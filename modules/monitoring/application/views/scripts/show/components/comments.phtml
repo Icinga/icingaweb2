@@ -39,14 +39,14 @@ if (empty($object->comments) && ! $addLink) {
         echo '<br>' . $addLink;
     }
     ?></th>
-    <td data-base-target="_next">
+    <td data-base-target="_self">
     <?php if (empty($object->comments)):
         echo $addLink;
     else: ?>
         <dl class="comment-list">
         <?php foreach ($object->comments as $comment): ?>
             <dt>
-                <a href="<?=  $this->href('monitoring/comment/show', array('comment_id' => $comment->id)) ?>">
+                <a data-base-target="_next" href="<?=  $this->href('monitoring/comment/show', array('comment_id' => $comment->id)) ?>">
                 <?= $this->escape($comment->author) ?>
                 <span class="comment-time">
                     <?= $this->translate('commented') ?>
@@ -59,6 +59,7 @@ if (empty($object->comments) && ! $addLink) {
                     ) ?>
                 <?php endif ?>
                 </span>
+                </a>
                 <?= $comment->persistent ? $this->icon('attach', 'This comment is persistent.') : '' ?>
                 <?php if (isset($delCommentForm)) {
                     // Form is unset if the current user lacks the respective permission
@@ -74,7 +75,6 @@ if (empty($object->comments) && ! $addLink) {
                     );
                     echo $deleteButton;
                 } ?>
-                </a>
             </dt>
             <dd>
                 <?= $this->nl2br($this->createTicketLinks($this->markdownLine($comment->comment, [ 'class' => 'caption']))) ?>
