@@ -45,7 +45,7 @@
          */
         this._pickers = new Map();
 
-        this.on('rendered', this.onRendered, this);
+        this.on('rendered', '#main > .container, #modal-content', this.onRendered, this);
         this.on('close-column', this.onCloseContainer, this);
         this.on('close-modal', this.onCloseContainer, this);
     };
