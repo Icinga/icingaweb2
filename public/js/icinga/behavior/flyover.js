@@ -14,7 +14,7 @@
     function Flyover(icinga) {
         Icinga.EventListener.call(this, icinga);
 
-        this.on('rendered', this.onRendered, this);
+        this.on('rendered', '#main > .container', this.onRendered, this);
         this.on('click', this.onClick, this);
         this.on('click', '.flyover-toggle', this.onClickFlyoverToggle, this);
     }
