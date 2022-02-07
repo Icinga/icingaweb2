@@ -56,9 +56,26 @@ class HostserviceproblemsummaryQuery extends IdoQuery
     {
         $this->hostStatusQuery = clone $query;
         $this->hostStatusQuery
-            ->clearOrder()
             ->setIsSubQuery()
             ->columns(array('object_id'));
+        if ($this->hostStatusQuery->hasOrder()) {
+            /*
+             * This works like this:
+             *  1. Get automatic group by definitions
+             *  2. Append the order by columns to them
+             *  3. Pass the entire result back to the query
+             *  4. Rely on the fact that `array_unique` (which is eventually used by IdoQuery::getGroup())
+             *     keeps the first items and removes subsequent ones so that the automatic group columns
+             *     are still first in the definition (mind blown?)
+             */
+            $groupBy = $this->hostStatusQuery->getGroup();
+            foreach ($this->hostStatusQuery->getOrder() as list($column, $_)) {
+                $groupBy[] = $column;
+            }
+
+            $this->hostStatusQuery->group($groupBy);
+        }
+
         return $this;
     }
 
