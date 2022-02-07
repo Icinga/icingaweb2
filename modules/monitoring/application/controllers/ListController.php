@@ -110,6 +110,7 @@ class ListController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $stats);
 
         $summary = $hosts->getQuery()->queryServiceProblemSummary();
+        $this->applyRestriction('monitoring/filter/objects', $summary);
 
         $this->view->hosts = $hosts;
         $this->view->stats = $stats;
