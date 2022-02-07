@@ -348,8 +348,8 @@
          */
         this.loading = false;
 
-        this.on('rendered', this.onRendered, this);
-        this.on('beforerender', this.beforeRender, this);
+        this.on('rendered', '#main > .container', this.onRendered, this);
+        this.on('beforerender', '#main > .container', this.beforeRender, this);
         this.on('click', 'table.action tr[href], table.table-row-selectable tr[href]', this.onRowClicked, this);
     };
     ActionTable.prototype = new Icinga.EventListener();
@@ -436,6 +436,11 @@
         var container = evt.target;
         var _this = evt.data.self;
 
+        if (evt.currentTarget !== container) {
+            // Nested containers are ignored
+            return;
+        }
+
         // initialize all rows with the correct row action
         $('table.action tr, table.table-row-selectable tr', container).each(function(idx, el) {
 
@@ -474,6 +479,11 @@
     ActionTable.prototype.beforeRender = function(evt) {
         var container = evt.target;
         var _this = evt.data.self;
+
+        if (evt.currentTarget !== container) {
+            // Nested containers are ignored
+            return;
+        }
 
         var active = _this.tables().find('tr.active');
         if (active.length) {

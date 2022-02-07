@@ -1,6 +1,5 @@
 /*! Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
-// @TODO(el): https://dev.icinga.com/issues/10646
 (function(Icinga, $) {
 
     'use strict';
@@ -9,13 +8,18 @@
 
     var ApplicationState = function (icinga) {
         Icinga.EventListener.call(this, icinga);
-        this.on('rendered', this.onRendered, this);
+        this.on('rendered', '#layout', this.onRendered, this);
         this.icinga = icinga;
     };
 
     ApplicationState.prototype = new Icinga.EventListener();
 
     ApplicationState.prototype.onRendered = function(e) {
+        if (e.currentTarget !== e.target) {
+            // Nested containers are ignored
+            return;
+        }
+
         if (! $('#application-state').length
             && ! $('#login').length
             && ! $('#guest-error').length

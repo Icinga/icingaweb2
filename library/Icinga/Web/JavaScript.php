@@ -38,7 +38,6 @@ class JavaScript
         'js/icinga/behavior/form.js',
         'js/icinga/behavior/actiontable.js',
         'js/icinga/behavior/flyover.js',
-        'js/icinga/behavior/expandable.js',
         'js/icinga/behavior/filtereditor.js',
         'js/icinga/behavior/selectable.js',
         'js/icinga/behavior/modal.js',
