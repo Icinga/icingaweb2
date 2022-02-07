@@ -15,13 +15,18 @@
     function FilterEditor(icinga) {
         Icinga.EventListener.call(this, icinga);
 
-        this.on('beforerender', this.beforeRender, this);
-        this.on('rendered', this.onRendered, this);
+        this.on('beforerender', '#main > .container', this.beforeRender, this);
+        this.on('rendered', '#main > .container', this.onRendered, this);
     }
 
     FilterEditor.prototype = new Icinga.EventListener();
 
     FilterEditor.prototype.beforeRender = function(event) {
+        if (event.currentTarget !== event.target) {
+            // Nested containers are ignored
+            return;
+        }
+
         var $container = $(event.target);
         var match = containerId.exec($container.attr('id'));
 
@@ -39,6 +44,11 @@
     };
 
     FilterEditor.prototype.onRendered = function(event) {
+        if (event.currentTarget !== event.target) {
+            // Nested containers are ignored
+            return;
+        }
+
         var $container = $(event.target);
         var match = containerId.exec($container.attr('id'));
 
