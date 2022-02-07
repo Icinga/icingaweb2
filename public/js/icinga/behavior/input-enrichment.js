@@ -27,8 +27,8 @@
     var InputEnrichment = function (icinga) {
         Icinga.EventListener.call(this, icinga);
 
-        this.on('beforerender', this.onBeforeRender, this);
-        this.on('rendered', this.onRendered, this);
+        this.on('beforerender', '#main > .container, #modal-content', this.onBeforeRender, this);
+        this.on('rendered', '#main > .container, #modal-content', this.onRendered, this);
 
         /**
          * Enriched inputs
