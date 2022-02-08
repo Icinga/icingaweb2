@@ -210,7 +210,7 @@ CSS;
             // we can't just access the light mode definitions in the calls above.
             // The LightModeVisitor ensures that all calls have access to the environment in which the mode was defined.
             // Finally, the rules are merged so that the light mode calls are also rendered to CSS.
-            $rules = new ReflectionProperty($parser::class, 'rules');
+            $rules = new ReflectionProperty(get_class($parser), 'rules');
             $rules->setAccessible(true);
             $evald->rules = array_merge(
                 $evald->rules,
