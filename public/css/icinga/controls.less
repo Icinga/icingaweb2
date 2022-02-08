@@ -43,13 +43,13 @@ input.search {
   }
 }
 
-@media (min-height: @prefer-light-color-scheme), (prefers-color-scheme: light) and (min-height: @enable-color-preference) {
+@light-mode: {
   #menu input.search,
   .controls input.search,
   input.search {
     background-image: url(../img/icons/search.png);
   }
-}
+};
 
 .backend-selection,
 .pagination-control,
@@ -241,7 +241,7 @@ input.search {
   }
 }
 
-@media (min-height: @prefer-light-color-scheme), (prefers-color-scheme: light) and (min-height: @enable-color-preference) {
+@light-mode: {
   :root {
     // These are actually the default colors for the flatpickr
 
@@ -276,6 +276,6 @@ input.search {
     --fp-hoverNumChooserBg: fadeout(black, 90%);
     --fp-numChooserBorderColor: fadeout(@fp-dayForeground, 85%);
   }
-}
+};
 
 // Datetime picker colors (end)

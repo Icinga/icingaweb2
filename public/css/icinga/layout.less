@@ -366,10 +366,10 @@
   }
 }
 
-@media (min-height: @prefer-light-color-scheme), (prefers-color-scheme: light) and (min-height: @enable-color-preference) {
+@light-mode: {
   #header-logo,
   #mobile-menu-logo,
   #about .icinga-logo {
     filter: brightness(0.415) sepia(1) ~"saturate(0.1)" hue-rotate(144deg);
   }
-}
+};

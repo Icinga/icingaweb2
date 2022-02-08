@@ -113,9 +113,10 @@
 @vertical-padding: 0.5em; // 6px
 @horizontal-padding: 1em; // 12px
 
-@media (min-height: @prefer-light-color-scheme), (prefers-color-scheme: light) and (min-height: @enable-color-preference) {
-
+@light-mode: {
   @light-body-bg-color: #F5F9FA;
+
+  @iplWebLightRules();
 
   :root {
     --body-bg-color: @light-body-bg-color;
@@ -151,7 +152,7 @@
     --gray-lighter: #e8ecef;
     --gray-lightest: #F7F7F7;
   }
-}
+};
 
 // Make padding not affect the final computed width of an element
 html {
@@ -293,11 +294,11 @@ td, th {
   }
 }
 
-@media (min-height: @prefer-light-color-scheme), (prefers-color-scheme: light) and (min-height: @enable-color-preference) {
+@light-mode: {
   .container {
     &:before,
     > .content:before {
       background-image: url(../img/icinga-loader-light.gif)
     }
   }
-}
+};
