@@ -15,11 +15,7 @@ class LightModeVisitor extends Less_VisitorReplacing
 
     public function visitRulesetCall($c)
     {
-        if ($this->getLightMode()->isModule($c->variable)) {
-            return LightModeCall::fromRulesetCall($c)->setLightMode($this->getLightMode());
-        }
-
-        return $c;
+        return LightModeCall::fromRulesetCall($c)->setLightMode($this->getLightMode());
     }
 
     public function run($node)

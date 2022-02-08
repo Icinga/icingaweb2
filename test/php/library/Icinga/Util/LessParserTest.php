@@ -5,6 +5,7 @@ namespace Tests\Icinga\Util;
 
 use Icinga\Test\BaseTestCase;
 use Icinga\Util\LessParser;
+use Less_Exception_Compiler;
 
 class LessParserTest extends BaseTestCase
 {
@@ -459,7 +460,7 @@ LESS
   :root {
     --my-other-color: green;
   }
-  .wrapper {
+  .icinga-module.module-test {
     --greenish-color: lime;
     --blueish-color: navy;
   }
@@ -483,7 +484,7 @@ CSS
   }
 };
 
-.wrapper {
+.icinga-module.module-test {
   @light-mode: {
     @more-light-colors();
   };
@@ -495,6 +496,22 @@ CSS
 };
 LESS
             )
+        );
+    }
+
+    public function testLightModeDefinitionRestrictedInSelectors()
+    {
+        $this->expectException(Less_Exception_Compiler::class);
+
+        $this->compileLess(<<<LESS
+.selector {
+  @light-mode: {
+    :root {
+      --my-color: orange;
+    }
+  };
+}
+LESS
         );
     }
 }

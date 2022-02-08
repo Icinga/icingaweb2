@@ -84,13 +84,15 @@ CSS;
         if ($this->variableOrigin->name === '@' . static::LIGHT_MODE_NAME) {
             $this->variableOrigin->name .= '-' . substr(sha1(uniqid(mt_rand(), true)), 0, 7);
 
-            $this->lightMode->add($this->variableOrigin->name, $this->moduleSelector);
+            $this->lightMode->add($this->variableOrigin->name);
 
             if ($this->moduleSelector !== false) {
-                $drs = LightModeDefinition::fromDetachedRuleset($drs)
-                    ->setLightMode($this->lightMode)
-                    ->setName($this->variableOrigin->name);
+                $this->lightMode->setSelector($this->variableOrigin->name, $this->moduleSelector);
             }
+
+            $drs = LightModeDefinition::fromDetachedRuleset($drs)
+                ->setLightMode($this->lightMode)
+                ->setName($this->variableOrigin->name);
         }
 
         // Since a detached ruleset is a variable definition in the first place,
@@ -190,14 +192,14 @@ CSS;
         $evald = $this->visitObj($node);
 
         // The visitor has registered all light modes in visitDetachedRuleset, but has not called them yet.
-        // Now the light mode calls are prepared with the appropriate module CSS selector.
+        // Now the light mode calls are prepared with the appropriate CSS selectors.
         $calls = [];
-        list($modes, $moduleModes) = $this->lightMode->list();
-        if (! empty($modes)) {
-            $calls[] = implode("();\n", $modes) . '();';
-        }
-        foreach ($moduleModes as $module => $modes) {
-            $calls[] = "$module {\n" . implode("();\n", $modes) . "();\n}";
+        foreach ($this->lightMode as $mode) {
+            if ($this->lightMode->hasSelector($mode)) {
+                $calls[] = "{$this->lightMode->getSelector($mode)} {\n$mode();\n}";
+            } else {
+                $calls[] = "$mode();";
+            }
         }
 
         if (! empty($calls)) {
