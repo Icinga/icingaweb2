@@ -259,6 +259,14 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
         $this->dbAdapter->setFetchMode(Zend_Db::FETCH_OBJ);
         // TODO(el/tg): The profiler is disabled per default, why do we disable the profiler explicitly?
         $this->dbAdapter->getProfiler()->setEnabled(false);
+
+        switch ($this->dbType) {
+            case 'pgsql':
+                $this->dbAdapter->query(
+                    $this->dbAdapter->quoteInto('SET TIME ZONE ?', $this->defaultTimezoneOffset())
+                );
+                break;
+        }
     }
 
     public static function fromResourceName($name)
