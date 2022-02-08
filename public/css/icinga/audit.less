@@ -6,10 +6,10 @@
   li {
     .rounded-corners(3px);
     border: 1px solid;
-    .var(border-color, low-sat-blue);
+    border-color: @low-sat-blue;
 
     &.active {
-      .var(border-color, icinga-blue);
+      border-color: @icinga-blue;
     }
   }
 }
@@ -20,14 +20,13 @@
   }
 
   h3 {
-    border-bottom: 1px solid;
-    .var(border-bottom-color, gray-light);
+    border-bottom: 1px solid @gray-light;
   }
 
   h3 em,
   .previews em,
   .privilege-label em {
-    .var(color, text-color-light);
+    color: @text-color-light;
   }
   h3 em {
     font-weight: normal;
@@ -37,18 +36,18 @@
   }
 
   .icon {
-    .var(color, gray-light);
+    color: @gray-light;
 
     &.granted {
-      .var(color, color-granted);
+      color: @color-granted;
     }
 
     &.refused {
-      .var(color, color-refused);
+      color: @color-refused;
     }
 
     &.restricted {
-      .var(color, color-restricted);
+      color: @color-restricted;
     }
   }
 
@@ -61,7 +60,7 @@
     &:hover .spacer {
       .transition(opacity .25s .25s ease-in);
       border: 0 dashed;
-      .var(border-color, gray-light);
+      border-color: @gray-light;
       border-top-width: .2em;
       opacity: 1;
     }
@@ -72,25 +71,25 @@
     border-left-width: 2px;
 
     &.granted {
-      .var(border-color, color-granted);
+      border-color: @color-granted;
     }
 
     &.refused {
-      .var(border-color, color-refused);
+      border-color: @color-refused;
     }
   }
 
   .connector {
     border: 0 solid;
-    .var(border-color, gray-lighter);
+    border-color: @gray-lighter;
     border-bottom-width: 2px;
 
     &.granted {
-      .var(border-color, color-granted);
+      border-color: @color-granted;
     }
 
     &.refused {
-      .var(border-color, color-refused);
+      border-color: @color-refused;
     }
 
     &:first-child {
@@ -102,22 +101,22 @@
   .role {
     .rounded-corners(1em);
     border: 2px solid;
-    .var(border-color, gray-lighter);
+    border-color: @gray-lighter;
 
     &.granted {
       border: 2px solid;
-      .var(border-color, color-granted);
+      border-color: @color-granted;
     }
 
     &.refused {
       border: 2px solid;
-      .var(border-color, color-refused);
+      border-color: @color-refused;
     }
   }
 
   .restriction {
     font-family: @font-family-fixed;
-    .var(background-color, gray-lighter);
+    background-color: @gray-lighter;
   }
 }
 

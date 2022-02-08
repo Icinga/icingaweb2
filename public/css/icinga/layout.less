@@ -9,7 +9,7 @@
 }
 
 #guest-error {
-  .var(background-color, icinga-blue);
+  background-color: @icinga-blue;
   height: 100%;
   overflow: auto;
 }
@@ -20,7 +20,7 @@
 
 #guest-error-message {
   .fadein();
-  .var(color, body-bg-color);
+  color: @body-bg-color;
   font-size: 2em;
 }
 
@@ -32,7 +32,7 @@
 }
 
 #header-logo-container {
-  .var(background, menu-bg-color);
+  background: @menu-bg-color;
   height: 6em;
   padding: 1.25em;
   width: 16em;
@@ -81,8 +81,8 @@
 }
 
 #layout {
-  .var(background-color, body-bg-color);
-  .var(color, text-color);
+  background-color: @body-bg-color;
+  color: @text-color;
   font-family: @font-family;
 }
 
@@ -141,11 +141,11 @@
 
 // Mobile menu
 #layout.minimal-layout #sidebar {
-  .var(background-color, menu-bg-color);
+  background-color: @menu-bg-color;
 }
 
 #mobile-menu-toggle {
-  .var(color, menu-color);
+  color: @menu-color;
   text-align: right;
 
   > button {
@@ -213,12 +213,11 @@
 }
 
 #notifications > li {
-  .var(color, text-color);
+  color: @text-color;
   display: block;
   line-height: 2.5em;
-  border-left: .5em solid;
-  .var(border-left-color, gray-light);
-  .var(background, body-bg-color);
+  border-left: .5em solid @gray-light;
+  background: @body-bg-color;
   margin-bottom: 1px;
   box-shadow: 0 0 1em 0 rgba(0,0,0,0.25);
 
@@ -233,38 +232,38 @@
   }
 
   &.error {
-    .var(border-color, color-notification-error);
-    .var(background, color-notification-error);
-    .var(color, text-color-on-icinga-blue);
+    border-color: @color-notification-error;
+    background: @color-notification-error;
+    color: @text-color-on-icinga-blue;
 
     .icon {
-      .var(color, text-color-on-icinga-blue);
+      color: @text-color-on-icinga-blue;
     }
   }
 
   &.info {
-    .var(border-color, color-notification-info);
+    border-color: @color-notification-info;
 
     .icon {
-      .var(color, color-notification-info);
+      color: @color-notification-info;
     }
   }
 
   &.success {
-    .var(border-color, color-notification-success);
+    border-color: @color-notification-success;
 
     .icon {
-      .var(color, color-notification-success);
+      color: @color-notification-success;
     }
   }
 
   &.warning {
-    .var(border-color, color-notification-warning);
-    .var(background, color-notification-warning);
-    .var(color, text-color-inverted);
+    border-color: @color-notification-warning;
+    background: @color-notification-warning;
+    color: @text-color-inverted;
 
     .icon {
-      .var(color, text-color-inverted);
+      color: @text-color-inverted;
     }
   }
 }
@@ -342,10 +341,10 @@
   }
 
   #search:focus {
-    .var(background-color, menu-bg-color);
+    background-color: @menu-bg-color;
     border-radius: 0 .25em .25em 0;
     box-shadow: 0 0 .25em 0 rgba(0, 0, 0, .2);
-    .var(color, menu-color);
+    color: @menu-color;
     width: 20em;
     position: fixed;
     z-index: 1;

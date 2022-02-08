@@ -3,7 +3,7 @@
 // Styles for tab navigation of containers
 
 .tabs {
-  .var(background-color, menu-bg-color);
+  background-color: @menu-bg-color;
   letter-spacing: -0.417em;
 }
 
@@ -27,18 +27,18 @@
   }
 
   > a {
-    .var(color, menu-color);
+    color: @menu-color;
 
     &:hover {
       text-decoration: none;
-      .var(background, tab-hover-bg-color);
+      background: @tab-hover-bg-color;
     }
   }
 
   &.active > a,
   > a:focus {
-    .var(background-color, body-bg-color);
-    .var(color, text-color);
+    background-color: @body-bg-color;
+    color: @text-color;
   }
 }
 
@@ -55,8 +55,8 @@
 .tabs > li > .close-container-control:hover,
 .tabs > li > .refresh-container-control:focus,
 .tabs > li > .refresh-container-control:hover {
-  .var(background-color, body-bg-color);
-  .var(color, text-color);
+  background-color: @body-bg-color;
+  color: @text-color;
   text-decoration: none;
 }
 
@@ -64,9 +64,9 @@
   .box-shadow();
   .rounded-corners(0 0 0.3em 0.3em);
 
-  .var(background-color, body-bg-color);
+  background-color: @body-bg-color;
   border: 1px solid;
-  .var(border-color, gray-light);
+  border-color: @gray-light;
   border-top: none;
   margin-left: -1px;
   min-width: 14em;
@@ -74,7 +74,7 @@
 }
 
 .tabs > .dropdown-nav-item > ul > li:hover > a {
-  .var(background-color, gray-lighter);
+  background-color: @gray-lighter;
   text-decoration: none;
 }
 

@@ -59,20 +59,20 @@
 
 // Host name and IP addresses in the host and service detail view
 .host-meta {
-  .var(color, text-color-light);
+  color: @text-color-light;
   font-size: @font-size-small;
 }
 
 // Link to unhandled services in the hosts overview
 .host-services-incidents {
-  .var(color, color-critical);
+  color: @color-critical;
   font-family: @font-family-wide;
   font-size: @font-size-small;
 }
 
 // Notification recipient in the notifications overview
 .notification-recipient {
-  .var(color, text-color-light);
+  color: @text-color-light;
   float: right;
   font-size: @font-size-small;
 }
@@ -104,7 +104,7 @@
 
 // Plugin output in overviews
 .overview-plugin-output {
-  .var(color, text-color-light);
+  color: @text-color-light;
   font-family: @font-family-fixed;
   font-size: @font-size-small;
   margin: 0;
@@ -146,7 +146,7 @@
 
 // Service description if in the service detail view
 .service-meta {
-  .var(color, text-color-light);
+  color: @text-color-light;
   font-size: @font-size-small;
 }
 
@@ -154,68 +154,61 @@
 .state-col {
   &.state-ok,
   &.state-up {
-    border-left: @border-left-width solid;
-    .var(border-left-color, color-ok);
+    border-left: @border-left-width solid @color-ok;
   }
 
   &.state-pending {
-    border-left: @border-left-width solid;
-    .var(border-left-color, color-pending);
+    border-left: @border-left-width solid @color-pending;
   }
 
   &.state-critical,
   &.state-down {
-    .var(background-color, color-critical);
-    .var(color, text-color-inverted);
+    background-color: @color-critical;
+    color: @text-color-inverted;
 
     &.handled {
       background-color: inherit;
       color: inherit;
-      border-left: @border-left-width solid;
-      .var(border-left-color, color-critical-handled);
+      border-left: @border-left-width solid @color-critical-handled;
     }
   }
 
   &.state-warning {
-    .var(background-color, color-warning);
-    .var(color, text-color-inverted);
+    background-color: @color-warning;
+    color: @text-color-inverted;
 
     &.handled {
       background-color: inherit;
       color: inherit;
-      border-left: @border-left-width solid;
-      .var(border-left-color, color-warning-handled);
+      border-left: @border-left-width solid @color-warning-handled;
     }
   }
 
   &.state-unknown {
-    .var(background-color, color-unknown);
-    .var(color, text-color-inverted);
+    background-color: @color-unknown;
+    color: @text-color-inverted;
 
     &.handled {
       background-color: inherit;
       color: inherit;
-      border-left: @border-left-width solid;
-      .var(border-left-color, color-unknown-handled);
+      border-left: @border-left-width solid @color-unknown-handled;
     }
   }
 
   &.state-unreachable {
-    .var(background-color, color-unreachable);
-    .var(color, text-color-inverted);
+    background-color: @color-unreachable;
+    color: @text-color-inverted;
 
     &.handled {
       background-color: inherit;
       color: inherit;
-      border-left: @border-left-width solid;
-      .var(border-left-color, color-unreachable-handled);
+      border-left: @border-left-width solid @color-unreachable-handled;
     }
   }
 
   // State class for history events
   &.state-no-state {
-    border-left: @border-left-width solid;
-    .var(border-left-color, text-color-light);
+    border-left: @border-left-width solid @text-color-light;
   }
 
   * {
@@ -263,11 +256,11 @@
   }
 
   tr[href].active {
-    .var(background-color, tr-active-color);
+    background-color: @tr-active-color;
   }
 
   tr[href]:hover {
-    .var(background-color, tr-hover-color);
+    background-color: @tr-hover-color;
     cursor: pointer;
   }
 

@@ -1,26 +1,20 @@
 /*! Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
 .box-shadow(@x: 0.2em; @y: 0.2em; @blur: 0.2em; @spread: 0; @color: rgba(83, 83, 83, 0.25)) {
-  -webkit-box-shadow: @x @y @blur @spread extract-variable-default(@color);
   -webkit-box-shadow: @arguments;
-     -moz-box-shadow: @x @y @blur @spread extract-variable-default(@color);
      -moz-box-shadow: @arguments;
-          box-shadow: @x @y @blur @spread extract-variable-default(@color);
           box-shadow: @arguments;
 }
 
 .button(
-  @background-color: ~"var(--body-bg-color, @{body-bg-color})",
-  @border-font-color: ~"var(--icinga-blue, @{icinga-blue})",
-  @color-dark: ~"var(--icinga-blue-dark, @{icinga-blue-dark})"
+  @background-color: @body-bg-color,
+  @border-font-color: @icinga-blue,
+  @color-dark: @icinga-blue-dark
 ) {
   .rounded-corners(3px);
 
-  background-color: extract-variable-default(@background-color);
   background-color: @background-color;
-  border: extract-variable-default(2px solid @border-font-color);
   border: 2px solid @border-font-color;
-  color: extract-variable-default(@border-font-color);
   color: @border-font-color;
   cursor: pointer;
   line-height: normal;
@@ -34,19 +28,14 @@
   &:focus,
   &:hover,
   &.btn-primary {
-    background-color: extract-variable-default(@border-font-color);
     background-color: @border-font-color;
-    color: extract-variable-default(@background-color);
     color: @background-color;
   }
 
   &.btn-primary:focus,
   &.btn-primary:hover {
-    background-color: extract-variable-default(@color-dark);
     background-color: @color-dark;
-    border-color: extract-variable-default(@color-dark);
     border-color: @color-dark;
-    color: extract-variable-default(@background-color);
     color: @background-color;
   }
 
@@ -153,90 +142,85 @@
 // Mixin for stateful foreground colors, e.g. text or icons
 .fg-stateful {
   &.state-ok {
-    .var(color, color-ok);
+    color: @color-ok;
   }
   &.state-up {
-    .var(color, color-up);
+    color: @color-up;
   }
   &.state-warning {
-    .var(color, color-warning);
+    color: @color-warning;
     &.handled {
-      .var(color, color-warning-handled);
+      color: @color-warning-handled;
     }
   }
   &.state-critical {
-    .var(color, color-critical);
+    color: @color-critical;
     &.handled {
-      .var(color, color-critical-handled);
+      color: @color-critical-handled;
     }
   }
   &.state-down {
-    .var(color, color-down);
+    color: @color-down;
     &.handled {
-      .var(color, color-down-handled);
+      color: @color-down-handled;
     }
   }
   &.state-unreachable {
-    .var(color, color-unreachable);
+    color: @color-unreachable;
     &.handled {
-      .var(color, color-unreachable-handled);
+      color: @color-unreachable-handled;
     }
   }
   &.state-unknown {
-    .var(color, color-unknown);
+    color: @color-unknown;
     &.handled {
-      .var(color, color-unknown-handled);
+      color: @color-unknown-handled;
     }
   }
   &.state-pending {
-    .var(color, color-pending);
+    color: @color-pending;
   }
 }
 
 // Mixin for stateful background colors
 .bg-stateful {
   &.state-ok {
-    .var(background-color, color-ok);
+    background-color: @color-ok;
   }
   &.state-up {
-    .var(background-color, color-up);
+    background-color: @color-up;
   }
   &.state-warning {
-    .var(background-color, color-warning);
+    background-color: @color-warning;
     &.handled {
-      .var(background-color, color-warning-handled);
+      background-color: @color-warning-handled;
     }
   }
   &.state-critical {
-    .var(background-color, color-critical);
+    background-color: @color-critical;
     &.handled {
-      .var(background-color, color-critical-handled);
+      background-color: @color-critical-handled;
     }
   }
   &.state-down {
-    .var(background-color, color-down);
+    background-color: @color-down;
     &.handled {
-      .var(background-color, color-down-handled);
+      background-color: @color-down-handled;
     }
   }
   &.state-unreachable {
-    .var(background-color, color-unreachable);
+    background-color: @color-unreachable;
     &.handled {
-      .var(background-color, color-unreachable-handled);
+      background-color: @color-unreachable-handled;
     }
   }
   &.state-unknown {
-    .var(background-color, color-unknown);
+    background-color: @color-unknown;
     &.handled {
-      .var(background-color, color-unknown-handled);
+      background-color: @color-unknown-handled;
     }
   }
   &.state-pending {
-    .var(background-color, color-pending);
+    background-color: @color-pending;
   }
-}
-
-.var(@property, @variable) {
-    @{property}: @@variable;
-    @{property}: var(~"--@{variable}", @@variable);
 }

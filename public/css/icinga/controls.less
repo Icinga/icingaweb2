@@ -39,7 +39,7 @@ input.search {
   }
 
   &:focus:not([readonly]) {
-    .var(border-color, icinga-blue);
+    border-color: @icinga-blue;
   }
 }
 
@@ -64,7 +64,7 @@ input.search {
   margin: .5em 0;
 
   > a {
-    .var(color, icinga-blue);
+    color: @icinga-blue;
     padding: .5em;
     line-height: 1;
   }
@@ -104,12 +104,11 @@ input.search {
     line-height: 1;
 
     &.active {
-      border-bottom: 2px solid;
-      .var(border-bottom-color, icinga-blue);
+      border-bottom: 2px solid @icinga-blue;
 
       > a,
       > a:hover {
-        .var(color, icinga-blue);
+        color: @icinga-blue;
         /* Compensate border-bottom: 2px */
         margin-bottom: -2px;
       }
@@ -122,7 +121,7 @@ input.search {
     }
 
     &.disabled {
-      .var(color, disabled-gray);
+      color: @disabled-gray;
       cursor: no-drop;
     }
 
@@ -131,7 +130,7 @@ input.search {
       padding: 0.5em;
     }
     > a:hover {
-      .var(background-color, gray-lighter);
+      background-color: @gray-lighter;
       text-decoration: none;
     }
   }
@@ -238,7 +237,7 @@ input.search {
 .icinga-datetime-picker .flatpickr-day.today {
   &:hover,
   &:focus {
-    .var(color, fp-today_fg_color);
+    color: @fp-today_fg_color;
   }
 }
 

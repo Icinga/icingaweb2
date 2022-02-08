@@ -64,10 +64,10 @@
     top: .75em;
     right: 1em;
 
-    .var(background-color, "gray");
+    background-color: @gray;
     border: none;
     border-radius: 50%;
-    .var(color, text-color-inverted);
+    color: @text-color-inverted;
     height: 1.5em;
     line-height: 1em;
     padding: 0;
@@ -102,7 +102,7 @@
   align-items: stretch;
   flex-direction: column;
 
-  .var(background-color, body-bg-color);
+  background-color: @body-bg-color;
   border-radius: .5em;
   box-shadow: 0 0 2em 0 rgba(0, 0, 0, .6);
   flex: 1;
