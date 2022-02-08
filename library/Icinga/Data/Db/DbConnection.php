@@ -298,19 +298,13 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     }
 
     /**
-     * Get offset from the current default timezone to GMT
+     * Get the current timezone
      *
      * @return string
      */
     protected function defaultTimezoneOffset()
     {
-        $tz = new DateTimeZone(date_default_timezone_get());
-        $offset = $tz->getOffset(new DateTime());
-        $prefix = $offset >= 0 ? '+' : '-';
-        $offset = abs($offset);
-        $hours = (int) floor($offset / 3600);
-        $minutes = (int) floor(($offset % 3600) / 60);
-        return sprintf('%s%d:%02d', $prefix, $hours, $minutes);
+        return date_default_timezone_get();
     }
 
     /**
