@@ -221,7 +221,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
             return $this->data[$key];
         }
 
-        return $default !== null ? $default : null;
+        return $default;
     }
 
     /**
