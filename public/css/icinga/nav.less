@@ -10,6 +10,38 @@
   }
 }
 
+.segmented-nav-item {
+  display: flex;
+
+  a:first-child {
+    width: 100%;
+  }
+
+  > a {
+    flex: 1 1 auto;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.nav-item .user-ball {
+  height: 1.5em;
+  width: 1.5em;
+  display: inline-block;
+  border-radius: 50%;
+
+  text-align: center;
+  font-style: normal;
+  text-transform: uppercase;
+  .var(backgroundbackground-color, icinga-blue);
+  .var(color, text-color-on-icinga-blue);
+
+  line-height: 1.5;
+  margin-right: .2em;
+}
+
 .dropdown-nav-item > ul {
   display: none;
   position: absolute;
@@ -43,4 +75,17 @@
 
 .primary-nav a {
   font-weight: 500;
+}
+
+.secondary-nav .nav-level-2 ul {
+  padding: 0;
+}
+
+#menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.secondary-nav {
+  margin-top: auto;
 }
