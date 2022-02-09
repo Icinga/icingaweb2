@@ -113,12 +113,15 @@ class StyleSheet
 
     /**
      * Create the StyleSheet
+     *
+     * @param bool $disableModes Disable replacing compiled Less colors with CSS var() function calls and don't inject
+     *                           light mode calls
      */
-    public function __construct()
+    public function __construct($disableModes = false)
     {
         $app = Icinga::app();
         $this->app = $app;
-        $this->lessCompiler = new LessCompiler();
+        $this->lessCompiler = new LessCompiler($disableModes);
         $this->pubPath = $app->getBaseDir('public');
         $this->collect();
     }
@@ -221,11 +224,13 @@ class StyleSheet
      *
      * Does not cache the stylesheet if the HTTP header Cache-Control or Pragma is set to no-cache.
      *
-     * @param   bool    $minified   Whether to compress the stylesheet
+     * @param bool $minified     Whether to compress the stylesheet
+     * @param bool $disableModes Disable replacing compiled Less colors with CSS var() function calls and don't inject
+     *                           light mode calls
      */
-    public static function send($minified = false)
+    public static function send($minified = false, $disableModes = false)
     {
-        $styleSheet = new self();
+        $styleSheet = new self($disableModes);
 
         $request = $styleSheet->app->getRequest();
         $response = $styleSheet->app->getResponse();
