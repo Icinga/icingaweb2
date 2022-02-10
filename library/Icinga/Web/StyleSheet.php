@@ -41,19 +41,11 @@ class StyleSheet
     ];
 
     /**
-     * RegEx pattern for matching full css @media query of theme mode
+     * Sequence that signals that a theme supports light mode
      *
      * @var string
      */
-    const REGEX_ALL_MODE_QUERY = '/@media\s*\(\s*min-height\s*:\s*@prefer-light-color-scheme\s*\)\s*,' .
-    '\s*\(\s*prefers-color-scheme\s*:\s*light\s*\)\s*and\s*\(\s*min-height\s*:\s*@enable-color-preference\s*\)/';
-
-    /**
-     * RegEx pattern for matching css @media query of theme mode
-     *
-     * @var string
-     */
-    const REGEX_AUTO_MODE_QUERY = '/@media.*prefers-color-scheme/';
+    const LIGHT_MODE_IDENTIFIER = '@light-mode:';
 
     /**
      * Array of core LESS files Web 2 sends to the client
@@ -178,12 +170,8 @@ class StyleSheet
 
         $mode = 'none';
         if ($user = Auth::getInstance()->getUser()) {
-            $file = $themePath !== null ? @file_get_contents($themePath) : '';
-            if ($file && $file !== '' && ! preg_match(self::REGEX_ALL_MODE_QUERY, $file)) {
-                if (preg_match(self::REGEX_AUTO_MODE_QUERY, $file)) {
-                    $mode = 'system';
-                }
-            } else {
+            $file = $themePath !== null ? @file_get_contents($themePath) : false;
+            if (! $file || strpos($file, self::LIGHT_MODE_IDENTIFIER) !== false) {
                 $mode = $user->getPreferences()->getValue('icingaweb', 'theme_mode', self::DEFAULT_MODE);
             }
         }
