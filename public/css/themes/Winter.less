@@ -1,66 +1,32 @@
 /*! Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
-@icinga-blue: #001E5b;
+@icinga-blue: #2b95ff;
+@control-color: @icinga-blue;
+
+@menu-2ndlvl-highlight-bg-color: transparent;
+
+.letitsnow {
+  background-image: url('../img/winter/snow1.png'), url('../img/winter/snow2.png'), url('../img/winter/snow3.png');
+  animation: ~"snow" 10s linear infinite;
+}
 
 #header-logo {
     background-image: url('../img/winter/logo_icinga_big_winter.png');
 }
 
-@tr-active-color: #dadeea;
-@tr-hover-color: #c6cfe4;
-@menu-2ndlvl-highlight-bg-color: transparent;
-@menu-2ndlvl-active-color: @text-color;
-
 /* Snow, from http://codepen.io/NickyCDK/pen/AIonk */
 #login, #header-logo-container, #main > .container > .controls > .tabs {
-    background-image: url('../img/winter/snow1.png'), url('../img/winter/snow2.png'), url('../img/winter/snow3.png');
-    -webkit-animation: snow 10s linear infinite;
-    -moz-animation: snow 10s linear infinite;
-    -ms-animation: snow 10s linear infinite;
-    animation: snow 10s linear infinite;
+  .letitsnow()
 }
 
-@keyframes snow {
+@keyframes ~"snow" {
   0% {background-position: 0px 0px, 0px 0px, 0px 0px;}
   50% {background-position: 500px 500px, 100px 200px, -100px 150px;}
   100% {background-position: 500px 1000px, 200px 400px, -100px 300px;}
-}
-@-moz-keyframes snow {
-  0% {background-position: 0px 0px, 0px 0px, 0px 0px;}
-  50% {background-position: 500px 500px, 100px 200px, -100px 150px;}
-  100% {background-position: 400px 1000px, 200px 400px, 100px 300px;}
-}
-@-webkit-keyframes snow {
-  0% {background-position: 0px 0px, 0px 0px, 0px 0px;}
-  50% {background-position: 500px 500px, 100px 200px, -100px 150px;}
-  100% {background-position: 500px 1000px, 200px 400px, -100px 300px;}
-}
-@-ms-keyframes snow {
-  0% {background-position: 0px 0px, 0px 0px, 0px 0px;}
-  50% {background-position: 500px 500px, 100px 200px, -100px 150px;}
-  100% {background-position: 500px 1000px, 200px 400px, -100px 300px;}
-}
-
-#menu .nav-level-2 > .nav-item.active {
-  > a:focus, > a:hover {
-    opacity: 1;
-  }
 }
 
 #menu ul.nav-level-1 > .nav-item {
-  &.selected > a {
-    background-color: transparent;
-  }
-
   &:focus, &:hover {
-    background-image: url('../img/winter/snow1.png'), url('../img/winter/snow2.png'), url('../img/winter/snow3.png');
-    -webkit-animation: snow 10s linear infinite;
-    -moz-animation: snow 10s linear infinite;
-    -ms-animation: snow 10s linear infinite;
-    animation: snow 10s linear infinite;
-  }
-
-  > a:hover, > a:focus {
-    color: white;
+    .letitsnow()
   }
 }
