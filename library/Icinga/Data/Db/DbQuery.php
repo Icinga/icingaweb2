@@ -3,6 +3,9 @@
 
 namespace Icinga\Data\Db;
 
+use DateInterval;
+use DateTime;
+use DateTimeZone;
 use Exception;
 use Zend_Db_Expr;
 use Zend_Db_Select;
@@ -267,10 +270,38 @@ class DbQuery extends SimpleQuery
         return $value;
     }
 
+    /**
+     * Render the given timestamp based on the local timezone
+     *
+     * Since {@see DbConnection::defaultTimezoneOffset()} tells the database the timezone with just an offset,
+     * this will prepare the rendered value in a way that it plays fine with daylight savings.
+     *
+     * @param int $value
+     * @return string
+     */
     protected function timestampForSql($value)
     {
-        // TODO: do this db-aware
-        return $this->escapeForSql(date('Y-m-d H:i:s', $value));
+        if ($this->getDatasource()->getDbType() === 'pgsql') {
+            // We don't tell PostgreSQL the user's timezone
+            $dateTime = (new DateTime())
+                ->setTimezone(new DateTimeZone('UTC'))
+                ->setTimestamp($value);
+        } else {
+            $dateTime = new DateTime();
+            // Get "current" offset the database will use
+            $offsetToUTC = $dateTime->getOffset();
+            // Set timezone to UTC and initialize it with the timestamp
+            $dateTime->setTimezone(new DateTimeZone('UTC'))->setTimestamp($value);
+            // Normalize every datetime based on the only offset the database knows about
+            if ($offsetToUTC >= 0) {
+                $dateTime->add(new DateInterval("PT{$offsetToUTC}S"));
+            } else {
+                $offsetToUTC = abs($offsetToUTC);
+                $dateTime->sub(new DateInterval("PT{$offsetToUTC}S"));
+            }
+        }
+
+        return $this->escapeForSql($dateTime->format('Y-m-d H:i:s'));
     }
 
     /**
