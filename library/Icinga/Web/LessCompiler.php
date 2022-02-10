@@ -58,10 +58,13 @@ class LessCompiler
 
     /**
      * Create a new LESS compiler
+     *
+     * @param bool $disableModes Disable replacing compiled Less colors with CSS var() function calls and don't inject
+     *                           light mode calls
      */
-    public function __construct()
+    public function __construct($disableModes = false)
     {
-        $this->lessc = new LessParser();
+        $this->lessc = new LessParser($disableModes);
         // Discourage usage of import because we're caching based on an explicit list of LESS files to compile
         $this->lessc->importDisabled = true;
     }

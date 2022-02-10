@@ -56,10 +56,12 @@ if (in_array($path, $special)) {
 
     switch ($path) {
         case 'css/icinga.css':
-            Stylesheet::send();
+            $forIe11 = (bool) preg_match('/Trident\/7.0;.*rv:11/', $_SERVER['HTTP_USER_AGENT']);
+            Stylesheet::send(false, $forIe11);
             exit;
         case 'css/icinga.min.css':
-            Stylesheet::send(true);
+            $forIe11 = (bool) preg_match('/Trident\/7.0;.*rv:11/', $_SERVER['HTTP_USER_AGENT']);
+            Stylesheet::send(true, $forIe11);
             exit;
 
         case 'js/icinga.dev.js':

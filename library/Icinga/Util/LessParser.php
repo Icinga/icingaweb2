@@ -3,6 +3,7 @@
 
 namespace Icinga\Util;
 
+use Icinga\Less\Visitor;
 use Less_Tree_Anonymous;
 use Less_Tree_Expression;
 use Less_Tree_Quoted;
@@ -13,9 +14,16 @@ require_once 'lessphp/lessc.inc.php';
 
 class LessParser extends lessc
 {
-    public function __construct()
+    /**
+     * @param bool $disableModes Disable replacing compiled Less colors with CSS var() function calls and don't inject
+     *                           light mode calls
+     */
+    public function __construct($disableModes = false)
     {
         $this->registerFunction('extract-variable-default', [$this, 'extractVariableDefault']);
+        if (! $disableModes) {
+            $this->setOption('plugins', [new Visitor()]);
+        }
     }
 
     /**
@@ -33,7 +41,7 @@ class LessParser extends lessc
      *   background: drop-shadow(5px 0 3px @mixin-parameter);
      *
      * @param mixed $value
-     * @param bool $valAsDefault
+     * @param bool  $valAsDefault
      *
      * @return mixed
      */
