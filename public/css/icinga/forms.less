@@ -162,7 +162,7 @@ form.icinga-form .control-group .toggle-switch ~ .control-info {
   input[type="file"],
   textarea,
   select {
-    .var(background-color, low-sat-blue);
+    background-color: @low-sat-blue;
   }
 }
 
@@ -306,22 +306,22 @@ form.icinga-form .form-controls {
   }
 
   input[type="submit"].btn-remove {
-    .button(~"var(--body-bg-color, @{body-bg-color})", ~"var(--color-critical, @{color-critical})", ~"var(--color-critical-accentuated, @{color-critical-accentuated})");
+    .button(@body-bg-color, @color-critical, @color-critical-accentuated);
   }
 
   input[type="submit"].btn-cancel {
-    .button(~"var(--body-bg-color, @{body-bg-color})", ~"var(--gray, @{gray})", ~"var(--black, @{black})");
+    .button(@body-bg-color, @gray, @black);
   }
 
   button.noscript-apply {
-    .var(color, "gray");
-    .var(background-color, gray-lightest);
-    .var(border-color, "gray");
+    color: @gray;
+    background-color: @gray-lightest;
+    border-color: @gray;
     border-width: 1px;
   }
 
   button[type="button"] {
-    .var(background-color, low-sat-blue);
+    background-color: @low-sat-blue;
   }
 }
 
@@ -363,9 +363,9 @@ form.inline {
   top: 0;
 
   display: inline-block;
-  .var(background, low-sat-blue);
+  background: @low-sat-blue;
   border: 1px solid;
-  .var(border-color, low-sat-blue);
+  border-color: @low-sat-blue;
   box-sizing: content-box;
   border-radius: 1em;
   height: 4/3em;
@@ -378,10 +378,10 @@ form.inline {
   top: 0;
   left: 0;
 
-  .var(background, text-color-inverted);
+  background: @text-color-inverted;
   border-radius: 1em;
   border: 1px solid;
-  .var(border-color, low-sat-blue);
+  border-color: @low-sat-blue;
   box-sizing: border-box;
   content: "";
   display: block;
@@ -397,19 +397,18 @@ form.inline {
 }
 
 .icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider {
-  .var(background-color, icinga-blue);
+  background-color: @icinga-blue;
   border: 1px solid;
-  .var(border-color, icinga-blue);
+  border-color: @icinga-blue;
 }
 
 .icinga-controls input[type="checkbox"]:focus + .toggle-switch .toggle-slider {
   box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px @icinga-blue-light;
-  box-shadow: 0 0 0 2px var(--body-bg-color, @body-bg-color), 0 0 0 4px var(--icinga-blue-light, @icinga-blue-light);
 }
 
 .icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider:before {
   border: 1px solid;
-  .var(border-color, icinga-blue);
+  border-color: @icinga-blue;
   left: 100%;
   margin-left: -4/3em;
 }
@@ -420,24 +419,24 @@ form.inline {
   cursor: default;
 
   & > .toggle-slider {
-    .var(background-color, gray-light);
-    .var(border-color, gray-light);
+    background-color: @gray-light;
+    border-color: @gray-light;
 
     &:before {
-      .var(background-color, gray-lighter);
-      .var(border-color, gray-light);
+      background-color: @gray-lighter;
+      border-color: @gray-light;
     }
   }
 }
 
 form.icinga-form .control-group.disabled .control-label-group {
-  .var(color, disabled-gray);
+  color: @disabled-gray;
 }
 
 .icinga-controls {
   input[disabled],
   select[disabled] {
-    .var(background-color, gray-lighter);
+    background-color: @gray-lighter;
     border-color: transparent;
   }
 }
@@ -475,20 +474,20 @@ form.icinga-form {
 
   .form-notifications {
     &.info {
-      .var(background-color, form-info-bg-color);
+      background-color: @form-info-bg-color;
     }
 
     &.error {
-      .var(background-color, form-error-bg-color);
+      background-color: @form-error-bg-color;
     }
 
     &.warning {
-      .var(background-color, form-warning-bg-color);
+      background-color: @form-warning-bg-color;
     }
   }
 
   .form-description {
-    .var(background-color, light-text-bg-color);
+    background-color: @light-text-bg-color;
   }
 
   .errors {
@@ -506,7 +505,7 @@ form.icinga-form {
 }
 
 form.icinga-form .form-info {
-  .var(color, text-color-light);
+  color: @text-color-light;
   font-size: @font-size-small;
   list-style: none;
   padding-left: 0;
@@ -516,13 +515,13 @@ form.icinga-form .form-info {
 
 .icinga-controls {
   input::placeholder {
-    .var(color, disabled-gray);
+    color: @disabled-gray;
     font-style: italic;
     opacity: 1;
   }
 
   input:-ms-input-placeholder {
-    .var(color, disabled-gray);
+    color: @disabled-gray;
     font-style: italic;
     opacity: 1;
   }
@@ -548,7 +547,7 @@ form.icinga-form .form-info {
   display: none;
 
   &:checked + img {
-    .var(border-color, icinga-blue);
+    border-color: @icinga-blue;
     border-radius: .25em;
   }
 

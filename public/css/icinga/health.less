@@ -2,28 +2,28 @@
 
 .app-health {
   header {
-    .var(color, text-color-light);
+    color: @text-color-light;
 
     span {
-      .var(color, text-color);
+      color: @text-color;
     }
   }
 
   span {
     &.state-ok {
-      .var(background-color, color-ok);
+      background-color: @color-ok;
     }
 
     &.state-warning {
-      .var(background-color, color-warning);
+      background-color: @color-warning;
     }
 
     &.state-critical {
-      .var(background-color, color-critical);
+      background-color: @color-critical;
     }
 
     &.state-unknown {
-      .var(background-color, color-unknown);
+      background-color: @color-unknown;
     }
   }
 
@@ -37,12 +37,12 @@
 
   tr:not(:last-child) td {
     border: 0 solid;
-    .var(border-color, gray-light);
+    border-color: @gray-light;
     border-bottom-width: 1px;
   }
 
   section {
-    .var(color, text-color-light);
+    color: @text-color-light;
     font-family: @font-family-fixed;
   }
 }

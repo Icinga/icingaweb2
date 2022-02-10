@@ -3,9 +3,9 @@
 
 namespace Icinga\Web;
 
-use Exception;
 use Icinga\Application\Logger;
 use Icinga\Util\LessParser;
+use Less_Exception_Parser;
 
 /**
  * Compile LESS into CSS
@@ -229,7 +229,7 @@ class LessCompiler
                 '\2 \1',
                 $this->lessc->compile($this->source)
             );
-        } catch (Exception $e) {
+        } catch (Less_Exception_Parser $e) {
             $excerpt = substr($this->source, $e->index - 500, 1000);
 
             $lines = [];

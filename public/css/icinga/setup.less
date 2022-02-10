@@ -16,7 +16,7 @@
 .setup-header {
   width: 100%;
   height: 5.5em;
-  .var(background-color, icinga-blue);
+  background-color: @icinga-blue;
   text-align: center;
 
   img {
@@ -103,7 +103,7 @@
         }
 
         &.complete {
-          .var(background-color, color-ok);
+          background-color: @color-ok;
         }
 
         &.visited {
@@ -227,7 +227,7 @@ form#setup_requirements {
       padding: 0.4em;
 
       &.fulfilled {
-        .var(background-color, color-ok);
+        background-color: @color-ok;
       }
 
       &.not-available {
@@ -236,7 +236,7 @@ form#setup_requirements {
       }
 
       &.missing {
-        .var(background-color, color-critical);
+        background-color: @color-critical;
       }
     }
   }
@@ -313,11 +313,11 @@ form#setup_requirements {
     color: white;
 
     &.success {
-      .var(background-color, color-ok);
+      background-color: @color-ok;
     }
 
     &.failure {
-      .var(background-color, color-critical);
+      background-color: @color-critical;
     }
   }
 
@@ -370,16 +370,16 @@ form#setup_requirements {
     text-align: left;
     font-size: 0.9em;
     border: 1px solid;
-    .var(border-color, gray-light);
+    border-color: @gray-light;
 
     h3 {
       padding: 0.2em;
       margin: -1em -1em 1em;
       text-align: center;
-      .var(color, text-color);
-      .var(background-color, gray-lightest);
+      color: @text-color;
+      background-color: @gray-lightest;
       border: 1px solid;
-      .var(border-color, gray-light);
+      border-color: @gray-light;
     }
 
     img {
@@ -423,8 +423,8 @@ form#setup_requirements {
     margin: 1em;
     padding: 0.3em;
     border: 1px solid;
-    .var(border-color, gray-semilight);
-    .var(background-color, gray-lightest);
+    border-color: @gray-semilight;
+    background-color: @gray-lightest;
 
     .header {
       height: 2.5em;

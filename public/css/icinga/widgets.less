@@ -1,21 +1,20 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
 #announcements > ul {
-  .var(background-color, body-bg-color);
+  background-color: @body-bg-color;
   list-style: none;
   margin: 0;
   padding: 0;
 
   > li {
-    border-bottom: 1px solid;
-    .var(border-bottom-color, gray-lighter);
+    border-bottom: 1px solid @gray-lighter;
     line-height: 1.5em;
     padding: 0.5em 1em 0.5em 3em;
 
     position: relative;
 
     &:before {
-      .var(color, icinga-blue);
+      color: @icinga-blue;
       content: "\e811";
       font-family: 'ifont';
 
@@ -28,7 +27,7 @@
     }
 
     a {
-      .var(color, icinga-blue);
+      color: @icinga-blue;
     }
 
     .message {
@@ -60,13 +59,13 @@
   color: #fff;
 
   &:hover .icon-cancel {
-    .var(color, icinga-blue);
+    color: @icinga-blue;
   }
 }
 
 #application-state-summary > div {
-  .var(background-color, color-critical);
-  .var(color, text-color-on-icinga-blue);
+  background-color: @color-critical;
+  color: @text-color-on-icinga-blue;
   line-height: 1.5em;
   padding: 0.5em 1em 0.5em 3em;
   margin-left: 12em;
@@ -90,7 +89,7 @@
   }
 
   > form .icon-cancel:before {
-    .var(color, text-color-on-icinga-blue);
+    color: @text-color-on-icinga-blue;
   }
 }
 
@@ -115,7 +114,7 @@
        -moz-box-shadow: 0 0 0.5em 0 rgba(0, 0, 0, 0.2);
             box-shadow: 0 0 0.5em 0 rgba(0, 0, 0, 0.2);
 
-    .var(background-color, tr-hover-color);
+    background-color: @tr-hover-color;
     text-decoration: none;
   }
 }
@@ -134,7 +133,7 @@
 }
 
 .link-description {
-  .var(color, text-color-light);
+  color: @text-color-light;
 }
 
 .link-icon {
@@ -218,17 +217,17 @@ table.multiselect tr[href] td {
     }
 
     ul.tree li.active {
-      .var(background-color, gray-lightest);
+      background-color: @gray-lightest;
     }
 
     button {
       padding: .5em;
       border: none;
       background: none;
-      .var(color, text-color);
+      color: @text-color;
 
       &:hover, &:focus {
-        .var(color, icinga-blue);
+        color: @icinga-blue;
       }
     }
 
@@ -249,7 +248,7 @@ form.role-form {
   }
 
   .control-label-group em {
-    .var(color, text-color-light);
+    color: @text-color-light;
     font-style: normal;
   }
 
@@ -265,15 +264,15 @@ form.role-form {
 
     .privilege-preview .icon {
       &.granted {
-        .var(color, color-granted);
+        color: @color-granted;
       }
 
       &.refused {
-        .var(color, color-refused);
+        color: @color-refused;
       }
 
       &.restricted {
-        .var(color, color-restricted);
+        color: @color-restricted;
       }
     }
   }
@@ -286,7 +285,7 @@ form.role-form {
     h3 em {
       font-size: .857em;
       font-weight: normal;
-      .var(color, text-color-light);
+      color: @text-color-light;
     }
 
     h4 {
@@ -303,18 +302,17 @@ form.role-form {
         text-align: center;
 
         &.icon-ok {
-          .var(color, color-granted);
+          color: @color-granted;
         }
 
         &.icon-cancel {
-          .var(color, color-refused);
+          color: @color-refused;
         }
       }
     }
 
     .collapsible-control {
-      border-bottom: 1px solid;
-      .var(border-bottom-color, gray-light);
+      border-bottom: 1px solid @gray-light;
       cursor: pointer;
       -webkit-touch-callout: none;
       -webkit-user-select: none;
@@ -390,7 +388,7 @@ ul.tree li::before, ul.tree li::after {
   position: absolute;
   right: auto;
   left: -0.2em;
-  .var(border-color, gray-light);
+  border-color: @gray-light;
   border-style: dotted;
   border-width: 0;
 }
@@ -432,22 +430,22 @@ ul.tree li a {
   line-height: 2em;
   padding: 0 .5em;
   text-decoration: none;
-  .var(color, "gray");
+  color: @gray;
   background-repeat: no-repeat;
   background-position: 0.8em 0.4em;
 }
 
 ul.tree li a.error {
-  .var(color, color-critical-handled);
+  color: @color-critical-handled;
 }
 
 ul.tree li a:hover {
-  .var(color, text-color);
+  color: @text-color;
   text-decoration: underline;
 }
 
 ul.tree li a.error:hover {
-  .var(color, color-critical);
+  color: @color-critical;
 }
 
 /* charts should grow as much as possible but never beyond the current viewport's size */
@@ -486,9 +484,9 @@ ul.tree li a.error:hover {
   position: relative;
 
   .flyover-content {
-    .var(background-color, body-bg-color);
+    background-color: @body-bg-color;
     border: 1px solid;
-    .var(border-color, gray-lighter);
+    border-color: @gray-lighter;
     box-shadow: 0 0 .5em 0 rgba(0, 0, 0, 0.2);
     position: absolute;
     padding: @vertical-padding @horizontal-padding;
@@ -496,11 +494,9 @@ ul.tree li a.error:hover {
   }
 
   &.flyover-arrow-top .flyover-content:before {
-    .var(background, body-bg-color);
-    border-left: 1px solid;
-    .var(border-left-color, gray-lighter);
-    border-top: 1px solid;
-    .var(border-top-color, gray-lighter);
+    background: @body-bg-color;
+    border-left: 1px solid @gray-lighter;
+    border-top: 1px solid @gray-lighter;
     content: "";
     height: 1em;
     -ms-transform: rotate(45deg);
@@ -524,58 +520,58 @@ ul.tree li a.error:hover {
 }
 
 .slice-state-ok {
-  .var(stroke, color-ok);
-  .var(background, color-ok);
+  stroke: @color-ok;
+  background: @color-ok;
 }
 
 .slice-state-warning-handled {
-  .var(stroke, color-warning-handled);
-  .var(background, color-warning-handled);
+  stroke: @color-warning-handled;
+  background: @color-warning-handled;
 }
 
 .slice-state-warning {
-  .var(stroke, color-warning);
-  .var(background, color-unreachable-handled);
+  stroke: @color-warning;
+  background: @color-unreachable-handled;
 }
 
 .slice-state-critical-handled {
-  .var(stroke, color-critical-handled);
-  .var(background, color-critical-handled);
+  stroke: @color-critical-handled;
+  background: @color-critical-handled;
 }
 
 .slice-state-critical {
-  .var(stroke, color-critical);
-  .var(background, color-critical);
+  stroke: @color-critical;
+  background: @color-critical;
 }
 
 .slice-state-unknown-handled {
-  .var(stroke, color-unknown-handled);
-  .var(background, color-unknown-handled);
+  stroke: @color-unknown-handled;
+  background: @color-unknown-handled;
 }
 
 .slice-state-unknown {
-  .var(stroke, color-unknown);
-  .var(background, color-unknown);
+  stroke: @color-unknown;
+  background: @color-unknown;
 }
 
 .slice-state-unreachable-handled {
-  .var(stroke, color-unreachable-handled);
-  .var(background, color-unreachable-handled);
+  stroke: @color-unreachable-handled;
+  background: @color-unreachable-handled;
 }
 
 .slice-state-unreachable {
-  .var(stroke, color-unreachable);
-  .var(background, color-unreachable);
+  stroke: @color-unreachable;
+  background: @color-unreachable;
 }
 
 .slice-state-pending {
-  .var(stroke, color-pending);
-  .var(background, color-pending);
+  stroke: @color-pending;
+  background: @color-pending;
 }
 
 .slice-state-not-checked {
-  .var(stroke, gray-light);
-  .var(background, gray-light);
+  stroke: @gray-light;
+  background: @gray-light;
 }
 
 .donut {
@@ -592,7 +588,7 @@ ul.tree li a.error:hover {
 
 .donut-label {
   font-weight: bold;
-  .var(fill, text-color);
+  fill: @text-color;
 }
 
 .donut-label {
@@ -601,7 +597,7 @@ ul.tree li a.error:hover {
 }
 
 .donut-label-big {
-  .var(color, gray-light);
+  color: @gray-light;
   .fg-stateful();
   font-size: 6em;
   line-height: 0;
@@ -612,7 +608,7 @@ ul.tree li a.error:hover {
 }
 
 .donut-label-small {
-  .var(fill, text-color);
+  fill: @text-color;
   font-size: 1.2em;
   text-anchor: middle;
   -moz-transform: translateY(0.35em);

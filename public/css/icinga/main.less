@@ -7,7 +7,7 @@
 @name-value-table-name-width: 38/3em;
 
 .action-link {
-  .var(color, icinga-blue);
+  color: @icinga-blue;
 }
 
 .error-message {
@@ -119,7 +119,7 @@
 }
 
 a:hover > .icon-cancel {
-  .var(color, color-critical);
+  color: @color-critical;
 }
 
 .icon-stateful {
@@ -132,12 +132,12 @@ a:hover > .icon-cancel {
   .action-link();
   .rounded-corners(3px);
 
-  .var(background, low-sat-blue);
+  background: @low-sat-blue;
   display: inline-block;
   padding: 0.25em 0.5em;
 
   &:hover {
-    .var(background, low-sat-blue-dark);
+    background: @low-sat-blue-dark;
     text-decoration: none;
   }
 }
@@ -148,12 +148,11 @@ a:hover > .icon-cancel {
   margin: 0;
 
   > dt {
-    border-bottom: 1px solid;
-    .var(border-bottom-color, gray-lighter);
+    border-bottom: 1px solid @gray-lighter;
     margin-bottom: 0.25em;
 
     &:hover {
-      .var(background-color, gray-lightest);
+      background-color: @gray-lightest;
 
       > .remove-action button:not(.spinner.active) {
         visibility: visible;
@@ -171,7 +170,7 @@ a:hover > .icon-cancel {
 }
 
 .comment-time {
-  .var(color, text-color-light);
+  color: @text-color-light;
   font-size: @font-size-small;
 }
 
@@ -182,7 +181,7 @@ a:hover > .icon-cancel {
   }
 
   > dt {
-    .var(color, text-color-light);
+    color: @text-color-light;
     font-size: @font-size-small;
   }
 }
@@ -206,13 +205,11 @@ a:hover > .icon-cancel {
   }
 
   thead {
-    border-bottom: 1px solid;
-    .var(border-bottom-color, gray-light);
+    border-bottom: 1px solid @gray-light;
   }
 
   tbody tr {
-    border-bottom: 1px solid;
-    .var(border-bottom-color, gray-lightest);
+    border-bottom: 1px solid @gray-lightest;
     border-left: 5px solid transparent;
 
     &:last-child {
@@ -221,12 +218,12 @@ a:hover > .icon-cancel {
   }
 
   tr[href].active {
-    .var(background-color, tr-active-color);
-    .var(border-left-color, icinga-blue);
+    background-color: @tr-active-color;
+    border-left-color: @icinga-blue;
   }
 
   tr[href]:hover {
-    .var(background-color, tr-hover-color);
+    background-color: @tr-hover-color;
     cursor: pointer;
   }
 }
@@ -242,7 +239,7 @@ a:hover > .icon-cancel {
 }
 
 .name-value-table > tbody > tr > th {
-  .var(color, text-color-light);
+  color: @text-color-light;
   // Reset default font-weight
   font-weight: normal;
   padding-left: 0;
@@ -320,15 +317,15 @@ a:hover > .icon-cancel {
     margin-top: -1em;
     margin-right: .25em;
 
-    .var(background, gray-lighter);
-    .var(color, "gray");
+    background: @gray-lighter;
+    color: @gray;
     border: none;
     -webkit-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
     -moz-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
     box-shadow: 0 0 1/3em rgba(0,0,0,.3);
 
     &:hover {
-      .var(background, gray-light);
+      background: @gray-light;
     }
   }
 
@@ -371,7 +368,6 @@ a:hover > .icon-cancel {
     display: block;
     height: 2em;
     background: linear-gradient(@body-bg-color-transparent, @body-bg-color);
-    background: linear-gradient(var(--body-bg-color-transparent, @body-bg-color-transparent), var(--body-bg-color, @body-bg-color));
     position: absolute;
     bottom: 0;
     left: 0;
@@ -403,8 +399,8 @@ a:hover > .icon-cancel {
 
 .module-dependencies {
   .unmet-dependencies {
-    .var(background-color, color-warning);
-    .var(color, text-color-on-icinga-blue);
+    background-color: @color-warning;
+    color: @text-color-on-icinga-blue;
     padding: .25em .5em;
     margin-left: -.5em;
   }
@@ -412,16 +408,16 @@ a:hover > .icon-cancel {
   .name-value-table {
     > caption {
       font-weight: normal;
-      .var(color, text-color-light);
+      color: @text-color-light;
     }
 
     > tbody > tr > th {
       font-weight: bold;
-      .var(color, text-color);
+      color: @text-color;
     }
 
     .missing {
-      .var(color, color-critical);
+      color: @color-critical;
       font-weight: bold;
     }
 
@@ -439,10 +435,8 @@ a:hover > .icon-cancel {
           height: 1.5em;
           width: 1.5em;
           left: 0.5em;
-          border-top: 3px solid;
-          border-right: 3px solid;
-          .var(border-top-color, "gray");
-          .var(border-right-color, "gray");
+          border-top: 3px solid @gray;
+          border-right: 3px solid @gray;
           border-top-right-radius: .50em;
           transform: rotate(45deg);
         }

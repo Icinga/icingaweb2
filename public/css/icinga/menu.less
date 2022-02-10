@@ -10,7 +10,7 @@
 @icon-width: 1.7em; // 1.5em width + 0.2em right margin
 
 #menu {
-  .var(background-color, menu-bg-color);
+  background-color: @menu-bg-color;
   width: 100%;
   flex: 1;
   overflow: auto;
@@ -65,16 +65,16 @@
 
 #menu .nav-level-1 > .nav-item {
   line-height: 2.167em; // 26 px
-  .var(color, menu-color);
+  color: @menu-color;
 
   &.active {
-    .var(color, menu-active-color);
+    color: @menu-active-color;
 
     > a > .badge {
       display: none;
     }
 
-    .var(background-color, menu-active-bg-color);
+    background-color: @menu-active-bg-color;
   }
 
   &.no-icon > a {
@@ -87,12 +87,12 @@
 
   &.active:not(.selected) > a:focus,
   &.active:not(.selected) > a:hover {
-    .var(background-color, menu-active-hover-bg-color);
+    background-color: @menu-active-hover-bg-color;
   }
 
   &:not(.selected) > a:hover,
   &:not(.selected) > a:focus {
-    .var(background-color, menu-hover-bg-color);
+    background-color: @menu-hover-bg-color;
   }
 
   // Balance icon weight for non active menu items
@@ -109,11 +109,11 @@
 }
 
 #menu ul:not(.nav-level-2) > .selected > a {
-  .var(background-color, menu-highlight-color);
-  .var(color, text-color-inverted);
+  background-color: @menu-highlight-color;
+  color: @text-color-inverted;
 
   &:focus {
-    .var(background-color, menu-highlight-hover-bg-color);
+    background-color: @menu-highlight-hover-bg-color;
   }
 
   &:after {
@@ -122,7 +122,7 @@
     position: absolute;
     right: -.75em;
 
-    .var(background-color, body-bg-color);
+    background-color: @body-bg-color;
     box-shadow: 0 0 1em 0 rgba(0,0,0,0.6);
     content: "";
     display: block;
@@ -138,7 +138,7 @@
   line-height: 1.833em; // 22px
 
   > a {
-    .var(color, menu-2ndlvl-color);
+    color: @menu-2ndlvl-color;
     font-size: @font-size-small;
     padding: 0.364em 0.545em 0.364em 0.545em;
 
@@ -156,7 +156,7 @@
   &.active:after {
     .transform(rotate(45deg));
 
-    .var(background-color, body-bg-color);
+    background-color: @body-bg-color;
     box-shadow: 0 0 1em 0 rgba(0,0,0,.6);
     content: "";
     display: block;
@@ -169,14 +169,14 @@
   }
 
   &.active > a {
-    .var(color, menu-2ndlvl-active-color);
-    .var(background-color, menu-2ndlvl-active-bg-color);
+    color: @menu-2ndlvl-active-color;
+    background-color: @menu-2ndlvl-active-bg-color;
 
     &:focus {
       &:first-of-type,
       &:first-of-type ~ a {
-        .var(color, menu-2ndlvl-active-hover-color);
-        .var(background-color, menu-2ndlvl-active-hover-bg-color);
+        color: @menu-2ndlvl-active-hover-color;
+        background-color: @menu-2ndlvl-active-hover-bg-color;
       }
     }
   }
@@ -221,26 +221,26 @@
   background: transparent url('../img/icons/search_white.png') no-repeat 1em center;
   background-size: 1em auto;
   border: none;
-  .var(color, menu-color);
+  color: @menu-color;
   line-height: 2.167em;
   padding: .25em;
   padding-left: @icon-width + .75em;
   width: 100%;
 
   &:focus::placeholder {
-    .var(color, menu-color);
+    color: @menu-color;
   }
   &:focus::-ms-input-placeholder {
     color: @menu-color;
   }
 
   &.active {
-    .var(background-color, menu-active-bg-color);
+    background-color: @menu-active-bg-color;
   }
 
   &:hover,
   &:focus {
-    .var(background-color, menu-search-hover-bg-color);
+    background-color: @menu-search-hover-bg-color;
   }
 }
 
@@ -258,9 +258,9 @@
 #layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item.hover,
 #layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active).hover {
   > .nav-level-2 {
-    .var(background-color, menu-flyout-bg-color);
+    background-color: @menu-flyout-bg-color;
     border: 1px solid;
-    .var(border-color, gray-light);
+    border-color: @gray-light;
     border-radius: .25em;
     box-shadow: 0 0 1em 0 rgba(0,0,0,.3);
     padding: @vertical-padding 0;
@@ -271,11 +271,9 @@
     &:after {
       .transform(rotate(45deg));
 
-      .var(background-color, body-bg-color);
-      border-bottom: 1px solid;
-      .var(border-bottom-color, gray-light);
-      border-left: 1px solid;
-      .var(border-left-color, gray-light);
+      background-color: @body-bg-color;
+      border-bottom: 1px solid @gray-light;
+      border-left: 1px solid @gray-light;
       content: "";
       display: block;
       height: 1.1em;
@@ -291,7 +289,7 @@
       position: relative;
 
       > a {
-        .var(color, menu-flyout-color);
+        color: @menu-flyout-color;
 
         &:first-of-type {
           padding-left: 1.5em;
@@ -302,13 +300,13 @@
         a:hover, a:focus {
           &:first-of-type,
           &:first-of-type ~ a {
-            .var(background-color, menu-2ndlvl-highlight-bg-color);
+            background-color: @menu-2ndlvl-highlight-bg-color;
           }
         }
       }
 
       &.active > a {
-        .var(color, menu-color);
+        color: @menu-color;
       }
 
       // Hide activity caret when displayed as flyout
@@ -376,7 +374,7 @@
     li {
       display: block;
       a, button[type="submit"] {
-        .var(background-color, body-bg-color);
+        background-color: @body-bg-color;
         border: none;
         left: -999px;
         padding: @vertical-padding @horizontal-padding;
@@ -410,13 +408,13 @@
 }
 
 .search-input:focus ~ .search-reset:hover {
-  .var(background-color, menu-active-hover-bg-color);
+  background-color: @menu-active-hover-bg-color;
 }
 
 .search-reset {
   background: none;
   border: 0;
-  .var(color, menu-color);
+  color: @menu-color;
   cursor: pointer;
   display: none;
   height: 100%;
@@ -428,7 +426,7 @@
 
   &:focus,
   &:hover {
-    .var(background-color, menu-search-hover-bg-color);
+    background-color: @menu-search-hover-bg-color;
     outline: none;
   }
 }
@@ -441,19 +439,19 @@ input[type=text].search-input {
 }
 
 .search-input:focus:-moz-placeholder { // FF 18-
-  .var(color, gray-light);
+  color: @gray-light;
 }
 
 .search-input:focus::-moz-placeholder { // FF 19+
-  .var(color, gray-light);
+  color: @gray-light;
 }
 
 .search-input:focus:-ms-input-placeholder {
-  .var(color, gray-light);
+  color: @gray-light;
 }
 
 .search-input:focus::-webkit-input-placeholder {
-  .var(color, gray-light);
+  color: @gray-light;
 }
 
 .search-input ~ .search-reset {
@@ -480,14 +478,14 @@ input[type=text].search-input {
   background: none;
   border: none;
   padding: 0;
-  .var(color, text-color-light);
+  color: @text-color-light;
   position: absolute;
   bottom: 0.2em;
   right: 0;
   z-index: 3;
 
   i {
-    .var(background-color, body-bg-color);
+    background-color: @body-bg-color;
     border-radius: .25em 0 0 .25em;
     font-size: 1.125em;
     width: 2em;
@@ -499,7 +497,7 @@ input[type=text].search-input {
 
   &:hover, &:focus {
     i {
-      .var(color, menu-highlight-color);
+      color: @menu-highlight-color;
     }
   }
 }
@@ -526,7 +524,7 @@ html.no-js  #toggle-sidebar {
   &.nav-item:not(.badge-nav-item) {
     &:not(.selected):not(.active) a:hover,
     &:not(.selected):not(.active) a:focus {
-      .var(background-color, menu-2ndlvl-highlight-bg-color);
+      background-color: @menu-2ndlvl-highlight-bg-color;
     }
   }
 }
@@ -561,7 +559,7 @@ html.no-js  #toggle-sidebar {
     a:focus {
       &:first-of-type,
       &:first-of-type ~ a {
-        .var(background-color, menu-2ndlvl-highlight-bg-color);
+        background-color: @menu-2ndlvl-highlight-bg-color;
       }
     }
   }

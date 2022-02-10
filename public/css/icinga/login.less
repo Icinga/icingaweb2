@@ -4,7 +4,7 @@
 
 #login {
   height: 100%;
-  .var(background-color, menu-bg-color);
+  background-color: @menu-bg-color;
   background-image: url(../img/icingaweb2-background-orbs.jpg);
   background-repeat:  no-repeat;
   background-size: cover;
@@ -18,8 +18,8 @@
     position: relative;
     z-index: 10;
     padding: 2em 6em;
-    .var(background-color, login-box-background);
-    .box-shadow(0, 0, 1em, 1em, ~"var(--login-box-background, @{login-box-background})");
+    background-color: @login-box-background;
+    .box-shadow(0, 0, 1em, 1em, @login-box-background);
   }
 
   #icinga-logo {
@@ -43,7 +43,7 @@
   }
 
   .errors {
-    .var(background-color, color-critical);
+    background-color: @color-critical;
     color: white;
   }
 
@@ -76,12 +76,12 @@
 
   input[type="submit"]:focus {
     outline: 3px solid;
-    .var(outline-color, icinga-blue-light);
+    outline-color: @icinga-blue-light;
   }
 
   input[type=submit] {
     border-radius: .25em;
-    .var(background, icinga-secondary);
+    background: @icinga-secondary;
     color: white;
     border: none;
     height: 2.5em;
@@ -89,19 +89,19 @@
     width: 100%;
 
     &:hover {
-      .var(background-color, icinga-secondary-dark);
+      background-color: @icinga-secondary-dark;
     }
   }
 
   .config-note {
-    .var(background-color, color-critical);
+    background-color: @color-critical;
     margin: 0 auto 2em auto; // Center horizontally w/ bottom margin
     max-width: 50%;
     min-width: 24em;
     padding: 1em;
 
     a {
-      .var(color, text-color-inverted);
+      color: @text-color-inverted;
       font-weight: bold;
     }
   }

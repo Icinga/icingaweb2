@@ -186,8 +186,7 @@ blockquote, p, pre {
 }
 
 blockquote {
-  border-left: 5px solid;
-  .var(border-left-color, gray-lighter);
+  border-left: 5px solid @gray-lighter;
   padding: 0.667em 0.333em;
 }
 
@@ -197,8 +196,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  border-bottom: 1px solid;
-  .var(border-bottom-color, gray-lighter);
+  border-bottom: 1px solid @gray-lighter;
   font-size: 1.333em;
 }
 
@@ -225,7 +223,7 @@ h6 {
 
 pre {
   .rounded-corners(.25em);
-  .var(background-color, gray-lighter);
+  background-color: @gray-lighter;
   font-family: @font-family-fixed;
   font-size: @font-size-small;
   padding: @vertical-padding @horizontal-padding;
@@ -262,7 +260,7 @@ td, th {
     display: block;
 
     background: url(../img/icinga-loader.gif) no-repeat center center;
-    .var(background-color, body-bg-color);
+    background-color: @body-bg-color;
     background-size: 4em 4em;
 
     opacity: 0;

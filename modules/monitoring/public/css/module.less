@@ -2,9 +2,8 @@
 
 .monitoring-statusbar {
   position: relative;
-  .var(background-color, body-bg-color);
-  border-top: 1px solid;
-  .var(border-top-color, gray-lighter);
+  background-color: @body-bg-color;
+  border-top: 1px solid @gray-lighter;
   padding: .25em @gutter;
   line-height: 1.3;
 
@@ -32,11 +31,11 @@
     font-size: 1.25em;
 
     &.-active {
-      .var(color, icinga-blue);
+      color: @icinga-blue;
     }
 
     &.-inactive {
-      .var(color, gray-light);
+      color: @gray-light;
     }
   }
 }
@@ -71,7 +70,7 @@
     color: white;
   }
   .group-grid-cell > div.state-none {
-    .var(background-color, gray-light);
+    background-color: @gray-light;
   }
 }
 
@@ -156,10 +155,10 @@
 }
 
 .service-on {
-  .var(color, text-color-light);
+  color: @text-color-light;
 
   > a {
-    .var(color, text-color);
+    color: @text-color;
     letter-spacing: normal;
     font-weight: bold;
   }
@@ -187,7 +186,7 @@
   }
 
   li {
-    .var(color, icinga-blue);
+    color: @icinga-blue;
   }
 
   a,
@@ -196,7 +195,7 @@
     padding: .25em .5em;
 
     &:hover {
-      .var(background-color, gray-lighter);
+      background-color: @gray-lighter;
       text-decoration: none;
     }
   }
@@ -255,7 +254,7 @@
 .tactical div.box.header {
   margin: 10px;
   min-height: 8em;
-  .var(color, text-color-inverted);
+  color: @text-color-inverted;
   font-size: @font-size-dashboard;
 }
 
@@ -264,12 +263,12 @@
 }
 
 div.box.ok_hosts.state_up {
-  .var(background-color, color-ok);
+  background-color: @color-ok;
   border: 1px solid white;
 }
 
 div.box.problem_hosts.state_down {
-  .var(background-color, color-critical);
+  background-color: @color-critical;
   border: 1px solid white;
 }
 
@@ -286,29 +285,25 @@ div.box.ok_hosts div.box.entry, div.box.problem_hosts div.box.entry {
 }
 
 div.box.monitoringfeatures {
-  border: 1px solid;
-  .var(border-color, gray-lighter);
-  border-left: 15px solid;
-  .var(border-left-color, "gray");
+  border: 1px solid @gray-lighter;
+  border-left: 15px @gray;
 }
 
 div.box.monitoringfeatures div.box-separator {
   color: white;
-  .var(background-color, color-ok);
+  background-color: @color-ok;
 }
 
 div.box.monitoringfeatures div.feature-highlight {
-  .var(background-color, color-critical);
+  background-color: @color-critical;
 }
 
 div.box.monitoringfeatures a.feature-highlight {
 }
 
 div.box.hostservicechecks {
-  border: 1px solid;
-  .var(border-color, gray-lighter);
-  border-left: 15px solid;
-  .var(border-left-color, "gray");
+  border: 1px solid @gray-lighter;
+  border-left: 15px @gray;
 }
 
 div.box.hostservicechecks th {
@@ -320,18 +315,15 @@ div.box.hostservicechecks th {
 div.box.process {
   width: 100%;
   max-width: 50em;
-  border: 1px solid;
-  .var(border-color, gray-lighter);
-  border-left: 15px solid;
-  .var(border-left-color, "gray");
+  border: 1px solid @gray-lighter;
+  border-left: 15px @gray;
   margin-bottom: 1em;
   margin-right: 1em;
 }
 
 .process div.box.header {
   min-height: 5em;
-  border-bottom:1px solid;
-  .var(border-bottom-color, gray-lighter);
+  border-bottom: 1px solid @gray-lighter;
 }
 
 .process > .boxview > div.box {
@@ -342,8 +334,7 @@ div.box.process {
   margin-top: 0;
   margin-bottom: 1em;
   padding-bottom: 1em;
-  border-bottom:1px solid;
-  .var(border-bottom-color, gray-lighter);
+  border-bottom: 1px solid @gray-lighter;
 }
 
 .process th {
@@ -358,7 +349,7 @@ div.box.process {
 }
 
 div.backend-running {
-  .var(background, color-ok);
+  background: @color-ok;
   color: white;
   text-align: center;
   margin-top: 1em;
@@ -370,7 +361,7 @@ div.backend-running {
 }
 
 div.backend-not-running {
-  .var(background, color-critical);
+  background: @color-critical;
   color: white;
   text-align: center;
   padding: 0.1em;
@@ -382,16 +373,13 @@ div.backend-not-running {
 div.box.features {
   width: 100%;
   max-width: 50em;
-  border: 1px solid;
-  .var(border-color, gray-lighter);
-  border-left: 15px solid;
-  .var(border-left-color, "gray");
+  border: 1px solid @gray-lighter;
+  border-left: 15px @gray;
 }
 
 .features div.box.header {
   min-height: 5em;
-  border-bottom: 1px solid;
-  .var(border-bottom-color, gray-lighter);
+  border-bottom: 1px solid @gray-lighter;
 }
 
 .features > .boxview > div.box {
@@ -402,8 +390,7 @@ div.box.features {
   margin-top: 0;
   margin-bottom: 1em;
   padding-bottom: 1em;
-  border-bottom: 1px solid;
-  .var(border-bottom-color, gray-lighter);
+  border-bottom: 1px solid @gray-lighter;
 }
 
 
@@ -412,11 +399,9 @@ div.box.features {
 div.box.stats {
   width: 100%;
   max-width: 50em;
-  border: 1px solid;
-  .var(border-color, gray-lighter);
-  border-left: 15px solid;
-  .var(border-left-color, "gray");
-  .var(color, text-color);
+  border: 1px solid @gray-lighter;
+  border-left: 15px @gray;
+  color: @text-color;
 }
 
 .stats > .boxview > div.box {
@@ -429,13 +414,12 @@ div.box.stats {
 }
 
 .stats > table > thead {
-  .var(color, "gray");
+  color: @gray;
 }
 
 .stats > h2 {
   text-align: left;
-  border-bottom: 1px solid;
-  .var(border-bottom-color, gray-lighter);
+  border-bottom: 1px solid @gray-lighter;
 
   > .hosts-summary,
   > .services-summary {
@@ -455,10 +439,8 @@ div.box.stats {
 div.timeline-legend {
   padding: 0.5em;
   margin-top: 2em;
-  border: 1px solid;
-  .var(border-color, gray-lighter);
-  border-left: 15px solid;
-  .var(border-left-color, "gray");
+  border: 1px solid @gray-lighter;
+  border-left-width: 15px;
 
   h2 {
     margin: 0;
@@ -478,7 +460,7 @@ div.timeline-legend {
       font-weight: @font-weight-bold;
       font-size: 11px;
       text-align: center;
-      .var(color, text-color-inverted);
+      color: @text-color-inverted;
       padding-left: 5px;
       padding-right: 5px;
       padding-top: 2px;
@@ -624,7 +606,7 @@ form.instance-features span.description, form.object-features span.description {
     text-align: left;
     margin-right: 0;
     width: @name-value-table-name-width;
-    .var(color, text-color-light);
+    color: @text-color-light;
 
     label {
       font-size: inherit;
@@ -663,50 +645,49 @@ form.instance-features span.description, form.object-features span.description {
 
     & + span.hint {
       margin: .35em;
-      .var(color, gray-light);
+      color: @gray-light;
       font-style: italic;
     }
   }
 }
 
 .plugin-output {
-  border-left: 5px solid;
-  .var(border-left-color, gray-lighter);
+  border-left: 5px solid @gray-lighter;
   padding: 0.66em 0.33em;
 
   .state-critical {
-    .var(background-color, color-critical);
-    .var(color, body-bg-color);
+    background-color: @color-critical;
+    color: @body-bg-color;
     padding: 0.2em;
   }
 
   .state-ok {
-    .var(background-color, color-ok);
-    .var(color, body-bg-color);
+    background-color: @color-ok;
+    color: @body-bg-color;
     padding: 0.2em;
   }
 
   .state-unknown {
-    .var(background-color, color-unknown);
-    .var(color, body-bg-color);
+    background-color: @color-unknown;
+    color: @body-bg-color;
     padding: 0.2em;
   }
 
   .state-warning {
-    .var(background-color, color-warning);
-    .var(color, body-bg-color);
+    background-color: @color-warning;
+    color: @body-bg-color;
     padding: 0.2em;
   }
 
   .state-down {
-    .var(background-color, color-down);
-    .var(color, body-bg-color);
+    background-color: @color-down;
+    color: @body-bg-color;
     padding: 0.2em;
   }
 
   .state-up {
-    .var(background-color, color-up);
-    .var(color, body-bg-color);
+    background-color: @color-up;
+    color: @body-bg-color;
     padding: 0.2em;
   }
 }
@@ -715,12 +696,10 @@ form.instance-features span.description, form.object-features span.description {
 .markdown,
 .plugin-output {
   a {
-    border-bottom: 1px dotted;
-    .var(border-bottom-color, gray-light);
+    border-bottom: 1px dotted @gray-light;
 
     &:hover {
-      border-bottom: 1px solid;
-      .var(border-bottom-color, text-color);
+      border-bottom: 1px solid @text-color;
       text-decoration: none;
     }
   }
