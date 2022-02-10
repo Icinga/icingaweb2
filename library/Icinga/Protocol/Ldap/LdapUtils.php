@@ -22,7 +22,7 @@ class LdapUtils
      * @param  string  $dn        DN
      * @param  boolean $with_type Returns 'type=value' when true and 'value' when false
      *
-     * @return string
+     * @return array
      */
     public static function explodeDN($dn, $with_type = true)
     {
