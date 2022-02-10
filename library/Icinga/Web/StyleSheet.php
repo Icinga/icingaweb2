@@ -26,7 +26,7 @@ class StyleSheet
      *
      * @var string
      */
-    const DEFAULT_MODE = 'dark';
+    const DEFAULT_MODE = 'none';
 
     /**
      * The themes that are compatible with the default theme
