@@ -616,16 +616,18 @@ abstract class IdoQuery extends DbQuery
             }
         }
 
-        if ($and || $negate && ! $and) {
+        if ($and || $negate) {
             // Having is only required for AND and != filters,
             // e.g. hostgroup_name=(ping&linux), hostgroup_name!=ping, hostgroup_name!=(ping|linux)
             $groups = $subQuery->getGroup();
-            $group = $groups[0];
-            $group = preg_replace('/(?<=^|\s)\w+(?=\.)/', 'sub_$0', $group);
+            if (! empty($groups)) {
+                $group = $groups[0];
+                $group = preg_replace('/(?<=^|\s)\w+(?=\.)/', 'sub_$0', $group);
 
-            $cnt = count($expr);
+                $cnt = count($expr);
 
-            $subQuery->select()->having("COUNT(DISTINCT $group) >= $cnt");
+                $subQuery->select()->having("COUNT(DISTINCT $group) >= $cnt");
+            }
         }
 
         $subQueryFilter->setColumn(preg_replace(
