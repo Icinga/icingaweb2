@@ -1,49 +1,27 @@
 /*! Icinga Web 2 | (c) 2019 Icinga Development Team | GPLv2+ */
 
-@color-ok: fade(#77E08E, 50%);
+@color-ok: fade(#77E08E, 25%);
 @color-critical: #FE5566;
-@color-critical-handled: fade(#FE5566, 50%);
-@color-warning: #EAD010;
-@color-warning-handled: fade(#EAD010, 50%);
+@color-critical-handled: fade(@color-critical, 33%);
+@color-warning: #B0A029;
+@color-warning-handled: fade(@color-warning, 33%);
 @color-unknown: #7791E0;
-@color-unknown-handled: fade(#7791E0, 50%);
+@color-unknown-handled: fade(@color-unknown, 50%);
 @color-unreachable: @color-unknown;
 @color-unreachable-handled: @color-unknown-handled;
-@color-pending:fade(#FFFFFF, 75%);
+@color-pending: fade(#FFFFFF, 75%);
 
-/* Adapt font color to match handled / unhandled states and maintain readability with text-shadows */
-.badge {
-  font-weight: 800;
-}
+/* Adapt font color to match handled / unhandled states */
+.badge,
+.state-badge {
+  font-weight: bold;
+  color: @text-color !important;
 
-.state-ok,
-.state-up {
-  color: @text-color;
-}
-.state-warning,
-.state-critical,
-.state-down,
-.state-unknown {
-  &.handled {
-    color: @text-color;
+  &.handled,
+  &.state-up,
+  &.state-ok {
+    color: fade(@text-color, 75%) !important;
   }
-}
-.state-warning,
-.state-critical,
-.state-down,
-.state-unknown {
-  color: @text-color-inverted;
-}
-.state-warning:not(.handled) {
-  text-shadow: 0 0 3px mix(@text-color, @color-warning, 60);
-}
-.state-critical:not(.handled),
-.state-down:not(.handled) {
-  text-shadow: 0 0 1px mix(@text-color, @color-critical, 20);
-}
-.state-unknown:not(.handled),
-.state-unreachable:not(.handled) {
-  text-shadow: 0 0 1px mix(@text-color, @color-unknown, 20);
 }
 
 .processinfo .process > div.backend-running {
