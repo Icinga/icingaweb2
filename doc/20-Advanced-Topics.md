@@ -151,168 +151,7 @@ Example from [puppet-icingaweb2](https://github.com/Icinga/puppet-icingaweb2):
 ```
 
 
-
-
-## Installing Icinga Web 2 from Source <a id="installing-from-source"></a>
-
-Although the preferred way of installing Icinga Web 2 is to use packages, it is also possible to install Icinga Web 2
-directly from source.
-
-### Getting the Source <a id="getting-the-source"></a>
-
-First of all, you need to download the sources.
-
-Git clone:
-
-```
-cd /usr/share/
-git clone https://github.com/Icinga/icingaweb2.git icingaweb2
-```
-
-Tarball download (latest [release](https://github.com/Icinga/icingaweb2/releases/latest)):
-
-```
-cd /usr/share
-wget https://github.com/Icinga/icingaweb2/archive/v2.4.1.zip
-unzip v2.4.1.zip
-mv icingaweb2-2.4.1 icingaweb2
-```
-
-### Installing Requirements from Source <a id="installing-from-source-requirements"></a>
-
-You will need to install certain dependencies depending on your setup listed [here](02-Installation.md#installing-requirements).
-
-The following example installs Apache2 as web server, MySQL as RDBMS and uses the PHP adapter for MySQL.
-Adopt the package requirements to your needs (e.g. adding ldap for authentication) and distribution.
-
-Example for RHEL/CentOS/Fedora:
-
-```
-yum install httpd mysql-server
-yum install php php-gd php-intl php-ZendFramework php-ZendFramework-Db-Adapter-Pdo-Mysql
-```
-
-The setup wizard will check the pre-requisites later on.
-
-
-### Installing Icinga Web 2 <a id="installing-from-source-example"></a>
-
-Choose a target directory and move Icinga Web 2 there.
-
-```
-mv icingaweb2 /usr/share/icingaweb2
-```
-
-### Configuring the Web Server <a id="configuring-web-server"></a>
-
-Use `icingacli` to generate web server configuration for either Apache or nginx.
-
-**Apache**:
-```
-./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public
-```
-
-**nginx**:
-```
-./bin/icingacli setup config webserver nginx --document-root /usr/share/icingaweb2/public
-```
-
-Save the output as new file in your webserver's configuration directory.
-
-Example for Apache on RHEL or CentOS:
-```
-./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public > /etc/httpd/conf.d/icingaweb2.conf
-```
-
-Example for Apache on SUSE:
-```
-./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public > /etc/apache2/conf.d/icingaweb2.conf
-```
-
-Example for Apache on Debian Jessie:
-```
-./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public > /etc/apache2/conf-available/icingaweb2.conf
-a2enconf icingaweb2
-```
-
-Example for Apache on Alpine Linux:
-```
-icingacli setup config webserver apache --document-root /usr/share/webapps/icingaweb2/public > /etc/apache2/conf.d/icingaweb2.conf
-```
-### Preparing Icinga Web 2 Setup <a id="preparing-web-setup-from-source"></a>
-
-You can set up Icinga Web 2 quickly and easily with the Icinga Web 2 setup wizard which is available the first time
-you visit Icinga Web 2 in your browser. Please follow the steps listed below for preparing the web setup.
-
-Because both web and CLI must have access to configuration and logs, permissions will be managed using a special
-system group. The web server user and CLI user have to be added to this system group.
-
-Add the system group `icingaweb2` in the first place.
-
-**Fedora, RHEL, CentOS, SLES and OpenSUSE**:
-```
-groupadd -r icingaweb2
-```
-
-**Debian and Ubuntu**:
-```
-addgroup --system icingaweb2
-```
-
-Add your web server's user to the system group `icingaweb2`
-and restart the web server:
-
-**Fedora, RHEL and CentOS**:
-```
-usermod -a -G icingaweb2 apache
-service httpd restart
-```
-
-**SLES and OpenSUSE**:
-```
-usermod -A icingaweb2 wwwrun
-service apache2 restart
-```
-
-**Debian and Ubuntu**:
-```
-usermod -a -G icingaweb2 www-data
-service apache2 restart
-```
-
-**Alpine Linux**:
-```
-gpasswd -a apache icingaweb2
-rc-service apache2 restart
-```
-
-
-Use `icingacli` to create the configuration directory which defaults to **/etc/icingaweb2**:
-```
-./bin/icingacli setup config directory
-```
-
-
-When using the web setup you are required to authenticate using a token. In order to generate a token use the
-`icingacli`:
-```
-./bin/icingacli setup token create
-```
-
-In case you do not remember the token you can show it using the `icingacli`:
-```
-./bin/icingacli setup token show
-```
-
-### Icinga Web 2 Setup Wizard <a id="web-setup-from-source-wizard"></a>
-
-Finally visit Icinga Web 2 in your browser to access the setup wizard and complete the installation:
-`/icingaweb2/setup`.
-
-Paste the previously generated token and follow the steps on-screen. Then you are done here.
-
-
-### Icinga Web 2 Manual Setup <a id="web-setup-manual-from-source"></a>
+## Icinga Web 2 Manual Setup <a id="web-setup-manual-from-source"></a>
 
 If you have chosen not to run the setup wizard, you will need further knowledge
 about
@@ -329,10 +168,11 @@ Puppet, Ansible, Chef, etc.
 > Read the documentation on the respective linked configuration sections before
 > deploying the configuration manually.
 >
-> If you are unsure about certain settings, use the [setup wizard](02-Installation.md#web-setup-wizard-from-source) once
-> and then collect the generated configuration as well as sql dumps.
+> If you are unsure about certain settings, use the setup wizard as described in the
+> [installation instructions](02-Installation.md) once and then collect the generated
+> configuration as well as sql dumps.
 
-#### Icinga Web 2 Manual Database Setup <a id="web-setup-manual-from-source-database"></a>
+### Icinga Web 2 Manual Database Setup <a id="web-setup-manual-from-source-database"></a>
 
 Create the database and add a new user as shown below for MySQL/MariaDB:
 
@@ -357,7 +197,7 @@ INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 
 quit
 ```
 
-#### Icinga Web 2 Manual Configuration <a id="web-setup-manual-from-source-config"></a>
+### Icinga Web 2 Manual Configuration <a id="web-setup-manual-from-source-config"></a>
 
 
 [resources.ini](04-Resources.md#resources) providing the details for the Icinga Web 2 and
@@ -423,7 +263,7 @@ users               = "icingaadmin"
 permissions         = "*"
 ```
 
-#### Icinga Web 2 Manual Configuration Monitoring Module <a id="web-setup-manual-from-source-config-monitoring-module"></a>
+### Icinga Web 2 Manual Configuration Monitoring Module <a id="web-setup-manual-from-source-config-monitoring-module"></a>
 
 
 **config.ini** defining additional security settings.
@@ -458,10 +298,9 @@ username = "api"
 password = "api"
 ```
 
-#### Icinga Web 2 Manual Setup Login <a id="web-setup-manual-from-source-login"></a>
+### Icinga Web 2 Manual Setup Login <a id="web-setup-manual-from-source-login"></a>
 
 Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/icingaweb2`.
-
 
 ## Automating the Installation of Icinga Web 2 <a id="web-setup-automation"></a>
 
@@ -483,7 +322,7 @@ by Icinga Web 2.
 4. Insert administrator user in the `icingaweb2` database:
 `INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('admin', 1, '<hash>')`, where `<hash>` is the output
 of `php -r 'echo password_hash("yourtopsecretpassword", PASSWORD_DEFAULT);'`.
-5. Make sure the `ido-mysql` and `api` features are enabled in Icinga 2: `icinga2 feature enable ido-mysql` and 
+5. Make sure the `ido-mysql` and `api` features are enabled in Icinga 2: `icinga2 feature enable ido-mysql` and
 `icinga2 feature enable api`.
 6. Generate Apache/nginx config. This command will print an apache config for you on stdout:
 `icingacli setup config webserver apache`. Similarly for nginx. You need to place that configuration in the right place,

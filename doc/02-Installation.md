@@ -1,29 +1,14 @@
+<!-- {% if index %} -->
 # Installation <a id="installation"></a>
 
 The preferred way of installing Icinga Web 2 is to use the official package repositories depending on which operating
 system and distribution you are running.
 
-In case you are upgrading from an older version of Icinga Web 2
-please make sure to read the [upgrading](80-Upgrading.md#upgrading) section
-thoroughly.
+Please follow the steps listed for your operating system. Packages for distributions other than the ones
+listed here may also be available. Please refer to [icinga.com/get-started/download](https://icinga.com/get-started/download/#community)
+for a full list of available community repositories.
 
-Source and automated setups are described inside the [advanced topics](20-Advanced-Topics.md#advanced-topics)
-chapter.
-
-## Installing Requirements <a id="installing-requirements"></a>
-
-* [Icinga 2](https://icinga.com/products/icinga-2/) with the IDO database backend (MySQL or PostgreSQL)
-* A web server, e.g. Apache or Nginx
-* PHP version >= 7.3
-  * Older versions (5.6+) are only supported up until version 2.11
-* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (>= 0.6)
-* [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) (>= 0.10)
-* The following PHP modules must be installed: cURL, json, gettext, fileinfo, intl, dom, OpenSSL and xml
-* For exports to PDF also the following PHP modules are required: mbstring, GD, Imagick
-* LDAP PHP library when using Active Directory or LDAP for authentication
-* MySQL or PostgreSQL PHP libraries
-
-### Browser Support
+## Browser Support
 
 Icinga Web 2 and modules made by Icinga don't require a particular browser or set of browsers. The
 vendor of the browser in question doesn't matter much. However, the features a browser supports do.
@@ -38,43 +23,37 @@ or sub-category here:
 If your desired browser and its version is showing up in green when visiting the respective link,
 it's probably okay to use it for Icinga Web 2.
 
-> **Note for Internet Explorer users**
->
-> Support for Internet Explorer will be completely dropped with version 2.11
+!!! note
 
-## Installing Icinga Web 2 from Package <a id="installing-from-package"></a>
+    Support for Internet Explorer will be completely dropped with version 2.11
 
-Official repositories ([support matrix](https://icinga.com/subscription/support-details/)):
+## Upgrade <a id="upgrade"></a>
 
-| Distribution  | Repository |
-| ------------- | ---------- |
-| Debian        | [Icinga Repository](https://packages.icinga.com/debian/) |
-| Ubuntu        | [Icinga Repository](https://packages.icinga.com/ubuntu/) |
-| RHEL/CentOS   | [Icinga Repository](https://packages.icinga.com/epel/) |
-| openSUSE      | [Icinga Repository](https://packages.icinga.com/openSUSE/) |
-| SLES          | [Icinga Repository](https://packages.icinga.com/SUSE/) |
+In case you are upgrading from an older version of Icinga Web 2
+please make sure to read the [upgrading](80-Upgrading.md#upgrading) section
+thoroughly.
+<!-- {% elif not from_source %} -->
 
+## Installation Requirements <a id="installation-requirements"></a>
 
-Community repositories:
+* [Icinga 2](https://icinga.com/products/icinga-2/) with the IDO database backend (MySQL or PostgreSQL)
+* A web server, e.g. Apache or Nginx
+* PHP version >= 7.3
+  * Older versions (5.6+) are only supported up until Icinga Web v2.11
 
-| Distribution  | Repository |
-| ------------- | ---------- |
-| Gentoo        | [Upstream](https://packages.gentoo.org/packages/www-apps/icingaweb2) |
-| FreeBSD       | [Upstream](http://portsmon.freebsd.org/portoverview.py?category=net-mgmt&portname=icingaweb2) |
-| ArchLinux     | [Upstream](https://aur.archlinux.org/packages/icingaweb2) |
-| Alpine Linux  | [Upstream](https://git.alpinelinux.org/cgit/aports/tree/community/icingaweb2/APKBUILD) |
+### Optional Requirements
+* For exports to PDF also the following PHP modules are required: mbstring, GD, Imagick
+* LDAP PHP library when using Active Directory or LDAP for authentication
 
-Packages for distributions other than the ones listed above may also be available.
-Please contact your distribution packagers.
-
-### Setting up Package Repositories <a id="package-repositories"></a>
+## Add Icinga Package Repository <a id="add-icinga-package-repository"></a>
 
 You need to add the Icinga repository to your package management configuration for installing Icinga Web 2.
 If you've already configured your OS to use the Icinga repository for installing Icinga 2, you may skip this step.
 
-**Debian**:
+<!-- {% if debian %} -->
+### Debian Repository <a id="ubuntu-repository"></a>
 
-```
+```bash
 apt-get update
 apt-get -y install apt-transport-https wget gnupg
 
@@ -88,10 +67,12 @@ DIST=$(awk -F"[)(]+" '/VERSION=/ {print $2}' /etc/os-release); \
 
 apt-get update
 ```
+<!-- {% endif %} -->
 
-**Ubuntu**:
+<!-- {% if ubuntu %} -->
+### Ubuntu Repository <a id="ubuntu-repository"></a>
 
-```
+```bash
 apt-get update
 apt-get -y install apt-transport-https wget gnupg
 
@@ -105,76 +86,55 @@ wget -O - https://packages.icinga.com/icinga.key | apt-key add -
 
 apt-get update
 ```
+<!-- {% endif %} -->
 
-**RHEL and CentOS 8**:
-```
-dnf install https://packages.icinga.com/epel/icinga-rpm-release-8-latest.noarch.rpm
-```
+<!-- {% if centos %} -->
+### CentOS Repository <a id="centos-repository"></a>
 
-**RHEL and CentOS 7**:
-```
-yum install https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.rpm
-```
-
-**Fedora 31**:
-```
-dnf install https://packages.icinga.com/fedora/icinga-rpm-release-31-latest.noarch.rpm
+```bash
+rpm --import https://packages.icinga.com/icinga.key
+wget https://packages.icinga.com/centos/ICINGA-release.repo -O /etc/yum.repos.d/ICINGA-release.repo
 ```
 
-**SLES 15/12**:
-```
-zypper ar http://packages.icinga.com/SUSE/ICINGA-release.repo
-zypper ref
-```
-
-If you're using php-fpm on SLES 15 SP2 onwards, `/etc/icingaweb2` may not be writable.
-That's because the default systemd unit file for php-fpm has `ProtectSystem=full`
-enabled. You want to lookup/add the systemd setting `ReadWritePaths=` in this case and
-add `/etc/icingaweb2` to it. Alternatively you can also define a different configuration
-directory using the environment variable `ICINGAWEB_CONFIGDIR`.
-
-**openSUSE**:
-```
-zypper ar http://packages.icinga.com/openSUSE/ICINGA-release.repo
-zypper ref
-```
-
-**Alpine Linux**:
-```
-echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repos
-apk update
-```
-> INFO
->
-> Latest version of Icinga Web 2 is in the edge repository, which is the -dev branch.
-
-#### RHEL/CentOS Notes <a id="package-repositories-rhel-notes"></a>
-
-The packages for RHEL/CentOS depend on other packages which are distributed
+The packages for CentOS depend on other packages which are distributed
 as part of the [EPEL repository](https://fedoraproject.org/wiki/EPEL).
-
-CentOS 8 additionally needs the PowerTools repository for EPEL:
-*Be aware that the name of the `powertools` repo [changed to lowercase](https://wiki.centos.org/Manuals/ReleaseNotes/CentOS8.2011#Yum_repo_file_and_repoid_changes) with CentOS 8.3.2011 and newer.*
-*If you are using CentOS 8.2.2044 or earlier please change the name to `PowerTools` in the following command.*
-```
-dnf install 'dnf-command(config-manager)'
-dnf config-manager --set-enabled powertools
-
-dnf install epel-release
-```
 
 CentOS 7:
 
-```
+```bash
 yum install epel-release
+```
+
+Since Icinga Web v2.5 we also require a **newer PHP version** than what is available
+in RedHat itself. You need to enable the SCL repository, so that the dependencies
+can pull in the newer PHP.
+
+```bash
+yum install centos-release-scl
+```
+<!-- {% endif %} -->
+
+<!-- {% if rhel %} -->
+### RHEL Repository <a id="rhel-repository"></a>
+
+!!! info
+
+    A paid repository subscription is required for RHEL repositories. Get more information on
+    [icinga.com/subscription](https://icinga.com/subscription)
+
+    Don't forget to fill in the username and password section with your credentials in the local .repo file.
+
+```bash
+rpm --import https://packages.icinga.com/icinga.key
+wget https://packages.icinga.com/subscription/rhel/ICINGA-release.repo -O /etc/yum.repos.d/ICINGA-release.repo
 ```
 
 If you are using RHEL you need to additionally enable the `optional` and `codeready-builder`
 repository before installing the [EPEL rpm package](https://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F).
 
-RHEL 8:
+#### RHEL 8
 
-```
+```bash
 ARCH=$( /bin/arch )
 
 subscription-manager repos --enable rhel-8-server-optional-rpms
@@ -183,188 +143,175 @@ subscription-manager repos --enable "codeready-builder-for-rhel-8-${ARCH}-rpms"
 dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 ```
 
-RHEL 7:
-
-```
-subscription-manager repos --enable rhel-7-server-optional-rpms
-yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-```
-
-##### RHEL/CentOS 7 PHP SCL
-
-Since version 2.5.0 we also require a **newer PHP version** than what is available
+#### RHEL 7
+Since Icinga Web v2.5 we also require a **newer PHP version** than what is available
 in RedHat itself. You need to enable the SCL repository, so that the dependencies
 can pull in the newer PHP.
 
-CentOS:
-```
-yum install centos-release-scl
-```
-
-RedHat:
-```
+```bash
+subscription-manager repos --enable rhel-7-server-optional-rpms
 subscription-manager repos --enable rhel-server-rhscl-7-rpms
+
+yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+```
+<!-- {% endif %} -->
+
+<!-- {% if sles %} -->
+### SLES Repository <a id="rhel-repository"></a>
+
+!!! info
+
+    A paid repository subscription is required for RHEL repositories. Get more information on
+    [icinga.com/subscription](https://icinga.com/subscription)
+
+    Don't forget to fill in the username and password section with your credentials in the local .repo file.
+
+```bash
+rpm --import https://packages.icinga.com/icinga.key
+
+zypper ar https://packages.icinga.com/subscription/sles/ICINGA-release.repo
+zypper ref
 ```
 
-Make sure to also read the chapter on [Setting up FPM](02-Installation.md#setting-up-fpm).
+You need to additionally enable a couple of SLES repositories to fulfill dependencies:
 
-#### Alpine Linux Notes <a id="package-repositories-alpine-notes"></a>
+```bash
+source /etc/os-release
 
-The example provided suppose that you are running Alpine edge, which is the -dev branch and is a rolling release.
-If you are using a stable version, in order to use the latest Icinga Web 2 version you should "pin" the edge repository.
-In order to correctly manage your repository, please follow
-[these instructions](https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management).
+SUSEConnect -p sle-module-desktop-applications/$VERSION_ID/x86_64
+SUSEConnect -p sle-module-development-tools/$VERSION_ID/x86_64
+SUSEConnect -p sle-module-web-scripting/$VERSION_ID/x86_64
+SUSEConnect -p PackageHub/$VERSION_ID/x86_64
+```
+<!-- {% endif %} -->
 
-### Installing Icinga Web 2 <a id="installing-from-package-example"></a>
+<!-- {% if amazon_linux %} -->
+### Amazon Linux 2 Repository <a id="amazon-linux-2-repository"></a>
+
+!!! info
+
+    A paid repository subscription is required for Amazon Linux repositories. Get more information on
+    [icinga.com/subscription](https://icinga.com/subscription)
+
+    Don't forget to fill in the username and password section with your credentials in the local .repo file.
+
+```bash
+rpm --import https://packages.icinga.com/icinga.key
+wget https://packages.icinga.com/subscription/amazon/ICINGA-release.repo -O /etc/yum.repos.d/ICINGA-release.repo
+```
+
+You need to install and enable the `amazon-linux-extras` repository to meet the requirements of
+Icinga Web 2 on Amazon Linux 2:
+
+```bash
+yum install -y amazon-linux-extras
+
+amazon-linux-extras enable php8.0
+```
+<!-- {% endif %} -->
+
+## Install Icinga Web 2 <a id="install-icingaweb2"></a>
 
 You can install Icinga Web 2 by using your distribution's package manager to install the `icingaweb2` package.
-Below is a list with examples for various distributions. The additional package `icingacli` is necessary to follow further steps in this guide.
-The additional package `libapache2-mod-php` is necessary on Ubuntu to make
-Icinga Web 2 working out-of-the-box if you aren't sure or don't care about [PHP
-FPM](02-Installation.md#setting-up-fpm).
+The additional package `icingacli` is necessary to follow further steps in this guide.
 
-**Debian**:
-```
+<!-- {% if debian %} -->
+<!-- {% if not icingaDocs %} -->
+#### Debian
+<!-- {% endif %} -->
+```bash
 apt-get install icingaweb2 icingacli
 ```
+<!-- {% endif %} -->
 
-**Ubuntu**:
-```
+<!-- {% if ubuntu %} -->
+<!-- {% if not icingaDocs %} -->
+#### Ubuntu
+<!-- {% endif %} -->
+```bash
 apt-get install icingaweb2 libapache2-mod-php icingacli
 ```
 
-**RHEL/CentOS 8 and Fedora**:
+The additional package `libapache2-mod-php` is necessary on Ubuntu to automatically
+install a web server and PHP and make Icinga Web 2 work out-of-the-box.
+<!-- {% endif %} -->
+
+<!-- {% if centos or rhel or amazon_linux %} -->
+!!! tip
+
+    If you have [SELinux](90-SELinux.md) enabled, the package `icingaweb2-selinux` is also required.
+<!-- {% endif %} -->
+
+<!-- {% if centos %} -->
+<!-- {% if not icingaDocs %} -->
+#### CentOS
+<!-- {% endif %} -->
 ```
 dnf install icingaweb2 icingacli
 ```
+<!-- {% endif %} -->
 
-**RHEL/CentOS 7**
+<!-- {% if rhel %} -->
+<!-- {% if not icingaDocs %} -->
+#### RHEL
+<!-- {% endif %} -->
+#### RHEL 8
+```bash
+dnf install icingaweb2 icingacli
 ```
+
+#### RHEL 7
+```bash
 yum install icingaweb2 icingacli
 ```
+<!-- {% endif %} -->
 
-If you have [SELinux](90-SELinux.md) enabled, the package `icingaweb2-selinux` is also required.
-For RHEL/CentOS please read the [package repositories notes](02-Installation.md#package-repositories-rhel-notes).
-
-**SLES and openSUSE**:
-```
+<!-- {% if sles %} -->
+<!-- {% if not icingaDocs %} -->
+#### SLES
+<!-- {% endif %} -->
+```bash
 zypper install icingaweb2 icingacli
 ```
+<!-- {% endif %} -->
 
-**Alpine Linux**:
+<!-- {% if amazon_linux %} -->
+<!-- {% if not icingaDocs %} -->
+#### Amazon Linux 2
+<!-- {% endif %} -->
+```bash
+yum install icingaweb2 icingacli
 ```
-apk add icingaweb2
-```
-For Alpine Linux please read the [package repositories notes](02-Installation.md#package-repositories-alpine-notes).
+<!-- {% endif %} -->
 
-## Installing the web server <a id="installing-the-web-server"></a>
+## Install the Web Server <a id="install-the-web-server"></a>
 
-Depending on your OS you might have to install, and or configure the web server.
-We usually only require PHP as hard dependency.
+Make sure you have a web server with PHP up and running before moving on.
+Please refer to the [installation requirements](#installation-requirements) for details about supported versions.
+Depending on your OS you might have to install, and configure the web server separately.
 
-We usually build on Apache httpd as the default web server, but you also can use nginx.
-
-**RedHat / CentOS / Fedora**
-
-Make sure to install httpd, start and enable it on boot.
-```
-yum install httpd
-
-systemctl start httpd.service
-systemctl enable httpd.service
-```
-
-Note for **EPEL 7 and 8**: Check the [Setting up FPM](02-Installation.md#setting-up-fpm) chapter.
-
-**SUSE SLE / openSUSE**
-
-Make sure that web server is installed, and the required modules are loaded.
-```
-zypper install apache2
-
-a2enmod rewrite
-a2enmod php7
-
-systemctl start apache2.service
-systemctl enable apache2.service
-```
-
-**Debian / Ubuntu**
-
-Your web server should be up and running after the installation of Icinga Web 2.
-
-### Setting up FPM <a id="setting-up-fpm"></a>
-
-If you are on CentOS / RedHat, or just want to run Icinga Web 2 with PHP-FPM instead
-of the Apache module.
-
-| Operating System    | FPM configuration path            |
-|---------------------|-----------------------------------|
-| RedHat 8            | `/etc/php-fpm.d/`                |
-| RedHat 7 (with SCL) | `/etc/opt/rh/rh-php71/php-fpm.d/` |
-| Fedora              | `/etc/php-fpm.d/`                 |
-| Debian/Ubuntu       | `/etc/php*/*/fpm/pool.d/`         |
-
-The default pool `www` should be sufficient for Icinga Web 2.
-
-On RedHat you need to start and enable the FPM service.
-
-RedHat / CentOS 8 and Fedora:
-
-```
-systemctl start php-fpm.service
-systemctl enable php-fpm.service
-```
-
-RedHat / CentOS 7 (SCL package):
-```
-systemctl start rh-php71-php-fpm.service
-systemctl enable rh-php71-php-fpm.service
-```
-
-All module packages for PHP have this SCL prefix, so you can install a
-database module like this:
-```
-yum install rh-php71-php-mysqlnd
-# or
-yum install rh-php71-php-pgsql
-```
-
-Depending on your web server installation, we might have installed or
-updated the config file for icingaweb2 with defaults for FPM.
-
-Check `/etc/httpd/conf.d/icingaweb2.conf` or `/etc/apache2/conf.d/icingaweb2.conf`.
-And `*.rpm*` `*.dpkg*` files there with updates.
-
-Make sure that the `FilesMatch` part is included for Apache >= 2.4. For Apache < 2.4 you have to include the
-`LocationMatch` block.
-
-Also see the example from icingacli:
-```
-icingacli setup config webserver apache
-```
-
-### Preparing Web Setup <a id="preparing-web-setup-from-package"></a>
+## Prepare Web Setup <a id="prepare-web-setup-from-package"></a>
 
 You can set up Icinga Web 2 quickly and easily with the Icinga Web 2 setup wizard which is available the first time
 you visit Icinga Web 2 in your browser. When using the web setup you are required to authenticate using a token.
 In order to generate a token use the `icingacli`:
-```
+
+```bash
 icingacli setup token create
 ```
 
 In case you do not remember the token you can show it using the `icingacli`:
-```
+
+```bash
 icingacli setup token show
 ```
 
-#### Preparing Web Setup on Debian/Ubuntu <a id="preparing-web-setup-from-package-debian"></a>
-
-On Debian and derivates, you need to manually create a database and a database user prior to starting the web wizard.
+<!-- {% if debian or ubuntu %} -->
+You need to manually create a database and a database user prior to starting the web wizard.
 This is due to local security restrictions whereas the web wizard cannot create a database/user through
 a local unix domain socket.
 
-```
+```bash
 MariaDB [mysql]> CREATE DATABASE icingaweb2;
 
 MariaDB [mysql]> GRANT ALL ON icingaweb2.* TO icingaweb2@localhost IDENTIFIED BY 'CHANGEME';
@@ -372,84 +319,213 @@ MariaDB [mysql]> GRANT ALL ON icingaweb2.* TO icingaweb2@localhost IDENTIFIED BY
 
 You may also create a separate administrative account with all privileges instead.
 
-> Note: This is only required if you are using a local database as authentication type.
+!!! note
 
-### Starting Web Setup <a id="starting-web-setup-from-package"></a>
+    This is only required if you are using a local database as authentication type.
+<!-- {% endif %} -->
+
+### Start Web Setup <a id="start-web-setup-from-package"></a>
 
 Finally visit Icinga Web 2 in your browser to access the setup wizard and complete the installation:
 `/icingaweb2/setup`.
 
-> **Note for Debian/Ubuntu**
->
-> Use the same database, user and password details created above when asked.
+<!-- {% if debian or ubuntu %} -->
+!!! hint
+
+    Use the same database, user and password details created above when asked.
+<!-- {% endif %} -->
 
 The setup wizard automatically detects the required packages. In case one of them is missing,
 e.g. a PHP module, please install the package, restart your webserver and reload the setup page.
 
-If you have SELinux enabled, please ensure to either have the selinux package for Icinga Web 2
-installed, or disable it.
+<!-- {% if sles %} -->
+!!! note
 
+    If you're using php-fpm on SLES 15 SP2 onwards, `/etc/icingaweb2` may not be writable.
+    That's because the default systemd unit file for php-fpm has `ProtectSystem=full`
+    enabled. You want to lookup/add the systemd setting `ReadWritePaths=` in this case and
+    add `/etc/icingaweb2` to it. Alternatively you can also define a different configuration
+    directory using the environment variable `ICINGAWEB_CONFIGDIR`.
+<!-- {% endif %} -->
 
-### Upgrading to FPM <a id="upgrading-to-fpm"></a>
+<!-- {% if centos or rhel or amazon_linux %} -->
+!!! note
 
-Valid for:
+    If you have SELinux enabled, please ensure to either have the selinux package for Icinga Web 2 installed, or disable it.
+<!-- {% endif %} -->
 
-* RedHat / CentOS 7
+<!-- {% else %} --><!-- {# end from_source elif #} -->
+<!-- {% if not icingaDocs %} -->
+## Installing Icinga Web 2 from Source <a id="installing-from-source"></a>
+<!-- {% endif %} -->
 
-Other distributions are also possible if preferred, but not included here.
+Although the preferred way of installing Icinga Web 2 is to use packages, it is also possible to install Icinga Web 2
+directly from source.
 
-Some upgrading work needs to be done manually, while we install PHP FPM
-as dependency, you need to start the service, and configure some things.
+### Getting the Source <a id="getting-the-source"></a>
 
-Please read [Setting up FPM](02-Installation.md#setting-up-fpm) first.
+First of all, you need to download the sources.
 
-**php.ini settings** you have tuned in the past needs to be migrated to a SCL installation
-of PHP.
+Git clone:
 
-Check these directories:
-
-* `/etc/php.ini`
-* `/etc/php.d/*.ini`
-
-PHP settings should be stored to:
-
-* RedHat / CentOS 7: `/etc/opt/rh/rh-php71/php.d/`
-
-Make sure to **install the required database modules**
-
-RedHat / CentOS 7:
-```
-yum install rh-php71-php-mysqlnd
-# or
-yum install rh-php71-php-pgsql
+```bash
+cd /usr/share/
+git clone https://github.com/Icinga/icingaweb2.git icingaweb2
 ```
 
-After any PHP related change you now need to **restart FPM**:
+Tarball download (latest [release](https://github.com/Icinga/icingaweb2/releases/latest)):
 
-RedHat / CentOS 7:
-```
-systemctl restart rh-php71-php-fpm.service
-```
-
-If you don't need mod_php for other apps on the server, you should disable it in Apache.
-
-Disable PHP in Apache httpd:
-```
-cd /etc/httpd
-cp conf.d/php.conf{,.bak}
-: >conf.d/php.conf
-
-# ONLY on el7!
-cp conf.modules.d/10-php.conf{,.bak}
-: >conf.modules.d/10-php.conf
-
-systemctl restart httpd.service
+```bash
+cd /usr/share
+wget https://github.com/Icinga/icingaweb2/archive/v2.9.5.zip
+unzip v2.9.5.zip
+mv icingaweb2-2.9.5 icingaweb2
 ```
 
-You can also uninstall the mod_php package, or all non-SCL PHP related packages.
-```
-yum remove php
-# or
-yum remove php-common
+### Installing Requirements from Source <a id="installing-from-source-requirements"></a>
+
+You will need to install certain dependencies depending on your setup:
+
+* [Icinga 2](https://icinga.com/products/icinga-2/) with the IDO database backend (MySQL or PostgreSQL)
+* A web server, e.g. Apache or Nginx
+* PHP version >= 7.3
+  * Older versions (5.6+) are only supported up until version 2.11
+* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (>= 0.6)
+* [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) (>= 0.10)
+* The following PHP modules must be installed: cURL, json, gettext, fileinfo, intl, dom, OpenSSL and xml
+* For exports to PDF also the following PHP modules are required: mbstring, GD, Imagick
+* LDAP PHP library when using Active Directory or LDAP for authentication
+* MySQL or PostgreSQL PHP libraries
+
+The following example installs Apache2 as web server, MySQL as RDBMS and uses the PHP adapter for MySQL.
+Adopt the package requirements to your needs (e.g. adding ldap for authentication) and distribution.
+
+Example for RHEL/CentOS/Fedora:
+
+```bash
+yum install httpd mysql-server
+yum install php php-gd php-intl
 ```
 
+The setup wizard will check the pre-requisites later on.
+
+
+### Installing Icinga Web 2 <a id="installing-from-source-example"></a>
+
+Choose a target directory and move Icinga Web 2 there.
+
+```bash
+mv icingaweb2 /usr/share/icingaweb2
+```
+
+### Configuring the Web Server <a id="configuring-web-server"></a>
+
+Use `icingacli` to generate web server configuration for either Apache or nginx.
+
+**Apache**:
+```bash
+./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public
+```
+
+**nginx**:
+```bash
+./bin/icingacli setup config webserver nginx --document-root /usr/share/icingaweb2/public
+```
+
+Save the output as new file in your webserver's configuration directory.
+
+Example for Apache on RHEL or CentOS:
+```bash
+./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public > /etc/httpd/conf.d/icingaweb2.conf
+```
+
+Example for Apache on SUSE:
+```bash
+./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public > /etc/apache2/conf.d/icingaweb2.conf
+```
+
+Example for Apache on Debian Jessie:
+```bash
+./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public > /etc/apache2/conf-available/icingaweb2.conf
+a2enconf icingaweb2
+```
+
+Example for Apache on Alpine Linux:
+```bash
+icingacli setup config webserver apache --document-root /usr/share/webapps/icingaweb2/public > /etc/apache2/conf.d/icingaweb2.conf
+```
+### Preparing Icinga Web 2 Setup <a id="preparing-web-setup-from-source"></a>
+
+You can set up Icinga Web 2 quickly and easily with the Icinga Web 2 setup wizard which is available the first time
+you visit Icinga Web 2 in your browser. Please follow the steps listed below for preparing the web setup.
+
+Because both web and CLI must have access to configuration and logs, permissions will be managed using a special
+system group. The web server user and CLI user have to be added to this system group.
+
+Add the system group `icingaweb2` in the first place.
+
+**Fedora, RHEL, CentOS, SLES and OpenSUSE**:
+```bash
+groupadd -r icingaweb2
+```
+
+**Debian and Ubuntu**:
+```bash
+addgroup --system icingaweb2
+```
+
+Add your web server's user to the system group `icingaweb2`
+and restart the web server:
+
+**Fedora, RHEL and CentOS**:
+```bash
+usermod -a -G icingaweb2 apache
+service httpd restart
+```
+
+**SLES and OpenSUSE**:
+```bash
+usermod -A icingaweb2 wwwrun
+service apache2 restart
+```
+
+**Debian and Ubuntu**:
+```bash
+usermod -a -G icingaweb2 www-data
+service apache2 restart
+```
+
+**Alpine Linux**:
+```bash
+gpasswd -a apache icingaweb2
+rc-service apache2 restart
+```
+
+
+Use `icingacli` to create the configuration directory which defaults to **/etc/icingaweb2**:
+```bash
+./bin/icingacli setup config directory
+```
+
+
+When using the web setup you are required to authenticate using a token. In order to generate a token use the
+`icingacli`:
+```bash
+./bin/icingacli setup token create
+```
+
+In case you do not remember the token you can show it using the `icingacli`:
+```bash
+./bin/icingacli setup token show
+```
+
+### Icinga Web 2 Setup Wizard <a id="web-setup-from-source-wizard"></a>
+
+Finally visit Icinga Web 2 in your browser to access the setup wizard and complete the installation:
+`/icingaweb2/setup`.
+
+Paste the previously generated token and follow the steps on-screen. Then you are done here.
+
+If you prefer to set up the configuration manually, follow the
+[Icinga Web 2 Manual Configuration instructions](20-Advanced-Topics.md#web-setup-manual-from-source-config)
+<!-- {% endif %} --><!-- {# end index if #} -->
