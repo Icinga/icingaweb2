@@ -221,12 +221,18 @@ input.search {
 }
 
 .search-bar,
-.button-link {
+.button-link,
+.view-mode-switcher > label {
   border: 1px solid @icinga-blue;
 }
 
+// compensate for 1px border
+.filter-input-area {
+  padding: 1/12em !important;
+}
+
 .view-mode-switcher > label {
-  border: 1px solid @icinga-blue;
+  padding: (10/16)*.25em (10/16)*.5em !important;
 
   &:not(:first-of-type) {
     border-left: none;
