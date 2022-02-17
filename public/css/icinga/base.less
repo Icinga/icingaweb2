@@ -13,7 +13,6 @@
 
 @disabled-gray: #9a9a9a;
 
-
 // State colors
 @color-ok: #44bb77;
 @color-up: @color-ok;
@@ -153,6 +152,75 @@
     --gray-lightest: #F7F7F7;
   }
 };
+
+// ipl-web overrides
+@default-bg: @body-bg-color;
+
+@base-gray: @gray;
+@base-gray-light: @gray-light;
+@base-gray-lighter: @gray-light;
+@base-disabled: @disabled-gray;
+
+@base-primary-color: @icinga-blue;
+@base-primary-bg: @icinga-blue;
+
+@default-text-color: @text-color;
+@default-text-color-light: fade(@default-text-color, 75%);
+@default-text-color-inverted: @default-bg;
+
+@state-ok: @color-ok;
+@state-up: @state-ok;
+@state-warning: @color-warning;
+@state-critical: @color-critical;
+@state-down: @state-critical;
+@state-pending: @color-pending;
+@state-unknown: @color-unknown;
+
+@primary-button-color: @default-text-color-inverted;
+@primary-button-bg: @base-primary-bg;
+@primary-button-hover-bg: @icinga-blue-dark;
+
+@search-term-bg: @base-gray;
+@search-term-color: @default-text-color-inverted;
+@search-term-selected-bg: @base-gray-light;
+@search-term-invalid-bg: @state-critical;
+@search-term-invalid-color: @default-text-color-inverted;
+@search-term-disabled-bg: @base-disabled;
+@search-term-selected-color: @base-gray-light;
+@search-term-highlighted-bg: @base-primary-bg;
+@search-term-highlighted-color: @default-text-color-inverted;
+
+@search-condition-remove-bg: @state-critical;
+@search-condition-remove-color: @default-text-color-inverted;
+
+@search-logical-operator-bg: @base-gray-light;
+@search-logical-operator-color: @default-text-color-light;
+
+@searchbar-bg: @low-sat-blue;
+@searchbar-scrollbar-bg: @base-gray-light;
+
+@search-editor-control-color: @base-gray-light;
+@search-editor-logical-op-bg: @base-gray-light;
+@search-editor-context-menu-border-color: @base-gray-light;
+@search-editor-context-menu-bg: @default-bg;
+@search-editor-drag-outline-color: @base-gray;
+
+@control-color: @base-primary-color;
+@control-hover-bg: @base-gray-lighter;
+@control-disabled-color: @base-disabled;
+
+@suggestions-bg: @default-bg;
+@suggestions-color: @default-text-color-light;
+@suggestions-focus-bg: @base-primary-bg;
+@suggestions-focus-color: @default-text-color-inverted;
+@suggestions-default-opt-bg: fade(@base-primary-bg, 10%);
+@suggestions-default-opt-color: @default-text-color-light;
+@suggestions-hover-bg: fade(@base-primary-bg, 30%);
+@suggestions-border-color: @base-gray-light;
+@suggestions-separation-bg: @base-gray-lighter;
+@suggestions-failure-message-color: @default-text-color-light;
+
+@card-border-color: @base-gray-light;
 
 // Make padding not affect the final computed width of an element
 html {
