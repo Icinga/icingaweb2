@@ -1191,14 +1191,32 @@ abstract class IdoQuery extends DbQuery
 
         $this->customVars[strtolower($customvar)] = $alias;
 
-        if ($this->hasJoinedVirtualTable('services')) {
-            $leftcol = 's.' . $type . '_object_id';
-        } elseif ($type === 'service') {
-            $this->requireVirtualTable('services');
-            $leftcol = 's.service_object_id';
-        } else {
-            $this->requireVirtualTable('hosts');
-            $leftcol = 'h.host_object_id';
+        if ($type === 'host') {
+            if (
+                $this instanceof HostserviceproblemsummaryQuery
+                || $this instanceof ServicecommentQuery
+                || $this instanceof ServicedowntimeQuery
+                || $this instanceof ServicecommenthistoryQuery
+                || $this instanceof ServicedowntimestarthistoryQuery
+                || $this instanceof ServiceflappingstarthistoryQuery
+                || $this instanceof ServicegroupQuery
+                || $this instanceof ServicenotificationQuery
+                || $this instanceof ServicestatehistoryQuery
+                || $this instanceof ServicestatusQuery
+            ) {
+                $this->requireVirtualTable('services');
+                $leftcol = 's.host_object_id';
+            } else {
+                $leftcol = 'ho.object_id';
+                if (! $this->hasJoinedTable('ho')) {
+                    $this->requireVirtualTable('hosts');
+                }
+            }
+        } else { // $type === 'service'
+            $leftcol = 'so.object_id';
+            if (! $this->hasJoinedTable('so')) {
+                $this->requireVirtualTable('services');
+            }
         }
 
         $mapped = $this->getMappedField($leftcol);
