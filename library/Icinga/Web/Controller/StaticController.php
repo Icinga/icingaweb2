@@ -39,10 +39,21 @@ class StaticController
         }
 
         $assetRoot = $library->getStaticAssetPath();
-        $filePath = $assetRoot . DIRECTORY_SEPARATOR . $assetPath;
+        if (empty($assetRoot)) {
+            $app->getResponse()
+                ->setHttpResponseCode(404);
 
-        // Doesn't use realpath as it isn't supposed to access files outside asset/static
-        if (! is_readable($filePath) || ! is_file($filePath)) {
+            return;
+        }
+
+        $filePath = $assetRoot . DIRECTORY_SEPARATOR . $assetPath;
+        $dirPath = realpath(dirname($filePath)); // dirname, because the file may be a link
+
+        if (
+            $dirPath === false
+            || substr($dirPath, 0, strlen($assetRoot)) !== $assetRoot
+            || ! is_file($filePath)
+        ) {
             $app->getResponse()
                 ->setHttpResponseCode(404);
 
