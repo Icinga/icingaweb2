@@ -150,6 +150,28 @@
     --gray-light: #d0d3da;
     --gray-lighter: #e8ecef;
     --gray-lightest: #F7F7F7;
+
+    // ipl-web overrides
+    --base-gray: var(--gray);
+    --base-gray-semilight: var(--gray-semilight);
+    --base-gray-light: var(--gray-light);
+    --base-gray-lighter: var(--gray-light);
+
+    --base-remove-bg: @color-critical;
+
+    --default-text-color: var(--text-color);
+    --default-text-color-light: var(--text-color-light);
+    --default-text-color-inverted: var(--text-color-inverted);
+
+    --primary-button-bg: @icinga-blue;
+    --primary-button-hover-bg: @icinga-blue-dark;
+
+    --searchbar-bg: var(--low-sat-blue);
+
+    --search-logical-operator-bg: fade(@gray, 50%);
+
+    --suggestions-default-opt-bg: fade(@icinga-blue, 10%);
+    --suggestions-hover-bg: fade(@icinga-blue, 30%);
   }
 };
 
