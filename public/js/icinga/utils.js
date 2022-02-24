@@ -374,7 +374,10 @@
                 var id = element.id;
 
                 // Only use ids if they're truly unique
-                if (!! id && document.querySelectorAll('* #' + id).length === 1) {
+                // TODO: The check used to use document.querySelectorAll, but this resulted in many issues with ids
+                //       that start with a decimal. jQuery seems to escape those correctly, so this is the only reason
+                //       why it's still.. jQuery.
+                if (!! id && $('* #' + id).length === 1) {
                     path.push('#' + id);
                     break;
                 }
