@@ -60,33 +60,6 @@ if (! $this->compact): ?>
                             'class' => 'rowaction'
                         )
                     ) ?>
-                <?php if (isset($summary[$host->host_name])): ?>
-                    <span class="host-services-incidents"> &#40;<?= $this->qlink(
-                          sprintf(
-                              $this->translatePlural(
-                                  '%u unhandled service', '%u unhandled services', $summary[$host->host_name]
-                              ),
-                              $summary[$host->host_name]
-                          ),
-                          'monitoring/list/services',
-                          array(
-                              'host'               => $host->host_name,
-                              'service_problem'    => 1,
-                              'service_handled'    => 0
-                          ),
-                          array(
-                              'title' => sprintf(
-                                  $this->translatePlural(
-                                      'List %s unhandled service problem on host %s',
-                                      'List %s unhandled service problems on host %s',
-                                      $summary[$host->host_name]
-                                  ),
-                                  $summary[$host->host_name],
-                                  $host->host_name
-                              )
-                          )
-                    ) ?>&#41;</span>
-                <?php endif ?>
                     <span class="state-icons"><?= $this->hostFlags($host) ?></span>
                 </div>
                 <p class="overview-plugin-output"><?= $this->pluginOutput($this->ellipsis($host->host_output, 10000), true, $host->host_check_command) ?></p>
