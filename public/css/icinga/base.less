@@ -13,7 +13,6 @@
 
 @disabled-gray: #9a9a9a;
 
-
 // State colors
 @color-ok: #44bb77;
 @color-up: @color-ok;
@@ -151,8 +150,45 @@
     --gray-light: #d0d3da;
     --gray-lighter: #e8ecef;
     --gray-lightest: #F7F7F7;
+
+    // ipl-web overrides
+    --base-gray: var(--gray);
+    --base-gray-light: var(--gray-light);
+    --base-gray-lighter: var(--gray-lighter);
+
+    --default-text-color: var(--text-color);
+    --default-text-color-light: var(--text-color-light);
+    --default-text-color-inverted: var(--text-color-inverted);
+
+    --searchbar-bg: var(--low-sat-blue);
+
+    --search-logical-operator-bg: fade(#819398, 50%); // --gray
   }
 };
+
+// ipl-web overrides
+@default-bg: @body-bg-color;
+
+@base-gray: @gray;
+@base-gray-light: @gray-light;
+@base-gray-lighter: @gray-lighter;
+@base-disabled: @disabled-gray;
+
+@base-primary-color: @icinga-blue;
+@base-primary-bg: @icinga-blue;
+
+@default-text-color: @text-color;
+@default-text-color-light: @text-color-light;
+
+@state-ok: @color-ok;
+@state-warning: @color-warning;
+@state-critical: @color-critical;
+@state-pending: @color-pending;
+@state-unknown: @color-unknown;
+
+@primary-button-hover-bg: @icinga-blue-dark;
+
+@searchbar-bg: @low-sat-blue;
 
 // Make padding not affect the final computed width of an element
 html {

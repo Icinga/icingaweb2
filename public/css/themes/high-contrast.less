@@ -24,6 +24,7 @@
 
 // Icinga colors
 @low-sat-blue: #dae3e6;
+@low-sat-blue-dark: #c0cccd;
 
 // Background color for <body>
 @body-bg-color: @white;
@@ -189,8 +190,7 @@
   }
 }
 
-.icinga-controls,
-.search-editor {
+.icinga-controls {
   input:not([type="checkbox"]):not([type="radio"]),
   .toggle-switch .toggle-slider:before,
   .toggle-switch > .toggle-slider,
@@ -203,6 +203,16 @@
     height: 1.166666667em;
     width: 1.166666667em;
     margin: 1px;
+  }
+}
+
+.search-suggestions {
+  input:not([type="checkbox"]):not([type="radio"]),
+  .toggle-switch .toggle-slider:before,
+  .toggle-switch > .toggle-slider,
+  select,
+  textarea {
+    border: none;
   }
 }
 
@@ -221,12 +231,18 @@ input.search {
 }
 
 .search-bar,
-.button-link {
+.button-link,
+.view-mode-switcher > label {
   border: 1px solid @icinga-blue;
 }
 
+// compensate for 1px border
+.filter-input-area {
+  padding: 1/12em !important;
+}
+
 .view-mode-switcher > label {
-  border: 1px solid @icinga-blue;
+  padding: (10/16)*.25em (10/16)*.5em !important;
 
   &:not(:first-of-type) {
     border-left: none;
