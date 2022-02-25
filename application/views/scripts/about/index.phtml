@@ -80,7 +80,8 @@ use ipl\Web\Widget\Icon;
             <div class="col">
             <?=
                 HtmlElement::create('a', [
-                    'href'   => 'https://github.com/icinga/icingaweb2/issues',
+                    'href'      => 'https://icinga.com/docs/icinga-web-2/'
+                        . (isset($version['docVersion']) ? $version['docVersion'] : 'latest'),
                     'target'    => '_blank',
                     'title'     => $this->translate('Icinga Documentation')
                 ], [
