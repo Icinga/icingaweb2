@@ -23,6 +23,15 @@ if (! $this->compact): ?>
            data-icinga-multiselect-url="<?= $this->href('monitoring/hosts/show') ?>"
            data-icinga-multiselect-controllers="<?= $this->href("monitoring/hosts") ?>"
            data-icinga-multiselect-data="host">
+    <thead class="print-only">
+        <tr>
+            <th><?= $this->translate('State') ?></th>
+            <th><?= $this->translate('Host') ?></th>
+        <?php foreach($this->addColumns as $col): ?>
+            <th><?= $this->escape($col) ?></th>
+        <?php endforeach ?>
+        </tr>
+    </thead>
     <tbody>
     <?php foreach($hosts->peekAhead($this->compact) as $host):
         $hostStateName = Host::getStateText($host->host_state);
@@ -76,7 +85,7 @@ if (! $this->compact): ?>
     </tbody>
     </table>
 <?php if ($hosts->hasMore()): ?>
-    <div class="action-links">
+    <div class="dont-print action-links">
         <?= $this->qlink(
             $this->translate('Show More'),
             $this->url()->without(array('showCompact', 'limit')),
