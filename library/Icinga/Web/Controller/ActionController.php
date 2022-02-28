@@ -3,6 +3,9 @@
 
 namespace Icinga\Web\Controller;
 
+use Icinga\Application\Modules\Module;
+use Icinga\Common\PdfExport;
+use Icinga\File\Pdf;
 use ipl\I18n\Translation;
 use Zend_Controller_Action;
 use Zend_Controller_Action_HelperBroker;
@@ -14,7 +17,6 @@ use Icinga\Authentication\Auth;
 use Icinga\Exception\Http\HttpMethodNotAllowedException;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
-use Icinga\File\Pdf;
 use Icinga\Forms\AutoRefreshForm;
 use Icinga\Security\SecurityException;
 use Icinga\Web\Session;
@@ -41,6 +43,9 @@ use Icinga\Web\Window;
 class ActionController extends Zend_Controller_Action
 {
     use Translation;
+    use PdfExport {
+        sendAsPdf as private newSendAsPdf;
+    }
 
     /**
      * The login route to use when requiring authentication
@@ -522,8 +527,12 @@ class ActionController extends Zend_Controller_Action
 
     protected function sendAsPdf()
     {
-        $pdf = new Pdf();
-        $pdf->renderControllerAction($this);
+        if (Module::exists('pdfexport')) {
+            $this->newSendAsPdf();
+        } else {
+            $pdf = new Pdf();
+            $pdf->renderControllerAction($this);
+        }
     }
 
     protected function shutdownSession()
