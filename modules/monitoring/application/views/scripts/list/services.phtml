@@ -24,6 +24,15 @@ if (! $this->compact): ?>
            data-icinga-multiselect-url="<?= $this->href('monitoring/services/show') ?>"
            data-icinga-multiselect-controllers="<?= $this->href('monitoring/services') ?>"
            data-icinga-multiselect-data="service,host">
+    <thead class="print-only">
+        <tr>
+            <th><?= $this->translate('State') ?></th>
+            <th><?= $this->translate('Service') ?></th>
+        <?php foreach($this->addColumns as $col): ?>
+            <th><?= $this->escape($col) ?></th>
+        <?php endforeach ?>
+        </tr>
+    </thead>
     <tbody>
     <?php foreach ($services->peekAhead($this->compact) as $service):
         $serviceLink = $this->href(
@@ -131,7 +140,7 @@ if (! $this->compact): ?>
     </tbody>
     </table>
 <?php if ($services->hasMore()): ?>
-<div class="action-links">
+<div class="dont-print action-links">
     <?= $this->qlink(
         $this->translate('Show More'),
         $this->url()->without(array('showCompact', 'limit')),
