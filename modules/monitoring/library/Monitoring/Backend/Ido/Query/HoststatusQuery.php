@@ -321,21 +321,6 @@ class HoststatusQuery extends IdoQuery
         );
     }
 
-    /**
-     * Query the service problem summary for all hosts of this query's result set
-     *
-     * @return  HostserviceproblemsummaryQuery
-     */
-    public function queryServiceProblemSummary()
-    {
-        return $this->createSubQuery('Hostserviceproblemsummary')
-            ->setHostStatusQuery($this)
-            ->columns(array(
-                'host_name',
-                'unhandled_service_count'
-            ));
-    }
-
     protected function joinSubQuery(IdoQuery $query, $name, $filter, $and, $negate, &$additionalFilter)
     {
         if ($name === 'hostgroup') {
