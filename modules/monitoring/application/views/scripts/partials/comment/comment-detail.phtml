@@ -63,7 +63,7 @@
         $textId = 'comment-' . $uniqId;
         $deleteButton = clone $delCommentForm;
         /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm $deleteButton */
-        $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
+        $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action dont-print');
         $deleteButton->populate(
             array(
                 'comment_id'            => $comment->id,
