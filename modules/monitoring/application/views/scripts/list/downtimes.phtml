@@ -24,6 +24,12 @@ if (! $this->compact): ?>
            data-icinga-multiselect-url="<?= $this->href('monitoring/downtimes/show') ?>"
            data-icinga-multiselect-controllers="<?= $this->href("monitoring/downtimes") ?>"
            data-icinga-multiselect-data="downtime_id">
+    <thead class="print-only">
+        <tr>
+            <th><?= $this->translate('State') ?></th>
+            <th><?= $this->translate('Downtime') ?></th>
+        </tr>
+    </thead>
     <tbody>
     <?php foreach ($downtimes->peekAhead($this->compact) as $downtime):
         if (isset($downtime->service_description)) {
@@ -43,7 +49,7 @@ if (! $this->compact): ?>
     </tbody>
     </table>
 <?php if ($downtimes->hasMore()): ?>
-    <div class="action-links">
+    <div class="dont-print action-links">
         <?= $this->qlink(
             $this->translate('Show More'),
             $this->url()->without(array('showCompact', 'limit')),
