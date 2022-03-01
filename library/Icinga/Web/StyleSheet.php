@@ -187,6 +187,8 @@ class StyleSheet
     public static function forPdf()
     {
         $styleSheet = new self();
+        $styleSheet->lessCompiler->setTheme(null);
+        $styleSheet->lessCompiler->setThemeMode($styleSheet->pubPath . '/css/modes/none.less');
         $styleSheet->lessCompiler->addLessFile($styleSheet->pubPath . '/css/pdf/pdfprint.less');
         // TODO(el): Caching
         return $styleSheet;

@@ -1,69 +1,73 @@
-/*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
+/*! Icinga Web 2 | (c) 2014 Icinga GmbH | GPLv2+ */
 
-.controls,
-.dontprint, // Compat only, use dont-print instead
-.dont-print {
-  display: none !important;
-}
+// Ensure styling is light, exports use a white background
 
-table.action img.inlinepie {
-  width: 50%;
-  height: 50%;
-}
+@gray: #7F7F7F;
+@gray-semilight: #A9A9A9;
+@gray-light: #C9C9C9;
+@gray-lighter: #EEEEEE;
+@gray-lightest: #F7F7F7;
+@icinga-blue: #0095BF;
+@low-sat-blue: #dae3e6;
+@low-sat-blue-dark: #becbcf;
+@body-bg-color: #fff;
+@text-color: @black;
+@text-color-light: @gray;
+@tr-active-color: @body-bg-color;
+@tr-hover-color: @body-bg-color;
+
+// Page layout
 
 @page {
-  margin: 2cm;
+  margin: 1cm;
 }
 
-.container * {
-  font-size: 7pt;
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding-top: 37px; // ~ logo height in the header
 }
 
-body > h1 {
-  font-size: 1em;
+.content {
+  font-size: 9pt;
 }
 
-#page-header, #page-footer {
-  font-family: fixed;
-  font-weight: bold;
+#header,
+#footer {
   position: fixed;
-  left: 1em;
-  right: 1em;
+  left: 0;
+  right: 0;
   color: #aaa;
   font-size: 0.9em;
 }
 
-#page-header table, #page-footer table {
+#header {
+  top: 0;
+  border-bottom: 0.1pt solid #aaa;
+
+  img {
+    margin-bottom: 3px;
+  }
+}
+
+#footer {
+  bottom: 0;
+  border-top: 0.1pt solid #aaa;
+}
+
+#header table,
+#footer table {
   width: 100%;
   border-collapse: collapse;
   border: none;
 }
 
-#page-header table {
-  width: 80%;
-}
-
-#page-header td, #page-footer td {
-  font-family: fixed;
+#header td,
+#header th,
+#footer td,
+#footer th {
   padding: 0;
-  color: #aaa;
   width: 50%;
-}
-
-#page-header {
-  top: 0.5em;
-  border-bottom: 0.2pt solid #aaa;
-}
-
-#page-footer {
-  bottom: 2.5em;
-  border-top: 0.2pt solid #aaa;
-}
-
-@page {
-  @bottom-right {
-    content: counter(page) " of " counter(pages);
-  }
 }
 
 .page-number {
@@ -79,19 +83,10 @@ hr {
   border: 0;
 }
 
-.content {
-  margin: 0;
-}
+// General style
 
-.dashboard > div.container {
-  width: 100%;
-  display: block;
-}
-
-h1 form {
-  display: none;
-}
-
-body {
-  margin: 1cm 1cm 1.5cm 1cm;
+.controls,
+.dontprint, // Compat only, use dont-print instead
+.dont-print {
+  display: none !important;
 }

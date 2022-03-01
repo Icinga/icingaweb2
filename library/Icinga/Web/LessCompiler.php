@@ -126,13 +126,13 @@ class LessCompiler
     /**
      * Set the path to the LESS theme
      *
-     * @param   string  $theme  Path to the LESS theme
+     * @param   ?string  $theme  Path to the LESS theme
      *
      * @return  $this
      */
     public function setTheme($theme)
     {
-        if (is_file($theme) && is_readable($theme)) {
+        if ($theme === null || (is_file($theme) && is_readable($theme))) {
             $this->theme = $theme;
         } else {
             Logger::error('Can\t load theme %s. Make sure that the theme exists and is readable', $theme);
