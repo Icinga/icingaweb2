@@ -88,16 +88,18 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         if (empty($output)) {
             return '';
         }
+
         if ($command !== null) {
             $output = $this->hookRenderer->render($command, $output, ! $raw);
         }
+
         if (preg_match('~<\w+(?>\s\w+=[^>]*)?>~', $output)) {
             // HTML
-            $output = preg_replace(
+            $output = HtmlPurifier::process(preg_replace(
                 self::$htmlPatterns,
                 self::$htmlReplacements,
-                HtmlPurifier::process($output)
-            );
+                $output
+            ));
             $isHtml = true;
         } else {
             // Plaintext
@@ -109,6 +111,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             );
             $isHtml = false;
         }
+
         $output = trim($output);
         // Add zero-width space after commas which are not followed by a whitespace character
         // in oder to help browsers to break words in plugin output
@@ -121,6 +124,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
                 $output = '<div class="plugin-output preformatted">' . $output . '</div>';
             }
         }
+
         return $output;
     }
 

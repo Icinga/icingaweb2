@@ -152,4 +152,24 @@ class PluginOutputTest extends BaseTestCase
             );
         }
     }
+
+    public function testNewlineProcessingInHtmlOutput()
+    {
+        $this->checkHtmlOutput(
+            'This is plugin output\n\n<ul>\n    <li>with a HTML list</li>\n</ul>\n\n'
+            . 'and more text that\nis split onto multiple\n\nlines',
+            <<<HTML
+This is plugin output
+
+<ul>
+    <li>with a HTML list</li>
+</ul>
+
+and more text that
+is split onto multiple
+
+lines
+HTML
+        );
+    }
 }
