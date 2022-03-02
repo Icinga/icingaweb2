@@ -45,7 +45,7 @@ class Auth
     /**
      * Authenticated user
      *
-     * @var User
+     * @var User|null
      */
     private $user;
 
@@ -189,7 +189,7 @@ class Auth
     /**
      * Returns the current user or null if no user is authenticated
      *
-     * @return User
+     * @return User|null
      */
     public function getUser()
     {
