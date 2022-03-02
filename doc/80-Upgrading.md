@@ -5,6 +5,10 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
 ## Upgrading to Icinga Web 2 2.10.x
 
+**General**
+
+* The theme "solarized-dark" has been removed due to the introduction of the new default dark mode.
+
 **Deprecations**
 
 * Builtin support for PDF exports using the `dompdf` library will be dropped with version 2.12.
