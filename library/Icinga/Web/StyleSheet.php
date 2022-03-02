@@ -36,7 +36,6 @@ class StyleSheet
     const THEME_WHITELIST = [
         'colorblind',
         'high-contrast',
-        'solarized-dark',
         'Winter'
     ];
 
@@ -161,7 +160,16 @@ class StyleSheet
         }
 
         if ($themePath = self::getThemeFile($theme)) {
-            $this->lessCompiler->setTheme($themePath);
+            if ($this->app->isCli() || is_file($themePath) && is_readable($themePath)) {
+                $this->lessCompiler->setTheme($themePath);
+            } else {
+                $themePath = null;
+                Logger::warning(sprintf(
+                    'Theme "%s" set by user "%s" has not been found.',
+                    $theme,
+                    ($user = Auth::getInstance()->getUser()) !== null ? $user->getUsername() : 'anonymous'
+                ));
+            }
         }
 
         if (! $themePath || in_array($theme, self::THEME_WHITELIST, true)) {
