@@ -36,7 +36,6 @@ class StyleSheet
     const THEME_WHITELIST = [
         'colorblind',
         'high-contrast',
-        'solarized-dark',
         'Winter'
     ];
 
