@@ -80,10 +80,8 @@
 
 // Dropdown tabs after the fourth title should be right-aligned
 .tabs > li:nth-child(n+5).dropdown-nav-item > ul {
-  // Offset according to width
-  margin-left: -10.95em;
-  margin-right: 1px;
-  width: 14em;
+  transform: translate(~"calc(-100% + 3em)"); // -full width + tab width
+  margin-left: 1px;
 }
 
 // TODO(el): Rename display-on-hover and move it to main.less
