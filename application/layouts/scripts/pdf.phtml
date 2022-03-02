@@ -1,5 +1,6 @@
 <?php
 
+use Icinga\Application\Icinga;
 use Icinga\Web\StyleSheet;
 
 
@@ -9,6 +10,9 @@ if ($moduleName !== 'default') {
 } else {
     $moduleClass = '';
 }
+
+$logoPath = Icinga::app()->getBootstrapDirectory() . '/img/icinga-logo-big-dark.png';
+$logo = base64_encode(file_get_contents($logoPath));
 
 
 ?><!DOCTYPE html>
@@ -20,33 +24,21 @@ if ($moduleName !== 'default') {
 <base href="<?= $this->serverUrl() ?>">
 </head>
 <body>
-<script type="text/php">
-// This attempt doesn't work :(
-if ( isset($pdf) )
-{
-	$w = $pdf->get_width();
-	$h = $pdf->get_height();
-	$font = Font_Metrics::get_font("helvetica");
-	$pdf->page_text($w -100, $h - 40, "Page {PAGE_NUM} of {PAGE_COUNT}", $font, 10, array(0,0,0));
-}
-
-</script>
-<?= $this->img('img/icinga-logo-big-dark.png', null, array('align' => 'right', 'width' => '75')) ?>
-<!--<div id="page-header">
+<div id="header">
   <table>
-    <tr>
-      <td><?= $this->escape($this->title) ?></td>
-      <td style="text-align: right;"></td>
-    </tr>
+    <tbody>
+      <tr>
+        <th><?= $this->escape($this->title) ?></th>
+        <td style="text-align: right;"><img width="75" src="data:image/png;base64,<?= $logo ?>"></td>
+      </tr>
+    </tbody>
   </table>
-</div>-->
-<h1><?= $this->escape($this->title) ?></h1>
-<div id="col1" class="container<?= $moduleClass ?>">
- <?= $this->render('inline.phtml') ?>
 </div>
-
-<div id="page-footer">
+<div id="footer">
   <div class="page-number"></div>
+</div>
+<div class="<?= $moduleClass ?>">
+    <?= $this->render('inline.phtml') ?>
 </div>
 </body>
 </html>

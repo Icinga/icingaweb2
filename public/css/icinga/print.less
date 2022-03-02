@@ -1,31 +1,15 @@
-/*! Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
-
-// Print styles
+/*! Icinga Web 2 | (c) 2015 Icinga GmbH | GPLv2+ */
 
 @media print {
-  #fileupload-frame-target,
-  #header,
-  #responsive-debug,
-  #sidebar,
-  .controls > .tabs,
-  .controls .filter,
-  .controls .limiter-control,
-  .controls .pagination-control,
-  .controls .selection-info,
-  .controls .sort-control,
+  .controls,
   .dontprint, // Compat only, use dont-print instead
   .dont-print {
-    display: none;
+    display: none !important;
   }
+}
 
-  #layout,
-  #main,
-  .controls {
-    position: static;
-  }
-
-  .container {
-    float: none !important;
-    width: 100% !important;
+@media not print {
+  .print-only {
+    display: none !important;
   }
 }

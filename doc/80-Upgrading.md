@@ -5,6 +5,12 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
 ## Upgrading to Icinga Web 2 2.10.x
 
+**Deprecations**
+
+* Builtin support for PDF exports using the `dompdf` library will be dropped with version 2.12.
+  It is highly recommended to use [Icinga PDF Export](https://github.com/Icinga/icingaweb2-module-pdfexport)
+  instead.
+
 **Framework changes affecting third-party code**
 
 * Asset support for modules (#3961) introduced with v2.8 has now been removed.

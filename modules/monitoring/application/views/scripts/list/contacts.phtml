@@ -68,7 +68,7 @@
     </tbody>
     </table>
 <?php if ($contacts->hasMore()): ?>
-    <div class="action-links">
+    <div class="dont-print action-links">
         <?= $this->qlink(
             $this->translate('Show More'),
             $this->url()->without(array('showCompact', 'limit')),
