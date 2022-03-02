@@ -716,6 +716,71 @@ form.instance-features span.description, form.object-features span.description {
   }
 }
 
+/* Object customvars */
+.custom-var-table {
+  .level-1 th {
+    padding-left: .5em;
+  }
+
+  .level-2 th {
+    padding-left: 1em;
+  }
+
+  .level-3 th {
+    padding-left: 1.5em;
+  }
+
+  .level-4 th {
+    padding-left: 2em;
+  }
+
+  .level-5 th {
+    padding-left: 2.5em;
+  }
+
+  .level-6 th {
+    padding-left: 3em;
+  }
+
+  .empty {
+    color: @gray-semilight;
+  }
+
+  thead th {
+    padding-left: 0;
+    text-align: left;
+    font-weight: bold;
+    font-size: 1.167em;
+
+    > span {
+      :nth-child(1),
+      :nth-child(2) {
+        display: none;
+      }
+    }
+  }
+
+  &.can-collapse thead th > span {
+    :nth-child(1) {
+      display: none;
+    }
+
+    :nth-child(2) {
+      display: inline-block;
+    }
+  }
+
+  &.collapsed thead th > span {
+    :nth-child(1) {
+      display: inline-block;
+    }
+
+    :nth-child(2) {
+      display: none;
+    }
+  }
+}
+
 //p.pluginoutput {
 //  width: 100%;
 //  white-space: pre-wrap;
