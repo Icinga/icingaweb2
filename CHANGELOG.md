@@ -4,6 +4,20 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.9.6
+
+**Notice**: This is a security release. It is recommended to upgrade immediately.
+
+#### Security Fixes
+
+This release includes three security related fixes. The first is a path traversal issue that affects installations
+of v2.9.0 and above. Another one allows admins to run arbitrary PHP code just by accessing the UI. The last one may
+disclose unwanted details to restricted users. Please check the advisories on GitHub for more details.
+
+* Path traversal in static library file requests for unauthenticated users [GHSA-5p3f-rh28-8frw](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-5p3f-rh28-8frw)
+* SSH resources allow arbitrary code execution for authenticated users [GHSA-v9mv-h52f-7g63](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-v9mv-h52f-7g63)
+* Unwanted disclosure of hosts and related data, linked to decommissioned services [GHSA-qcmg-vr56-x9wf](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-qcmg-vr56-x9wf)
+
 ### What's New in Version 2.9.5
 
 This is a hotfix release which fixes the following issues:
