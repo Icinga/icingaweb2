@@ -4,6 +4,19 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.8.6
+
+**Notice**: This is a security release. It is recommended to upgrade to this release if you don't plan to upgrade to v2.9.0.
+
+#### Security Fixes
+
+This release includes two security related fixes. Both were published as part of a security advisory on Github.
+They allow admins to run arbitrary PHP code just by accessing the UI and may disclose unwanted details to
+restricted users. Please check the respective advisory for details.
+
+* SSH resources allow arbitrary code execution for authenticated users [GHSA-v9mv-h52f-7g63](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-v9mv-h52f-7g63)
+* Unwanted disclosure of hosts and related data, linked to decommissioned services [GHSA-qcmg-vr56-x9wf](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-qcmg-vr56-x9wf)
+
 ### What's New in Version 2.8.5
 
 This minor release backports two small fixes to the v2.8.x branch:
