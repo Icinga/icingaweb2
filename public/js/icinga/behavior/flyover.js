@@ -56,16 +56,23 @@
 
         $flyover.toggleClass('flyover-expanded');
 
+        var $container = $flyover.closest('.container');
         if ($flyover.hasClass('flyover-expanded')) {
-            var $container = $flyover.closest('.container');
-
             if ($flyover.offset().left - $container.offset().left > $container.innerWidth() / 2) {
                 $flyover.addClass('flyover-right');
+            }
+
+            if ($flyover.is('[data-flyover-suspends-auto-refresh]')) {
+                $container[0].dataset.suspendAutorefresh = '';
             }
 
             expandedFlyovers['#' + $flyover.attr('id')] = null;
         } else {
             $flyover.removeClass('flyover-right');
+
+            if ($flyover.is('[data-flyover-suspends-auto-refresh]')) {
+                delete $container[0].dataset.suspendAutorefresh;
+            }
 
             delete expandedFlyovers['#' + $flyover.attr('id')];
         }
