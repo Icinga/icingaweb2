@@ -40,14 +40,13 @@
     };
 
     Flyover.prototype.onClick = function(event) {
+        // Close flyover on click outside the flyover
         var $target = $(event.target);
 
         if (! $target.closest('.flyover').length) {
             var _this = event.data.self;
-            $target.closest('#main').find('.flyover.flyover-expanded').each(function() {
-                $(this).find('.flyover-toggle:first').each(function() {
-                    _this.onClickFlyoverToggle({target: this});
-                });
+            $.each(expandedFlyovers, function (id) {
+                _this.onClickFlyoverToggle({target: $('.flyover-toggle', id)[0]});
             });
         }
     };
