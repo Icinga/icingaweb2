@@ -89,7 +89,7 @@ class HostcontactQuery extends IdoQuery
             []
         )->join(
             ['co' => $this->prefix . 'objects'],
-            'co.object_id = c.contact_object_id AND co.is_active = 1',
+            'co.object_id = c.contact_object_id AND co.is_active = 1 AND co.objecttype_id = 10',
             []
         );
 
@@ -153,7 +153,7 @@ class HostcontactQuery extends IdoQuery
             []
         )->joinLeft(
             ['ho' => $this->prefix . 'objects'],
-            'ho.object_id = h.host_object_id AND ho.is_active = 1',
+            'ho.object_id = h.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
             []
         );
     }
