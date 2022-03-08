@@ -118,6 +118,7 @@
                         )
                     ).on('load', function() {
                         $oldLink.remove();
+                        $('head').trigger('css-reloaded');
                     });
 
                     $newLink.appendTo($('head'));
