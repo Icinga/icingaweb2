@@ -72,7 +72,7 @@ class HostserviceproblemsummaryQuery extends IdoQuery
             array()
         )->join(
             array('s' => $this->prefix . 'services'),
-            's.service_object_id = so.object_id AND so.is_active = 1',
+            's.service_object_id = so.object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
         $this->select->group('so.name1');
