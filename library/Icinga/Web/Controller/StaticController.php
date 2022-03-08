@@ -49,8 +49,7 @@ class StaticController
         $filePath = $assetRoot . DIRECTORY_SEPARATOR . $assetPath;
         $dirPath = realpath(dirname($filePath)); // dirname, because the file may be a link
 
-        if (
-            $dirPath === false
+        if ($dirPath === false
             || substr($dirPath, 0, strlen($assetRoot)) !== $assetRoot
             || ! is_file($filePath)
         ) {
