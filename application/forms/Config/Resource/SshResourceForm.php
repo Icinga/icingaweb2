@@ -52,9 +52,13 @@ class SshResourceForm extends Form
 
         if ($this->getRequest()->getActionName() != 'editresource') {
             $callbackValidator = new Zend_Validate_Callback(function ($value) {
-                if (openssl_pkey_get_private($value) === false) {
+                if (
+                    substr(ltrim($value), 0, 7) === 'file://'
+                    || openssl_pkey_get_private($value) === false
+                ) {
                     return false;
                 }
+
                 return true;
             });
             $callbackValidator->setMessage(
@@ -126,20 +130,19 @@ class SshResourceForm extends Form
         $configDir = Icinga::app()->getConfigDir();
         $user = $form->getElement('user')->getValue();
 
-        $filePath = $configDir . '/ssh/' . $user;
-
+        $filePath = join(DIRECTORY_SEPARATOR, [$configDir, 'ssh', sha1($user)]);
         if (! file_exists($filePath)) {
             $file = File::create($filePath, 0600);
         } else {
             $form->error(
-                sprintf($form->translate('The private key for the user "%s" is already exists.'), $user)
+                sprintf($form->translate('The private key for the user "%s" already exists.'), $user)
             );
             return false;
         }
 
         $file->fwrite($form->getElement('private_key')->getValue());
 
-        $form->getElement('private_key')->setValue($configDir . '/ssh/' . $user);
+        $form->getElement('private_key')->setValue($filePath);
 
         return true;
     }
