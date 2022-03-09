@@ -1,0 +1,300 @@
+<?php
+/* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
+
+namespace Icinga\Web\Navigation;
+
+use Icinga\Application\Hook\HealthHook;
+use Icinga\Application\Icinga;
+use Icinga\Authentication\Auth;
+use ipl\Html\Attributes;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\HtmlElement;
+use ipl\Html\Text;
+use ipl\Web\Url;
+use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\StateBadge;
+
+class ConfigMenu extends BaseHtmlElement
+{
+    const STATE_OK = 'ok';
+    const STATE_CRITICAL = 'critical';
+    const STATE_WARNING = 'warning';
+    const STATE_PENDING = 'pending';
+    const STATE_UNKNOWN = 'unknown';
+
+    protected $tag = 'ul';
+
+    protected $defaultAttributes = ['class' => 'nav'];
+
+    protected $children;
+
+    protected $selected;
+
+    protected $cogItemActive = false;
+
+    protected $state;
+
+    public function __construct()
+    {
+        $this->children = [
+            'system' => [
+                'title' => t('System'),
+                'items' => [
+                    'about' => [
+                        'label' => t('About'),
+                        'url' => 'about'
+                    ],
+                    'health' => [
+                        'label' => t('Health'),
+                        'url' => 'health',
+                    ],
+                    'announcements' => [
+                        'label' => t('Announcements'),
+                        'url' => 'announcements'
+                    ],
+                    'sessions' => [
+                        'label' => t('User Sessions'),
+                        'permission' => 'application/sessions',
+                        'url' => 'manage-user-devices'
+                    ]
+                ]
+            ],
+            'configuration' => [
+                'title' => t('Configuration'),
+                'permission' => 'config/*',
+                'items' => [
+                    'application' => [
+                        'label' => t('Application'),
+                        'url' => 'config/general'
+                    ],
+                    'authentication' => [
+                        'label' => t('Access Control'),
+                        'permission'  => 'config/access-control/*',
+                        'url' => 'role/list'
+                    ],
+                    'navigation' => [
+                        'label' => t('Shared Navigation'),
+                        'permission'  => 'config/navigation',
+                        'url' => 'navigation'
+                    ],
+                    'modules' => [
+                        'label' => t('Modules'),
+                        'permission'  => 'config/modules',
+                        'url' => 'config/modules'
+                    ]
+                ]
+            ],
+            'logout' => [
+                'items' => [
+                    'logout' => [
+                        'label' => t('Logout'),
+                        'atts'  => [
+                            'target' => '_self',
+                            'class' => 'nav-item-logout'
+                        ],
+                        'url'         => 'authentication/logout'
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    protected function assembleUserMenuItem(BaseHtmlElement $userMenuItem)
+    {
+        $username = Auth::getInstance()->getUser()->getUsername();
+
+        $userMenuItem->add(
+            new HtmlElement(
+                'a',
+                Attributes::create(['href' => Url::fromPath('account')]),
+                new HtmlElement(
+                    'i',
+                    Attributes::create(['class' => 'user-ball']),
+                    Text::create($username[0])
+                ),
+                Text::create($username)
+            )
+        );
+
+        if (Icinga::app()->getRequest()->getUrl()->matches('account')) {
+            $userMenuItem->addAttributes(['class' => 'selected active']);
+        }
+    }
+
+    protected function assembleCogMenuItem($cogMenuItem)
+    {
+        $cogMenuItem->add([
+            HtmlElement::create(
+                'button',
+                null,
+                [
+                    new Icon('cog'),
+                    $this->createHealthBadge(),
+                ]
+            ),
+            $this->createLevel2Menu()
+        ]);
+
+        if ($this->cogItemActive) {
+            $cogMenuItem->addAttributes([ 'class' => 'active' ]);
+        }
+    }
+
+    protected function assembleLevel2Nav(BaseHtmlElement $level2Nav)
+    {
+        $navContent = HtmlElement::create('div', ['class' => 'flyout-content']);
+        foreach ($this->children as $c) {
+            if (isset($c['permission']) && ! Auth::getInstance()->hasPermission($c['permission'])) {
+                continue;
+            }
+
+            if (isset($c['title'])) {
+                $navContent->add(HtmlElement::create(
+                    'h3',
+                    null,
+                    $c['title']
+                ));
+            }
+
+            $ul = HtmlElement::create('ul', ['class' => 'nav']);
+            foreach ($c['items'] as $key => $item) {
+                $ul->add($this->createLevel2MenuItem($item, $key));
+            }
+
+            $navContent->add($ul);
+        }
+
+        $level2Nav->add($navContent);
+    }
+
+    protected function getHealthCount()
+    {
+        $count = 0;
+        $title = null;
+        $worstState = null;
+        foreach (HealthHook::collectHealthData()->select() as $result) {
+            if ($worstState === null || $result->state > $worstState) {
+                $worstState = $result->state;
+                $title = $result->message;
+                $count = 1;
+            } elseif ($worstState === $result->state) {
+                $count++;
+            }
+        }
+
+        switch ($worstState) {
+            case HealthHook::STATE_OK:
+                $count = 0;
+                break;
+            case HealthHook::STATE_WARNING:
+                $this->state = self::STATE_WARNING;
+                break;
+            case HealthHook::STATE_CRITICAL:
+                $this->state = self::STATE_CRITICAL;
+                break;
+            case HealthHook::STATE_UNKNOWN:
+                $this->state = self::STATE_UNKNOWN;
+                break;
+        }
+
+        $this->title = $title;
+
+        return $count;
+    }
+
+    protected function isSelectedItem($item)
+    {
+        if ($item !== null && Icinga::app()->getRequest()->getUrl()->matches($item['url'])) {
+            $this->selected = $item;
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function createHealthBadge()
+    {
+        $stateBadge = null;
+        if ($this->getHealthCount() > 0) {
+            $stateBadge = new StateBadge($this->getHealthCount(), $this->state);
+            $stateBadge->addAttributes(['class' => 'disabled']);
+        }
+
+        return $stateBadge;
+    }
+
+    protected function createLevel2Menu()
+    {
+        $level2Nav = HtmlElement::create(
+            'div',
+            Attributes::create(['class' => 'nav-level-1 flyout'])
+        );
+
+        $this->assembleLevel2Nav($level2Nav);
+
+        return $level2Nav;
+    }
+
+    protected function createLevel2MenuItem($item, $key)
+    {
+        if (isset($item['permission']) && ! Auth::getInstance()->hasPermission($item['permission'])) {
+            return null;
+        }
+
+        $healthBadge = null;
+        $class = null;
+        if ($key === 'health') {
+            $class = 'badge-nav-item';
+            $healthBadge = $this->createHealthBadge();
+        }
+
+        $li = HtmlElement::create(
+            'li',
+            isset($item['atts']) ? $item['atts'] : [],
+            [
+                HtmlElement::create(
+                    'a',
+                    Attributes::create(['href' => $item['url']]),
+                    [
+                        $item['label'],
+                        isset($healthBadge) ? $healthBadge : ''
+                    ]
+                ),
+            ]
+        );
+        $li->addAttributes(['class' => $class]);
+
+        if ($this->isSelectedItem($item)) {
+            $li->addAttributes(['class' => 'selected']);
+            $this->cogItemActive = true;
+        }
+
+        return $li;
+    }
+
+    protected function createUserMenuItem()
+    {
+        $userMenuItem = HtmlElement::create('li', ['class' => 'user-nav-item']);
+
+        $this->assembleUserMenuItem($userMenuItem);
+
+        return $userMenuItem;
+    }
+
+    protected function createCogMenuItem()
+    {
+        $cogMenuItem = HtmlElement::create('li', ['class' => 'config-nav-item']);
+
+        $this->assembleCogMenuItem($cogMenuItem);
+
+        return $cogMenuItem;
+    }
+
+    protected function assemble()
+    {
+        $this->add([
+            $this->createUserMenuItem(),
+            $this->createCogMenuItem()
+        ]);
+    }
+}
