@@ -90,10 +90,15 @@ git push -u origin support/2.7
 
 ## Package Builds
 
+> **Caution!**
+>
+> Don't forget the subscription packages!
+
 ### RPM Packages
 
 ```
 git clone git@git.icinga.com:packaging/rpm-icingaweb2.git && cd rpm-icingaweb2
+git clone git@git.icinga.com:packaging/subscription-rpm-icingaweb2.git && cd subscription-rpm-icingaweb2
 ```
 
 ### DEB Packages
