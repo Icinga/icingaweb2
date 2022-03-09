@@ -109,6 +109,11 @@
         req.addToHistory = false;
         req.$redirectTarget = $modal.data('redirectTarget');
         req.done(function (data, textStatus, req) {
+            var title = req.getResponseHeader('X-Icinga-Title');
+            if (!! title) {
+                _this.setTitle($modal, decodeURIComponent(title).replace(/\s::\s.*/, ''));
+            }
+
             if (req.getResponseHeader('X-Icinga-Redirect')) {
                 _this.hide($modal);
             }
