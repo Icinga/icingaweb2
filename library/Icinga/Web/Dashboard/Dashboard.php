@@ -149,7 +149,7 @@ class Dashboard extends BaseHtmlElement
                 $this->tabs->add(
                     $key,
                     [
-                        'title' => sprintf(
+                        'title'     => sprintf(
                             t('Show %s', 'dashboard.pane.tooltip'),
                             $pane->getTitle()
                         ),
@@ -199,10 +199,10 @@ class Dashboard extends BaseHtmlElement
     /**
      * Determine the active pane either by the selected tab or the current request
      *
-     * @throws \Icinga\Exception\ConfigurationError
+     * @return Pane The currently active pane
      * @throws \Icinga\Exception\ProgrammingError
      *
-     * @return Pane The currently active pane
+     * @throws \Icinga\Exception\ConfigurationError
      */
     public function determineActivePane()
     {
@@ -241,7 +241,7 @@ class Dashboard extends BaseHtmlElement
     protected function assemble()
     {
         $activeHome = $this->getActiveHome();
-        if (! $activeHome || $activeHome->getName() === DashboardHome::DEFAULT_HOME && ! $activeHome->hasPanes()) {
+        if (! $activeHome || ($activeHome->getName() === DashboardHome::DEFAULT_HOME && ! $activeHome->hasPanes())) {
             $this->setAttribute('class', 'content welcome-view');
             $wrapper = HtmlElement::create('div', ['class' => 'dashboard-introduction']);
 
@@ -252,7 +252,10 @@ class Dashboard extends BaseHtmlElement
                 t('You will see this screen every time you log in and haven\'t created any dashboards yet.')
             ));
 
-            $message = t('At the moment this view is empty, but you can populate it with small portions of information called Dashlets.');
+            $message = t(
+                'At the moment this view is empty, but you can populate it with small portions of'
+                . ' information called Dashlets.'
+            );
             $wrapper->addHtml(HtmlElement::create('p', null, $message));
 
             $message = t(

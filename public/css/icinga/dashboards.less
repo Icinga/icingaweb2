@@ -6,7 +6,7 @@
   top: 40%;
   right: 50%;
   position: absolute;
-  transform: translate(50%,-50%);
+  transform: translate(50%, -50%);
   color: @text-color;
 
   h1, p {
@@ -68,10 +68,14 @@
   }
 }
 
+.collapsed .dashlet-list-item {
+  margin-top: 1.3em;
+}
+
 // All the dashboard item lists
-.home-item-list, .dashboard-item-list, .dashlet-item-list {
+.dashboard-item-list, .dashlet-item-list {
   padding: 0;
-  margin-left: 0;
+  margin: 1em 0 0;
   width: 100%;
   display: flex;
   flex-flow: row wrap;
@@ -79,7 +83,11 @@
 
   label {
     width: 49%;
-    margin: 0 6px 6px 0;
+    margin-bottom: .5em;
+  }
+
+  label:nth-child(odd) {
+    margin-right: .5em;
   }
 
   .dashlet-list-item {
@@ -99,9 +107,9 @@
     }
 
     .caption {
-      height: auto;
-      min-height: 3em;;
-      font-size: 1.2em;
+      height: 3em;
+      overflow-y: auto;
+      font-size: 1.1em;
       color: @text-color-light;
     }
   }
@@ -142,7 +150,7 @@
   line-height: normal;
   text-decoration: none;
   border: 2px solid @icinga-blue;
-  border-radius: 3px;
+  border-radius: .4em;
   color: @text-color-on-icinga-blue;
   background-color: @icinga-blue;
 }
@@ -152,29 +160,33 @@
 }
 
 .action-link.add-dashboard {
-  width: 82.6%;
-  margin-top: 1em;
+  width: 81.5%;
+  margin-top: .5em;
 }
 
 .action-link.add-dashlet, .action-link.add-dashboard {
   order: 1;
   font-size: 1.2em;
   font-weight: 500;
-  padding: .9em 1em;
-  border-radius: .5em;
+  padding: .6em 1em;
+  border-radius: .3em;
   text-decoration: none;
   background-color: @low-sat-blue;
 }
 
-.dashboard-item-list {
+.dashboard-list-control .dashlet-item-list {
   width: 100%;
   display: flex;
   margin-left: 2.2em;
 
   .dashlet-list-item {
     width: 49.4%;
-    margin: 0 6px 6px 0;
+    margin-bottom: .5em;
     background: transparent;
+  }
+
+  .dashlet-list-item:nth-child(odd) {
+    margin-right: .5em;
   }
 }
 
@@ -186,7 +198,7 @@
   }
 
   .action-link.add-dashlet {
-    width: 98.8%; // Dashlet list item 49.4% x 2
+    width: 99.5%;
     margin-left: 1.8em;
   }
 }
@@ -203,6 +215,7 @@
 
   h1.collapsible-header a, h1.dashlet-header a {
     margin-left: .3em;
+    font-weight: normal;
     color: @icinga-blue;
   }
 
@@ -226,11 +239,16 @@
   }
 
   .action-link.add-dashboard {
-    margin-left: .4em;
+    width: 81.6%;
+    margin-left: 1.3em;
   }
 
   .dashboard-list-control {
-    .dashboard-item-list {
+    .dashboard-item-list, .dashlet-item-list {
+      margin: 0;
+    }
+
+    .dashlet-item-list {
       margin-left: 4em;
     }
 
@@ -244,6 +262,7 @@
 
     .action-link.add-dashlet {
       margin-left: 3.4em;
+      width: 99.2%;
     }
   }
 }
@@ -286,10 +305,10 @@
   box-shadow: 4px 4px 4px 4px @black;
 }
 
-.dashlet-sortable.drag-active * {
+.drag-active * {
   pointer-events: none;
 }
 
-.draggable-element{
+.draggable-element {
   opacity: .4;
 }

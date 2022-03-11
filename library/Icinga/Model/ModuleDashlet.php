@@ -5,6 +5,7 @@
 namespace Icinga\Model;
 
 use ipl\Orm\Model;
+use ipl\Orm\Relations;
 
 class ModuleDashlet extends Model
 {
@@ -52,5 +53,12 @@ class ModuleDashlet extends Model
     public function getDefaultSort()
     {
         return ['module_dashlet.name', 'module_dashlet.priority'];
+    }
+
+    public function createRelations(Relations $relations)
+    {
+        $relations->belongsToMany('dashlet', Dashlet::class)
+            ->through(SystemDashlet::class)
+            ->setJoinType('LEFT');
     }
 }

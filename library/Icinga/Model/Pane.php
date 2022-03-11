@@ -34,10 +34,10 @@ class Pane extends Model
     public function getMetaData()
     {
         return [
-            'home_id'   => t('Dashboard Home Id'),
-            'name'      => t('Dashboard Name'),
-            'label'     => t('Dashboard Title'),
-            'username'  => t('Username'),
+            'home_id'  => t('Dashboard Home Id'),
+            'name'     => t('Dashboard Name'),
+            'label'    => t('Dashboard Title'),
+            'username' => t('Username'),
         ];
     }
 

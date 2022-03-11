@@ -12,10 +12,8 @@ use Icinga\Forms\Dashboard\RemoveHomePaneForm;
 use Icinga\Forms\Dashboard\WelcomeForm;
 use Icinga\Model\ModuleDashlet;
 use Icinga\Web\Dashboard\Dashboard;
-use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Dashboard\Settings;
 use Icinga\Web\Dashboard\Setup\SetupNewDashboard;
-use Icinga\Web\Navigation\DashboardHome;
 use Icinga\Web\Widget\Tabextension\DashboardSettings;
 use ipl\Html\HtmlElement;
 use ipl\Web\Compat\CompatController;
@@ -42,11 +40,11 @@ class DashboardsController extends CompatController
         $this->createTabs();
 
         $activeHome = $this->dashboard->getActiveHome();
-        if (!$activeHome || ! $activeHome->hasPanes()) {
+        if (! $activeHome || ! $activeHome->hasPanes()) {
             $this->getTabs()->add('dashboard', [
                 'active' => true,
-                'title' => $this->translate('Welcome'),
-                'url' => Url::fromRequest()
+                'title'  => t('Welcome'),
+                'url'    => Url::fromRequest()
             ]);
 
             // Setup dashboard introduction form
@@ -58,11 +56,8 @@ class DashboardsController extends CompatController
             $this->dashboard->setWelcomeForm($welcomeForm);
         } elseif (empty($activeHome->getPanes(true))) {
             // TODO(TBD): What to do when the user has only disabled dashboards? Should we render the welcome screen?
-        } else {
-            if ($this->getParam('pane')) {
-                $pane = $this->getParam('pane');
-                $this->getTabs()->activate($pane);
-            }
+        } elseif (($pane = $this->getParam('pane'))) {
+            $this->getTabs()->activate($pane);
         }
 
         $this->content = $this->dashboard;
@@ -85,11 +80,11 @@ class DashboardsController extends CompatController
         $activeHome = $this->dashboard->getActiveHome();
         if (! $activeHome || empty($activeHome->getPanes(true))) {
             $this->getTabs()->add($home, [
-                'active'    => true,
-                'title'     => $home,
-                'url'       => Url::fromRequest()
+                'active' => true,
+                'title'  => $home,
+                'url'    => Url::fromRequest()
             ]);
-        } elseif (($pane = $this->getParam('param'))) {
+        } elseif (($pane = $this->getParam('pane'))) {
             $this->dashboard->activate($pane);
         }
 
@@ -102,13 +97,14 @@ class DashboardsController extends CompatController
 
         $home = $this->params->getRequired('home');
         if (! $this->dashboard->hasHome($home)) {
-            $this->httpNotFound(sprintf($this->translate('Home "%s" not found'), $home));
+            $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
 
-        $homeForm = new HomePaneForm($this->dashboard);
-        $homeForm->on(HomePaneForm::ON_SUCCESS, function () {
-            $this->redirectNow('__CLOSE__');
-        })->handleRequest(ServerRequest::fromGlobals());
+        $homeForm = (new HomePaneForm($this->dashboard))
+            ->on(HomePaneForm::ON_SUCCESS, function () {
+                $this->redirectNow('__CLOSE__');
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
 
         $homeForm->load($this->dashboard->getActiveHome());
         $this->addContent($homeForm);
@@ -120,7 +116,7 @@ class DashboardsController extends CompatController
 
         $home = $this->params->getRequired('home');
         if (! $this->dashboard->hasHome($home)) {
-            $this->httpNotFound(sprintf($this->translate('Home "%s" not found'), $home));
+            $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
 
         $homeForm = (new RemoveHomePaneForm($this->dashboard))
@@ -140,17 +136,18 @@ class DashboardsController extends CompatController
         $home = $this->params->getRequired('home');
 
         if (! $this->dashboard->hasHome($home)) {
-            $this->httpNotFound(sprintf($this->translate('Home "%s" not found'), $home));
+            $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
 
         if (! $this->dashboard->getActiveHome()->hasPane($pane)) {
-            $this->httpNotFound(sprintf($this->translate('Pane "%s" not found'), $pane));
+            $this->httpNotFound(sprintf(t('Pane "%s" not found'), $pane));
         }
 
-        $paneForm = new HomePaneForm($this->dashboard);
-        $paneForm->on(HomePaneForm::ON_SUCCESS, function () use ($pane) {
-            $this->redirectNow('__CLOSE__');
-        })->handleRequest(ServerRequest::fromGlobals());
+        $paneForm = (new HomePaneForm($this->dashboard))
+            ->on(HomePaneForm::ON_SUCCESS, function () {
+                $this->redirectNow('__CLOSE__');
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
 
         $paneForm->load($this->dashboard->getActiveHome()->getPane($pane));
 
@@ -165,16 +162,16 @@ class DashboardsController extends CompatController
         $paneParam = $this->params->getRequired('pane');
 
         if (! $this->dashboard->hasHome($home)) {
-            $this->httpNotFound(sprintf($this->translate('Home "%s" not found'), $home));
+            $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
 
         if (! $this->dashboard->getActiveHome()->hasPane($paneParam)) {
-            $this->httpNotFound(sprintf($this->translate('Pane "%s" not found'), $paneParam));
+            $this->httpNotFound(sprintf(t('Pane "%s" not found'), $paneParam));
         }
 
         $paneForm = new RemoveHomePaneForm($this->dashboard);
         $paneForm->populate(['org_name' => $paneParam]);
-        $paneForm->on(RemoveHomePaneForm::ON_SUCCESS, function ()  {
+        $paneForm->on(RemoveHomePaneForm::ON_SUCCESS, function () {
             $this->redirectNow('__CLOSE__');
         })->handleRequest(ServerRequest::fromGlobals());
 
@@ -193,7 +190,7 @@ class DashboardsController extends CompatController
 
         $dashletForm = new DashletForm($this->dashboard);
         $dashletForm->populate($this->getRequest()->getPost());
-        $dashletForm->on(DashletForm::ON_SUCCESS, function () use ($dashletForm) {
+        $dashletForm->on(DashletForm::ON_SUCCESS, function () {
             $this->redirectNow('__CLOSE__');
         })->handleRequest(ServerRequest::fromGlobals());
 
@@ -214,10 +211,11 @@ class DashboardsController extends CompatController
         $pane = $this->validateDashletParams();
         $dashlet = $pane->getDashlet($this->getParam('dashlet'));
 
-        $dashletForm = new DashletForm($this->dashboard);
-        $dashletForm->on(DashletForm::ON_SUCCESS, function () use ($dashletForm, $pane) {
-            $this->redirectNow('__CLOSE__');
-        })->handleRequest(ServerRequest::fromGlobals());
+        $dashletForm = (new DashletForm($this->dashboard))
+            ->on(DashletForm::ON_SUCCESS, function () {
+                $this->redirectNow('__CLOSE__');
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
 
         $dashletForm->getElement('submit')->setLabel(t('Update Dashlet'));
 
@@ -231,7 +229,7 @@ class DashboardsController extends CompatController
         $this->setTitle(t('Remove Dashlet'));
 
         $removeForm = (new RemoveDashletForm($this->dashboard))
-            ->on(RemoveDashletForm::ON_SUCCESS, function ()  {
+            ->on(RemoveDashletForm::ON_SUCCESS, function () {
                 $this->redirectNow('__CLOSE__');
             })
             ->handleRequest(ServerRequest::fromGlobals());
@@ -239,45 +237,61 @@ class DashboardsController extends CompatController
         $this->addContent($removeForm);
     }
 
-    public function reorderDashletsAction()
+    /**
+     * Handles all widgets drag and drop requests
+     */
+    public function reorderWidgetsAction()
     {
         $this->assertHttpMethod('post');
         if (! $this->getRequest()->isApiRequest()) {
             $this->httpBadRequest('No API request');
         }
 
-        if (
-            ! preg_match('/([^;]*);?/', $this->getRequest()->getHeader('Content-Type'), $matches)
-            || $matches[1] !== 'application/json'
-        ) {
+        if (! preg_match('/([^;]*);?/', $this->getRequest()->getHeader('Content-Type'), $matches)
+            || $matches[1] !== 'application/json') {
             $this->httpBadRequest('No JSON content');
         }
 
         $dashboards = $this->getRequest()->getPost();
-        foreach ($dashboards as $home => $panes) {
+        $widgetType = array_pop($dashboards);
+
+        foreach ($dashboards as $key => $panes) {
+            $home = $widgetType === 'Homes' ? $panes : $key;
             if (! $this->dashboard->hasHome($home)) {
-                $this->httpNotFound(sprintf($this->translate('Dashboard home "%s" not found'), $home));
+                $this->httpNotFound(sprintf(t('Dashboard home "%s" not found'), $home));
             }
 
             $home = $this->dashboard->getHome($home);
-            $home->setActive();
-            $home->loadDashboardsFromDB();
+            if ($widgetType === 'Homes') {
+                $home->setPriority($key);
+                $this->dashboard->manageHome($home);
 
-            foreach ($panes as $pane => $dashlets) {
+                continue;
+            }
+
+            $home->setActive();
+            $home->loadPanesFromDB();
+
+            foreach ($panes as $innerKey => $value) {
+                $pane = $widgetType === 'Dashboards' ? $value : $innerKey;
                 if (! $home->hasPane($pane)) {
-                    $this->httpNotFound(sprintf($this->translate('Dashboard pane "%s" not found'), $pane));
+                    $this->httpNotFound(sprintf(t('Dashboard pane "%s" not found'), $pane));
                 }
 
                 $pane = $home->getPane($pane);
-                foreach ($dashlets as $order => $dashlet) {
-                    if (! $pane->hasDashlet($dashlet)) {
-                        $this->httpNotFound(sprintf($this->translate('Dashlet "%s" not found'), $pane));
-                    }
+                if ($widgetType === 'Dashboards') {
+                    $pane->setPriority($innerKey);
+                    $home->managePanes($pane);
+                } else {
+                    foreach ($value as $order => $dashlet) {
+                        if (! $pane->hasDashlet($dashlet)) {
+                            $this->httpNotFound(sprintf(t('Dashlet "%s" not found'), $dashlet));
+                        }
 
-                    Dashboard::getConn()->update(Dashlet::TABLE, ['priority' => $order], [
-                        'id = ?'            => $pane->getDashlet($dashlet)->getUuid(),
-                        'dashboard_id = ?'  => $pane->getUuid()
-                    ]);
+                        $dashlet = $pane->getDashlet($dashlet);
+                        $dashlet->setPriority($order);
+                        $pane->manageDashlets($dashlet);
+                    }
                 }
             }
         }
@@ -296,9 +310,9 @@ class DashboardsController extends CompatController
             // rendered in the modal view when redirecting
             $this->view->compact = true;
 
-            $this->getResponse()->setHeader('X-Icinga-Title', 'Configure Dashlets', true);
+            $this->getResponse()->setHeader('X-Icinga-Title', t('Configure Dashlets'), true);
         } else {
-            $this->setTitle($this->translate('Add Dashlet'));
+            $this->setTitle(t('Add Dashlet'));
         }
 
         $query = ModuleDashlet::on(Dashboard::getConn());
@@ -324,13 +338,13 @@ class DashboardsController extends CompatController
         $this->dashboard->activate('dashboard_settings');
 
         $this->addControl(new ActionLink(
-            $this->translate('Add new Home'),
+            t('Add new Home'),
             Url::fromPath(Dashboard::BASE_ROUTE . '/new-dashlet'),
             'plus',
             [
-                'class'                 => 'add-home',
-                'data-icinga-modal'     => true,
-                'data-no-icinga-ajax'   => true
+                'class'               => 'add-home',
+                'data-icinga-modal'   => true,
+                'data-no-icinga-ajax' => true
             ]
         ));
 
@@ -358,16 +372,16 @@ class DashboardsController extends CompatController
         $dashlet = $this->params->getRequired('dashlet');
 
         if (! $this->dashboard->hasHome($home)) {
-            $this->httpNotFound(sprintf($this->translate('Home "%s" not found'), $home));
+            $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
 
         if (! $this->dashboard->getActiveHome()->hasPane($pane)) {
-            $this->httpNotFound(sprintf($this->translate('Pane "%s" not found'), $pane));
+            $this->httpNotFound(sprintf(t('Pane "%s" not found'), $pane));
         }
 
         $pane = $this->dashboard->getActiveHome()->getPane($pane);
         if (! $pane->hasDashlet($dashlet)) {
-            $this->httpNotFound(sprintf($this->translate('Dashlet "%s" not found'), $dashlet));
+            $this->httpNotFound(sprintf(t('Dashlet "%s" not found'), $dashlet));
         }
 
         return $pane;

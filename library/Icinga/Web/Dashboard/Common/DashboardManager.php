@@ -27,9 +27,16 @@ trait DashboardManager
 
     /** @var User */
     private static $user;
-    
+
     /** @var Connection */
     private static $conn;
+
+    /**
+     * A list of default panes loaded from monitoring|icingadb module
+     *
+     * @var Pane[]
+     */
+    private static $defaultPanes = [];
 
     /**
      * A list of @see DashboardHome
@@ -38,20 +45,13 @@ trait DashboardManager
      */
     private $homes = [];
 
-    /**
-     * A list of default panes loaded from monitoring|icingadb module
-     *
-     * @var Pane[]
-     */
-    private $defaultPanes = [];
-
     public function load()
     {
         $this->loadHomesFromMenu();
         $this->loadDashboards();
 
-        $this->initAndGetDefaultHome();
-        $this->deployModuleDashlets();
+        $this->initGetDefaultHome();
+        self::deployModuleDashlets();
     }
 
     /**
@@ -106,7 +106,7 @@ trait DashboardManager
     /**
      * Load dashboards assigned to the given home or active home being loaded
      *
-     * @param string $name
+     * @param ?string $name Name of the dashboard home you want to load the dashboards for
      *
      * @return $this
      */
@@ -117,11 +117,12 @@ trait DashboardManager
         } else {
             $requestRoute = Url::fromRequest();
             if ($requestRoute->getPath() === Dashboard::BASE_ROUTE) {
-                $home = $this->initAndGetDefaultHome();
+                $home = $this->initGetDefaultHome();
             } else {
                 $homeParam = $requestRoute->getParam('home');
                 if (empty($homeParam) || ! $this->hasHome($homeParam)) {
                     if (! ($home = $this->rewindHomes())) {
+                        // No dashboard homes
                         return $this;
                     }
                 } else {
@@ -131,7 +132,7 @@ trait DashboardManager
         }
 
         $this->activateHome($home);
-        $home->loadDashboardsFromDB();
+        $home->loadPanesFromDB();
 
         return $this;
     }
@@ -163,9 +164,11 @@ trait DashboardManager
     }
 
     /**
-     * Set this home's dashboards
+     * Set this user's dashboard homes
      *
      * @param DashboardHome|DashboardHome[] $homes
+     *
+     * @return $this
      */
     public function setHomes($homes)
     {
@@ -181,7 +184,7 @@ trait DashboardManager
     /**
      * Get whether the given home exist
      *
-     * @param string  $name
+     * @param string $name
      *
      * @return bool
      */
@@ -191,7 +194,7 @@ trait DashboardManager
     }
 
     /**
-     * Add a new pane to this home
+     * Activates the given home and deactivates all other active homes
      *
      * @param DashboardHome $home
      *
@@ -210,22 +213,19 @@ trait DashboardManager
     }
 
     /**
-     * Checks if this home has any panes
+     * Get the active home currently being loaded
      *
      * @return ?DashboardHome
      */
     public function getActiveHome()
     {
-        $active = null;
         foreach ($this->getHomes() as $home) {
             if ($home->getActive()) {
-                $active = $home;
-
-                break;
+                return $home;
             }
         }
 
-        return $active;
+        return null;
     }
 
     /**
@@ -239,7 +239,7 @@ trait DashboardManager
     }
 
     /**
-     * Remove a specific pane form this home
+     * Remove the given home
      *
      * @param DashboardHome|string $home
      *
@@ -263,9 +263,9 @@ trait DashboardManager
     }
 
     /**
-     * Remove all panes from this home, unless you specified the panes
+     * Remove all|given list of dashboard homes
      *
-     * @param DashboardHome[] $homes
+     * @param DashboardHome[] $homes Optional list of dashboard homes
      *
      * @return $this
      */
@@ -280,7 +280,7 @@ trait DashboardManager
     }
 
     /**
-     * Manage the given pane(s)
+     * Manage the given home
      *
      * @param DashboardHome $home
      *
@@ -289,19 +289,23 @@ trait DashboardManager
     public function manageHome(DashboardHome $home)
     {
         $conn = self::getConn();
-
         if (! $this->hasHome($home->getName())) {
             $conn->insert(DashboardHome::TABLE, [
-                'name'      => $home->getName(),
-                'label'     => $home->getLabel(),
-                'username'  => self::getUser()->getUsername(),
-                'priority'  => $home->getPriority(),
-                'type'      => $home->getType() !== Dashboard::SYSTEM ? $home->getType() : Dashboard::PRIVATE_DS
+                'name'     => $home->getName(),
+                'label'    => $home->getLabel(),
+                'username' => self::getUser()->getUsername(),
+                'priority' => count($this->getHomes()) + 1,
+                'type'     => $home->getType() !== Dashboard::SYSTEM ? $home->getType() : Dashboard::PRIVATE_DS
             ]);
 
             $home->setUuid($conn->lastInsertId());
         } elseif ($home->getName() !== DashboardHome::DEFAULT_HOME) {
-            $conn->update(DashboardHome::TABLE, ['label' => $home->getLabel()], ['id = ?' => $home->getUuid()]);
+            $conn->update(DashboardHome::TABLE, [
+                'label'    => $home->getLabel(),
+                'priority' => $home->getPriority()
+            ], ['id = ?' => $home->getUuid()]);
+        } else {
+            $conn->update(DashboardHome::TABLE, ['priority' => $home->getPriority()], ['id = ?' => $home->getUuid()]);
         }
 
         return $this;
@@ -327,11 +331,11 @@ trait DashboardManager
     }
 
     /**
-     * Get and/or init the default dashboard home
+     * Get and|or init the default dashboard home
      *
      * @return DashboardHome
      */
-    public function initAndGetDefaultHome()
+    public function initGetDefaultHome()
     {
         if ($this->hasHome(DashboardHome::DEFAULT_HOME)) {
             return $this->getHome(DashboardHome::DEFAULT_HOME);
@@ -379,9 +383,9 @@ trait DashboardManager
      *
      * @return Pane[]
      */
-    public function getSystemDefaults()
+    public static function getSystemDefaults()
     {
-        return $this->defaultPanes;
+        return self::$defaultPanes;
     }
 
     /**
@@ -390,32 +394,39 @@ trait DashboardManager
      *
      * @return void
      */
-    public function deployModuleDashlets()
+    public static function deployModuleDashlets()
     {
         $moduleManager = Icinga::app()->getModuleManager();
         foreach ($moduleManager->getLoadedModules() as $module) {
             foreach ($module->getDashboard() as $dashboardPane) {
+                $priority = 0;
                 foreach ($dashboardPane->getDashlets() as $dashlet) {
-                    $identifier = self::getSHA1(
-                        $module->getName() . $dashboardPane->getName() . $dashlet->getName()
-                    );
-                    $dashlet->setUuid($identifier);
-                    self::updateOrInsertModuleDashlet($dashlet, $module->getName());
+                    $uuid = self::getSHA1($module->getName() . $dashboardPane->getName() . $dashlet->getName());
+                    $dashlet
+                        ->setUuid($uuid)
+                        ->setPriority($priority++)
+                        ->setModule($module->getName())
+                        ->setModuleDashlet(true);
+
+                    self::updateOrInsertModuleDashlet($dashlet);
                 }
 
                 if (in_array($module->getName(), ['monitoring', 'icingadb'], true)) {
-                    $this->defaultPanes[$dashboardPane->getName()] = $dashboardPane;
+                    self::$defaultPanes[$dashboardPane->getName()] = $dashboardPane;
                 }
             }
 
             $priority = 0;
-            foreach ($module->getDashlet() as $dashlet) {
+            foreach ($module->getDashlets() as $dashlet) {
                 $identifier = self::getSHA1($module->getName() . $dashlet->getName());
 
-                $dashlet->setUuid($identifier);
-                $dashlet->setPriority($priority++);
+                $dashlet
+                    ->setUuid($identifier)
+                    ->setPriority($priority++)
+                    ->setModule($module->getName())
+                    ->setModuleDashlet(true);
 
-                self::updateOrInsertModuleDashlet($dashlet, $module->getName());
+                self::updateOrInsertModuleDashlet($dashlet);
             }
         }
     }
@@ -439,29 +450,33 @@ trait DashboardManager
      * Insert or update the given module dashlet
      *
      * @param Dashlet $dashlet
-     * @param string  $module
+     * @param string $module
      *
      * @return void
      */
-    public static function updateOrInsertModuleDashlet(Dashlet $dashlet, $module)
+    public static function updateOrInsertModuleDashlet(Dashlet $dashlet)
     {
+        if (! $dashlet->isModuleDashlet()) {
+            return;
+        }
+
         if (! self::moduleDashletExist($dashlet)) {
             self::getConn()->insert('module_dashlet', [
-                'id'            => $dashlet->getUuid(),
-                'name'          => $dashlet->getName(),
-                'label'         => $dashlet->getTitle(),
-                'pane'          => $dashlet->getPane() ? $dashlet->getPane()->getName() : null,
-                'module'        => $module,
-                'url'           => $dashlet->getUrl()->getRelativeUrl(),
-                'description'   => $dashlet->getDescription(),
-                'priority'      => $dashlet->getPriority()
+                'id'          => $dashlet->getUuid(),
+                'name'        => $dashlet->getName(),
+                'label'       => $dashlet->getTitle(),
+                'pane'        => $dashlet->getPane() ? $dashlet->getPane()->getName() : null,
+                'module'      => $dashlet->getModule(),
+                'url'         => $dashlet->getUrl()->getRelativeUrl(),
+                'description' => $dashlet->getDescription(),
+                'priority'    => $dashlet->getPriority()
             ]);
         } else {
             self::getConn()->update('module_dashlet', [
-                'label'         => $dashlet->getTitle(),
-                'url'           => $dashlet->getUrl()->getRelativeUrl(),
-                'description'   => $dashlet->getDescription(),
-                'priority'      => $dashlet->getPriority()
+                'label'       => $dashlet->getTitle(),
+                'url'         => $dashlet->getUrl()->getRelativeUrl(),
+                'description' => $dashlet->getDescription(),
+                'priority'    => $dashlet->getPriority()
             ], ['id = ?' => $dashlet->getUuid()]);
         }
     }
@@ -481,16 +496,16 @@ trait DashboardManager
             }
 
             $dashlet->fromArray([
-                'label'         => t($moduleDashlet->label),
-                'priority'      => $moduleDashlet->priority,
-                'uuid'          => $moduleDashlet->id
+                'label'    => t($moduleDashlet->label),
+                'priority' => $moduleDashlet->priority,
+                'uuid'     => $moduleDashlet->id
             ]);
 
             if (($pane = $moduleDashlet->pane)) {
                 $dashlet->setPane(new Pane($pane));
             }
 
-            $dashlets[$moduleDashlet->module][$dashlet->getName()] =  $dashlet;
+            $dashlets[$moduleDashlet->module][$dashlet->getName()] = $dashlet;
         }
 
         return $dashlets;

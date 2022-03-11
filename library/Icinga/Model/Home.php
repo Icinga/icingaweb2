@@ -46,7 +46,7 @@ class Home extends Model
 
     public function getDefaultSort()
     {
-        return 'dashboard_home.name';
+        return 'name';
     }
 
     public function createRelations(Relations $relations)

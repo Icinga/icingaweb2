@@ -13,7 +13,7 @@ use ipl\Web\Widget\ActionLink;
 
 class Settings extends BaseHtmlElement
 {
-    protected $defaultAttributes = ['class' => ['dashboard-settings content']];
+    protected $defaultAttributes = ['class' => 'content dashboard-settings'];
 
     protected $tag = 'div';
 
@@ -27,7 +27,7 @@ class Settings extends BaseHtmlElement
 
     protected function assemble()
     {
-        // TODO: What we should with disabled homes??
+        // TODO: What we should do with disabled homes??
         $activeHome = $this->dashboard->getActiveHome();
 
         if (empty($this->dashboard->getHomes())) {
@@ -44,13 +44,13 @@ class Settings extends BaseHtmlElement
                 Url::fromPath(Dashboard::BASE_ROUTE . '/new-dashlet'),
                 'plus',
                 [
-                    'class'                 => 'add-dashboard',
-                    'data-icinga-modal'     => true,
-                    'data-no-icinga-ajax'   => true
+                    'class'               => 'add-dashboard',
+                    'data-icinga-modal'   => true,
+                    'data-no-icinga-ajax' => true
                 ]
             ));
         } else {
-            // Make a list of dashbaord homes
+            // Make a list of dashboard homes
             foreach ($this->dashboard->getHomes() as $home) {
                 $this->addHtml(new DashboardHomeList($home));
             }

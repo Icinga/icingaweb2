@@ -9,7 +9,7 @@ interface OverridingWidget
     /**
      * Set whether this widget overrides another widget
      *
-     * @param  bool $override
+     * @param bool $override
      *
      * @return $this
      */

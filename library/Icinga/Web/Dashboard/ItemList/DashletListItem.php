@@ -1,5 +1,7 @@
 <?php
 
+/* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
+
 namespace Icinga\Web\Dashboard\ItemList;
 
 use Icinga\Web\Dashboard\Dashboard;
@@ -11,19 +13,34 @@ use ipl\Web\Widget\Link;
 
 class DashletListItem extends BaseHtmlElement
 {
-    protected $defaultAttributes = ['class' => 'dashlet-list-item'];
+    protected $defaultAttributes = ['class' => 'dashlet-list-item',];
 
     protected $tag = 'li';
 
     /** @var Dashlet */
     protected $dashlet;
 
+    /** @var bool Whether to render an edit button for the dashlet */
     protected $renderEditButton;
 
     public function __construct(Dashlet $dashlet = null, $renderEditButton = false)
     {
         $this->dashlet = $dashlet;
         $this->renderEditButton = $renderEditButton;
+
+        if ($this->dashlet) {
+            $this->getAttributes()
+                ->set('draggable', 'true')
+                ->add('class', 'widget-sortable');
+
+            $this->getAttributes()
+                ->registerAttributeCallback('data-icinga-dashlet', function () {
+                    return $this->dashlet->getName();
+                })
+                ->registerAttributeCallback('id', function () {
+                    return 'dashlet_' . $this->dashlet->getPriority();
+                });
+        }
     }
 
     /**
@@ -53,9 +70,9 @@ class DashletListItem extends BaseHtmlElement
                 $pane = $this->dashlet->getPane();
                 $url = Url::fromPath(Dashboard::BASE_ROUTE . '/edit-dashlet');
                 $url->setParams([
-                    'home'      => $pane->getHome()->getName(),
-                    'pane'      => $pane->getName(),
-                    'dashlet'   => $this->dashlet->getName()
+                    'home'    => $pane->getHome()->getName(),
+                    'pane'    => $pane->getName(),
+                    'dashlet' => $this->dashlet->getName()
                 ]);
 
                 $title->addHtml(new Link(t('Edit'), $url, [

@@ -1,5 +1,7 @@
 <?php
 
+/* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
+
 namespace Icinga\Web\Navigation;
 
 use Icinga\Exception\ProgrammingError;
@@ -52,7 +54,7 @@ class DashboardHome extends NavigationItem
     /**
      * Init this dashboard home
      *
-     * Don't set the url of this dashboard home if it's the default one or is disabled
+     * Doesn't set the url of this dashboard home if it's the default one or is disabled
      * to prevent from being rendered as dropdown in the navigation bar
      *
      * @return void
@@ -61,7 +63,7 @@ class DashboardHome extends NavigationItem
     {
         if ($this->getName() !== self::DEFAULT_HOME && ! $this->isDisabled()) {
             $this->setUrl(Url::fromPath(Dashboard::BASE_ROUTE . '/home', [
-                'home'  => $this->getName()
+                'home' => $this->getName()
             ]));
         }
     }
@@ -283,7 +285,10 @@ class DashboardHome extends NavigationItem
         if (! $pane->isOverriding()) {
             $pane->removeDashlets();
 
-            Dashboard::getConn()->delete(Pane::TABLE, ['id = ?' => $this->getUuid()]);
+            Dashboard::getConn()->delete(Pane::TABLE, [
+                'id = ?'      => $pane->getUuid(),
+                'home_id = ?' => $this->getUuid()
+            ]);
         }
 
         return $this;
@@ -311,7 +316,7 @@ class DashboardHome extends NavigationItem
      *
      * @return $this
      */
-    public function loadDashboardsFromDB()
+    public function loadPanesFromDB()
     {
         // Skip when this home is either disabled or inactive
         if (! $this->getActive() || $this->isDisabled()) {
@@ -328,10 +333,10 @@ class DashboardHome extends NavigationItem
             $newPane = new Pane($pane->name);
             //$newPane->disable($pane->disable);
             $newPane->fromArray([
-                'uuid'      => $pane->id,
-                'title'     => t($pane->label),
-                'priority'  => $pane->priority,
-                'home'      => $this
+                'uuid'     => $pane->id,
+                'title'    => $pane->label,
+                'priority' => $pane->priority,
+                'home'     => $this
             ]);
 
             $newPane->loadDashletsFromDB();
@@ -345,15 +350,16 @@ class DashboardHome extends NavigationItem
     /**
      * Manage the given pane(s)
      *
-     * If you want to move the pane(s) from another to this pane,
-     * you have to also pass the origin home with
+     * If you want to move the pane(s) from another to this home,
+     * you have to also pass through the origin home with
      *
-     * @param Pane|Pane[]        $panes
-     * @param DashboardHome|null $origin
+     * @param Pane|Pane[] $panes
+     * @param ?DashboardHome $origin
+     * @param bool $mngPaneDashlets
      *
      * @return $this
      */
-    public function managePanes($panes, DashboardHome $origin = null)
+    public function managePanes($panes, DashboardHome $origin = null, $mngPaneDashlets = false)
     {
         $user = Dashboard::getUser();
         $conn = Dashboard::getConn();
@@ -366,30 +372,41 @@ class DashboardHome extends NavigationItem
             if (! $pane->isOverriding()) {
                 if (! $this->hasPane($pane->getName()) && (! $origin || ! $origin->hasPane($pane->getName()))) {
                     $conn->insert(Pane::TABLE, [
-                        'id'        => $uuid,
-                        'home_id'   => $this->getUuid(),
-                        'name'      => $pane->getName(),
-                        'label'     => $pane->getTitle(),
-                        'username'  => $user->getUsername(),
-                        'priority'  => $order++
+                        'id'       => $uuid,
+                        'home_id'  => $this->getUuid(),
+                        'name'     => $pane->getName(),
+                        'label'    => $pane->getTitle(),
+                        'username' => $user->getUsername(),
+                        'priority' => $order++
+                    ]);
+                } elseif (! $this->hasPane($pane->getName()) || ! $origin || ! $origin->hasPane($pane->getName())) {
+                    $conn->update(Pane::TABLE, [
+                        'id'       => $uuid,
+                        'home_id'  => $this->getUuid(),
+                        'label'    => $pane->getTitle(),
+                        'priority' => $pane->getPriority()
+                    ], [
+                        'id = ?'      => $pane->getUuid(),
+                        'home_id = ?' => $this->getUuid()
                     ]);
                 } else {
-                    $conn->update(Pane::TABLE, [
-                        'id'        => $uuid,
-                        'home_id'   => $this->getUuid(),
-                        'label'     => $pane->getTitle(),
-                        'priority'  => $pane->getPriority()
-                    ], ['id = ?' => $pane->getUuid()]);
+                    // Failed to move the pane! Should have been handled already by the caller
+                    break;
                 }
 
-                // We may want to update some dashlets later, so we need to set the uuid
-                // here too in case the pane might be moved from another home
                 $pane->setUuid($uuid);
             } else {
                 // TODO(TBD)
             }
 
             $pane->setHome($this);
+            if ($mngPaneDashlets) {
+                // Those dashboard panes are usually system defaults and go up when
+                // the user is clicking on the "Use System Defaults" button
+                $dashlets = $pane->getDashlets();
+                $pane->setDashlets([]);
+                $pane->manageDashlets($dashlets);
+            }
         }
 
         return $this;

@@ -27,7 +27,7 @@ class DashboardOverride extends Model
             'username',
             'disabled',
             'priority',
-            'acceptance' => new Expression('COALESCE(COUNT(dashboard_subscribable_dashboard_dashboard_override.dashboard_id), 0)')
+            'acceptance' => new Expression('0')
         ];
     }
 
