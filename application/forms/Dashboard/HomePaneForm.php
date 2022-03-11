@@ -53,11 +53,11 @@ class HomePaneForm extends CompatForm
 
             $homes = $this->dashboard->getHomeKeyTitleArr();
             $this->addElement('checkbox', 'create_new_home', [
-                'required'      => false,
-                'class'         => 'autosubmit',
-                'disabled'      => empty($homes) ?: null,
-                'label'         => t('New Dashboard Home'),
-                'description'   => t('Check this box if you want to move the pane to a new dashboard home.'),
+                'required'    => false,
+                'class'       => 'autosubmit',
+                'disabled'    => empty($homes) ?: null,
+                'label'       => t('New Dashboard Home'),
+                'description' => t('Check this box if you want to move the pane to a new dashboard home.'),
             ]);
 
             $activeHome = $this->dashboard->getActiveHome();
@@ -67,26 +67,26 @@ class HomePaneForm extends CompatForm
                 $this->getElement('create_new_home')->addAttributes(['checked' => 'checked']);
 
                 $this->addElement('text', 'home', [
-                    'required'      => true,
-                    'label'         => t('Dashboard Home'),
-                    'description'   => t('Enter a title for the new dashboard home.'),
+                    'required'    => true,
+                    'label'       => t('Dashboard Home'),
+                    'description' => t('Enter a title for the new dashboard home.'),
                 ]);
             } else {
                 $this->addElement('select', 'home', [
-                    'required'      => true,
-                    'class'         => 'autosubmit',
-                    'value'         => $populatedHome,
-                    'multiOptions'  => $homes,
-                    'label'         => t('Move to Home'),
-                    'description'   => t('Select a dashboard home you want to move the dashboard to.'),
+                    'required'     => true,
+                    'class'        => 'autosubmit',
+                    'value'        => $populatedHome,
+                    'multiOptions' => $homes,
+                    'label'        => t('Move to Home'),
+                    'description'  => t('Select a dashboard home you want to move the dashboard to.'),
                 ]);
             }
         }
 
         $this->addElement('text', 'title', [
-            'required'      => true,
-            'label'         => t('Title'),
-            'description'   => $titleDesc
+            'required'    => true,
+            'label'       => t('Title'),
+            'description' => $titleDesc
         ]);
 
         $this->addElement('submit', 'btn_update', ['label' => $buttonLabel]);
@@ -104,7 +104,7 @@ class HomePaneForm extends CompatForm
                 $activeHome = $this->dashboard->getActiveHome();
                 if ($currentHome->getName() !== $activeHome->getName()) {
                     $currentHome->setActive();
-                    $currentHome->loadDashboardsFromDB();
+                    $currentHome->loadPanesFromDB();
                 }
             }
 

@@ -50,12 +50,11 @@ CREATE TABLE `dashlet` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE `dashlet_system` (
+    `id`                int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `dashlet_id`        binary(20) NOT NULL,
     `module_dashlet_id` binary(20) NOT NULL,
-    `username`          varchar(254) NOT NULL COLLATE utf8mb4_unicode_ci,
-    PRIMARY KEY (`username`, `dashlet_id`, `module_dashlet_id`),
     CONSTRAINT `fk_dashlet_system_dashlet` FOREIGN KEY (`dashlet_id`) REFERENCES `dashlet` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_dashlet_system_module_dashlet` FOREIGN KEY (`dashlet_id`) REFERENCES `dashlet` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT `fk_dashlet_system_module_dashlet` FOREIGN KEY (`module_dashlet_id`) REFERENCES `module_dashlet` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE `module_dashlet` (
@@ -65,7 +64,7 @@ CREATE TABLE `module_dashlet` (
     `module`        varchar(64) NOT NULL COLLATE utf8mb4_unicode_ci,
     `pane`          varchar(64) DEFAULT NULL COLLATE utf8mb4_unicode_ci,
     `url`           varchar(2048) NOT NULL COLLATE utf8mb4_bin,
-    `description`   varchar(64) DEFAULT NULL COLLATE utf8mb4_unicode_ci,
+    `description`   text DEFAULT NULL COLLATE utf8mb4_unicode_ci,
     `priority`      int(10) DEFAULT 0,
     PRIMARY KEY (`id`),
     INDEX `idx_module_dashlet_name` (`name`),

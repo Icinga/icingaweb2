@@ -31,10 +31,10 @@ class WelcomeForm extends CompatForm
         $this->registerElement($element)->decorate($element);
 
         $this->addElement('submit', 'btn_customize_dashlets', [
-            'label'                 => t('Add Dashlets Now'),
-            'href'                  => Url::fromPath(Dashboard::BASE_ROUTE . '/setup-dashboard'),
-            'data-icinga-modal'     => true,
-            'data-no-icinga-ajax'   => true
+            'label'               => t('Add Dashlets Now'),
+            'href'                => Url::fromPath(Dashboard::BASE_ROUTE . '/setup-dashboard'),
+            'data-icinga-modal'   => true,
+            'data-no-icinga-ajax' => true
         ]);
 
         $this->getElement('btn_customize_dashlets')->setWrapper($element->getWrapper());
@@ -43,15 +43,17 @@ class WelcomeForm extends CompatForm
     protected function onSuccess()
     {
         if ($this->getPopulatedValue('btn_use_defaults')) {
-            $order = 0;
             $home = $this->dashboard->getHome(DashboardHome::DEFAULT_HOME);
-            foreach ($this->dashboard->getSystemDefaults() as $pane) {
-                $pane->setPriority($order++);
-                $home->managePanes($pane);
+            $conn = Dashboard::getConn();
+            $conn->beginTransaction();
 
-                $dashlets = $pane->getDashlets();
-                $pane->setDashlets([]);
-                $pane->manageDashlets($dashlets);
+            try {
+                $home->managePanes($this->dashboard->getSystemDefaults(), null, true);
+
+                $conn->commitTransaction();
+            } catch (\Exception $err) {
+                $conn->rollBackTransaction();
+                throw $err;
             }
         }
     }

@@ -4,6 +4,7 @@
 
 namespace Icinga\Forms\Dashboard;
 
+use Exception;
 use Icinga\Application\Logger;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Navigation\DashboardHome;
@@ -64,47 +65,49 @@ class DashletForm extends CompatForm
             $panes = $this->dashboard->getActiveHome()->getPaneKeyTitleArr();
         }
 
-        $this->addElement('hidden', 'org_pane', ['required'     => false]);
-        $this->addElement('hidden', 'org_home', ['required'     => false]);
-        $this->addElement('hidden', 'org_dashlet', ['required'  => false]);
+        $this->addElement('hidden', 'org_pane', ['required' => false]);
+        $this->addElement('hidden', 'org_home', ['required' => false]);
+        $this->addElement('hidden', 'org_dashlet', ['required' => false]);
 
         $this->addElement('checkbox', 'create_new_home', [
-            'class'         => 'autosubmit',
-            'required'      => false,
-            'disabled'      => empty($homes) ?: null,
-            'label'         => t('New Dashboard Home'),
-            'description'   => t('Check this box if you want to add the dashboard to a new dashboard home.'),
+            'class'       => 'autosubmit',
+            'required'    => false,
+            'disabled'    => empty($homes) ?: null,
+            'label'       => t('New Dashboard Home'),
+            'description' => t('Check this box if you want to add the dashboard to a new dashboard home.'),
         ]);
 
         if (empty($homes) || $this->getPopulatedValue('create_new_home') === 'y') {
             // $el->attrs->set() has no effect here anymore, so we need to register a proper callback
             $this->getElement('create_new_home')
                 ->getAttributes()
-                ->registerAttributeCallback('checked', function () { return true; });
+                ->registerAttributeCallback('checked', function () {
+                    return true;
+                });
 
             $this->addElement('text', 'home', [
-                'required'      => true,
-                'label'         => t('Dashboard Home'),
-                'description'   => t('Enter a title for the new dashboard home.')
+                'required'    => true,
+                'label'       => t('Dashboard Home'),
+                'description' => t('Enter a title for the new dashboard home.')
             ]);
         } else {
             $this->addElement('select', 'home', [
-                'required'      => true,
-                'class'         => 'autosubmit',
-                'value'         => $currentHome,
-                'multiOptions'  => $homes,
-                'label'         => t('Dashboard Home'),
-                'descriptions'  => t('Select a home you want to add the dashboard pane to.')
+                'required'     => true,
+                'class'        => 'autosubmit',
+                'value'        => $currentHome,
+                'multiOptions' => $homes,
+                'label'        => t('Dashboard Home'),
+                'descriptions' => t('Select a home you want to add the dashboard pane to.')
             ]);
         }
 
         $disable = empty($panes) || $this->getPopulatedValue('create_new_home') === 'y';
         $this->addElement('checkbox', 'create_new_pane', [
-            'required'      => false,
-            'class'         => 'autosubmit',
-            'disabled'      => $disable ?: null,
-            'label'         => t('New Dashboard'),
-            'description'   => t('Check this box if you want to add the dashlet to a new dashboard.'),
+            'required'    => false,
+            'class'       => 'autosubmit',
+            'disabled'    => $disable ?: null,
+            'label'       => t('New Dashboard'),
+            'description' => t('Check this box if you want to add the dashlet to a new dashboard.'),
         ]);
 
         // Pane element's values are depending on the home element's value
@@ -116,37 +119,39 @@ class DashletForm extends CompatForm
             // $el->attrs->set() has no effect here anymore, so we need to register a proper callback
             $this->getElement('create_new_pane')
                 ->getAttributes()
-                ->registerAttributeCallback('checked', function () { return true; });
+                ->registerAttributeCallback('checked', function () {
+                    return true;
+                });
 
             $this->addElement('text', 'pane', [
-                'required'      => true,
-                'label'         => t('New Dashboard Title'),
-                'description'   => t('Enter a title for the new dashboard.'),
+                'required'    => true,
+                'label'       => t('New Dashboard Title'),
+                'description' => t('Enter a title for the new dashboard.'),
             ]);
         } else {
             $this->addElement('select', 'pane', [
-                'required'      => true,
-                'value'         => reset($panes),
-                'multiOptions'  => $panes,
-                'label'         => t('Dashboard'),
-                'description'   => t('Select a dashboard you want to add the dashlet to.'),
+                'required'     => true,
+                'value'        => reset($panes),
+                'multiOptions' => $panes,
+                'label'        => t('Dashboard'),
+                'description'  => t('Select a dashboard you want to add the dashlet to.'),
             ]);
         }
 
         $this->addHtml(new HtmlElement('hr'));
 
         $this->addElement('textarea', 'url', [
-            'required'      => true,
-            'label'         => t('Url'),
-            'description'   => t(
+            'required'    => true,
+            'label'       => t('Url'),
+            'description' => t(
                 'Enter url to be loaded in the dashlet. You can paste the full URL, including filters.'
             ),
         ]);
 
         $this->addElement('text', 'dashlet', [
-            'required'      => true,
-            'label'         => t('Dashlet Title'),
-            'description'   => t('Enter a title for the dashlet.'),
+            'required'    => true,
+            'label'       => t('Dashlet Title'),
+            'description' => t('Enter a title for the dashlet.'),
         ]);
 
         $url = (string) Url::fromPath(Dashboard::BASE_ROUTE . '/browse');
@@ -156,9 +161,9 @@ class DashletForm extends CompatForm
 
         // We might need this later to allow the user to browse dashlets when creating a dashlet
         $this->addElement('submit', 'btn_browse', [
-            'label'         => t('Browse Dashlets'),
-            'href'          => $url,
-            'formaction'    => $url,
+            'label'      => t('Browse Dashlets'),
+            'href'       => $url,
+            'formaction' => $url,
         ]);
 
         $this->getElement('btn_browse')->setWrapper($element->getWrapper());
@@ -173,12 +178,12 @@ class DashletForm extends CompatForm
     {
         $home = Url::fromRequest()->getParam('home');
         $this->populate(array(
-            'org_home'      => $home,
-            'org_pane'      => $dashlet->getPane()->getName(),
-            'pane'          => $dashlet->getPane()->getTitle(),
-            'org_dashlet'   => $dashlet->getName(),
-            'dashlet'       => $dashlet->getTitle(),
-            'url'           => $dashlet->getUrl()->getRelativeUrl()
+            'org_home'    => $home,
+            'org_pane'    => $dashlet->getPane()->getName(),
+            'pane'        => $dashlet->getPane()->getTitle(),
+            'org_dashlet' => $dashlet->getName(),
+            'dashlet'     => $dashlet->getTitle(),
+            'url'         => $dashlet->getUrl()->getRelativeUrl()
         ));
     }
 
@@ -193,7 +198,7 @@ class DashletForm extends CompatForm
                 $home = $dashboard->getHome($home->getName());
                 if ($home->getName() !== $dashboard->getActiveHome()->getName()) {
                     $home->setActive();
-                    $home->loadDashboardsFromDB();
+                    $home->loadPanesFromDB();
                 }
             }
 
@@ -221,7 +226,7 @@ class DashletForm extends CompatForm
                 $pane->manageDashlets($dashlet);
 
                 $conn->commitTransaction();
-            } catch (\Exception $err) { // This error handling is just for debugging purpose! Will be removed!
+            } catch (Exception $err) { // This error handling is just for debugging purpose! Will be removed!
                 Logger::error($err);
                 $conn->rollBackTransaction();
 
@@ -240,7 +245,7 @@ class DashletForm extends CompatForm
                 $activeHome = $dashboard->getActiveHome();
                 if ($currentHome->getName() !== $activeHome->getName()) {
                     $currentHome->setActive();
-                    $currentHome->loadDashboardsFromDB();
+                    $currentHome->loadPanesFromDB();
                 }
             }
 
@@ -257,10 +262,8 @@ class DashletForm extends CompatForm
                 ->setUrl($this->getValue('url'))
                 ->setTitle($this->getValue('dashlet'));
 
-            if (
-                $orgPane->getName() !== $currentPane->getName()
-                && $currentPane->hasDashlet($currentDashlet->getName())
-            ) {
+            if ($orgPane->getName() !== $currentPane->getName()
+                && $currentPane->hasDashlet($currentDashlet->getName())) {
                 Notification::error(sprintf(
                     t('Failed to move dashlet "%s": Dashlet already exists within the "%s" dashboard pane'),
                     $currentDashlet->getTitle(),
@@ -292,7 +295,7 @@ class DashletForm extends CompatForm
                 $currentPane->manageDashlets($currentDashlet, $orgPane);
 
                 $conn->commitTransaction();
-            } catch (\Exception $err) {
+            } catch (Exception $err) {
                 Logger::error($err);
                 $conn->rollBackTransaction();
 

@@ -34,11 +34,11 @@ class Dashlet extends Model
     public function getMetaData()
     {
         return [
-            'dashboard_id'  => t('Dashboard Id'),
-            'name'          => t('Dashlet Name'),
-            'label'         => t('Dashlet Title'),
-            'url'           => t('Dashlet Url'),
-            'priority'      => t('Dashlet Order Priority')
+            'dashboard_id' => t('Dashboard Id'),
+            'name'         => t('Dashlet Name'),
+            'label'        => t('Dashlet Title'),
+            'url'          => t('Dashlet Url'),
+            'priority'     => t('Dashlet Order Priority')
         ];
     }
 
@@ -56,5 +56,9 @@ class Dashlet extends Model
     {
         $relations->belongsTo('dashboard', Pane::class);
         //$relations->belongsTo('home', Home::class);
+
+        $relations->belongsToMany('module_dashlet', ModuleDashlet::class)
+            ->through(SystemDashlet::class)
+            ->setJoinType('LEFT');
     }
 }

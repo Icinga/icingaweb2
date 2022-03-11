@@ -33,7 +33,7 @@ class Dashlet extends BaseHtmlElement
     protected $tag = 'div';
 
     protected $defaultAttributes = [
-        'class'     => 'container dashlet-sortable',
+        'class'     => 'container widget-sortable',
         'draggable' => 'true'
     ];
 
@@ -88,9 +88,9 @@ class Dashlet extends BaseHtmlElement
     /**
      * Create a new dashlet displaying the given url in the provided pane
      *
-     * @param string $title     The title to use for this dashlet
-     * @param Url|string $url   The url this dashlet uses for displaying information
-     * @param Pane|null $pane   The pane this Dashlet will be added to
+     * @param string $title The title to use for this dashlet
+     * @param Url|string $url The url this dashlet uses for displaying information
+     * @param Pane|null $pane The pane this Dashlet will be added to
      */
     public function __construct($title, $url, Pane $pane = null)
     {
@@ -193,7 +193,7 @@ class Dashlet extends BaseHtmlElement
     /**
      * Set the dashlets URL
      *
-     * @param  string|Url $url  The url to use, either as an Url object or as a path
+     * @param string|Url $url The url to use, either as an Url object or as a path
      *
      * @return $this
      */
@@ -207,7 +207,7 @@ class Dashlet extends BaseHtmlElement
     /**
      * Set the progress label to use
      *
-     * @param   string  $label
+     * @param string $label
      *
      * @return  $this
      */
@@ -245,7 +245,7 @@ class Dashlet extends BaseHtmlElement
     /**
      * Set the dashlet's description
      *
-     * @param   string  $description
+     * @param string $description
      *
      * @return  $this
      */
@@ -300,9 +300,9 @@ class Dashlet extends BaseHtmlElement
                 t($this->getTitle()),
                 $url->getUrlWithout(['showCompact', 'limit'])->getRelativeUrl(),
                 [
-                    'aria-label'        => t($this->getTitle()),
-                    'title'             => t($this->getTitle()),
-                    'data-base-target'  => 'col1'
+                    'aria-label'       => t($this->getTitle()),
+                    'title'            => t($this->getTitle()),
+                    'data-base-target' => 'col1'
                 ]
             )));
 
@@ -322,13 +322,13 @@ class Dashlet extends BaseHtmlElement
     public function toArray()
     {
         return [
-            'id'        => $this->getUuid(),
-            'pane'      => $this->getPane() ? $this->getPane()->getName() : null,
-            'name'      => $this->getName(),
-            'url'       => $this->getUrl()->getRelativeUrl(),
-            'label'     => $this->getTitle(),
-            'order'     => $this->getPriority(),
-            'disabled'  => (int) $this->isDisabled(),
+            'id'       => $this->getUuid(),
+            'pane'     => $this->getPane() ? $this->getPane()->getName() : null,
+            'name'     => $this->getName(),
+            'url'      => $this->getUrl()->getRelativeUrl(),
+            'label'    => $this->getTitle(),
+            'order'    => $this->getPriority(),
+            'disabled' => (int) $this->isDisabled(),
         ];
     }
 }

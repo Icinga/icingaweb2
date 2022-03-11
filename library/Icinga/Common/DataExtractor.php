@@ -16,7 +16,7 @@ trait DataExtractor
     public function fromArray(array $data)
     {
         foreach ($data as $name => $value) {
-            $func = 'set'. ucfirst($name);
+            $func = 'set' . ucfirst($name);
             if (method_exists($this, $func)) {
                 $this->$func($value);
             }

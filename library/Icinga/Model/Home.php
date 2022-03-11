@@ -33,9 +33,9 @@ class Home extends Model
     public function getMetaData()
     {
         return [
-            'name'      => t('Dashboard Home Name'),
-            'label'     => t('Dashboard Home Title'),
-            //'priority'  => t('Dashboard Order Priority')
+            'name'     => t('Dashboard Home Name'),
+            'label'    => t('Dashboard Home Title'),
+            'priority' => t('Dashboard Order Priority')
         ];
     }
 
@@ -46,7 +46,7 @@ class Home extends Model
 
     public function getDefaultSort()
     {
-        return 'dashboard_home.name';
+        return 'name';
     }
 
     public function createRelations(Relations $relations)

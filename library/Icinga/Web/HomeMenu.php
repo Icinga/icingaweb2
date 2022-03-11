@@ -29,10 +29,10 @@ class HomeMenu extends Menu
 
         foreach ($homes as $home) {
             $dashboardHome = new DashboardHome($home->name, [
-                'uuid'      => $home->id,
-                'label'     => t($home->label),
-                'priority'  => $home->priority,
-                'type'      => $home->type,
+                'uuid'     => $home->id,
+                'label'    => t($home->label),
+                'priority' => $home->priority,
+                'type'     => $home->type,
             ]);
 
             $dashboardItem->addChild($dashboardHome);

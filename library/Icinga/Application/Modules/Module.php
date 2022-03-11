@@ -375,9 +375,13 @@ class Module
      *
      * @return Dashboard\Dashlet[]
      */
-    public function getDashlet()
+    public function getDashlets()
     {
         $this->launchConfigScript();
+        uasort($this->dashletItems, function (Dashboard\Dashlet $x, Dashboard\Dashlet $y) {
+            return $x->getPriority() - $y->getPriority();
+        });
+
         return $this->dashletItems;
     }
 
