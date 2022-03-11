@@ -4,13 +4,29 @@
 namespace Icinga\Web\Widget\Tabextension;
 
 use Icinga\Web\Url;
+use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Widget\Tabs;
+use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 
 /**
  * Dashboard settings
  */
 class DashboardSettings implements Tabextension
 {
+    /** @var array|null url params to be attached to the dropdown menus. */
+    private $urlParam;
+
+    /**
+     * DashboardSettings constructor.
+     *
+     * @param array $urlParam
+     */
+    public function __construct(array $urlParam = [])
+    {
+        $this->urlParam = $urlParam;
+    }
+
     /**
      * Apply this tabextension to the provided tabs
      *
@@ -18,22 +34,15 @@ class DashboardSettings implements Tabextension
      */
     public function apply(Tabs $tabs)
     {
-        $tabs->addAsDropdown(
-            'dashboard_add',
-            array(
-                'icon'      => 'dashboard',
-                'label'     => t('Add Dashlet'),
-                'url'       => Url::fromPath('dashboard/new-dashlet')
-            )
-        );
-
-        $tabs->addAsDropdown(
+        $url = Url::fromPath(Dashboard::BASE_ROUTE . '/settings');
+        $url =  empty($this->urlParam) ? $url : $url->addParams($this->urlParam);
+        $tabs->add(
             'dashboard_settings',
-            array(
-                'icon'      => 'dashboard',
-                'label'     => t('Settings'),
-                'url'       => Url::fromPath('dashboard/settings')
-            )
+            [
+               'icon'       => 'service',
+                'url'       => (string) $url,
+                'priority'  => -100
+            ]
         );
     }
 }
