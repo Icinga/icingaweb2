@@ -1,0 +1,295 @@
+.welcome-view {
+  position: relative;
+}
+
+.dashboard-introduction {
+  top: 40%;
+  right: 50%;
+  position: absolute;
+  transform: translate(50%,-50%);
+  color: @text-color;
+
+  h1, p {
+    color: inherit;
+    text-align: center;
+  }
+
+  h1 {
+    border-bottom: none;
+  }
+
+  p {
+    opacity: .9;
+    width: 58em;
+    font-size: 1.1em;
+    line-height: 1.5em;
+  }
+
+  // Welcome page form controls
+  form.icinga-form .form-controls {
+    margin-left: 13em;
+    margin-top: 1.8em;
+    justify-content: center;
+  }
+}
+
+// Collapse/Expand icons wrapper
+.dashboard-list-info, .dashlets-list-info {
+  float: left;
+  width: 1.5%;
+  height: 6%;
+  cursor: pointer;
+
+  .collapse-icon, .expand-icon {
+    top: 0;
+    position: absolute;
+
+    &:before {
+      font-size: 2em;
+    }
+  }
+
+  .collapse-icon {
+    display: block;
+  }
+
+  .expand-icon {
+    display: none;
+  }
+}
+
+.collapsed .dashboard-list-info, .collapsed .dashlets-list-info {
+  .collapse-icon {
+    display: none;
+  }
+
+  .expand-icon {
+    display: block;
+  }
+}
+
+// All the dashboard item lists
+.home-item-list, .dashboard-item-list, .dashlet-item-list {
+  padding: 0;
+  margin-left: 0;
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  list-style-type: none;
+
+  label {
+    width: 49%;
+    margin: 0 6px 6px 0;
+  }
+
+  .dashlet-list-item {
+    display: flex;
+    flex-direction: column;
+    border-radius: .4em;
+    border: 1px solid @gray-light;
+    background: @gray-lightest;
+
+    section.caption, h1 {
+      margin-left: .5em;
+      font-weight: 500;
+    }
+
+    h1 {
+      border-bottom: none;
+    }
+
+    .caption {
+      height: auto;
+      min-height: 3em;;
+      font-size: 1.2em;
+      color: @text-color-light;
+    }
+  }
+
+  .dashlet-list-item:hover {
+    background-color: @tr-hover-color;
+    cursor: pointer;
+  }
+
+  // Simulate a multiselect based on the checkbox state
+  input[type="checkbox"]:checked + li {
+    outline-offset: -2px;
+    outline: 2px solid @icinga-blue;
+    background-color: @tr-active-color;
+  }
+}
+
+.dashlet-item-list.empty-list {
+  margin: 0 0 .9em;
+}
+
+// Dashboard manager
+.dashboard-settings {
+  display: flex;
+  flex-direction: column;
+  margin-top: .6em;
+  border-top: 1px solid @gray-light;
+}
+
+// Add new home button of the dashboard manager
+.controls .add-home {
+  float: right;
+  outline: none;
+  cursor: pointer;
+  font-size: 1.2em;
+  font-weight: 500;
+  padding: .5em 1em;
+  line-height: normal;
+  text-decoration: none;
+  border: 2px solid @icinga-blue;
+  border-radius: 3px;
+  color: @text-color-on-icinga-blue;
+  background-color: @icinga-blue;
+}
+
+.collapsed .action-link.add-dashlet, .collapsed .action-link.add-dashboard {
+  display: none;
+}
+
+.action-link.add-dashboard {
+  width: 82.6%;
+  margin-top: 1em;
+}
+
+.action-link.add-dashlet, .action-link.add-dashboard {
+  order: 1;
+  font-size: 1.2em;
+  font-weight: 500;
+  padding: .9em 1em;
+  border-radius: .5em;
+  text-decoration: none;
+  background-color: @low-sat-blue;
+}
+
+.dashboard-item-list {
+  width: 100%;
+  display: flex;
+  margin-left: 2.2em;
+
+  .dashlet-list-item {
+    width: 49.4%;
+    margin: 0 6px 6px 0;
+    background: transparent;
+  }
+}
+
+.dashboard-list-control {
+  width: 80%;
+
+  h1.collapsible-header {
+    margin-left: 1.5em;
+  }
+
+  .action-link.add-dashlet {
+    width: 98.8%; // Dashlet list item 49.4% x 2
+    margin-left: 1.8em;
+  }
+}
+
+.home-list-control, .dashboard-list-control {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+
+  h1.collapsible-header {
+    border-bottom: none;
+  }
+
+  h1.collapsible-header a, h1.dashlet-header a {
+    margin-left: .3em;
+    color: @icinga-blue;
+  }
+
+  .dashlets-list-info, .dashboard-list-info {
+    .expand-icon {
+      margin-top: .9em;
+    }
+
+    .collapse-icon {
+      margin-top: .6em;
+    }
+  }
+}
+
+.home-list-control {
+  width: 100%;
+
+  h1.collapsible-header.home {
+    margin-left: 1.5em;
+    margin-bottom: 0;
+  }
+
+  .action-link.add-dashboard {
+    margin-left: .4em;
+  }
+
+  .dashboard-list-control {
+    .dashboard-item-list {
+      margin-left: 4em;
+    }
+
+    .dashlets-list-info {
+      margin-left: 2.2em;
+    }
+
+    h1.collapsible-header {
+      margin-left: 3em;
+    }
+
+    .action-link.add-dashlet {
+      margin-left: 3.4em;
+    }
+  }
+}
+
+// Add dashlets mini wizard
+.form-list-control {
+  span {
+    font-size: 1.3em;
+    opacity: .8;
+    font-weight: 500;
+  }
+}
+
+.form-list-control.multi-dashlets {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-top: 2px solid @gray-light;
+
+  .control-group {
+    width: 100%;
+  }
+}
+
+.form-list-control.multi-dashlets:not(.collapsed) span {
+  margin-left: 1.4em;
+}
+
+// Make the submit buttons a bit bigger than the normal size
+.modal-form.icinga-controls .control-group.form-controls input[type="submit"] {
+  min-width: 7em;
+  font-size: 1.2em;
+  margin-right: .4em;
+}
+
+// Drag and drop
+.drag-over {
+  background: fade(@icinga-blue, 20);
+  border: 5px @body-bg-color dashed;
+  box-shadow: 4px 4px 4px 4px @black;
+}
+
+.dashlet-sortable.drag-active * {
+  pointer-events: none;
+}
+
+.draggable-element{
+  opacity: .4;
+}
