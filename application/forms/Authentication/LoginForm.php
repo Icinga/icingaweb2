@@ -11,6 +11,7 @@ use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Common\Database;
 use Icinga\User;
+use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Form;
 use Icinga\Web\RememberMe;
 use Icinga\Web\Url;
@@ -27,7 +28,7 @@ class LoginForm extends Form
     /**
      * Redirect URL
      */
-    const REDIRECT_URL = 'dashboard';
+    const REDIRECT_URL = Dashboard::BASE_ROUTE;
 
     public static $defaultElementDecorators = [
         ['ViewHelper', ['separator' => '']],
