@@ -6,6 +6,7 @@ namespace Icinga\Web;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Web\Navigation\Navigation;
+use Icinga\Web\Dashboard\Dashboard;
 
 /**
  * Main menu for Icinga Web 2
@@ -28,7 +29,7 @@ class Menu extends Navigation
     {
         $this->addItem('dashboard', [
             'label'     => t('Dashboard'),
-            'url'       => 'dashboard',
+            'url'       => Dashboard::BASE_ROUTE,
             'icon'      => 'dashboard',
             'priority'  => 10
         ]);

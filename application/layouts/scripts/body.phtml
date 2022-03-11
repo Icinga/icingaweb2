@@ -1,5 +1,6 @@
 <?php
 
+use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Url;
 use Icinga\Web\Notification;
 use Icinga\Authentication\Auth;
@@ -36,7 +37,7 @@ if ($this->layout()->inlineLayout) {
         <div id="header-logo-container">
             <?= $this->qlink(
                 '',
-                Auth::getInstance()->isAuthenticated() ? 'dashboard' : '',
+                Auth::getInstance()->isAuthenticated() ? Dashboard::BASE_ROUTE : '',
                 null,
                 array(
                     'aria-hidden'       => 'true',
