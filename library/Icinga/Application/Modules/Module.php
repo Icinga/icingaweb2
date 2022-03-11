@@ -13,11 +13,14 @@ use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
+use Icinga\Web\Dashboard;
 use Icinga\Web\Navigation\Navigation;
-use Icinga\Web\Widget;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\StaticTranslator;
 use ipl\I18n\Translation;
+use ipl\Web\Url;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Zend_Controller_Router_Route;
 use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route_Regex;
@@ -214,9 +217,16 @@ class Module
     /**
      * A set of Pane elements
      *
-     * @var array
+     * @var Dashboard\Pane[]
      */
-    protected $paneItems = array();
+    protected $paneItems = [];
+
+    /**
+     * A set of Dashlet elements
+     *
+     * @var Dashboard\Dashlet[]
+     */
+    protected $dashletItems = [];
 
     /**
      * A set of objects representing a searchUrl configuration
@@ -307,49 +317,38 @@ class Module
     /**
      * Return this module's dashboard
      *
-     * @return  Navigation
+     * @return Dashboard\Pane[]
      */
     public function getDashboard()
     {
         $this->launchConfigScript();
-        return $this->createDashboard($this->paneItems);
+        return $this->paneItems;
     }
 
     /**
      * Create and return a new navigation for the given dashboard panes
      *
-     * @param   DashboardContainer[]    $panes
+     * @param   DashboardContainer[] $paneItems
      *
-     * @return  Navigation
+     * @return  DashboardContainer[]
      */
-    public function createDashboard(array $panes)
+    public function createDashboard(array $paneItems)
     {
-        $navigation = new Navigation();
-        foreach ($panes as $pane) {
-            /** @var DashboardContainer $pane */
+        $panes = [];
+        foreach ($paneItems as $pane) {
             $dashlets = [];
             foreach ($pane->getDashlets() as $dashletName => $dashletConfig) {
-                $dashlets[$dashletName] = [
-                    'label'     => $this->translate($dashletName),
-                    'url'       => $dashletConfig['url'],
-                    'priority'  => $dashletConfig['priority']
-                ];
+                $dashlet = new Dashboard\Dashlet($dashletName, $dashletConfig['url']);
+                $dashlet->fromArray($dashletConfig);
+
+                $dashlets[$dashletName] = $dashlet;
             }
 
-            $navigation->addItem(
-                $pane->getName(),
-                array_merge(
-                    $pane->getProperties(),
-                    array(
-                        'label'     => $this->translate($pane->getName()),
-                        'type'      => 'dashboard-pane',
-                        'children'  => $dashlets
-                    )
-                )
-            );
+            $pane->setDashlets($dashlets);
+            $panes[$pane->getName()] = $pane;
         }
 
-        return $navigation;
+        return $panes;
     }
 
     /**
@@ -358,17 +357,48 @@ class Module
      * @param   string  $name
      * @param   array   $properties
      *
-     * @return  DashboardContainer
+     * @return  Dashboard\Pane
      */
     protected function dashboard($name, array $properties = array())
     {
         if (array_key_exists($name, $this->paneItems)) {
-            $this->paneItems[$name]->setProperties($properties);
+            $this->paneItems[$name]->fromArray($properties);
         } else {
-            $this->paneItems[$name] = new DashboardContainer($name, $properties);
+            $this->paneItems[$name] = new Dashboard\Pane($name, $properties);
         }
 
         return $this->paneItems[$name];
+    }
+
+    /**
+     * Get this module's provided dashlets
+     *
+     * @return Dashboard\Dashlet[]
+     */
+    public function getDashlet()
+    {
+        $this->launchConfigScript();
+        return $this->dashletItems;
+    }
+
+    /**
+     * Add or get a dashlet
+     *
+     * @param string     $name
+     * @param Url|string $url
+     * @param string     $description
+     *
+     * @return Dashboard\Dashlet
+     */
+    protected function provideDashlet($name, $url, $description)
+    {
+        if (! array_key_exists($name, $this->dashletItems)) {
+            $this->dashletItems[$name] = new Dashboard\Dashlet($name, $url);
+        }
+
+        $this->dashletItems[$name]->setDescription($description);
+
+        return $this->dashletItems[$name];
     }
 
     /**
