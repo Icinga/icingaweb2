@@ -78,7 +78,8 @@ class StyleSheet
         'css/icinga/responsive.less',
         'css/icinga/modal.less',
         'css/icinga/audit.less',
-        'css/icinga/health.less'
+        'css/icinga/health.less',
+        'css/icinga/php-diff.less'
     ];
 
     /**
