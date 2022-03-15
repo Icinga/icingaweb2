@@ -15,6 +15,14 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
   It is highly recommended to use [Icinga PDF Export](https://github.com/Icinga/icingaweb2-module-pdfexport)
   instead.
 
+**Discontinued package updates**
+
+* We will stop offering major updates for Debian 9 (Stretch) starting with version 2.11.
+  However, versions 2.9 and 2.10 will continue to receive minor updates on this platform.
+
+[icinga.com](https://icinga.com/subscription/support-details/) provides an overview about
+currently supported distributions.
+
 **Framework changes affecting third-party code**
 
 * Asset support for modules (#3961) introduced with v2.8 has now been removed.
