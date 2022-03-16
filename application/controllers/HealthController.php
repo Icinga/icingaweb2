@@ -45,7 +45,7 @@ class HealthController extends CompatController
         ]));
         $this->addControl(HtmlString::create((string) $this->view->filterEditor));
 
-        $this->setTitle(t('Health'));
+        $this->addTitleTab(t('Health'));
         $this->setAutorefreshInterval(10);
         $this->addContent(new AppHealth($query));
     }
