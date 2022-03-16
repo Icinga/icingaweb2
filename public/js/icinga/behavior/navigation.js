@@ -11,9 +11,15 @@
         this.on('click', '#menu a', this.linkClicked, this);
         this.on('click', '#menu tr[href]', this.linkClicked, this);
         this.on('rendered', '#menu', this.onRendered, this);
-        this.on('mouseenter', '#menu .nav-level-1 > .nav-item', this.showFlyoutMenu, this);
-        this.on('mouseleave', '#menu', this.hideFlyoutMenu, this);
+        this.on('mouseenter', '#menu .primary-nav .nav-level-1 > .nav-item', this.showFlyoutMenu, this);
+        this.on('mouseleave', '#menu .primary-nav', this.hideFlyoutMenu, this);
         this.on('click', '#toggle-sidebar', this.toggleSidebar, this);
+
+        this.on('click', '#menu .config-nav-item button', this.toggleConfigFlyout, this);
+        this.on('mouseenter', '#menu .config-menu .config-nav-item', this.showConfigFlyout, this);
+        this.on('mouseleave', '#menu .config-menu .config-nav-item', this.hideConfigFlyout, this);
+
+        this.on('keydown', '#menu .config-menu .config-nav-item', this.onKeyDown, this);
 
         /**
          * The DOM-Path of the active item
@@ -121,6 +127,7 @@
         } else {
             _this.setActiveAndSelected($(event.target));
         }
+
         // update target url of the menu container to the clicked link
         var $menu = $('#menu');
         var menuDataUrl = icinga.utils.parseUrl($menu.data('icinga-url'));
@@ -322,7 +329,8 @@
      */
     Navigation.prototype.hideFlyoutMenu = function(e) {
         var $layout = $('#layout');
-        var $hovered = $('#menu').find('.nav-level-1 > .nav-item.hover');
+        var $nav = $(e.currentTarget);
+        var $hovered = $nav.find('.nav-level-1 > .nav-item.hover');
 
         if (! $hovered.length) {
             $layout.removeClass('menu-hovered');
@@ -332,7 +340,7 @@
 
         setTimeout(function() {
             try {
-                if ($hovered.is(':hover') || $('#menu').is(':hover')) {
+                if ($hovered.is(':hover') || $nav.is(':hover')) {
                     return;
                 }
             } catch(e) { /* Bypass because if IE8 */ };
@@ -353,6 +361,56 @@
         _this.storage.set('sidebar-collapsed', $layout.is('.sidebar-collapsed'));
         $(window).trigger('resize');
     };
+
+    /**
+     * Toggle config flyout visibility
+     *
+     * @param {Object} e Event
+     */
+    Navigation.prototype.toggleConfigFlyout = function(e) {
+        var _this = e.data.self;
+        if ($('#layout').is('.config-flyout-open')) {
+            _this.hideConfigFlyout(e);
+        } else {
+            _this.showConfigFlyout(e);
+        }
+    }
+
+    /**
+     * Hide config flyout
+     *
+     * @param {Object} e Event
+     */
+    Navigation.prototype.hideConfigFlyout = function(e) {
+        console.log('hide config flyout');
+        $('#layout').removeClass('config-flyout-open');
+        if (e.target) {
+            delete $(e.target).closest('.container')[0].dataset.suspendAutorefresh;
+        }
+    }
+
+    /**
+     * Show config flyout
+     *
+     * @param {Object} e Event
+     */
+    Navigation.prototype.showConfigFlyout = function(e) {
+        $('#layout').addClass('config-flyout-open');
+        $(e.target).closest('.container')[0].dataset.suspendAutorefresh = '';
+    }
+
+    /**
+     * Hide, config flyout when "Enter" key is pressed to follow `.flyout` nav item link
+     *
+     * @param {Object} e Event
+     */
+    Navigation.prototype.onKeyDown = function(e) {
+        var _this = e.data.self;
+
+        if (e.code == 'Enter' && $(':focus').is('.flyout a')) {
+            _this.hideConfigFlyout(e);
+        }
+    }
 
     /**
      * Called when the history changes
