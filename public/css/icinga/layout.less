@@ -2,10 +2,18 @@
 
 #footer {
   bottom: 0;
-  left: 12em;
   right: 0;
+  left: 12em;
   position: fixed;
   z-index: 999;
+}
+
+#layout.minimal-layout #footer {
+  left: 0;
+}
+
+.sidebar-collapsed #footer {
+  left: 3em;
 }
 
 #guest-error {
