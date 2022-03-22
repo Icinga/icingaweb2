@@ -6,7 +6,7 @@
   <h1><?= $this->translate('Contact details') ?></h1>
   <div class="circular" style="background-image: url('<?=
       $this->href('static/gravatar', array('email' => $contact->contact_email))
-  ?>')"></div>
+  ?>';width:120px;height:120px;)"></div>
 
 <?php if (! $contact): ?>
   <?= $this->translate('No such contact') ?>: <?= $contactName ?>

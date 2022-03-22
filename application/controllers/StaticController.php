@@ -32,6 +32,7 @@ class StaticController extends Controller
     {
         $response = $this->getResponse();
         $response->setHeader('Cache-Control', 'public, max-age=1814400, stale-while-revalidate=604800', true);
+        $response->setHeader('Content-Type', 'image/png', true);
 
         $noCache = $this->getRequest()->getHeader('Cache-Control') === 'no-cache'
             || $this->getRequest()->getHeader('Pragma') === 'no-cache';
