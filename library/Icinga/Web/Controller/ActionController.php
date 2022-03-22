@@ -452,6 +452,10 @@ class ActionController extends Zend_Controller_Action
      */
     public function postDispatch()
     {
+        if (! $this->getRequest()->isDispatched()) {
+            return;
+        }
+
         Benchmark::measure('Action::postDispatch()');
 
         $req = $this->getRequest();
