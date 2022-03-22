@@ -601,7 +601,7 @@ class WebWizard extends Wizard implements SetupWizard
         )));
 
         $set->add(new WebLibraryRequirement(array(
-            'condition'     => ['icinga-php-library', '>=', '0.6.0'],
+            'condition'     => ['icinga-php-library', '>=', '0.8.0'],
             'alias'         => 'Icinga PHP library',
             'description'   => mt(
                 'setup',
