@@ -43,7 +43,7 @@
         </li>
     <?php endif ?>
     <?php if (isset($checkNowForm)): // Form is unset if the current user lacks the respective permission ?>
-        <?php ($checkNowForm = clone $checkNowForm)->setName('quickAction_' . $checkNowForm->getName()); // Avoids id duplication ?>
+        <?php ($checkNowForm = clone $checkNowForm)->setName($checkNowForm->getName());?>
         <li><?= $checkNowForm ?></li>
     <?php endif ?>
     <?php if ($this->hasPermission('monitoring/command/comment/add')): ?>
