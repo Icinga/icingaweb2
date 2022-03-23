@@ -37,7 +37,7 @@ if (! $this->compact): ?>
         $hostStateName = Host::getStateText($host->host_state);
         $hostLink = $this->href('monitoring/host/show', array('host' => $host->host_name));
         $hostCheckOverdue = $host->host_next_update < time();?>
-        <tr<?= $hostCheckOverdue ? ' class="state-outdated"' : '' ?>>
+        <tr href=<?= $hostLink ?> <?= $hostCheckOverdue ? ' class="state-outdated"' : '' ?>>
             <td class="state-col state-<?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
                 <div class="state-label">
                 <?php if ($hostCheckOverdue): ?>
