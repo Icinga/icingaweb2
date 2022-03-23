@@ -4,6 +4,42 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.10.0
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/63?closed=1).
+
+Please make sure to also check the respective [upgrading section](https://icinga.com/docs/icinga-web-2/latest/doc/80-Upgrading/#upgrading-to-icinga-web-2-210x)
+in the documentation.
+
+#### The Appearance of Dark and Light
+
+We have already spoken a lot about the [theme mode support](https://icinga.com/blog/2021/06/16/introducing-dark-and-light-theme-modes/)
+that we were working on [for some time](https://icinga.com/blog/2022/02/10/icinga-web-not-just-black-and-white/) now.
+It was planned for v2.9.0, but in respect of many modules and themes out there we gave it the deserved attention.
+Below is a glimpse of what this looks like.
+
+[![Icinga Web 2 Theme Mode Preview](https://icinga.com/wp-content/uploads/2022/03/theme-mode-demo-small.jpg "Icinga Web 2 Theme Mode Preview")](https://icinga.com/wp-content/uploads/2022/03/theme-mode-demo.jpg)
+
+#### Custom Variables Shown Unaltered – Or not
+
+Icinga Web 2 had some bad habits when displaying custom variables in the UI. We've driven out the last one regarding
+names now. Uppercase characters are now shown as such. What Icinga Web 2 stopped doing though, can now be accomplished
+by modules. A new hook that enables modules to influence the rendering of custom variables has been introduced.
+
+* CustomVarNames should not be converted to lowercase [#4639](https://github.com/Icinga/icingaweb2/issues/4639)
+* Display the Director Caption of a Custom Variable [#3479](https://github.com/Icinga/icingaweb2/issues/3479)
+
+#### Surprising Beauty in Exported Places
+
+Anyone who already attempted to export a list of services to PDF has seen the degradation of details in recent years.
+Be it images, icons, colors or the general layout. We simply reached a technical limit with the builtin PDF export.
+That is why we made [Icinga PDF Export](https://github.com/Icinga/icingaweb2-module-pdfexport). Icinga Web 2 has now
+a much enhanced compatibility with it. Exporting a list of services while Icinga PDF Export is set up, will now lead
+to a much better looking result.
+
+* Enhance PDF export [#4685](https://github.com/Icinga/icingaweb2/pull/4685)
+* Image not found when creating PDF view of objects [#4674](https://github.com/Icinga/icingaweb2/issues/4674)
+
 ### What's New in Version 2.9.6
 
 **Notice**: This is a security release. It is recommended to upgrade immediately.
