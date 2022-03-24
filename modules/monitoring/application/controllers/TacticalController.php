@@ -115,7 +115,8 @@ class TacticalController extends Controller
             ->setLabelBigUrl($this->view->filteredUrl(
                 'monitoring/list/services',
                 array(
-                    'service_state' => 2,
+                    'service_state' => $summary->services_critical_unhandled > 0
+                        || ! $summary->services_unknown_unhandled ? 2 : 3,
                     'service_handled' => 0,
                     'sort' => 'service_last_check',
                     'dir' => 'asc'
