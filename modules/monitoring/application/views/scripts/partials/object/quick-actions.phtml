@@ -4,7 +4,7 @@
         <li>
             <?php
             $removeAckForm = clone $removeAckForm;
-            $removeAckForm->setName('quickAction_' . $removeAckForm->getName()); // Avoids id duplication
+            $removeAckForm->setAttrib('id', 'quickAction_' . $removeAckForm->getName()); // Avoids id duplication
             $removeAckForm->setLabelEnabled(true);
             echo $removeAckForm;
             ?>
@@ -43,7 +43,7 @@
         </li>
     <?php endif ?>
     <?php if (isset($checkNowForm)): // Form is unset if the current user lacks the respective permission ?>
-        <?php ($checkNowForm = clone $checkNowForm)->setName('quickAction_' . $checkNowForm->getName()); // Avoids id duplication ?>
+        <?php ($checkNowForm = clone $checkNowForm)->setAttrib('id', 'quickAction_' . $checkNowForm->getName()); // Avoids id duplication ?>
         <li><?= $checkNowForm ?></li>
     <?php endif ?>
     <?php if ($this->hasPermission('monitoring/command/comment/add')): ?>
