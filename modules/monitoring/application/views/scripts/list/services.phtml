@@ -50,7 +50,7 @@ if (! $this->compact): ?>
         );
         $serviceStateName = Service::getStateText($service->service_state);
         $serviceCheckOverdue = $service->service_next_update < time(); ?>
-        <tr<?= $serviceCheckOverdue ? ' class="state-outdated"' : '' ?>>
+        <tr <?= $serviceLink ?> <?= $serviceCheckOverdue ? ' class="state-outdated"' : '' ?>>
             <td class="state-col state-<?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
                 <div class="state-label">
                 <?php if ($serviceCheckOverdue): ?>
