@@ -276,6 +276,10 @@ class Loader
 
     protected function searchMatch($needle, $haystack)
     {
+        if ($needle === null) {
+            $needle = '';
+        }
+
         $this->lastSuggestions = preg_grep(sprintf('/^%s.*$/', preg_quote($needle, '/')), $haystack);
         $match = array_search($needle, $haystack, true);
         if (false !== $match) {
@@ -358,7 +362,7 @@ class Loader
             } elseif (! empty($step['object'])) {
                 $object = (string) $step['object'] . $step['type'];
             }
-            if (is_array($step['args'])) {
+            if (isset($step['args']) && is_array($step['args'])) {
                 foreach ($step['args'] as & $arg) {
                     if (is_object($arg)) {
                         $arg = sprintf('[%s]', get_class($arg));

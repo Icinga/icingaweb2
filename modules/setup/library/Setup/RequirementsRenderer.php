@@ -7,17 +7,17 @@ use RecursiveIteratorIterator;
 
 class RequirementsRenderer extends RecursiveIteratorIterator
 {
-    public function beginIteration()
+    public function beginIteration(): void
     {
         $this->tags[] = '<ul class="requirements">';
     }
 
-    public function endIteration()
+    public function endIteration(): void
     {
         $this->tags[] = '</ul>';
     }
 
-    public function beginChildren()
+    public function beginChildren(): void
     {
         $this->tags[] = '<li>';
         $currentSet = $this->getSubIterator();
@@ -25,7 +25,7 @@ class RequirementsRenderer extends RecursiveIteratorIterator
         $this->tags[] = '<ul class="set-state ' . $state . '">';
     }
 
-    public function endChildren()
+    public function endChildren(): void
     {
         $this->tags[] = '</ul>';
         $this->tags[] = '</li>';

@@ -73,7 +73,7 @@ class QueryAdapter implements Zend_Paginator_Adapter_Interface
      *
      * @return  int
      */
-    public function count()
+    public function count(): int
     {
         if ($this->count === null) {
             $this->count = $this->query->count();

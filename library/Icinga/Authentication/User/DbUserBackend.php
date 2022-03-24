@@ -203,6 +203,10 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
             $lob = stream_get_contents($lob);
         }
 
+        if ($lob === null) {
+            return '';
+        }
+
         return $this->ds->getDbType() === 'pgsql' ? pg_unescape_bytea($lob) : $lob;
     }
 

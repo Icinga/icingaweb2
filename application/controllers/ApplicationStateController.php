@@ -41,7 +41,7 @@ class ApplicationStateController extends Controller
                 setcookie(
                     'icingaweb2-session',
                     $now,
-                    null,
+                    0,
                     $params['path'],
                     $params['domain'],
                     $params['secure'],

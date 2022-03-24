@@ -331,7 +331,7 @@ class Auth
         setcookie(
             'icingaweb2-session',
             time(),
-            null,
+            0,
             $params['path'],
             $params['domain'],
             $params['secure'],

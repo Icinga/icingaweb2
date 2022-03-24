@@ -165,52 +165,32 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getChildren()
+    public function getChildren(): NavigationRenderer
     {
         return new static($this->current()->getChildren(), $this->skipOuterElement);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return $this->current()->hasChildren();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return  NavigationItem
-     */
-    public function current()
+    public function current(): NavigationItem
     {
         return $this->iterator->current();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function key()
+    public function key(): int
     {
         return $this->iterator->key();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function next()
+    public function next(): void
     {
         $this->iterator->next();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rewind()
+    public function rewind(): void
     {
         $this->iterator->rewind();
         if (! $this->skipOuterElement) {
@@ -218,10 +198,7 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function valid()
+    public function valid(): bool
     {
         $valid = $this->iterator->valid();
         if (! $this->skipOuterElement && !$valid) {

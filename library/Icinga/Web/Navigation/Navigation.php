@@ -67,50 +67,32 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      */
     protected $layout;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->items[$offset]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetGet($offset)
+    public function offsetGet($offset): ?NavigationItem
     {
-        return isset($this->items[$offset]) ? $this->items[$offset] : null;
+        return $this->items[$offset] ?? null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->items[$offset] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->items[$offset]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function count()
+    public function count(): int
     {
         return count($this->items);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         $this->order();
         return new ArrayIterator($this->items);

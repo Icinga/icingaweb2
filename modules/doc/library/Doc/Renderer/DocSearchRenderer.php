@@ -9,10 +9,6 @@ use Icinga\Module\Doc\Search\DocSearchMatch;
 
 /**
  * Renderer for doc searches
- *
- * @method DocSearchIterator getInnerIterator() {
- *     @{inheritdoc}
- * }
  */
 class DocSearchRenderer extends DocRenderer
 {
@@ -33,45 +29,30 @@ class DocSearchRenderer extends DocRenderer
         parent::__construct($iterator, RecursiveIteratorIterator::SELF_FIRST);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function beginIteration()
+    public function beginIteration(): void
     {
         $this->content[] = '<nav role="navigation"><ul class="toc">';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function endIteration()
+    public function endIteration(): void
     {
         $this->content[] = '</ul></nav>';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function beginChildren()
+    public function beginChildren(): void
     {
         if ($this->getInnerIterator()->getMatches()) {
             $this->content[] = '<ul class="toc">';
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function endChildren()
+    public function endChildren(): void
     {
         if ($this->getInnerIterator()->getMatches()) {
             $this->content[] = '</ul>';
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function render()
     {
         foreach ($this as $section) {

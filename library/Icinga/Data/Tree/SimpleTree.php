@@ -5,6 +5,7 @@ namespace Icinga\Data\Tree;
 
 use IteratorAggregate;
 use LogicException;
+use Traversable;
 
 /**
  * A simple tree
@@ -80,10 +81,9 @@ class SimpleTree implements IteratorAggregate
     }
 
     /**
-     * {@inheritdoc}
      * @return TreeNodeIterator
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new TreeNodeIterator($this->sentinel);
     }

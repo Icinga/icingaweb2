@@ -169,7 +169,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
      */
     public function setUserBaseDn($baseDn)
     {
-        if (($baseDn = trim($baseDn))) {
+        if ($baseDn && ($baseDn = trim($baseDn))) {
             $this->userBaseDn = $baseDn;
         }
 
@@ -195,7 +195,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
      */
     public function setGroupBaseDn($baseDn)
     {
-        if (($baseDn = trim($baseDn))) {
+        if ($baseDn && ($baseDn = trim($baseDn))) {
             $this->groupBaseDn = $baseDn;
         }
 
@@ -336,7 +336,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
      */
     public function setUserFilter($filter)
     {
-        if (($filter = trim($filter))) {
+        if ($filter && ($filter = trim($filter))) {
             if ($filter[0] === '(') {
                 $filter = substr($filter, 1, -1);
             }
@@ -366,7 +366,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
      */
     public function setGroupFilter($filter)
     {
-        if (($filter = trim($filter))) {
+        if ($filter && ($filter = trim($filter))) {
             $this->groupFilter = $filter;
         }
 
@@ -431,9 +431,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
      */
     public function setDomain($domain)
     {
-        $domain = trim($domain);
-
-        if (strlen($domain)) {
+        if ($domain && ($domain = trim($domain))) {
             $this->domain = $domain;
         }
 

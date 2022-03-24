@@ -230,7 +230,7 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
      * @param  array $value
      * @return void
      */
-    public function offsetSet($index, $value)
+    public function offsetSet($index, $value): void
     {
         if (!$this->_isValid($value)) {
             $e = new Zend_View_Exception('offsetSet() expects a data token; please use one of the custom offsetSet*() methods');
@@ -238,7 +238,7 @@ class Zend_View_Helper_HeadLink extends Zend_View_Helper_Placeholder_Container_S
             throw $e;
         }
 
-        return $this->getContainer()->offsetSet($index, $value);
+        $this->getContainer()->offsetSet($index, $value);
     }
 
     /**

@@ -17,19 +17,13 @@ abstract class EnumeratingFilterIterator extends FilterIterator
      */
     private $index;
 
-    /**
-     * @return void
-     */
-    public function rewind()
+    public function rewind(): void
     {
         parent::rewind();
         $this->index = 0;
     }
 
-    /**
-     * @return int
-     */
-    public function key()
+    public function key(): int
     {
         return $this->index++;
     }

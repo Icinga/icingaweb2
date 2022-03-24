@@ -61,31 +61,11 @@ abstract class LdapRepository extends Repository
      */
     protected function getNormedAttribute($name)
     {
-        $loweredName = strtolower($name);
+        $loweredName = strtolower($name ?? '');
         if (array_key_exists($loweredName, $this->normedAttributes)) {
             return $this->normedAttributes[$loweredName];
         }
 
         return $name;
-    }
-
-    /**
-     * Return whether the given object DN is related to the given base DN
-     *
-     * Will use the current connection's root DN if $baseDn is not given.
-     *
-     * @deprecated This was only used by LdapUserGroupBackend::isMemberAttributeAmbiguous
-     *             It will be removed with 2.6.0!
-     *
-     * @param   string  $dn         The object DN to check
-     * @param   string  $baseDn     The base DN to compare the object DN with
-     *
-     * @return  bool
-     */
-    protected function isRelatedDn($dn, $baseDn = null)
-    {
-        $normalizedDn = strtolower(join(',', array_map('trim', explode(',', $dn))));
-        $normalizedBaseDn = strtolower(join(',', array_map('trim', explode(',', $baseDn ?: $this->ds->getDn()))));
-        return strpos($normalizedDn, $normalizedBaseDn) !== false;
     }
 }

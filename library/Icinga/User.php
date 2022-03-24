@@ -432,9 +432,7 @@ class User
      */
     public function setDomain($domain)
     {
-        $domain = trim($domain);
-
-        if (strlen($domain)) {
+        if ($domain && ($domain = trim($domain))) {
             $this->domain = $domain;
         }
 

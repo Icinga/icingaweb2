@@ -207,7 +207,7 @@ class TimeRange implements Iterator
     /**
      * Reset the iterator to its initial state
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->current = clone $this->start;
     }
@@ -217,7 +217,7 @@ class TimeRange implements Iterator
      *
      * @return  bool
      */
-    public function valid()
+    public function valid(): bool
     {
         if ($this->negative) {
             return $this->current > $this->end;
@@ -231,7 +231,7 @@ class TimeRange implements Iterator
      *
      * @return  StdClass
      */
-    public function current()
+    public function current(): object
     {
         return $this->getTimeframe($this->current);
     }
@@ -241,7 +241,7 @@ class TimeRange implements Iterator
      *
      * @return  int
      */
-    public function key()
+    public function key(): int
     {
         return $this->current->getTimestamp();
     }
@@ -249,7 +249,7 @@ class TimeRange implements Iterator
     /**
      * Advance the iterator position by one
      */
-    public function next()
+    public function next(): void
     {
         $this->applyInterval($this->current, 0);
     }

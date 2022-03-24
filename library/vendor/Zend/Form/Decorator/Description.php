@@ -158,7 +158,7 @@ class Zend_Form_Decorator_Description extends Zend_Form_Decorator_Abstract
         }
 
         $description = $element->getDescription();
-        $description = trim($description);
+        $description = trim($description ?: '');
 
         if (!empty($description) && (null !== ($translator = $element->getTranslator()))) {
             $description = $translator->translate($description);

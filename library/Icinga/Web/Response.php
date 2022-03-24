@@ -389,12 +389,12 @@ class Response extends Zend_Controller_Response_Http
             /** @var Cookie $cookie */
             setcookie(
                 $cookie->getName(),
-                $cookie->getValue(),
-                $cookie->getExpire(),
+                $cookie->getValue() ?? '',
+                $cookie->getExpire() ?? 0,
                 $cookie->getPath(),
-                $cookie->getDomain(),
+                $cookie->getDomain() ?? '',
                 $cookie->isSecure(),
-                $cookie->isHttpOnly()
+                $cookie->isHttpOnly() ?? true
             );
         }
     }

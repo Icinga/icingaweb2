@@ -30,7 +30,7 @@ class LogFileIterator implements Iterator
     /**
      * Value for static::current()
      *
-     * @var string
+     * @var array
      */
     protected $current;
 
@@ -68,40 +68,31 @@ class LogFileIterator implements Iterator
         $this->fields = $fields;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->file->rewind();
         $this->index = 0;
         $this->nextMessage();
     }
 
-    public function next()
+    public function next(): void
     {
         $this->file->next();
         ++$this->index;
         $this->nextMessage();
     }
 
-    /**
-     * @return string
-     */
-    public function current()
+    public function current(): array
     {
         return $this->current;
     }
 
-    /**
-     * @return int
-     */
-    public function key()
+    public function key(): int
     {
         return $this->index;
     }
 
-    /**
-     * @return boolean
-     */
-    public function valid()
+    public function valid(): bool
     {
         return $this->valid;
     }

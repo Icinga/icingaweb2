@@ -5,6 +5,7 @@ namespace Icinga\Module\Monitoring\Plugin;
 
 use ArrayIterator;
 use IteratorAggregate;
+use Traversable;
 
 class PerfdataSet implements IteratorAggregate
 {
@@ -36,7 +37,7 @@ class PerfdataSet implements IteratorAggregate
      */
     protected function __construct($perfdataStr)
     {
-        if (($perfdataStr = trim($perfdataStr)) !== '') {
+        if ($perfdataStr && ($perfdataStr = trim($perfdataStr))) {
             $this->perfdataStr = $perfdataStr;
             $this->parse();
         }
@@ -47,7 +48,7 @@ class PerfdataSet implements IteratorAggregate
      *
      * @return  ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->asArray());
     }

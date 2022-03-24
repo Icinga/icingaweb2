@@ -448,7 +448,7 @@ class RoleForm extends RepositoryForm
                 $b = array_shift($bParts);
             } while ($a === $b);
 
-            return strnatcmp($a, $b);
+            return strnatcmp($a ?? '', $b ?? '');
         });
     }
 

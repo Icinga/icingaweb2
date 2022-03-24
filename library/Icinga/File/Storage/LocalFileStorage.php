@@ -11,6 +11,7 @@ use Icinga\Exception\NotWritableError;
 use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Traversable;
 use UnexpectedValueException;
 
 /**
@@ -35,10 +36,17 @@ class LocalFileStorage implements StorageInterface
         $this->baseDir = rtrim($baseDir, DIRECTORY_SEPARATOR);
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         try {
-            return new LocalFileStorageIterator($this->baseDir);
+            return new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(
+                    $this->baseDir,
+                    RecursiveDirectoryIterator::CURRENT_AS_FILEINFO
+                    | RecursiveDirectoryIterator::KEY_AS_PATHNAME
+                    | RecursiveDirectoryIterator::SKIP_DOTS
+                )
+            );
         } catch (UnexpectedValueException $e) {
             throw new NotReadableError('Couldn\'t read the directory "%s": %s', $this->baseDir, $e);
         }

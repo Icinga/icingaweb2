@@ -89,7 +89,7 @@ class FileReader implements Selectable, Countable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         if ($this->count === null) {
             $this->count = iterator_count($this->iterate());

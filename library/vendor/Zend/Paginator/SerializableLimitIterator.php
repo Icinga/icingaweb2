@@ -70,6 +70,16 @@ class Zend_Paginator_SerializableLimitIterator extends LimitIterator implements 
         ));
     }
 
+    public function __serialize(): array
+    {
+        return array(
+            'it'     => $this->getInnerIterator(),
+            'offset' => $this->_offset,
+            'count'  => $this->_count,
+            'pos'    => $this->getPosition(),
+        );
+    }
+
     /**
      * @param string $data representation of the instance
      */
@@ -80,12 +90,19 @@ class Zend_Paginator_SerializableLimitIterator extends LimitIterator implements 
         $this->seek($dataArr['pos']+$dataArr['offset']);
     }
 
+    public function __unserialize(array $data): void
+    {
+        $this->__construct($data['it'], $data['offset'], $data['count']);
+        $this->seek($data['pos']+$data['offset']);
+    }
+
     /**
      * Returns value of the Iterator
      *
      * @param int $offset
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         $currentOffset = $this->key();
@@ -102,7 +119,7 @@ class Zend_Paginator_SerializableLimitIterator extends LimitIterator implements 
      * @param int $offset
      * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
     }
 
@@ -111,7 +128,7 @@ class Zend_Paginator_SerializableLimitIterator extends LimitIterator implements 
      *
      * @param int $offset
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         if ($offset > 0 && $offset < $this->_count) {
             try {
@@ -136,7 +153,7 @@ class Zend_Paginator_SerializableLimitIterator extends LimitIterator implements 
      *
      * @param int $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
     }
 }

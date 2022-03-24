@@ -30,7 +30,7 @@ $history->limit($limit * $page);
 ?>
 <div class="content">
 <?php
-$dateFormat = $this->translate('%A, %B %e, %Y', 'date.verbose');
+$dateFormatter = new IntlDateFormatter(setlocale(LC_TIME, 0), IntlDateFormatter::FULL, IntlDateFormatter::LONG);
 $lastDate = null;
 $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
 $rowAction = Url::fromPath('monitoring/event/show');
@@ -161,7 +161,7 @@ $rowAction = Url::fromPath('monitoring/event/show');
                 break;
         } ?>
         <?php
-        $currentDate = strftime($dateFormat, (int) $event->timestamp);
+        $currentDate = $dateFormatter->format($event->timestamp);
         if ($currentDate !== $lastDate):
             $lastDate = $currentDate;
         ?>

@@ -114,9 +114,7 @@ class File extends SplFileObject
         }
     }
 
-    /**
-     * @see SplFileObject::fwrite()
-     */
+    #[\ReturnTypeWillChange]
     public function fwrite($str, $length = null)
     {
         $this->assertOpenForWriting();
@@ -126,10 +124,7 @@ class File extends SplFileObject
         return $retVal;
     }
 
-    /**
-     * @see SplFileObject::ftruncate()
-     */
-    public function ftruncate($size)
+    public function ftruncate($size): bool
     {
         $this->assertOpenForWriting();
         $this->setupErrorHandler();
@@ -138,9 +133,7 @@ class File extends SplFileObject
         return $retVal;
     }
 
-    /**
-     * @see SplFileObject::ftell()
-     */
+    #[\ReturnTypeWillChange]
     public function ftell()
     {
         $this->setupErrorHandler();
@@ -149,10 +142,7 @@ class File extends SplFileObject
         return $retVal;
     }
 
-    /**
-     * @see SplFileObject::flock()
-     */
-    public function flock($operation, &$wouldblock = null)
+    public function flock($operation, &$wouldblock = null): bool
     {
         $this->setupErrorHandler();
         $retVal = parent::flock($operation, $wouldblock);
@@ -160,9 +150,7 @@ class File extends SplFileObject
         return $retVal;
     }
 
-    /**
-     * @see SplFileObject::fgetc()
-     */
+    #[\ReturnTypeWillChange]
     public function fgetc()
     {
         $this->setupErrorHandler();
@@ -171,10 +159,7 @@ class File extends SplFileObject
         return $retVal;
     }
 
-    /**
-     * @see SplFileObject::fflush()
-     */
-    public function fflush()
+    public function fflush(): bool
     {
         $this->setupErrorHandler();
         $retVal = parent::fflush();

@@ -5,6 +5,7 @@ namespace Icinga\Web;
 
 use ArrayIterator;
 use IteratorAggregate;
+use Traversable;
 
 /**
  * Maintain a set of cookies
@@ -23,7 +24,7 @@ class CookieSet implements IteratorAggregate
      *
      * @return  ArrayIterator   An iterator for traversing the cookies in this set
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->cookies);
     }
