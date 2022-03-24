@@ -23,7 +23,7 @@ $modReason = [];
 
 if (isset($requiredVendor, $requiredProject) && $requiredVendor && $requiredProject) {
     // TODO: I don't like this, can we define requirements somewhere else?
-    $coreDeps = ['icinga-php-library' => '>= 0.8', 'icinga-php-thirdparty' => '>= 0.10'];
+    $coreDeps = ['icinga-php-library' => '>= 0.9', 'icinga-php-thirdparty' => '>= 0.11'];
 
     foreach ($coreDeps as $libraryName => $requiredVersion) {
         if (! $libraries->has($libraryName)) {
