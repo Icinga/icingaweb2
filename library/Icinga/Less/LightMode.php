@@ -7,6 +7,7 @@ use ArrayIterator;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Less_Environment;
+use Traversable;
 
 /**
  * Registry for light modes and the environments in which they are defined
@@ -120,7 +121,7 @@ class LightMode implements IteratorAggregate
         return $this;
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new ArrayIterator(array_keys($this->modes));
     }
