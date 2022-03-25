@@ -208,8 +208,15 @@ class PreferenceForm extends Form
                     )
                 );
             }
+        } else {
+            $globalThemeFile = Config::app()->get('themes', 'default');
+            $themeFile = StyleSheet::getThemeFile($globalThemeFile);
+            $file = $themeFile !== null ? @file_get_contents($themeFile) : false;
+            if ($file && strpos($file, StyleSheet::LIGHT_MODE_IDENTIFIER) === false) {
+                $disabled = ['', 'light', 'system'];
+            }
         }
-
+        
         if (isset($formData['theme']) && $formData['theme'] !== StyleSheet::DEFAULT_THEME) {
             $themeFile = StyleSheet::getThemeFile($formData['theme']);
             $file = $themeFile !== null ? @file_get_contents($themeFile) : false;
