@@ -2,7 +2,7 @@
 
 /* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
 
-namespace Icinga\Web\Dashboard;
+namespace Icinga\Web\Dashboard\Common;
 
 interface OverridingWidget
 {

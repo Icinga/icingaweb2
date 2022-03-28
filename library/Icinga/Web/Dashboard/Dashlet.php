@@ -5,13 +5,10 @@
 namespace Icinga\Web\Dashboard;
 
 use Icinga\Application\Icinga;
-use Icinga\Common\DataExtractor;
-use Icinga\Web\Dashboard\Common\DisableWidget;
+use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Web\Dashboard\Common\ModuleDashlet;
-use Icinga\Web\Dashboard\Common\OrderWidget;
 use Icinga\Web\Request;
 use Icinga\Web\Url;
-use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Web\Widget\Link;
 
@@ -20,22 +17,12 @@ use ipl\Web\Widget\Link;
  *
  * This is the new element being used for the Dashlets view
  */
-class Dashlet extends BaseHtmlElement
+class Dashlet extends BaseDashboard
 {
-    use DisableWidget;
-    use OrderWidget;
     use ModuleDashlet;
-    use DataExtractor;
 
     /** @var string Database table name */
     const TABLE = 'dashlet';
-
-    protected $tag = 'div';
-
-    protected $defaultAttributes = [
-        'class'     => 'container widget-sortable',
-        'draggable' => 'true'
-    ];
 
     /**
      * The url of this Dashlet
@@ -43,19 +30,6 @@ class Dashlet extends BaseHtmlElement
      * @var Url|null
      */
     protected $url;
-
-    /**
-     * Not translatable name of this dashlet
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * The title being displayed on top of the dashlet
-     * @var
-     */
-    protected $title;
 
     /**
      * The pane this dashlet belongs to
@@ -72,104 +46,18 @@ class Dashlet extends BaseHtmlElement
     protected $progressLabel;
 
     /**
-     * Unique identifier of this dashlet
-     *
-     * @var string
-     */
-    protected $uuid;
-
-    /**
-     * The dashlet's description
-     *
-     * @var string
-     */
-    protected $description;
-
-    /**
      * Create a new dashlet displaying the given url in the provided pane
      *
-     * @param string $title The title to use for this dashlet
+     * @param string $name The title to use for this dashlet
      * @param Url|string $url The url this dashlet uses for displaying information
      * @param Pane|null $pane The pane this Dashlet will be added to
      */
-    public function __construct($title, $url, Pane $pane = null)
+    public function __construct($name, $url, Pane $pane = null)
     {
-        $this->name = $title;
-        $this->title = $title;
+        parent::__construct($name);
+
         $this->pane = $pane;
         $this->url = $url;
-    }
-
-    /**
-     * Set the identifier of this dashlet
-     *
-     * @param string $id
-     *
-     * @return $this
-     */
-    public function setUuid($id)
-    {
-        $this->uuid = $id;
-
-        return $this;
-    }
-
-    /**
-     * Get the unique identifier of this dashlet
-     *
-     * @return string
-     */
-    public function getUuid()
-    {
-        return $this->uuid;
-    }
-
-    /**
-     * Setter for this name
-     *
-     * @param $name
-     *
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Getter for this name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Retrieve the dashlets title
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title !== null ? $this->title : $this->getName();
-    }
-
-    /**
-     * Set the title of this dashlet
-     *
-     * @param string $title
-     *
-     * @return $this
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-
-        return $this;
     }
 
     /**
@@ -233,30 +121,6 @@ class Dashlet extends BaseHtmlElement
     }
 
     /**
-     * Get the dashlet's description
-     *
-     * @return  string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * Set the dashlet's description
-     *
-     * @param string $description
-     *
-     * @return  $this
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    /**
      * Set the Pane of this dashlet
      *
      * @param Pane $pane
@@ -280,11 +144,17 @@ class Dashlet extends BaseHtmlElement
         return $this->pane;
     }
 
-    protected function assemble()
+    /**
+     * Generate a html widget for this dashlet
+     *
+     * @return HtmlElement
+     */
+    public function getHtml()
     {
+        $dashletHtml = HtmlElement::create('div', ['class' => 'container']);
         if (! $this->getUrl()) {
-            $this->addHtml(HtmlElement::create('h1', null, t($this->getTitle())));
-            $this->addHtml(HtmlElement::create(
+            $dashletHtml->addHtml(HtmlElement::create('h1', null, t($this->getTitle())));
+            $dashletHtml->addHtml(HtmlElement::create(
                 'p',
                 ['class' => 'error-message'],
                 sprintf(t('Cannot create dashboard dashlet "%s" without valid URL'), t($this->getTitle()))
@@ -293,10 +163,10 @@ class Dashlet extends BaseHtmlElement
             $url = $this->getUrl();
             $url->setParam('showCompact', true);
 
-            $this->setAttribute('data-icinga-url', $url);
-            $this->setAttribute('data-icinga-dashlet', $this->getName());
+            $dashletHtml->setAttribute('data-icinga-url', $url);
+            $dashletHtml->setAttribute('data-icinga-dashlet', $this->getName());
 
-            $this->addHtml(new HtmlElement('h1', null, new Link(
+            $dashletHtml->addHtml(new HtmlElement('h1', null, new Link(
                 t($this->getTitle()),
                 $url->getUrlWithout(['showCompact', 'limit'])->getRelativeUrl(),
                 [
@@ -306,7 +176,7 @@ class Dashlet extends BaseHtmlElement
                 ]
             )));
 
-            $this->addHtml(HtmlElement::create(
+            $dashletHtml->addHtml(HtmlElement::create(
                 'p',
                 ['class' => 'progress-label'],
                 [
@@ -317,18 +187,20 @@ class Dashlet extends BaseHtmlElement
                 ]
             ));
         }
+
+        return $dashletHtml;
     }
 
-    public function toArray()
+    public function toArray($stringify = true)
     {
+        $pane = $this->getPane();
         return [
-            'id'       => $this->getUuid(),
-            'pane'     => $this->getPane() ? $this->getPane()->getName() : null,
-            'name'     => $this->getName(),
-            'url'      => $this->getUrl()->getRelativeUrl(),
-            'label'    => $this->getTitle(),
-            'order'    => $this->getPriority(),
-            'disabled' => (int) $this->isDisabled(),
+            'id'    => $this->getUuid(),
+            'pane'  => ! $stringify ? $pane : ($pane ? $pane->getName() : null),
+            'name'  => $this->getName(),
+            'url'   => $this->getUrl()->getRelativeUrl(),
+            'label' => $this->getTitle(),
+            'order' => $this->getPriority(),
         ];
     }
 }

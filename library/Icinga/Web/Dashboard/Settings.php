@@ -6,7 +6,6 @@ namespace Icinga\Web\Dashboard;
 
 use Icinga\Web\Dashboard\ItemList\DashboardHomeList;
 use Icinga\Web\Dashboard\ItemList\DashboardList;
-use Icinga\Web\Navigation\DashboardHome;
 use ipl\Html\BaseHtmlElement;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
@@ -27,31 +26,25 @@ class Settings extends BaseHtmlElement
 
     protected function assemble()
     {
-        // TODO: What we should do with disabled homes??
         $activeHome = $this->dashboard->getActiveHome();
-
-        if (empty($this->dashboard->getHomes())) {
-            // TODO: No dashboard homes :( what should we render now??
-        } elseif (count($this->dashboard->getHomes()) === 1 && $activeHome->getName() === DashboardHome::DEFAULT_HOME) {
-            foreach ($activeHome->getPanes() as $pane) {
+        if (count($this->dashboard->getEntries()) === 1 && $activeHome->getName() === DashboardHome::DEFAULT_HOME) {
+            foreach ($activeHome->getEntries() as $pane) {
                 $pane->setHome($activeHome);
 
                 $this->addHtml(new DashboardList($pane));
             }
 
-            $this->addHtml(new ActionLink(
-                t('Add Dashboard'),
-                Url::fromPath(Dashboard::BASE_ROUTE . '/new-dashlet'),
-                'plus',
-                [
-                    'class'               => 'add-dashboard',
-                    'data-icinga-modal'   => true,
-                    'data-no-icinga-ajax' => true
-                ]
-            ));
+            $url = Url::fromPath(Dashboard::BASE_ROUTE . '/new-pane')
+                ->setParams(['home' => $activeHome->getName()]);
+
+            $this->addHtml(new ActionLink(t('Add Dashboard'), $url, 'plus', [
+                'class'               => 'add-dashboard',
+                'data-icinga-modal'   => true,
+                'data-no-icinga-ajax' => true
+            ]));
         } else {
             // Make a list of dashboard homes
-            foreach ($this->dashboard->getHomes() as $home) {
+            foreach ($this->dashboard->getEntries() as $home) {
                 $this->addHtml(new DashboardHomeList($home));
             }
         }

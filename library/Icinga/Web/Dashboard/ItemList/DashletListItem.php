@@ -28,17 +28,13 @@ class DashletListItem extends BaseHtmlElement
         $this->dashlet = $dashlet;
         $this->renderEditButton = $renderEditButton;
 
-        if ($this->dashlet) {
-            $this->getAttributes()
-                ->set('draggable', 'true')
-                ->add('class', 'widget-sortable');
-
+        if ($this->dashlet && $renderEditButton) {
             $this->getAttributes()
                 ->registerAttributeCallback('data-icinga-dashlet', function () {
                     return $this->dashlet->getName();
                 })
                 ->registerAttributeCallback('id', function () {
-                    return 'dashlet_' . $this->dashlet->getPriority();
+                    return bin2hex($this->dashlet->getUuid());
                 });
         }
     }
@@ -63,23 +59,33 @@ class DashletListItem extends BaseHtmlElement
 
         if (! $this->dashlet) {
             $title->add(t('Custom Url'));
+        } elseif ($this->renderEditButton) {
+            $title->addHtml(new Link(
+                t($this->dashlet->getTitle()),
+                $this->dashlet->getUrl()->getUrlWithout(['showCompact', 'limit'])->getRelativeUrl(),
+                [
+                    'class'            => 'dashlet-title',
+                    'aria-label'       => t($this->dashlet->getTitle()),
+                    'title'            => t($this->dashlet->getTitle()),
+                    'data-base-target' => '_next'
+                ]
+            ));
+
+            $pane = $this->dashlet->getPane();
+            $url = Url::fromPath(Dashboard::BASE_ROUTE . '/edit-dashlet');
+            $url->setParams([
+                'home'    => $pane->getHome()->getName(),
+                'pane'    => $pane->getName(),
+                'dashlet' => $this->dashlet->getName()
+            ]);
+
+            $title->addHtml(new Link(t('Edit'), $url, [
+                'data-icinga-modal'   => true,
+                'data-no-icinga-ajax' => true
+            ]));
         } else {
             $title->add($this->dashlet->getTitle());
-
-            if ($this->renderEditButton) {
-                $pane = $this->dashlet->getPane();
-                $url = Url::fromPath(Dashboard::BASE_ROUTE . '/edit-dashlet');
-                $url->setParams([
-                    'home'    => $pane->getHome()->getName(),
-                    'pane'    => $pane->getName(),
-                    'dashlet' => $this->dashlet->getName()
-                ]);
-
-                $title->addHtml(new Link(t('Edit'), $url, [
-                    'data-icinga-modal'   => true,
-                    'data-no-icinga-ajax' => true
-                ]));
-            }
+            $title->getAttributes()->set('title', $this->dashlet->getTitle());
         }
 
         return $title;
@@ -92,7 +98,12 @@ class DashletListItem extends BaseHtmlElement
         if (! $this->dashlet) {
             $section->add(t('Create a dashlet with custom url and filter'));
         } else {
-            $section->add($this->dashlet->getDescription() ?: $this->dashlet->getTitle());
+            $section->getAttributes()->set(
+                'title',
+                $this->dashlet->getDescription() ?: t('There is no provided description.')
+            );
+
+            $section->add($this->dashlet->getDescription() ?: t('There is no provided dashlet description.'));
         }
 
         return $section;

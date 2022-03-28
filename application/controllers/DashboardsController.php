@@ -7,15 +7,19 @@ namespace Icinga\Controllers;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Forms\Dashboard\DashletForm;
 use Icinga\Forms\Dashboard\HomePaneForm;
+use Icinga\Forms\Dashboard\NewHomePaneForm;
 use Icinga\Forms\Dashboard\RemoveDashletForm;
 use Icinga\Forms\Dashboard\RemoveHomePaneForm;
 use Icinga\Forms\Dashboard\WelcomeForm;
 use Icinga\Model\ModuleDashlet;
+use Icinga\Util\Json;
 use Icinga\Web\Dashboard\Dashboard;
+use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Web\Dashboard\Pane;
 use Icinga\Web\Dashboard\Settings;
 use Icinga\Web\Dashboard\Setup\SetupNewDashboard;
+use Icinga\Web\Notification;
 use Icinga\Web\Widget\Tabextension\DashboardSettings;
-use ipl\Html\HtmlElement;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
@@ -40,7 +44,7 @@ class DashboardsController extends CompatController
         $this->createTabs();
 
         $activeHome = $this->dashboard->getActiveHome();
-        if (! $activeHome || ! $activeHome->hasPanes()) {
+        if (! $activeHome || ! $activeHome->hasEntries()) {
             $this->getTabs()->add('dashboard', [
                 'active' => true,
                 'title'  => t('Welcome'),
@@ -54,8 +58,6 @@ class DashboardsController extends CompatController
             })->handleRequest(ServerRequest::fromGlobals());
 
             $this->dashboard->setWelcomeForm($welcomeForm);
-        } elseif (empty($activeHome->getPanes(true))) {
-            // TODO(TBD): What to do when the user has only disabled dashboards? Should we render the welcome screen?
         } elseif (($pane = $this->getParam('pane'))) {
             $this->getTabs()->activate($pane);
         }
@@ -71,38 +73,43 @@ class DashboardsController extends CompatController
     public function homeAction()
     {
         $home = $this->params->getRequired('home');
-        if (! $this->dashboard->hasHome($home)) {
+        if (! $this->dashboard->hasEntry($home)) {
             $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
 
-        $this->createTabs();
-
         $activeHome = $this->dashboard->getActiveHome();
-        if (! $activeHome || empty($activeHome->getPanes(true))) {
-            $this->getTabs()->add($home, [
+        if (! $activeHome->getEntries()) {
+            $this->getTabs()->add($activeHome->getName(), [
                 'active' => true,
-                'title'  => $home,
+                'title'  => $activeHome->getTitle(),
                 'url'    => Url::fromRequest()
             ]);
+
+            // Not to render the cog icon before the above tab
+            $this->createTabs();
         } elseif (($pane = $this->getParam('pane'))) {
+            $this->createTabs();
+
             $this->dashboard->activate($pane);
         }
 
         $this->content = $this->dashboard;
     }
 
-    public function renameHomeAction()
+    public function editHomeAction()
     {
         $this->setTitle(t('Update Home'));
 
         $home = $this->params->getRequired('home');
-        if (! $this->dashboard->hasHome($home)) {
+        if (! $this->dashboard->hasEntry($home)) {
             $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
 
         $homeForm = (new HomePaneForm($this->dashboard))
             ->on(HomePaneForm::ON_SUCCESS, function () {
-                $this->redirectNow('__CLOSE__');
+                $this->getResponse()->setAutoRefreshInterval(1);
+
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest(ServerRequest::fromGlobals());
 
@@ -115,17 +122,39 @@ class DashboardsController extends CompatController
         $this->setTitle(t('Remove Home'));
 
         $home = $this->params->getRequired('home');
-        if (! $this->dashboard->hasHome($home)) {
+        if (! $this->dashboard->hasEntry($home)) {
             $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
 
         $homeForm = (new RemoveHomePaneForm($this->dashboard))
             ->on(RemoveHomePaneForm::ON_SUCCESS, function () {
-                $this->redirectNow('__CLOSE__');
+                $this->getResponse()->setAutoRefreshInterval(1);
+
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest(ServerRequest::fromGlobals());
 
         $this->addContent($homeForm);
+    }
+
+    public function newPaneAction()
+    {
+        $this->setTitle(t('Add new Dashboard'));
+
+        $home = $this->params->getRequired('home');
+        if (! $this->dashboard->hasEntry($home)) {
+            $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
+        }
+
+        $paneForm = (new NewHomePaneForm($this->dashboard))
+            ->on(NewHomePaneForm::ON_SUCCESS, function () {
+                $this->getResponse()->setAutoRefreshInterval(1);
+
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
+
+        $this->addContent($paneForm);
     }
 
     public function editPaneAction()
@@ -135,21 +164,23 @@ class DashboardsController extends CompatController
         $pane = $this->params->getRequired('pane');
         $home = $this->params->getRequired('home');
 
-        if (! $this->dashboard->hasHome($home)) {
+        if (! $this->dashboard->hasEntry($home)) {
             $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
 
-        if (! $this->dashboard->getActiveHome()->hasPane($pane)) {
+        if (! $this->dashboard->getActiveHome()->hasEntry($pane)) {
             $this->httpNotFound(sprintf(t('Pane "%s" not found'), $pane));
         }
 
         $paneForm = (new HomePaneForm($this->dashboard))
             ->on(HomePaneForm::ON_SUCCESS, function () {
-                $this->redirectNow('__CLOSE__');
+                $this->getResponse()->setAutoRefreshInterval(1);
+
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest(ServerRequest::fromGlobals());
 
-        $paneForm->load($this->dashboard->getActiveHome()->getPane($pane));
+        $paneForm->load($this->dashboard->getActiveHome()->getEntry($pane));
 
         $this->addContent($paneForm);
     }
@@ -161,25 +192,21 @@ class DashboardsController extends CompatController
         $home = $this->params->getRequired('home');
         $paneParam = $this->params->getRequired('pane');
 
-        if (! $this->dashboard->hasHome($home)) {
+        if (! $this->dashboard->hasEntry($home)) {
             $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
 
-        if (! $this->dashboard->getActiveHome()->hasPane($paneParam)) {
+        if (! $this->dashboard->getActiveHome()->hasEntry($paneParam)) {
             $this->httpNotFound(sprintf(t('Pane "%s" not found'), $paneParam));
         }
 
         $paneForm = new RemoveHomePaneForm($this->dashboard);
         $paneForm->populate(['org_name' => $paneParam]);
         $paneForm->on(RemoveHomePaneForm::ON_SUCCESS, function () {
-            $this->redirectNow('__CLOSE__');
-        })->handleRequest(ServerRequest::fromGlobals());
+            $this->getResponse()->setAutoRefreshInterval(1);
 
-        $paneForm->getElement('btn_remove')->setLabel(t('Remove Pane'));
-        $paneForm->prependHtml(HtmlElement::create('h1', null, sprintf(
-            t('Please confirm removal of dashboard pane "%s"'),
-            $paneParam
-        )));
+            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+        })->handleRequest(ServerRequest::fromGlobals());
 
         $this->addContent($paneForm);
     }
@@ -191,15 +218,10 @@ class DashboardsController extends CompatController
         $dashletForm = new DashletForm($this->dashboard);
         $dashletForm->populate($this->getRequest()->getPost());
         $dashletForm->on(DashletForm::ON_SUCCESS, function () {
-            $this->redirectNow('__CLOSE__');
+            $this->getResponse()->setAutoRefreshInterval(1);
+
+            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
         })->handleRequest(ServerRequest::fromGlobals());
-
-        $params = $this->getAllParams();
-        if ($this->getParam('url')) {
-            $params['url'] = rawurldecode($this->getParam('url'));
-        }
-
-        $dashletForm->populate($params);
 
         $this->addContent($dashletForm);
     }
@@ -209,11 +231,13 @@ class DashboardsController extends CompatController
         $this->setTitle(t('Edit Dashlet'));
 
         $pane = $this->validateDashletParams();
-        $dashlet = $pane->getDashlet($this->getParam('dashlet'));
+        $dashlet = $pane->getEntry($this->getParam('dashlet'));
 
         $dashletForm = (new DashletForm($this->dashboard))
             ->on(DashletForm::ON_SUCCESS, function () {
-                $this->redirectNow('__CLOSE__');
+                $this->getResponse()->setAutoRefreshInterval(1);
+
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest(ServerRequest::fromGlobals());
 
@@ -225,12 +249,14 @@ class DashboardsController extends CompatController
 
     public function removeDashletAction()
     {
-        $this->validateDashletParams();
         $this->setTitle(t('Remove Dashlet'));
+        $this->validateDashletParams();
 
         $removeForm = (new RemoveDashletForm($this->dashboard))
             ->on(RemoveDashletForm::ON_SUCCESS, function () {
-                $this->redirectNow('__CLOSE__');
+                $this->getResponse()->setAutoRefreshInterval(1);
+
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest(ServerRequest::fromGlobals());
 
@@ -243,60 +269,109 @@ class DashboardsController extends CompatController
     public function reorderWidgetsAction()
     {
         $this->assertHttpMethod('post');
-        if (! $this->getRequest()->isApiRequest()) {
-            $this->httpBadRequest('No API request');
-        }
-
-        if (! preg_match('/([^;]*);?/', $this->getRequest()->getHeader('Content-Type'), $matches)
-            || $matches[1] !== 'application/json') {
-            $this->httpBadRequest('No JSON content');
-        }
-
         $dashboards = $this->getRequest()->getPost();
-        $widgetType = array_pop($dashboards);
+        if (! isset($dashboards['dashboardData'])) {
+            $this->httpBadRequest(t('Invalid request data'));
+        }
 
-        foreach ($dashboards as $key => $panes) {
-            $home = $widgetType === 'Homes' ? $panes : $key;
-            if (! $this->dashboard->hasHome($home)) {
-                $this->httpNotFound(sprintf(t('Dashboard home "%s" not found'), $home));
+        $dashboards = Json::decode($dashboards['dashboardData'], true);
+        $originals = $dashboards['originals'];
+        unset($dashboards['Type']);
+        unset($dashboards['originals']);
+
+        $orgHome = null;
+        $orgPane = null;
+        if ($originals && isset($originals['originalHome'])) {
+            /** @var DashboardHome $orgHome */
+            $orgHome = $this->dashboard->getEntry($originals['originalHome']);
+            $orgHome->setActive()->loadDashboardEntries();
+
+            if (isset($originals['originalPane'])) {
+                $orgPane = $orgHome->getEntry($originals['originalPane']);
+                $orgHome->setEntries([$orgPane->getName() => $orgPane]);
+            }
+        }
+
+        $reroutePath = $dashboards['redirectPath'];
+        unset($dashboards['redirectPath']);
+
+        foreach ($dashboards as $home => $value) {
+            if (! $this->dashboard->hasEntry($home)) {
+                Notification::error(sprintf(t('Dashboard home "%s" not found'), $home));
+                break;
             }
 
-            $home = $this->dashboard->getHome($home);
-            if ($widgetType === 'Homes') {
-                $home->setPriority($key);
-                $this->dashboard->manageHome($home);
+            /** @var DashboardHome $home */
+            $home = $this->dashboard->getEntry($home);
+            if (! is_array($value)) {
+                $this->dashboard->reorderWidget($home, (int) $value);
 
-                continue;
+                Notification::success(sprintf(t('Updated dashboard home "%s" successfully'), $home->getTitle()));
+                break;
             }
 
-            $home->setActive();
-            $home->loadPanesFromDB();
-
-            foreach ($panes as $innerKey => $value) {
-                $pane = $widgetType === 'Dashboards' ? $value : $innerKey;
-                if (! $home->hasPane($pane)) {
-                    $this->httpNotFound(sprintf(t('Dashboard pane "%s" not found'), $pane));
+            $home->setActive()->loadDashboardEntries();
+            foreach ($value as $pane => $indexOrValues) {
+                if (! $home->hasEntry($pane) && (! $orgHome || ! $orgHome->hasEntry($pane))) {
+                    Notification::error(sprintf(t('Dashboard pane "%s" not found'), $pane));
+                    break;
                 }
 
-                $pane = $home->getPane($pane);
-                if ($widgetType === 'Dashboards') {
-                    $pane->setPriority($innerKey);
-                    $home->managePanes($pane);
-                } else {
-                    foreach ($value as $order => $dashlet) {
-                        if (! $pane->hasDashlet($dashlet)) {
-                            $this->httpNotFound(sprintf(t('Dashlet "%s" not found'), $dashlet));
-                        }
-
-                        $dashlet = $pane->getDashlet($dashlet);
-                        $dashlet->setPriority($order);
-                        $pane->manageDashlets($dashlet);
+                /** @var Pane $pane */
+                $pane = $home->hasEntry($pane) ? $home->getEntry($pane) : $orgHome->getEntry($pane);
+                if (! is_array($indexOrValues)) {
+                    if ($orgHome && $orgHome->hasEntry($pane->getName()) && $home->hasEntry($pane->getName())) {
+                        Notification::error(sprintf(
+                            t('Dashboard "%s" already exists within "%s" home'),
+                            $pane->getTitle(),
+                            $home->getTitle()
+                        ));
+                        break;
                     }
+
+                    // Perform DB updates
+                    $home->reorderWidget($pane, (int) $indexOrValues, $orgHome);
+                    if ($orgHome) {
+                        // In order to properly update the dashlets id (user + home + pane + dashlet)
+                        $pane->manageEntry($pane->getEntries());
+                    }
+
+                    Notification::success(sprintf(
+                        t('%s dashboard pane "%s" successfully'),
+                        $orgHome ? 'Moved' : 'Updated',
+                        $pane->getTitle()
+                    ));
+                    break;
+                }
+
+                foreach ($indexOrValues as $dashlet => $index) {
+                    if (! $pane->hasEntry($dashlet) && (! $orgPane || ! $orgPane->hasEntry($dashlet))) {
+                        Notification::error(sprintf(t('Dashlet "%s" not found'), $dashlet));
+                        break;
+                    }
+
+                    if ($orgPane && $orgPane->hasEntry($dashlet) && $pane->hasEntry($dashlet)) {
+                        Notification::error(sprintf(
+                            t('Dashlet "%s" already exists within "%s" dashboard pane'),
+                            $dashlet,
+                            $pane->getTitle()
+                        ));
+                        break;
+                    }
+
+                    $dashlet = $pane->hasEntry($dashlet) ? $pane->getEntry($dashlet) : $orgPane->getEntry($dashlet);
+                    $pane->reorderWidget($dashlet, (int) $index, $orgPane);
+
+                    Notification::success(sprintf(
+                        t('%s dashlet "%s" successfully'),
+                        $orgPane ? 'Moved' : 'Updated',
+                        $dashlet->getTitle()
+                    ));
                 }
             }
         }
 
-        exit;
+        $this->redirectNow($reroutePath);
     }
 
     /**
@@ -320,10 +395,6 @@ class DashboardsController extends CompatController
         $setupForm = new SetupNewDashboard($this->dashboard);
         $setupForm->initDashlets(Dashboard::getModuleDashlets($query));
         $setupForm->on(SetupNewDashboard::ON_SUCCESS, function () use ($setupForm) {
-            if ($setupForm->getPopulatedValue('btn_cancel')) {
-                $this->redirectNow('__CLOSE__');
-            }
-
             $this->redirectNow($setupForm->getRedirectUrl());
         })->handleRequest(ServerRequest::fromGlobals());
 
@@ -333,8 +404,12 @@ class DashboardsController extends CompatController
     public function settingsAction()
     {
         $this->createTabs();
-        // TODO(yh): This may raise an exception when the given tab name doesn't exist.
-        //      But as ipl::Tabs() doesn't offer the possibility to check this beforehand, just ignore it for now!!
+        $activeHome = $this->dashboard->getActiveHome();
+        // We can't grant access the user to the dashboard manager if there aren't any dashboards to manage
+        if (! $activeHome || (! $activeHome->hasEntries() && count($this->dashboard->getEntries()) === 1)) {
+            $this->redirectNow(Dashboard::BASE_ROUTE);
+        }
+
         $this->dashboard->activate('dashboard_settings');
 
         $this->addControl(new ActionLink(
@@ -358,7 +433,7 @@ class DashboardsController extends CompatController
     {
         $tabs = $this->dashboard->getTabs();
         $activeHome = $this->dashboard->getActiveHome();
-        if ($activeHome && $activeHome->hasPanes()) {
+        if (($activeHome && $activeHome->hasEntries()) || count($this->dashboard->getEntries()) > 1) {
             $tabs->extend(new DashboardSettings());
         }
 
@@ -371,16 +446,16 @@ class DashboardsController extends CompatController
         $pane = $this->params->getRequired('pane');
         $dashlet = $this->params->getRequired('dashlet');
 
-        if (! $this->dashboard->hasHome($home)) {
+        if (! $this->dashboard->hasEntry($home)) {
             $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
 
-        if (! $this->dashboard->getActiveHome()->hasPane($pane)) {
+        if (! $this->dashboard->getActiveHome()->hasEntry($pane)) {
             $this->httpNotFound(sprintf(t('Pane "%s" not found'), $pane));
         }
 
-        $pane = $this->dashboard->getActiveHome()->getPane($pane);
-        if (! $pane->hasDashlet($dashlet)) {
+        $pane = $this->dashboard->getActiveHome()->getEntry($pane);
+        if (! $pane->hasEntry($dashlet)) {
             $this->httpNotFound(sprintf(t('Dashlet "%s" not found'), $dashlet));
         }
 

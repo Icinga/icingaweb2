@@ -3,35 +3,21 @@
 namespace Icinga\Forms\Dashboard;
 
 use Icinga\Web\Dashboard\Dashboard;
+use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Dashboard\Pane;
 use Icinga\Web\Notification;
-use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
 
-class NewHomePaneForm extends CompatForm
+class NewHomePaneForm extends BaseDashboardForm
 {
-    /** @var Dashboard */
-    protected $dashboard;
-
     public function __construct(Dashboard $dashboard)
     {
-        $this->dashboard = $dashboard;
+        parent::__construct($dashboard);
 
         $requestUrl = Url::fromRequest();
-
-        // We need to set this explicitly needed for modals
-        $this->setAction((string) $requestUrl);
-
         if ($requestUrl->hasParam('home')) {
             $this->populate(['home' => $requestUrl->getParam('home')]);
         }
-    }
-
-    public function hasBeenSubmitted()
-    {
-        return $this->hasBeenSent()
-            && ($this->getPopulatedValue('btn_cancel')
-                || $this->getPopulatedValue('submit'));
     }
 
     protected function assemble()
@@ -40,43 +26,69 @@ class NewHomePaneForm extends CompatForm
         $this->addElement('text', 'pane', [
             'required'    => true,
             'label'       => t('Title'),
+            'placeholder' => t('Create new Dashboard'),
             'description' => t('Add new dashboard to this home.')
         ]);
 
+        $homes = array_merge([self::CREATE_NEW_HOME => self::CREATE_NEW_HOME], $this->dashboard->getEntryKeyTitleArr());
         $this->addElement('select', 'home', [
             'required'     => true,
             'class'        => 'autosubmit',
             'value'        => $populatedHome,
-            'multiOptions' => $this->dashboard->getHomeKeyTitleArr(),
+            'multiOptions' => $homes,
             'label'        => t('Assign to Home'),
             'description'  => t('A dashboard home you want to assign the new dashboard to.'),
         ]);
 
-        $submitButton = $this->createElement('submit', 'submit', [
-            'class' => 'autosubmit',
-            'label' => t('Add Dashboard'),
-        ]);
-        $this->registerElement($submitButton)->decorate($submitButton);
+        if ($this->getPopulatedValue('home') === self::CREATE_NEW_HOME) {
+            $this->addElement('text', 'new_home', [
+                'required'    => true,
+                'label'       => t('Dashboard Home'),
+                'placeholder' => t('Enter dashboard home title'),
+                'description' => t('Enter a title for the new dashboard home.'),
+            ]);
+        }
 
-        $this->addElement('submit', 'btn_cancel', ['label' => t('Cancel')]);
-        $this->getElement('btn_cancel')->setWrapper($submitButton->getWrapper());
+        $submitButton = $this->createElement('submit', 'submit', [
+            'class' => 'btn-primary',
+            'label' => t('Add Dashboard')
+        ]);
+        $this->registerElement($submitButton);
+
+        $formControls = $this->createFormControls();
+        $formControls->add([
+            $this->registerSubmitButton(t('Add Dashboard')),
+            $this->createCancelButton()
+        ]);
+
+        $this->addHtml($formControls);
     }
 
     protected function onSuccess()
     {
         $requestUrl = Url::fromRequest();
-        $dashboard = $this->dashboard;
         $conn = Dashboard::getConn();
 
-        if ($requestUrl->getPath() === Dashboard::BASE_ROUTE . '/new-pane') {
-            $home = $this->getPopulatedValue('home');
-            $home = $dashboard->getHome($home);
+        $selectedHome = $this->getPopulatedValue('home');
+        if (! $selectedHome || $selectedHome === self::CREATE_NEW_HOME) {
+            $selectedHome = $this->getPopulatedValue('new_home');
+        }
 
+        if ($requestUrl->getPath() === Dashboard::BASE_ROUTE . '/new-pane') {
+            $currentHome = new DashboardHome($selectedHome);
+            if ($this->dashboard->hasEntry($currentHome->getName())) {
+                $currentHome = clone $this->dashboard->getEntry($currentHome->getName());
+                if ($currentHome->getName() !== $this->dashboard->getActiveHome()->getName()) {
+                    $currentHome->setActive()->loadDashboardEntries();
+                }
+            }
+
+            $pane = new Pane($this->getPopulatedValue('pane'));
             $conn->beginTransaction();
 
             try {
-                $pane = new Pane($this->getPopulatedValue('pane'));
-                $home->managePanes($pane);
+                $this->dashboard->manageEntry($currentHome);
+                $currentHome->manageEntry($pane);
 
                 $conn->commitTransaction();
             } catch (\Exception $err) {
@@ -85,8 +97,6 @@ class NewHomePaneForm extends CompatForm
             }
 
             Notification::success('Added dashboard successfully');
-        } else {
-
         }
     }
 }

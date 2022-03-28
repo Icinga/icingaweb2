@@ -6,8 +6,9 @@ namespace Icinga\Web\Dashboard;
 
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Dashboard\Common\DashboardControls;
+use Icinga\Web\Dashboard\Common\DashboardEntry;
 use Icinga\Web\Dashboard\Common\DashboardManager;
-use Icinga\Web\Navigation\DashboardHome;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Form;
 use ipl\Html\HtmlElement;
@@ -23,9 +24,10 @@ use ipl\Web\Widget\Tabs;
  * - Dashboard/Home:    Shows all panes belonging to this home
  *
  */
-class Dashboard extends BaseHtmlElement
+class Dashboard extends BaseHtmlElement implements DashboardEntry
 {
     use DashboardManager;
+    use DashboardControls;
 
     /**
      * Base path of our new dashboards controller
@@ -35,8 +37,7 @@ class Dashboard extends BaseHtmlElement
     const BASE_ROUTE = 'dashboards';
 
     /**
-     * System dashboards are provided by the modules in PHP code
-     * and are available to all users
+     * System dashboards are provided by the modules in PHP code and are available to all users
      *
      * @var string
      */
@@ -51,8 +52,7 @@ class Dashboard extends BaseHtmlElement
     const PUBLIC_DS = 'public';
 
     /**
-     * Private dashboards are created by any user and are only
-     * available to this user
+     * Private dashboards are created by any user and are only available to this user
      *
      * @var string
      */
@@ -136,15 +136,11 @@ class Dashboard extends BaseHtmlElement
         }
 
         $this->tabs->disableLegacyExtensions();
-        if (! $activeHome || $activeHome->isDisabled()) {
+        if (! $activeHome) {
             return $this->tabs;
         }
 
-        foreach ($activeHome->getPanes() as $key => $pane) {
-            if ($pane->isDisabled()) {
-                continue;
-            }
-
+        foreach ($activeHome->getEntries() as $key => $pane) {
             if (! $this->tabs->get($key)) {
                 $this->tabs->add(
                     $key,
@@ -173,12 +169,9 @@ class Dashboard extends BaseHtmlElement
     {
         $active = null;
         $activeHome = $this->getActiveHome();
-
-        foreach ($activeHome->getPanes() as $key => $pane) {
-            if ($pane->isDisabled() === false) {
-                $active = $key;
-                break;
-            }
+        foreach ($activeHome->getEntries() as $key => $pane) {
+            $active = $key;
+            break;
         }
 
         if ($active !== null) {
@@ -211,7 +204,7 @@ class Dashboard extends BaseHtmlElement
 
         if (! $active) {
             if ($active = Url::fromRequest()->getParam($this->tabParam)) {
-                if ($activeHome->hasPane($active)) {
+                if ($activeHome->hasEntry($active)) {
                     $this->activate($active);
                 } else {
                     throw new ProgrammingError('Try to get an inexistent pane.');
@@ -223,7 +216,7 @@ class Dashboard extends BaseHtmlElement
             $active = $active->getName();
         }
 
-        $panes = $activeHome->getPanes();
+        $panes = $activeHome->getEntries();
         if (isset($panes[$active])) {
             return $panes[$active];
         }
@@ -241,7 +234,7 @@ class Dashboard extends BaseHtmlElement
     protected function assemble()
     {
         $activeHome = $this->getActiveHome();
-        if (! $activeHome || ($activeHome->getName() === DashboardHome::DEFAULT_HOME && ! $activeHome->hasPanes())) {
+        if (! $activeHome || (! $activeHome->hasEntries() && $activeHome->getName() === DashboardHome::DEFAULT_HOME)) {
             $this->setAttribute('class', 'content welcome-view');
             $wrapper = HtmlElement::create('div', ['class' => 'dashboard-introduction']);
 
@@ -266,19 +259,21 @@ class Dashboard extends BaseHtmlElement
 
             $wrapper->addHtml($this->welcomeForm);
             $this->addHtml($wrapper);
-        } elseif (! empty($activeHome->getPanes(true))) {
-            $dashlets = $this->getActivePane()->getDashlets();
+        } elseif (! $activeHome->hasEntries()) {
+            $this->setAttribute('class', 'content');
+            $this->addHtml(HtmlElement::create('h1', null, t('No dashboard added to this dashboard home')));
+        } else {
+            $activePane = $this->getActivePane();
             $this->setAttribute('data-icinga-pane', $activeHome->getName() . '|' . $this->getActivePane()->getName());
 
-            if (empty($dashlets)) {
+            if (! $activePane->hasEntries()) {
                 $this->setAttribute('class', 'content');
-                $dashlets = HtmlElement::create('h1', null, t('No dashlet added to this pane.'));
+                $this->addHtml(HtmlElement::create('h1', null, t('No dashlet added to this pane.')));
+            } else {
+                foreach ($activePane->getEntries() as $dashlet) {
+                    $this->addHtml($dashlet->getHtml());
+                }
             }
-
-            $this->add($dashlets);
-        } else {
-            // TODO: What to do with dashboard homes without any dashboards??
-            exit(0);
         }
     }
 }

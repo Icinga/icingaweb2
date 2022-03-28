@@ -35,14 +35,10 @@ class DashboardSettings implements Tabextension
     public function apply(Tabs $tabs)
     {
         $url = Url::fromPath(Dashboard::BASE_ROUTE . '/settings');
-        $url =  empty($this->urlParam) ? $url : $url->addParams($this->urlParam);
-        $tabs->add(
-            'dashboard_settings',
-            [
-               'icon'       => 'service',
-                'url'       => (string) $url,
-                'priority'  => -100
-            ]
-        );
+        $url = empty($this->urlParam) ? $url : $url->addParams($this->urlParam);
+        $tabs->add('dashboard_settings', [
+            'icon' => 'service',
+            'url'  => (string) $url,
+        ]);
     }
 }

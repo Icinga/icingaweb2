@@ -5,7 +5,7 @@ namespace Icinga\Web\Widget;
 
 use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Application\Icinga;
-use Icinga\Web\Navigation\DashboardHome;
+use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Url;
 
 /**
@@ -37,7 +37,6 @@ class SearchDashboard extends \Icinga\Web\Dashboard\Dashboard
     public function __construct()
     {
         $this->searchHome = new DashboardHome(self::SEARCH_HOME);
-        $this->searchHome->setActive();
     }
 
     public function getTabs()
@@ -72,7 +71,8 @@ class SearchDashboard extends \Icinga\Web\Dashboard\Dashboard
      */
     public function search($searchString = '')
     {
-        $pane = $this->searchHome->addPane(self::SEARCH_PANE)->getPane(self::SEARCH_PANE)->setTitle(t('Search'));
+        $pane = $this->searchHome->createEntry(self::SEARCH_PANE)->getEntry(self::SEARCH_PANE);
+        $pane->setTitle(t('Search'));
         $this->activate(self::SEARCH_PANE);
 
         $manager = Icinga::app()->getModuleManager();
@@ -83,7 +83,7 @@ class SearchDashboard extends \Icinga\Web\Dashboard\Dashboard
                 $moduleSearchUrls = $module->getSearchUrls();
                 if (! empty($moduleSearchUrls)) {
                     if ($searchString === '') {
-                        $pane->addDashlet(t('Ready to search'), 'search/hint');
+                        $pane->createEntry(t('Ready to search'), 'search/hint');
                         return $this;
                     }
                     $searchUrls = array_merge($searchUrls, $moduleSearchUrls);
@@ -95,8 +95,8 @@ class SearchDashboard extends \Icinga\Web\Dashboard\Dashboard
 
         foreach (array_reverse($searchUrls) as $searchUrl) {
             $title = $searchUrl->title . ': ' . $searchString;
-            $pane->addDashlet($title, Url::fromPath($searchUrl->url, array('q' => $searchString)));
-            $pane->getDashlet($title)->setProgressLabel(t('Searching'));
+            $pane->createEntry($title, Url::fromPath($searchUrl->url, array('q' => $searchString)));
+            $pane->getEntry($title)->setProgressLabel(t('Searching'));
         }
 
         return $this;
@@ -104,11 +104,11 @@ class SearchDashboard extends \Icinga\Web\Dashboard\Dashboard
 
     protected function assemble()
     {
-        if (! $this->searchHome->getPane(self::SEARCH_PANE)->hasDashlets()) {
+        if ($this->searchHome->getEntry(self::SEARCH_PANE)->hasEntries()) {
             throw new HttpNotFoundException(t('Page not found'));
         }
 
-        $this->add($this->searchHome->getPane(self::SEARCH_PANE)->getDashlets());
+        $this->add($this->searchHome->getEntry(self::SEARCH_PANE)->getEntries());
     }
 
     /**

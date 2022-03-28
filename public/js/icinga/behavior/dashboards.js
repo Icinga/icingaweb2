@@ -4,19 +4,26 @@
 
     'use strict';
 
+    try {
+        var Sortable = require('icinga/icinga-php-library/vendor/Sortable')
+    } catch (e) {
+        console.warn('Unable to provide Sortable. Library not available:', e);
+        return;
+    }
+
     /**
      * Possible type of widgets this behavior is being applied to
      *
      * @type {object}
      */
-    const WIDGET_TYPES = { Dashlets : 'Dashlets', Dashboards : 'Dashboards', DashboardHomes : 'Homes' };
+    const WIDGET_TYPES = { Dashlet : 'Dashlets', Dashboard : 'Dashboards', DashboardHome : 'Homes' };
 
     Icinga.Behaviors = Icinga.Behaviors || {};
 
     /**
      * Behavior for the enhanced Icinga Web 2 dashboards
      *
-     * @param icinga {Icinga} The current Icinga Object
+     * @param {Icinga} icinga The current Icinga Object
      *
      * @constructor
      */
@@ -25,281 +32,180 @@
 
         this.icinga = icinga;
 
-        /**
-         * Type of the widget which is currently being sorted
-         *
-         * @type {string}
-         */
-        this.sortedWidgetType = WIDGET_TYPES.Dashlets;
-
-        /**
-         * Widget container id which is currently being dragged
-         *
-         * @type {null|string}
-         */
-        this.containerId = null;
-
-        // Register event handlers for drag and drop functionalities
-        this.on('dragstart', '.widget-sortable', this.onDragStart, this);
-        this.on('dragover', '.widget-sortable', this.onDragOver, this);
-        this.on('dragleave', '.widget-sortable', this.onDragLeave, this);
-        this.on('dragend', '.widget-sortable', this.onDragEnd, this);
-        this.on('drop', '.widget-sortable', this.onDrop, this);
+        this.on('rendered', '#main > .container', this.onRendered, this);
+        this.on('end', '.dashboard-settings, .dashboard-list-control, .dashlet-list-item', this.elementDropped, this);
+        // This is for the normal dashboard/dashlets view
+        this.on('end', '.dashboard.content', this.elementDropped, this);
     };
 
     Dashboard.prototype = new Icinga.EventListener();
 
     /**
-     * A user tries to drag an element, so make sure it's sortable and setup the procedure
+     * Get the widget type of the given element
      *
-     * @param event {Event} The `dragstart` event triggered when starting to drag the element
-     *                      with a mouse click and begin to move it
+     * @param {HTMLElement} target
+     *
+     * @returns {null|string}
      */
-    Dashboard.prototype.onDragStart = function (event) {
-        let _this = event.data.self;
-        let $target = $(event.target);
-
-        if (! _this.isDraggable($target)) {
-            return false;
+    Dashboard.prototype.getTypeFor = function (target) {
+        if (target.matches('.dashboard-settings')) {
+            return WIDGET_TYPES.DashboardHome;
+        } else if (target.matches('.dashboard-item-list')) {
+            return WIDGET_TYPES.Dashboard;
+        } else if (target.matches('.dashlet-item-list') || target.matches('.dashboard.content')) {
+            return WIDGET_TYPES.Dashlet;
         }
 
-        _this.containerId = $target.attr('id');
-        $target.addClass('draggable-element');
-
-        let $parent = $target.parent()[0];
-        // Prevents child elements from being the target of pointer events
-        $($parent).children('.widget-sortable').addClass('drag-active');
+        return null;
     };
 
     /**
-     * Event handler for drag over
+     * Set up a request with the reordered widget and post the data to the controller
      *
-     * Check that the target el is draggable and isn't the el itself
-     * which is currently being dragged
-     *
-     * @param event {Event} The `drag over` event triggered when dragging over another dashlet
-     */
-    Dashboard.prototype.onDragOver = function (event) {
-        let $target = $(event.target);
-        let _this = event.data.self;
-
-        // Moving an element arbitrarily elsewhere isn't allowed
-        if (! _this.isDraggable($target) || ! _this.isDraggableSiblingOf($target)) {
-            return false;
-        }
-
-        // Don't show mouse drop cursor if the target element is the draggable element
-        if ($target.attr('id') !== _this.containerId) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            $target.addClass('drag-over');
-        }
-    };
-
-    /**
-     * The element doesn't get dragged over anymore, so just remove the drag-over class
-     *
-     * @param event {Event} The `drag leave` event triggered when dragging over a dashlet
-     *                      and leaving without dropping the draggable element
-     */
-    Dashboard.prototype.onDragLeave = function (event) {
-        let $target = $(event.target);
-        let _this = event.data.self;
-
-        if (! _this.isDraggable($target) || ! _this.isDraggableSiblingOf($target)) {
-            return false;
-        }
-
-        $target.removeClass('drag-over');
-    };
-
-    /**
-     * Remove all class names added dynamically
-     *
-     * @param event {Event} The `drag end` event triggered when the draggable element is released
-     */
-    Dashboard.prototype.onDragEnd = function (event) {
-        let $target = $(event.target);
-        let _this = event.data.self;
-
-        if (! _this.isDraggable($target) || ! _this.isDraggableSiblingOf($target)) {
-            return false;
-        }
-
-        $target.removeClass('draggable-element');
-        $target.removeClass('drag-over');
-
-        let $parent = $target.parent()[0];
-        // The draggable is now released, so we have to remove the class to enable the pointer events again
-        $($parent).children('.widget-sortable').removeClass('drag-active');
-    };
-
-    /**
-     * Event handler for on drop action
-     *
-     * @param event {Event} The `ondrop` event triggered when the dashlet has been dropped
-     */
-    Dashboard.prototype.onDrop = function (event) {
-        let $target = $(event.target);
-        let _this = event.data.self;
-
-        // Don't allow to drop an element arbitrarily elsewhere
-        if (! _this.isDraggable($target) || ! _this.isDraggableSiblingOf($target)) {
-            return false;
-        }
-
-        // Prevent default behaviors to allow the drop event
-        event.preventDefault();
-        event.stopPropagation();
-
-        const draggable = $target.parent().children('#' + _this.containerId);
-
-        // If the target element has been located before the draggable element,
-        // insert the draggable before the target element otherwise after it
-        if ($target.nextAll().filter(draggable).length) {
-            draggable.insertBefore($target);
-        } else {
-            draggable.insertAfter($target);
-        }
-
-        // Draggable element is now dropped, so drag-over class must also be removed
-        $target.removeClass('drag-over');
-
-        if ($target.data('icinga-pane')) {
-            _this.sortedWidgetType = WIDGET_TYPES.Dashboards;
-        } else if ($target.data('icinga-home')) {
-            _this.sortedWidgetType = WIDGET_TYPES.DashboardHomes;
-        }
-
-        _this.sendReorderedWidgets($target);
-    };
-
-    /**
-     * Get whether the given element is draggable
-     *
-     * @param $target {jQuery}
+     * @param event
      *
      * @returns {boolean}
      */
-    Dashboard.prototype.isDraggable = function ($target) {
-        return $target.attr('draggable');
-    };
-
-    /**
-     * Get whether the given element is sibling of the element currently being dragged
-     *
-     * @param $target {jQuery}
-     *
-     * @returns {number}
-     */
-    Dashboard.prototype.isDraggableSiblingOf = function ($target) {
-        return $target.parent().children('#' + this.containerId).length;
-    };
-
-    /**
-     * Set up a request with the reordered containers and post the data to the controller
-     *
-     * @param $target {jQuery}
-     */
-    Dashboard.prototype.sendReorderedWidgets = function ($target) {
-        let _this = this,
+    Dashboard.prototype.elementDropped = function (event) {
+        let _this = event.data.self,
+            orgEvt = event.originalEvent,
             data = {};
 
-        switch (_this.sortedWidgetType) {
-            case WIDGET_TYPES.DashboardHomes: {
-                let $homes = [];
-                $target.parent().children('.home-list-control.widget-sortable').each(function () {
-                    let home = $(this);
-                    if (typeof home.data('icinga-home') === 'undefined') {
-                        _this.icinga.logger.error(
-                            '[Dashboards] Dashboard home widget has no "icingaHome" data attribute registered: ',
-                            home[0]
-                        );
-                        return;
-                    }
+        if (orgEvt.to === orgEvt.from && orgEvt.newIndex === orgEvt.oldIndex) {
+            return false;
+        }
 
-                    $homes.push(home.data('icinga-home'));
-                });
-
-                data = { ...$homes };
+        let item = orgEvt.item;
+        switch (_this.getTypeFor(orgEvt.to)) {
+            case WIDGET_TYPES.DashboardHome: {
+                let home = item.dataset.icingaHome;
+                data[home] = orgEvt.newIndex;
                 break;
             }
-            case WIDGET_TYPES.Dashboards: {
-                let $home, $panes = [];
-                $target.parent().children('.dashboard-list-control.widget-sortable').each(function () {
-                    let pane = $(this);
-                    if (typeof pane.data('icinga-pane') === 'undefined') {
-                        _this.icinga.logger.error(
-                            '[Dashboards] Dashboard widget has no "icingaPane" data attribute registered: ',
-                            pane[0]
-                        );
-                        return;
-                    }
-
-                    pane = pane.data('icinga-pane').split('|', 2);
-                    if (! $home) {
-                        $home = pane.shift();
-                    }
-
-                    $panes.push(pane.pop());
-                });
-
-                data[$home] = $panes;
-                break;
-            }
-            case WIDGET_TYPES.Dashlets: {
-                let $home, $pane, $dashlets = [];
-                $target.parent().children('.widget-sortable').each(function () {
-                    let dashlet = $(this);
-                    if (typeof dashlet.data('icinga-dashlet') === 'undefined') {
-                        _this.icinga.logger.error(
-                            '[Dashboards] Dashlet widget has no "icingaDashlet" data attribute registered: ',
-                            dashlet[0]
-                        );
-                        return;
-                    }
-
-                    if (! $home && ! $pane) {
-                        let pane = dashlet.parent();
-                        if (typeof pane.data('icinga-pane') === 'undefined') {
-                            // Nested parents
-                            pane = pane.parent();
-                            if (typeof pane.data('icinga-pane') === 'undefined') {
-                                _this.icinga.logger.error(
-                                    '[Dashboards] Dashlet parent widget has no "icingaPane" data attribute registered: ',
-                                    pane[0]
-                                );
-                                return;
-                            }
-                        }
-
-                        pane = pane.data('icinga-pane').split('|', 2);
-                        $home = pane.shift();
-                        $pane = pane.shift();
-                    }
-
-                    $dashlets.push(dashlet.data('icinga-dashlet'));
-                });
-
-                if ($home && $pane) {
-                    data[$home] = { [$pane] : $dashlets };
+            case WIDGET_TYPES.Dashboard: {
+                let pane = item.dataset.icingaPane,
+                    home = orgEvt.to.closest('.home-list-control').dataset.icingaHome;
+                if (orgEvt.to !== orgEvt.from) {
+                    data.originals = {
+                        originalHome : orgEvt.from.closest('.home-list-control').dataset.icingaHome,
+                        originalPane : pane
+                    };
                 }
+
+                data[home] = { [pane] : orgEvt.newIndex };
+                break;
+            }
+            case WIDGET_TYPES.Dashlet: {
+                let dashlet = item.dataset.icingaDashlet,
+                    pane,
+                    home;
+
+                if (orgEvt.to.matches('.dashboard.content')) {
+                    let parentData = orgEvt.to.dataset.icingaPane.split('|', 2);
+                    home = parentData.shift();
+                    pane = parentData.shift();
+
+                    data.redirectPath = 'dashboards';
+                } else { // Dashboard manager view
+                    let parent = orgEvt.to.closest('.dashboard-list-control');
+                    pane = parent.dataset.icingaPane;
+                    home = parent.closest('.home-list-control').dataset.icingaHome;
+
+                    if (orgEvt.to !== orgEvt.from) {
+                        let parent = orgEvt.from.closest('.dashboard-list-control');
+                        data.originals = {
+                            originalHome : parent.closest('.home-list-control').dataset.icingaHome,
+                            originalPane : parent.dataset.icingaPane
+                        }
+                    }
+                }
+
+                dashlet = { [dashlet] : orgEvt.newIndex };
+                data[home] = { [pane] : dashlet };
             }
         }
 
         if (Object.keys(data).length) {
-            data.Type = _this.sortedWidgetType;
+            data.Type = _this.getTypeFor(orgEvt.to);
+            if (! data.hasOwnProperty('originals')) {
+                data.originals = null;
+            }
 
-            $.ajax({
-                context     : _this,
-                type        : 'post',
-                url         : _this.icinga.config.baseUrl + '/dashboards/reorder-widgets',
-                headers     : { 'Accept' : 'application/json' },
-                contentType : 'application/json',
-                data        : JSON.stringify(data),
-            });
+            if (! data.hasOwnProperty('redirectPath')) {
+                data.redirectPath = 'dashboards/settings';
+            }
+
+            data = { dashboardData : JSON.stringify(data) };
+            let url = _this.icinga.config.baseUrl + '/dashboards/reorder-widgets';
+            _this.icinga.loader.loadUrl(url, $('#col1'), data, 'post');
         }
+    };
+
+    /**
+     * Get whether the given element is a valid target of the drag & drop events
+     *
+     * @param to
+     * @param from
+     * @param item
+     * @param event
+     *
+     * @returns {boolean}
+     */
+    Dashboard.prototype.isValid = function (to, from, item, event) {
+        if (typeof from.options.group === 'undefined' || typeof to.options.group === 'undefined') {
+            return false;
+        }
+
+        return from.options.group.name === to.options.group.name;
+    };
+
+    Dashboard.prototype.onRendered = function (e) {
+        let _this = e.data.self;
+        $(e.target).find('.dashboard-settings, .dashboard.content, .dashboard-item-list, .dashlet-item-list').each(function () {
+            let groupName = _this.getTypeFor(this),
+                draggable,
+                handle;
+
+            switch (groupName) {
+                case WIDGET_TYPES.DashboardHome: {
+                    groupName = WIDGET_TYPES.DashboardHome;
+                    draggable = '.home-list-control';
+                    handle = '.home-list-control > h1';
+                    break;
+                }
+                case WIDGET_TYPES.Dashboard: {
+                    groupName = WIDGET_TYPES.Dashboard;
+                    draggable = '.dashboard-list-control';
+                    handle = '.dashboard-list-control > h1'
+                    break;
+                }
+                case WIDGET_TYPES.Dashlet: {
+                    groupName = WIDGET_TYPES.Dashlet;
+                    if (this.matches('.dashboard.content')) {
+                        draggable = '> .container';
+                    } else {
+                        draggable = '.dashlet-list-item';
+                    }
+
+                    handle = draggable;
+                }
+            }
+
+            let options = {
+                scroll     : true,
+                invertSwap : true,
+                dataIdAttr : 'id',
+                direction  : 'vertical',
+                draggable  : draggable,
+                handle     : handle,
+                group      : {
+                    name : groupName,
+                    put  : _this['isValid'],
+                }
+            };
+
+            Sortable.create(this, options);
+        });
     };
 
     Icinga.Behaviors.Dashboard = Dashboard;

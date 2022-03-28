@@ -5,9 +5,7 @@ namespace Icinga\Common;
 trait DataExtractor
 {
     /**
-     * Extract data from array to this class's properties
-     *
-     * Unknown properties (no matching setter) are ignored
+     * Extract data from array to this class's properties Unknown properties (no matching setter) are ignored
      *
      * @param array $data
      *
@@ -28,9 +26,13 @@ trait DataExtractor
     /**
      * Get this class's structure as array
      *
+     * Stringifies the attrs or set to null if it doesn't have a value, when $stringify is true
+     *
+     * @param bool $stringify Whether, the attributes should be returned unmodified
+     *
      * @return array
      */
-    public function toArray()
+    public function toArray($stringify = true)
     {
         return [];
     }

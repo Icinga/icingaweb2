@@ -4,29 +4,26 @@
 
 namespace Icinga\Web\Dashboard\Setup;
 
+use Icinga\Forms\Dashboard\BaseDashboardForm;
 use Icinga\Web\Dashboard\Dashboard;
+use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Dashboard\Pane;
-use Icinga\Web\Navigation\DashboardHome;
 use Icinga\Web\Notification;
 use Icinga\Web\Dashboard\ItemList\DashletListMultiSelect;
 use ipl\Html\HtmlElement;
 use ipl\Html\ValidHtml;
-use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
 
-class SetupNewDashboard extends CompatForm
+class SetupNewDashboard extends BaseDashboardForm
 {
-    /** @var Dashboard */
-    protected $dashboard;
-
     /** @var array Module dashlets from the DB */
     private $dashlets = [];
 
     public function __construct(Dashboard $dashboard)
     {
-        $this->dashboard = $dashboard;
+        parent::__construct($dashboard);
 
         $this->setRedirectUrl((string) Url::fromPath(Dashboard::BASE_ROUTE));
         $this->setAction($this->getRedirectUrl() . '/setup-dashboard');
@@ -46,13 +43,6 @@ class SetupNewDashboard extends CompatForm
         return $this;
     }
 
-    public function hasBeenSubmitted()
-    {
-        return $this->hasBeenSent()
-            && ($this->getPopulatedValue('btn_cancel')
-                || $this->getPopulatedValue('submit'));
-    }
-
     protected function assemble()
     {
         $this->getAttributes()->add('class', 'modal-form');
@@ -60,6 +50,7 @@ class SetupNewDashboard extends CompatForm
         if ($this->getPopulatedValue('btn_next')) { // Configure Dashlets
             $this->dumpArbitaryDashlets();
 
+            $submitButtonLabel = t('Add Dashlets');
             $this->addElement('text', 'pane', [
                 'required'    => true,
                 'label'       => t('Dashboard Title'),
@@ -134,10 +125,8 @@ class SetupNewDashboard extends CompatForm
                     }
                 }
             }
-
-            $submitButton = $this->createElement('submit', 'submit', ['label' => t('Add Dashlets')]);
-            $this->registerElement($submitButton)->decorate($submitButton);
         } else { // Select Dashlets
+            $submitButtonLabel = t('Next');
             $list = HtmlElement::create('ul', ['class' => 'dashlet-item-list empty-list']);
             $multi = new DashletListMultiSelect();
             $multi->setCheckBox($this->createElement('checkbox', 'custom_url', ['class' => 'sr-only']));
@@ -169,16 +158,19 @@ class SetupNewDashboard extends CompatForm
 
                 $this->addHtml($listControl->addHtml($list));
             }
-
-            $submitButton = $this->createElement('submit', 'btn_next', [
-                'class' => 'autosubmit',
-                'label' => t('Next'),
-            ]);
-            $this->registerElement($submitButton)->decorate($submitButton);
         }
 
-        $this->addElement('submit', 'btn_cancel', ['label' => t('Cancel')]);
-        $this->getElement('btn_cancel')->setWrapper($submitButton->getWrapper());
+        $submitButton = $this->registerSubmitButton($submitButtonLabel);
+        if (! $this->getPopulatedValue('btn_next')) {
+            $submitButton
+                ->setName('btn_next')
+                ->getAttributes()->add('class', 'autosubmit');
+        }
+
+        $formControls = $this->createFormControls();
+        $formControls->add([$submitButton, $this->createCancelButton()]);
+
+        $this->addHtml($formControls);
     }
 
     protected function onSuccess()
@@ -190,12 +182,12 @@ class SetupNewDashboard extends CompatForm
             $conn->beginTransaction();
 
             try {
-                $this->dashboard->getHome(DashboardHome::DEFAULT_HOME)->managePanes($pane);
+                $this->dashboard->getEntry(DashboardHome::DEFAULT_HOME)->manageEntry($pane);
 
                 // If element name "dashlet" and "url" are set we need to only store one dashlet
                 if (($name = $this->getPopulatedValue('dashlet')) && ($url = $this->getPopulatedValue('url'))) {
                     $dashlet = new Dashlet($name, $url, $pane);
-                    $pane->manageDashlets($dashlet);
+                    $pane->manageEntry($dashlet);
                 } else {
                     foreach ($this->dashlets as $module => $dashlets) {
                         $moduleDashlets = [];
@@ -226,7 +218,7 @@ class SetupNewDashboard extends CompatForm
                             $moduleDashlets[$dashlet->getName()] = $dashlet;
                         }
 
-                        $pane->manageDashlets($moduleDashlets);
+                        $pane->manageEntry($moduleDashlets);
                     }
                 }
 
