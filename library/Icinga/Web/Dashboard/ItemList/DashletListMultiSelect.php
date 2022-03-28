@@ -1,5 +1,7 @@
 <?php
 
+/* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
+
 namespace Icinga\Web\Dashboard\ItemList;
 
 use ipl\Html\Contract\FormElement;

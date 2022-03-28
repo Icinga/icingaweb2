@@ -5,21 +5,14 @@
 namespace Icinga\Forms\Dashboard;
 
 use Icinga\Web\Notification;
-use Icinga\Web\Dashboard\Dashboard;
 use ipl\Html\HtmlElement;
-use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
 
-class RemoveDashletForm extends CompatForm
+class RemoveDashletForm extends BaseDashboardForm
 {
-    /** @var Dashboard */
-    protected $dashboard;
-
-    public function __construct(Dashboard $dashboard)
+    public function hasBeenSubmitted()
     {
-        $this->dashboard = $dashboard;
-
-        $this->setAction((string) Url::fromRequest());
+        return $this->hasBeenSent() && $this->getPopulatedValue('btn_remove');
     }
 
     protected function assemble()
@@ -29,17 +22,20 @@ class RemoveDashletForm extends CompatForm
             Url::fromRequest()->getParam('dashlet')
         )));
 
-        $this->addElement('submit', 'remove_dashlet', ['label' => t('Remove Dashlet')]);
+        $submit = $this->registerSubmitButton(t('Remove Dashlet'));
+        $submit->setName('btn_remove');
+
+        $this->addHtml($submit);
     }
 
     protected function onSuccess()
     {
         $requestUrl = Url::fromRequest();
         $home = $this->dashboard->getActiveHome();
-        $pane = $home->getPane($requestUrl->getParam('pane'));
+        $pane = $home->getEntry($requestUrl->getParam('pane'));
 
         $dashlet = $requestUrl->getParam('dashlet');
-        $pane->removeDashlet($dashlet);
+        $pane->removeEntry($dashlet);
 
         Notification::success(sprintf(t('Removed dashlet "%s" successfully'), $dashlet));
     }

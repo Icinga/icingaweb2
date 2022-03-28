@@ -82,7 +82,7 @@
   list-style-type: none;
 
   label {
-    width: 49%;
+    width: 49.5%;
     margin-bottom: .5em;
   }
 
@@ -93,24 +93,29 @@
   .dashlet-list-item {
     display: flex;
     flex-direction: column;
-    border-radius: .4em;
-    border: 1px solid @gray-light;
     background: @gray-lightest;
+    border: 1px solid @gray-light;
+    .rounded-corners();
 
     section.caption, h1 {
       margin-left: .5em;
       font-weight: 500;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
     }
 
     h1 {
       border-bottom: none;
+      overflow: hidden;
+      -webkit-line-clamp: 1;
     }
 
     .caption {
       height: 3em;
-      overflow-y: auto;
       font-size: 1.1em;
       color: @text-color-light;
+      -webkit-line-clamp: 2;
     }
   }
 
@@ -141,16 +146,10 @@
 
 // Add new home button of the dashboard manager
 .controls .add-home {
+  .button();
   float: right;
-  outline: none;
-  cursor: pointer;
   font-size: 1.2em;
   font-weight: 500;
-  padding: .5em 1em;
-  line-height: normal;
-  text-decoration: none;
-  border: 2px solid @icinga-blue;
-  border-radius: .4em;
   color: @text-color-on-icinga-blue;
   background-color: @icinga-blue;
 }
@@ -160,27 +159,27 @@
 }
 
 .action-link.add-dashboard {
-  width: 81.5%;
-  margin-top: .5em;
+  width: 85%;
+  margin: .5em 0 0;
 }
 
 .action-link.add-dashlet, .action-link.add-dashboard {
+  .rounded-corners();
   order: 1;
   font-size: 1.2em;
   font-weight: 500;
   padding: .6em 1em;
-  border-radius: .3em;
   text-decoration: none;
   background-color: @low-sat-blue;
 }
 
 .dashboard-list-control .dashlet-item-list {
-  width: 100%;
-  display: flex;
   margin-left: 2.2em;
+  display: flex;
+  width: 97.8%; // 100% - 2.2em margin-left
 
   .dashlet-list-item {
-    width: 49.4%;
+    width: 49.7%;
     margin-bottom: .5em;
     background: transparent;
   }
@@ -191,14 +190,14 @@
 }
 
 .dashboard-list-control {
-  width: 80%;
+  width: 85%;
 
   h1.collapsible-header {
     margin-left: 1.5em;
   }
 
   .action-link.add-dashlet {
-    width: 99.5%;
+    width: 97.8%;
     margin-left: 1.8em;
   }
 }
@@ -213,10 +212,14 @@
     border-bottom: none;
   }
 
-  h1.collapsible-header a, h1.dashlet-header a {
+  h1.collapsible-header a:not(.dashlet-title), h1.dashlet-header a:not(.dashlet-title) {
     margin-left: .3em;
     font-weight: normal;
     color: @icinga-blue;
+  }
+
+  h1.dashlet-header a.dashlet-title {
+    color: @text-color;
   }
 
   .dashlets-list-info, .dashboard-list-info {
@@ -230,17 +233,22 @@
   }
 }
 
+// Dashboard home list controls only
 .home-list-control {
   width: 100%;
 
-  h1.collapsible-header.home {
+  & > h1.collapsible-header {
     margin-left: 1.5em;
-    margin-bottom: 0;
+    margin-bottom: -1em;
+
+    & > a.disabled {
+      pointer-events: none;
+      cursor: default;
+    }
   }
 
-  .action-link.add-dashboard {
-    width: 81.6%;
-    margin-left: 1.3em;
+  .dashboard-list-control, .action-link.add-dashboard {
+    margin-left: 1.4em;
   }
 
   .dashboard-list-control {
@@ -249,20 +257,13 @@
     }
 
     .dashlet-item-list {
-      margin-left: 4em;
-    }
-
-    .dashlets-list-info {
-      margin-left: 2.2em;
-    }
-
-    h1.collapsible-header {
-      margin-left: 3em;
+      margin-left: 2em;
+      width: 98%; // 100% - 2em margin-left
     }
 
     .action-link.add-dashlet {
-      margin-left: 3.4em;
-      width: 99.2%;
+      margin-left: 1.6em;
+      width: calc((49.74% * 2) - 1.2em); // 2x flex columns - own size
     }
   }
 }
@@ -292,17 +293,37 @@
 }
 
 // Make the submit buttons a bit bigger than the normal size
-.modal-form.icinga-controls .control-group.form-controls input[type="submit"] {
+.modal-form.icinga-controls .control-group.form-controls input[type="submit"],
+.control-group.form-controls .modal-cancel {
   min-width: 7em;
   font-size: 1.2em;
-  margin-right: .4em;
+  padding: ~"calc(@{vertical-padding} - 2px)" @horizontal-padding;
+}
+
+// Remove and modal cancel buttons
+form.icinga-form .control-group.form-controls .remove-button {
+  .cancel-button();
+  margin-right: auto;
+}
+
+.modal-form .form-controls .modal-cancel {
+  padding: .5em 1em;
+}
+
+.control-group.form-controls .modal-cancel {
+  background-color: @low-sat-blue;
+  border: none;
 }
 
 // Drag and drop
-.drag-over {
+.sortable-chosen {
+  .box-shadow();
   background: fade(@icinga-blue, 20);
   border: 5px @body-bg-color dashed;
-  box-shadow: 4px 4px 4px 4px @black;
+}
+
+.home-list-control.sortable-drag {
+  width: calc(85% + 1.4em);
 }
 
 .drag-active * {

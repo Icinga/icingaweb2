@@ -4,142 +4,54 @@
 
 namespace Icinga\Web\Dashboard;
 
-use Icinga\Common\DataExtractor;
-use Icinga\Web\Dashboard\Common\DisableWidget;
-use Icinga\Web\Dashboard\Common\OrderWidget;
+use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Model;
-use Icinga\Web\Navigation\DashboardHome;
+use Icinga\Web\Dashboard\Common\DashboardControls;
+use Icinga\Web\Dashboard\Common\OverridingWidget;
+use Icinga\Web\Dashboard\Common\Sortable;
 use ipl\Stdlib\Filter;
 use ipl\Web\Url;
+
+use function ipl\Stdlib\get_php_type;
 
 /**
  * A pane, displaying different Dashboard dashlets
  */
-class Pane implements OverridingWidget
+class Pane extends BaseDashboard implements Sortable, OverridingWidget
 {
-    use DisableWidget;
-    use OrderWidget;
-    use DataExtractor;
+    use DashboardControls;
 
     const TABLE = 'dashboard';
-
-    /**
-     * The name of this pane
-     *
-     * @var string
-     */
-    private $name;
-
-    /**
-     * The title of this pane, as displayed in the dashboard tabs
-     *
-     * @var string
-     */
-    private $title;
 
     /**
      * An array of @see Dashlet that are displayed in this pane
      *
      * @var array
      */
-    private $dashlets = [];
+    protected $dashlets = [];
 
     /**
      * Whether this widget overrides another widget
      *
      * @var bool
      */
-    private $override;
-
-    /**
-     * Unique identifier of this pane
-     *
-     * @var string
-     */
-    private $uuid;
-
-    /**
-     * Name of the owner/creator of this pane
-     *
-     * @var string
-     */
-    private $owner;
+    protected $override;
 
     /**
      * Number of users who have subscribed to this pane if (public)
      *
      * @var int
      */
-    private $acceptance;
+    protected $acceptance;
 
     /**
      * A dashboard home this pane is a part of
      *
      * @var DashboardHome
      */
-    private $home;
-
-    /**
-     * Create a new pane
-     *
-     * @param string $name The pane to create
-     * @param array $properties
-     */
-    public function __construct($name, array $properties = [])
-    {
-        $this->name = $name;
-        $this->title = $name;
-
-        if (! empty($properties)) {
-            $this->fromArray($properties);
-        }
-    }
-
-    /**
-     * Set the name of this pane
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * Returns the name of this pane
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Returns the title of this pane
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * Overwrite the title of this pane
-     *
-     * @param string $title The new title to use for this pane
-     *
-     * @return $this
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-
-        return $this;
-    }
+    protected $home;
 
     public function override(bool $override)
     {
@@ -151,54 +63,6 @@ class Pane implements OverridingWidget
     public function isOverriding()
     {
         return $this->override;
-    }
-
-    /**
-     * Set this pane's unique identifier
-     *
-     * @param string $uuid
-     *
-     * @return $this
-     */
-    public function setUuid($uuid)
-    {
-        $this->uuid = $uuid;
-
-        return $this;
-    }
-
-    /**
-     * Get this pane's unique identifier
-     *
-     * @return string
-     */
-    public function getUuid()
-    {
-        return $this->uuid;
-    }
-
-    /**
-     * Set the owner of this dashboard
-     *
-     * @param string $owner
-     *
-     * @return $this
-     */
-    public function setOwner($owner)
-    {
-        $this->owner = $owner;
-
-        return $this;
-    }
-
-    /**
-     * Get owner of this dashboard
-     *
-     * @return string
-     */
-    public function getOwner()
-    {
-        return $this->owner;
     }
 
     /**
@@ -249,86 +113,12 @@ class Pane implements OverridingWidget
         return $this;
     }
 
-    /**
-     * Return true if a dashlet with the given name exists in this pane
-     *
-     * @param string $name The title of the dashlet to check for existence
-     *
-     * @return bool
-     */
-    public function hasDashlet($name)
-    {
-        return array_key_exists($name, $this->dashlets);
-    }
-
-    /**
-     * Checks if the current pane has any dashlets
-     *
-     * @return bool
-     */
-    public function hasDashlets()
-    {
-        return ! empty($this->dashlets);
-    }
-
-    /**
-     * Get a dashlet with the given name if existing
-     *
-     * @param string $name
-     *
-     * @return Dashlet
-     */
-    public function getDashlet($name)
-    {
-        if ($this->hasDashlet($name)) {
-            return $this->dashlets[$name];
-        }
-
-        throw new ProgrammingError('Trying to access invalid dashlet: %s', $name);
-    }
-
-    /**
-     * Get all dashlets belongs to this pane
-     *
-     * @return Dashlet[]
-     */
-    public function getDashlets()
-    {
-        uasort($this->dashlets, function (Dashlet $x, Dashlet $y) {
-            return $x->getPriority() - $y->getPriority();
-        });
-
-        return $this->dashlets;
-    }
-
-    /**
-     * Set dashlets of this pane
-     *
-     * @param Dashlet[] $dashlets
-     *
-     * @return $this
-     */
-    public function setDashlets(array $dashlets)
-    {
-        $this->dashlets = $dashlets;
-
-        return $this;
-    }
-
-    /**
-     * Create, add and return a new dashlet
-     *
-     * @param string $name
-     * @param string $url
-     *
-     * @return  Dashlet
-     */
-    public function createDashlet($name, $url = null)
+    public function createEntry($name, $url = null)
     {
         $dashlet = new Dashlet($name, $url, $this);
         $this->addDashlet($dashlet);
 
-        return $dashlet;
+        return $this;
     }
 
     /**
@@ -343,9 +133,9 @@ class Pane implements OverridingWidget
     public function addDashlet($dashlet, $url = null)
     {
         if ($dashlet instanceof Dashlet) {
-            $this->dashlets[$dashlet->getName()] = $dashlet;
+            $this->addEntry($dashlet);
         } elseif (is_string($dashlet) && $url !== null) {
-            $this->createDashlet($dashlet, $url);
+            $this->createEntry($dashlet, $url);
         } else {
             throw new ConfigurationError('Invalid dashlet added: %s', $dashlet);
         }
@@ -364,31 +154,24 @@ class Pane implements OverridingWidget
      */
     public function add($name, $url, $priority = 0, $description = null)
     {
-        $dashlet = $this->createDashlet($name, $url);
+        $this->createEntry($name, $url);
+        $dashlet = $this->getEntry($name);
         $dashlet
             ->setDescription($description)
             ->setPriority($priority);
-        $this->addDashlet($dashlet);
 
         return $this;
     }
 
-    /**
-     * Remove the given dashlet if it exists in this pane
-     *
-     * @param Dashlet|string $dashlet
-     *
-     * @return $this
-     */
-    public function removeDashlet($dashlet)
+    public function removeEntry($dashlet)
     {
         $name = $dashlet instanceof Dashlet ? $dashlet->getName() : $dashlet;
-        if (! $this->hasDashlet($name)) {
+        if (! $this->hasEntry($name)) {
             throw new ProgrammingError('Trying to remove invalid dashlet: %s', $name);
         }
 
         if (! $dashlet instanceof Dashlet) {
-            $dashlet = $this->getDashlet($dashlet);
+            $dashlet = $this->getEntry($dashlet);
         }
 
         Dashboard::getConn()->delete(Dashlet::TABLE, [
@@ -399,38 +182,12 @@ class Pane implements OverridingWidget
         return $this;
     }
 
-    /**
-     * Removes all or a given list of dashlets from this pane
-     *
-     * @param array $dashlets Optional list of dashlets
-     *
-     * @return $this
-     */
-    public function removeDashlets(array $dashlets = [])
+    public function loadDashboardEntries($name = '')
     {
-        $dashlets = ! empty($dashlets) ? $dashlets : $this->getDashlets();
-        foreach ($dashlets as $dashlet) {
-            $this->removeDashlet($dashlet);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Load all dashlets this dashboard is assigned to
-     *
-     * @return $this
-     */
-    public function loadDashletsFromDB()
-    {
-        if ($this->isDisabled()) {
-            return $this;
-        }
-
-        $this->dashlets = [];
         $dashlets = Model\Dashlet::on(Dashboard::getConn())->with('module_dashlet');
         $dashlets->filter(Filter::equal('dashboard_id', $this->getUuid()));
 
+        $this->setEntries([]);
         foreach ($dashlets as $dashlet) {
             $newDashlet = new Dashlet($dashlet->name, $dashlet->url, $this);
             $newDashlet->fromArray([
@@ -447,44 +204,40 @@ class Pane implements OverridingWidget
         return $this;
     }
 
-    /**
-     * Manage the given dashlet(s)
-     *
-     * If you want to move the dashlet(s) from another to this pane,
-     * you have to also pass the origin pane
-     *
-     * @param Dashlet|Dashlet[] $dashlets
-     * @param ?Pane $origin
-     *
-     * @return $this
-     */
-    public function manageDashlets($dashlets, Pane $origin = null)
+    public function manageEntry($entry, BaseDashboard $origin = null, $updateChildEntries = false)
     {
+        if ($origin && ! $origin instanceof Pane) {
+            throw new \InvalidArgumentException(sprintf(
+                __METHOD__ . ' expects parameter "$origin" to be an instance of "%s". Got "%s" instead.',
+                get_php_type($this),
+                get_php_type($origin)
+            ));
+        }
+
         if (! $this->getHome()) {
             throw new \LogicException(
                 'Dashlets cannot be managed. Please make sure to set the current dashboard home beforehand.'
             );
         }
 
-        $user = Dashboard::getUser();
+        $home = $this->getHome();
+        $user = Dashboard::getUser()->getUsername();
         $conn = Dashboard::getConn();
-        $dashlets = is_array($dashlets) ? $dashlets : [$dashlets];
-        $order = count($this->getDashlets()) + 1;
 
+        $dashlets = is_array($entry) ? $entry : [$entry];
+        // highest priority is 0, so count($entries) are all always lowest prio + 1
+        $order = count($this->getEntries());
         foreach ($dashlets as $dashlet) {
             if (is_array($dashlet)) {
-                $this->manageDashlets($dashlet, $origin);
+                $this->manageEntry($dashlet, $origin);
             }
 
             if (! $dashlet instanceof Dashlet) {
                 break;
             }
 
-            $uuid = Dashboard::getSHA1(
-                $user->getUsername() . $this->getHome()->getName() . $this->getName() . $dashlet->getName()
-            );
-
-            if (! $this->hasDashlet($dashlet->getName()) && (! $origin || ! $origin->hasDashlet($dashlet->getName()))) {
+            $uuid = Dashboard::getSHA1($user . $home->getName() . $this->getName() . $dashlet->getName());
+            if (! $this->hasEntry($dashlet->getName()) && (! $origin || ! $origin->hasEntry($dashlet->getName()))) {
                 $conn->insert(Dashlet::TABLE, [
                     'id'           => $uuid,
                     'dashboard_id' => $this->getUuid(),
@@ -495,22 +248,41 @@ class Pane implements OverridingWidget
                 ]);
 
                 if ($dashlet->isModuleDashlet()) {
-                    $systemUuid = Dashboard::getSHA1($dashlet->getModule() . $this->getName() . $dashlet->getName());
-                    $conn->insert('dashlet_system', [
-                        'dashlet_id'        => $uuid,
-                        'module_dashlet_id' => $systemUuid
-                    ]);
+                    $systemUuid = $dashlet->getUuid();
+                    if (! $systemUuid && $dashlet->getPane()) {
+                        $systemUuid = Dashboard::getSHA1(
+                            $dashlet->getModule() . $dashlet->getPane()->getName() . $dashlet->getName()
+                        );
+                    }
+
+                    if ($systemUuid) {
+                        $conn->insert('dashlet_system', [
+                            'dashlet_id'        => $uuid,
+                            'module_dashlet_id' => $systemUuid
+                        ]);
+                    }
                 }
-            } elseif (! $this->hasDashlet($dashlet->getName())
-                || ! $origin
-                || ! $origin->hasDashlet($dashlet->getName())) {
+            } elseif (! $this->hasEntry($dashlet->getName()) || ! $origin
+                || ! $origin->hasEntry($dashlet->getName())) {
+                $filterCondition = [
+                    'id = ?'           => $dashlet->getUuid(),
+                    'dashboard_id = ?' => $this->getUuid()
+                ];
+
+                if ($origin && $origin->hasEntry($dashlet->getName())) {
+                    $filterCondition = [
+                        'id = ?'           => $origin->getEntry($dashlet->getName())->getUuid(),
+                        'dashboard_id = ?' => $origin->getUuid()
+                    ];
+                }
+
                 $conn->update(Dashlet::TABLE, [
                     'id'           => $uuid,
                     'dashboard_id' => $this->getUuid(),
                     'label'        => $dashlet->getTitle(),
                     'url'          => $dashlet->getUrl()->getRelativeUrl(),
                     'priority'     => $dashlet->getPriority()
-                ], ['id = ?' => $dashlet->getUuid()]);
+                ], $filterCondition);
             } else {
                 // This should have already been handled by the caller
                 break;
@@ -522,15 +294,15 @@ class Pane implements OverridingWidget
         return $this;
     }
 
-    public function toArray()
+    public function toArray($stringify = true)
     {
+        $home = $this->getHome();
         return [
             'id'       => $this->getUuid(),
             'name'     => $this->getName(),
             'label'    => $this->getTitle(),
-            'home'     => $this->getHome() ? $this->getHome()->getName() : null,
+            'home'     => ! $stringify ? $home : ($home ? $home->getName() : null),
             'priority' => $this->getPriority(),
-            'disabled' => (int) $this->isDisabled()
         ];
     }
 }

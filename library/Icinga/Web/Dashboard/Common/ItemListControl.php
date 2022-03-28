@@ -6,35 +6,82 @@ namespace Icinga\Web\Dashboard\Common;
 
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
+use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 
 abstract class ItemListControl extends BaseHtmlElement
 {
     protected $tag = 'div';
 
     /**
-     * Set a class name for the collapsible control
+     * Get this item's unique html identifier
      *
-     * @var string
+     * @return string
      */
-    protected $collapsibleControlClass;
+    protected abstract function getHtmlId();
 
-    protected function setCollapsibleControlClass($class)
+    /**
+     * Get a class name for the collapsible control
+     *
+     * @return string
+     */
+    protected abstract function getCollapsibleControlClass();
+
+    /**
+     * Create an action link to be added at the end of the list
+     *
+     * @return HtmlElement
+     */
+    protected abstract function createActionLink();
+
+    /**
+     * Create the appropriate item list of this control
+     *
+     * @return HtmlElement
+     */
+    protected abstract function createItemList();
+
+    /**
+     * Assemble a header element for this item list
+     *
+     * @param Url $url
+     * @param string $header
+     *
+     * @return void
+     */
+    protected function assembleHeader(Url $url, $header, $disable = false)
     {
-        $this->collapsibleControlClass = $class;
+        $header = HtmlElement::create('h1', ['class' => 'collapsible-header'], $header);
+        $header->addHtml(new Link(t('Edit'), $url, [
+            'class'               => $disable ? 'disabled' : null,
+            'data-icinga-modal'   => true,
+            'data-no-icinga-ajax' => true
+        ]));
 
-        return $this;
+        $this->addHtml($header);
     }
 
     protected function assemble()
     {
-        $this->addHtml(HtmlElement::create('div', ['class' => $this->collapsibleControlClass], [
+        $this->getAttributes()->add([
+            'id'                  => $this->getHtmlId(),
+            'class'               => ['collapsible'],
+            'data-toggle-element' => '.dashboard-list-info',
+        ]);
+
+        $this->addHtml(HtmlElement::create('div', ['class' => $this->getCollapsibleControlClass()], [
             new Icon('angle-down', ['class' => 'expand-icon', 'title' => t('Expand')]),
             new Icon('angle-up', ['class' => 'collapse-icon', 'title' => t('Collapse')])
         ]));
 
-        $this->getAttributes()->registerAttributeCallback('draggable', function () {
-            return 'true';
-        });
+        $this->addHtml($this->createItemList());
+        $actionLink = $this->createActionLink();
+        $actionLink->getAttributes()->add([
+            'data-icinga-modal'   => true,
+            'data-no-icinga-ajax' => true
+        ]);
+
+        $this->addHtml($actionLink);
     }
 }

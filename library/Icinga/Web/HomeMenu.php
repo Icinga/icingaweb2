@@ -1,10 +1,13 @@
 <?php
 
+/* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
+
 namespace Icinga\Web;
 
 use Icinga\Model\Home;
 use Icinga\Web\Dashboard\Dashboard;
-use Icinga\Web\Navigation\DashboardHome;
+use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Web\Navigation\DashboardHomeItem;
 use ipl\Stdlib\Filter;
 
 /**
@@ -28,7 +31,7 @@ class HomeMenu extends Menu
         $homes->filter(Filter::equal('username', $user->getUsername()));
 
         foreach ($homes as $home) {
-            $dashboardHome = new DashboardHome($home->name, [
+            $dashboardHome = new DashboardHomeItem($home->name, [
                 'uuid'     => $home->id,
                 'label'    => t($home->label),
                 'priority' => $home->priority,
@@ -37,5 +40,27 @@ class HomeMenu extends Menu
 
             $dashboardItem->addChild($dashboardHome);
         }
+    }
+
+    /**
+     * Load dashboard homes form the navigation menu
+     *
+     * @return DashboardHome[]
+     */
+    public function loadHomes()
+    {
+        $homes = [];
+        foreach ($this->getItem('dashboard')->getChildren() as $child) {
+            if (! $child instanceof DashboardHomeItem) {
+                continue;
+            }
+
+            $home = DashboardHome::create($child);
+            $home->setTitle($child->getLabel());
+
+            $homes[$child->getName()] = $home;
+        }
+
+        return $homes;
     }
 }

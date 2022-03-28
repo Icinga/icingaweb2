@@ -11,10 +11,10 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Model;
 use Icinga\User;
 use Icinga\Web\Dashboard\Dashboard;
+use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Dashboard\Pane;
 use Icinga\Web\HomeMenu;
-use Icinga\Web\Navigation\DashboardHome;
 use ipl\Orm\Query;
 use ipl\Sql\Connection;
 use ipl\Sql\Expression;
@@ -38,17 +38,10 @@ trait DashboardManager
      */
     private static $defaultPanes = [];
 
-    /**
-     * A list of @see DashboardHome
-     *
-     * @var DashboardHome[]
-     */
-    private $homes = [];
-
     public function load()
     {
-        $this->loadHomesFromMenu();
-        $this->loadDashboards();
+        $this->setEntries((new HomeMenu())->loadHomes());
+        $this->loadDashboardEntries();
 
         $this->initGetDefaultHome();
         self::deployModuleDashlets();
@@ -84,113 +77,31 @@ trait DashboardManager
         return sha1($name, true);
     }
 
-    /**
-     * Load dashboard homes from the navigation menu
-     *
-     * @return $this
-     */
-    public function loadHomesFromMenu()
+    public function loadDashboardEntries($name = '')
     {
-        $menu = new HomeMenu();
-        foreach ($menu->getItem('dashboard')->getChildren() as $home) {
-            if (! $home instanceof DashboardHome) {
-                continue;
-            }
-
-            $this->homes[$home->getName()] = $home;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Load dashboards assigned to the given home or active home being loaded
-     *
-     * @param ?string $name Name of the dashboard home you want to load the dashboards for
-     *
-     * @return $this
-     */
-    public function loadDashboards($name = null)
-    {
-        if ($name && $this->hasHome($name)) {
-            $home = $this->getHome($name);
+        if ($name && $this->hasEntry($name)) {
+            $home = $this->getEntry($name);
         } else {
             $requestRoute = Url::fromRequest();
             if ($requestRoute->getPath() === Dashboard::BASE_ROUTE) {
                 $home = $this->initGetDefaultHome();
             } else {
                 $homeParam = $requestRoute->getParam('home');
-                if (empty($homeParam) || ! $this->hasHome($homeParam)) {
-                    if (! ($home = $this->rewindHomes())) {
+                if (empty($homeParam) || ! $this->hasEntry($homeParam)) {
+                    if (! ($home = $this->rewindEntries())) {
                         // No dashboard homes
                         return $this;
                     }
                 } else {
-                    $home = $this->getHome($homeParam);
+                    $home = $this->getEntry($homeParam);
                 }
             }
         }
 
         $this->activateHome($home);
-        $home->loadPanesFromDB();
+        $home->loadDashboardEntries();
 
         return $this;
-    }
-
-    /**
-     * Get a dashboard home by the given name
-     *
-     * @param string $name
-     *
-     * @return DashboardHome
-     */
-    public function getHome($name)
-    {
-        if ($this->hasHome($name)) {
-            return $this->homes[$name];
-        }
-
-        throw new ProgrammingError('Trying to retrieve invalid dashboard home "%s"', $name);
-    }
-
-    /**
-     * Get all dashboard homes assigned to the active user
-     *
-     * @return DashboardHome[]
-     */
-    public function getHomes()
-    {
-        return $this->homes;
-    }
-
-    /**
-     * Set this user's dashboard homes
-     *
-     * @param DashboardHome|DashboardHome[] $homes
-     *
-     * @return $this
-     */
-    public function setHomes($homes)
-    {
-        if ($homes instanceof DashboardHome) {
-            $homes = [$homes->getName() => $homes];
-        }
-
-        $this->homes = $homes;
-
-        return $this;
-    }
-
-    /**
-     * Get whether the given home exist
-     *
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function hasHome($name)
-    {
-        return array_key_exists($name, $this->homes);
     }
 
     /**
@@ -207,7 +118,7 @@ trait DashboardManager
             $activeHome->setActive(false);
         }
 
-        $home->setActive(true);
+        $home->setActive();
 
         return $this;
     }
@@ -219,7 +130,8 @@ trait DashboardManager
      */
     public function getActiveHome()
     {
-        foreach ($this->getHomes() as $home) {
+        /** @var DashboardHome $home */
+        foreach ($this->getEntries() as $home) {
             if ($home->getActive()) {
                 return $home;
             }
@@ -228,123 +140,59 @@ trait DashboardManager
         return null;
     }
 
-    /**
-     * Reset the current position of the internal dashboard homes pointer
-     *
-     * @return false|DashboardHome
-     */
-    public function rewindHomes()
-    {
-        return reset($this->homes);
-    }
-
-    /**
-     * Remove the given home
-     *
-     * @param DashboardHome|string $home
-     *
-     * @return $this
-     */
-    public function removeHome($home)
+    public function removeEntry($home)
     {
         $name = $home instanceof DashboardHome ? $home->getName() : $home;
-        if (! $this->hasHome($name)) {
+        if (! $this->hasEntry($name)) {
             throw new ProgrammingError('Trying to remove invalid dashboard home "%s"', $name);
         }
 
-        $home = $home instanceof DashboardHome ? $home : $this->getHome($home);
-        if (! $home->isDisabled()) {
-            $home->removePanes();
-
+        $home = $home instanceof DashboardHome ? $home : $this->getEntry($home);
+        $home->removeEntries();
+        if ($home->getName() !== DashboardHome::DEFAULT_HOME) {
             self::getConn()->delete(DashboardHome::TABLE, ['id = ?' => $home->getUuid()]);
         }
 
         return $this;
     }
 
-    /**
-     * Remove all|given list of dashboard homes
-     *
-     * @param DashboardHome[] $homes Optional list of dashboard homes
-     *
-     * @return $this
-     */
-    public function removeHomes(array $homes = [])
-    {
-        $homes = ! empty($homes) ? $homes : $this->getHomes();
-        foreach ($homes as $home) {
-            $this->removeHome($home);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Manage the given home
-     *
-     * @param DashboardHome $home
-     *
-     * @return $this
-     */
-    public function manageHome(DashboardHome $home)
+    public function manageEntry($entry, BaseDashboard $origin = null, $updateChildEntries = false)
     {
         $conn = self::getConn();
-        if (! $this->hasHome($home->getName())) {
+        $home = $entry;
+        if (! $this->hasEntry($home->getName())) {
+            $priority = $home->getName() === DashboardHome::DEFAULT_HOME ? 0 : count($this->getEntries());
             $conn->insert(DashboardHome::TABLE, [
                 'name'     => $home->getName(),
-                'label'    => $home->getLabel(),
+                'label'    => $home->getTitle(),
                 'username' => self::getUser()->getUsername(),
-                'priority' => count($this->getHomes()) + 1,
+                // highest priority is 0, so count($entries) are always lowest prio + 1
+                'priority' => $priority,
                 'type'     => $home->getType() !== Dashboard::SYSTEM ? $home->getType() : Dashboard::PRIVATE_DS
             ]);
 
             $home->setUuid($conn->lastInsertId());
         } elseif ($home->getName() !== DashboardHome::DEFAULT_HOME) {
-            $conn->update(DashboardHome::TABLE, [
-                'label'    => $home->getLabel(),
-                'priority' => $home->getPriority()
-            ], ['id = ?' => $home->getUuid()]);
-        } else {
-            $conn->update(DashboardHome::TABLE, ['priority' => $home->getPriority()], ['id = ?' => $home->getUuid()]);
+            $conn->update(DashboardHome::TABLE, ['label' => $home->getTitle()], ['id = ?' => $home->getUuid()]);
         }
 
         return $this;
     }
 
     /**
-     * Get an array with home name=>title format
-     *
-     * @return array
-     */
-    public function getHomeKeyTitleArr()
-    {
-        $panes = [];
-        foreach ($this->getHomes() as $home) {
-            if ($home->isDisabled()) {
-                continue;
-            }
-
-            $panes[$home->getName()] = $home->getLabel();
-        }
-
-        return $panes;
-    }
-
-    /**
      * Get and|or init the default dashboard home
      *
-     * @return DashboardHome
+     * @return BaseDashboard
      */
     public function initGetDefaultHome()
     {
-        if ($this->hasHome(DashboardHome::DEFAULT_HOME)) {
-            return $this->getHome(DashboardHome::DEFAULT_HOME);
+        if ($this->hasEntry(DashboardHome::DEFAULT_HOME)) {
+            return $this->getEntry(DashboardHome::DEFAULT_HOME);
         }
 
         $default = new DashboardHome(DashboardHome::DEFAULT_HOME);
-        $this->manageHome($default);
-
-        $this->homes[$default->getName()] = $default;
+        $this->manageEntry($default);
+        $this->addEntry($default);
 
         return $default;
     }
@@ -400,7 +248,8 @@ trait DashboardManager
         foreach ($moduleManager->getLoadedModules() as $module) {
             foreach ($module->getDashboard() as $dashboardPane) {
                 $priority = 0;
-                foreach ($dashboardPane->getDashlets() as $dashlet) {
+                /** @var Dashlet $dashlet */
+                foreach ($dashboardPane->getEntries() as $dashlet) {
                     $uuid = self::getSHA1($module->getName() . $dashboardPane->getName() . $dashlet->getName());
                     $dashlet
                         ->setUuid($uuid)

@@ -6,24 +6,32 @@ namespace Icinga\Forms\Dashboard;
 
 use Icinga\Web\Notification;
 use Icinga\Web\Dashboard\Dashboard;
-use ipl\Web\Compat\CompatForm;
+use ipl\Html\HtmlElement;
 use ipl\Web\Url;
 
-class RemoveHomePaneForm extends CompatForm
+class RemoveHomePaneForm extends BaseDashboardForm
 {
-    /** @var Dashboard */
-    protected $dashboard;
-
-    public function __construct(Dashboard $dashboard)
+    public function hasBeenSubmitted()
     {
-        $this->dashboard = $dashboard;
-
-        $this->setAction((string) Url::fromRequest());
+        return $this->hasBeenSent() && $this->getPopulatedValue('btn_remove');
     }
 
     protected function assemble()
     {
-        $this->addElement('submit', 'btn_remove', ['label' => t('Remove Home')]);
+        $requestRoute = Url::fromRequest();
+        $label = t('Remove Home');
+        $message = sprintf(t('Please confirm removal of dashboard home "%s"'), $requestRoute->getParam('home'));
+        if ($requestRoute->getPath() === Dashboard::BASE_ROUTE . '/remove-pane') {
+            $label = t('Remove Pane');
+            $message = sprintf(t('Please confirm removal of dashboard pane "%s"'), $requestRoute->getParam('pane'));
+        }
+
+        $this->addHtml(HtmlElement::create('h1', null, $message));
+
+        $submit = $this->registerSubmitButton($label);
+        $submit->setName('btn_remove');
+
+        $this->addHtml($submit);
     }
 
     protected function onSuccess()
@@ -32,12 +40,12 @@ class RemoveHomePaneForm extends CompatForm
         $home = $this->dashboard->getActiveHome();
 
         if ($requestUrl->getPath() === Dashboard::BASE_ROUTE . '/remove-home') {
-            $this->dashboard->removeHome($home);
+            $this->dashboard->removeEntry($home);
 
-            Notification::success(sprintf(t('Removed dashboard home "%s" successfully'), $home->getLabel()));
+            Notification::success(sprintf(t('Removed dashboard home "%s" successfully'), $home->getTitle()));
         } else {
-            $pane = $home->getPane($requestUrl->getParam('pane'));
-            $home->removePane($pane);
+            $pane = $home->getEntry($requestUrl->getParam('pane'));
+            $home->removeEntry($pane);
 
             Notification::success(sprintf(t('Removed dashboard pane "%s" successfully'), $pane->getTitle()));
         }

@@ -5,7 +5,7 @@
 namespace Icinga\Forms\Dashboard;
 
 use Icinga\Web\Dashboard\Dashboard;
-use Icinga\Web\Navigation\DashboardHome;
+use Icinga\Web\Dashboard\DashboardHome;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
 
@@ -43,12 +43,12 @@ class WelcomeForm extends CompatForm
     protected function onSuccess()
     {
         if ($this->getPopulatedValue('btn_use_defaults')) {
-            $home = $this->dashboard->getHome(DashboardHome::DEFAULT_HOME);
+            $home = $this->dashboard->getEntry(DashboardHome::DEFAULT_HOME);
             $conn = Dashboard::getConn();
             $conn->beginTransaction();
 
             try {
-                $home->managePanes($this->dashboard->getSystemDefaults(), null, true);
+                $home->manageEntry($this->dashboard->getSystemDefaults(), null, true);
 
                 $conn->commitTransaction();
             } catch (\Exception $err) {

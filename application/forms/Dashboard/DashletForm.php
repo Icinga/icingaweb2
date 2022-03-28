@@ -6,135 +6,92 @@ namespace Icinga\Forms\Dashboard;
 
 use Exception;
 use Icinga\Application\Logger;
+use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Web\Dashboard\Dashboard;
-use Icinga\Web\Navigation\DashboardHome;
+use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Notification;
 use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Dashboard\Pane;
 use ipl\Html\HtmlElement;
-use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
 
-/**
- * Form to add an url a dashboard pane
- */
-class DashletForm extends CompatForm
+class DashletForm extends BaseDashboardForm
 {
-    /**
-     * @var Dashboard
-     */
-    private $dashboard;
-
-    public function __construct(Dashboard $dashboard)
-    {
-        $this->dashboard = $dashboard;
-
-        $this->setAction((string) Url::fromRequest());
-    }
-
-    public function hasBeenSubmitted()
-    {
-        return $this->hasBeenSent() && $this->getPopulatedValue('submit');
-    }
-
     protected function assemble()
     {
         $requestUrl = Url::fromRequest();
 
-        $homes = $this->dashboard->getHomeKeyTitleArr();
+        $homes = $this->dashboard->getEntryKeyTitleArr();
         $activeHome = $this->dashboard->getActiveHome();
         $currentHome = $requestUrl->getParam('home', reset($homes));
         $populatedHome = $this->getPopulatedValue('home', $currentHome);
 
         $panes = [];
-        if ($currentHome === $populatedHome && $this->getPopulatedValue('create_new_home') !== 'y') {
+        if ($currentHome === $populatedHome && $populatedHome !== self::CREATE_NEW_HOME) {
             if (! $currentHome || ! $activeHome) {
                 // Home param isn't passed through, so let's try to load based on the first home
-                $firstHome = $this->dashboard->rewindHomes();
+                $firstHome = $this->dashboard->rewindEntries();
                 if ($firstHome) {
-                    $this->dashboard->loadDashboards($firstHome->getName());
+                    $this->dashboard->loadDashboardEntries($firstHome->getName());
 
-                    $panes = $firstHome->getPaneKeyTitleArr();
+                    $panes = $firstHome->getEntryKeyTitleArr();
                 }
             } else {
-                $panes = $activeHome->getPaneKeyTitleArr();
+                $panes = $activeHome->getEntryKeyTitleArr();
             }
-        } elseif ($this->dashboard->hasHome($populatedHome)) {
-            $this->dashboard->loadDashboards($populatedHome);
+        } elseif ($this->dashboard->hasEntry($populatedHome)) {
+            $this->dashboard->loadDashboardEntries($populatedHome);
 
-            $panes = $this->dashboard->getActiveHome()->getPaneKeyTitleArr();
+            $panes = $this->dashboard->getActiveHome()->getEntryKeyTitleArr();
         }
 
         $this->addElement('hidden', 'org_pane', ['required' => false]);
         $this->addElement('hidden', 'org_home', ['required' => false]);
         $this->addElement('hidden', 'org_dashlet', ['required' => false]);
 
-        $this->addElement('checkbox', 'create_new_home', [
-            'class'       => 'autosubmit',
-            'required'    => false,
-            'disabled'    => empty($homes) ?: null,
-            'label'       => t('New Dashboard Home'),
-            'description' => t('Check this box if you want to add the dashboard to a new dashboard home.'),
+        $this->addElement('select', 'home', [
+            'class'        => 'autosubmit',
+            'required'     => true,
+            'disabled'     => empty($homes) ?: null,
+            'value'        => $populatedHome,
+            'multiOptions' => array_merge([self::CREATE_NEW_HOME => self::CREATE_NEW_HOME], $homes),
+            'label'        => t('Select Home'),
+            'descriptions' => t('Select a dashboard home you want to add the dashboard pane to.')
         ]);
 
-        if (empty($homes) || $this->getPopulatedValue('create_new_home') === 'y') {
-            // $el->attrs->set() has no effect here anymore, so we need to register a proper callback
-            $this->getElement('create_new_home')
-                ->getAttributes()
-                ->registerAttributeCallback('checked', function () {
-                    return true;
-                });
-
-            $this->addElement('text', 'home', [
+        if (empty($homes) || $populatedHome === self::CREATE_NEW_HOME) {
+            $this->addElement('text', 'new_home', [
                 'required'    => true,
-                'label'       => t('Dashboard Home'),
+                'label'       => t('Home Title'),
+                'placeholder' => t('Enter dashboard home title'),
                 'description' => t('Enter a title for the new dashboard home.')
-            ]);
-        } else {
-            $this->addElement('select', 'home', [
-                'required'     => true,
-                'class'        => 'autosubmit',
-                'value'        => $currentHome,
-                'multiOptions' => $homes,
-                'label'        => t('Dashboard Home'),
-                'descriptions' => t('Select a home you want to add the dashboard pane to.')
             ]);
         }
 
-        $disable = empty($panes) || $this->getPopulatedValue('create_new_home') === 'y';
-        $this->addElement('checkbox', 'create_new_pane', [
-            'required'    => false,
-            'class'       => 'autosubmit',
-            'disabled'    => $disable ?: null,
-            'label'       => t('New Dashboard'),
-            'description' => t('Check this box if you want to add the dashlet to a new dashboard.'),
-        ]);
-
+        $populatedPane = $this->getPopulatedValue('pane');
         // Pane element's values are depending on the home element's value
-        if (! in_array($this->getPopulatedValue('pane'), $panes)) {
+        if ($populatedPane !== self::CREATE_NEW_PANE && ! in_array($populatedPane, $panes)) {
             $this->clearPopulatedValue('pane');
         }
 
-        if ($disable || $this->getValue('create_new_pane') === 'y') {
-            // $el->attrs->set() has no effect here anymore, so we need to register a proper callback
-            $this->getElement('create_new_pane')
-                ->getAttributes()
-                ->registerAttributeCallback('checked', function () {
-                    return true;
-                });
+        $populatedPane = $this->getPopulatedValue('pane', reset($panes));
+        $disable = empty($panes) || $populatedHome === self::CREATE_NEW_HOME;
+        $this->addElement('select', 'pane', [
+            'class'        => 'autosubmit',
+            'required'     => true,
+            'disabled'     => $disable ?: null,
+            'value'        => ! $disable ? $populatedPane : self::CREATE_NEW_PANE, // Cheat the browser complains
+            'multiOptions' => array_merge([self::CREATE_NEW_PANE => self::CREATE_NEW_PANE], $panes),
+            'label'        => t('Select Dashboard'),
+            'description'  => t('Select a dashboard you want to add the dashlet to.'),
+        ]);
 
-            $this->addElement('text', 'pane', [
+        if ($disable || $this->getPopulatedValue('pane') === self::CREATE_NEW_PANE) {
+            $this->addElement('text', 'new_pane', [
                 'required'    => true,
-                'label'       => t('New Dashboard Title'),
+                'label'       => t('Dashboard Title'),
+                'placeholder' => t('Enter dashboard title'),
                 'description' => t('Enter a title for the new dashboard.'),
-            ]);
-        } else {
-            $this->addElement('select', 'pane', [
-                'required'     => true,
-                'value'        => reset($panes),
-                'multiOptions' => $panes,
-                'label'        => t('Dashboard'),
-                'description'  => t('Select a dashboard you want to add the dashlet to.'),
             ]);
         }
 
@@ -143,6 +100,7 @@ class DashletForm extends CompatForm
         $this->addElement('textarea', 'url', [
             'required'    => true,
             'label'       => t('Url'),
+            'placeholder' => t('Enter dashlet url'),
             'description' => t(
                 'Enter url to be loaded in the dashlet. You can paste the full URL, including filters.'
             ),
@@ -151,40 +109,24 @@ class DashletForm extends CompatForm
         $this->addElement('text', 'dashlet', [
             'required'    => true,
             'label'       => t('Dashlet Title'),
+            'placeholder' => t('Enter a dashlet title'),
             'description' => t('Enter a title for the dashlet.'),
         ]);
 
-        $url = (string) Url::fromPath(Dashboard::BASE_ROUTE . '/browse');
+        $removeButton = null;
+        if ($requestUrl->getPath() === Dashboard::BASE_ROUTE . '/edit-dashlet') {
+            $targetUrl = (clone $requestUrl)->setPath(Dashboard::BASE_ROUTE . '/remove-dashlet');
+            $removeButton = $this->createRemoveButton($targetUrl, t('Remove Dashlet'));
+        }
 
-        $element = $this->createElement('submit', 'submit', ['label' => t('Add to Dashboard')]);
-        $this->registerElement($element)->decorate($element);
-
-        // We might need this later to allow the user to browse dashlets when creating a dashlet
-        $this->addElement('submit', 'btn_browse', [
-            'label'      => t('Browse Dashlets'),
-            'href'       => $url,
-            'formaction' => $url,
+        $formControls = $this->createFormControls();
+        $formControls->add([
+            $this->registerSubmitButton(t('Add to Dashboard')),
+            $removeButton,
+            $this->createCancelButton()
         ]);
 
-        $this->getElement('btn_browse')->setWrapper($element->getWrapper());
-    }
-
-    /**
-     * Populate form data from config
-     *
-     * @param Dashlet $dashlet
-     */
-    public function load(Dashlet $dashlet)
-    {
-        $home = Url::fromRequest()->getParam('home');
-        $this->populate(array(
-            'org_home'    => $home,
-            'org_pane'    => $dashlet->getPane()->getName(),
-            'pane'        => $dashlet->getPane()->getTitle(),
-            'org_dashlet' => $dashlet->getName(),
-            'dashlet'     => $dashlet->getTitle(),
-            'url'         => $dashlet->getUrl()->getRelativeUrl()
-        ));
+        $this->addHtml($formControls);
     }
 
     protected function onSuccess()
@@ -192,27 +134,38 @@ class DashletForm extends CompatForm
         $conn = Dashboard::getConn();
         $dashboard = $this->dashboard;
 
+        $selectedHome = $this->getPopulatedValue('home');
+        if (! $selectedHome || $selectedHome === self::CREATE_NEW_HOME) {
+            $selectedHome = $this->getPopulatedValue('new_home');
+        }
+
+        $selectedPane = $this->getPopulatedValue('pane');
+        // If "pane" element is disabled, there will be no populated value for it
+        if (! $selectedPane || $selectedPane === self::CREATE_NEW_PANE) {
+            $selectedPane = $this->getPopulatedValue('new_pane');
+        }
+
         if (Url::fromRequest()->getPath() === Dashboard::BASE_ROUTE . '/new-dashlet') {
-            $home = new DashboardHome($this->getValue('home'));
-            if ($dashboard->hasHome($home->getName())) {
-                $home = $dashboard->getHome($home->getName());
-                if ($home->getName() !== $dashboard->getActiveHome()->getName()) {
-                    $home->setActive();
-                    $home->loadPanesFromDB();
+            $currentHome = new DashboardHome($selectedHome);
+            if ($dashboard->hasEntry($currentHome->getName())) {
+                $currentHome = clone $dashboard->getEntry($currentHome->getName());
+                if ($currentHome->getName() !== $dashboard->getActiveHome()->getName()) {
+                    $currentHome->setActive();
+                    $currentHome->loadDashboardEntries();
                 }
             }
 
-            $pane = new Pane($this->getValue('pane'));
-            if ($home->hasPane($pane->getName())) {
-                $pane = $home->getPane($pane->getName());
+            $currentPane = new Pane($selectedPane);
+            if ($currentHome->hasEntry($currentPane->getName())) {
+                $currentPane = clone $currentHome->getEntry($currentPane->getName());
             }
 
-            $dashlet = new Dashlet($this->getValue('dashlet'), $this->getValue('url'), $pane);
-            if ($pane->hasDashlet($dashlet->getName())) {
+            $dashlet = new Dashlet($this->getValue('dashlet'), $this->getValue('url'), $currentPane);
+            if ($currentPane->hasEntry($dashlet->getName())) {
                 Notification::error(sprintf(
                     t('Dashlet "%s" already exists within the "%s" dashboard pane'),
                     $dashlet->getTitle(),
-                    $pane->getTitle()
+                    $currentPane->getTitle()
                 ));
 
                 return;
@@ -221,12 +174,12 @@ class DashletForm extends CompatForm
             $conn->beginTransaction();
 
             try {
-                $dashboard->manageHome($home);
-                $home->managePanes($pane);
-                $pane->manageDashlets($dashlet);
+                $dashboard->manageEntry($currentHome);
+                $currentHome->manageEntry($currentPane);
+                $currentPane->manageEntry($dashlet);
 
                 $conn->commitTransaction();
-            } catch (Exception $err) { // This error handling is just for debugging purpose! Will be removed!
+            } catch (Exception $err) {
                 Logger::error($err);
                 $conn->rollBackTransaction();
 
@@ -235,26 +188,35 @@ class DashletForm extends CompatForm
 
             Notification::success(sprintf(t('Created dashlet "%s" successfully'), $dashlet->getTitle()));
         } else {
-            $orgHome = $dashboard->getHome($this->getValue('org_home'));
-            $orgPane = $orgHome->getPane($this->getValue('org_pane'));
-            $orgDashlet = $orgPane->getDashlet($this->getValue('org_dashlet'));
+            $orgHome = $dashboard->getEntry($this->getValue('org_home'));
+            $orgPane = $orgHome->getEntry($this->getValue('org_pane'));
+            $orgDashlet = $orgPane->getEntry($this->getValue('org_dashlet'));
 
-            $currentHome = new DashboardHome($this->getValue('home'));
-            if ($dashboard->hasHome($currentHome->getName())) {
-                $currentHome = $dashboard->getHome($currentHome->getName());
+            $currentHome = new DashboardHome($selectedHome);
+            if ($dashboard->hasEntry($currentHome->getName())) {
+                $currentHome = clone $dashboard->getEntry($currentHome->getName());
                 $activeHome = $dashboard->getActiveHome();
                 if ($currentHome->getName() !== $activeHome->getName()) {
                     $currentHome->setActive();
-                    $currentHome->loadPanesFromDB();
+                    $currentHome->loadDashboardEntries();
                 }
             }
 
-            $currentPane = new Pane($this->getValue('pane'));
-            if ($currentHome->hasPane($currentPane->getName())) {
-                $currentPane = $currentHome->getPane($currentPane->getName());
+            $currentPane = new Pane($selectedPane);
+            if ($currentHome->hasEntry($currentPane->getName())) {
+                $currentPane = clone $currentHome->getEntry($currentPane->getName());
             }
 
             $currentPane->setHome($currentHome);
+            // When the user wishes to create a new dashboard pane, we have to explicitly reset the dashboard panes
+            // of the original home, so that it isn't considered as we want to move the pane even though it isn't
+            // supposed to when the original home contains a dashboard with the same name
+            // @see DashboardHome::managePanes() for details
+            $selectedPane = $this->getPopulatedValue('pane');
+            if ((! $selectedPane || $selectedPane === self::CREATE_NEW_PANE)
+                && ! $currentHome->hasEntry($currentPane->getName())) {
+                $orgHome->setEntries([]);
+            }
 
             $currentDashlet = clone $orgDashlet;
             $currentDashlet
@@ -263,7 +225,7 @@ class DashletForm extends CompatForm
                 ->setTitle($this->getValue('dashlet'));
 
             if ($orgPane->getName() !== $currentPane->getName()
-                && $currentPane->hasDashlet($currentDashlet->getName())) {
+                && $currentPane->hasEntry($currentDashlet->getName())) {
                 Notification::error(sprintf(
                     t('Failed to move dashlet "%s": Dashlet already exists within the "%s" dashboard pane'),
                     $currentDashlet->getTitle(),
@@ -287,12 +249,18 @@ class DashletForm extends CompatForm
                 return;
             }
 
+            if (empty($paneDiff)) {
+                // No dashboard diff means the dashlet is still in the same pane, so just
+                // reset the dashlets of the original pane
+                $orgPane->setEntries([]);
+            }
+
             $conn->beginTransaction();
 
             try {
-                $dashboard->manageHome($currentHome);
-                $currentHome->managePanes($currentPane, $orgHome);
-                $currentPane->manageDashlets($currentDashlet, $orgPane);
+                $dashboard->manageEntry($currentHome);
+                $currentHome->manageEntry($currentPane, $orgHome);
+                $currentPane->manageEntry($currentDashlet, $orgPane);
 
                 $conn->commitTransaction();
             } catch (Exception $err) {
@@ -303,6 +271,23 @@ class DashletForm extends CompatForm
             }
 
             Notification::success(sprintf(t('Updated dashlet "%s" successfully'), $currentDashlet->getTitle()));
+        }
+    }
+
+    public function load(BaseDashboard $dashlet)
+    {
+        $home = Url::fromRequest()->getParam('home');
+        /** @var Dashlet $dashlet */
+        $this->populate(array(
+            'org_home'    => $home,
+            'org_pane'    => $dashlet->getPane()->getName(),
+            'org_dashlet' => $dashlet->getName(),
+            'dashlet'     => $dashlet->getTitle(),
+            'url'         => $dashlet->getUrl()->getRelativeUrl()
+        ));
+
+        if ($this->getPopulatedValue('pane') !== self::CREATE_NEW_PANE) {
+            $this->populate(['pane' => $dashlet->getPane()->getTitle()]);
         }
     }
 }
