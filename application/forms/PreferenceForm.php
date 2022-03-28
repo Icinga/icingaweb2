@@ -185,7 +185,8 @@ class PreferenceForm extends Form
                 false
             );
         }
-
+        $themeFile = null;
+        
         if (! (bool) Config::app()->get('themes', 'disabled', false)) {
             $themes = Icinga::app()->getThemes();
             if (count($themes) > 1) {
@@ -209,17 +210,15 @@ class PreferenceForm extends Form
                 );
             }
         } else {
-            $globalThemeFile = Config::app()->get('themes', 'default');
-            $themeFile = StyleSheet::getThemeFile($globalThemeFile);
-            $file = $themeFile !== null ? @file_get_contents($themeFile) : false;
-            if ($file && strpos($file, StyleSheet::LIGHT_MODE_IDENTIFIER) === false) {
-                $disabled = ['', 'light', 'system'];
-            }
+            $themeFile = StyleSheet::getThemeFile(Config::app()->get('themes', 'default'));
         }
         
         if (isset($formData['theme']) && $formData['theme'] !== StyleSheet::DEFAULT_THEME) {
             $themeFile = StyleSheet::getThemeFile($formData['theme']);
-            $file = $themeFile !== null ? @file_get_contents($themeFile) : false;
+        }
+
+        if ($themeFile !== null) {
+            $file = @file_get_contents($themeFile);
             if ($file && strpos($file, StyleSheet::LIGHT_MODE_IDENTIFIER) === false) {
                 $disabled = ['', 'light', 'system'];
             }
