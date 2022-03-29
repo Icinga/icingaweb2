@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\Filter;
+
 class HoststatusQuery extends IdoQuery
 {
     /**
@@ -13,7 +15,7 @@ class HoststatusQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupBase = array('hosts' => array('ho.object_id', 'h.host_id'));
+    protected $groupBase = array('hosts' => array('ho.object_id'));
 
     /**
      * {@inheritdoc}
@@ -50,7 +52,7 @@ class HoststatusQuery extends IdoQuery
             'host_address6'         => 'h.address6',
             'host_alias'            => 'h.alias',
             'host_check_interval'   => '(h.check_interval * 60)',
-            'host_display_name'     => 'h.display_name COLLATE latin1_general_ci',
+            'host_display_name'     => 'h.display_name',
             'host_icon_image'       => 'h.icon_image',
             'host_icon_image_alt'   => 'h.icon_image_alt',
             'host_ipv4'             => 'INET_ATON(h.address)',
@@ -86,6 +88,7 @@ class HoststatusQuery extends IdoQuery
             'host_is_passive_checked'               => 'CASE WHEN hs.active_checks_enabled = 0 AND hs.passive_checks_enabled = 1 THEN 1 ELSE 0 END',
             'host_is_reachable'                     => 'hs.is_reachable',
             'host_last_check'                       => 'UNIX_TIMESTAMP(hs.last_check)',
+            'host_last_check_ts'                    => 'hs.last_check',
             'host_last_hard_state'                  => 'hs.last_hard_state',
             'host_last_hard_state_change'           => 'UNIX_TIMESTAMP(hs.last_hard_state_change)',
             'host_last_notification'                => 'UNIX_TIMESTAMP(hs.last_notification)',
@@ -171,6 +174,17 @@ class HoststatusQuery extends IdoQuery
             'service_display_name'   => 's.display_name COLLATE latin1_general_ci',
         )
     );
+
+    protected $isFiltered = false;
+
+    public function addFilter(Filter $filter)
+    {
+        if (! $filter->isEmpty()) {
+            $this->isFiltered = true;
+        }
+
+        return parent::addFilter($filter);
+    }
 
     /**
      * {@inheritdoc}
@@ -349,5 +363,30 @@ class HoststatusQuery extends IdoQuery
         }
 
         return parent::joinSubQuery($query, $name, $filter, $and, $negate, $additionalFilter);
+    }
+
+    public function getSelectQuery()
+    {
+        if ($this->getDatasource()->getDbType() === 'mysql' && ! $this->isFiltered) {
+            $order = $this->getOrder();
+            if ($order === [['h.display_name', 'ASC']] || $order === [['h.display_name', 'DESC']]) {
+                // Force idx_services_display_name index usage
+                $zendSelect = $this->select;
+
+                $partsProp = (new \ReflectionClass('\Zend_Db_Select'))->getProperty('_parts');
+                $partsProp->setAccessible(true);
+
+                $parts = $partsProp->getValue($zendSelect);
+
+                $parts['from'] = json_decode(
+                    str_replace('"h":', '"h USE INDEX(idx_hosts_display_name)":', json_encode($parts['from'])),
+                    true
+                );
+
+                $partsProp->setValue($zendSelect, $parts);
+            }
+        }
+
+        return parent::getSelectQuery();
     }
 }

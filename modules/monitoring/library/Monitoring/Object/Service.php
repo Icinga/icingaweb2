@@ -106,7 +106,6 @@ class Service extends MonitoredObject
     protected function getDataView()
     {
         return $this->backend->select()->from('servicestatus', array(
-            'instance_name',
             'host_attempt',
             'host_icon_image',
             'host_icon_image_alt',

@@ -138,8 +138,7 @@ class Host extends MonitoredObject
             'host_perfdata',
             'host_process_perfdata' => 'host_process_performance_data',
             'host_state',
-            'host_state_type',
-            'instance_name'
+            'host_state_type'
         );
         return $this->backend->select()->from('hoststatus', $columns)
             ->where('host_name', $this->host);

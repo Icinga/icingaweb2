@@ -140,7 +140,7 @@ class ListController extends Controller
         $this->setAutorefreshInterval(10);
 
         $services = $this->backend->select()->from('servicestatus', array_merge(array(
-            'host_name',
+            'service_host_name',
             'host_display_name',
             'host_state',
             'service_description',
