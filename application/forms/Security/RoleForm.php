@@ -319,7 +319,7 @@ class RoleForm extends RepositoryForm
             'users'             => $role->users,
             'groups'            => $role->groups,
             'unrestricted'      => $role->unrestricted,
-            self::WILDCARD_NAME => (bool) preg_match('~(?>^|,)\*(?>$|,)~', $role->permissions)
+            self::WILDCARD_NAME => $role->permissions && preg_match('~(?>^|,)\*(?>$|,)~', $role->permissions)
         ];
 
         if (! empty($role->permissions) || ! empty($role->refusals)) {
