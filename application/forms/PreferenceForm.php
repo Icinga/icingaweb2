@@ -186,7 +186,7 @@ class PreferenceForm extends Form
             );
         }
 
-        $themeFile = StyleSheet::getThemeFile(Config::app()->get('themes', 'default'));        
+        $themeFile = StyleSheet::getThemeFile(Config::app()->get('themes', 'default'));
         if (! (bool) Config::app()->get('themes', 'disabled', false)) {
             $themes = Icinga::app()->getThemes();
             if (count($themes) > 1) {
