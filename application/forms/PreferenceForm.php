@@ -212,7 +212,7 @@ class PreferenceForm extends Form
         } else {
             $themeFile = StyleSheet::getThemeFile(Config::app()->get('themes', 'default'));
         }
-        
+
         if (isset($formData['theme']) && $formData['theme'] !== StyleSheet::DEFAULT_THEME) {
             $themeFile = StyleSheet::getThemeFile($formData['theme']);
         }
