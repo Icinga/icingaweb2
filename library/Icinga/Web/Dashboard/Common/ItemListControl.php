@@ -50,11 +50,10 @@ abstract class ItemListControl extends BaseHtmlElement
      *
      * @return void
      */
-    protected function assembleHeader(Url $url, $header, $disable = false)
+    protected function assembleHeader(Url $url, $header)
     {
         $header = HtmlElement::create('h1', ['class' => 'collapsible-header'], $header);
         $header->addHtml(new Link(t('Edit'), $url, [
-            'class'               => $disable ? 'disabled' : null,
             'data-icinga-modal'   => true,
             'data-no-icinga-ajax' => true
         ]));

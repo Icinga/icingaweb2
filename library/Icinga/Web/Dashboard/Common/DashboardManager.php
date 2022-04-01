@@ -159,21 +159,28 @@ trait DashboardManager
     public function manageEntry($entry, BaseDashboard $origin = null, $updateChildEntries = false)
     {
         $conn = self::getConn();
-        $home = $entry;
-        if (! $this->hasEntry($home->getName())) {
-            $priority = $home->getName() === DashboardHome::DEFAULT_HOME ? 0 : count($this->getEntries());
-            $conn->insert(DashboardHome::TABLE, [
-                'name'     => $home->getName(),
-                'label'    => $home->getTitle(),
-                'username' => self::getUser()->getUsername(),
-                // highest priority is 0, so count($entries) are always lowest prio + 1
-                'priority' => $priority,
-                'type'     => $home->getType() !== Dashboard::SYSTEM ? $home->getType() : Dashboard::PRIVATE_DS
-            ]);
+        $homes = is_array($entry) ? $entry : [$entry];
 
-            $home->setUuid($conn->lastInsertId());
-        } elseif ($home->getName() !== DashboardHome::DEFAULT_HOME) {
-            $conn->update(DashboardHome::TABLE, ['label' => $home->getTitle()], ['id = ?' => $home->getUuid()]);
+        /** @var DashboardHome $home */
+        foreach ($homes as $home) {
+            if (! $this->hasEntry($home->getName())) {
+                $priority = $home->getName() === DashboardHome::DEFAULT_HOME ? 0 : count($this->getEntries());
+                $conn->insert(DashboardHome::TABLE, [
+                    'name'     => $home->getName(),
+                    'label'    => $home->getTitle(),
+                    'username' => self::getUser()->getUsername(),
+                    // highest priority is 0, so count($entries) are always lowest prio + 1
+                    'priority' => $priority,
+                    'type'     => $home->getType() !== Dashboard::SYSTEM ? $home->getType() : Dashboard::PRIVATE_DS
+                ]);
+
+                $home->setUuid($conn->lastInsertId());
+            } else {
+                $conn->update(DashboardHome::TABLE, [
+                    'label'    => $home->getTitle(),
+                    'priority' => $home->getPriority()
+                ], ['id = ?' => $home->getUuid()]);
+            }
         }
 
         return $this;
