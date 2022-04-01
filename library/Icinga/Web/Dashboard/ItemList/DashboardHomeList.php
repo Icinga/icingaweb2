@@ -45,8 +45,7 @@ class DashboardHomeList extends ItemListControl
         $url = Url::fromPath(Dashboard::BASE_ROUTE . '/edit-home')
             ->setParams(['home' => $this->home->getName()]);
 
-        $disable = $this->home->getName() === DashboardHome::DEFAULT_HOME;
-        $this->assembleHeader($url, $this->home->getTitle(), $disable);
+        $this->assembleHeader($url, $this->home->getTitle());
 
         $list = HtmlElement::create('ul', ['class' => 'dashboard-item-list']);
         // List all dashboard panes

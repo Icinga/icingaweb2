@@ -19,6 +19,7 @@ class HomePaneForm extends BaseDashboardForm
         $buttonLabel = t('Update Home');
         $removeButtonLabel = t('Remove Home');
 
+        $activeHome = $this->dashboard->getActiveHome();
         $requestUrl = Url::fromRequest();
         $removeTargetUrl = (clone $requestUrl)->setPath(Dashboard::BASE_ROUTE . '/remove-home');
 
@@ -33,7 +34,6 @@ class HomePaneForm extends BaseDashboardForm
             $removeTargetUrl = (clone $requestUrl)->setPath(Dashboard::BASE_ROUTE . '/remove-pane');
 
             $homes = $this->dashboard->getEntryKeyTitleArr();
-            $activeHome = $this->dashboard->getActiveHome();
             $populatedHome = $this->getPopulatedValue('home', $activeHome->getName());
 
             $this->addElement('select', 'home', [
