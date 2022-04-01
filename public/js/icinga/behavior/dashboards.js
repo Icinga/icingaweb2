@@ -161,52 +161,53 @@
 
     Dashboard.prototype.onRendered = function (e) {
         let _this = e.data.self;
-        $(e.target).find('.dashboard-settings, .dashboard.content, .dashboard-item-list, .dashlet-item-list').each(function () {
-            let groupName = _this.getTypeFor(this),
-                draggable,
-                handle;
+        e.target.querySelectorAll('.dashboard-settings, .dashboard.content, .dashboard-item-list, .dashlet-item-list')
+            .forEach(sortable => {
+                let groupName = _this.getTypeFor(sortable),
+                    draggable,
+                    handle;
 
-            switch (groupName) {
-                case WIDGET_TYPES.DashboardHome: {
-                    groupName = WIDGET_TYPES.DashboardHome;
-                    draggable = '.home-list-control';
-                    handle = '.home-list-control > h1';
-                    break;
-                }
-                case WIDGET_TYPES.Dashboard: {
-                    groupName = WIDGET_TYPES.Dashboard;
-                    draggable = '.dashboard-list-control';
-                    handle = '.dashboard-list-control > h1'
-                    break;
-                }
-                case WIDGET_TYPES.Dashlet: {
-                    groupName = WIDGET_TYPES.Dashlet;
-                    if (this.matches('.dashboard.content')) {
-                        draggable = '> .container';
-                    } else {
-                        draggable = '.dashlet-list-item';
+                switch (groupName) {
+                    case WIDGET_TYPES.DashboardHome: {
+                        groupName = WIDGET_TYPES.DashboardHome;
+                        draggable = '.home-list-control';
+                        handle = '.home-list-control > h1';
+                        break;
                     }
+                    case WIDGET_TYPES.Dashboard: {
+                        groupName = WIDGET_TYPES.Dashboard;
+                        draggable = '.dashboard-list-control';
+                        handle = '.dashboard-list-control > h1'
+                        break;
+                    }
+                    case WIDGET_TYPES.Dashlet: {
+                        groupName = WIDGET_TYPES.Dashlet;
+                        if (sortable.matches('.dashboard.content')) {
+                            draggable = '> .container';
+                        } else {
+                            draggable = '.dashlet-list-item';
+                        }
 
-                    handle = draggable;
+                        handle = draggable;
+                    }
                 }
-            }
 
-            let options = {
-                scroll     : true,
-                invertSwap : true,
-                delay      : 100,
-                dataIdAttr : 'id',
-                direction  : 'vertical',
-                draggable  : draggable,
-                handle     : handle,
-                group      : {
-                    name : groupName,
-                    put  : _this['isValid'],
-                }
-            };
+                let options = {
+                    scroll     : true,
+                    invertSwap : true,
+                    delay      : 100,
+                    dataIdAttr : 'id',
+                    direction  : 'vertical',
+                    draggable  : draggable,
+                    handle     : handle,
+                    group      : {
+                        name : groupName,
+                        put  : _this['isValid'],
+                    }
+                };
 
-            Sortable.create(this, options);
-        });
+                Sortable.create(sortable, options);
+            });
     };
 
     Icinga.Behaviors.Dashboard = Dashboard;
