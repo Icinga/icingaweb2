@@ -6,6 +6,7 @@ namespace Icinga\Web\Widget;
 use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Application\Icinga;
 use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Url;
 
 /**
@@ -104,11 +105,14 @@ class SearchDashboard extends \Icinga\Web\Dashboard\Dashboard
 
     protected function assemble()
     {
-        if ($this->searchHome->getEntry(self::SEARCH_PANE)->hasEntries()) {
+        if (! $this->searchHome->getEntry(self::SEARCH_PANE)->hasEntries()) {
             throw new HttpNotFoundException(t('Page not found'));
         }
 
-        $this->add($this->searchHome->getEntry(self::SEARCH_PANE)->getEntries());
+        /** @var Dashlet $dashlet */
+        foreach ($this->searchHome->getEntry(self::SEARCH_PANE)->getEntries() as $dashlet) {
+            $this->addHtml($dashlet->getHtml());
+        }
     }
 
     /**
