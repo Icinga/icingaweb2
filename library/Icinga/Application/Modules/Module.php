@@ -15,6 +15,7 @@ use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
 use Icinga\Web\Dashboard;
 use Icinga\Web\Navigation\Navigation;
+use Icinga\Web\Widget;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\StaticTranslator;
 use ipl\I18n\Translation;
