@@ -187,7 +187,7 @@ class Pane extends BaseDashboard implements Sortable, OverridingWidget
             $newDashlet = new Dashlet($dashlet->name, $dashlet->url, $this);
             $newDashlet->fromArray([
                 'uuid'        => $dashlet->id,
-                'title'       => t($dashlet->label),
+                'title'       => $dashlet->label,
                 'priority'    => $dashlet->priority,
                 'pane'        => $this,
                 'description' => $dashlet->module_dashlet->description
@@ -199,7 +199,7 @@ class Pane extends BaseDashboard implements Sortable, OverridingWidget
         return $this;
     }
 
-    public function manageEntry($entry, BaseDashboard $origin = null, $updateChildEntries = false)
+    public function manageEntry($entry, BaseDashboard $origin = null, $manageRecursive = false)
     {
         if ($origin && ! $origin instanceof Pane) {
             throw new \InvalidArgumentException(sprintf(

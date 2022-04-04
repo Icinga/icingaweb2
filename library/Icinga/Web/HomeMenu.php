@@ -55,10 +55,7 @@ class HomeMenu extends Menu
                 continue;
             }
 
-            $home = DashboardHome::create($child);
-            $home->setTitle($child->getLabel());
-
-            $homes[$child->getName()] = $home;
+            $homes[$child->getName()] = DashboardHome::create($child);
         }
 
         return $homes;
