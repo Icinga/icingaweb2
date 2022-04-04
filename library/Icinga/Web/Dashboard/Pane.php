@@ -26,13 +26,6 @@ class Pane extends BaseDashboard implements Sortable, OverridingWidget
     const TABLE = 'dashboard';
 
     /**
-     * An array of @see Dashlet that are displayed in this pane
-     *
-     * @var array
-     */
-    protected $dashlets = [];
-
-    /**
      * Whether this widget overrides another widget
      *
      * @var bool
@@ -184,7 +177,9 @@ class Pane extends BaseDashboard implements Sortable, OverridingWidget
 
     public function loadDashboardEntries($name = '')
     {
-        $dashlets = Model\Dashlet::on(Dashboard::getConn())->with('module_dashlet');
+        $dashlets = Model\Dashlet::on(Dashboard::getConn())
+            ->utilize('dashboard')
+            ->with('module_dashlet');
         $dashlets->filter(Filter::equal('dashboard_id', $this->getUuid()));
 
         $this->setEntries([]);
