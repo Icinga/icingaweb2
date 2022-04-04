@@ -105,13 +105,14 @@ interface DashboardEntry
      * move pane(s)|dashlet(s) from another to this widget you have to also provide the origin from which the
      * given entry(ies) originated
      *
-     * @param BaseDashboard|BaseDashboard[] $entry
-     * @param ?BaseDashboard $origin
-     * @param bool $updateChildEntries
+     * @param BaseDashboard|BaseDashboard[] $entry The actual dashboard entry to be managed
+     * @param ?BaseDashboard $origin The original widget from which the given entry originates
+     * @param bool $manageRecursive Whether the given entry should be managed recursively e.g if the given entry
+     *                              is a Pane type, all its dashlets can be managed recursively
      *
      * @return $this
      */
-    public function manageEntry($entry, BaseDashboard $origin = null, $updateChildEntries = false);
+    public function manageEntry($entry, BaseDashboard $origin = null, $manageRecursive = false);
 
     /**
      * Load all the assigned entries to this widget

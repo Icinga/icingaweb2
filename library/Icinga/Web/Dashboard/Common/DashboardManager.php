@@ -156,7 +156,7 @@ trait DashboardManager
         return $this;
     }
 
-    public function manageEntry($entry, BaseDashboard $origin = null, $updateChildEntries = false)
+    public function manageEntry($entry, BaseDashboard $origin = null, $manageRecursive = false)
     {
         $conn = self::getConn();
         $homes = is_array($entry) ? $entry : [$entry];

@@ -38,6 +38,11 @@ class DashboardHome extends BaseDashboard implements Sortable
      */
     protected $type = Dashboard::SYSTEM;
 
+    /**
+     * A flag whether this home has been activated
+     *
+     * @var bool
+     */
     protected $active;
 
     /**
@@ -49,7 +54,14 @@ class DashboardHome extends BaseDashboard implements Sortable
      */
     public static function create(DashboardHomeItem $homeItem)
     {
-        return new self($homeItem->getName(), $homeItem->getAttributes());
+        $self = new self($homeItem->getName());
+        $self
+            ->setTitle($homeItem->getLabel())
+            ->setPriority($homeItem->getPriority())
+            ->setType($homeItem->getAttribute('type'))
+            ->setUuid($homeItem->getAttribute('uuid'));
+
+        return $self;
     }
 
     /**
@@ -160,7 +172,7 @@ class DashboardHome extends BaseDashboard implements Sortable
         return $this;
     }
 
-    public function manageEntry($entry, BaseDashboard $origin = null, $updateChildEntries = false)
+    public function manageEntry($entry, BaseDashboard $origin = null, $manageRecursive = false)
     {
         $user = Dashboard::getUser();
         $conn = Dashboard::getConn();
@@ -218,7 +230,7 @@ class DashboardHome extends BaseDashboard implements Sortable
                 $pane->setUuid($uuid);
             }
 
-            if ($updateChildEntries) {
+            if ($manageRecursive) {
                 // Those dashboard panes are usually system defaults and go up when
                 // the user is clicking on the "Use System Defaults" button
                 $dashlets = $pane->getEntries();
