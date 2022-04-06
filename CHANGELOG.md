@@ -4,6 +4,16 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.10.1
+
+It's a rather small update this time without any critical bugs. :tada: So let's get straight to the fixes:
+
+* Clicking anywhere on a list item in the dashboard now opens the primary link again, instead of nothing [#4710](https://github.com/Icinga/icingaweb2/issues/4710)
+* The `Check Now` and `Remove Acknowledgement` quick actions in an object's detail header are now working again [#4711](https://github.com/Icinga/icingaweb2/issues/4711)
+* Clicking on the big number in the tactical overview if there are `UNKNOWN` services, shows `UNKNOWN` services now [#4714](https://github.com/Icinga/icingaweb2/issues/4714)
+* The contrast of text in the sidebar, while in light mode, has been increased [#4720](https://github.com/Icinga/icingaweb2/issues/4720)
+* A theme without mode support, which is set globally, now also prevents users from configuring the mode [#4723](https://github.com/Icinga/icingaweb2/issues/4723)
+
 ### What's New in Version 2.10.0
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/63?closed=1).
