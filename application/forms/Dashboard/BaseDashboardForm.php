@@ -76,7 +76,11 @@ abstract class BaseDashboardForm extends CompatForm
      */
     protected function createCancelButton()
     {
-        return $this->createElement('submitButton', 'btn_cancel', ['class' => 'modal-cancel', 'label' => t('Cancel')]);
+        return $this->createElement('submitButton', 'btn_cancel', [
+            'class'                    => 'modal-cancel',
+            'label'                    => t('Cancel'),
+            'data-icinga-modal-cancel' => true
+        ]);
     }
 
     /**
