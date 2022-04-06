@@ -122,14 +122,12 @@ class DashboardHome extends BaseDashboard implements Sortable
         }
 
         $pane = $pane instanceof Pane ? $pane : $this->getEntry($pane);
-        if (! $pane->isOverriding()) {
-            $pane->removeEntries();
+        $pane->removeEntries();
 
-            Dashboard::getConn()->delete(Pane::TABLE, [
-                'id = ?'      => $pane->getUuid(),
-                'home_id = ?' => $this->getUuid()
-            ]);
-        }
+        Dashboard::getConn()->delete(Pane::TABLE, [
+            'id = ?'      => $pane->getUuid(),
+            'home_id = ?' => $this->getUuid()
+        ]);
 
         return $this;
     }
@@ -192,43 +190,41 @@ class DashboardHome extends BaseDashboard implements Sortable
         /** @var Pane $pane */
         foreach ($panes as $pane) {
             $uuid = Dashboard::getSHA1($user->getUsername() . $this->getName() . $pane->getName());
-            if (! $pane->isOverriding()) {
-                if (! $this->hasEntry($pane->getName()) && (! $origin || ! $origin->hasEntry($pane->getName()))) {
-                    $conn->insert(Pane::TABLE, [
-                        'id'       => $uuid,
-                        'home_id'  => $this->getUuid(),
-                        'name'     => $pane->getName(),
-                        'label'    => $pane->getTitle(),
-                        'username' => $user->getUsername(),
-                        'priority' => $order++
-                    ]);
-                } elseif (! $this->hasEntry($pane->getName()) || ! $origin || ! $origin->hasEntry($pane->getName())) {
+            if (! $this->hasEntry($pane->getName()) && (! $origin || ! $origin->hasEntry($pane->getName()))) {
+                $conn->insert(Pane::TABLE, [
+                    'id'       => $uuid,
+                    'home_id'  => $this->getUuid(),
+                    'name'     => $pane->getName(),
+                    'label'    => $pane->getTitle(),
+                    'username' => $user->getUsername(),
+                    'priority' => $order++
+                ]);
+            } elseif (! $this->hasEntry($pane->getName()) || ! $origin || ! $origin->hasEntry($pane->getName())) {
+                $filterCondition = [
+                    'id = ?'      => $pane->getUuid(),
+                    'home_id = ?' => $this->getUuid()
+                ];
+
+                if ($origin && $origin->hasEntry($pane->getName())) {
                     $filterCondition = [
-                        'id = ?'      => $pane->getUuid(),
-                        'home_id = ?' => $this->getUuid()
+                        'id = ?'      => $origin->getEntry($pane->getName())->getUuid(),
+                        'home_id = ?' => $origin->getUuid()
                     ];
-
-                    if ($origin && $origin->hasEntry($pane->getName())) {
-                        $filterCondition = [
-                            'id = ?'      => $origin->getEntry($pane->getName())->getUuid(),
-                            'home_id = ?' => $origin->getUuid()
-                        ];
-                    }
-
-                    $conn->update(Pane::TABLE, [
-                        'id'       => $uuid,
-                        'home_id'  => $this->getUuid(),
-                        'label'    => $pane->getTitle(),
-                        'priority' => $pane->getPriority()
-                    ], $filterCondition);
-                } else {
-                    // Failed to move the pane! Should have been handled already by the caller
-                    break;
                 }
 
-                $pane->setHome($this);
-                $pane->setUuid($uuid);
+                $conn->update(Pane::TABLE, [
+                    'id'       => $uuid,
+                    'home_id'  => $this->getUuid(),
+                    'label'    => $pane->getTitle(),
+                    'priority' => $pane->getPriority()
+                ], $filterCondition);
+            } else {
+                // Failed to move the pane! Should have been handled already by the caller
+                break;
             }
+
+            $pane->setHome($this);
+            $pane->setUuid($uuid);
 
             if ($manageRecursive) {
                 // Those dashboard panes are usually system defaults and go up when
