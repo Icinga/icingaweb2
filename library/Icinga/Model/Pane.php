@@ -56,8 +56,6 @@ class Pane extends Model
         $relations->belongsTo('home', Home::class)
             ->setCandidateKey('home_id');
 
-        $relations->hasMany('dashboard_override', DashboardOverride::class)
-            ->setJoinType('LEFT');
         $relations->hasMany('dashlet', Dashlet::class)
             ->setJoinType('LEFT');
     }
