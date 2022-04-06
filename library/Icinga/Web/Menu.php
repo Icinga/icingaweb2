@@ -5,8 +5,12 @@ namespace Icinga\Web;
 
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
+use Icinga\Model\Home;
+use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Web\Navigation\DashboardHomeItem;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Dashboard\Dashboard;
+use ipl\Stdlib\Filter;
 
 /**
  * Main menu for Icinga Web 2
@@ -19,6 +23,8 @@ class Menu extends Navigation
     public function __construct()
     {
         $this->init();
+        $this->initHome();
+
         $this->load('menu-item');
     }
 
@@ -148,4 +154,44 @@ class Menu extends Navigation
             ]));
         }
     }
+
+    public function initHome()
+    {
+        $user = Dashboard::getUser();
+        $dashboardItem = $this->getItem('dashboard');
+
+        $homes = Home::on(Dashboard::getConn());
+        $homes->filter(Filter::equal('username', $user->getUsername()));
+
+        foreach ($homes as $home) {
+            $dashboardHome = new DashboardHomeItem($home->name, [
+                'uuid'     => $home->id,
+                'label'    => t($home->label),
+                'priority' => $home->priority,
+                'type'     => $home->type,
+            ]);
+
+            $dashboardItem->addChild($dashboardHome);
+        }
+    }
+
+    /**
+     * Load dashboard homes form the navigation menu
+     *
+     * @return DashboardHome[]
+     */
+    public function loadHomes()
+    {
+        $homes = [];
+        foreach ($this->getItem('dashboard')->getChildren() as $child) {
+            if (! $child instanceof DashboardHomeItem) {
+                continue;
+            }
+
+            $homes[$child->getName()] = DashboardHome::create($child);
+        }
+
+        return $homes;
+    }
+
 }
