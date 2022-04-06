@@ -195,5 +195,4 @@ class Menu extends Navigation
 
         return $homes;
     }
-
 }

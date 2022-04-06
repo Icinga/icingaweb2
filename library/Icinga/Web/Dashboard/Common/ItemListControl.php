@@ -19,28 +19,28 @@ abstract class ItemListControl extends BaseHtmlElement
      *
      * @return string
      */
-    protected abstract function getHtmlId();
+    abstract protected function getHtmlId();
 
     /**
      * Get a class name for the collapsible control
      *
      * @return string
      */
-    protected abstract function getCollapsibleControlClass();
+    abstract protected function getCollapsibleControlClass();
 
     /**
      * Create an action link to be added at the end of the list
      *
      * @return HtmlElement
      */
-    protected abstract function createActionLink();
+    abstract protected function createActionLink();
 
     /**
      * Create the appropriate item list of this control
      *
      * @return HtmlElement
      */
-    protected abstract function createItemList();
+    abstract protected function createItemList();
 
     /**
      * Assemble a header element for this item list

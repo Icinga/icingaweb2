@@ -5,6 +5,7 @@
 namespace Icinga\Web\Dashboard\Common;
 
 use Icinga\Application\Icinga;
+use Icinga\Application\Modules\DashletContainer;
 use Icinga\Authentication\Auth;
 use Icinga\Common\Database;
 use Icinga\Exception\ProgrammingError;
@@ -14,7 +15,8 @@ use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Dashboard\Pane;
-use Icinga\Web\HomeMenu;
+use Icinga\Web\Menu;
+use Icinga\Web\Navigation\DashboardPane;
 use ipl\Orm\Query;
 use ipl\Sql\Connection;
 use ipl\Sql\Expression;
@@ -40,7 +42,7 @@ trait DashboardManager
 
     public function load()
     {
-        $this->setEntries((new HomeMenu())->loadHomes());
+        $this->setEntries((new Menu())->loadHomes());
         $this->loadDashboardEntries();
 
         $this->initGetDefaultHome();
@@ -253,36 +255,47 @@ trait DashboardManager
     {
         $moduleManager = Icinga::app()->getModuleManager();
         foreach ($moduleManager->getLoadedModules() as $module) {
+            /** @var DashboardPane $dashboardPane */
             foreach ($module->getDashboard() as $dashboardPane) {
-                $priority = 0;
-                /** @var Dashlet $dashlet */
-                foreach ($dashboardPane->getEntries() as $dashlet) {
-                    $uuid = self::getSHA1($module->getName() . $dashboardPane->getName() . $dashlet->getName());
+                $pane = new Pane($dashboardPane->getName());
+                $pane->setTitle($dashboardPane->getLabel());
+                $pane->fromArray($dashboardPane->getAttributes());
+
+                foreach ($dashboardPane->getIterator()->getItems() as $dashletItem) {
+                    $uuid = self::getSHA1($module->getName() . $pane->getName() . $dashletItem->getName());
+                    $dashlet = new Dashlet($dashletItem->getName(), $dashletItem->getUrl(), $pane);
+                    $dashlet->fromArray($dashletItem->getAttributes());
                     $dashlet
                         ->setUuid($uuid)
-                        ->setPriority($priority++)
                         ->setModule($module->getName())
-                        ->setModuleDashlet(true);
+                        ->setModuleDashlet(true)
+                        ->setPriority($dashletItem->getPriority());
 
                     self::updateOrInsertModuleDashlet($dashlet);
+                    $pane->addEntry($dashlet);
                 }
 
                 if (in_array($module->getName(), ['monitoring', 'icingadb'], true)) {
-                    self::$defaultPanes[$dashboardPane->getName()] = $dashboardPane;
+                    self::$defaultPanes[$pane->getName()] = $pane;
                 }
             }
 
             $priority = 0;
             foreach ($module->getDashlets() as $dashlet) {
                 $identifier = self::getSHA1($module->getName() . $dashlet->getName());
-
-                $dashlet
+                $newDashlet = new Dashlet($dashlet->getName(), $dashlet->getUrl());
+                $newDashlet->fromArray($dashlet->getProperties());
+                $newDashlet
                     ->setUuid($identifier)
-                    ->setPriority($priority++)
                     ->setModule($module->getName())
                     ->setModuleDashlet(true);
 
-                self::updateOrInsertModuleDashlet($dashlet);
+                if (! $newDashlet->getPriority()) {
+                    $newDashlet->setPriority($priority);
+                }
+
+                self::updateOrInsertModuleDashlet($newDashlet);
+                $priority++;
             }
         }
     }

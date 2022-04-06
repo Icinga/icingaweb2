@@ -28,6 +28,8 @@ class Settings extends BaseHtmlElement
     {
         $activeHome = $this->dashboard->getActiveHome();
         if (count($this->dashboard->getEntries()) === 1 && $activeHome->getName() === DashboardHome::DEFAULT_HOME) {
+            $this->setAttribute('data-icinga-home', DashboardHome::DEFAULT_HOME);
+
             foreach ($activeHome->getEntries() as $pane) {
                 $pane->setHome($activeHome);
 

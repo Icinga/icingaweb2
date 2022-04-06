@@ -1,5 +1,5 @@
 <?php
-/* Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
+/* Icinga Web 2 | (c) 2014-2022 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget\Tabextension;
 
@@ -14,17 +14,17 @@ use ipl\Web\Widget\Link;
  */
 class DashboardSettings implements Tabextension
 {
-    /** @var array|null url params to be attached to the dropdown menus. */
-    private $urlParam;
+    /** @var array|null url params to be attached to the cog icon being rendered on the dashboard tab */
+    private $urlParams;
 
     /**
      * DashboardSettings constructor.
      *
-     * @param array $urlParam
+     * @param array $urlParams
      */
-    public function __construct(array $urlParam = [])
+    public function __construct(array $urlParams = [])
     {
-        $this->urlParam = $urlParam;
+        $this->urlParams = $urlParams;
     }
 
     /**
@@ -34,8 +34,7 @@ class DashboardSettings implements Tabextension
      */
     public function apply(Tabs $tabs)
     {
-        $url = Url::fromPath(Dashboard::BASE_ROUTE . '/settings');
-        $url = empty($this->urlParam) ? $url : $url->addParams($this->urlParam);
+        $url = Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->addParams($this->urlParams);
         $tabs->add('dashboard_settings', [
             'icon' => 'service',
             'url'  => (string) $url,
