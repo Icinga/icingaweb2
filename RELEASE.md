@@ -112,7 +112,9 @@ git clone git@git.icinga.com:packaging/deb-icingaweb2.git && cd deb-icingaweb2
 Checkout `master` and create a new branch.
 
 * For releases use x.x[.x] as branch name (e.g. 2.7 or 2.7.1)
+  * `git checkout -b $VERSION`
 * For releases with revision use x.x.x-n (e.g. 2.7.0-2)
+  * `git checkout -b $VERSION-1`
 
 ### Switch Build Type (For RPM and DEB)
 
@@ -164,7 +166,7 @@ Commit the changes and push the branch.
 
 ```
 git commit -av -m "Release $VERSION-1"
-git push origin 2.7
+git push origin $VERSION
 ```
 
 Gitlab will now build snapshot packages based on the tag `v2.7.0` of Icinga Web 2.
@@ -192,8 +194,8 @@ To build release packages and upload them to [packages.icinga.com](https://packa
 tag the release commit and push it.
 
 ```
-git tag -s 2.7.0-1
-git push origin 2.7.0-1
+git tag -s $VERSION-1 -m "Version $VERSION-1"
+git push origin $VERSION-1
 ```
 
 Now cherry pick the release commit to `master` so that the changes are transferred back to it.
