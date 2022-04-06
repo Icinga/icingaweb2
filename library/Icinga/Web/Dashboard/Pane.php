@@ -9,7 +9,6 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Model;
 use Icinga\Web\Dashboard\Common\DashboardControls;
-use Icinga\Web\Dashboard\Common\OverridingWidget;
 use Icinga\Web\Dashboard\Common\Sortable;
 use ipl\Stdlib\Filter;
 use ipl\Web\Url;
@@ -19,25 +18,11 @@ use function ipl\Stdlib\get_php_type;
 /**
  * A pane, displaying different Dashboard dashlets
  */
-class Pane extends BaseDashboard implements Sortable, OverridingWidget
+class Pane extends BaseDashboard implements Sortable
 {
     use DashboardControls;
 
     const TABLE = 'dashboard';
-
-    /**
-     * Whether this widget overrides another widget
-     *
-     * @var bool
-     */
-    protected $override;
-
-    /**
-     * Number of users who have subscribed to this pane if (public)
-     *
-     * @var int
-     */
-    protected $acceptance;
 
     /**
      * A dashboard home this pane is a part of
@@ -45,40 +30,6 @@ class Pane extends BaseDashboard implements Sortable, OverridingWidget
      * @var DashboardHome
      */
     protected $home;
-
-    public function override(bool $override)
-    {
-        $this->override = $override;
-
-        return $this;
-    }
-
-    public function isOverriding()
-    {
-        return $this->override;
-    }
-
-    /**
-     * Set the number of users who have subscribed to this pane if (public)
-     *
-     * @param int $acceptance
-     */
-    public function setAcceptance($acceptance)
-    {
-        $this->acceptance = $acceptance;
-
-        return $this;
-    }
-
-    /**
-     * Get the number of users who have subscribed to this pane if (public)
-     *
-     * @return int
-     */
-    public function getAcceptance()
-    {
-        return $this->acceptance;
-    }
 
     /**
      * Get the dashboard home this pane is a part of
