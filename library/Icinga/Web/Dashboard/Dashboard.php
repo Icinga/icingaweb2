@@ -68,7 +68,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = ['class' => 'dashboard content'];
+    protected $defaultAttributes = ['class' => 'dashboard'];
 
     /**
      * The @see Tabs object for displaying displayable panes
@@ -235,11 +235,10 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
     {
         $activeHome = $this->getActiveHome();
         if (! $activeHome || (! $activeHome->hasEntries() && $activeHome->getName() === DashboardHome::DEFAULT_HOME)) {
-            $this->setAttribute('class', 'content welcome-view');
-            $wrapper = HtmlElement::create('div', ['class' => 'dashboard-introduction']);
+            $this->setAttribute('class', 'dashboard-introduction welcome-view');
 
-            $wrapper->addHtml(HtmlElement::create('h1', null, t('Welcome to Icinga Web 2!')));
-            $wrapper->addHtml(HtmlElement::create(
+            $this->addHtml(HtmlElement::create('h1', null, t('Welcome to Icinga Web 2!')));
+            $this->addHtml(HtmlElement::create(
                 'p',
                 null,
                 t('You will see this screen every time you log in and haven\'t created any dashboards yet.')
@@ -249,25 +248,23 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
                 'At the moment this view is empty, but you can populate it with small portions of'
                 . ' information called Dashlets.'
             );
-            $wrapper->addHtml(HtmlElement::create('p', null, $message));
+            $this->addHtml(HtmlElement::create('p', null, $message));
 
             $message = t(
                 'Now you can either customize which dashlets to display, or use the system default dashlets.'
                 . ' You will be always able to edit them afterwards.'
             );
-            $wrapper->addHtml(HtmlElement::create('p', null, $message));
+            $this->addHtml(HtmlElement::create('p', null, $message));
 
-            $wrapper->addHtml($this->welcomeForm);
-            $this->addHtml($wrapper);
+            $this->addHtml($this->welcomeForm);
+            //$this->addHtml($wrapper);
         } elseif (! $activeHome->hasEntries()) {
-            $this->setAttribute('class', 'content');
             $this->addHtml(HtmlElement::create('h1', null, t('No dashboard added to this dashboard home')));
         } else {
             $activePane = $this->getActivePane();
             $this->setAttribute('data-icinga-pane', $activeHome->getName() . '|' . $this->getActivePane()->getName());
 
             if (! $activePane->hasEntries()) {
-                $this->setAttribute('class', 'content');
                 $this->addHtml(HtmlElement::create('h1', null, t('No dashlet added to this pane.')));
             } else {
                 foreach ($activePane->getEntries() as $dashlet) {

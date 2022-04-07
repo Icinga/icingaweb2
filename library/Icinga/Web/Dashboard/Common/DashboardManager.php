@@ -247,7 +247,7 @@ trait DashboardManager
 
     /**
      * Browse all enabled modules configuration file and import all dashboards
-     * provided by them into the DB table `module_dashlet`
+     * provided by them into the DB table `icingaweb_module_dashlet`
      *
      * @return void
      */
@@ -261,6 +261,7 @@ trait DashboardManager
                 $pane->setTitle($dashboardPane->getLabel());
                 $pane->fromArray($dashboardPane->getAttributes());
 
+                $priority = 0;
                 foreach ($dashboardPane->getIterator()->getItems() as $dashletItem) {
                     $uuid = self::getSHA1($module->getName() . $pane->getName() . $dashletItem->getName());
                     $dashlet = new Dashlet($dashletItem->getName(), $dashletItem->getUrl(), $pane);
@@ -269,7 +270,7 @@ trait DashboardManager
                         ->setUuid($uuid)
                         ->setModule($module->getName())
                         ->setModuleDashlet(true)
-                        ->setPriority($dashletItem->getPriority());
+                        ->setPriority($priority++);
 
                     self::updateOrInsertModuleDashlet($dashlet);
                     $pane->addEntry($dashlet);
@@ -288,11 +289,8 @@ trait DashboardManager
                 $newDashlet
                     ->setUuid($identifier)
                     ->setModule($module->getName())
+                    ->setPriority($priority++)
                     ->setModuleDashlet(true);
-
-                if (! $newDashlet->getPriority()) {
-                    $newDashlet->setPriority($priority);
-                }
 
                 self::updateOrInsertModuleDashlet($newDashlet);
                 $priority++;
@@ -330,7 +328,7 @@ trait DashboardManager
         }
 
         if (! self::moduleDashletExist($dashlet)) {
-            self::getConn()->insert('module_dashlet', [
+            self::getConn()->insert('icingaweb_module_dashlet', [
                 'id'          => $dashlet->getUuid(),
                 'name'        => $dashlet->getName(),
                 'label'       => $dashlet->getTitle(),
@@ -341,7 +339,7 @@ trait DashboardManager
                 'priority'    => $dashlet->getPriority()
             ]);
         } else {
-            self::getConn()->update('module_dashlet', [
+            self::getConn()->update('icingaweb_module_dashlet', [
                 'label'       => $dashlet->getTitle(),
                 'url'         => $dashlet->getUrl()->getRelativeUrl(),
                 'description' => $dashlet->getDescription(),

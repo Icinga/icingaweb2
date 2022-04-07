@@ -137,6 +137,10 @@
 }
 
 // Dashboard manager
+:not(.dashboard) > .container > .content {
+  padding-top: 0;
+}
+
 .dashboard-settings {
   display: flex;
   flex-direction: column;
@@ -306,8 +310,15 @@ form.icinga-form .control-group.form-controls .remove-button {
 }
 
 .control-group.form-controls .modal-cancel {
-  background-color: @low-sat-blue;
+  .button();
   border: none;
+  color: @icinga-blue;
+  background-color: @low-sat-blue;
+
+  &:hover {
+    color: @text-color-on-icinga-blue;
+    background-color: @icinga-blue;
+  }
 }
 
 // Drag and drop

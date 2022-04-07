@@ -4,6 +4,7 @@
 
 namespace Icinga\Model;
 
+use Icinga\Web\Dashboard;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -11,7 +12,7 @@ class ModuleDashlet extends Model
 {
     public function getTableName()
     {
-        return 'module_dashlet';
+        return 'icingaweb_module_dashlet';
     }
 
     public function getKeyName()
@@ -52,13 +53,14 @@ class ModuleDashlet extends Model
 
     public function getDefaultSort()
     {
-        return ['module_dashlet.name', 'module_dashlet.priority'];
+        return ['name', 'priority'];
     }
 
     public function createRelations(Relations $relations)
     {
-        $relations->belongsToMany('dashlet', Dashlet::class)
+        $relations->belongsToMany(Dashboard\Dashlet::TABLE, Dashlet::class)
             ->through(SystemDashlet::class)
+            ->setForeignKey('module_dashlet_id')
             ->setJoinType('LEFT');
     }
 }

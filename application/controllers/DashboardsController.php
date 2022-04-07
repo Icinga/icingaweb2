@@ -20,6 +20,7 @@ use Icinga\Web\Dashboard\Settings;
 use Icinga\Web\Dashboard\Setup\SetupNewDashboard;
 use Icinga\Web\Notification;
 use Icinga\Web\Widget\Tabextension\DashboardSettings;
+use ipl\Html\HtmlElement;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
@@ -58,11 +59,16 @@ class DashboardsController extends CompatController
             })->handleRequest(ServerRequest::fromGlobals());
 
             $this->dashboard->setWelcomeForm($welcomeForm);
-        } elseif (($pane = $this->getParam('pane'))) {
+        } else {
+            $pane = $this->getParam('pane');
+            if (! $pane) {
+                $pane = $this->dashboard->getActivePane()->getName();
+            }
+
             $this->getTabs()->activate($pane);
         }
 
-        $this->content = $this->dashboard;
+        $this->addContent($this->dashboard);
     }
 
     /**
@@ -84,16 +90,21 @@ class DashboardsController extends CompatController
                 'title'  => $activeHome->getTitle(),
                 'url'    => Url::fromRequest()
             ]);
+        }
 
-            // Not to render the cog icon before the above tab
-            $this->createTabs();
-        } elseif (($pane = $this->getParam('pane'))) {
-            $this->createTabs();
+        // Not to render the cog icon before the above tab
+        $this->createTabs();
+
+        if ($activeHome->hasEntries()) {
+            $pane = $this->getParam('pane');
+            if (! $pane) {
+                $pane = $this->dashboard->getActivePane()->getName();
+            }
 
             $this->dashboard->activate($pane);
         }
 
-        $this->content = $this->dashboard;
+        $this->addContent($this->dashboard);
     }
 
     public function editHomeAction()
@@ -276,6 +287,7 @@ class DashboardsController extends CompatController
 
         $dashboards = Json::decode($dashboards['dashboardData'], true);
         $originals = $dashboards['originals'];
+        $widgetType = $dashboards['Type'];
         unset($dashboards['Type']);
         unset($dashboards['originals']);
 
@@ -371,7 +383,13 @@ class DashboardsController extends CompatController
             }
         }
 
-        $this->redirectNow($reroutePath);
+        if ($widgetType !== 'Dashlets' || ($orgHome && $orgPane)) {
+            $this->redirectNow($reroutePath);
+        }
+
+        // Just create a dummy content and ignore it, as we don't have any view scripts and aren't redirecting
+        $this->getResponse()->setHeader('X-Icinga-Container', 'ignore');
+        $this->addContent(new HtmlElement('p'));
     }
 
     /**
@@ -423,7 +441,7 @@ class DashboardsController extends CompatController
             ]
         ));
 
-        $this->content = new Settings($this->dashboard);
+        $this->addContent(new Settings($this->dashboard));
     }
 
     /**
