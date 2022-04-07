@@ -28,9 +28,10 @@
             this.widgetTypes = { Dashlet : 'Dashlets', Dashboard : 'Dashboards', DashboardHome : 'Homes' };
 
             this.on('rendered', '#main > .container', this.onRendered, this);
-            this.on('end', '.dashboard-settings, .dashboard-list-control, .dashlet-list-item', this.elementDropped, this);
+            // Registers all drop events for all the widget types
+            this.on('end', '.dashboard-settings', this.elementDropped, this);
             // This is for the normal dashboard/dashlets view
-            this.on('end', '.dashboard.content', this.elementDropped, this);
+            this.on('end', '.content > .dashboard', this.elementDropped, this);
         }
 
         /**
@@ -49,7 +50,7 @@
                 return this.widgetTypes.DashboardHome;
             } else if (target.matches('.dashboard-item-list')) {
                 return this.widgetTypes.Dashboard;
-            } else if (target.matches('.dashlet-item-list') || target.matches('.dashboard.content')) {
+            } else if (target.matches('.dashlet-item-list') || target.matches('.content > .dashboard')) {
                 return this.widgetTypes.Dashlet;
             }
 
@@ -98,7 +99,7 @@
                         pane,
                         home;
 
-                    if (orgEvt.to.matches('.dashboard.content')) {
+                    if (orgEvt.to.matches('.content > .dashboard')) {
                         let parentData = orgEvt.to.dataset.icingaPane.split('|', 2);
                         home = parentData.shift();
                         pane = parentData.shift();
@@ -137,13 +138,18 @@
 
                 data = { dashboardData : JSON.stringify(data) };
                 let url = _this.icinga.config.baseUrl + '/dashboards/reorder-widgets';
-                _this.icinga.loader.loadUrl(url, $('#col1'), data, 'post');
+                let req = _this.icinga.loader.loadUrl(url, $('#col1'), data, 'post');
+
+                if (data.Type === _this.widgetTypes.Dashlet && data.originals === null) {
+                    req.addToHistory = false;
+                    req.scripted = true;
+                }
             }
         }
 
         onRendered(e) {
             let _this = e.data.self;
-            e.target.querySelectorAll('.dashboard-settings, .dashboard.content,'
+            e.target.querySelectorAll('.dashboard-settings, .content > .dashboard,'
                 + ' .dashboard-item-list, .dashlet-item-list')
                 .forEach(sortable => {
                     let groupName = _this.getTypeFor(sortable),
@@ -163,7 +169,7 @@
                             break;
                         case _this.widgetTypes.Dashlet:
                             groupName = _this.widgetTypes.Dashlet;
-                            if (sortable.matches('.dashboard.content')) {
+                            if (sortable.matches('.content > .dashboard')) {
                                 draggable = '> .container';
                             } else {
                                 draggable = '.dashlet-list-item';

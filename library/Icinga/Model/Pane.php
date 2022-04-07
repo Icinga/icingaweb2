@@ -4,15 +4,15 @@
 
 namespace Icinga\Model;
 
+use Icinga\Web\Dashboard;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
-use ipl\Sql\Expression;
 
 class Pane extends Model
 {
     public function getTableName()
     {
-        return 'dashboard';
+        return Dashboard\Pane::TABLE;
     }
 
     public function getKeyName()
@@ -48,15 +48,16 @@ class Pane extends Model
 
     public function getDefaultSort()
     {
-        return 'dashboard.name';
+        return 'icingaweb_dashboard.name';
     }
 
     public function createRelations(Relations $relations)
     {
-        $relations->belongsTo('home', Home::class)
+        $relations->belongsTo(Dashboard\DashboardHome::TABLE, Home::class)
             ->setCandidateKey('home_id');
 
-        $relations->hasMany('dashlet', Dashlet::class)
+        $relations->hasMany(Dashboard\Dashlet::TABLE, Dashlet::class)
+            ->setForeignKey('dashboard_id')
             ->setJoinType('LEFT');
     }
 }

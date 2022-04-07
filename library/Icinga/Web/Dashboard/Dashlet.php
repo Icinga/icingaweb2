@@ -22,7 +22,7 @@ class Dashlet extends BaseDashboard
     use ModuleDashlet;
 
     /** @var string Database table name */
-    const TABLE = 'dashlet';
+    const TABLE = 'icingaweb_dashlet';
 
     /**
      * The url of this Dashlet

@@ -22,7 +22,7 @@ class Pane extends BaseDashboard implements Sortable
 {
     use DashboardControls;
 
-    const TABLE = 'dashboard';
+    const TABLE = 'icingaweb_dashboard';
 
     /**
      * A dashboard home this pane is a part of
@@ -129,8 +129,8 @@ class Pane extends BaseDashboard implements Sortable
     public function loadDashboardEntries($name = '')
     {
         $dashlets = Model\Dashlet::on(Dashboard::getConn())
-            ->utilize('dashboard')
-            ->with('module_dashlet');
+            ->utilize(self::TABLE)
+            ->with('icingaweb_module_dashlet');
         $dashlets->filter(Filter::equal('dashboard_id', $this->getUuid()));
 
         $this->setEntries([]);
@@ -141,7 +141,7 @@ class Pane extends BaseDashboard implements Sortable
                 'title'       => $dashlet->label,
                 'priority'    => $dashlet->priority,
                 'pane'        => $this,
-                'description' => $dashlet->module_dashlet->description
+                'description' => $dashlet->icingaweb_module_dashlet->description
             ]);
 
             $this->addDashlet($newDashlet);
@@ -202,7 +202,7 @@ class Pane extends BaseDashboard implements Sortable
                     }
 
                     if ($systemUuid) {
-                        $conn->insert('dashlet_system', [
+                        $conn->insert('icingaweb_system_dashlet', [
                             'dashlet_id'        => $uuid,
                             'module_dashlet_id' => $systemUuid
                         ]);

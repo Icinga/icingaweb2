@@ -4,6 +4,7 @@
 
 namespace Icinga\Model;
 
+use Icinga\Web\Dashboard;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -11,7 +12,7 @@ class SystemDashlet extends Model
 {
     public function getTableName()
     {
-        return 'dashlet_system';
+        return 'icingaweb_system_dashlet';
     }
 
     public function getKeyName()
@@ -30,7 +31,8 @@ class SystemDashlet extends Model
 
     public function createRelations(Relations $relations)
     {
-        $relations->belongsTo('dashlet', Dashlet::class);
-        $relations->belongsTo('module_dashlet', ModuleDashlet::class);
+        $relations->belongsTo(Dashboard\Dashlet::TABLE, Dashlet::class);
+        $relations->belongsTo('icingaweb_module_dashlet', ModuleDashlet::class)
+            ->setCandidateKey('module_dashlet_id');
     }
 }

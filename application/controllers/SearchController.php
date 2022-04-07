@@ -17,7 +17,7 @@ class SearchController extends CompatController
         $searchDashboard->setUser($this->Auth()->getUser());
 
         $this->controls->setTabs($searchDashboard->getTabs());
-        $this->content = $searchDashboard->search($this->getParam('q'));
+        $this->addContent($searchDashboard->search($this->getParam('q')));
     }
 
     public function hintAction()

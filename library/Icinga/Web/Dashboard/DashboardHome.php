@@ -29,7 +29,7 @@ class DashboardHome extends BaseDashboard implements Sortable
      *
      * @var string
      */
-    const TABLE = 'dashboard_home';
+    const TABLE = 'icingaweb_dashboard_home';
 
     /**
      * A type of this dashboard home
@@ -139,7 +139,7 @@ class DashboardHome extends BaseDashboard implements Sortable
         }
 
         $this->setEntries([]);
-        $panes = \Icinga\Model\Pane::on(Dashboard::getConn())->utilize('home');
+        $panes = \Icinga\Model\Pane::on(Dashboard::getConn())->utilize(self::TABLE);
         $panes
             ->filter(Filter::equal('home_id', $this->getUuid()))
             ->filter(Filter::equal('username', Dashboard::getUser()->getUsername()));

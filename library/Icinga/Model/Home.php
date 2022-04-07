@@ -4,6 +4,8 @@
 
 namespace Icinga\Model;
 
+use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Web\Dashboard;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -11,7 +13,7 @@ class Home extends Model
 {
     public function getTableName()
     {
-        return 'dashboard_home';
+        return DashboardHome::TABLE;
     }
 
     public function getKeyName()
@@ -51,8 +53,8 @@ class Home extends Model
 
     public function createRelations(Relations $relations)
     {
-        $relations->hasMany('dashboard', Pane::class);
+        $relations->hasMany(Dashboard\Pane::TABLE, Pane::class);
 
-        //$relations->hasMany('dashlet', Dashlet::class);
+        //$relations->hasMany(Dashboard\Dashlet::TABLE, Dashlet::class);
     }
 }

@@ -4,15 +4,15 @@
 
 namespace Icinga\Model;
 
+use Icinga\Web\Dashboard;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
-use ipl\Sql\Expression;
 
 class Dashlet extends Model
 {
     public function getTableName()
     {
-        return 'dashlet';
+        return Dashboard\Dashlet::TABLE;
     }
 
     public function getKeyName()
@@ -55,11 +55,13 @@ class Dashlet extends Model
 
     public function createRelations(Relations $relations)
     {
-        $relations->belongsTo('dashboard', Pane::class);
-        //$relations->belongsTo('home', Home::class);
+        $relations->belongsTo(Dashboard\Pane::TABLE, Pane::class)
+            ->setCandidateKey('dashboard_id');
+        //$relations->belongsTo(Dashboard\DashboardHome::TABLE, Home::class);
 
-        $relations->belongsToMany('module_dashlet', ModuleDashlet::class)
+        $relations->belongsToMany('icingaweb_module_dashlet', ModuleDashlet::class)
             ->through(SystemDashlet::class)
+            ->setForeignKey('dashlet_id')
             ->setJoinType('LEFT');
     }
 }

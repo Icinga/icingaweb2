@@ -12,7 +12,7 @@ use ipl\Web\Widget\ActionLink;
 
 class Settings extends BaseHtmlElement
 {
-    protected $defaultAttributes = ['class' => 'content dashboard-settings'];
+    protected $defaultAttributes = ['class' => 'dashboard-settings'];
 
     protected $tag = 'div';
 
