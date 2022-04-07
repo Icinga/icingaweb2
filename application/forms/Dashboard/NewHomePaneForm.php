@@ -115,7 +115,7 @@ class NewHomePaneForm extends BaseDashboardForm
 
             $this->dashboard->manageEntry($home);
 
-            Notification::success('Add dashboard home successfully');
+            Notification::success('Added dashboard home successfully');
         }
     }
 }
