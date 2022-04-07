@@ -165,15 +165,13 @@
             var _this = event.data.self;
             var $target = $(event.target);
 
-            if ($target.children('.dashboard').length) {
-                $target.find('.dashboard > .container').each(function () {
-                    var $dashlet = $(this);
-                    var url = $dashlet.data('icingaUrl');
-                    if (typeof url !== 'undefined') {
-                        _this.icinga.loader.loadUrl(url, $dashlet).autorefresh = true;
-                    }
-                });
-            }
+            $target.find('.dashboard > .container').each(function () {
+                var $dashlet = $(this);
+                var url = $dashlet.data('icingaUrl');
+                if (typeof url !== 'undefined') {
+                    _this.icinga.loader.loadUrl(url, $dashlet).autorefresh = true;
+                }
+            });
         },
 
         rememberSubmitButton: function(e) {
