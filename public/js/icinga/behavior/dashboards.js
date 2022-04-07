@@ -42,6 +42,10 @@
          */
         getTypeFor(target) {
             if (target.matches('.dashboard-settings')) {
+                if (! target.querySelector('.home-list-control:first-child')) {
+                    return this.widgetTypes.Dashboard;
+                }
+
                 return this.widgetTypes.DashboardHome;
             } else if (target.matches('.dashboard-item-list')) {
                 return this.widgetTypes.Dashboard;
@@ -77,10 +81,11 @@
                 }
                 case _this.widgetTypes.Dashboard: {
                     let pane = item.dataset.icingaPane,
-                        home = orgEvt.to.closest('.home-list-control').dataset.icingaHome;
+                        home = orgEvt.to.closest('.home-list-control, .dashboard-settings').dataset.icingaHome;
                     if (orgEvt.to !== orgEvt.from) {
+                        let homeList = orgEvt.from.closest('.home-list-control, .dashboard-settings');
                         data.originals = {
-                            originalHome : orgEvt.from.closest('.home-list-control').dataset.icingaHome,
+                            originalHome : homeList.dataset.icingaHome,
                             originalPane : pane
                         };
                     }
