@@ -285,9 +285,5 @@ class DashletForm extends BaseDashboardForm
             'dashlet'     => $dashlet->getTitle(),
             'url'         => $dashlet->getUrl()->getRelativeUrl()
         ));
-
-        if ($this->getPopulatedValue('pane') !== self::CREATE_NEW_PANE) {
-            $this->populate(['pane' => $dashlet->getPane()->getTitle()]);
-        }
     }
 }
