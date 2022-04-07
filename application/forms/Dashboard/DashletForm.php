@@ -74,7 +74,7 @@ class DashletForm extends BaseDashboardForm
             $this->clearPopulatedValue('pane');
         }
 
-        $populatedPane = $this->getPopulatedValue('pane', reset($panes));
+        $populatedPane = $this->getPopulatedValue('pane', $requestUrl->getParam('pane', reset($panes)));
         $disable = empty($panes) || $populatedHome === self::CREATE_NEW_HOME;
         $this->addElement('select', 'pane', [
             'class'        => 'autosubmit',
