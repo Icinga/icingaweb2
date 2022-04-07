@@ -22,42 +22,51 @@ class NewHomePaneForm extends BaseDashboardForm
 
     protected function assemble()
     {
-        $populatedHome = Url::fromRequest()->getParam('home');
-        $this->addElement('text', 'pane', [
-            'required'    => true,
-            'label'       => t('Title'),
-            'placeholder' => t('Create new Dashboard'),
-            'description' => t('Add new dashboard to this home.')
-        ]);
-
-        $homes = array_merge([self::CREATE_NEW_HOME => self::CREATE_NEW_HOME], $this->dashboard->getEntryKeyTitleArr());
-        $this->addElement('select', 'home', [
-            'required'     => true,
-            'class'        => 'autosubmit',
-            'value'        => $populatedHome,
-            'multiOptions' => $homes,
-            'label'        => t('Assign to Home'),
-            'description'  => t('A dashboard home you want to assign the new dashboard to.'),
-        ]);
-
-        if ($this->getPopulatedValue('home') === self::CREATE_NEW_HOME) {
-            $this->addElement('text', 'new_home', [
-                'required'    => true,
-                'label'       => t('Dashboard Home'),
-                'placeholder' => t('Enter dashboard home title'),
-                'description' => t('Enter a title for the new dashboard home.'),
-            ]);
+        $requestUrl = Url::fromRequest();
+        if ($requestUrl->getPath() === Dashboard::BASE_ROUTE . '/new-pane') {
+            $placeHolder = t('Create new Dashboard');
+            $description = t('Add new dashboard to this home.');
+            $btnLabel = t('Add Dashboard');
+        } else {
+            $placeHolder = t('Create new Dashboard Home');
+            $description = t('Add new dashboard home.');
+            $btnLabel = t('Add Home');
         }
 
-        $submitButton = $this->createElement('submit', 'submit', [
-            'class' => 'btn-primary',
-            'label' => t('Add Dashboard')
+        $this->addElement('text', 'title', [
+            'required'    => true,
+            'label'       => t('Title'),
+            'placeholder' => $placeHolder,
+            'description' => $description
         ]);
-        $this->registerElement($submitButton);
+
+        if ($requestUrl->getPath() === Dashboard::BASE_ROUTE . '/new-pane') {
+            $homes = array_merge(
+                [self::CREATE_NEW_HOME => self::CREATE_NEW_HOME],
+                $this->dashboard->getEntryKeyTitleArr()
+            );
+            $this->addElement('select', 'home', [
+                'required'     => true,
+                'class'        => 'autosubmit',
+                'value'        => $requestUrl->getParam('home', reset($homes)),
+                'multiOptions' => $homes,
+                'label'        => t('Assign to Home'),
+                'description'  => t('A dashboard home you want to assign the new dashboard to.'),
+            ]);
+
+            if ($this->getPopulatedValue('home') === self::CREATE_NEW_HOME) {
+                $this->addElement('text', 'new_home', [
+                    'required'    => true,
+                    'label'       => t('Dashboard Home'),
+                    'placeholder' => t('Enter dashboard home title'),
+                    'description' => t('Enter a title for the new dashboard home.'),
+                ]);
+            }
+        }
 
         $formControls = $this->createFormControls();
         $formControls->add([
-            $this->registerSubmitButton(t('Add Dashboard')),
+            $this->registerSubmitButton($btnLabel),
             $this->createCancelButton()
         ]);
 
@@ -69,12 +78,12 @@ class NewHomePaneForm extends BaseDashboardForm
         $requestUrl = Url::fromRequest();
         $conn = Dashboard::getConn();
 
-        $selectedHome = $this->getPopulatedValue('home');
-        if (! $selectedHome || $selectedHome === self::CREATE_NEW_HOME) {
-            $selectedHome = $this->getPopulatedValue('new_home');
-        }
-
         if ($requestUrl->getPath() === Dashboard::BASE_ROUTE . '/new-pane') {
+            $selectedHome = $this->getPopulatedValue('home');
+            if (! $selectedHome || $selectedHome === self::CREATE_NEW_HOME) {
+                $selectedHome = $this->getPopulatedValue('new_home');
+            }
+
             $currentHome = new DashboardHome($selectedHome);
             if ($this->dashboard->hasEntry($currentHome->getName())) {
                 $currentHome = clone $this->dashboard->getEntry($currentHome->getName());
@@ -83,7 +92,7 @@ class NewHomePaneForm extends BaseDashboardForm
                 }
             }
 
-            $pane = new Pane($this->getPopulatedValue('pane'));
+            $pane = new Pane($this->getPopulatedValue('title'));
             $conn->beginTransaction();
 
             try {
@@ -97,6 +106,16 @@ class NewHomePaneForm extends BaseDashboardForm
             }
 
             Notification::success('Added dashboard successfully');
+        } else { // New home
+            $home = new DashboardHome($this->getPopulatedValue('title'));
+            if ($this->dashboard->hasEntry($home->getName())) {
+                Notification::error(sprintf(t('Dashboard home "%s" already exists'), $home->getName()));
+                return;
+            }
+
+            $this->dashboard->manageEntry($home);
+
+            Notification::success('Add dashboard home successfully');
         }
     }
 }

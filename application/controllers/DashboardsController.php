@@ -107,6 +107,19 @@ class DashboardsController extends CompatController
         $this->addContent($this->dashboard);
     }
 
+    public function newHomeAction()
+    {
+        $this->setTitle(t('Add new Dashboard Home'));
+
+        $paneForm = (new NewHomePaneForm($this->dashboard))
+            ->on(NewHomePaneForm::ON_SUCCESS, function () {
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
+
+        $this->addContent($paneForm);
+    }
+
     public function editHomeAction()
     {
         $this->setTitle(t('Update Home'));
@@ -139,8 +152,6 @@ class DashboardsController extends CompatController
 
         $homeForm = (new RemoveHomePaneForm($this->dashboard))
             ->on(RemoveHomePaneForm::ON_SUCCESS, function () {
-                $this->getResponse()->setAutoRefreshInterval(1);
-
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest(ServerRequest::fromGlobals());
@@ -159,8 +170,6 @@ class DashboardsController extends CompatController
 
         $paneForm = (new NewHomePaneForm($this->dashboard))
             ->on(NewHomePaneForm::ON_SUCCESS, function () {
-                $this->getResponse()->setAutoRefreshInterval(1);
-
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest(ServerRequest::fromGlobals());
@@ -185,8 +194,6 @@ class DashboardsController extends CompatController
 
         $paneForm = (new HomePaneForm($this->dashboard))
             ->on(HomePaneForm::ON_SUCCESS, function () {
-                $this->getResponse()->setAutoRefreshInterval(1);
-
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest(ServerRequest::fromGlobals());
@@ -229,8 +236,6 @@ class DashboardsController extends CompatController
         $dashletForm = new DashletForm($this->dashboard);
         $dashletForm->populate($this->getRequest()->getPost());
         $dashletForm->on(DashletForm::ON_SUCCESS, function () {
-            $this->getResponse()->setAutoRefreshInterval(1);
-
             $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
         })->handleRequest(ServerRequest::fromGlobals());
 
@@ -246,8 +251,6 @@ class DashboardsController extends CompatController
 
         $dashletForm = (new DashletForm($this->dashboard))
             ->on(DashletForm::ON_SUCCESS, function () {
-                $this->getResponse()->setAutoRefreshInterval(1);
-
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest(ServerRequest::fromGlobals());
@@ -265,8 +268,6 @@ class DashboardsController extends CompatController
 
         $removeForm = (new RemoveDashletForm($this->dashboard))
             ->on(RemoveDashletForm::ON_SUCCESS, function () {
-                $this->getResponse()->setAutoRefreshInterval(1);
-
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest(ServerRequest::fromGlobals());
@@ -432,7 +433,7 @@ class DashboardsController extends CompatController
 
         $this->addControl(new ActionLink(
             t('Add new Home'),
-            Url::fromPath(Dashboard::BASE_ROUTE . '/new-dashlet'),
+            Url::fromPath(Dashboard::BASE_ROUTE . '/new-home'),
             'plus',
             [
                 'class'               => 'add-home',
