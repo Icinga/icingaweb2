@@ -58,7 +58,7 @@ trait DashboardManager
      *
      * @return Connection
      */
-    public static function getConn()
+    public static function getConn(): Connection
     {
         if (self::$conn === null) {
             self::$conn = (new self())->getDb();
@@ -74,12 +74,12 @@ trait DashboardManager
      *
      * @return string
      */
-    public static function getSHA1($name)
+    public static function getSHA1(string $name): string
     {
         return sha1($name, true);
     }
 
-    public function loadDashboardEntries($name = '')
+    public function loadDashboardEntries(string $name = '')
     {
         if ($name && $this->hasEntry($name)) {
             $home = $this->getEntry($name);
@@ -113,7 +113,7 @@ trait DashboardManager
      *
      * @return $this
      */
-    public function activateHome(DashboardHome $home)
+    public function activateHome(DashboardHome $home): self
     {
         $activeHome = $this->getActiveHome();
         if ($activeHome && $activeHome->getName() !== $home->getName()) {
@@ -166,12 +166,12 @@ trait DashboardManager
         /** @var DashboardHome $home */
         foreach ($homes as $home) {
             if (! $this->hasEntry($home->getName())) {
+                // Highest priority is 0, so count($entries) are always lowest prio + 1
                 $priority = $home->getName() === DashboardHome::DEFAULT_HOME ? 0 : count($this->getEntries());
                 $conn->insert(DashboardHome::TABLE, [
                     'name'     => $home->getName(),
                     'label'    => $home->getTitle(),
                     'username' => self::getUser()->getUsername(),
-                    // highest priority is 0, so count($entries) are always lowest prio + 1
                     'priority' => $priority,
                     'type'     => $home->getType() !== Dashboard::SYSTEM ? $home->getType() : Dashboard::PRIVATE_DS
                 ]);
@@ -191,9 +191,9 @@ trait DashboardManager
     /**
      * Get and|or init the default dashboard home
      *
-     * @return BaseDashboard
+     * @return DashboardHome
      */
-    public function initGetDefaultHome()
+    public function initGetDefaultHome(): DashboardHome
     {
         if ($this->hasEntry(DashboardHome::DEFAULT_HOME)) {
             return $this->getEntry(DashboardHome::DEFAULT_HOME);
@@ -213,7 +213,7 @@ trait DashboardManager
      *
      * @return $this
      */
-    public function setUser(User $user)
+    public function setUser(User $user): self
     {
         self::$user = $user;
 
@@ -225,7 +225,7 @@ trait DashboardManager
      *
      * @return User
      */
-    public static function getUser()
+    public static function getUser(): User
     {
         if (self::$user === null) {
             self::$user = Auth::getInstance()->getUser();
@@ -240,7 +240,7 @@ trait DashboardManager
      *
      * @return Pane[]
      */
-    public static function getSystemDefaults()
+    public static function getSystemDefaults(): array
     {
         return self::$defaultPanes;
     }
@@ -251,26 +251,29 @@ trait DashboardManager
      *
      * @return void
      */
-    public static function deployModuleDashlets()
+    public static function deployModuleDashlets(): void
     {
-        $moduleManager = Icinga::app()->getModuleManager();
-        foreach ($moduleManager->getLoadedModules() as $module) {
-            /** @var DashboardPane $dashboardPane */
-            foreach ($module->getDashboard() as $dashboardPane) {
-                $pane = new Pane($dashboardPane->getName());
-                $pane->setTitle($dashboardPane->getLabel());
-                $pane->fromArray($dashboardPane->getAttributes());
+        $mg = Icinga::app()->getModuleManager();
+        foreach ($mg->getLoadedModules() as $module) {
+            foreach ($module->getDashboard() as $dashboard) {
+                $pane = new Pane($dashboard->getName());
+                $pane->fromArray($dashboard->getProperties());
 
                 $priority = 0;
-                foreach ($dashboardPane->getIterator()->getItems() as $dashletItem) {
-                    $uuid = self::getSHA1($module->getName() . $pane->getName() . $dashletItem->getName());
-                    $dashlet = new Dashlet($dashletItem->getName(), $dashletItem->getUrl(), $pane);
-                    $dashlet->fromArray($dashletItem->getAttributes());
+                foreach ($dashboard->getDashlets() as $name => $configPart) {
+                    $uuid = self::getSHA1($module->getName() . $pane->getName() . $name);
+                    $dashlet = new Dashlet($name, $configPart['url'], $pane);
+                    $dashlet->fromArray($configPart);
                     $dashlet
                         ->setUuid($uuid)
-                        ->setModule($module->getName())
                         ->setModuleDashlet(true)
-                        ->setPriority($priority++);
+                        ->setPriority($priority++)
+                        ->setModule($module->getName());
+
+                    // As we don't have a setter for labels, this might be ignored by the data extractor
+                    if (isset($configPart['label'])) {
+                        $dashlet->setTitle($configPart['label']);
+                    }
 
                     self::updateOrInsertModuleDashlet($dashlet);
                     $pane->addEntry($dashlet);
@@ -305,7 +308,7 @@ trait DashboardManager
      *
      * @return bool
      */
-    public static function moduleDashletExist(Dashlet $dashlet)
+    public static function moduleDashletExist(Dashlet $dashlet): bool
     {
         $query = Model\ModuleDashlet::on(self::getConn())->filter(Filter::equal('id', $dashlet->getUuid()));
         $query->getSelectBase()->columns(new Expression('1'));
@@ -317,11 +320,10 @@ trait DashboardManager
      * Insert or update the given module dashlet
      *
      * @param Dashlet $dashlet
-     * @param string $module
      *
      * @return void
      */
-    public static function updateOrInsertModuleDashlet(Dashlet $dashlet)
+    public static function updateOrInsertModuleDashlet(Dashlet $dashlet): void
     {
         if (! $dashlet->isModuleDashlet()) {
             return;
@@ -351,9 +353,11 @@ trait DashboardManager
     /**
      * Get module dashlets from the database
      *
+     * @param Query $query
+     *
      * @return array
      */
-    public static function getModuleDashlets(Query $query)
+    public static function getModuleDashlets(Query $query): array
     {
         $dashlets = [];
         foreach ($query as $moduleDashlet) {

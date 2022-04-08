@@ -14,10 +14,10 @@ interface Sortable
      * Insert the dashboard entry at the given position within this dashboard entries
      *
      * @param BaseDashboard $dashboard
-     * @param $position
+     * @param int $position
      * @param Sortable|null $origin
      *
      * @return $this
      */
-    public function reorderWidget(BaseDashboard $dashboard, $position, Sortable $origin = null);
+    public function reorderWidget(BaseDashboard $dashboard, int $position, Sortable $origin = null);
 }

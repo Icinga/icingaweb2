@@ -307,8 +307,8 @@ class DashboardsController extends CompatController
                 break;
             }
 
-            /** @var DashboardHome $home */
             $home = $this->dashboard->getEntry($home);
+            /** @var DashboardHome $home */
             if (! is_array($value)) {
                 $this->dashboard->reorderWidget($home, (int) $value);
 
@@ -323,8 +323,8 @@ class DashboardsController extends CompatController
                     break;
                 }
 
-                /** @var Pane $pane */
                 $pane = $home->hasEntry($pane) ? $home->getEntry($pane) : $orgHome->getEntry($pane);
+                /** @var Pane $pane */
                 if (! is_array($indexOrValues)) {
                     if ($orgHome && $orgHome->hasEntry($pane->getName()) && $home->hasEntry($pane->getName())) {
                         Notification::error(sprintf(

@@ -7,6 +7,7 @@ namespace Icinga\Web\Dashboard\ItemList;
 use Icinga\Web\Dashboard\Common\ItemListControl;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
+use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
@@ -30,17 +31,17 @@ class DashboardHomeList extends ItemListControl
             });
     }
 
-    protected function getHtmlId()
+    protected function getHtmlId(): string
     {
         return $this->home->getUuid();
     }
 
-    protected function getCollapsibleControlClass()
+    protected function getCollapsibleControlClass(): string
     {
         return 'dashboard-list-info';
     }
 
-    protected function createItemList()
+    protected function createItemList(): BaseHtmlElement
     {
         $url = Url::fromPath(Dashboard::BASE_ROUTE . '/edit-home')
             ->setParams(['home' => $this->home->getName()]);
@@ -58,7 +59,7 @@ class DashboardHomeList extends ItemListControl
         return $list;
     }
 
-    protected function createActionLink()
+    protected function createActionLink(): BaseHtmlElement
     {
         $url = Url::fromPath(Dashboard::BASE_ROUTE . '/new-pane');
         $url->setParams(['home' => $this->home->getName()]);

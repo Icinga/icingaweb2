@@ -19,40 +19,40 @@ abstract class ItemListControl extends BaseHtmlElement
      *
      * @return string
      */
-    abstract protected function getHtmlId();
+    abstract protected function getHtmlId(): string;
 
     /**
      * Get a class name for the collapsible control
      *
      * @return string
      */
-    abstract protected function getCollapsibleControlClass();
+    abstract protected function getCollapsibleControlClass(): string;
 
     /**
      * Create an action link to be added at the end of the list
      *
-     * @return HtmlElement
+     * @return BaseHtmlElement
      */
-    abstract protected function createActionLink();
+    abstract protected function createActionLink(): BaseHtmlElement;
 
     /**
      * Create the appropriate item list of this control
      *
-     * @return HtmlElement
+     * @return BaseHtmlElement
      */
-    abstract protected function createItemList();
+    abstract protected function createItemList(): BaseHtmlElement;
 
     /**
      * Assemble a header element for this item list
      *
      * @param Url $url
-     * @param string $header
+     * @param string $title
      *
      * @return void
      */
-    protected function assembleHeader(Url $url, $header)
+    protected function assembleHeader(Url $url, string $title)
     {
-        $header = HtmlElement::create('h1', ['class' => 'collapsible-header'], $header);
+        $header = HtmlElement::create('h1', ['class' => 'collapsible-header'], $title);
         $header->addHtml(new Link(t('Edit'), $url, [
             'data-icinga-modal'   => true,
             'data-no-icinga-ajax' => true

@@ -22,7 +22,7 @@ trait DashboardControls
         return ! empty($this->dashboards);
     }
 
-    public function getEntry($name)
+    public function getEntry(string $name)
     {
         if (! $this->hasEntry($name)) {
             throw new ProgrammingError('Trying to retrieve invalid dashboard entry "%s"', $name);
@@ -31,7 +31,7 @@ trait DashboardControls
         return $this->dashboards[$name];
     }
 
-    public function hasEntry($name)
+    public function hasEntry(string $name)
     {
         return array_key_exists($name, $this->dashboards);
     }
@@ -85,7 +85,7 @@ trait DashboardControls
         return $this;
     }
 
-    public function createEntry($name, $url = null)
+    public function createEntry(string $name, $url = null)
     {
     }
 
@@ -94,7 +94,7 @@ trait DashboardControls
         return reset($this->dashboards);
     }
 
-    public function reorderWidget(BaseDashboard $dashboard, $position, Sortable $origin = null)
+    public function reorderWidget(BaseDashboard $dashboard, int $position, Sortable $origin = null)
     {
         if ($origin && ! $origin instanceof $this) {
             throw new \InvalidArgumentException(sprintf(

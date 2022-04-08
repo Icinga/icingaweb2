@@ -19,14 +19,14 @@ class DashletListMultiSelect extends DashletListItem
      *
      * @return $this
      */
-    public function setCheckBox(FormElement $checkbox)
+    public function setCheckBox(FormElement $checkbox): self
     {
         $this->checkbox = $checkbox;
 
         return $this;
     }
 
-    protected function createLabel()
+    protected function createLabel(): HtmlElement
     {
         $label = HtmlElement::create('label');
         $label->addHtml($this->checkbox);

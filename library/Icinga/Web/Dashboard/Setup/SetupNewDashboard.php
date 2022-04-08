@@ -36,7 +36,7 @@ class SetupNewDashboard extends BaseDashboardForm
      *
      * @return $this
      */
-    public function initDashlets(array $dashlets)
+    public function initDashlets(array $dashlets): self
     {
         $this->dashlets = $dashlets;
 
@@ -236,9 +236,9 @@ class SetupNewDashboard extends BaseDashboardForm
      * Dump all module dashlets which are not selected by the user
      * from the member variable
      *
-     * @return $this
+     * @return void
      */
-    private function dumpArbitaryDashlets()
+    private function dumpArbitaryDashlets(): void
     {
         $choosenDashlets = [];
         foreach ($this->dashlets as $module => $dashlets) {
@@ -252,8 +252,6 @@ class SetupNewDashboard extends BaseDashboardForm
         }
 
         $this->dashlets = $choosenDashlets;
-
-        return $this;
     }
 
     /**
@@ -261,7 +259,7 @@ class SetupNewDashboard extends BaseDashboardForm
      *
      * @return ValidHtml
      */
-    private function createFormListControl()
+    private function createFormListControl(): ValidHtml
     {
         return HtmlElement::create('div', [
             'class'               => ['control-group', 'form-list-control', 'collapsible'],
