@@ -235,7 +235,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
     {
         $activeHome = $this->getActiveHome();
         if (! $activeHome || (! $activeHome->hasEntries() && $activeHome->getName() === DashboardHome::DEFAULT_HOME)) {
-            $this->setAttribute('class', 'dashboard-introduction welcome-view');
+            $this->setAttribute('class', 'dashboard-introduction');
 
             $this->addHtml(HtmlElement::create('h1', null, t('Welcome to Icinga Web 2!')));
             $this->addHtml(HtmlElement::create(
