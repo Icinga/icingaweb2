@@ -63,7 +63,7 @@ abstract class BaseDashboard implements DashboardEntry
      * @param string $name
      * @param array $properties
      */
-    public function __construct($name, array $properties = [])
+    public function __construct(string $name, array $properties = [])
     {
         $this->name = $name;
         $this->title = $name;
@@ -80,7 +80,7 @@ abstract class BaseDashboard implements DashboardEntry
      *
      * @return $this
      */
-    public function setUuid($uuid)
+    public function setUuid($uuid): self
     {
         $this->uuid = $uuid;
 
@@ -90,7 +90,7 @@ abstract class BaseDashboard implements DashboardEntry
     /**
      * Get this widget's unique identifier
      *
-     * @return string
+     * @return string|int
      */
     public function getUuid()
     {
@@ -101,10 +101,14 @@ abstract class BaseDashboard implements DashboardEntry
      * Set the name of this widget
      *
      * @param string $name
+     *
+     * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -112,7 +116,7 @@ abstract class BaseDashboard implements DashboardEntry
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -124,7 +128,7 @@ abstract class BaseDashboard implements DashboardEntry
      *
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle(string $title): self
     {
         $this->title = $title;
 
@@ -136,7 +140,7 @@ abstract class BaseDashboard implements DashboardEntry
      *
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title !== null ? $this->title : $this->getName();
     }
@@ -148,7 +152,7 @@ abstract class BaseDashboard implements DashboardEntry
      *
      * @return $this
      */
-    public function setOwner($owner)
+    public function setOwner(string $owner): self
     {
         $this->owner = $owner;
 
@@ -158,7 +162,7 @@ abstract class BaseDashboard implements DashboardEntry
     /**
      * Get owner of this widget
      *
-     * @return string
+     * @return ?string
      */
     public function getOwner()
     {
@@ -168,7 +172,7 @@ abstract class BaseDashboard implements DashboardEntry
     /**
      * Get the widget's description
      *
-     * @return  string
+     * @return ?string
      */
     public function getDescription()
     {
@@ -182,7 +186,7 @@ abstract class BaseDashboard implements DashboardEntry
      *
      * @return  $this
      */
-    public function setDescription($description)
+    public function setDescription(string $description = null): self
     {
         $this->description = $description;
 
@@ -196,7 +200,7 @@ abstract class BaseDashboard implements DashboardEntry
      *
      * @return $this
      */
-    public function setPriority(int $order)
+    public function setPriority(int $order): self
     {
         $this->order = $order;
 
@@ -208,7 +212,7 @@ abstract class BaseDashboard implements DashboardEntry
      *
      * @return int
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return $this->order;
     }
@@ -217,11 +221,11 @@ abstract class BaseDashboard implements DashboardEntry
     {
     }
 
-    public function getEntry($name)
+    public function getEntry(string $name)
     {
     }
 
-    public function hasEntry($name)
+    public function hasEntry(string $name)
     {
     }
 
@@ -237,7 +241,7 @@ abstract class BaseDashboard implements DashboardEntry
     {
     }
 
-    public function createEntry($name, $url = null)
+    public function createEntry(string $name, $url = null)
     {
     }
 
@@ -253,11 +257,11 @@ abstract class BaseDashboard implements DashboardEntry
     {
     }
 
-    public function manageEntry($entry, BaseDashboard $origin = null, $manageRecursive = false)
+    public function manageEntry($entry, BaseDashboard $origin = null, bool $manageRecursive = false)
     {
     }
 
-    public function loadDashboardEntries($name = '')
+    public function loadDashboardEntries(string $name = '')
     {
     }
 

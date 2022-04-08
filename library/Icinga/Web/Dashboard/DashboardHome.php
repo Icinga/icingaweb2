@@ -73,7 +73,7 @@ class DashboardHome extends BaseDashboard implements Sortable
      *
      * @return $this
      */
-    public function setActive($active = true)
+    public function setActive(bool $active = true)
     {
         $this->active = $active;
 
@@ -97,7 +97,7 @@ class DashboardHome extends BaseDashboard implements Sortable
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type)
     {
         $this->type = $type;
 
@@ -132,7 +132,7 @@ class DashboardHome extends BaseDashboard implements Sortable
         return $this;
     }
 
-    public function loadDashboardEntries($name = '')
+    public function loadDashboardEntries(string $name = '')
     {
         if (! $this->getActive()) {
             return $this;
@@ -160,7 +160,7 @@ class DashboardHome extends BaseDashboard implements Sortable
         return $this;
     }
 
-    public function createEntry($name, $url = null)
+    public function createEntry(string $name, $url = null)
     {
         $entry = new Pane($name);
         $entry->setHome($this);
@@ -170,7 +170,7 @@ class DashboardHome extends BaseDashboard implements Sortable
         return $this;
     }
 
-    public function manageEntry($entry, BaseDashboard $origin = null, $manageRecursive = false)
+    public function manageEntry($entry, BaseDashboard $origin = null, bool $manageRecursive = false)
     {
         $user = Dashboard::getUser();
         $conn = Dashboard::getConn();
@@ -236,7 +236,7 @@ class DashboardHome extends BaseDashboard implements Sortable
         }
     }
 
-    public function toArray($stringify = true)
+    public function toArray(bool $stringify = true): array
     {
         return [
             'id'       => $this->getUuid(),

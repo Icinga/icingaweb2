@@ -43,7 +43,7 @@ class DashletContainer extends NavigationItemContainer
     }
 
     /**
-     * Set url if this dashlet item
+     * Set url of this dashlet item
      *
      * @param Url|string $url
      *

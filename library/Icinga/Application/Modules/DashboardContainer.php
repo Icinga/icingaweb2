@@ -13,7 +13,7 @@ class DashboardContainer extends NavigationItemContainer
      *
      * @var array
      */
-    protected $dashlets;
+    protected $dashlets = [];
 
     /**
      * Set this dashboard's dashlets
@@ -35,7 +35,11 @@ class DashboardContainer extends NavigationItemContainer
      */
     public function getDashlets()
     {
-        return $this->dashlets ?: array();
+        uasort($this->dashlets, function (array $x, array $y) {
+            return $x['priority'] - $y['priority'];
+        });
+
+        return $this->dashlets;
     }
 
     /**

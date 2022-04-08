@@ -46,14 +46,14 @@ class DashletListItem extends BaseHtmlElement
      *
      * @return $this
      */
-    protected function setDetailUrl(bool $value)
+    protected function setDetailUrl(bool $value): self
     {
         $this->renderEditButton = $value;
 
         return $this;
     }
 
-    protected function assembleTitle()
+    protected function assembleHeader(): HtmlElement
     {
         $title = HtmlElement::create('h1', ['class' => 'dashlet-header']);
 
@@ -98,12 +98,10 @@ class DashletListItem extends BaseHtmlElement
         if (! $this->dashlet) {
             $section->add(t('Create a dashlet with custom url and filter'));
         } else {
-            $section->getAttributes()->set(
-                'title',
-                $this->dashlet->getDescription() ?: t('There is no provided description.')
-            );
+            $description = $this->dashlet->getDescription() ?: t('There is no provided description.');
+            $section->getAttributes()->set('title', $description);
 
-            $section->add($this->dashlet->getDescription() ?: t('There is no provided dashlet description.'));
+            $section->add($description);
         }
 
         return $section;
@@ -111,7 +109,7 @@ class DashletListItem extends BaseHtmlElement
 
     protected function assemble()
     {
-        $this->addHtml($this->assembleTitle());
+        $this->addHtml($this->assembleHeader());
         $this->addHtml($this->assembleSummary());
     }
 }

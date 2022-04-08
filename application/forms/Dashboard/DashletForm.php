@@ -1,6 +1,5 @@
 <?php
-
-/* Icinga Web 2 | (c) 2013-2022 Icinga GmbH | GPLv2+ */
+/* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Forms\Dashboard;
 
@@ -274,16 +273,16 @@ class DashletForm extends BaseDashboardForm
         }
     }
 
-    public function load(BaseDashboard $dashlet)
+    public function load(BaseDashboard $dashboard)
     {
         $home = Url::fromRequest()->getParam('home');
-        /** @var Dashlet $dashlet */
+        /** @var Dashlet $dashboard */
         $this->populate(array(
             'org_home'    => $home,
-            'org_pane'    => $dashlet->getPane()->getName(),
-            'org_dashlet' => $dashlet->getName(),
-            'dashlet'     => $dashlet->getTitle(),
-            'url'         => $dashlet->getUrl()->getRelativeUrl()
+            'org_pane'    => $dashboard->getPane()->getName(),
+            'org_dashlet' => $dashboard->getName(),
+            'dashlet'     => $dashboard->getTitle(),
+            'url'         => $dashboard->getUrl()->getRelativeUrl()
         ));
     }
 }

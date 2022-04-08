@@ -7,6 +7,7 @@ namespace Icinga\Web\Dashboard\ItemList;
 use Icinga\Web\Dashboard\Common\ItemListControl;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\Pane;
+use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
@@ -28,17 +29,17 @@ class DashboardList extends ItemListControl
             });
     }
 
-    protected function getHtmlId()
+    protected function getHtmlId(): string
     {
         return bin2hex($this->pane->getUuid());
     }
 
-    protected function getCollapsibleControlClass()
+    protected function getCollapsibleControlClass(): string
     {
         return 'dashlets-list-info';
     }
 
-    protected function createItemList()
+    protected function createItemList(): BaseHtmlElement
     {
         $pane = $this->pane;
         $this->getAttributes()->set('data-toggle-element', '.dashlets-list-info');
@@ -61,7 +62,7 @@ class DashboardList extends ItemListControl
         return $list;
     }
 
-    protected function createActionLink()
+    protected function createActionLink(): BaseHtmlElement
     {
         $url = Url::fromPath(Dashboard::BASE_ROUTE . '/new-dashlet');
         $url->setParams([

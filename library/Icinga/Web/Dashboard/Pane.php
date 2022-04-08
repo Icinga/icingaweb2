@@ -50,59 +50,21 @@ class Pane extends BaseDashboard implements Sortable
      *
      * @return $this
      */
-    public function setHome(DashboardHome $home)
+    public function setHome(DashboardHome $home): self
     {
         $this->home = $home;
 
         return $this;
     }
 
-    public function createEntry($name, $url = null)
+    public function createEntry(string $name, $url = null)
     {
-        $dashlet = new Dashlet($name, $url, $this);
-        $this->addDashlet($dashlet);
-
-        return $this;
-    }
-
-    /**
-     * Add a dashlet to this pane, optionally creating it if $dashlet is a string
-     *
-     * @param string|Dashlet $dashlet
-     * @param ?string $url
-     *
-     * @return $this
-     * @throws \Icinga\Exception\ConfigurationError
-     */
-    public function addDashlet($dashlet, $url = null)
-    {
-        if ($dashlet instanceof Dashlet) {
-            $this->addEntry($dashlet);
-        } elseif (is_string($dashlet) && $url !== null) {
-            $this->createEntry($dashlet, $url);
-        } else {
-            throw new ConfigurationError('Invalid dashlet added: %s', $dashlet);
+        if ($url === null) {
+            throw new ConfigurationError('Can\'t create a dashlet "%s" without a valid url', $name);
         }
 
-        return $this;
-    }
-
-    /**
-     * Add a dashlet to the current pane
-     *
-     * @param string $name
-     * @param Url|string $url
-     *
-     * @return $this
-     * @see addDashlet()
-     */
-    public function add($name, $url, $priority = 0, $description = null)
-    {
-        $this->createEntry($name, $url);
-        $dashlet = $this->getEntry($name);
-        $dashlet
-            ->setDescription($description)
-            ->setPriority($priority);
+        $dashlet = new Dashlet($name, $url, $this);
+        $this->addEntry($dashlet);
 
         return $this;
     }
@@ -126,7 +88,7 @@ class Pane extends BaseDashboard implements Sortable
         return $this;
     }
 
-    public function loadDashboardEntries($name = '')
+    public function loadDashboardEntries(string $name = '')
     {
         $dashlets = Model\Dashlet::on(Dashboard::getConn())
             ->utilize(self::TABLE)
@@ -144,13 +106,13 @@ class Pane extends BaseDashboard implements Sortable
                 'description' => $dashlet->icingaweb_module_dashlet->description
             ]);
 
-            $this->addDashlet($newDashlet);
+            $this->addEntry($newDashlet);
         }
 
         return $this;
     }
 
-    public function manageEntry($entry, BaseDashboard $origin = null, $manageRecursive = false)
+    public function manageEntry($entry, BaseDashboard $origin = null, bool $manageRecursive = false)
     {
         if ($origin && ! $origin instanceof Pane) {
             throw new \InvalidArgumentException(sprintf(
@@ -171,7 +133,7 @@ class Pane extends BaseDashboard implements Sortable
         $conn = Dashboard::getConn();
 
         $dashlets = is_array($entry) ? $entry : [$entry];
-        // highest priority is 0, so count($entries) are all always lowest prio + 1
+        // Highest priority is 0, so count($entries) are always lowest prio + 1
         $order = count($this->getEntries());
         foreach ($dashlets as $dashlet) {
             if (is_array($dashlet)) {
@@ -240,7 +202,7 @@ class Pane extends BaseDashboard implements Sortable
         return $this;
     }
 
-    public function toArray($stringify = true)
+    public function toArray(bool $stringify = true): array
     {
         $home = $this->getHome();
         return [

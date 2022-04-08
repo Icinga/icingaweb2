@@ -97,7 +97,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
      * @param string $name The tab name to activate
      *
      */
-    public function activate($name)
+    public function activate(string $name)
     {
         $this->getTabs()->activate($name);
     }

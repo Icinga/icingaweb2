@@ -17,7 +17,7 @@ class WelcomeForm extends CompatForm
     public function __construct(Dashboard $dashboard)
     {
         $this->dashboard = $dashboard;
-        $this->setRedirectUrl(Url::fromPath(Dashboard::BASE_ROUTE));
+        $this->setRedirectUrl((string) Url::fromPath(Dashboard::BASE_ROUTE));
     }
 
     public function hasBeenSubmitted()

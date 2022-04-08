@@ -11,7 +11,7 @@ trait DataExtractor
      *
      * @return $this
      */
-    public function fromArray(array $data)
+    public function fromArray(array $data): self
     {
         foreach ($data as $name => $value) {
             $func = 'set' . ucfirst($name);
@@ -32,7 +32,7 @@ trait DataExtractor
      *
      * @return array
      */
-    public function toArray($stringify = true)
+    public function toArray(bool $stringify = true): array
     {
         return [];
     }

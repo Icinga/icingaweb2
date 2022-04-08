@@ -91,7 +91,7 @@ abstract class BaseDashboardForm extends CompatForm
      *
      * @return FormElement
      */
-    protected function createRemoveButton(Url $action, $label)
+    protected function createRemoveButton(Url $action, string $label)
     {
         return $this->createElement('submitButton', 'btn_remove', [
             'class'      => 'remove-button',
@@ -107,7 +107,7 @@ abstract class BaseDashboardForm extends CompatForm
      *
      * @return FormElement
      */
-    protected function registerSubmitButton($label)
+    protected function registerSubmitButton(string $label)
     {
         $submitElement = $this->createElement('submit', 'submit', ['class' => 'btn-primary', 'label' => $label]);
         $this->registerElement($submitElement);

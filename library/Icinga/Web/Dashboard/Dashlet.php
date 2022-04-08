@@ -9,6 +9,7 @@ use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Web\Dashboard\Common\ModuleDashlet;
 use Icinga\Web\Request;
 use Icinga\Web\Url;
+use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Web\Widget\Link;
 
@@ -52,7 +53,7 @@ class Dashlet extends BaseDashboard
      * @param Url|string $url The url this dashlet uses for displaying information
      * @param Pane|null $pane The pane this Dashlet will be added to
      */
-    public function __construct($name, $url, Pane $pane = null)
+    public function __construct(string $name, $url, Pane $pane = null)
     {
         parent::__construct($name);
 
@@ -63,7 +64,7 @@ class Dashlet extends BaseDashboard
     /**
      * Retrieve the dashlets url
      *
-     * @return Url|null
+     * @return ?Url
      */
     public function getUrl()
     {
@@ -85,7 +86,7 @@ class Dashlet extends BaseDashboard
      *
      * @return $this
      */
-    public function setUrl($url)
+    public function setUrl($url): self
     {
         $this->url = $url;
 
@@ -99,7 +100,7 @@ class Dashlet extends BaseDashboard
      *
      * @return  $this
      */
-    public function setProgressLabel($label)
+    public function setProgressLabel(string $label): self
     {
         $this->progressLabel = $label;
 
@@ -111,7 +112,7 @@ class Dashlet extends BaseDashboard
      *
      * @return  string
      */
-    public function getProgressLabel()
+    public function getProgressLabel(): string
     {
         if ($this->progressLabel === null) {
             return $this->progressLabel = t('Loading');
@@ -127,7 +128,7 @@ class Dashlet extends BaseDashboard
      *
      * @return Dashlet
      */
-    public function setPane(Pane $pane)
+    public function setPane(Pane $pane): self
     {
         $this->pane = $pane;
 
@@ -137,7 +138,7 @@ class Dashlet extends BaseDashboard
     /**
      * Get the pane of this dashlet
      *
-     * @return Pane
+     * @return ?Pane
      */
     public function getPane()
     {
@@ -147,9 +148,9 @@ class Dashlet extends BaseDashboard
     /**
      * Generate a html widget for this dashlet
      *
-     * @return HtmlElement
+     * @return BaseHtmlElement
      */
-    public function getHtml()
+    public function getHtml(): BaseHtmlElement
     {
         $dashletHtml = HtmlElement::create('div', ['class' => 'container']);
         if (! $this->getUrl()) {
@@ -191,7 +192,7 @@ class Dashlet extends BaseDashboard
         return $dashletHtml;
     }
 
-    public function toArray($stringify = true)
+    public function toArray(bool $stringify = true): array
     {
         $pane = $this->getPane();
         return [

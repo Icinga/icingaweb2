@@ -25,7 +25,7 @@ interface DashboardEntry
      *
      * @return BaseDashboard
      */
-    public function getEntry($name);
+    public function getEntry(string $name);
 
     /**
      * Get whether the given dashboard entry exists
@@ -34,7 +34,7 @@ interface DashboardEntry
      *
      * @return bool
      */
-    public function hasEntry($name);
+    public function hasEntry(string $name);
 
     /**
      * Get all dashboard entries of this widget
@@ -69,7 +69,7 @@ interface DashboardEntry
      *
      * @return $this
      */
-    public function createEntry($name, $url = null);
+    public function createEntry(string $name, $url = null);
 
     /**
      * Get an array with entry name=>title format
@@ -112,7 +112,7 @@ interface DashboardEntry
      *
      * @return $this
      */
-    public function manageEntry($entry, BaseDashboard $origin = null, $manageRecursive = false);
+    public function manageEntry($entry, BaseDashboard $origin = null, bool $manageRecursive = false);
 
     /**
      * Load all the assigned entries to this widget
@@ -121,7 +121,7 @@ interface DashboardEntry
      *
      * @return $this
      */
-    public function loadDashboardEntries($name = '');
+    public function loadDashboardEntries(string $name = '');
 
     /**
      * Reset the current position of the internal dashboard entries pointer

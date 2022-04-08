@@ -23,7 +23,7 @@ trait ModuleDashlet
     /**
      * Get the name of the module which provides this dashlet
      *
-     * @return string
+     * @return ?string
      */
     public function getModule()
     {
@@ -37,7 +37,7 @@ trait ModuleDashlet
      *
      * @return $this
      */
-    public function setModule($module)
+    public function setModule(string $module): self
     {
         $this->module = $module;
 
@@ -49,7 +49,7 @@ trait ModuleDashlet
      *
      * @return bool
      */
-    public function isModuleDashlet()
+    public function isModuleDashlet(): bool
     {
         return $this->moduleDashlet;
     }
@@ -61,7 +61,7 @@ trait ModuleDashlet
      *
      * @return $this
      */
-    public function setModuleDashlet(bool $moduleDashlet)
+    public function setModuleDashlet(bool $moduleDashlet): self
     {
         $this->moduleDashlet = $moduleDashlet;
 
