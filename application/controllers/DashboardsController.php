@@ -20,7 +20,6 @@ use Icinga\Web\Dashboard\Settings;
 use Icinga\Web\Dashboard\Setup\SetupNewDashboard;
 use Icinga\Web\Notification;
 use Icinga\Web\Widget\Tabextension\DashboardSettings;
-use ipl\Html\HtmlElement;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
@@ -58,6 +57,7 @@ class DashboardsController extends CompatController
                 $this->redirectNow($welcomeForm->getRedirectUrl());
             })->handleRequest(ServerRequest::fromGlobals());
 
+            $this->content->getAttributes()->add('class', 'welcome-view');
             $this->dashboard->setWelcomeForm($welcomeForm);
         } else {
             $pane = $this->getParam('pane');
@@ -131,8 +131,6 @@ class DashboardsController extends CompatController
 
         $homeForm = (new HomePaneForm($this->dashboard))
             ->on(HomePaneForm::ON_SUCCESS, function () {
-                $this->getResponse()->setAutoRefreshInterval(1);
-
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest(ServerRequest::fromGlobals());
@@ -288,8 +286,6 @@ class DashboardsController extends CompatController
 
         $dashboards = Json::decode($dashboards['dashboardData'], true);
         $originals = $dashboards['originals'];
-        $widgetType = $dashboards['Type'];
-        unset($dashboards['Type']);
         unset($dashboards['originals']);
 
         $orgHome = null;
@@ -304,9 +300,6 @@ class DashboardsController extends CompatController
                 $orgHome->setEntries([$orgPane->getName() => $orgPane]);
             }
         }
-
-        $reroutePath = $dashboards['redirectPath'];
-        unset($dashboards['redirectPath']);
 
         foreach ($dashboards as $home => $value) {
             if (! $this->dashboard->hasEntry($home)) {
@@ -384,13 +377,9 @@ class DashboardsController extends CompatController
             }
         }
 
-        if ($widgetType !== 'Dashlets' || ($orgHome && $orgPane)) {
-            $this->redirectNow($reroutePath);
-        }
-
-        // Just create a dummy content and ignore it, as we don't have any view scripts and aren't redirecting
-        $this->getResponse()->setHeader('X-Icinga-Container', 'ignore');
-        $this->addContent(new HtmlElement('p'));
+        $this->createTabs();
+        $this->dashboard->activate('dashboard_settings');
+        $this->sendMultipartUpdate();
     }
 
     /**
@@ -442,6 +431,7 @@ class DashboardsController extends CompatController
             ]
         ));
 
+        $this->content->getAttributes()->add('class', 'dashboard-manager');
         $this->addContent(new Settings($this->dashboard));
     }
 
