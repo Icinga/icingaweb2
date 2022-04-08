@@ -163,15 +163,21 @@ class Menu extends Navigation
         $homes = Home::on(Dashboard::getConn());
         $homes->filter(Filter::equal('username', $user->getUsername()));
 
-        foreach ($homes as $home) {
-            $dashboardHome = new DashboardHomeItem($home->name, [
-                'uuid'     => $home->id,
-                'label'    => t($home->label),
-                'priority' => $home->priority,
-                'type'     => $home->type,
-            ]);
+        try {
+            foreach ($homes as $home) {
+                $dashboardHome = new DashboardHomeItem($home->name, [
+                    'uuid'     => $home->id,
+                    'label'    => t($home->label),
+                    'priority' => $home->priority,
+                    'type'     => $home->type,
+                ]);
 
-            $dashboardItem->addChild($dashboardHome);
+                $dashboardItem->addChild($dashboardHome);
+            }
+        } catch (\Exception $_) {
+            // Nothing to do
+            // Any database issue will be noticed soon enough, so prevent the Menu
+            // from being ruined in any case.
         }
     }
 
