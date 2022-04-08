@@ -160,10 +160,10 @@ class Menu extends Navigation
         $user = Dashboard::getUser();
         $dashboardItem = $this->getItem('dashboard');
 
-        $homes = Home::on(Dashboard::getConn());
-        $homes->filter(Filter::equal('username', $user->getUsername()));
-
         try {
+            $homes = Home::on(Dashboard::getConn());
+            $homes->filter(Filter::equal('username', $user->getUsername()));
+
             foreach ($homes as $home) {
                 $dashboardHome = new DashboardHomeItem($home->name, [
                     'uuid'     => $home->id,
