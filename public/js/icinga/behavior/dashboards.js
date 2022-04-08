@@ -103,19 +103,18 @@
                         let parentData = orgEvt.to.dataset.icingaPane.split('|', 2);
                         home = parentData.shift();
                         pane = parentData.shift();
-
-                        data.redirectPath = 'dashboards';
                     } else { // Dashboard manager view
                         let parent = orgEvt.to.closest('.dashboard-list-control');
                         pane = parent.dataset.icingaPane;
-                        // If there is only default home in the dashboard manager view, there won't be rendered
+                        // If there is only default home in the dashboard manager view, there won't be rendered a
                         // ".home-list-control", so we need to look for an alternative
                         home = parent.closest('.home-list-control, .dashboard-settings').dataset.icingaHome;
 
                         if (orgEvt.to !== orgEvt.from) {
                             let parent = orgEvt.from.closest('.dashboard-list-control');
+                            let orgHome = parent.closest('.home-list-control, .dashboard-settings').dataset.icingaHome;
                             data.originals = {
-                                originalHome : parent.closest('.home-list-control').dataset.icingaHome,
+                                originalHome : orgHome,
                                 originalPane : parent.dataset.icingaPane
                             }
                         }
@@ -127,23 +126,16 @@
             }
 
             if (Object.keys(data).length) {
-                data.Type = _this.getTypeFor(orgEvt.to);
                 if (! data.originals) {
                     data.originals = null;
-                }
-
-                if (! data.redirectPath) {
-                    data.redirectPath = 'dashboards/settings';
                 }
 
                 data = { dashboardData : JSON.stringify(data) };
                 let url = _this.icinga.config.baseUrl + '/dashboards/reorder-widgets';
                 let req = _this.icinga.loader.loadUrl(url, $('#col1'), data, 'post');
 
-                if (data.Type === _this.widgetTypes.Dashlet && data.originals === null) {
-                    req.addToHistory = false;
-                    req.scripted = true;
-                }
+                req.addToHistory = false;
+                req.scripted = true;
             }
         }
 
