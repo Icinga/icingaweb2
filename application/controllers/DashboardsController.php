@@ -45,11 +45,7 @@ class DashboardsController extends CompatController
 
         $activeHome = $this->dashboard->getActiveHome();
         if (! $activeHome || ! $activeHome->hasEntries()) {
-            $this->getTabs()->add('dashboard', [
-                'active' => true,
-                'title'  => t('Welcome'),
-                'url'    => Url::fromRequest()
-            ]);
+            $this->addTitleTab(t('Welcome'));
 
             // Setup dashboard introduction form
             $welcomeForm = new WelcomeForm($this->dashboard);
@@ -85,11 +81,7 @@ class DashboardsController extends CompatController
 
         $activeHome = $this->dashboard->getActiveHome();
         if (! $activeHome->getEntries()) {
-            $this->getTabs()->add($activeHome->getName(), [
-                'active' => true,
-                'title'  => $activeHome->getTitle(),
-                'url'    => Url::fromRequest()
-            ]);
+            $this->addTitleTab($activeHome->getTitle());
         }
 
         // Not to render the cog icon before the above tab
