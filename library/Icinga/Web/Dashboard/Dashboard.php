@@ -140,10 +140,11 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
             return $this->tabs;
         }
 
-        foreach ($activeHome->getEntries() as $key => $pane) {
-            if (! $this->tabs->get($key)) {
+        /*** @var Pane $pane */
+        foreach ($activeHome->getEntries() as $pane) {
+            if (! $this->tabs->get($pane->getName())) {
                 $this->tabs->add(
-                    $key,
+                    $pane->getName(),
                     [
                         'title'     => sprintf(
                             t('Show %s', 'dashboard.pane.tooltip'),
@@ -151,7 +152,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
                         ),
                         'label'     => $pane->getTitle(),
                         'url'       => clone($url),
-                        'urlParams' => [$this->tabParam => $key]
+                        'urlParams' => [$this->tabParam => $pane->getName()]
                     ]
                 );
             }
@@ -163,18 +164,13 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
     /**
      * Activate the default pane of this dashboard and returns its name
      *
-     * @return ?int|string
+     * @return ?string
      */
     private function setDefaultPane()
     {
-        $active = null;
-        $activeHome = $this->getActiveHome();
-        foreach ($activeHome->getEntries() as $key => $pane) {
-            $active = $key;
-            break;
-        }
-
-        if ($active !== null) {
+        $active = $this->getActiveHome()->rewindEntries();
+        if ($active) {
+            $active = $active->getName();
             $this->activate($active);
         }
 
@@ -216,9 +212,8 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
             $active = $active->getName();
         }
 
-        $panes = $activeHome->getEntries();
-        if (isset($panes[$active])) {
-            return $panes[$active];
+        if ($activeHome->hasEntry($active)) {
+            return $activeHome->getEntry($active);
         }
 
         throw new ConfigurationError('Could not determine active pane');

@@ -369,14 +369,16 @@ trait DashboardManager
             $dashlet->fromArray([
                 'label'    => t($moduleDashlet->label),
                 'priority' => $moduleDashlet->priority,
-                'uuid'     => $moduleDashlet->id
+                'uuid'     => $moduleDashlet->id,
+                'module'   => $moduleDashlet->module
             ]);
 
             if (($pane = $moduleDashlet->pane)) {
                 $dashlet->setPane(new Pane($pane));
             }
 
-            $dashlets[$moduleDashlet->module][$dashlet->getName()] = $dashlet;
+            $dashlet->setModuleDashlet(true);
+            $dashlets[$dashlet->getModule()][$dashlet->getName()] = $dashlet;
         }
 
         return $dashlets;

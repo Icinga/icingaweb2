@@ -201,19 +201,9 @@ class SetupNewDashboard extends BaseDashboardForm
 
                             $title = $this->getPopulatedValue($element);
                             $url = $this->getPopulatedValue($element . '_url');
-
                             $dashlet
                                 ->setUrl($url)
-                                ->setTitle($title)
-                                ->setModule($module)
-                                ->setModuleDashlet(true);
-
-                            if ($dashlet->getPane()) {
-                                $paneName = $dashlet->getPane()->getName();
-                                $dashlet->setUuid(Dashboard::getSHA1($module . $paneName . $dashlet->getName()));
-                            } else {
-                                $dashlet->setUuid(Dashboard::getSHA1($module . $dashlet->getName()));
-                            }
+                                ->setTitle($title);
 
                             $moduleDashlets[$dashlet->getName()] = $dashlet;
                         }
