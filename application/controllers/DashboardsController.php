@@ -211,8 +211,6 @@ class DashboardsController extends CompatController
         $paneForm = new RemoveHomePaneForm($this->dashboard);
         $paneForm->populate(['org_name' => $paneParam]);
         $paneForm->on(RemoveHomePaneForm::ON_SUCCESS, function () {
-            $this->getResponse()->setAutoRefreshInterval(1);
-
             $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
         })->handleRequest(ServerRequest::fromGlobals());
 
@@ -385,7 +383,7 @@ class DashboardsController extends CompatController
             // rendered in the modal view when redirecting
             $this->view->compact = true;
 
-            $this->getResponse()->setHeader('X-Icinga-Title', t('Configure Dashlets'), true);
+            $this->setTitle(t('Configure Dashlets'));
         } else {
             $this->setTitle(t('Add Dashlet'));
         }
