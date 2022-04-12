@@ -61,7 +61,7 @@ class DashboardsController extends CompatController
                 $pane = $this->dashboard->getActivePane()->getName();
             }
 
-            $this->getTabs()->activate($pane);
+            $this->dashboard->activate($pane);
         }
 
         $this->addContent($this->dashboard);
