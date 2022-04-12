@@ -45,8 +45,6 @@ class SetupNewDashboard extends BaseDashboardForm
 
     protected function assemble()
     {
-        $this->getAttributes()->add('class', 'modal-form');
-
         if ($this->getPopulatedValue('btn_next')) { // Configure Dashlets
             $this->dumpArbitaryDashlets();
 
