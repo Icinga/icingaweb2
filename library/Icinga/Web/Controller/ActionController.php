@@ -496,20 +496,18 @@ class ActionController extends Zend_Controller_Action
             $resp->setReloadCss(true);
         }
 
-        if ($resp->getHeader('X-Icinga-Title') === null) {
-            if ($this->view->title) {
-                if (preg_match('~[\r\n]~', $this->view->title)) {
-                    // TODO: Innocent exception and error log for hack attempts
-                    throw new IcingaException('No way, guy');
-                }
-                $resp->setHeader(
-                    'X-Icinga-Title',
-                    rawurlencode($this->view->title . ' :: ' . $this->view->defaultTitle),
-                    true
-                );
-            } else {
-                $resp->setHeader('X-Icinga-Title', rawurlencode($this->view->defaultTitle), true);
+        if ($this->view->title) {
+            if (preg_match('~[\r\n]~', $this->view->title)) {
+                // TODO: Innocent exception and error log for hack attempts
+                throw new IcingaException('No way, guy');
             }
+            $resp->setHeader(
+                'X-Icinga-Title',
+                rawurlencode($this->view->title . ' :: ' . $this->view->defaultTitle),
+                true
+            );
+        } else {
+            $resp->setHeader('X-Icinga-Title', rawurlencode($this->view->defaultTitle), true);
         }
 
         $layout = $this->_helper->layout();
