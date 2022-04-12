@@ -1,5 +1,6 @@
 <?php
 
+use Icinga\Web\Navigation\Mobile\MobileNavigation;
 use Icinga\Web\Url;
 use Icinga\Web\Notification;
 use Icinga\Authentication\Auth;
@@ -44,9 +45,12 @@ if ($this->layout()->inlineLayout) {
                     'id'                => 'header-logo'
                 )
             ); ?>
-            <div id="mobile-menu-toggle">
-                <button type="button"><?= $this->icon('menu') ?><?= $this->icon('cancel') ?></button>
-            </div>
+        </div>
+        <div id="mobile-searchbar">
+            <input type="search">
+        </div>
+        <div id="mobile-user-menu">
+            <i class="user-ball">i</i>
         </div>
         <?= $this->render('parts/navigation.phtml'); ?>
     </div>
@@ -68,7 +72,6 @@ if ($this->layout()->inlineLayout) {
 </div>
 <div id="footer">
   <ul role="alert" id="notifications"><?php
-
     $notifications = Notification::getInstance();
     if ($notifications->hasMessages()) {
         foreach ($notifications->popMessages() as $m) {
@@ -96,3 +99,4 @@ if ($this->layout()->inlineLayout) {
   ?></ul>
   <div id="application-state-summary" class="container" data-icinga-url="<?= $this->url('application-state/summary') ?>" data-last-update="-1" data-icinga-refresh="60"></div>
 </div>
+<?= new MobileNavigation() ?>
