@@ -291,36 +291,6 @@
   margin-left: 1.4em;
 }
 
-// Make the submit buttons a bit bigger than the normal size
-.modal-form.icinga-controls .control-group.form-controls input[type="submit"],
-.control-group.form-controls .modal-cancel {
-  min-width: 7em;
-  font-size: 1.2em;
-  padding: ~"calc(@{vertical-padding} - 2px)" @horizontal-padding;
-}
-
-// Remove and modal cancel buttons
-form.icinga-form .control-group.form-controls .remove-button {
-  .cancel-button();
-  margin-right: auto;
-}
-
-.modal-form .control-group.form-controls .modal-cancel {
-  padding: .5em 1em;
-}
-
-.control-group.form-controls .modal-cancel {
-  .button();
-  border: none;
-  color: @icinga-blue;
-  background-color: @low-sat-blue;
-
-  &:hover {
-    color: @text-color-on-icinga-blue;
-    background-color: @icinga-blue;
-  }
-}
-
 // Drag and drop
 .sortable-chosen {
   .box-shadow();

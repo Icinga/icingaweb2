@@ -78,7 +78,7 @@ abstract class BaseDashboardForm extends CompatForm
     {
         return HtmlElement::create('button', [
             'type'                     => 'button',
-            'class'                    => 'modal-cancel',
+            'class'                    => 'btn-cancel',
             'data-icinga-modal-cancel' => true
         ])->setContent(t('Cancel'));
     }
@@ -94,7 +94,7 @@ abstract class BaseDashboardForm extends CompatForm
     protected function createRemoveButton(Url $action, string $label)
     {
         return $this->createElement('submitButton', 'btn_remove', [
-            'class'      => 'remove-button',
+            'class'      => 'btn-remove',
             'label'      => [new Icon('trash'), $label],
             'formaction' => (string) $action
         ]);
