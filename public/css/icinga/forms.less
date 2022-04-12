@@ -305,12 +305,15 @@ form.icinga-form .form-controls {
     .button();
   }
 
-  input[type="submit"].btn-remove {
-    .button(@body-bg-color, @color-critical, @color-critical-accentuated);
+  input[type="submit"].btn-remove,
+  button[type="submit"].btn-remove {
+    margin-right: auto;
+    .cancel-button();
   }
 
-  input[type="submit"].btn-cancel {
-    .button(@body-bg-color, @gray, @black);
+  input[type="submit"].btn-cancel,
+  button[type="button"].btn-cancel {
+    .button(@body-bg-color, @icinga-blue, @icinga-blue);
   }
 
   button.noscript-apply {
@@ -328,6 +331,16 @@ form.icinga-form .form-controls {
 form.icinga-form {
   button[type="button"] {
     line-height: normal;
+  }
+
+  // Button elements of type button inside a form controls
+  .form-controls button[type="button"] {
+    .button();
+  }
+
+  .control-group button[type="button"]:hover {
+    color: @text-color-on-icinga-blue;
+    background-color: @icinga-blue;
   }
 }
 
