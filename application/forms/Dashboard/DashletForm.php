@@ -59,11 +59,11 @@ class DashletForm extends BaseSetupDashboard
             $this->addElement('hidden', 'org_home', ['required' => false]);
             $this->addElement('hidden', 'org_dashlet', ['required' => false]);
 
-           if ($this->isUpdatingADashlet()) {
-               $this->assembleDashletElements();
+            if ($this->isUpdatingADashlet()) {
+                $this->assembleDashletElements();
 
-               $this->addHtml(new HtmlElement('hr'));
-           }
+                $this->addHtml(new HtmlElement('hr'));
+            }
 
             $this->addElement('select', 'home', [
                 'class'        => 'autosubmit',
@@ -72,7 +72,7 @@ class DashletForm extends BaseSetupDashboard
                 'value'        => $populatedHome,
                 'multiOptions' => array_merge([self::CREATE_NEW_HOME => self::CREATE_NEW_HOME], $homes),
                 'label'        => t('Select Home'),
-                'description' => t('Select a dashboard home you want to add the dashboard pane to.')
+                'description'  => t('Select a dashboard home you want to add the dashboard pane to.')
             ]);
 
             if (empty($homes) || $populatedHome === self::CREATE_NEW_HOME) {
