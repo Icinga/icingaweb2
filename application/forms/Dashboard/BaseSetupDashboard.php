@@ -20,7 +20,7 @@ abstract class BaseSetupDashboard extends BaseDashboardForm
      *
      * @var array
      */
-    static protected $moduleDashlets = [];
+    protected static $moduleDashlets = [];
 
     protected $duplicateCustomDashlet = false;
 
@@ -64,7 +64,10 @@ abstract class BaseSetupDashboard extends BaseDashboardForm
             }
 
             if (isset($choosenDashlets[$module]) && ! $this->duplicateCustomDashlet) {
-                $this->duplicateCustomDashlet = array_key_exists($this->getPopulatedValue('dashlet'), $choosenDashlets[$module]);
+                $this->duplicateCustomDashlet = array_key_exists(
+                    $this->getPopulatedValue('dashlet'),
+                    $choosenDashlets[$module]
+                );
             }
         }
 
@@ -125,7 +128,8 @@ abstract class BaseSetupDashboard extends BaseDashboardForm
             foreach ($dashlets as $dashlet) {
                 $multi = new DashletListMultiSelect($dashlet);
                 $multi->setCheckBox($this->createElement(
-                    'checkbox', $module . '|' . $dashlet->getName(),
+                    'checkbox',
+                    $module . '|' . $dashlet->getName(),
                     ['class' => 'sr-only']
                 ));
 
@@ -146,7 +150,7 @@ abstract class BaseSetupDashboard extends BaseDashboardForm
         $this->addElement('text', 'pane', [
             'required'    => true,
             'label'       => t('Dashboard Title'),
-            'description' => t('Enter a title for the new dashboard you want to add the dashlets to'),
+            'description' => t('Enter a title for the new dashboard you want to add the dashlets to')
         ]);
     }
 
@@ -162,7 +166,7 @@ abstract class BaseSetupDashboard extends BaseDashboardForm
             $this->assembleDashletElements();
         }
 
-        if (! empty(self::$moduleDashlets))  {
+        if (! empty(self::$moduleDashlets)) {
             foreach (self::$moduleDashlets as $module => $dashlets) {
                 /** @var Dashlet $dashlet */
                 foreach ($dashlets as $dashlet) {
