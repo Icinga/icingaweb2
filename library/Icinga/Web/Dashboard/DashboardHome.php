@@ -50,7 +50,7 @@ class DashboardHome extends BaseDashboard implements Sortable
      *
      * @var bool
      */
-    protected $disabled;
+    protected $disabled = false;
 
     /**
      * Create a new dashboard home from the given home item
