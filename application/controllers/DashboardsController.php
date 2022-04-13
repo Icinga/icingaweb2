@@ -432,7 +432,7 @@ class DashboardsController extends CompatController
     {
         $tabs = $this->dashboard->getTabs();
         $activeHome = $this->dashboard->getActiveHome();
-        if (($activeHome && $activeHome->hasEntries()) || count($this->dashboard->getEntries()) > 1) {
+        if (($activeHome && $activeHome->hasEntries()) || (! $activeHome->isDisabled() && count($this->dashboard->getEntries()) > 1)) {
             $tabs->extend(new DashboardSettings());
         }
 

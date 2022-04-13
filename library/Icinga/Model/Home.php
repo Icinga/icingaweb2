@@ -29,6 +29,7 @@ class Home extends Model
             'username',
             'type',
             'priority',
+            'disabled',
         ];
     }
 

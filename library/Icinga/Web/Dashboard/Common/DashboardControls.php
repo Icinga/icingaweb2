@@ -6,6 +6,7 @@ namespace Icinga\Web\Dashboard\Common;
 
 use Icinga\Exception\ProgrammingError;
 
+use Icinga\Web\Dashboard\Dashboard;
 use function ipl\Stdlib\get_php_type;
 
 trait DashboardControls
@@ -91,7 +92,14 @@ trait DashboardControls
 
     public function rewindEntries()
     {
-        return reset($this->dashboards);
+        $dashboards = $this->dashboards;
+        if ($this instanceof Dashboard) {
+            $dashboards = array_filter($dashboards, function ($home) {
+                return ! $home->isDisabled();
+            });
+        }
+
+        return reset($dashboards);
     }
 
     public function reorderWidget(BaseDashboard $dashboard, int $position, Sortable $origin = null)

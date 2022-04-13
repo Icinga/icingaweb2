@@ -47,6 +47,10 @@ class Settings extends BaseHtmlElement
         } else {
             // Make a list of dashboard homes
             foreach ($this->dashboard->getEntries() as $home) {
+                if ($home->isDisabled()) {
+                    continue;
+                }
+
                 $this->addHtml(new DashboardHomeList($home));
             }
         }
