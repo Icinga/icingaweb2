@@ -30,7 +30,15 @@ class HomePaneForm extends BaseDashboardForm
             $titleDesc = t('Edit the title of this dashboard pane');
             $buttonLabel = t('Update Pane');
             $removeButtonLabel = t('Remove Pane');
+        }
 
+        $this->addElement('text', 'title', [
+            'required'    => true,
+            'label'       => t('Title'),
+            'description' => $titleDesc
+        ]);
+
+        if ($requestUrl->getPath() === Dashboard::BASE_ROUTE . '/edit-pane') {
             $removeTargetUrl = (clone $requestUrl)->setPath(Dashboard::BASE_ROUTE . '/remove-pane');
 
             $homes = $this->dashboard->getEntryKeyTitleArr();
@@ -54,12 +62,6 @@ class HomePaneForm extends BaseDashboardForm
                 ]);
             }
         }
-
-        $this->addElement('text', 'title', [
-            'required'    => true,
-            'label'       => t('Title'),
-            'description' => $titleDesc
-        ]);
 
         $formControls = $this->createFormControls();
         $formControls->add([
@@ -119,6 +121,8 @@ class HomePaneForm extends BaseDashboardForm
             try {
                 $this->dashboard->manageEntry($currentHome);
                 $currentHome->manageEntry($currentPane, $orgHome);
+                // We have to update all the dashlet ids too sha1(username + home + pane + dashlet)
+                $currentPane->manageEntry($currentPane->getEntries());
 
                 $conn->commitTransaction();
             } catch (\Exception $err) {

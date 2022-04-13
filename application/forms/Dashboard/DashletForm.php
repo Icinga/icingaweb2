@@ -48,6 +48,24 @@ class DashletForm extends BaseDashboardForm
         $this->addElement('hidden', 'org_home', ['required' => false]);
         $this->addElement('hidden', 'org_dashlet', ['required' => false]);
 
+        $this->addElement('text', 'dashlet', [
+            'required'    => true,
+            'label'       => t('Dashlet Title'),
+            'placeholder' => t('Enter a dashlet title'),
+            'description' => t('Enter a title for the dashlet.'),
+        ]);
+
+        $this->addElement('textarea', 'url', [
+            'required'    => true,
+            'label'       => t('Url'),
+            'placeholder' => t('Enter dashlet url'),
+            'description' => t(
+                'Enter url to be loaded in the dashlet. You can paste the full URL, including filters.'
+            ),
+        ]);
+
+        $this->addHtml(new HtmlElement('hr'));
+
         $this->addElement('select', 'home', [
             'class'        => 'autosubmit',
             'required'     => true,
@@ -55,7 +73,7 @@ class DashletForm extends BaseDashboardForm
             'value'        => $populatedHome,
             'multiOptions' => array_merge([self::CREATE_NEW_HOME => self::CREATE_NEW_HOME], $homes),
             'label'        => t('Select Home'),
-            'descriptions' => t('Select a dashboard home you want to add the dashboard pane to.')
+            'description' => t('Select a dashboard home you want to add the dashboard pane to.')
         ]);
 
         if (empty($homes) || $populatedHome === self::CREATE_NEW_HOME) {
@@ -79,7 +97,7 @@ class DashletForm extends BaseDashboardForm
             'class'        => 'autosubmit',
             'required'     => true,
             'disabled'     => $disable ?: null,
-            'value'        => ! $disable ? $populatedPane : self::CREATE_NEW_PANE, // Cheat the browser complains
+            'value'        => ! $disable ? $populatedPane : self::CREATE_NEW_PANE,
             'multiOptions' => array_merge([self::CREATE_NEW_PANE => self::CREATE_NEW_PANE], $panes),
             'label'        => t('Select Dashboard'),
             'description'  => t('Select a dashboard you want to add the dashlet to.'),
@@ -93,24 +111,6 @@ class DashletForm extends BaseDashboardForm
                 'description' => t('Enter a title for the new dashboard.'),
             ]);
         }
-
-        $this->addHtml(new HtmlElement('hr'));
-
-        $this->addElement('textarea', 'url', [
-            'required'    => true,
-            'label'       => t('Url'),
-            'placeholder' => t('Enter dashlet url'),
-            'description' => t(
-                'Enter url to be loaded in the dashlet. You can paste the full URL, including filters.'
-            ),
-        ]);
-
-        $this->addElement('text', 'dashlet', [
-            'required'    => true,
-            'label'       => t('Dashlet Title'),
-            'placeholder' => t('Enter a dashlet title'),
-            'description' => t('Enter a title for the dashlet.'),
-        ]);
 
         $removeButton = null;
         if ($requestUrl->getPath() === Dashboard::BASE_ROUTE . '/edit-dashlet') {
