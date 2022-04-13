@@ -153,6 +153,10 @@ trait DashboardManager
         $home->removeEntries();
         if ($home->getName() !== DashboardHome::DEFAULT_HOME) {
             self::getConn()->delete(DashboardHome::TABLE, ['id = ?' => $home->getUuid()]);
+        } elseif (! $home->isDisabled()) {
+            self::getConn()->update(DashboardHome::TABLE, ['disabled' => 1], [
+                'id = ?' => $home->getUuid()
+            ]);
         }
 
         return $this;
@@ -180,7 +184,8 @@ trait DashboardManager
             } else {
                 $conn->update(DashboardHome::TABLE, [
                     'label'    => $home->getTitle(),
-                    'priority' => $home->getPriority()
+                    'priority' => $home->getPriority(),
+                    'disabled' => 0
                 ], ['id = ?' => $home->getUuid()]);
             }
         }

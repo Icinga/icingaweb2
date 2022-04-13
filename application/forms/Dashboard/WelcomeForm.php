@@ -48,6 +48,7 @@ class WelcomeForm extends CompatForm
             $conn->beginTransaction();
 
             try {
+                $this->dashboard->manageEntry($home);
                 $home->manageEntry($this->dashboard->getSystemDefaults(), null, true);
 
                 $conn->commitTransaction();

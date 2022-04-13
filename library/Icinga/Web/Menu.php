@@ -170,6 +170,7 @@ class Menu extends Navigation
                     'label'    => t($home->label),
                     'priority' => $home->priority,
                     'type'     => $home->type,
+                    'disabled' => (bool) $home->disabled
                 ]);
 
                 $dashboardItem->addChild($dashboardHome);

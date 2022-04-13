@@ -43,7 +43,14 @@ class DashboardHome extends BaseDashboard implements Sortable
      *
      * @var bool
      */
-    protected $active;
+    protected $active = false;
+
+    /**
+     * A flag whether a home has been disabled (affects only default home)
+     *
+     * @var bool
+     */
+    protected $disabled;
 
     /**
      * Create a new dashboard home from the given home item
@@ -52,14 +59,15 @@ class DashboardHome extends BaseDashboard implements Sortable
      *
      * @return DashboardHome
      */
-    public static function create(DashboardHomeItem $homeItem)
+    public static function create(DashboardHomeItem $homeItem): self
     {
         $self = new self($homeItem->getName());
         $self
             ->setTitle($homeItem->getLabel())
             ->setPriority($homeItem->getPriority())
             ->setType($homeItem->getAttribute('type'))
-            ->setUuid($homeItem->getAttribute('uuid'));
+            ->setUuid($homeItem->getAttribute('uuid'))
+            ->setDisabled($homeItem->getAttribute('disabled'));
 
         return $self;
     }
@@ -73,7 +81,7 @@ class DashboardHome extends BaseDashboard implements Sortable
      *
      * @return $this
      */
-    public function setActive(bool $active = true)
+    public function setActive(bool $active = true): self
     {
         $this->active = $active;
 
@@ -85,7 +93,7 @@ class DashboardHome extends BaseDashboard implements Sortable
      *
      * @return bool
      */
-    public function getActive()
+    public function getActive(): bool
     {
         return $this->active;
     }
@@ -97,7 +105,7 @@ class DashboardHome extends BaseDashboard implements Sortable
      *
      * @return $this
      */
-    public function setType(string $type)
+    public function setType(string $type): self
     {
         $this->type = $type;
 
@@ -109,9 +117,33 @@ class DashboardHome extends BaseDashboard implements Sortable
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
+    }
+
+    /**
+     * Set whether this home should be disabled
+     *
+     * @param bool $disabled
+     *
+     * @return $this
+     */
+    public function setDisabled(bool $disabled): self
+    {
+        $this->disabled = $disabled;
+
+        return $this;
+    }
+
+    /**
+     * Get whether this home has been disabled
+     *
+     * @return bool
+     */
+    public function isDisabled(): bool
+    {
+        return $this->disabled;
     }
 
     public function removeEntry($pane)
