@@ -4,9 +4,10 @@ CREATE TABLE `icingaweb_dashboard_home` (
     `label`     varchar(64) NOT NULL COLLATE utf8mb4_unicode_ci,
     `username`  varchar(254) NOT NULL COLLATE utf8mb4_unicode_ci,
     `priority`  tinyint NOT NULL,
+    `disabled`  tinyint DEFAULT 0,
     `type`      enum('public', 'private', 'shared') DEFAULT 'private',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_dashboard_home_name` (`name`)
+    UNIQUE KEY `idx_dashboard_home_name` (`name`, `username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE `icingaweb_dashboard` (
