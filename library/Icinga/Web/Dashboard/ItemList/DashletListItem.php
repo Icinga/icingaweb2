@@ -57,9 +57,7 @@ class DashletListItem extends BaseHtmlElement
     {
         $title = HtmlElement::create('h1', ['class' => 'dashlet-header']);
 
-        if (! $this->dashlet) {
-            $title->add(t('Custom Url'));
-        } elseif ($this->renderEditButton) {
+        if ($this->renderEditButton) {
             $title->addHtml(new Link(
                 t($this->dashlet->getTitle()),
                 $this->dashlet->getUrl()->getUrlWithout(['showCompact', 'limit'])->getRelativeUrl(),
@@ -95,9 +93,7 @@ class DashletListItem extends BaseHtmlElement
     {
         $section = HtmlElement::create('section', ['class' => 'caption']);
 
-        if (! $this->dashlet) {
-            $section->add(t('Create a dashlet with custom url and filter'));
-        } else {
+        if ($this->dashlet) {
             $description = $this->dashlet->getDescription() ?: t('There is no provided description.');
             $section->getAttributes()->set('title', $description);
 

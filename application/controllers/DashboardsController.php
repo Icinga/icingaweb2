@@ -11,7 +11,6 @@ use Icinga\Forms\Dashboard\NewHomePaneForm;
 use Icinga\Forms\Dashboard\RemoveDashletForm;
 use Icinga\Forms\Dashboard\RemoveHomePaneForm;
 use Icinga\Forms\Dashboard\WelcomeForm;
-use Icinga\Model\ModuleDashlet;
 use Icinga\Util\Json;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
@@ -219,7 +218,15 @@ class DashboardsController extends CompatController
 
     public function newDashletAction()
     {
-        $this->setTitle(t('Add Dashlet To Dashboard'));
+        if (isset($this->getRequest()->getPost()['btn_next'])) {
+            // Set compact view to prevent the controls from being
+            // rendered in the modal view when redirecting
+            $this->view->compact = true;
+
+            $this->setTitle(t('Add Dashlet To Dashboard'));
+        } else {
+            $this->setTitle(t('Select Dashlets'));
+        }
 
         $dashletForm = new DashletForm($this->dashboard);
         $dashletForm->populate($this->getRequest()->getPost());
@@ -388,10 +395,7 @@ class DashboardsController extends CompatController
             $this->setTitle(t('Add Dashlet'));
         }
 
-        $query = ModuleDashlet::on(Dashboard::getConn());
-
         $setupForm = new SetupNewDashboard($this->dashboard);
-        $setupForm->initDashlets(Dashboard::getModuleDashlets($query));
         $setupForm->on(SetupNewDashboard::ON_SUCCESS, function () use ($setupForm) {
             $this->redirectNow($setupForm->getRedirectUrl());
         })->handleRequest(ServerRequest::fromGlobals());

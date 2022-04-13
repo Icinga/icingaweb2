@@ -156,14 +156,19 @@ class Pane extends BaseDashboard implements Sortable
                 ]);
 
                 if ($dashlet->isModuleDashlet()) {
-                    $data = $dashlet->getModule();
-                    if (($pane = $dashlet->getPane())) {
-                        $data .= $pane->getName();
+                    $systemUuid = $dashlet->getUuid();
+                    if (! $systemUuid) {
+                        $data = $dashlet->getModule();
+                        if (($pane = $dashlet->getPane())) {
+                            $data .= $pane->getName();
+                        }
+
+                        $systemUuid = Dashboard::getSHA1($data . $dashlet->getName());
                     }
 
                     $conn->insert('icingaweb_system_dashlet', [
                         'dashlet_id'        => $uuid,
-                        'module_dashlet_id' => Dashboard::getSHA1($data . $dashlet->getName())
+                        'module_dashlet_id' => $systemUuid
                     ]);
                 }
             } elseif (! $this->hasEntry($dashlet->getName()) || ! $origin
