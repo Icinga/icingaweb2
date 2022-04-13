@@ -8,6 +8,7 @@ use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Web\Dashboard\Dashboard;
 use ipl\Html\Contract\FormElement;
 use ipl\Html\HtmlElement;
+use ipl\Html\ValidHtml;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
@@ -37,6 +38,16 @@ abstract class BaseDashboardForm extends CompatForm
     {
         $this->dashboard = $dashboard;
 
+        $this->init();
+    }
+
+    /**
+     * Initialize this form
+     *
+     * @return void
+     */
+    protected function init()
+    {
         // This is needed for the modal views
         $this->setAction((string) Url::fromRequest());
     }
@@ -64,9 +75,9 @@ abstract class BaseDashboardForm extends CompatForm
      *
      * @return HtmlElement
      */
-    protected function createFormControls()
+    protected function createFormControls(): ValidHtml
     {
-        return HtmlElement::create('div', ['class' => 'control-group form-controls']);
+        return HtmlElement::create('div', ['class' => ['control-group', 'form-controls']]);
     }
 
     /**
@@ -74,7 +85,7 @@ abstract class BaseDashboardForm extends CompatForm
      *
      * @return HtmlElement
      */
-    protected function createCancelButton()
+    protected function createCancelButton(): ValidHtml
     {
         return HtmlElement::create('button', [
             'type'                     => 'button',
@@ -91,7 +102,7 @@ abstract class BaseDashboardForm extends CompatForm
      *
      * @return FormElement
      */
-    protected function createRemoveButton(Url $action, string $label)
+    protected function createRemoveButton(Url $action, string $label): ValidHtml
     {
         return $this->createElement('submitButton', 'btn_remove', [
             'class'      => 'btn-remove',
@@ -107,7 +118,7 @@ abstract class BaseDashboardForm extends CompatForm
      *
      * @return FormElement
      */
-    protected function registerSubmitButton(string $label)
+    protected function registerSubmitButton(string $label): ValidHtml
     {
         $submitElement = $this->createElement('submit', 'submit', ['class' => 'btn-primary', 'label' => $label]);
         $this->registerElement($submitElement);

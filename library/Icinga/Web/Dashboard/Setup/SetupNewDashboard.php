@@ -5,6 +5,7 @@
 namespace Icinga\Web\Dashboard\Setup;
 
 use Icinga\Forms\Dashboard\BaseDashboardForm;
+use Icinga\Forms\Dashboard\BaseSetupDashboard;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Dashboard\Dashlet;
@@ -16,159 +17,14 @@ use ipl\Html\ValidHtml;
 use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
 
-class SetupNewDashboard extends BaseDashboardForm
+class SetupNewDashboard extends BaseSetupDashboard
 {
-    /** @var array Module dashlets from the DB */
-    private $dashlets = [];
-
-    public function __construct(Dashboard $dashboard)
+    protected function init()
     {
-        parent::__construct($dashboard);
+        parent::init();
 
         $this->setRedirectUrl((string) Url::fromPath(Dashboard::BASE_ROUTE));
         $this->setAction($this->getRedirectUrl() . '/setup-dashboard');
-    }
-
-    /**
-     * Initialize module dashlets
-     *
-     * @param array $dashlets
-     *
-     * @return $this
-     */
-    public function initDashlets(array $dashlets): self
-    {
-        $this->dashlets = $dashlets;
-
-        return $this;
-    }
-
-    protected function assemble()
-    {
-        if ($this->getPopulatedValue('btn_next')) { // Configure Dashlets
-            $this->dumpArbitaryDashlets();
-
-            $submitButtonLabel = t('Add Dashlets');
-            $this->addElement('text', 'pane', [
-                'required'    => true,
-                'label'       => t('Dashboard Title'),
-                'description' => t('Enter a title for the new dashboard you want to add the dashlets to'),
-            ]);
-
-            if (empty($this->dashlets)
-                || (count(array_keys($this->dashlets)) == 1 // Only one module
-                    && count(reset($this->dashlets)) == 1 // Only one module dashlet
-                )
-            ) {
-                $this->addHtml(HtmlElement::create('hr'));
-
-                $this->addElement('text', 'dashlet', [
-                    'required'    => true,
-                    'label'       => t('Dashlet Title'),
-                    'description' => t('Enter a title for the dashlet'),
-                ]);
-
-                $this->addElement('textarea', 'url', [
-                    'required'    => true,
-                    'label'       => t('Url'),
-                    'description' => t(
-                        'Enter url to be loaded in the dashlet. You can paste the full URL, including filters'
-                    )
-                ]);
-
-                foreach ($this->dashlets as $_ => $dashlets) {
-                    /** @var Dashlet $dashlet */
-                    foreach ($dashlets as $dashlet) {
-                        $this->getElement('dashlet')->getAttributes()->set('value', $dashlet->getTitle());
-                        $this->getElement('url')->getAttributes()->set('value', $dashlet->getUrl()->getRelativeUrl());
-                    }
-                }
-            } else {
-                foreach ($this->dashlets as $module => $dashlets) {
-                    /** @var Dashlet $dashlet */
-                    foreach ($dashlets as $dashlet) {
-                        $listControl = $this->createFormListControl();
-                        $listControl->getAttributes()->add('class', 'multi-dashlets');
-
-                        $listControl->addHtml(HtmlElement::create('div', ['class' => 'dashlets-list-info'], [
-                            new Icon('angle-down', ['class' => 'expand-icon', 'title' => t('Expand')]),
-                            new Icon('angle-up', ['class' => 'collapse-icon', 'title' => t('Collapse')])
-                        ]));
-
-                        $dashletName = $this->createElement('text', $module . $dashlet->getName(), [
-                            'required'    => true,
-                            'label'       => t('Dashlet Title'),
-                            'value'       => $dashlet->getTitle(),
-                            'description' => t('Enter a title for the dashlet'),
-                        ]);
-
-                        $dashletUrl = $this->createElement('textarea', $module . $dashlet->getName() . '_url', [
-                            'required'    => true,
-                            'label'       => t('Url'),
-                            'value'       => $dashlet->getUrl()->getRelativeUrl(),
-                            'description' => t(
-                                'Enter url to be loaded in the dashlet. You can paste the full URL, including filters'
-                            )
-                        ]);
-
-                        $this->registerElement($dashletName)->decorate($dashletName);
-                        $this->registerElement($dashletUrl)->decorate($dashletUrl);
-
-                        $listControl->addHtml(HtmlElement::create('span', null, t($dashlet->getTitle())));
-
-                        $listControl->addHtml($dashletName);
-                        $listControl->addHtml($dashletUrl);
-
-                        $this->addHtml($listControl);
-                    }
-                }
-            }
-        } else { // Select Dashlets
-            $submitButtonLabel = t('Next');
-            $list = HtmlElement::create('ul', ['class' => 'dashlet-item-list empty-list']);
-            $multi = new DashletListMultiSelect();
-            $multi->setCheckBox($this->createElement('checkbox', 'custom_url', ['class' => 'sr-only']));
-
-            $listControl = $this->createFormListControl();
-            $listControl->getAttributes()->remove('class', 'collapsible');
-
-            $this->addHtml($listControl->addHtml($list->addHtml($multi)));
-
-            foreach ($this->dashlets as $module => $dashlets) {
-                $listControl = $this->createFormListControl();
-                $listControl->addHtml(HtmlElement::create('div', ['class' => 'dashlets-list-info'], [
-                    new Icon('angle-down', ['class' => 'expand-icon', 'title' => t('Expand')]),
-                    new Icon('angle-up', ['class' => 'collapse-icon', 'title' => t('Collapse')])
-                ]));
-
-                $list = HtmlElement::create('ul', ['class' => 'dashlet-item-list ' . $module]);
-                $listControl->addHtml(HtmlElement::create('span', null, ucfirst($module)));
-
-                /** @var Dashlet $dashlet */
-                foreach ($dashlets as $dashlet) {
-                    $multi = new DashletListMultiSelect($dashlet);
-                    $multi->setCheckBox(
-                        $this->createElement('checkbox', $module . '|' . $dashlet->getName(), ['class' => 'sr-only'])
-                    );
-
-                    $list->addHtml($multi);
-                }
-
-                $this->addHtml($listControl->addHtml($list));
-            }
-        }
-
-        $submitButton = $this->registerSubmitButton($submitButtonLabel);
-        if (! $this->getPopulatedValue('btn_next')) {
-            $submitButton
-                ->setName('btn_next')
-                ->getAttributes()->add('class', 'autosubmit');
-        }
-
-        $formControls = $this->createFormControls();
-        $formControls->add([$submitButton, $this->createCancelButton()]);
-
-        $this->addHtml($formControls);
     }
 
     protected function onSuccess()
@@ -176,39 +32,31 @@ class SetupNewDashboard extends BaseDashboardForm
         if ($this->getPopulatedValue('submit')) {
             $conn = Dashboard::getConn();
             $pane = new Pane($this->getPopulatedValue('pane'));
+            $home = $this->dashboard->getEntry(DashboardHome::DEFAULT_HOME);
 
             $conn->beginTransaction();
 
             try {
-                $this->dashboard->getEntry(DashboardHome::DEFAULT_HOME)->manageEntry($pane);
+                $this->dashboard->manageEntry($home);
+                $home->manageEntry($pane);
 
-                // If element name "dashlet" and "url" are set we need to only store one dashlet
+                $this->dumpArbitaryDashlets(false);
+
                 if (($name = $this->getPopulatedValue('dashlet')) && ($url = $this->getPopulatedValue('url'))) {
+                    if ($this->duplicateCustomDashlet) {
+                        Notification::error(sprintf(
+                            t('Failed to create new dahlets. Dashlet "%s" exists within the selected one'),
+                            $name
+                        ));
+
+                        return;
+                    }
+
                     $dashlet = new Dashlet($name, $url, $pane);
                     $pane->manageEntry($dashlet);
-                } else {
-                    foreach ($this->dashlets as $module => $dashlets) {
-                        $moduleDashlets = [];
-
-                        /** @var Dashlet $dashlet */
-                        foreach ($dashlets as $dashlet) {
-                            $element = str_replace(' ', '_', $module . $dashlet->getName());
-                            if (! $this->getPopulatedValue($element)) {
-                                continue;
-                            }
-
-                            $title = $this->getPopulatedValue($element);
-                            $url = $this->getPopulatedValue($element . '_url');
-                            $dashlet
-                                ->setUrl($url)
-                                ->setTitle($title);
-
-                            $moduleDashlets[$dashlet->getName()] = $dashlet;
-                        }
-
-                        $pane->manageEntry($moduleDashlets);
-                    }
                 }
+
+                $pane->manageEntry(self::$moduleDashlets);
 
                 $conn->commitTransaction();
             } catch (\Exception $err) {
@@ -216,42 +64,7 @@ class SetupNewDashboard extends BaseDashboardForm
                 throw $err;
             }
 
-            Notification::success(t('Created dashboard successfully'));
+            Notification::success(t('Added new dashlet(s) successfully'));
         }
-    }
-
-    /**
-     * Dump all module dashlets which are not selected by the user
-     * from the member variable
-     *
-     * @return void
-     */
-    private function dumpArbitaryDashlets(): void
-    {
-        $choosenDashlets = [];
-        foreach ($this->dashlets as $module => $dashlets) {
-            /** @var Dashlet $dashlet */
-            foreach ($dashlets as $dashlet) {
-                $element = str_replace(' ', '_', $module . '|' . $dashlet->getName());
-                if ($this->getPopulatedValue($element) === 'y') {
-                    $choosenDashlets[$module][$dashlet->getName()] = $dashlet;
-                }
-            }
-        }
-
-        $this->dashlets = $choosenDashlets;
-    }
-
-    /**
-     * Create collapsible form list control
-     *
-     * @return ValidHtml
-     */
-    private function createFormListControl(): ValidHtml
-    {
-        return HtmlElement::create('div', [
-            'class'               => ['control-group', 'form-list-control', 'collapsible'],
-            'data-toggle-element' => '.dashlets-list-info'
-        ]);
     }
 }

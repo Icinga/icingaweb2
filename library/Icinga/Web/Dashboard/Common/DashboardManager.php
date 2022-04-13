@@ -358,13 +358,12 @@ trait DashboardManager
     /**
      * Get module dashlets from the database
      *
-     * @param Query $query
-     *
      * @return array
      */
-    public static function getModuleDashlets(Query $query): array
+    public static function getModuleDashlets(): array
     {
         $dashlets = [];
+        $query = Model\ModuleDashlet::on(self::getConn());
         foreach ($query as $moduleDashlet) {
             $dashlet = new Dashlet($moduleDashlet->name, $moduleDashlet->url);
             if ($moduleDashlet->description) {

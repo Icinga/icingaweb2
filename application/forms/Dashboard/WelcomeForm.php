@@ -48,6 +48,7 @@ class WelcomeForm extends CompatForm
             $conn->beginTransaction();
 
             try {
+                // Default Home might have been disabled, so we have to update it first
                 $this->dashboard->manageEntry($home);
                 $home->manageEntry($this->dashboard->getSystemDefaults(), null, true);
 

@@ -14,118 +14,129 @@ use Icinga\Web\Dashboard\Pane;
 use ipl\Html\HtmlElement;
 use ipl\Web\Url;
 
-class DashletForm extends BaseDashboardForm
+class DashletForm extends BaseSetupDashboard
 {
+    protected function assembleNextPage()
+    {
+        if (! $this->getPopulatedValue('btn_next')) {
+            return;
+        }
+
+        $this->dumpArbitaryDashlets();
+        $this->assembleNexPageDashletPart();
+    }
+
     protected function assemble()
     {
-        $requestUrl = Url::fromRequest();
+        if ($this->isUpdatingADashlet() || $this->getPopulatedValue('btn_next')) {
+            $requestUrl = Url::fromRequest();
 
-        $homes = $this->dashboard->getEntryKeyTitleArr();
-        $activeHome = $this->dashboard->getActiveHome();
-        $currentHome = $requestUrl->getParam('home', reset($homes));
-        $populatedHome = $this->getPopulatedValue('home', $currentHome);
+            $homes = $this->dashboard->getEntryKeyTitleArr();
+            $activeHome = $this->dashboard->getActiveHome();
+            $currentHome = $requestUrl->getParam('home', reset($homes));
+            $populatedHome = $this->getPopulatedValue('home', $currentHome);
 
-        $panes = [];
-        if ($currentHome === $populatedHome && $populatedHome !== self::CREATE_NEW_HOME) {
-            if (! $currentHome || ! $activeHome) {
-                // Home param isn't passed through, so let's try to load based on the first home
-                $firstHome = $this->dashboard->rewindEntries();
-                if ($firstHome) {
-                    $this->dashboard->loadDashboardEntries($firstHome->getName());
+            $panes = [];
+            if ($currentHome === $populatedHome && $populatedHome !== self::CREATE_NEW_HOME) {
+                if (! $currentHome || ! $activeHome) {
+                    // Home param isn't passed through, so let's try to load based on the first home
+                    $firstHome = $this->dashboard->rewindEntries();
+                    if ($firstHome) {
+                        $this->dashboard->loadDashboardEntries($firstHome->getName());
 
-                    $panes = $firstHome->getEntryKeyTitleArr();
+                        $panes = $firstHome->getEntryKeyTitleArr();
+                    }
+                } else {
+                    $panes = $activeHome->getEntryKeyTitleArr();
                 }
-            } else {
-                $panes = $activeHome->getEntryKeyTitleArr();
+            } elseif ($this->dashboard->hasEntry($populatedHome)) {
+                $this->dashboard->loadDashboardEntries($populatedHome);
+
+                $panes = $this->dashboard->getActiveHome()->getEntryKeyTitleArr();
             }
-        } elseif ($this->dashboard->hasEntry($populatedHome)) {
-            $this->dashboard->loadDashboardEntries($populatedHome);
 
-            $panes = $this->dashboard->getActiveHome()->getEntryKeyTitleArr();
-        }
+            $this->addElement('hidden', 'org_pane', ['required' => false]);
+            $this->addElement('hidden', 'org_home', ['required' => false]);
+            $this->addElement('hidden', 'org_dashlet', ['required' => false]);
 
-        $this->addElement('hidden', 'org_pane', ['required' => false]);
-        $this->addElement('hidden', 'org_home', ['required' => false]);
-        $this->addElement('hidden', 'org_dashlet', ['required' => false]);
+           if ($this->isUpdatingADashlet()) {
+               $this->assembleDashletElements();
 
-        $this->addElement('text', 'dashlet', [
-            'required'    => true,
-            'label'       => t('Dashlet Title'),
-            'placeholder' => t('Enter a dashlet title'),
-            'description' => t('Enter a title for the dashlet.'),
-        ]);
+               $this->addHtml(new HtmlElement('hr'));
+           }
 
-        $this->addElement('textarea', 'url', [
-            'required'    => true,
-            'label'       => t('Url'),
-            'placeholder' => t('Enter dashlet url'),
-            'description' => t(
-                'Enter url to be loaded in the dashlet. You can paste the full URL, including filters.'
-            ),
-        ]);
-
-        $this->addHtml(new HtmlElement('hr'));
-
-        $this->addElement('select', 'home', [
-            'class'        => 'autosubmit',
-            'required'     => true,
-            'disabled'     => empty($homes) ?: null,
-            'value'        => $populatedHome,
-            'multiOptions' => array_merge([self::CREATE_NEW_HOME => self::CREATE_NEW_HOME], $homes),
-            'label'        => t('Select Home'),
-            'description' => t('Select a dashboard home you want to add the dashboard pane to.')
-        ]);
-
-        if (empty($homes) || $populatedHome === self::CREATE_NEW_HOME) {
-            $this->addElement('text', 'new_home', [
-                'required'    => true,
-                'label'       => t('Home Title'),
-                'placeholder' => t('Enter dashboard home title'),
-                'description' => t('Enter a title for the new dashboard home.')
+            $this->addElement('select', 'home', [
+                'class'        => 'autosubmit',
+                'required'     => true,
+                'disabled'     => empty($homes) ?: null,
+                'value'        => $populatedHome,
+                'multiOptions' => array_merge([self::CREATE_NEW_HOME => self::CREATE_NEW_HOME], $homes),
+                'label'        => t('Select Home'),
+                'description' => t('Select a dashboard home you want to add the dashboard pane to.')
             ]);
-        }
 
-        $populatedPane = $this->getPopulatedValue('pane');
-        // Pane element's values are depending on the home element's value
-        if ($populatedPane !== self::CREATE_NEW_PANE && ! in_array($populatedPane, $panes)) {
-            $this->clearPopulatedValue('pane');
-        }
+            if (empty($homes) || $populatedHome === self::CREATE_NEW_HOME) {
+                $this->addElement('text', 'new_home', [
+                    'required'    => true,
+                    'label'       => t('Home Title'),
+                    'placeholder' => t('Enter dashboard home title'),
+                    'description' => t('Enter a title for the new dashboard home.')
+                ]);
+            }
 
-        $populatedPane = $this->getPopulatedValue('pane', $requestUrl->getParam('pane', reset($panes)));
-        $disable = empty($panes) || $populatedHome === self::CREATE_NEW_HOME;
-        $this->addElement('select', 'pane', [
-            'class'        => 'autosubmit',
-            'required'     => true,
-            'disabled'     => $disable ?: null,
-            'value'        => ! $disable ? $populatedPane : self::CREATE_NEW_PANE,
-            'multiOptions' => array_merge([self::CREATE_NEW_PANE => self::CREATE_NEW_PANE], $panes),
-            'label'        => t('Select Dashboard'),
-            'description'  => t('Select a dashboard you want to add the dashlet to.'),
-        ]);
+            $populatedPane = $this->getPopulatedValue('pane');
+            // Pane element's values are depending on the home element's value
+            if ($populatedPane !== self::CREATE_NEW_PANE && ! in_array($populatedPane, $panes)) {
+                $this->clearPopulatedValue('pane');
+            }
 
-        if ($disable || $this->getPopulatedValue('pane') === self::CREATE_NEW_PANE) {
-            $this->addElement('text', 'new_pane', [
-                'required'    => true,
-                'label'       => t('Dashboard Title'),
-                'placeholder' => t('Enter dashboard title'),
-                'description' => t('Enter a title for the new dashboard.'),
+            $populatedPane = $this->getPopulatedValue('pane', $requestUrl->getParam('pane', reset($panes)));
+            $disable = empty($panes) || $populatedHome === self::CREATE_NEW_HOME;
+            $this->addElement('select', 'pane', [
+                'class'        => 'autosubmit',
+                'required'     => true,
+                'disabled'     => $disable ?: null,
+                'value'        => ! $disable ? $populatedPane : self::CREATE_NEW_PANE,
+                'multiOptions' => array_merge([self::CREATE_NEW_PANE => self::CREATE_NEW_PANE], $panes),
+                'label'        => t('Select Dashboard'),
+                'description'  => t('Select a dashboard you want to add the dashlet to.'),
             ]);
+
+            if ($disable || $this->getPopulatedValue('pane') === self::CREATE_NEW_PANE) {
+                $this->addElement('text', 'new_pane', [
+                    'required'    => true,
+                    'label'       => t('Dashboard Title'),
+                    'placeholder' => t('Enter dashboard title'),
+                    'description' => t('Enter a title for the new dashboard.'),
+                ]);
+            }
+
+            if ($this->isUpdatingADashlet()) {
+                $targetUrl = (clone $requestUrl)->setPath(Dashboard::BASE_ROUTE . '/remove-dashlet');
+                $removeButton = $this->createRemoveButton($targetUrl, t('Remove Dashlet'));
+
+                $formControls = $this->createFormControls();
+                $formControls->add([
+                    $this->registerSubmitButton(t('Add to Dashboard')),
+                    $removeButton,
+                    $this->createCancelButton()
+                ]);
+
+                $this->addHtml($formControls);
+            } else {
+                $this->assembleNextPage();
+
+                $formControls = $this->createFormControls();
+                $formControls->add([
+                    $this->registerSubmitButton(t('Add to Dashboard')),
+                    $this->createCancelButton()
+                ]);
+
+                $this->addHtml($formControls);
+            }
+        } else {
+            parent::assemble();
         }
-
-        $removeButton = null;
-        if ($requestUrl->getPath() === Dashboard::BASE_ROUTE . '/edit-dashlet') {
-            $targetUrl = (clone $requestUrl)->setPath(Dashboard::BASE_ROUTE . '/remove-dashlet');
-            $removeButton = $this->createRemoveButton($targetUrl, t('Remove Dashlet'));
-        }
-
-        $formControls = $this->createFormControls();
-        $formControls->add([
-            $this->registerSubmitButton(t('Add to Dashboard')),
-            $removeButton,
-            $this->createCancelButton()
-        ]);
-
-        $this->addHtml($formControls);
     }
 
     protected function onSuccess()
@@ -144,7 +155,7 @@ class DashletForm extends BaseDashboardForm
             $selectedPane = $this->getPopulatedValue('new_pane');
         }
 
-        if (Url::fromRequest()->getPath() === Dashboard::BASE_ROUTE . '/new-dashlet') {
+        if (! $this->isUpdatingADashlet()) {
             $currentHome = new DashboardHome($selectedHome);
             if ($dashboard->hasEntry($currentHome->getName())) {
                 $currentHome = clone $dashboard->getEntry($currentHome->getName());
@@ -159,15 +170,19 @@ class DashletForm extends BaseDashboardForm
                 $currentPane = clone $currentHome->getEntry($currentPane->getName());
             }
 
-            $dashlet = new Dashlet($this->getValue('dashlet'), $this->getValue('url'), $currentPane);
-            if ($currentPane->hasEntry($dashlet->getName())) {
-                Notification::error(sprintf(
-                    t('Dashlet "%s" already exists within the "%s" dashboard pane'),
-                    $dashlet->getTitle(),
-                    $currentPane->getTitle()
-                ));
+            $customDashlet = null;
+            if (($dashlet = $this->getPopulatedValue('dashlet')) && ($url = $this->getPopulatedValue('url'))) {
+                $customDashlet = new Dashlet($dashlet, $url, $currentPane);
 
-                return;
+                if ($currentPane->hasEntry($customDashlet->getName()) || $this->duplicateCustomDashlet) {
+                    Notification::error(sprintf(
+                        t('Dashlet "%s" already exists within the "%s" dashboard pane'),
+                        $customDashlet->getTitle(),
+                        $currentPane->getTitle()
+                    ));
+
+                    return;
+                }
             }
 
             $conn->beginTransaction();
@@ -175,7 +190,35 @@ class DashletForm extends BaseDashboardForm
             try {
                 $dashboard->manageEntry($currentHome);
                 $currentHome->manageEntry($currentPane);
-                $currentPane->manageEntry($dashlet);
+
+                if ($customDashlet) {
+                    $currentPane->manageEntry($customDashlet);
+                }
+
+                // Avoid the hassle of iterating through the module dashlets each time to check if exits,
+                // even though the current pane doesn't have any entries
+                if (! $this->getPopulatedValue('new_pane') && $currentPane->hasEntries()) {
+                    $this->dumpArbitaryDashlets(false);
+
+                    foreach (self::$moduleDashlets as $_ => $dashlets) {
+                        /** @var Dashlet $dashlet */
+                        foreach ($dashlets as $dashlet) {
+                            if ($currentPane->hasEntry($dashlet->getName()) || $this->duplicateCustomDashlet) {
+                                Notification::error(sprintf(
+                                    t('Dashlet "%s" already exists within the "%s" dashboard pane'),
+                                    $dashlet->getTitle(),
+                                    $currentPane->getTitle()
+                                ));
+
+                                return;
+                            }
+
+                            $currentPane->manageEntry($dashlet);
+                        }
+                    }
+                } else {
+                    $currentPane->manageEntry(self::$moduleDashlets);
+                }
 
                 $conn->commitTransaction();
             } catch (Exception $err) {
@@ -185,7 +228,7 @@ class DashletForm extends BaseDashboardForm
                 throw $err;
             }
 
-            Notification::success(sprintf(t('Created dashlet "%s" successfully'), $dashlet->getTitle()));
+            Notification::success(t('Created dashlet(s) successfully'));
         } else {
             $orgHome = $dashboard->getEntry($this->getValue('org_home'));
             $orgPane = $orgHome->getEntry($this->getValue('org_pane'));
