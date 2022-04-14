@@ -298,6 +298,7 @@ class DashboardsController extends CompatController
             }
         }
 
+        $duplicatedError = false;
         foreach ($dashboards as $home => $value) {
             if (! $this->dashboard->hasEntry($home)) {
                 Notification::error(sprintf(t('Dashboard home "%s" not found'), $home));
@@ -329,6 +330,8 @@ class DashboardsController extends CompatController
                             $pane->getTitle(),
                             $home->getTitle()
                         ));
+
+                        $duplicatedError = true;
                         break;
                     }
 
@@ -359,6 +362,8 @@ class DashboardsController extends CompatController
                             $dashlet,
                             $pane->getTitle()
                         ));
+
+                        $duplicatedError = true;
                         break;
                     }
 
@@ -372,6 +377,12 @@ class DashboardsController extends CompatController
                     ));
                 }
             }
+        }
+
+        if ($duplicatedError) {
+            // Even though the drop action couldn't be performed successfully from our server, Sortable JS has
+            // already dropped the draggable element though, so we need to redirect here to undo it.
+            $this->redirectNow(Dashboard::BASE_ROUTE . '/settings');
         }
 
         $this->createTabs();
@@ -426,6 +437,8 @@ class DashboardsController extends CompatController
         ));
 
         $this->content->getAttributes()->add('class', 'dashboard-manager');
+        $this->controls->getAttributes()->add('class', 'dashboard-manager-controls');
+
         $this->addContent(new Settings($this->dashboard));
     }
 
