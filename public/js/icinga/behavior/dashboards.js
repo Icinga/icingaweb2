@@ -134,24 +134,20 @@
             e.target.querySelectorAll('.dashboard-settings, .dashboard-item-list, .dashlet-item-list')
                 .forEach(sortable => {
                     let groupName = _this.getTypeFor(sortable),
-                        draggable,
-                        handle;
+                        draggable;
 
                     switch (groupName) {
                         case _this.widgetTypes.DashboardHome:
                             groupName = _this.widgetTypes.DashboardHome;
                             draggable = '.home-list-control';
-                            handle = 'h1 > .widget-drag-initiator';
                             break;
                         case _this.widgetTypes.Dashboard:
                             groupName = _this.widgetTypes.Dashboard;
                             draggable = '.dashboard-list-control';
-                            handle = 'h1 > .widget-drag-initiator'
                             break;
                         case _this.widgetTypes.Dashlet:
                             groupName = _this.widgetTypes.Dashlet;
                             draggable = '.dashlet-list-item';
-                            handle = 'h1 > .widget-drag-initiator';
                     }
 
                     let options = {
@@ -160,7 +156,7 @@
                         dataIdAttr  : 'id',
                         direction   : 'vertical',
                         draggable   : draggable,
-                        handle      : handle,
+                        handle      : 'h1 > .widget-drag-initiator',
                         group       : { name : groupName },
                         chosenClass : 'draggable-widget-chosen'
                     };
