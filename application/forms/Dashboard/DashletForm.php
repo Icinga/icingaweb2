@@ -152,6 +152,7 @@ class DashletForm extends SetupNewDashboardForm
                 $this->addHtml($formControls);
             }
         } else {
+            // Just setup the initial view of the modal view
             parent::assemble();
         }
     }
@@ -212,11 +213,10 @@ class DashletForm extends SetupNewDashboardForm
                     $currentPane->manageEntry($customDashlet);
                 }
 
+                $this->dumpArbitaryDashlets(false);
                 // Avoid the hassle of iterating through the module dashlets each time to check if exits,
                 // even though the current pane doesn't have any entries
                 if (! $this->getPopulatedValue('new_pane') && $currentPane->hasEntries()) {
-                    $this->dumpArbitaryDashlets(false);
-
                     foreach (self::$moduleDashlets as $_ => $dashlets) {
                         /** @var Dashlet $dashlet */
                         foreach ($dashlets as $dashlet) {
