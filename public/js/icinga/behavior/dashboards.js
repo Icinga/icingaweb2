@@ -157,7 +157,6 @@
                     let options = {
                         scroll      : true,
                         invertSwap  : true,
-                        delay       : 100,
                         dataIdAttr  : 'id',
                         direction   : 'vertical',
                         draggable   : draggable,
