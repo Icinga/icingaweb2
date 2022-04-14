@@ -44,7 +44,7 @@ abstract class ItemListControl extends BaseHtmlElement
     abstract protected function createItemList(): BaseHtmlElement;
 
     /**
-     * Get a drag initiator for this dashlet item
+     * Get a drag initiator for this widget item
      *
      * @return ValidHtml
      */

@@ -36,7 +36,7 @@ class DashboardContainer extends NavigationItemContainer
     public function getDashlets()
     {
         uasort($this->dashlets, function (array $x, array $y) {
-            return $x['priority'] - $y['priority'];
+            return $x['priority'] <=> $y['priority'];
         });
 
         return $this->dashlets;

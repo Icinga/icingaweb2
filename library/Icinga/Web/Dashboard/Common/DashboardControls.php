@@ -42,7 +42,7 @@ trait DashboardControls
         // An entry can be added individually afterwards, it might be the case that the priority
         // order gets mixed up, so we have to sort things here before being able to render them
         uasort($this->dashboards, function (BaseDashboard $x, BaseDashboard $y) {
-            return $x->getPriority() - $y->getPriority();
+            return $x->getPriority() <=> $y->getPriority();
         });
 
         return $this->dashboards;
