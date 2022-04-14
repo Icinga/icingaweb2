@@ -5,6 +5,7 @@
 namespace Icinga\Web\Dashboard\ItemList;
 
 use ipl\Html\HtmlElement;
+use ipl\Html\ValidHtml;
 
 class EmptyDashlet extends DashletListMultiSelect
 {
@@ -13,7 +14,7 @@ class EmptyDashlet extends DashletListMultiSelect
         return HtmlElement::create('ul', ['class' => 'dashlet-item-list empty-list']);
     }
 
-    protected function assembleHeader(): HtmlElement
+    protected function assembleHeader(): ValidHtml
     {
         $header = HtmlElement::create('h1', ['class' => 'dashlet-header']);
         $header->add(t('Custom Url'));

@@ -165,8 +165,6 @@ class Dashlet extends BaseDashboard
             $url->setParam('showCompact', true);
 
             $dashletHtml->setAttribute('data-icinga-url', $url);
-            $dashletHtml->setAttribute('data-icinga-dashlet', $this->getName());
-
             $dashletHtml->addHtml(new HtmlElement('h1', null, new Link(
                 t($this->getTitle()),
                 $url->getUrlWithout(['showCompact', 'limit'])->getRelativeUrl(),

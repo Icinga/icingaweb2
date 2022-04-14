@@ -4,10 +4,12 @@
 
 namespace Icinga\Web\Dashboard\ItemList;
 
+use Icinga\Web\Dashboard\Common\ItemListControl;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\Dashlet;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
+use ipl\Html\ValidHtml;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
 
@@ -20,15 +22,15 @@ class DashletListItem extends BaseHtmlElement
     /** @var Dashlet */
     protected $dashlet;
 
-    /** @var bool Whether to render an edit button for the dashlet */
-    protected $renderEditButton;
+    /** @var bool Whether to render the detail actions for this dashlet item */
+    protected $renderDetailActions;
 
-    public function __construct(Dashlet $dashlet = null, $renderEditButton = false)
+    public function __construct(Dashlet $dashlet = null, $renderDetailActions = false)
     {
         $this->dashlet = $dashlet;
-        $this->renderEditButton = $renderEditButton;
+        $this->renderDetailActions = $renderDetailActions;
 
-        if ($this->dashlet && $renderEditButton) {
+        if ($this->dashlet && $renderDetailActions) {
             $this->getAttributes()
                 ->registerAttributeCallback('data-icinga-dashlet', function () {
                     return $this->dashlet->getName();
@@ -40,25 +42,30 @@ class DashletListItem extends BaseHtmlElement
     }
 
     /**
-     * Set whether to render an edit button for this dashlet
+     * Set whether to render the detail actions for this dashlet
      *
      * @param bool $value
      *
      * @return $this
      */
-    protected function setDetailUrl(bool $value): self
+    protected function setRenderDetailActions(bool $value): self
     {
-        $this->renderEditButton = $value;
+        $this->renderDetailActions = $value;
 
         return $this;
     }
 
-    protected function assembleHeader(): HtmlElement
+    /**
+     * Assemble header of this dashlet item
+     *
+     * @return ValidHtml
+     */
+    protected function assembleHeader(): ValidHtml
     {
-        $title = HtmlElement::create('h1', ['class' => 'dashlet-header']);
+        $header = HtmlElement::create('h1', ['class' => 'dashlet-header']);
 
-        if ($this->renderEditButton) {
-            $title->addHtml(new Link(
+        if ($this->renderDetailActions) {
+            $header->addHtml(new Link(
                 t($this->dashlet->getTitle()),
                 $this->dashlet->getUrl()->getUrlWithout(['showCompact', 'limit'])->getRelativeUrl(),
                 [
@@ -77,16 +84,18 @@ class DashletListItem extends BaseHtmlElement
                 'dashlet' => $this->dashlet->getName()
             ]);
 
-            $title->addHtml(new Link(t('Edit'), $url, [
+            $header->addHtml(new Link(t('Edit'), $url, [
                 'data-icinga-modal'   => true,
                 'data-no-icinga-ajax' => true
             ]));
+
+            $header->addHtml(ItemListControl::createDragInitiator());
         } else {
-            $title->add($this->dashlet->getTitle());
-            $title->getAttributes()->set('title', $this->dashlet->getTitle());
+            $header->add($this->dashlet->getTitle());
+            $header->getAttributes()->set('title', $this->dashlet->getTitle());
         }
 
-        return $title;
+        return $header;
     }
 
     protected function assembleSummary()

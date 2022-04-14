@@ -28,10 +28,8 @@
             this.widgetTypes = { Dashlet : 'Dashlets', Dashboard : 'Dashboards', DashboardHome : 'Homes' };
 
             this.on('rendered', '#main > .container', this.onRendered, this);
-            // Registers all drop events for all the widget types
+            // Registers the drop event for all the widget types
             this.on('end', '.dashboard-settings', this.elementDropped, this);
-            // This is for the normal dashboard/dashlets view
-            this.on('end', '.content > .dashboard', this.elementDropped, this);
         }
 
         /**
@@ -50,7 +48,7 @@
                 return this.widgetTypes.DashboardHome;
             } else if (target.matches('.dashboard-item-list')) {
                 return this.widgetTypes.Dashboard;
-            } else if (target.matches('.dashlet-item-list') || target.matches('.content > .dashboard')) {
+            } else if (target.matches('.dashlet-item-list')) {
                 return this.widgetTypes.Dashlet;
             }
 
@@ -95,28 +93,20 @@
                     break;
                 }
                 case _this.widgetTypes.Dashlet: {
-                    let dashlet = item.dataset.icingaDashlet,
-                        pane,
-                        home;
+                    let dashlet = item.dataset.icingaDashlet;
 
-                    if (orgEvt.to.matches('.content > .dashboard')) {
-                        let parentData = orgEvt.to.dataset.icingaPane.split('|', 2);
-                        home = parentData.shift();
-                        pane = parentData.shift();
-                    } else { // Dashboard manager view
-                        let parent = orgEvt.to.closest('.dashboard-list-control');
-                        pane = parent.dataset.icingaPane;
-                        // If there is only default home in the dashboard manager view, there won't be rendered a
-                        // ".home-list-control", so we need to look for an alternative
-                        home = parent.closest('.home-list-control, .dashboard-settings').dataset.icingaHome;
+                    let parent = orgEvt.to.closest('.dashboard-list-control');
+                    let pane = parent.dataset.icingaPane;
+                    // If there is only default home in the dashboard manager view, there won't be rendered a
+                    // ".home-list-control", so we need to look for an alternative
+                    let home = parent.closest('.home-list-control, .dashboard-settings').dataset.icingaHome;
 
-                        if (orgEvt.to !== orgEvt.from) {
-                            let parent = orgEvt.from.closest('.dashboard-list-control');
-                            let orgHome = parent.closest('.home-list-control, .dashboard-settings').dataset.icingaHome;
-                            data.originals = {
-                                originalHome : orgHome,
-                                originalPane : parent.dataset.icingaPane
-                            }
+                    if (orgEvt.to !== orgEvt.from) {
+                        let parent = orgEvt.from.closest('.dashboard-list-control');
+                        let orgHome = parent.closest('.home-list-control, .dashboard-settings').dataset.icingaHome;
+                        data.originals = {
+                            originalHome : orgHome,
+                            originalPane : parent.dataset.icingaPane
                         }
                     }
 
@@ -141,8 +131,7 @@
 
         onRendered(e) {
             let _this = e.data.self;
-            e.target.querySelectorAll('.dashboard-settings, .content > .dashboard,'
-                + ' .dashboard-item-list, .dashlet-item-list')
+            e.target.querySelectorAll('.dashboard-settings, .dashboard-item-list, .dashlet-item-list')
                 .forEach(sortable => {
                     let groupName = _this.getTypeFor(sortable),
                         draggable,
@@ -152,33 +141,29 @@
                         case _this.widgetTypes.DashboardHome:
                             groupName = _this.widgetTypes.DashboardHome;
                             draggable = '.home-list-control';
-                            handle = '.home-list-control > h1';
+                            handle = 'h1 > .widget-drag-initiator';
                             break;
                         case _this.widgetTypes.Dashboard:
                             groupName = _this.widgetTypes.Dashboard;
                             draggable = '.dashboard-list-control';
-                            handle = '.dashboard-list-control > h1'
+                            handle = 'h1 > .widget-drag-initiator'
                             break;
                         case _this.widgetTypes.Dashlet:
                             groupName = _this.widgetTypes.Dashlet;
-                            if (sortable.matches('.content > .dashboard')) {
-                                draggable = '> .container';
-                            } else {
-                                draggable = '.dashlet-list-item';
-                            }
-
-                            handle = draggable;
+                            draggable = '.dashlet-list-item';
+                            handle = 'h1 > .widget-drag-initiator';
                     }
 
                     let options = {
-                        scroll     : true,
-                        invertSwap : true,
-                        delay      : 100,
-                        dataIdAttr : 'id',
-                        direction  : 'vertical',
-                        draggable  : draggable,
-                        handle     : handle,
-                        group      : { name : groupName }
+                        scroll      : true,
+                        invertSwap  : true,
+                        delay       : 100,
+                        dataIdAttr  : 'id',
+                        direction   : 'vertical',
+                        draggable   : draggable,
+                        handle      : handle,
+                        group       : { name : groupName },
+                        chosenClass : 'draggable-widget-chosen'
                     };
 
                     _this.Sortable.create(sortable, options);

@@ -98,7 +98,7 @@
     .rounded-corners();
 
     section.caption, h1 {
-      margin-left: .5em;
+      padding-left: .5em;
       font-weight: 500;
       overflow: hidden;
       display: -webkit-box;
@@ -106,7 +106,7 @@
     }
 
     h1 {
-      border-bottom: none;
+      border-bottom: 1px solid @gray-light;
       -webkit-line-clamp: 1;
     }
 
@@ -140,17 +140,28 @@
   padding-top: 0;
 }
 
+.dashboard-manager-controls {
+  padding-bottom: .5em;
+}
+
 .dashboard-settings {
   display: flex;
   flex-direction: column;
   margin-top: .6em;
-  border-top: 1px solid @gray-light;
+  margin-right: 1em;
+}
+
+.dashboard-manager-controls,
+.home-list-control .collapsible-header,
+.dashboard-list-control .collapsible-header {
+  border-bottom: 1px solid @gray-light;
 }
 
 // Add new home button of the dashboard manager
 .controls .add-home {
   .button();
   float: right;
+  margin-right: 1.15em;
   font-size: 1.2em;
   font-weight: 500;
   color: @text-color-on-icinga-blue;
@@ -162,7 +173,6 @@
 }
 
 .action-link.add-dashboard {
-  width: 85%;
   margin: .5em 0 0;
 }
 
@@ -177,12 +187,13 @@
 }
 
 .dashboard-list-control .dashlet-item-list {
-  margin-left: 2.2em;
   display: flex;
+  margin-left: 2.2em;
   width: 97.8%; // 100% - 2.2em margin-left
 
   .dashlet-list-item {
     width: 49.7%;
+    cursor: default;
     margin-bottom: .5em;
     background: transparent;
   }
@@ -193,7 +204,7 @@
 }
 
 .dashboard-list-control {
-  width: 85%;
+  width: inherit;
 
   h1.collapsible-header {
     margin-left: 1.5em;
@@ -211,10 +222,6 @@
   display: flex;
   flex-direction: column;
 
-  h1.collapsible-header {
-    border-bottom: none;
-  }
-
   h1.collapsible-header a:not(.dashlet-title), h1.dashlet-header a:not(.dashlet-title) {
     margin-left: .3em;
     font-weight: normal;
@@ -223,6 +230,10 @@
 
   h1.dashlet-header a.dashlet-title {
     color: @text-color;
+  }
+
+  h1.collapsible-header {
+    margin-right: .3em;
   }
 
   .dashlets-list-info, .dashboard-list-info {
@@ -251,12 +262,14 @@
 
   .dashboard-list-control {
     .dashboard-item-list, .dashlet-item-list {
-      margin: 0;
+      margin-bottom: 0;
+      margin-top: 0;
     }
 
     .dashlet-item-list {
+      width: inherit;
       margin-left: 2em;
-      width: 98%; // 100% - 2em margin-left
+      padding-right: 2em;
     }
 
     .action-link.add-dashlet {
@@ -291,12 +304,24 @@
 }
 
 // Drag and drop
-.sortable-chosen {
+.draggable-widget-chosen {
   .box-shadow();
   background: fade(@icinga-blue, 20);
   border: .5em @body-bg-color dashed;
 }
 
-.home-list-control.sortable-drag {
-  width: calc(85% + 1.4em);
+// Handle icon
+.widget-drag-initiator {
+  cursor: grab;
+  float: right;
+  display: none;
+
+  &:before {
+    color: @base-gray-light;
+  }
+}
+
+h1.collapsible-header:hover .widget-drag-initiator,
+.dashlet-list-item:hover .widget-drag-initiator {
+  display: block;
 }
