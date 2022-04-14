@@ -49,7 +49,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
      */
     protected function dumpArbitaryDashlets(bool $strict = true): void
     {
-        $choosenDashlets = [];
+        $chosenDashlets = [];
         foreach (self::$moduleDashlets as $module => $dashlets) {
             /** @var Dashlet $dashlet */
             foreach ($dashlets as $dashlet) {
@@ -65,19 +65,19 @@ class SetupNewDashboardForm extends BaseDashboardForm
                             ->setTitle($title);
                     }
 
-                    $choosenDashlets[$module][$dashlet->getName()] = $dashlet;
+                    $chosenDashlets[$module][$dashlet->getName()] = $dashlet;
                 }
             }
 
-            if (isset($choosenDashlets[$module]) && ! $this->duplicateCustomDashlet) {
+            if (isset($chosenDashlets[$module]) && ! $this->duplicateCustomDashlet) {
                 $this->duplicateCustomDashlet = array_key_exists(
                     $this->getPopulatedValue('dashlet'),
-                    $choosenDashlets[$module]
+                    $chosenDashlets[$module]
                 );
             }
         }
 
-        self::$moduleDashlets = $choosenDashlets;
+        self::$moduleDashlets = $chosenDashlets;
     }
 
     /**
@@ -97,11 +97,8 @@ class SetupNewDashboardForm extends BaseDashboardForm
      */
     protected function assembleNextPage()
     {
-        if (! $this->isUpdatingADashlet() && ! $this->getPopulatedValue('btn_next')) {
-            return;
-        }
-
-        $this->dumpArbitaryDashlets();
+        $strict = $this->isUpdatingADashlet() || $this->getPopulatedValue('btn_next') || ! $this->hasBeenSent();
+        $this->dumpArbitaryDashlets($strict);
         $this->assembleNextPageDashboardPart();
         $this->assembleNexPageDashletPart();
     }

@@ -38,10 +38,6 @@ class DashletForm extends SetupNewDashboardForm
 
     protected function assembleNextPageDashboardPart()
     {
-        if (! $this->isUpdatingADashlet() && ! $this->getPopulatedValue('btn_next')) {
-            return;
-        }
-
         $requestUrl = Url::fromRequest();
 
         $homes = $this->dashboard->getEntryKeyTitleArr();
@@ -127,7 +123,7 @@ class DashletForm extends SetupNewDashboardForm
 
     protected function assemble()
     {
-        if ($this->isUpdatingADashlet() || $this->getPopulatedValue('btn_next')) {
+        if ($this->isUpdatingADashlet() || $this->getPopulatedValue('btn_next') || $this->hasBeenSent()) {
             $this->assembleNextPage();
 
             if ($this->isUpdatingADashlet()) {
