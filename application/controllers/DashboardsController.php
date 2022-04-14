@@ -219,10 +219,6 @@ class DashboardsController extends CompatController
     public function newDashletAction()
     {
         if (isset($this->getRequest()->getPost()['btn_next'])) {
-            // Set compact view to prevent the controls from being
-            // rendered in the modal view when redirecting
-            $this->view->compact = true;
-
             $this->setTitle(t('Add Dashlet To Dashboard'));
         } else {
             $this->setTitle(t('Select Dashlets'));

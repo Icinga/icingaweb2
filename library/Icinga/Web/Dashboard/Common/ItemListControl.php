@@ -6,6 +6,7 @@ namespace Icinga\Web\Dashboard\Common;
 
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
+use ipl\Html\ValidHtml;
 use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
@@ -43,6 +44,16 @@ abstract class ItemListControl extends BaseHtmlElement
     abstract protected function createItemList(): BaseHtmlElement;
 
     /**
+     * Get a drag initiator for this dashlet item
+     *
+     * @return ValidHtml
+     */
+    public static function createDragInitiator()
+    {
+        return new Icon('bars', ['class' => 'widget-drag-initiator']);
+    }
+
+    /**
      * Assemble a header element for this item list
      *
      * @param Url $url
@@ -58,6 +69,7 @@ abstract class ItemListControl extends BaseHtmlElement
             'data-no-icinga-ajax' => true
         ]));
 
+        $header->addHtml(self::createDragInitiator());
         $this->addHtml($header);
     }
 
@@ -65,7 +77,7 @@ abstract class ItemListControl extends BaseHtmlElement
     {
         $this->getAttributes()->add([
             'id'                  => $this->getHtmlId(),
-            'class'               => ['collapsible'],
+            'class'               => 'collapsible',
             'data-toggle-element' => '.dashboard-list-info',
         ]);
 
@@ -75,6 +87,7 @@ abstract class ItemListControl extends BaseHtmlElement
         ]));
 
         $this->addHtml($this->createItemList());
+
         $actionLink = $this->createActionLink();
         $actionLink->getAttributes()->add([
             'data-icinga-modal'   => true,

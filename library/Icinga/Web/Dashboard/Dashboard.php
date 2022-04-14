@@ -257,7 +257,6 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
             $this->addHtml(HtmlElement::create('h1', null, t('No dashboard added to this dashboard home')));
         } else {
             $activePane = $this->getActivePane();
-            $this->setAttribute('data-icinga-pane', $activeHome->getName() . '|' . $this->getActivePane()->getName());
 
             if (! $activePane->hasEntries()) {
                 $this->addHtml(HtmlElement::create('h1', null, t('No dashlet added to this pane.')));
