@@ -10,13 +10,13 @@ use Icinga\Forms\Dashboard\HomePaneForm;
 use Icinga\Forms\Dashboard\NewHomePaneForm;
 use Icinga\Forms\Dashboard\RemoveDashletForm;
 use Icinga\Forms\Dashboard\RemoveHomePaneForm;
+use Icinga\Forms\Dashboard\SetupNewDashboardForm;
 use Icinga\Forms\Dashboard\WelcomeForm;
 use Icinga\Util\Json;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Dashboard\Pane;
 use Icinga\Web\Dashboard\Settings;
-use Icinga\Web\Dashboard\Setup\SetupNewDashboard;
 use Icinga\Web\Notification;
 use Icinga\Web\Widget\Tabextension\DashboardSettings;
 use ipl\Web\Compat\CompatController;
@@ -395,8 +395,8 @@ class DashboardsController extends CompatController
             $this->setTitle(t('Add Dashlet'));
         }
 
-        $setupForm = new SetupNewDashboard($this->dashboard);
-        $setupForm->on(SetupNewDashboard::ON_SUCCESS, function () use ($setupForm) {
+        $setupForm = new SetupNewDashboardForm($this->dashboard);
+        $setupForm->on(SetupNewDashboardForm::ON_SUCCESS, function () use ($setupForm) {
             $this->redirectNow($setupForm->getRedirectUrl());
         })->handleRequest(ServerRequest::fromGlobals());
 
