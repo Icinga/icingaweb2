@@ -131,6 +131,12 @@
 
         onRendered(e) {
             let _this = e.data.self;
+
+            if (e.currentTarget !== e.target || ! e.target.querySelector(':scope > .dashboard-manager')) {
+                // This is for the editor only, which has no nested .containers but a .dashboard-manager
+                return;
+            }
+
             e.target.querySelectorAll('.dashboard-settings, .dashboard-item-list, .dashlet-item-list')
                 .forEach(sortable => {
                     let groupName = _this.getTypeFor(sortable),
