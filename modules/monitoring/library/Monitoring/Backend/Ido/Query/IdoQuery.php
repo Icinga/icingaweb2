@@ -874,6 +874,10 @@ abstract class IdoQuery extends DbQuery
             '%1$s = %2$s.object_id AND LOWER(%2$s.varname) = %3$s';
         foreach ($this->columnMap as $table => & $columns) {
             foreach ($columns as $alias => & $column) {
+                if ($column === null) {
+                    continue;
+                }
+
                 // Using a regex here because COLLATE may occur anywhere in the string
                 $column = preg_replace('/ COLLATE .+$/', '', $column, -1, $count);
                 if ($count > 0) {
