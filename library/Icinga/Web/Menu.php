@@ -167,7 +167,7 @@ class Menu extends Navigation
                 }
 
                 $dashboardHomes[$home->name] = [
-                    'label'    => t($home->label),
+                    'label'    => $home->label,
                     'priority' => $home->priority,
                     'url'      => Url::fromPath(Dashboard::BASE_ROUTE . '/home', [
                         'home' => $home->name
