@@ -5,10 +5,10 @@
 namespace Icinga\Web\Dashboard;
 
 use Icinga\Exception\ProgrammingError;
+use Icinga\Model\Home;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Web\Dashboard\Common\DashboardControls;
 use Icinga\Web\Dashboard\Common\Sortable;
-use Icinga\Web\Navigation\DashboardHomeItem;
 use ipl\Stdlib\Filter;
 
 use function ipl\Stdlib\get_php_type;
@@ -53,21 +53,21 @@ class DashboardHome extends BaseDashboard implements Sortable
     protected $disabled = false;
 
     /**
-     * Create a new dashboard home from the given home item
+     * Create a new dashboard home from the given model
      *
-     * @param DashboardHomeItem $homeItem
+     * @param Home $home
      *
      * @return DashboardHome
      */
-    public static function create(DashboardHomeItem $homeItem): self
+    public static function create(Home $home): self
     {
-        $self = new self($homeItem->getName());
+        $self = new self($home->name);
         $self
-            ->setTitle($homeItem->getLabel())
-            ->setPriority($homeItem->getPriority())
-            ->setType($homeItem->getAttribute('type'))
-            ->setUuid($homeItem->getAttribute('uuid'))
-            ->setDisabled($homeItem->getAttribute('disabled'));
+            ->setTitle($home->label)
+            ->setPriority($home->priority)
+            ->setType($home->type)
+            ->setUuid($home->id)
+            ->setDisabled((bool) $home->disabled);
 
         return $self;
     }

@@ -7,7 +7,6 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Model\Home;
 use Icinga\Web\Dashboard\DashboardHome;
-use Icinga\Web\Navigation\DashboardHomeItem;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Dashboard\Dashboard;
 use ipl\Stdlib\Filter;
@@ -23,8 +22,6 @@ class Menu extends Navigation
     public function __construct()
     {
         $this->init();
-        $this->initHome();
-
         $this->load('menu-item');
     }
 
@@ -37,7 +34,8 @@ class Menu extends Navigation
             'label'     => t('Dashboard'),
             'url'       => Dashboard::BASE_ROUTE,
             'icon'      => 'dashboard',
-            'priority'  => 10
+            'priority'  => 10,
+            'children'  => $this->fetchDashboardHomes()
         ]);
         $this->addItem('system', [
             'label'     => t('System'),
@@ -155,49 +153,33 @@ class Menu extends Navigation
         }
     }
 
-    public function initHome()
+    protected function fetchDashboardHomes()
     {
-        $user = Dashboard::getUser();
-        $dashboardItem = $this->getItem('dashboard');
+        $dashboardHomes = [];
 
         try {
             $homes = Home::on(Dashboard::getConn());
-            $homes->filter(Filter::equal('username', $user->getUsername()));
+            $homes->filter(Filter::equal('username', Auth::getInstance()->getUser()->getUsername()));
 
             foreach ($homes as $home) {
-                $dashboardHome = new DashboardHomeItem($home->name, [
-                    'uuid'     => $home->id,
+                if ($home->name === DashboardHome::DEFAULT_HOME) {
+                    continue;
+                }
+
+                $dashboardHomes[$home->name] = [
                     'label'    => t($home->label),
                     'priority' => $home->priority,
-                    'type'     => $home->type,
-                    'disabled' => (bool) $home->disabled
-                ]);
-
-                $dashboardItem->addChild($dashboardHome);
+                    'url'      => Url::fromPath(Dashboard::BASE_ROUTE . '/home', [
+                        'home' => $home->name
+                    ])
+                ];
             }
         } catch (\Exception $_) {
             // Nothing to do
             // Any database issue will be noticed soon enough, so prevent the Menu
             // from being ruined in any case.
         }
-    }
 
-    /**
-     * Load dashboard homes form the navigation menu
-     *
-     * @return DashboardHome[]
-     */
-    public function loadHomes()
-    {
-        $homes = [];
-        foreach ($this->getItem('dashboard')->getChildren() as $child) {
-            if (! $child instanceof DashboardHomeItem) {
-                continue;
-            }
-
-            $homes[$child->getName()] = DashboardHome::create($child);
-        }
-
-        return $homes;
+        return $dashboardHomes;
     }
 }
