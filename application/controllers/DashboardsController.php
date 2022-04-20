@@ -418,6 +418,7 @@ class DashboardsController extends CompatController
         }
 
         $this->createTabs();
+        $this->getTabs()->setRefreshUrl(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
         $this->dashboard->activate('dashboard_settings');
         $this->sendMultipartUpdate();
     }
