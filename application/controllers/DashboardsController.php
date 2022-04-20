@@ -4,7 +4,6 @@
 
 namespace Icinga\Controllers;
 
-use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Forms\Dashboard\DashletForm;
 use Icinga\Forms\Dashboard\HomePaneForm;
 use Icinga\Forms\Dashboard\NewHomePaneForm;
@@ -51,7 +50,7 @@ class DashboardsController extends CompatController
             $welcomeForm = new WelcomeForm($this->dashboard);
             $welcomeForm->on(WelcomeForm::ON_SUCCESS, function () use ($welcomeForm) {
                 $this->redirectNow($welcomeForm->getRedirectUrl());
-            })->handleRequest(ServerRequest::fromGlobals());
+            })->handleRequest($this->getServerRequest());
 
             $this->content->getAttributes()->add('class', 'welcome-view');
             $this->dashboard->setWelcomeForm($welcomeForm);
@@ -105,7 +104,7 @@ class DashboardsController extends CompatController
             ->on(NewHomePaneForm::ON_SUCCESS, function () {
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
-            ->handleRequest(ServerRequest::fromGlobals());
+            ->handleRequest($this->getServerRequest());
 
         $this->addContent($paneForm);
     }
@@ -128,7 +127,7 @@ class DashboardsController extends CompatController
             ->on(HomePaneForm::ON_SUCCESS, function () {
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
-            ->handleRequest(ServerRequest::fromGlobals());
+            ->handleRequest($this->getServerRequest());
 
         $homeForm->load($this->dashboard->getActiveHome());
         $this->addContent($homeForm);
@@ -152,7 +151,7 @@ class DashboardsController extends CompatController
             ->on(RemoveHomePaneForm::ON_SUCCESS, function () {
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
-            ->handleRequest(ServerRequest::fromGlobals());
+            ->handleRequest($this->getServerRequest());
 
         $this->addContent($homeForm);
     }
@@ -175,7 +174,7 @@ class DashboardsController extends CompatController
             ->on(NewHomePaneForm::ON_SUCCESS, function () {
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
-            ->handleRequest(ServerRequest::fromGlobals());
+            ->handleRequest($this->getServerRequest());
 
         $this->addContent($paneForm);
     }
@@ -204,7 +203,7 @@ class DashboardsController extends CompatController
             ->on(HomePaneForm::ON_SUCCESS, function () {
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
-            ->handleRequest(ServerRequest::fromGlobals());
+            ->handleRequest($this->getServerRequest());
 
         $paneForm->load($this->dashboard->getActiveHome()->getEntry($pane));
 
@@ -235,7 +234,7 @@ class DashboardsController extends CompatController
         $paneForm->populate(['org_name' => $paneParam]);
         $paneForm->on(RemoveHomePaneForm::ON_SUCCESS, function () {
             $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
-        })->handleRequest(ServerRequest::fromGlobals());
+        })->handleRequest($this->getServerRequest());
 
         $this->addContent($paneForm);
     }
@@ -254,7 +253,7 @@ class DashboardsController extends CompatController
         $dashletForm->populate($this->getRequest()->getPost());
         $dashletForm->on(DashletForm::ON_SUCCESS, function () {
             $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
-        })->handleRequest(ServerRequest::fromGlobals());
+        })->handleRequest($this->getServerRequest());
 
         $this->addContent($dashletForm);
     }
@@ -271,7 +270,7 @@ class DashboardsController extends CompatController
             ->on(DashletForm::ON_SUCCESS, function () {
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
-            ->handleRequest(ServerRequest::fromGlobals());
+            ->handleRequest($this->getServerRequest());
 
         $dashletForm->getElement('submit')->setLabel(t('Update Dashlet'));
 
@@ -290,7 +289,7 @@ class DashboardsController extends CompatController
             ->on(RemoveDashletForm::ON_SUCCESS, function () {
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
-            ->handleRequest(ServerRequest::fromGlobals());
+            ->handleRequest($this->getServerRequest());
 
         $this->addContent($removeForm);
     }
@@ -439,7 +438,7 @@ class DashboardsController extends CompatController
         $setupForm = new SetupNewDashboardForm($this->dashboard);
         $setupForm->on(SetupNewDashboardForm::ON_SUCCESS, function () use ($setupForm) {
             $this->redirectNow($setupForm->getRedirectUrl());
-        })->handleRequest(ServerRequest::fromGlobals());
+        })->handleRequest($this->getServerRequest());
 
         $this->addContent($setupForm);
     }
