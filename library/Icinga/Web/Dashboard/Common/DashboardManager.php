@@ -5,9 +5,9 @@
 namespace Icinga\Web\Dashboard\Common;
 
 use Icinga\Application\Icinga;
-use Icinga\Application\Modules\DashletContainer;
 use Icinga\Authentication\Auth;
 use Icinga\Common\Database;
+use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Model;
 use Icinga\User;
@@ -15,13 +15,9 @@ use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Dashboard\Pane;
-use Icinga\Web\Menu;
-use Icinga\Web\Navigation\DashboardPane;
-use ipl\Orm\Query;
 use ipl\Sql\Connection;
 use ipl\Sql\Expression;
 use ipl\Stdlib\Filter;
-use ipl\Web\Url;
 
 trait DashboardManager
 {
@@ -40,12 +36,46 @@ trait DashboardManager
      */
     private static $defaultPanes = [];
 
-    public function load()
+    /**
+     * Load the given or all homes (null)
+     *
+     * @param ?string $name
+     *
+     * @return void
+     */
+    public function load(string $name = null)
     {
-        $this->setEntries((new Menu())->loadHomes());
-        $this->loadDashboardEntries();
+        $query = Model\Home::on(self::getConn());
+        $query->filter(Filter::equal('username', $this::getUser()->getUsername()));
 
-        $this->initGetDefaultHome();
+        if ($name !== null) {
+            $query->filter(Filter::equal('name', $name));
+
+            /** @var Model\Home $row */
+            if (($row = $query->first()) === null) {
+                if ($name === DashboardHome::DEFAULT_HOME) {
+                    $home = $this->initGetDefaultHome();
+                } else {
+                    throw new HttpNotFoundException(t('Home "%s" not found'), $name);
+                }
+            } else {
+                $home = DashboardHome::create($row);
+                $this->addEntry($home);
+            }
+
+            $this->activateHome($home);
+            $home->loadDashboardEntries();
+        } else {
+            foreach ($query as $row) {
+                $this->addEntry(DashboardHome::create($row));
+            }
+
+            if (($firstHome = $this->rewindEntries())) {
+                $this->activateHome($firstHome);
+                $firstHome->loadDashboardEntries();
+            }
+        }
+
         self::deployModuleDashlets();
     }
 
@@ -81,25 +111,7 @@ trait DashboardManager
 
     public function loadDashboardEntries(string $name = '')
     {
-        if ($name && $this->hasEntry($name)) {
-            $home = $this->getEntry($name);
-        } else {
-            $requestRoute = Url::fromRequest();
-            if ($requestRoute->getPath() === Dashboard::BASE_ROUTE) {
-                $home = $this->initGetDefaultHome();
-            } else {
-                $homeParam = $requestRoute->getParam('home');
-                if (empty($homeParam) || ! $this->hasEntry($homeParam)) {
-                    if (! ($home = $this->rewindEntries())) {
-                        // No dashboard homes
-                        return $this;
-                    }
-                } else {
-                    $home = $this->getEntry($homeParam);
-                }
-            }
-        }
-
+        $home = $this->getEntry($name);
         $this->activateHome($home);
         $home->loadDashboardEntries();
 

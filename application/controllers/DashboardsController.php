@@ -35,11 +35,12 @@ class DashboardsController extends CompatController
         $this->dashboard = new Dashboard();
         $this->dashboard->setUser($this->Auth()->getUser());
         $this->dashboard->setTabs($this->getTabs());
-        $this->dashboard->load();
     }
 
     public function indexAction()
     {
+        $this->dashboard->load(DashboardHome::DEFAULT_HOME);
+
         $this->createTabs();
 
         $activeHome = $this->dashboard->getActiveHome();
@@ -73,10 +74,7 @@ class DashboardsController extends CompatController
      */
     public function homeAction()
     {
-        $home = $this->params->getRequired('home');
-        if (! $this->dashboard->hasEntry($home)) {
-            $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
-        }
+        $this->dashboard->load($this->params->getRequired('home'));
 
         $activeHome = $this->dashboard->getActiveHome();
         if (! $activeHome->getEntries()) {
@@ -101,6 +99,7 @@ class DashboardsController extends CompatController
     public function newHomeAction()
     {
         $this->setTitle(t('Add new Dashboard Home'));
+        $this->dashboard->load();
 
         $paneForm = (new NewHomePaneForm($this->dashboard))
             ->on(NewHomePaneForm::ON_SUCCESS, function () {
@@ -114,11 +113,16 @@ class DashboardsController extends CompatController
     public function editHomeAction()
     {
         $this->setTitle(t('Update Home'));
+        $this->dashboard->load();
 
         $home = $this->params->getRequired('home');
         if (! $this->dashboard->hasEntry($home)) {
             $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
+
+        // TODO: Shouldn't be necessary. load() should get the name already and
+        //       the form should otherwise ensure it has the required data
+        $this->dashboard->activateHome($this->dashboard->getEntry($home));
 
         $homeForm = (new HomePaneForm($this->dashboard))
             ->on(HomePaneForm::ON_SUCCESS, function () {
@@ -133,11 +137,16 @@ class DashboardsController extends CompatController
     public function removeHomeAction()
     {
         $this->setTitle(t('Remove Home'));
+        $this->dashboard->load();
 
         $home = $this->params->getRequired('home');
         if (! $this->dashboard->hasEntry($home)) {
             $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
+
+        // TODO: Shouldn't be necessary. load() should get the name already and
+        //       the form should otherwise ensure it has the required data
+        $this->dashboard->activateHome($this->dashboard->getEntry($home));
 
         $homeForm = (new RemoveHomePaneForm($this->dashboard))
             ->on(RemoveHomePaneForm::ON_SUCCESS, function () {
@@ -151,11 +160,16 @@ class DashboardsController extends CompatController
     public function newPaneAction()
     {
         $this->setTitle(t('Add new Dashboard'));
+        $this->dashboard->load();
 
         $home = $this->params->getRequired('home');
         if (! $this->dashboard->hasEntry($home)) {
             $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
+
+        // TODO: Shouldn't be necessary. load() should get the name already and
+        //       the form should otherwise ensure it has the required data
+        $this->dashboard->activateHome($this->dashboard->getEntry($home));
 
         $paneForm = (new NewHomePaneForm($this->dashboard))
             ->on(NewHomePaneForm::ON_SUCCESS, function () {
@@ -169,6 +183,7 @@ class DashboardsController extends CompatController
     public function editPaneAction()
     {
         $this->setTitle(t('Update Pane'));
+        $this->dashboard->load();
 
         $pane = $this->params->getRequired('pane');
         $home = $this->params->getRequired('home');
@@ -176,6 +191,10 @@ class DashboardsController extends CompatController
         if (! $this->dashboard->hasEntry($home)) {
             $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
+
+        // TODO: Shouldn't be necessary. load() should get the name already and
+        //       the form should otherwise ensure it has the required data
+        $this->dashboard->activateHome($this->dashboard->getEntry($home));
 
         if (! $this->dashboard->getActiveHome()->hasEntry($pane)) {
             $this->httpNotFound(sprintf(t('Pane "%s" not found'), $pane));
@@ -195,6 +214,7 @@ class DashboardsController extends CompatController
     public function removePaneAction()
     {
         $this->setTitle(t('Remove Pane'));
+        $this->dashboard->load();
 
         $home = $this->params->getRequired('home');
         $paneParam = $this->params->getRequired('pane');
@@ -202,6 +222,10 @@ class DashboardsController extends CompatController
         if (! $this->dashboard->hasEntry($home)) {
             $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
+
+        // TODO: Shouldn't be necessary. load() should get the name already and
+        //       the form should otherwise ensure it has the required data
+        $this->dashboard->activateHome($this->dashboard->getEntry($home));
 
         if (! $this->dashboard->getActiveHome()->hasEntry($paneParam)) {
             $this->httpNotFound(sprintf(t('Pane "%s" not found'), $paneParam));
@@ -224,6 +248,13 @@ class DashboardsController extends CompatController
             $this->setTitle(t('Select Dashlets'));
         }
 
+        $this->dashboard->load();
+
+        $home = $this->params->getRequired('home');
+        // TODO: Shouldn't be necessary. load() should get the name already and
+        //       the form should otherwise ensure it has the required data
+        $this->dashboard->activateHome($this->dashboard->getEntry($home));
+
         $dashletForm = new DashletForm($this->dashboard);
         $dashletForm->populate($this->getRequest()->getPost());
         $dashletForm->on(DashletForm::ON_SUCCESS, function () {
@@ -236,6 +267,7 @@ class DashboardsController extends CompatController
     public function editDashletAction()
     {
         $this->setTitle(t('Edit Dashlet'));
+        $this->dashboard->load();
 
         $pane = $this->validateDashletParams();
         $dashlet = $pane->getEntry($this->getParam('dashlet'));
@@ -255,6 +287,8 @@ class DashboardsController extends CompatController
     public function removeDashletAction()
     {
         $this->setTitle(t('Remove Dashlet'));
+        $this->dashboard->load();
+
         $this->validateDashletParams();
 
         $removeForm = (new RemoveDashletForm($this->dashboard))
@@ -280,6 +314,8 @@ class DashboardsController extends CompatController
         $dashboards = Json::decode($dashboards['dashboardData'], true);
         $originals = $dashboards['originals'];
         unset($dashboards['originals']);
+
+        $this->dashboard->load();
 
         $orgHome = null;
         $orgPane = null;
@@ -402,6 +438,8 @@ class DashboardsController extends CompatController
             $this->setTitle(t('Add Dashlet'));
         }
 
+        $this->dashboard->load();
+
         $setupForm = new SetupNewDashboardForm($this->dashboard);
         $setupForm->on(SetupNewDashboardForm::ON_SUCCESS, function () use ($setupForm) {
             $this->redirectNow($setupForm->getRedirectUrl());
@@ -412,7 +450,9 @@ class DashboardsController extends CompatController
 
     public function settingsAction()
     {
+        $this->dashboard->load();
         $this->createTabs();
+
         $activeHome = $this->dashboard->getActiveHome();
         // We can't grant access the user to the dashboard manager if there aren't any dashboards to manage
         if (! $activeHome || (! $activeHome->hasEntries() && count($this->dashboard->getEntries()) === 1)) {
@@ -445,8 +485,7 @@ class DashboardsController extends CompatController
     {
         $tabs = $this->dashboard->getTabs();
         $activeHome = $this->dashboard->getActiveHome();
-        if (($activeHome && $activeHome->hasEntries()) ||
-            ($activeHome && ! $activeHome->isDisabled() && count($this->dashboard->getEntries()) > 1)) {
+        if ($activeHome && ($activeHome->getName() !== DashboardHome::DEFAULT_HOME || $activeHome->hasEntries())) {
             $tabs->extend(new DashboardSettings());
         }
 
@@ -462,6 +501,10 @@ class DashboardsController extends CompatController
         if (! $this->dashboard->hasEntry($home)) {
             $this->httpNotFound(sprintf(t('Home "%s" not found'), $home));
         }
+
+        // TODO: Shouldn't be necessary. load() should get the name already and
+        //       the form should otherwise ensure it has the required data
+        $this->dashboard->activateHome($this->dashboard->getEntry($home));
 
         if (! $this->dashboard->getActiveHome()->hasEntry($pane)) {
             $this->httpNotFound(sprintf(t('Pane "%s" not found'), $pane));
