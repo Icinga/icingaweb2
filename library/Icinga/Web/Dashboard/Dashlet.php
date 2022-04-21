@@ -162,12 +162,11 @@ class Dashlet extends BaseDashboard
             ));
         } else {
             $url = $this->getUrl();
-            $url->setParam('showCompact', true);
 
-            $dashletHtml->setAttribute('data-icinga-url', $url);
+            $dashletHtml->setAttribute('data-icinga-url', $url->with('showCompact', true));
             $dashletHtml->addHtml(new HtmlElement('h1', null, new Link(
                 t($this->getTitle()),
-                $url->getUrlWithout(['showCompact', 'limit'])->getRelativeUrl(),
+                $url->without(['limit', 'view'])->getRelativeUrl(),
                 [
                     'aria-label'       => t($this->getTitle()),
                     'title'            => t($this->getTitle()),

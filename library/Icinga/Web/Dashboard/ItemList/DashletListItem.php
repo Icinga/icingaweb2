@@ -67,7 +67,7 @@ class DashletListItem extends BaseHtmlElement
         if ($this->renderDetailActions) {
             $header->addHtml(new Link(
                 t($this->dashlet->getTitle()),
-                $this->dashlet->getUrl()->getUrlWithout(['showCompact', 'limit'])->getRelativeUrl(),
+                $this->dashlet->getUrl()->getRelativeUrl(),
                 [
                     'class'            => 'dashlet-title',
                     'aria-label'       => t($this->dashlet->getTitle()),
