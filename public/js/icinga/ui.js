@@ -212,6 +212,16 @@
             this.icinga.behaviors.navigation.trySetActiveAndSelectedByUrl($('#col1').data('icingaUrl'));
         },
 
+        moveToRight: function () {
+            let col1 = document.getElementById('col1'),
+                col2 = document.getElementById('col2'),
+                col1Backup = this.cutContainer($(col1));
+
+            this.cutContainer($(col2)); // Clear col2 states
+            this.pasteContainer($(col2), col1Backup);
+            this.layout2col();
+        },
+
         cutContainer: function ($col) {
             var props = {
               'elements': $('#' + $col.attr('id') + ' > *').detach(),
@@ -331,6 +341,8 @@
             $c.removeData('icingaRefresh');
             $c.removeData('lastUpdate');
             $c.removeData('icingaModule');
+            delete $c[0].dataset.icingaContainerId;
+            $c.removeAttr('class').attr('class', 'container');
             this.icinga.loader.stopPendingRequestsFor($c);
             $c.trigger('close-column');
             $c.html('');

@@ -224,57 +224,60 @@
          * Read the pane url from the current URL and load the corresponding panes into containers to
          * match the current history state.
          *
-         * @param   {Boolean|Null}  onload  Set to true when the main pane should not be updated, defaults to false
+         * @param   {Boolean}  onload  Set to true when the main pane should not be updated, defaults to false
          */
-        applyLocationBar: function (onload) {
-            var icinga = this.icinga,
-                main,
-                parts;
+        applyLocationBar: function (onload = false) {
+            let col2State = this.getCol2State();
 
-            if (typeof onload === 'undefined') {
-                onload = false;
+            if (onload && document.querySelector('#layout > #login')) {
+                // The user landed on the login
+                let redirectInput = document.querySelector('#login form input[name=redirect]');
+                redirectInput.value = redirectInput.value + col2State;
+                return;
             }
 
-            // TODO: Still hardcoding col1/col2, shall be dynamic soon
-            main = document.location.pathname + document.location.search;
-            if (! onload && $('#col1').data('icingaUrl') !== main) {
-                icinga.loader.loadUrl(
-                    main,
-                    $('#col1')
-                ).addToHistory = false;
+            let col1 = document.getElementById('col1'),
+                col2 = document.getElementById('col2'),
+                col1Url = document.location.pathname + document.location.search;
+
+            let col2Url;
+            if (col2State && col2State.match(/^#!/)) {
+                col2Url = col2State.split(/#!/)[1];
             }
 
-            if (this.getPaneAnchor(0)) {
-                $('#col1').data('icingaUrl', $('#col1').data('icingaUrl') + '#' + this.getPaneAnchor(0));
+            // This uses jQuery only because of its internal data attribute cache -.-
+            let currentCol1Url = $(col1).data('icingaUrl'),
+                currentCol2Url = $(col2).data('icingaUrl');
+
+            let loadCol1 = ! onload,
+                loadCol2 = !! col2Url;
+            if (currentCol2Url === col1Url) {
+                // User navigated forward
+                this.icinga.ui.moveToLeft();
+                loadCol1 = false;
+            } else if (currentCol1Url === col2Url) {
+                // User navigated back
+                this.icinga.ui.moveToRight();
+                loadCol2 = false;
             }
 
-            var hash = this.getCol2State();
-            if (hash && hash.match(/^#!/)) {
-                parts = hash.split(/#!/);
-
-                if ($('#layout > #login').length) {
-                    // We are on the login page
-                    var redirect = $('#login form input[name=redirect]').first();
-                    redirect.val(
-                        redirect.val() + '#!' + parts[1]
-                    );
-                } else {
-                    if ($('#col2').data('icingaUrl') !== parts[1]) {
-                        var req = icinga.loader.loadUrl(
-                            parts[1],
-                            $('#col2')
-                        );
-                        req.addToHistory = false;
-                        req.scripted = onload;
-                    }
+            if (loadCol1 && currentCol1Url !== col1Url) {
+                let anchor = this.getPaneAnchor(0);
+                if (anchor) {
+                    col1Url += '#' + anchor;
                 }
 
-                // TODO: Replace with dynamic columns
-                icinga.ui.layout2col();
+                this.icinga.loader.loadUrl(col1Url, $(col1)).addToHistory = false;
+            }
 
-            } else {
-                // TODO: Replace with dynamic columns
-                icinga.ui.layout1col();
+            if (loadCol2 && currentCol2Url !== col2Url) {
+                let col2Req = this.icinga.loader.loadUrl(col2Url, $(col2));
+                col2Req.addToHistory = false;
+                col2Req.scripted = onload;
+
+                this.icinga.ui.layout2col();
+            } else if (! loadCol2 && ! col2Url) {
+                this.icinga.ui.layout1col();
             }
         },
 
