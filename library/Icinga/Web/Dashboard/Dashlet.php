@@ -6,7 +6,6 @@ namespace Icinga\Web\Dashboard;
 
 use Icinga\Application\Icinga;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
-use Icinga\Web\Dashboard\Common\ModuleDashlet;
 use Icinga\Web\Request;
 use Icinga\Web\Url;
 use ipl\Html\BaseHtmlElement;
@@ -20,8 +19,6 @@ use ipl\Web\Widget\Link;
  */
 class Dashlet extends BaseDashboard
 {
-    use ModuleDashlet;
-
     /** @var string Database table name */
     const TABLE = 'icingaweb_dashlet';
 
@@ -45,6 +42,20 @@ class Dashlet extends BaseDashboard
      * @var string
      */
     protected $progressLabel;
+
+    /**
+     * A flag to identify whether this dashlet widget originates from a module
+     *
+     * @var bool
+     */
+    protected $moduleDashlet = false;
+
+    /**
+     * The name of the module this dashlet comes from
+     *
+     * @var string
+     */
+    protected $module;
 
     /**
      * Create a new dashlet displaying the given url in the provided pane
@@ -143,6 +154,54 @@ class Dashlet extends BaseDashboard
     public function getPane()
     {
         return $this->pane;
+    }
+
+    /**
+     * Get the name of the module which provides this dashlet
+     *
+     * @return ?string
+     */
+    public function getModule()
+    {
+        return $this->module;
+    }
+
+    /**
+     * Set the name of the module which provides this dashlet
+     *
+     * @param string $module
+     *
+     * @return $this
+     */
+    public function setModule(string $module): self
+    {
+        $this->module = $module;
+
+        return $this;
+    }
+
+    /**
+     * Get whether this widget originates from a module
+     *
+     * @return bool
+     */
+    public function isModuleDashlet(): bool
+    {
+        return $this->moduleDashlet;
+    }
+
+    /**
+     * Set whether this dashlet widget is provided by a module
+     *
+     * @param bool $moduleDashlet
+     *
+     * @return $this
+     */
+    public function setModuleDashlet(bool $moduleDashlet): self
+    {
+        $this->moduleDashlet = $moduleDashlet;
+
+        return $this;
     }
 
     /**
