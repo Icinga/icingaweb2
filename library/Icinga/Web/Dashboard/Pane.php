@@ -8,7 +8,7 @@ use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Model;
-use Icinga\Web\Dashboard\Common\DashboardControls;
+use Icinga\Web\Dashboard\Common\DashboardEntries;
 use Icinga\Web\Dashboard\Common\Sortable;
 use ipl\Stdlib\Filter;
 use ipl\Web\Url;
@@ -20,7 +20,7 @@ use function ipl\Stdlib\get_php_type;
  */
 class Pane extends BaseDashboard implements Sortable
 {
-    use DashboardControls;
+    use DashboardEntries;
 
     const TABLE = 'icingaweb_dashboard';
 
@@ -98,13 +98,12 @@ class Pane extends BaseDashboard implements Sortable
         $this->setEntries([]);
         foreach ($dashlets as $dashlet) {
             $newDashlet = new Dashlet($dashlet->name, $dashlet->url, $this);
-            $newDashlet->fromArray([
-                'uuid'        => $dashlet->id,
-                'title'       => $dashlet->label,
-                'priority'    => $dashlet->priority,
-                'pane'        => $this,
-                'description' => $dashlet->icingaweb_module_dashlet->description
-            ]);
+            $newDashlet
+                ->setPane($this)
+                ->setUuid($dashlet->id)
+                ->setTitle($dashlet->label)
+                ->setPriority($dashlet->priority)
+                ->setDescription($dashlet->icingaweb_module_dashlet->description);
 
             $this->addEntry($newDashlet);
         }

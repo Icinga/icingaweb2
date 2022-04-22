@@ -6,7 +6,7 @@ namespace Icinga\Web\Dashboard;
 
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Dashboard\Common\DashboardControls;
+use Icinga\Web\Dashboard\Common\DashboardEntries;
 use Icinga\Web\Dashboard\Common\DashboardEntry;
 use Icinga\Web\Dashboard\Common\DashboardManager;
 use ipl\Html\BaseHtmlElement;
@@ -27,7 +27,7 @@ use ipl\Web\Widget\Tabs;
 class Dashboard extends BaseHtmlElement implements DashboardEntry
 {
     use DashboardManager;
-    use DashboardControls;
+    use DashboardEntries;
 
     /**
      * Base path of our new dashboards controller

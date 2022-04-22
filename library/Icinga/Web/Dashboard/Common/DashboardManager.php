@@ -274,13 +274,13 @@ trait DashboardManager
         foreach ($mg->getLoadedModules() as $module) {
             foreach ($module->getDashboard() as $dashboard) {
                 $pane = new Pane($dashboard->getName());
-                $pane->fromArray($dashboard->getProperties());
+                $pane->setProperties($dashboard->getProperties());
 
                 $priority = 0;
                 foreach ($dashboard->getDashlets() as $name => $configPart) {
                     $uuid = self::getSHA1($module->getName() . $pane->getName() . $name);
                     $dashlet = new Dashlet($name, $configPart['url'], $pane);
-                    $dashlet->fromArray($configPart);
+                    $dashlet->setProperties($configPart);
                     $dashlet
                         ->setUuid($uuid)
                         ->setModuleDashlet(true)
@@ -305,7 +305,7 @@ trait DashboardManager
             foreach ($module->getDashlets() as $dashlet) {
                 $identifier = self::getSHA1($module->getName() . $dashlet->getName());
                 $newDashlet = new Dashlet($dashlet->getName(), $dashlet->getUrl());
-                $newDashlet->fromArray($dashlet->getProperties());
+                $newDashlet->setProperties($dashlet->getProperties());
                 $newDashlet
                     ->setUuid($identifier)
                     ->setModule($module->getName())
@@ -382,7 +382,7 @@ trait DashboardManager
                 $dashlet->setDescription(t($moduleDashlet->description));
             }
 
-            $dashlet->fromArray([
+            $dashlet->setProperties([
                 'label'    => t($moduleDashlet->label),
                 'priority' => $moduleDashlet->priority,
                 'uuid'     => $moduleDashlet->id,
