@@ -7,7 +7,7 @@ namespace Icinga\Web\Dashboard;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Model\Home;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
-use Icinga\Web\Dashboard\Common\DashboardControls;
+use Icinga\Web\Dashboard\Common\DashboardEntries;
 use Icinga\Web\Dashboard\Common\Sortable;
 use ipl\Stdlib\Filter;
 
@@ -15,7 +15,7 @@ use function ipl\Stdlib\get_php_type;
 
 class DashboardHome extends BaseDashboard implements Sortable
 {
-    use DashboardControls;
+    use DashboardEntries;
 
     /**
      * Name of the default home
@@ -178,12 +178,11 @@ class DashboardHome extends BaseDashboard implements Sortable
 
         foreach ($panes as $pane) {
             $newPane = new Pane($pane->name);
-            $newPane->fromArray([
-                'uuid'     => $pane->id,
-                'title'    => $pane->label,
-                'priority' => $pane->priority,
-                'home'     => $this
-            ]);
+            $newPane
+                ->setHome($this)
+                ->setUuid($pane->id)
+                ->setTitle($pane->label)
+                ->setPriority($pane->priority);
 
             $newPane->loadDashboardEntries($name);
             $this->addEntry($newPane);

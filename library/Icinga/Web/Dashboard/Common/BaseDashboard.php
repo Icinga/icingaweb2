@@ -4,8 +4,6 @@
 
 namespace Icinga\Web\Dashboard\Common;
 
-use Icinga\Common\DataExtractor;
-
 /**
  * Base class for all dashboard widget types
  *
@@ -13,8 +11,6 @@ use Icinga\Common\DataExtractor;
  */
 abstract class BaseDashboard implements DashboardEntry
 {
-    use DataExtractor;
-
     /**
      * Not translatable name of this widget
      *
@@ -69,7 +65,7 @@ abstract class BaseDashboard implements DashboardEntry
         $this->title = $name;
 
         if (! empty($properties)) {
-            $this->fromArray($properties);
+            $this->setProperties($properties);
         }
     }
 
@@ -182,7 +178,7 @@ abstract class BaseDashboard implements DashboardEntry
     /**
      * Set the widget's description
      *
-     * @param string $description
+     * @param ?string $description
      *
      * @return  $this
      */
@@ -215,6 +211,39 @@ abstract class BaseDashboard implements DashboardEntry
     public function getPriority(): int
     {
         return $this->order;
+    }
+
+    /**
+     * Set properties from the given list (no matching setter) are ignored
+     *
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function setProperties(array $data): self
+    {
+        foreach ($data as $name => $value) {
+            $func = 'set' . ucfirst($name);
+            if (method_exists($this, $func)) {
+                $this->$func($value);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get this class's structure as array
+     *
+     * Stringifies the attrs or set to null if it doesn't have a value, when $stringify is true
+     *
+     * @param bool $stringify Whether, the attributes should be returned unmodified
+     *
+     * @return array
+     */
+    public function toArray(bool $stringify = true): array
+    {
+        return [];
     }
 
     public function hasEntries()
