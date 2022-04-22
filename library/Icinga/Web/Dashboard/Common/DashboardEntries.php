@@ -9,7 +9,7 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Dashboard\Dashboard;
 use function ipl\Stdlib\get_php_type;
 
-trait DashboardControls
+trait DashboardEntries
 {
     /**
      * A list of @see BaseDashboard assigned to this dashboard widget
@@ -17,6 +17,13 @@ trait DashboardControls
      * @var BaseDashboard
      */
     private $dashboards = [];
+
+    /**
+     * Whether to sort the entries when retrieving using getEntries()
+     *
+     * @var bool
+     */
+    private $sortEntries = false;
 
     public function hasEntries()
     {
@@ -39,11 +46,15 @@ trait DashboardControls
 
     public function getEntries()
     {
-        // An entry can be added individually afterwards, it might be the case that the priority
-        // order gets mixed up, so we have to sort things here before being able to render them
-        uasort($this->dashboards, function (BaseDashboard $x, BaseDashboard $y) {
-            return $x->getPriority() <=> $y->getPriority();
-        });
+        if ($this->sortEntries) {
+            $this->sortEntries = false;
+
+            // An entry can be added individually afterwards, it might be the case that the priority
+            // order gets mixed up, so we have to sort things here before being able to render them
+            uasort($this->dashboards, function (BaseDashboard $x, BaseDashboard $y) {
+                return $x->getPriority() <=> $y->getPriority();
+            });
+        }
 
         return $this->dashboards;
     }
@@ -51,6 +62,7 @@ trait DashboardControls
     public function setEntries(array $entries)
     {
         $this->dashboards = $entries;
+        $this->sortEntries = true;
 
         return $this;
     }
@@ -61,6 +73,7 @@ trait DashboardControls
             $this->getEntry($dashboard->getName())->fromArray($dashboard->toArray(false));
         } else {
             $this->dashboards[$dashboard->getName()] = $dashboard;
+            $this->sortEntries = true;
         }
 
         return $this;
