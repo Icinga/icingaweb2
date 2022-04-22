@@ -208,6 +208,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
 
     protected function assembleDashletElements()
     {
+        $this->addElement('hidden', 'custom_url', ['required' => false, 'value' => 'y']);
         $this->addElement('text', 'dashlet', [
             'required'    => true,
             'label'       => t('Dashlet Title'),

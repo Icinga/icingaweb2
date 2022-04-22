@@ -266,7 +266,7 @@ class DashletForm extends SetupNewDashboardForm
             // When the user wishes to create a new dashboard pane, we have to explicitly reset the dashboard panes
             // of the original home, so that it isn't considered as we want to move the pane even though it isn't
             // supposed to when the original home contains a dashboard with the same name
-            // @see DashboardHome::managePanes() for details
+            // @see DashboardHome::manageEntries() for details
             $selectedPane = $this->getPopulatedValue('pane');
             if ((! $selectedPane || $selectedPane === self::CREATE_NEW_PANE)
                 && ! $currentHome->hasEntry($currentPane->getName())) {
