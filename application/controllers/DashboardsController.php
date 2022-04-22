@@ -249,6 +249,11 @@ class DashboardsController extends CompatController
 
         $this->dashboard->load();
 
+        $home = $this->params->getRequired('home');
+        // TODO: Shouldn't be necessary. load() should get the name already and
+        //       the form should otherwise ensure it has the required data
+        $this->dashboard->activateHome($this->dashboard->getEntry($home));
+
         $dashletForm = new DashletForm($this->dashboard);
         $dashletForm->populate($this->getRequest()->getPost());
         $dashletForm->on(DashletForm::ON_SUCCESS, function () {

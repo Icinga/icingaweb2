@@ -56,7 +56,7 @@ class DashletForm extends SetupNewDashboardForm
                     $panes = $firstHome->getEntryKeyTitleArr();
                 }
             } else {
-                $panes = $activeHome->getEntryKeyTitleArr();
+                $panes = $activeHome->loadDashboardEntries()->getEntryKeyTitleArr();
             }
         } elseif ($this->dashboard->hasEntry($populatedHome)) {
             $this->dashboard->loadDashboardEntries($populatedHome);
