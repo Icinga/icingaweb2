@@ -3,10 +3,15 @@
 
 namespace Icinga\Web\Controller;
 
+use Icinga\Application\Icinga;
 use Icinga\Application\Modules\Module;
 use Icinga\Common\PdfExport;
+use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\File\Pdf;
+use Icinga\Model\Dashlet;
+use Icinga\Web\Dashboard\Dashboard;
 use ipl\I18n\Translation;
+use ipl\Stdlib\Filter;
 use Zend_Controller_Action;
 use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Request_Abstract;
@@ -448,6 +453,28 @@ class ActionController extends Zend_Controller_Action
             $form->handleRequest();
         }
         $this->_helper->layout()->autoRefreshForm = $form;
+
+        // Load associated dashlet into the session
+        if ($this->isXhr() && ($dashletId = $this->Window()->getDashletId()) !== null) {
+            $sessionStorage = Session::getSession()->getNamespace('dashboard.dashlets');
+
+            $dashletData = $sessionStorage->get($dashletId, []);
+            if (empty($dashletData)) {
+                $dashlet = Dashlet::on(Dashboard::getConn())
+                    ->filter(Filter::equal('id', $dashletId))
+                    ->first();
+                if ($dashlet !== null) {
+                    $dashletData['storedUrl'] = $dashlet->url;
+
+                    $sessionStorage->set($dashletId, $dashletData);
+                } elseif ($this->getRequest()->isGet()) {
+                    $this->redirectNow($this->getRequest()->getUrl()->without('_dashlet'));
+                } else {
+                    // TODO: Really? What if the dashlet is removed in the meantime and the user changes e.g. the view mode?
+                    throw new HttpBadRequestException('Invalid dashlet ID');
+                }
+            }
+        }
     }
 
     /**
@@ -527,6 +554,76 @@ class ActionController extends Zend_Controller_Action
 
         if ($this->autorefreshInterval !== null) {
             $resp->setAutoRefreshInterval($this->autorefreshInterval);
+        }
+
+        // TODO: Doesn't detect multipart update changes (no GET (redirect) involved)
+        if (($dashletId = $this->Window()->getDashletId()) !== null) {
+            $sessionStorage = Session::getSession()->getNamespace('dashboard.dashlets');
+            $dashletData = $sessionStorage->get($dashletId);
+            $dashletUrl = Url::fromPath($dashletData['storedUrl']);
+
+            $frameworkParams = array_flip(Icinga::app()->getFrameworkParams());
+
+            $newParams = [];
+            if (($locationQuery = $resp->getHeader('X-Icinga-Location-Query', true))) {
+                foreach (UrlParams::fromQueryString($locationQuery)->toArray() as $newParam) {
+                    if (isset($newParams[$newParam[0]])) {
+                        $newParams[$newParam[0]][] = $newParam[1];
+                    } else {
+                        $newParams[$newParam[0]] = [$newParam[1]];
+                    }
+                }
+            } else {
+                foreach ($this->getRequest()->getUrl()->getParams()->toArray() as $newParam) {
+                    if (isset($newParams[$newParam[0]])) {
+                        $newParams[$newParam[0]][] = $newParam[1];
+                    } else {
+                        $newParams[$newParam[0]] = [$newParam[1]];
+                    }
+                }
+            }
+
+            $oldParams = [];
+            foreach ($dashletUrl->getParams()->toArray() as $oldParam) {
+                if (isset($oldParams[$oldParam[0]])) {
+                    $oldParams[$oldParam[0]][] = $oldParam[1];
+                } else {
+                    $oldParams[$oldParam[0]] = [$oldParam[1]];
+                }
+            }
+
+            $changed = false;
+            foreach ($newParams as $name => $values) {
+                if (array_key_exists($name, $frameworkParams)) {
+                    if (isset($oldParams[$name])) {
+                        $newParams[$name] = $oldParams[$name];
+                    } else {
+                        unset($newParams[$name]);
+                    }
+                } elseif (! isset($oldParams[$name])) {
+                    $changed = true;
+                } elseif (! $changed) {
+                    $changed = ! empty(array_diff($values, $oldParams[$name]));
+                }
+            }
+
+            if ($changed) {
+                $urlParams = $dashletUrl->setParams([])->getParams();
+                foreach ($newParams as $name => $values) {
+                    $urlParams->addValues($name, array_map('rawurldecode', $values));
+                }
+
+                $changedUrl = $dashletUrl->getRelativeUrl();
+                if (! isset($dashletData['changedUrl']) || $dashletData['changedUrl'] !== $changedUrl) {
+                    $dashletData['changedUrl'] = $changedUrl;
+                    $sessionStorage->set($dashletId, $dashletData);
+                }
+
+                $resp->setHeader('X-Icinga-Extra-Updates', '#col1');
+            } elseif (isset($dashletData['changedUrl'])) {
+                unset($dashletData['changedUrl']);
+                $sessionStorage->set($dashletId, $dashletData);
+            }
         }
     }
 
