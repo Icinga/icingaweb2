@@ -1003,9 +1003,10 @@
             var extraUpdates = req.getResponseHeader('X-Icinga-Extra-Updates');
             if (!! extraUpdates && req.getResponseHeader('X-Icinga-Redirect-Http') !== 'yes') {
                 $.each(extraUpdates.split(','), function (idx, el) {
-                    var parts = el.trim().split(';');
-                    var $target;
-                    var url;
+                    let parts = el.trim().split(';'),
+                        refreshesView,
+                        $target,
+                        url;
                     if (parts.length === 2) {
                         $target = $('#' + parts[0]);
                         if (! $target.length) {
@@ -1014,6 +1015,7 @@
                         }
 
                         url = parts[1];
+                        refreshesView = false;
                     } else if (parts.length === 1) {
                         $target = $(parts[0]).closest(".container").not(req.$target);
                         if (! $target.length) {
@@ -1022,12 +1024,17 @@
                         }
 
                         url = $target.data('icingaUrl');
+                        refreshesView = true;
                     } else {
                         _this.icinga.logger.error('Invalid extra update', el);
                         return;
                     }
 
-                    _this.loadUrl(url, $target).addToHistory = false;
+                    let extraReq = _this.loadUrl(url, $target, undefined, undefined, undefined, refreshesView);
+                    if (extraReq) {
+                        extraReq.addToHistory = false;
+                        extraReq.scripted = true;
+                    }
                 });
             }
 
