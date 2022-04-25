@@ -266,6 +266,15 @@
                 headers['X-Icinga-Container'] = id;
             }
 
+            if (method !== 'GET' && $target[0].dataset.icingaDashletId) {
+                let currentUrlPath = this.icinga.utils.parseUrl($target.data('icingaUrl')).path;
+                let newUrlPath = this.icinga.utils.parseUrl(url).path;
+
+                if (newUrlPath === currentUrlPath) {
+                    headers['X-Icinga-DashletId'] = $target[0].dataset.icingaDashletId;
+                }
+            }
+
             if (autorefresh) {
                 headers['X-Icinga-Autorefresh'] = '1';
             }
@@ -774,6 +783,14 @@
             var windowId = req.getResponseHeader('X-Icinga-WindowId');
             if (windowId) {
                 this.icinga.ui.setWindowId(windowId);
+            }
+
+            // Preserve the dashlet identifier if available, clean up if not
+            let dashletId = req.getResponseHeader('X-Icinga-DashletId');
+            if (dashletId) {
+                req.$target[0].dataset.icingaDashletId = decodeURIComponent(dashletId);
+            } else {
+                delete req.$target[0].dataset.icingaDashletId;
             }
 
             // Handle search requests, still hardcoded.

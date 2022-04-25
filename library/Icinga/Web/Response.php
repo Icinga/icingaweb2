@@ -317,28 +317,44 @@ class Response extends Zend_Controller_Response_Http
     {
         $redirectUrl = $this->getRedirectUrl();
         if ($this->getRequest()->isXmlHttpRequest()) {
+            $window = Window::getInstance();
+            $dashletId = $window->getDashletId();
+
             if ($redirectUrl !== null) {
                 if ($this->getRequest()->isGet() && Icinga::app()->getViewRenderer()->view->compact) {
                     $redirectUrl->getParams()->set('showCompact', true);
+                }
+
+                if ($dashletId !== null && $this->getRequest()->getUrl()->getPath() === $redirectUrl->getPath()) {
+                    $redirectUrl->getParams()->set('_dashlet', bin2hex($dashletId));
                 }
 
                 $this->setHeader('X-Icinga-Redirect', rawurlencode($redirectUrl->getAbsoluteUrl()), true);
                 if ($this->getRerenderLayout()) {
                     $this->setHeader('X-Icinga-Rerender-Layout', 'yes', true);
                 }
+            } else {
+                if ($dashletId !== null) {
+                    $this->setHeader('X-Icinga-DashletId', bin2hex($dashletId));
+                }
             }
+
             if ($this->getOverrideWindowId()) {
-                $this->setHeader('X-Icinga-WindowId', Window::getInstance()->getId(), true);
+                $this->setHeader('X-Icinga-WindowId', $window->getId(), true);
             }
+
             if ($this->getRerenderLayout()) {
                 $this->setHeader('X-Icinga-Container', 'layout', true);
             }
+
             if ($this->isWindowReloaded()) {
                 $this->setHeader('X-Icinga-Reload-Window', 'yes', true);
             }
+
             if ($this->isReloadCss()) {
                 $this->setHeader('X-Icinga-Reload-Css', 'now', true);
             }
+
             if (($autoRefreshInterval = $this->getAutoRefreshInterval()) !== null) {
                 $this->setHeader('X-Icinga-Refresh', $autoRefreshInterval, true);
             }

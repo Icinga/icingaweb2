@@ -157,6 +157,11 @@ class ActionController extends Zend_Controller_Action
             $this->_helper->layout()->disableLayout();
         }
 
+        if (($dashletId = $this->params->shift('_dashlet')) !== null) {
+            // Not removed from the request's url because GET requests for the same url should still be tracked
+            $this->Window()->setDashletId(hex2bin($dashletId));
+        }
+
         // $auth->authenticate($request, $response, $this->requiresLogin());
         if ($this->requiresLogin()) {
             if (! $request->isXmlHttpRequest() && $request->isApiRequest()) {

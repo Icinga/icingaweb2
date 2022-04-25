@@ -19,6 +19,9 @@ class Window
     /** @var string */
     protected $containerId;
 
+    /** @var ?string A dashlet's UUID which the current request is associated with */
+    protected $dashletId;
+
     public function __construct($id)
     {
         $parts = explode('_', $id, 2);
@@ -58,6 +61,28 @@ class Window
     public function getContainerId()
     {
         return $this->containerId ?: $this->id;
+    }
+
+    /**
+     * Get the dashlet's UUID which the current request is associated with
+     *
+     * @return ?string
+     */
+    public function getDashletId(): ?string
+    {
+        return $this->dashletId;
+    }
+
+    /**
+     * Associate the current request with a specific dashlet
+     *
+     * @param ?string $dashletId The dashlet's UUID
+     *
+     * @return void
+     */
+    public function setDashletId(?string $dashletId): void
+    {
+        $this->dashletId = $dashletId;
     }
 
     /**
@@ -111,13 +136,18 @@ class Window
     public static function getInstance()
     {
         if (! isset(static::$window)) {
-            $id = Icinga::app()->getRequest()->getHeader('X-Icinga-WindowId');
+            $request = Icinga::app()->getRequest();
+            $id = $request->getHeader('X-Icinga-WindowId');
             if (empty($id) || $id === static::UNDEFINED) {
                 Icinga::app()->getResponse()->setOverrideWindowId();
                 $id = static::generateId();
             }
 
             static::$window = new Window($id);
+
+            if (($dashletId = $request->getHeader('X-Icinga-DashletId'))) {
+                static::$window->setDashletId(hex2bin($dashletId));
+            }
         }
 
         return static::$window;
