@@ -207,6 +207,9 @@ class Module
      */
     protected $routes = array();
 
+    /** @var string[] Framework parameters of this module */
+    protected $frameworkParams = [];
+
     /**
      * A set of menu elements
      *
@@ -281,6 +284,18 @@ class Module
         $this->metadataFile   = $basedir . '/module.info';
 
         $this->translationDomain = $name;
+    }
+
+    /**
+     * Get this module's framework parameters
+     *
+     * @return string[]
+     */
+    public function getFrameworkParams(): array
+    {
+        $this->launchConfigScript();
+
+        return $this->frameworkParams;
     }
 
     /**
@@ -1459,6 +1474,20 @@ class Module
     protected function addRoute($name, Zend_Controller_Router_Route_Abstract $route)
     {
         $this->routes[$name] = $route;
+        return $this;
+    }
+
+    /**
+     * Register URL parameters which should be ignored by various URL handlers
+     *
+     * @param string ...$params
+     *
+     * @return $this
+     */
+    protected function addFrameworkParams(string ...$params): self
+    {
+        $this->frameworkParams = array_merge($this->frameworkParams, $params);
+
         return $this;
     }
 }

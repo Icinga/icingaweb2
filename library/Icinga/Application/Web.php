@@ -134,6 +134,33 @@ class Web extends EmbeddedWeb
     }
 
     /**
+     * Get default framework parameters and those of the current module
+     *
+     * @return string[]
+     */
+    public function getFrameworkParams(): array
+    {
+        $defaultParams = [
+            'isIframe',
+            'showFullscreen',
+            'showCompact',
+            'renderLayout',
+            '_disableLayout',
+            '_dashlet',
+            '_dev',
+            // TODO: is this really a "framework" param? or should the all be called differently, widgetyUrlFlags perhaps?
+            'page'
+        ];
+
+        $moduleParams = [];
+        if (($moduleName = $this->getRequest()->getModuleName()) !== 'default') {
+            $moduleParams = $this->getModuleManager()->getModule($moduleName)->getFrameworkParams();
+        }
+
+        return array_merge($defaultParams, $moduleParams);
+    }
+
+    /**
      * Prepare routing
      *
      * @return $this
