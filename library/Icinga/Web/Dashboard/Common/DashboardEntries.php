@@ -105,7 +105,7 @@ trait DashboardEntries
 
     public function rewindEntries()
     {
-        $dashboards = $this->dashboards;
+        $dashboards = $this->getEntries();
         if ($this instanceof Dashboard) {
             $dashboards = array_filter($dashboards, function ($home) {
                 return ! $home->isDisabled();
