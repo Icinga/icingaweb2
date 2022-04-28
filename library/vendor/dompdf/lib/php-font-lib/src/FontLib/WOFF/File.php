@@ -46,11 +46,11 @@ class File extends \FontLib\TrueType\File {
       $data = $this->read($entry->length);
 
       if ($entry->length < $entry->origLength) {
-        $data = gzuncompress($data);
+        $data = (string) gzuncompress($data);
       }
 
       // Prepare data ...
-      $length        = strlen($data);
+      $length        = mb_strlen($data, '8bit');
       $entry->length = $entry->origLength = $length;
       $entry->offset = $dataOffset;
 

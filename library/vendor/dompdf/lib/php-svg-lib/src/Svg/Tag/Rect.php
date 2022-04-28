@@ -2,7 +2,7 @@
 /**
  * @package php-svg-lib
  * @link    http://github.com/PhenX/php-svg-lib
- * @author  Fabien Ménager <fabien.menager@gmail.com>
+ * @author  Fabien MÃ©nager <fabien.menager@gmail.com>
  * @license GNU LGPLv3+ http://www.gnu.org/copyleft/lesser.html
  */
 
@@ -27,10 +27,20 @@ class Rect extends Shape
         }
 
         if (isset($attributes['width'])) {
-            $this->width = $attributes['width'];
+            if ('%' === substr($attributes['width'], -1)) {
+                $factor = substr($attributes['width'], 0, -1) / 100;
+                $this->width = $this->document->getWidth() * $factor;
+            } else {
+                $this->width = $attributes['width'];
+            }
         }
         if (isset($attributes['height'])) {
-            $this->height = $attributes['height'];
+            if ('%' === substr($attributes['height'], -1)) {
+                $factor = substr($attributes['height'], 0, -1) / 100;
+                $this->height = $this->document->getHeight() * $factor;
+            } else {
+                $this->height = $attributes['height'];
+            }
         }
 
         if (isset($attributes['rx'])) {

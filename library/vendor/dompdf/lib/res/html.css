@@ -48,7 +48,7 @@ summary {
 
 body {
   page-break-before: avoid;
-  display: block;
+  display: block !important;
   counter-increment: page;
 }
 
@@ -148,16 +148,18 @@ table {
 }
 
 table[border] {
-  border-style: outset;
-  border-color: gray;
+  border: outset gray;
 }
 
-/* This won't work (???) */
-/*
 table[border] td,
 table[border] th {
-  border: 1pt solid grey;
-}*/
+  border: 1px inset gray;
+}
+
+table[border="0"] td,
+table[border="0"] th {
+  border-width: 0;
+}
 
 /* make sure backgrounds are inherited in tables  -- see bug 4510 */
 td, th, tr {
@@ -213,14 +215,12 @@ td {
 th {
   display: table-cell;
   vertical-align: inherit;
+  text-align: center;
   font-weight: bold;
   padding: 1px;
 }
 
 /* inlines */
-q {
-  quotes: '"' '"' "'" "'"; /* FIXME only the first level is used */
-}
 
 q:before {
   content: open-quote;

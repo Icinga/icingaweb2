@@ -9,6 +9,7 @@ namespace Dompdf\FrameReflower;
 
 use Dompdf\FrameDecorator\Block as BlockFrameDecorator;
 use Dompdf\FrameDecorator\Table as TableFrameDecorator;
+use Dompdf\Helpers;
 
 /**
  * Reflows table cells
@@ -31,6 +32,9 @@ class TableCell extends Block
      */
     function reflow(BlockFrameDecorator $block = null)
     {
+        // Counters and generated content
+        $this->_set_content();
+
         $style = $this->_frame->get_style();
 
         $table = TableFrameDecorator::find_parent_table($this->_frame);
@@ -50,23 +54,23 @@ class TableCell extends Block
         //FIXME?
         $h = $this->_frame->get_containing_block("h");
 
-        $left_space = (float)$style->length_in_pt(array($style->margin_left,
+        $left_space = (float)$style->length_in_pt([$style->margin_left,
                 $style->padding_left,
-                $style->border_left_width),
+                $style->border_left_width],
             $w);
 
-        $right_space = (float)$style->length_in_pt(array($style->padding_right,
+        $right_space = (float)$style->length_in_pt([$style->padding_right,
                 $style->margin_right,
-                $style->border_right_width),
+                $style->border_right_width],
             $w);
 
-        $top_space = (float)$style->length_in_pt(array($style->margin_top,
+        $top_space = (float)$style->length_in_pt([$style->margin_top,
                 $style->padding_top,
-                $style->border_top_width),
+                $style->border_top_width],
             $h);
-        $bottom_space = (float)$style->length_in_pt(array($style->margin_bottom,
+        $bottom_space = (float)$style->length_in_pt([$style->margin_bottom,
                 $style->padding_bottom,
-                $style->border_bottom_width),
+                $style->border_bottom_width],
             $h);
 
         $style->width = $cb_w = $w - $left_space - $right_space;
@@ -86,14 +90,14 @@ class TableCell extends Block
 
         // Set the containing blocks and reflow each child
         foreach ($this->_frame->get_children() as $child) {
-            if ($page->is_full()) {
-                break;
-            }
-
             $child->set_containing_block($content_x, $content_y, $cb_w, $h);
             $this->process_clear($child);
             $child->reflow($this->_frame);
-            $this->process_float($child, $x + $left_space, $w - $right_space - $left_space);
+            $this->process_float($child, $content_x, $cb_w);
+
+            if ($page->is_full()) {
+                break;
+            }
         }
 
         // Determine our height
@@ -117,5 +121,37 @@ class TableCell extends Block
         $style->height = $height;
         $this->_text_align();
         $this->vertical_align();
+
+        // Handle relative positioning
+        foreach ($this->_frame->get_children() as $child) {
+            $this->position_relative($child);
+        }
+    }
+
+    public function get_min_max_content_width(): array
+    {
+        // Ignore percentage values for a specified width here, as they are
+        // relative to the table width, which is not determined yet
+        $style = $this->_frame->get_style();
+        $width = $style->width;
+        $fixed_width = $width !== "auto" && !Helpers::is_percent($width);
+
+        [$min, $max] = $this->get_min_max_child_width();
+
+        // For table cells: Use specified width if it is greater than the
+        // minimum defined by the content
+        if ($fixed_width) {
+            $width = (float) $style->length_in_pt($width, 0);
+            $min = max($width, $min);
+            $max = $min;
+        }
+
+        // Handle min/max width style properties
+        $min_width = $this->resolve_min_width(null);
+        $max_width = $this->resolve_max_width(null);
+        $min = Helpers::clamp($min, $min_width, $max_width);
+        $max = Helpers::clamp($max, $min_width, $max_width);
+
+        return [$min, $max];
     }
 }
