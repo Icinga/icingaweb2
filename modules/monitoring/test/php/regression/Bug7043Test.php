@@ -53,7 +53,7 @@ class Bug7043Test extends BaseTestCase
             )
         )));
 
-        $defaultBackend = Backend::createBackend();
+        $defaultBackend = Backend::instance();
 
         $this->assertEquals('backendName', $defaultBackend->getName(), 'Default backend has name set');
     }
