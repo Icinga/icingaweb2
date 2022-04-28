@@ -171,7 +171,9 @@ abstract class FilterChain extends Filter
             return '';
         }
         foreach ($this->filters() as $filter) {
-            $parts[] = $filter->toQueryString();
+            if (! $filter->isEmpty()) {
+                $parts[] = $filter->toQueryString();
+            }
         }
 
         // TODO: getLevel??
