@@ -1168,9 +1168,6 @@ class Form extends Zend_Form
             || $this->getUidDisabled()
             || $this->wasSent($formData)
         ) {
-            if (($frameUpload = (bool) $request->getUrl()->shift('_frameUpload', false))) {
-                $this->getView()->layout()->setLayout('wrapped');
-            }
             $this->populate($formData); // Necessary to get isSubmitted() to work
             if (! $this->getSubmitLabel() || $this->isSubmitted()) {
                 if ($this->isValid($formData)
@@ -1192,10 +1189,8 @@ class Form extends Zend_Form
                         $this->getResponse()->json()
                             ->setSuccessData($message !== null ? array('message' => $message) : null)
                             ->sendResponse();
-                    } elseif (! $frameUpload) {
-                        $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                     } else {
-                        $this->getView()->layout()->redirectUrl = $this->getRedirectUrl()->getAbsoluteUrl();
+                        $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                     }
                 // TODO: Still bad. An api target must not behave as one if it's not an api request
                 } elseif ($this->getIsApiTarget() || $this->getRequest()->isApiRequest()) {
