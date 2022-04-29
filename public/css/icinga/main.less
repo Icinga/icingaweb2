@@ -358,11 +358,11 @@ a:hover > .icon-cancel {
 
 // Collapsibles
 
-.collapsible.collapsed {
+.collapsible.collapsed:not(details) {
   overflow: hidden;
 }
 
-.collapsible.collapsed:not([data-toggle-element]) {
+.collapsible.collapsed:not([data-toggle-element], details) {
   position: relative;
 
   &:after {
