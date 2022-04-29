@@ -20,7 +20,8 @@ use Icinga\Web\Notification;
 use Icinga\Web\Widget\Tabextension\DashboardSettings;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Url;
-use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 
 class DashboardsController extends CompatController
 {
@@ -419,19 +420,18 @@ class DashboardsController extends CompatController
 
         $this->dashboard->activate('dashboard_settings');
 
-        $this->addControl(new ActionLink(
-            t('Add new Home'),
+        $this->addControl(new Link(
+            [new Icon('plus'), t('Add new Home')],
             Url::fromPath(Dashboard::BASE_ROUTE . '/new-home'),
-            'plus',
             [
-                'class'               => 'add-home',
+                'class'               => ['button-link', 'add-home'],
                 'data-icinga-modal'   => true,
                 'data-no-icinga-ajax' => true
             ]
         ));
 
         $this->content->getAttributes()->add('class', 'dashboard-manager');
-        $this->controls->getAttributes()->add('class', 'dashboard-manager-controls');
+        $this->controls->getAttributes()->add('class', ['separated', 'dashboard-manager-controls']);
 
         $this->addContent(new Settings($this->dashboard));
     }

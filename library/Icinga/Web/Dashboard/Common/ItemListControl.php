@@ -8,8 +8,8 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\ValidHtml;
 use ipl\Web\Url;
+use ipl\Web\Widget\ActionLink;
 use ipl\Web\Widget\Icon;
-use ipl\Web\Widget\Link;
 
 abstract class ItemListControl extends BaseHtmlElement
 {
@@ -64,7 +64,7 @@ abstract class ItemListControl extends BaseHtmlElement
     protected function assembleHeader(Url $url, string $title)
     {
         $header = HtmlElement::create('h1', ['class' => 'collapsible-header'], $title);
-        $header->addHtml(new Link(t('Edit'), $url, [
+        $header->addHtml(new ActionLink(t('Edit'), $url, null, [
             'data-icinga-modal'   => true,
             'data-no-icinga-ajax' => true
         ]));

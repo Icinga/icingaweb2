@@ -10,7 +10,8 @@ use Icinga\Web\Dashboard\Pane;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Web\Url;
-use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 
 class DashboardList extends ItemListControl
 {
@@ -70,6 +71,10 @@ class DashboardList extends ItemListControl
             'pane' => $this->pane->getName()
         ]);
 
-        return new ActionLink(t('Add Dashlet'), $url, 'plus', ['class' => 'add-dashlet']);
+        return new Link(
+            [new Icon('plus'), t('Add Dashlet')],
+            $url,
+            ['class' => ['button-link', 'add-dashlet']]
+        );
     }
 }
