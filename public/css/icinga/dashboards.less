@@ -1,3 +1,5 @@
+// Welcome view and introduction
+
 .welcome-view {
   position: relative;
 }
@@ -7,29 +9,20 @@
   right: 50%;
   position: absolute;
   transform: translate(50%, -50%);
-  color: @text-color;
 
-  h1, p {
-    color: inherit;
+  h2, p {
     text-align: center;
   }
 
-  h1 {
-    border-bottom: none;
-  }
-
   p {
-    opacity: .9;
-    width: 58em;
     font-size: 1.1em;
-    line-height: 1.5em;
   }
 
   // Welcome page form controls
-  form.icinga-form .form-controls {
-    margin-left: 13em;
-    margin-top: 1.8em;
-    justify-content: center;
+  form {
+    display: flex;
+    padding: 0 20em;
+    justify-content: space-around;
   }
 }
 

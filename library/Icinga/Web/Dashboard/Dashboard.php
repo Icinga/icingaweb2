@@ -232,11 +232,11 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
         if (! $activeHome || (! $activeHome->hasEntries() && $activeHome->getName() === DashboardHome::DEFAULT_HOME)) {
             $this->setAttribute('class', 'dashboard-introduction');
 
-            $this->addHtml(HtmlElement::create('h1', null, t('Welcome to Icinga Web 2!')));
+            $this->addHtml(HtmlElement::create('h2', null, t('Welcome to Icinga Web 2!')));
             $this->addHtml(HtmlElement::create(
                 'p',
                 null,
-                t('You will see this screen every time you log in and haven\'t created any dashboards yet.')
+                t('You will see this screen every time you log in.')
             ));
 
             $message = t(
@@ -247,7 +247,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
 
             $message = t(
                 'Now you can either customize which dashlets to display, or use the system default dashlets.'
-                . ' You will be always able to edit them afterwards.'
+                . ' You will always be able to edit them afterwards.'
             );
             $this->addHtml(HtmlElement::create('p', null, $message));
 

@@ -6,13 +6,15 @@ namespace Icinga\Forms\Dashboard;
 
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
-use ipl\Web\Compat\CompatForm;
+use ipl\Html\Form;
 use ipl\Web\Url;
 
-class WelcomeForm extends CompatForm
+class WelcomeForm extends Form
 {
     /** @var Dashboard */
     protected $dashboard;
+
+    protected $defaultAttributes = ['class' => 'icinga-controls'];
 
     public function __construct(Dashboard $dashboard)
     {
@@ -27,9 +29,6 @@ class WelcomeForm extends CompatForm
 
     protected function assemble()
     {
-        $element = $this->createElement('submit', 'btn_use_defaults', ['label' => t('Use System Defaults')]);
-        $this->registerElement($element)->decorate($element);
-
         $this->addElement('submit', 'btn_customize_dashlets', [
             'label'               => t('Add Dashlets Now'),
             'href'                => Url::fromPath(Dashboard::BASE_ROUTE . '/setup-dashboard'),
@@ -37,7 +36,7 @@ class WelcomeForm extends CompatForm
             'data-no-icinga-ajax' => true
         ]);
 
-        $this->getElement('btn_customize_dashlets')->setWrapper($element->getWrapper());
+        $this->addElement('submit', 'btn_use_defaults', ['label' => t('Use System Defaults')]);
     }
 
     protected function onSuccess()
