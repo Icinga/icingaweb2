@@ -291,7 +291,7 @@
                     this.currentLayout = matched[1];
                     if (this.currentLayout === 'poor' || this.currentLayout === 'minimal') {
                         this.layout1col();
-                    } else {
+                    } else if (this.icinga.initialized) {
                         // layout1col() also triggers this, that's why an else is required
                         $('#layout').trigger('layout-change');
                     }
@@ -319,7 +319,11 @@
             this.icinga.logger.debug('Switching to single col');
             $('#layout').removeClass('twocols');
             this.closeContainer($('#col2'));
-            $('#layout').trigger('layout-change');
+
+            if (this.icinga.initialized) {
+                $('#layout').trigger('layout-change');
+            }
+
             // one-column layouts never have any selection active
             $('#col1').removeData('icinga-actiontable-former-href');
             this.icinga.behaviors.actiontable.clearAll();
@@ -340,7 +344,10 @@
             if (! this.isOneColLayout()) { return; }
             this.icinga.logger.debug('Switching to double col');
             $('#layout').addClass('twocols');
-            $('#layout').trigger('layout-change');
+
+            if (this.icinga.initialized) {
+                $('#layout').trigger('layout-change');
+            }
         },
 
         prepareColumnFor: function ($el, $target) {
