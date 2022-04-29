@@ -335,7 +335,9 @@ a:hover > .icon-cancel {
 }
 
 .collapsible.can-collapse:not(.collapsed) + .collapsible-control button,
-.collapsible.can-collapse:not(.collapsed) > .collapsible-control {
+.collapsible.can-collapse:not(.collapsed) > .collapsible-control,
+details.collapsible[open] + .collapsible-control button,
+details.collapsible[open] > .collapsible-control {
   i.expand-icon {
     display: none;
   }
@@ -346,7 +348,9 @@ a:hover > .icon-cancel {
 }
 
 .collapsible.collapsed + .collapsible-control button,
-.collapsible.collapsed > .collapsible-control {
+.collapsible.collapsed > .collapsible-control,
+details.collapsible:not([open]) + .collapsible-control button,
+details.collapsible:not([open]) > .collapsible-control {
   i.expand-icon {
     display: inline;
   }
@@ -358,11 +362,11 @@ a:hover > .icon-cancel {
 
 // Collapsibles
 
-.collapsible.collapsed {
+.collapsible.collapsed:not(details) {
   overflow: hidden;
 }
 
-.collapsible.collapsed:not([data-toggle-element]) {
+.collapsible.collapsed:not([data-toggle-element], details) {
   position: relative;
 
   &:after {
