@@ -20,6 +20,9 @@ class DashboardHomeList extends ItemListControl
 
     protected $defaultAttributes = ['class' => 'home-list-control'];
 
+    /** @var bool Whether the header should be hidden or not */
+    protected $headerDisabled = false;
+
     public function __construct(DashboardHome $home)
     {
         $this->home = $home;
@@ -29,6 +32,20 @@ class DashboardHomeList extends ItemListControl
             ->registerAttributeCallback('data-icinga-home', function () {
                 return $this->home->getName();
             });
+    }
+
+    /**
+     * Set whether the header should be hidden or not
+     *
+     * @param bool $state
+     *
+     * @return $this
+     */
+    public function setHeaderDisabled(bool $state = true): self
+    {
+        $this->headerDisabled = $state;
+
+        return $this;
     }
 
     protected function getHtmlId(): string
@@ -43,12 +60,13 @@ class DashboardHomeList extends ItemListControl
 
     protected function createItemList(): BaseHtmlElement
     {
-        $url = Url::fromPath(Dashboard::BASE_ROUTE . '/edit-home')
-            ->setParams(['home' => $this->home->getName()]);
+        if (! $this->headerDisabled) {
+            $url = Url::fromPath(Dashboard::BASE_ROUTE . '/edit-home')
+                ->setParams(['home' => $this->home->getName()]);
+            $this->assembleHeader($url, $this->home->getTitle());
+        }
 
-        $this->assembleHeader($url, $this->home->getTitle());
-
-        $list = HtmlElement::create('ul', ['class' => 'dashboard-item-list']);
+        $list = HtmlElement::create('div', ['class' => 'dashboard-item-list']);
         // List all dashboard panes
         foreach ($this->home->getEntries() as $pane) {
             $pane->setHome($this->home); // In case it's not set

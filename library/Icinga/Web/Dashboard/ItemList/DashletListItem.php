@@ -63,7 +63,7 @@ class DashletListItem extends BaseHtmlElement
      */
     protected function assembleHeader(): ValidHtml
     {
-        $header = HtmlElement::create('h1', ['class' => 'dashlet-header']);
+        $header = HtmlElement::create('div', ['class' => 'dashlet-header']);
 
         if ($this->renderDetailActions) {
             $header->addHtml(new Link(
@@ -90,6 +90,7 @@ class DashletListItem extends BaseHtmlElement
                 'data-no-icinga-ajax' => true
             ]));
 
+            $header->addHtml(HtmlElement::create('div', ['class' => 'spacer']));
             $header->addHtml(ItemListControl::createDragInitiator());
         } else {
             $header->add($this->dashlet->getTitle());

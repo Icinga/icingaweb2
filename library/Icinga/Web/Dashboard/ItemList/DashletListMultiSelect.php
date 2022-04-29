@@ -38,6 +38,12 @@ class DashletListMultiSelect extends DashletListItem
     {
         parent::assemble();
 
-        $this->addWrapper($this->createLabel());
+        $itemContent = HtmlElement::create('div', ['class' => 'dashlet-form-items']);
+        $itemContent->addFrom($this);
+        $this->setHtmlContent();
+
+        $label = $this->createLabel();
+        $label->addHtml($itemContent);
+        $this->addHtml($label);
     }
 }

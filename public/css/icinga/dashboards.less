@@ -24,299 +24,193 @@
     padding: 0 20em;
     justify-content: space-around;
   }
+
+  input[name="btn_use_defaults"] {
+    background-color: @icinga-blue;
+    color: @text-color-on-icinga-blue;
+
+    &:hover, &:focus {
+      background-color: @icinga-blue-dark;
+    }
+  }
 }
 
-// Collapse/Expand icons wrapper
-.dashboard-list-info, .dashlets-list-info {
-  float: left;
-  width: 1.5%;
-  height: 6%;
-  cursor: pointer;
+// Sortable dashboard styles
 
-  .collapse-icon, .expand-icon {
-    top: 0;
-    position: absolute;
+.dashboard-settings {
+  .collapsible-header, .dashlet-header {
+    .spacer {
+      flex: 1 1 auto;
+    }
 
-    &:before {
-      font-size: 2em;
+    .widget-drag-initiator {
+      display: none; // Appears on hover
+      align-self: center;
+      margin-left: 0.5em;
+
+      cursor: grab;
+      color: @gray-light;
+    }
+
+    &:hover .widget-drag-initiator {
+      display: inline-block;
     }
   }
 
-  .collapse-icon {
-    display: block;
+  .dashlet-header .widget-drag-initiator {
+    font-size: 1.4em;
+    margin-right: -0.4em; // Counteracts the parent padding
   }
 
-  .expand-icon {
-    display: none;
+  .collapsible-header {
+    .widget-drag-initiator {
+      font-size: 1.3em;
+    }
+
+    border-bottom: 1px solid transparent;
+    &:hover {
+      border-bottom-color: @gray-light;
+    }
+  }
+
+  .home-list-control, .dashboard-list-control, .dashlet-list-item {
+    &.draggable-widget-chosen {
+      outline: 2px dashed @gray-light;
+      outline-offset: 2px;
+    }
   }
 }
 
-.collapsed .dashboard-list-info, .collapsed .dashlets-list-info {
-  .collapse-icon {
-    display: none;
-  }
+// General dashboard styles
 
-  .expand-icon {
-    display: block;
+.dashboard-manager-controls .add-home {
+  float: right;
+  background-color: @icinga-blue;
+  color: @text-color-on-icinga-blue;
+
+  &:hover, &:focus {
+    background-color: @icinga-blue-dark;
   }
 }
 
-.collapsed .dashlet-list-item {
-  margin-top: 1.3em;
-}
-
-// All the dashboard item lists
-.dashboard-item-list, .dashlet-item-list {
-  padding: 0;
-  margin: 1em 0 0;
-  width: 100%;
-  display: flex;
-  flex-flow: row wrap;
-  list-style-type: none;
-
-  label {
-    width: 49.5%; // (100% % 2) - .5em aka (margin-right)
-    margin-bottom: .5em;
+.dashboard-settings, .dashboard-form {
+  .collapsible-header, .dashlet-header {
+    .action-link {
+      margin-left: .5em;
+    }
   }
 
-  label:nth-child(odd) {
-    margin-right: .5em;
+  .collapsible-header {
+    display: flex;
+    align-items: baseline;
+
+    font-size: 1.333em;
+    font-weight: bold;
+    margin: 0.25em 0 0.25em;
+
+    .action-link {
+      font-weight: normal;
+    }
+  }
+
+  .home-list-control, .dashboard-list-control {
+    &:not(:first-of-type) {
+      margin-top: .75em;
+    }
+  }
+
+  .dashlet-header {
+    display: flex;
+    font-size: 1.25em;
+
+    .dashlet-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .dashboard-item-list, .dashlet-item-list {
+    margin: 0 0 .5em 0;
+  }
+
+  .home-list-control > .dashboard-item-list, .dashlet-item-list {
+    margin-left: 2em;
+  }
+
+  .home-list-control > .dashboard-item-list + .add-dashboard, .dashlet-item-list + .add-dashlet {
+    margin-left: 1.6em; // 2em (target width) / 1.25em (font-size)
+  }
+
+  .dashlet-item-list {
+    display: flex;
+    flex-flow: row wrap;
+    list-style: none;
+    padding: 0;
+
+    &:not(:empty) {
+      margin: -.25em -.25em .25em 1.75em;
+    }
+
+    .dashlet-list-item {
+      flex: 1 1 auto;
+      width: 50%;
+      max-width: ~"calc(50% - .5em - 2px)"; // 50% - horizontal margins - horizontal-border
+      margin: .25em;
+    }
   }
 
   .dashlet-list-item {
-    display: flex;
-    flex-direction: column;
-    background: @gray-lightest;
-    border: 1px solid @gray-light;
+    padding: .1em 0;
+
     .rounded-corners();
+    border: 1px solid @gray-light;
 
-    section.caption, h1 {
-      padding-left: .5em;
-      font-weight: 500;
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-    }
-
-    h1 {
+    .dashlet-header {
+      padding: 0 .5em;
       border-bottom: 1px solid @gray-light;
-      -webkit-line-clamp: 1;
     }
 
     .caption {
+      padding: .25em .5em 0 .5em;
       height: 3em;
-      font-size: 1.1em;
-      color: @text-color-light;
+      overflow: hidden;
+      display: -webkit-box;
       -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+
+      color: @text-color-light;
     }
   }
 
-  .dashlet-list-item:hover {
-    background-color: @tr-hover-color;
-    cursor: pointer;
-  }
-
-  // Simulate a multiselect based on the checkbox state
-  input[type="checkbox"]:checked + li {
-    outline-offset: -2px;
-    outline: 2px solid @icinga-blue;
-    background-color: @tr-active-color;
+  .add-dashboard, .add-dashlet {
+    display: block; // To let it span the entire width
+    font-size: 1.25em;
   }
 }
 
-.dashlet-item-list.empty-list {
-  margin: 0 0 .9em;
-}
+// Dashboard form styles
 
-// Dashboard manager
-:not(.dashboard) > .container > .content.dashboard-manager {
-  padding-top: 0;
-}
-
-.dashboard-manager-controls {
-  padding-bottom: .5em;
-}
-
-.dashboard-settings {
-  display: flex;
-  flex-direction: column;
-  margin-top: .6em;
-  margin-right: 1em;
-}
-
-.dashboard-manager-controls,
-.home-list-control .collapsible-header,
-.dashboard-list-control .collapsible-header {
-  border-bottom: 1px solid @gray-light;
-}
-
-// Add new home button of the dashboard manager
-.controls .add-home {
-  .button();
-  float: right;
-  margin-right: 1.15em;
-  font-size: 1.2em;
-  font-weight: 500;
-  color: @text-color-on-icinga-blue;
-  background-color: @icinga-blue;
-}
-
-.collapsed .action-link.add-dashlet, .collapsed .action-link.add-dashboard {
-  display: none;
-}
-
-.action-link.add-dashboard {
-  margin: .5em 0 0;
-}
-
-.action-link.add-dashlet, .action-link.add-dashboard {
-  .rounded-corners();
-  order: 1;
-  font-size: 1.2em;
-  font-weight: 500;
-  padding: .6em 1em;
-  text-decoration: none;
-  background-color: @low-sat-blue;
-}
-
-.dashboard-list-control .dashlet-item-list {
-  display: flex;
-  margin-left: 2.2em;
-  width: 97.8%; // 100% - 2.2em margin-left
-
-  .dashlet-list-item {
-    width: 49.7%;
-    cursor: default;
-    margin-bottom: .5em;
-    background: transparent;
+.dashboard-form {
+  .dashlet-header {
+    font-size: 1em;
   }
 
-  .dashlet-list-item:nth-child(odd) {
-    margin-right: .5em;
-  }
-}
-
-.dashboard-list-control {
-  width: inherit;
-
-  h1.collapsible-header {
-    margin-left: 1.5em;
-  }
-
-  .action-link.add-dashlet {
-    width: 97.8%;
-    margin-left: 1.8em;
-  }
-}
-
-.home-list-control, .dashboard-list-control {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-
-  h1.collapsible-header a:not(.dashlet-title), h1.dashlet-header a:not(.dashlet-title) {
-    margin-left: .3em;
-    font-weight: normal;
-    color: @icinga-blue;
-  }
-
-  h1.dashlet-header a.dashlet-title {
-    color: @text-color;
-  }
-
-  h1.collapsible-header {
-    margin-right: .3em;
-  }
-
-  .dashlets-list-info, .dashboard-list-info {
-    .expand-icon {
-      margin-top: .9em;
-    }
-
-    .collapse-icon {
-      margin-top: .6em;
-    }
-  }
-}
-
-// Dashboard home list controls only
-.home-list-control {
-  width: 100%;
-
-  & > h1.collapsible-header {
-    margin-left: 1.5em;
-    margin-bottom: -1em;
-  }
-
-  .dashboard-list-control, .action-link.add-dashboard {
-    margin-left: 1.4em;
-  }
-
-  .dashboard-list-control {
-    .dashboard-item-list, .dashlet-item-list {
-      margin-bottom: 0;
-      margin-top: 0;
-    }
-
-    .dashlet-item-list {
-      width: inherit;
-      margin-left: 2em;
-      padding-right: 2em;
-    }
-
-    .action-link.add-dashlet {
-      margin-left: 1.6em;
-      width: calc((49.74% * 2) - 1.2em); // 2x flex columns - own size
-    }
-  }
-}
-
-// Add dashlets mini wizard
-.form-list-control {
-  span {
-    font-size: 1.3em;
-    opacity: .8;
-    font-weight: 500;
-  }
-}
-
-.form-list-control.multi-dashlets {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  border-top: 2px solid @gray-light;
-
-  .control-group {
+  .control-group > .dashlet-item-list {
+    // The empty list
     width: 100%;
   }
-}
 
-.form-list-control.multi-dashlets:not(.collapsed) span {
-  margin-left: 1.4em;
-}
-
-// Drag and drop
-.draggable-widget-chosen {
-  .box-shadow();
-  background: fade(@icinga-blue, 20);
-  border: .5em @body-bg-color dashed;
-}
-
-// Handle icon
-.widget-drag-initiator {
-  cursor: grab;
-  float: right;
-  font-size: 1.4em;
-  margin-top: -.05em;
-  display: none;
-
-  &:before {
-    color: @base-gray-light;
+  .dashlet-form-items {
+    background-color: @gray-lightest;
   }
-}
+  .dashlet-form-items:hover, input[type="checkbox"]:focus + .dashlet-form-items {
+    background-color: @tr-hover-color;
+  }
 
-h1.collapsible-header:hover .widget-drag-initiator,
-.dashlet-list-item:hover .widget-drag-initiator {
-  display: block;
+  .dashlet-item-list input[type="checkbox"]:checked + .dashlet-form-items {
+    outline: 2px solid @icinga-blue;
+    background-color: @tr-active-color;
+    .rounded-corners();
+  }
 }

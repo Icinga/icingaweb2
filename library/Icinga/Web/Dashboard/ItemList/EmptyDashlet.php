@@ -9,14 +9,9 @@ use ipl\Html\ValidHtml;
 
 class EmptyDashlet extends DashletListMultiSelect
 {
-    protected function createEmptyList()
-    {
-        return HtmlElement::create('ul', ['class' => 'dashlet-item-list empty-list']);
-    }
-
     protected function assembleHeader(): ValidHtml
     {
-        $header = HtmlElement::create('h1', ['class' => 'dashlet-header']);
+        $header = HtmlElement::create('div', ['class' => 'dashlet-header']);
         $header->add(t('Custom Url'));
 
         return $header;
@@ -28,14 +23,5 @@ class EmptyDashlet extends DashletListMultiSelect
         $section->add(t('Create a dashlet with custom url and filter'));
 
         return $section;
-    }
-
-    protected function assemble()
-    {
-        $this->addHtml($this->assembleHeader());
-        $this->addHtml($this->assembleSummary());
-
-        $this->addWrapper($this->createLabel());
-        $this->addWrapper($this->createEmptyList());
     }
 }

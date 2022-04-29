@@ -43,7 +43,6 @@ class DashboardList extends ItemListControl
     protected function createItemList(): BaseHtmlElement
     {
         $pane = $this->pane;
-        $this->getAttributes()->set('data-toggle-element', '.dashlets-list-info');
         $url = Url::fromPath(Dashboard::BASE_ROUTE . '/edit-pane')
             ->setParams(['home' => $pane->getHome()->getName(), 'pane' => $pane->getName()]);
 
