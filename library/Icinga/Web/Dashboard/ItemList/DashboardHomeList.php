@@ -10,7 +10,8 @@ use Icinga\Web\Dashboard\DashboardHome;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Web\Url;
-use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 
 class DashboardHomeList extends ItemListControl
 {
@@ -63,6 +64,10 @@ class DashboardHomeList extends ItemListControl
         $url = Url::fromPath(Dashboard::BASE_ROUTE . '/new-pane');
         $url->setParams(['home' => $this->home->getName()]);
 
-        return new ActionLink(t('Add Dashboard'), $url, 'plus', ['class' => 'add-dashboard']);
+        return new Link(
+            [new Icon('plus'), t('Add Dashboard')],
+            $url,
+            ['class' => ['button-link', 'add-dashboard']]
+        );
     }
 }
