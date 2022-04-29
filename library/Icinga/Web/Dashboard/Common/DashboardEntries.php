@@ -18,13 +18,6 @@ trait DashboardEntries
      */
     private $dashboards = [];
 
-    /**
-     * Whether to sort the entries when retrieving using getEntries()
-     *
-     * @var bool
-     */
-    private $sortEntries = false;
-
     public function hasEntries()
     {
         return ! empty($this->dashboards);
@@ -46,23 +39,12 @@ trait DashboardEntries
 
     public function getEntries()
     {
-        if ($this->sortEntries) {
-            $this->sortEntries = false;
-
-            // An entry can be added individually afterwards, it might be the case that the priority
-            // order gets mixed up, so we have to sort things here before being able to render them
-            uasort($this->dashboards, function (BaseDashboard $x, BaseDashboard $y) {
-                return $x->getPriority() <=> $y->getPriority();
-            });
-        }
-
         return $this->dashboards;
     }
 
     public function setEntries(array $entries)
     {
         $this->dashboards = $entries;
-        $this->sortEntries = true;
 
         return $this;
     }
@@ -73,7 +55,6 @@ trait DashboardEntries
             $this->getEntry($dashboard->getName())->fromArray($dashboard->toArray(false));
         } else {
             $this->dashboards[$dashboard->getName()] = $dashboard;
-            $this->sortEntries = true;
         }
 
         return $this;
@@ -134,13 +115,17 @@ trait DashboardEntries
             array_splice($data, $position, 0, [$dashboard]);
         }
 
+        $entries = [];
         foreach ($data as $index => $item) {
             if (count($data) !== 1) {
                 $item->setPriority($index);
             }
 
+            $entries[$item->getName()] = $item;
             $this->manageEntry($item, $dashboard->getName() === $item->getName() ? $origin : null);
         }
+
+        $this->setEntries($entries);
 
         return $this;
     }

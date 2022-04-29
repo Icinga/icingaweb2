@@ -48,7 +48,7 @@ class Pane extends Model
 
     public function getDefaultSort()
     {
-        return 'icingaweb_dashboard.name';
+        return 'priority';
     }
 
     public function createRelations(Relations $relations)

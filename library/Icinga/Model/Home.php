@@ -49,7 +49,7 @@ class Home extends Model
 
     public function getDefaultSort()
     {
-        return 'name';
+        return 'priority';
     }
 
     public function createRelations(Relations $relations)
