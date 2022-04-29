@@ -10,6 +10,7 @@ use Icinga\Web\Dashboard\ItemList\EmptyDashlet;
 use Icinga\Web\Dashboard\Pane;
 use Icinga\Web\Notification;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Html\ValidHtml;
 use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
@@ -114,8 +115,9 @@ class SetupNewDashboardForm extends BaseDashboardForm
             return;
         }
 
-        $emptyList = new EmptyDashlet();
-        $emptyList->setCheckBox($this->createElement('checkbox', 'custom_url', ['class' => 'sr-only']));
+        $emptyDashlet = new EmptyDashlet();
+        $emptyDashlet->setCheckBox($this->createElement('checkbox', 'custom_url', ['class' => 'sr-only']));
+        $emptyList = HtmlElement::create('ul', ['class' => 'dashlet-item-list'], $emptyDashlet);
 
         $listControl = $this->createFormListControls();
         $listControl->addHtml($emptyList);
@@ -123,9 +125,8 @@ class SetupNewDashboardForm extends BaseDashboardForm
         $this->addHtml($listControl);
 
         foreach (self::$moduleDashlets as $module => $dashlets) {
-            $listControl = $this->createFormListControls(true);
+            $listControl = $this->createFormListControls(ucfirst($module));
             $list = HtmlElement::create('ul', ['class' => 'dashlet-item-list']);
-            $listControl->addHtml(HtmlElement::create('span', null, ucfirst($module)));
 
             /** @var Dashlet $dashlet */
             foreach ($dashlets as $dashlet) {
@@ -173,17 +174,16 @@ class SetupNewDashboardForm extends BaseDashboardForm
             foreach (self::$moduleDashlets as $module => $dashlets) {
                 /** @var Dashlet $dashlet */
                 foreach ($dashlets as $dashlet) {
-                    $listControl = $this->createFormListControls(true);
-                    $listControl->getAttributes()->add('class', 'multi-dashlets');
+                    $this->addHtml(HtmlElement::create('h3', null, t($dashlet->getTitle())));
 
-                    $dashletName = $this->createElement('text', $module . '|' . $dashlet->getName(), [
+                    $this->addElement('text', $module . '|' . $dashlet->getName(), [
                         'required'    => true,
                         'label'       => t('Dashlet Title'),
                         'value'       => $dashlet->getTitle(),
                         'description' => t('Enter a title for the dashlet'),
                     ]);
 
-                    $dashletUrl = $this->createElement('textarea', $module . '|' . $dashlet->getName() . '_url', [
+                    $this->addElement('textarea', $module . '|' . $dashlet->getName() . '_url', [
                         'required'    => true,
                         'label'       => t('Url'),
                         'value'       => $dashlet->getUrl()->getRelativeUrl(),
@@ -191,16 +191,6 @@ class SetupNewDashboardForm extends BaseDashboardForm
                             'Enter url to be loaded in the dashlet. You can paste the full URL, including filters'
                         )
                     ]);
-
-                    $this->registerElement($dashletName)->decorate($dashletName);
-                    $this->registerElement($dashletUrl)->decorate($dashletUrl);
-
-                    $listControl->addHtml(HtmlElement::create('span', null, t($dashlet->getTitle())));
-
-                    $listControl->addHtml($dashletName);
-                    $listControl->addHtml($dashletUrl);
-
-                    $this->addHtml($listControl);
                 }
             }
         }
@@ -293,28 +283,31 @@ class SetupNewDashboardForm extends BaseDashboardForm
     /**
      * Create form list controls (can be collapsible if you want)
      *
-     * @param bool $makeCollapsible
+     * @param ?string $title
      *
      * @return ValidHtml
      */
-    protected function createFormListControls(bool $makeCollapsible = false): ValidHtml
+    protected function createFormListControls(string $title = null): ValidHtml
     {
-        $listControls = HtmlElement::create('div', [
-            'class' => ['control-group', 'form-list-control'],
-        ]);
-
-        if ($makeCollapsible) {
-            $listControls
-                ->getAttributes()
-                ->add('data-toggle-element', '.' . self::DATA_TOGGLE_ELEMENT)
-                ->add('class', 'collapsible');
-
-            $listControls->addHtml(HtmlElement::create('div', ['class' => self::DATA_TOGGLE_ELEMENT], [
-                new Icon('angle-down', ['class' => 'expand-icon', 'title' => t('Expand')]),
-                new Icon('angle-up', ['class' => 'collapse-icon', 'title' => t('Collapse')])
-            ]));
+        $controlGroup = HtmlElement::create('div', ['class' => 'control-group']);
+        if ($title === null) {
+            return $controlGroup;
         }
 
-        return $listControls;
+        $details = HtmlElement::create('details', [
+            'class'                 => ['dashboard-list-control', 'collapsible'],
+            'data-no-persistence'   => true
+        ]);
+        $summary = HtmlElement::create('summary', ['class' => 'collapsible-header']);
+        $summary->addHtml(
+            new Icon('angle-right', ['class' => 'expand-icon', 'title' => t('Expand')]),
+            new Icon('angle-down', ['class' => 'collapse-icon', 'title' => t('Collapse')]),
+            Text::create($title)
+        );
+
+        $details->addHtml($summary);
+        $details->prependWrapper($controlGroup);
+
+        return $details;
     }
 }

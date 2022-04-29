@@ -6,6 +6,7 @@ namespace Icinga\Web\Dashboard\Common;
 
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Html\ValidHtml;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
@@ -13,7 +14,7 @@ use ipl\Web\Widget\Icon;
 
 abstract class ItemListControl extends BaseHtmlElement
 {
-    protected $tag = 'div';
+    protected $tag = 'details';
 
     /**
      * Get this item's unique html identifier
@@ -63,12 +64,18 @@ abstract class ItemListControl extends BaseHtmlElement
      */
     protected function assembleHeader(Url $url, string $title)
     {
-        $header = HtmlElement::create('h1', ['class' => 'collapsible-header'], $title);
+        $header = HtmlElement::create('summary', ['class' => 'collapsible-header']);
+        $header->addHtml(
+            new Icon('angle-right', ['class' => 'expand-icon', 'title' => t('Expand')]),
+            new Icon('angle-down', ['class' => 'collapse-icon', 'title' => t('Collapse')])
+        );
+        $header->addHtml(Text::create($title));
         $header->addHtml(new ActionLink(t('Edit'), $url, null, [
             'data-icinga-modal'   => true,
             'data-no-icinga-ajax' => true
         ]));
 
+        $header->addHtml(HtmlElement::create('div', ['class' => 'spacer']));
         $header->addHtml(self::createDragInitiator());
         $this->addHtml($header);
     }
@@ -76,15 +83,9 @@ abstract class ItemListControl extends BaseHtmlElement
     protected function assemble()
     {
         $this->getAttributes()->add([
-            'id'                  => $this->getHtmlId(),
-            'class'               => 'collapsible',
-            'data-toggle-element' => '.dashboard-list-info',
+            'id'    => $this->getHtmlId(),
+            'class' => 'collapsible'
         ]);
-
-        $this->addHtml(HtmlElement::create('div', ['class' => $this->getCollapsibleControlClass()], [
-            new Icon('angle-down', ['class' => 'expand-icon', 'title' => t('Expand')]),
-            new Icon('angle-up', ['class' => 'collapse-icon', 'title' => t('Collapse')])
-        ]));
 
         $this->addHtml($this->createItemList());
 

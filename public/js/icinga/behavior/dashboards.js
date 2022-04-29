@@ -162,7 +162,7 @@
                         dataIdAttr  : 'id',
                         direction   : 'vertical',
                         draggable   : draggable,
-                        handle      : 'h1 > .widget-drag-initiator',
+                        handle      : '.widget-drag-initiator',
                         group       : { name : groupName },
                         chosenClass : 'draggable-widget-chosen'
                     };

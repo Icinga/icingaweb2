@@ -50,6 +50,7 @@ abstract class BaseDashboardForm extends CompatForm
     {
         // This is needed for the modal views
         $this->setAction((string) Url::fromRequest());
+        $this->getAttributes()->add('class', 'dashboard-form');
     }
 
     public function hasBeenSubmitted()
