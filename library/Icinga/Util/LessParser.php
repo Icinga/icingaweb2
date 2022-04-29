@@ -10,14 +10,8 @@ require_once 'lessphp/lessc.inc.php';
 
 class LessParser extends lessc
 {
-    /**
-     * @param bool $disableModes Disable replacing compiled Less colors with CSS var() function calls and don't inject
-     *                           light mode calls
-     */
-    public function __construct($disableModes = false)
+    public function __construct()
     {
-        if (! $disableModes) {
-            $this->setOption('plugins', [new Visitor()]);
-        }
+        $this->setOption('plugins', [new Visitor()]);
     }
 }
