@@ -53,9 +53,9 @@ class JavaScript
         'js/define.js'
     ];
 
-    public static function sendMinified($forIe11 = false)
+    public static function sendMinified()
     {
-        self::send(true, $forIe11);
+        self::send(true);
     }
 
     /**
@@ -65,7 +65,7 @@ class JavaScript
      *
      * @param   bool    $minified   Whether to compress the client side script code
      */
-    public static function send($minified = false, $forIe11 = false)
+    public static function send($minified = false)
     {
         header('Content-Type: application/javascript');
         $basedir = Icinga::app()->getBootstrapDirectory();
@@ -91,11 +91,9 @@ class JavaScript
             $files[] = $filePath;
         }
 
-        if (! $forIe11) {
-            // Prepare library file list
-            foreach (Icinga::app()->getLibraries() as $library) {
-                $files = array_merge($files, $library->getJsAssets());
-            }
+        // Prepare library file list
+        foreach (Icinga::app()->getLibraries() as $library) {
+            $files = array_merge($files, $library->getJsAssets());
         }
 
         // Prepare core file list
@@ -151,28 +149,26 @@ class JavaScript
             $baseJs .= file_get_contents($file) . "\n\n\n";
         }
 
-        if (! $forIe11) {
-            // Library files need to be namespaced first before they can be included
-            foreach (Icinga::app()->getLibraries() as $library) {
-                foreach ($library->getJsAssets() as $file) {
-                    $alreadyMinified = false;
-                    if ($minified && file_exists(($minFile = substr($file, 0, -3) . '.min.js'))) {
-                        $alreadyMinified = true;
-                        $file = $minFile;
-                    }
+        // Library files need to be namespaced first before they can be included
+        foreach (Icinga::app()->getLibraries() as $library) {
+            foreach ($library->getJsAssets() as $file) {
+                $alreadyMinified = false;
+                if ($minified && file_exists(($minFile = substr($file, 0, -3) . '.min.js'))) {
+                    $alreadyMinified = true;
+                    $file = $minFile;
+                }
 
-                    $content = self::optimizeDefine(
-                        file_get_contents($file),
-                        $file,
-                        $library->getJsAssetPath(),
-                        $library->getName()
-                    );
+                $content = self::optimizeDefine(
+                    file_get_contents($file),
+                    $file,
+                    $library->getJsAssetPath(),
+                    $library->getName()
+                );
 
-                    if ($alreadyMinified) {
-                        $out .= ';' . ltrim(trim($content), ';') . "\n";
-                    } else {
-                        $js .= $content . "\n\n\n";
-                    }
+                if ($alreadyMinified) {
+                    $out .= ';' . ltrim(trim($content), ';') . "\n";
+                } else {
+                    $js .= $content . "\n\n\n";
                 }
             }
         }

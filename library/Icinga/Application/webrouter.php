@@ -63,13 +63,11 @@ if (in_array($path, $special)) {
             exit;
 
         case 'js/icinga.dev.js':
-            $forIe11 = (bool) preg_match('/Trident\/7.0;.*rv:11/', $_SERVER['HTTP_USER_AGENT']);
-            JavaScript::send(false, $forIe11);
+            JavaScript::send();
             exit;
 
         case 'js/icinga.min.js':
-            $forIe11 = (bool) preg_match('/Trident\/7.0;.*rv:11/', $_SERVER['HTTP_USER_AGENT']);
-            JavaScript::sendMinified($forIe11);
+            JavaScript::sendMinified();
             break;
 
         default:
