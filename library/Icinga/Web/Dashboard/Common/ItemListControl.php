@@ -24,6 +24,13 @@ abstract class ItemListControl extends BaseHtmlElement
     abstract protected function getHtmlId(): string;
 
     /**
+     * Get whether the item should be expanded by default
+     *
+     * @return bool
+     */
+    abstract protected function shouldExpandByDefault(): bool;
+
+    /**
      * Get a class name for the collapsible control
      *
      * @return string
@@ -84,7 +91,8 @@ abstract class ItemListControl extends BaseHtmlElement
     {
         $this->getAttributes()->add([
             'id'    => $this->getHtmlId(),
-            'class' => 'collapsible'
+            'class' => 'collapsible',
+            'open'  => $this->shouldExpandByDefault()
         ]);
 
         $this->addHtml($this->createItemList());
