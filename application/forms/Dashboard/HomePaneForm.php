@@ -90,7 +90,7 @@ class HomePaneForm extends BaseDashboardForm
                 $currentHome = clone $this->dashboard->getEntry($currentHome->getName());
                 $activeHome = $this->dashboard->getActiveHome();
                 if ($currentHome->getName() !== $activeHome->getName()) {
-                    $currentHome->setActive()->loadDashboardEntries();
+                    $currentHome->loadDashboardEntries();
                 }
             }
 

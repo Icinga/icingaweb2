@@ -112,7 +112,6 @@ trait DashboardManager
     public function loadDashboardEntries(string $name = '')
     {
         $home = $this->getEntry($name);
-        $this->activateHome($home);
         $home->loadDashboardEntries();
 
         return $this;
