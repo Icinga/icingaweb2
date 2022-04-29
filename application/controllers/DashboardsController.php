@@ -410,6 +410,18 @@ class DashboardsController extends CompatController
     public function settingsAction()
     {
         $this->dashboard->load();
+
+        $highlightHome = $this->params->get('home');
+        if ($highlightHome) {
+            if (! $this->dashboard->hasEntry($highlightHome)) {
+                $this->httpNotFound(t('Home "%s" not found'), $highlightHome);
+            }
+
+            $home = $this->dashboard->getEntry($highlightHome);
+            $this->dashboard->activateHome($home);
+            $home->loadDashboardEntries(); // createTabs() won't get the panes otherwise
+        }
+
         $this->createTabs();
 
         $activeHome = $this->dashboard->getActiveHome();
@@ -444,7 +456,12 @@ class DashboardsController extends CompatController
         $tabs = $this->dashboard->getTabs();
         $activeHome = $this->dashboard->getActiveHome();
         if ($activeHome && ($activeHome->getName() !== DashboardHome::DEFAULT_HOME || $activeHome->hasEntries())) {
-            $tabs->extend(new DashboardSettings());
+            $params = [];
+            if ($activeHome->getName() !== DashboardHome::DEFAULT_HOME) {
+                $params['home'] = $activeHome->getName();
+            }
+
+            $tabs->extend(new DashboardSettings($params));
         }
 
         return $tabs;

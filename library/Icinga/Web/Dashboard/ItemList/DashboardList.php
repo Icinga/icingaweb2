@@ -35,6 +35,11 @@ class DashboardList extends ItemListControl
         return bin2hex($this->pane->getUuid());
     }
 
+    protected function shouldExpandByDefault(): bool
+    {
+        return $this->pane->getHome()->getActive();
+    }
+
     protected function getCollapsibleControlClass(): string
     {
         return 'dashlets-list-info';

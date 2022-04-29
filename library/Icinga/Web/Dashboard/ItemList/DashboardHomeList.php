@@ -53,6 +53,11 @@ class DashboardHomeList extends ItemListControl
         return $this->home->getUuid();
     }
 
+    protected function shouldExpandByDefault(): bool
+    {
+        return $this->home->getActive();
+    }
+
     protected function getCollapsibleControlClass(): string
     {
         return 'dashboard-list-info';
