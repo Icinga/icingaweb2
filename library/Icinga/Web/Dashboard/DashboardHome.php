@@ -166,10 +166,6 @@ class DashboardHome extends BaseDashboard implements Sortable
 
     public function loadDashboardEntries(string $name = '')
     {
-        if (! $this->getActive()) {
-            return $this;
-        }
-
         $this->setEntries([]);
         $panes = \Icinga\Model\Pane::on(Dashboard::getConn())->utilize(self::TABLE);
         $panes

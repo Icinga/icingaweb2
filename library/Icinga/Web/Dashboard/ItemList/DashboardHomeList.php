@@ -22,7 +22,6 @@ class DashboardHomeList extends ItemListControl
     public function __construct(DashboardHome $home)
     {
         $this->home = $home;
-        $this->home->setActive();
         $this->home->loadDashboardEntries();
 
         $this->getAttributes()
