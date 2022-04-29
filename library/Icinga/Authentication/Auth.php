@@ -378,7 +378,6 @@ class Auth
 
         if ($config->get('global', 'config_backend', 'db') !== 'none') {
             $preferencesConfig = new ConfigObject([
-                'store'     => $config->get('global', 'config_backend', 'db'),
                 'resource'  => $config->get('global', 'config_resource')
             ]);
 

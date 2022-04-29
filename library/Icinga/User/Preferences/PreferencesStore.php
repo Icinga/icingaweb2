@@ -3,14 +3,12 @@
 
 namespace Icinga\User\Preferences;
 
-use Icinga\Application\Config;
-use Icinga\Application\Logger;
 use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Data\Db\DbConnection;
+use Icinga\User\Preferences\Store\DbStore;
 
 /**
  * Preferences store factory
@@ -26,7 +24,6 @@ use Icinga\Data\Db\DbConnection;
  * // Create a INI store
  * $store = PreferencesStore::create(
  *     new ConfigObject(
- *         'store'       => 'ini',
  *         'config_path' => '/path/to/preferences'
  *     ),
  *     $user // Instance of \Icinga\User
@@ -117,27 +114,13 @@ abstract class PreferencesStore
      */
     public static function create(ConfigObject $config, User $user)
     {
-        $type = ucfirst(strtolower($config->get('store', 'db')));
-        $storeClass = 'Icinga\\User\\Preferences\\Store\\' . $type . 'Store';
-        if (!class_exists($storeClass)) {
-            throw new ConfigurationError(
-                'Preferences configuration defines an invalid storage type. Storage type %s not found',
-                $type
-            );
+        $resourceConfig = ResourceFactory::getResourceConfig($config->resource);
+        if ($resourceConfig->db === 'mysql') {
+            $resourceConfig->charset = 'utf8mb4';
         }
 
-        if ($type === 'Ini') {
-            Logger::warning('The preferences backend of type INI is deprecated and will be removed with version 2.11');
-            $config->location = Config::resolvePath('preferences');
-        } elseif ($type === 'Db') {
-            $resourceConfig = ResourceFactory::getResourceConfig($config->resource);
-            if ($resourceConfig->db === 'mysql') {
-                $resourceConfig->charset = 'utf8mb4';
-            }
+        $config->connection = ResourceFactory::createResource($resourceConfig);
 
-            $config->connection = ResourceFactory::createResource($resourceConfig);
-        }
-
-        return new $storeClass($config, $user);
+        return new DbStore($config, $user);
     }
 }
