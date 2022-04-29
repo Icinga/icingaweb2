@@ -1,11 +1,5 @@
 # Exclude files related to git when generating an archive
 .git* export-ignore
-# Exclude Vagrant and Puppet related files when generating an archive
-.puppet* export-ignore
-Vagrantfile export-ignore
-
-# Normalize puppet manifests' line endings to LF on checkin and prevent conversion to CRLF when the files are checked out
-.puppet* eol=lf
 
 # Include version information on `git archive'
 /application/VERSION export-subst

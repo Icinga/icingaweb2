@@ -1,9 +1,8 @@
 # Exclude all hidden files
 .*
 
-# Except those related to git and vagrant
+# Except those related to git
 !.git*
-!.puppet*
 !.travis.yml
 !.mailmap
 
