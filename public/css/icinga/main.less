@@ -334,22 +334,24 @@ a:hover > .icon-cancel {
   }
 }
 
-.collapsible.can-collapse:not(.collapsed) + .collapsible-control button {
-  > i.expand-icon {
+.collapsible.can-collapse:not(.collapsed) + .collapsible-control button,
+.collapsible.can-collapse:not(.collapsed) > .collapsible-control {
+  i.expand-icon {
     display: none;
   }
 
-  > i.collapse-icon {
+  i.collapse-icon {
     display: inline;
   }
 }
 
-.collapsible.collapsed + .collapsible-control button {
-  > i.expand-icon {
+.collapsible.collapsed + .collapsible-control button,
+.collapsible.collapsed > .collapsible-control {
+  i.expand-icon {
     display: inline;
   }
 
-  > i.collapse-icon {
+  i.collapse-icon {
     display: none;
   }
 }
