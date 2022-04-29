@@ -39,13 +39,19 @@
      * @param event  Event  The `onRender` event triggered by the rendered container
      */
     Collapsible.prototype.onRendered = function(event) {
-        var _this = event.data.self;
-        var toCollapse = [];
+        var _this = event.data.self,
+            toCollapse = [],
+            toExpand = [];
 
         $.each(event.target.querySelectorAll('.collapsible:not(.can-collapse)'), function (_, collapsible) {
             // Assumes that any newly rendered elements are expanded
-            if (_this.canCollapse(collapsible) && _this.setupCollapsible(collapsible)) {
-                toCollapse.push([collapsible, _this.calculateCollapsedHeight(collapsible)]);
+            if (_this.canCollapse(collapsible)) {
+                if (_this.setupCollapsible(collapsible)) {
+                    toCollapse.push([collapsible, _this.calculateCollapsedHeight(collapsible)]);
+                } else if (_this.isDetails(collapsible)) {
+                    // Except if it's a <details> element, which may not be expanded by default
+                    toExpand.push(collapsible);
+                }
             }
         });
 
@@ -54,6 +60,10 @@
         // the height of the next element is being calculated.
         for (var i = 0; i < toCollapse.length; i++) {
             _this.collapse(toCollapse[i][0], toCollapse[i][1]);
+        }
+
+        for (i = 0; i < toExpand.length; i++) {
+            _this.expand(toExpand[i]);
         }
     };
 
@@ -70,7 +80,7 @@
             if (collapsible.matches('.can-collapse')) {
                 if (! _this.canCollapse(collapsible)) {
                     var toggleSelector = collapsible.dataset.toggleElement;
-                    if (! toggleSelector) {
+                    if (! toggleSelector && ! this.isDetails(collapsible)) {
                         $(collapsible).next('.collapsible-control').remove();
                     }
 
@@ -99,7 +109,11 @@
         var collapsible = $(collapsiblePath)[0];
 
         if (collapsible && collapsible.matches('.can-collapse')) {
-            this.expand(collapsible);
+            if ('stateCollapses' in collapsible.dataset) {
+                this.collapse(collapsible, this.calculateCollapsedHeight(collapsible));
+            } else {
+                this.expand(collapsible);
+            }
         }
     };
 
@@ -112,7 +126,11 @@
         var collapsible = $(collapsiblePath)[0];
 
         if (collapsible && this.canCollapse(collapsible)) {
-            this.collapse(collapsible, this.calculateCollapsedHeight(collapsible));
+            if ('stateCollapses' in collapsible.dataset) {
+                this.expand(collapsible);
+            } else {
+                this.collapse(collapsible, this.calculateCollapsedHeight(collapsible));
+            }
         }
     };
 
@@ -133,6 +151,8 @@
         if (! collapsible) {
             _this.icinga.logger.error(
                 '[Collapsible] Collapsible control has no associated .collapsible: ', $target[0]);
+
+            return;
         } else if (typeof collapsible.dataset.noPersistence !== 'undefined') {
             if (collapsible.matches('.collapsed')) {
                 _this.expand(collapsible);
@@ -140,14 +160,31 @@
                 _this.collapse(collapsible, _this.calculateCollapsedHeight(collapsible));
             }
         } else {
-            var collapsiblePath = _this.icinga.utils.getCSSPath(collapsible);
+            var collapsiblePath = _this.icinga.utils.getCSSPath(collapsible),
+                stateCollapses = 'stateCollapses' in collapsible.dataset;
+
             if (_this.state.has(collapsiblePath)) {
                 _this.state.delete(collapsiblePath);
-                _this.collapse(collapsible, _this.calculateCollapsedHeight(collapsible));
+
+                if (stateCollapses) {
+                    _this.expand(collapsible);
+                } else {
+                    _this.collapse(collapsible, _this.calculateCollapsedHeight(collapsible));
+                }
             } else {
                 _this.state.set(collapsiblePath);
-                _this.expand(collapsible);
+
+                if (stateCollapses) {
+                    _this.collapse(collapsible, _this.calculateCollapsedHeight(collapsible));
+                } else {
+                    _this.expand(collapsible);
+                }
             }
+        }
+
+        if (_this.isDetails(collapsible)) {
+            // The browser handles these clicks as well, and would toggle the state again
+            event.preventDefault();
         }
     };
 
@@ -159,9 +196,18 @@
      * @returns {boolean}  Whether it needs to collapse or not
      */
     Collapsible.prototype.setupCollapsible = function (collapsible) {
-        var toggleSelector = collapsible.dataset.toggleElement;
-        if (!! toggleSelector) {
-            var toggle = $(collapsible).children(toggleSelector)[0];
+        if (this.isDetails(collapsible)) {
+            var summary = collapsible.querySelector(':scope > summary');
+            if (! summary.classList.contains('collapsible-control')) {
+                summary.classList.add('collapsible-control');
+            }
+
+            if (collapsible.open) {
+                collapsible.dataset.stateCollapses = '';
+            }
+        } else if (!! collapsible.dataset.toggleElement) {
+            var toggleSelector = collapsible.dataset.toggleElement,
+                toggle = $(collapsible).children(toggleSelector)[0];
             if (! toggle && $(collapsible.nextSibling).is(toggleSelector)) {
                 toggle = collapsible.nextSibling;
             }
@@ -184,8 +230,15 @@
 
         collapsible.classList.add('can-collapse');
 
-        return typeof collapsible.dataset.noPersistence !== 'undefined'
-            || ! this.state.has(this.icinga.utils.getCSSPath(collapsible));
+        if ('noPersistence' in collapsible.dataset) {
+            return ! ('stateCollapses' in collapsible.dataset);
+        }
+
+        if ('stateCollapses' in collapsible.dataset) {
+            return this.state.has(this.icinga.utils.getCSSPath(collapsible));
+        } else {
+            return ! this.state.has(this.icinga.utils.getCSSPath(collapsible));
+        }
     };
 
     /**
@@ -217,6 +270,10 @@
      * @returns {boolean}
      */
     Collapsible.prototype.canCollapse = function(collapsible) {
+        if (this.isDetails(collapsible)) {
+            return collapsible.querySelector(':scope > summary') !== null;
+        }
+
         var rowSelector = this.getRowSelector(collapsible);
         if (!! rowSelector) {
             var visibleRows = Number(collapsible.dataset.visibleRows);
@@ -246,6 +303,10 @@
      */
     Collapsible.prototype.calculateCollapsedHeight = function (collapsible) {
         var height;
+
+        if (this.isDetails(collapsible)) {
+            return -1;
+        }
 
         var rowSelector = this.getRowSelector(collapsible);
         if (!! rowSelector) {
@@ -303,7 +364,12 @@
      * @param toHeight {int} The height in pixels to collapse to
      */
     Collapsible.prototype.collapse = function(collapsible, toHeight) {
-        collapsible.style.cssText = 'display: block; height: ' + toHeight + 'px; padding-bottom: 0';
+        if (this.isDetails(collapsible)) {
+            collapsible.open = false;
+        } else {
+            collapsible.style.cssText = 'display: block; height: ' + toHeight + 'px; padding-bottom: 0';
+        }
+
         collapsible.classList.add('collapsed');
     };
 
@@ -314,7 +380,23 @@
      */
     Collapsible.prototype.expand = function(collapsible) {
         collapsible.classList.remove('collapsed');
-        collapsible.style.cssText = '';
+
+        if (this.isDetails(collapsible)) {
+            collapsible.open = true;
+        } else {
+            collapsible.style.cssText = '';
+        }
+    };
+
+    /**
+     * Get whether the given collapsible is a <details> element
+     *
+     * @param collapsible
+     *
+     * @return {Boolean}
+     */
+    Collapsible.prototype.isDetails = function (collapsible) {
+        return collapsible.tagName === 'DETAILS';
     };
 
     Icinga.Behaviors.Collapsible = Collapsible;
