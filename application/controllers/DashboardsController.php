@@ -168,7 +168,7 @@ class DashboardsController extends CompatController
         $this->dashboard->load($home);
 
         if (! $this->dashboard->getActiveHome()->hasEntry($pane)) {
-            $this->httpNotFound(sprintf(t('Pane "%s" not found'), $pane));
+            $this->httpNotFound(t('Pane "%s" not found'), $pane);
         }
 
         $paneForm = (new HomePaneForm($this->dashboard))
@@ -191,7 +191,7 @@ class DashboardsController extends CompatController
         $this->dashboard->load($home);
 
         if (! $this->dashboard->getActiveHome()->hasEntry($paneParam)) {
-            $this->httpNotFound(sprintf(t('Pane "%s" not found'), $paneParam));
+            $this->httpNotFound(t('Pane "%s" not found'), $paneParam);
         }
 
         $paneForm = new RemoveHomePaneForm($this->dashboard);
@@ -459,12 +459,12 @@ class DashboardsController extends CompatController
         $this->dashboard->load($home);
 
         if (! $this->dashboard->getActiveHome()->hasEntry($pane)) {
-            $this->httpNotFound(sprintf(t('Pane "%s" not found'), $pane));
+            $this->httpNotFound(t('Pane "%s" not found'), $pane);
         }
 
         $pane = $this->dashboard->getActiveHome()->getEntry($pane);
         if (! $pane->hasEntry($dashlet)) {
-            $this->httpNotFound(sprintf(t('Dashlet "%s" not found'), $dashlet));
+            $this->httpNotFound(t('Dashlet "%s" not found'), $dashlet);
         }
 
         return $pane;
