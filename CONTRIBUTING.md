@@ -238,8 +238,6 @@ git push -f origin fix/style-detail-view
 ## <a id="contributing-testing"></a> Testing
 
 Basic unit test coverage is provided by running `icingacli test php unit`.
-The [development Vagrant box](https://github.com/Icinga/icingaweb2/blob/master/doc/99-Vagrant.md)
-provides a pre-built environment for development and tests.
 
 Snapshot packages from the laster development branch are available inside the
 [package repository](https://packages.icinga.com).
@@ -252,9 +250,9 @@ You can help test-drive the latest Icinga 2 snapshot packages inside the
 
 Icinga Web 2 is written in PHP and JavaScript.
 
-In order to develop Icinga Web 2 please use the [development Vagrant box](https://github.com/Icinga/icingaweb2/blob/master/doc/99-Vagrant.md).
+In order to develop Icinga Web 2 please install it locally.
 You can edit the source code in your local git repository and review changes
-live from the Vagrant environment.
+live from the local environment.
 
 ## <a id="contributing-patches-documentation"></a> Documentation Patches
 
