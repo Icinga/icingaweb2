@@ -133,16 +133,6 @@ class PreferencesStore
     }
 
     /**
-     * Set the table to use
-     *
-     * @param   string  $table  The table name
-     */
-    public function setTable(string $table)
-    {
-        $this->table = $table;
-    }
-
-    /**
      * Initialize the store
      */
     protected function init(): void
