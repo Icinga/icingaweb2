@@ -766,19 +766,4 @@ abstract class ApplicationBootstrap
         $localedir = $this->getLocaleDir();
         return $localedir !== false && file_exists($localedir) && is_dir($localedir);
     }
-
-    /**
-     * List all available locales
-     *
-     * @return array Locale list
-     *
-     * @deprecated Use {@see \ipl\I18n\GettextTranslator::listLocales()} instead
-     */
-    public function listLocales()
-    {
-        /** @var GettextTranslator $translator */
-        $translator = StaticTranslator::$instance;
-
-        return $translator->listLocales();
-    }
 }
