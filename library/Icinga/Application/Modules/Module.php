@@ -1388,22 +1388,6 @@ class Module
         return $this->includeScript($this->configScript);
     }
 
-    /**
-     * Register a hook
-     *
-     * @param   string  $name   Name of the hook
-     * @param   string  $class  Class of the hook w/ namespace
-     * @param   string  $key
-     *
-     * @return  $this
-     *
-     * @deprecated              Deprecated since 2.1.1. Use {@link provideHook()} instead
-     */
-    protected function registerHook($name, $class, $key = null)
-    {
-        return $this->provideHook($name, $class, $key);
-    }
-
     protected function slashesToNamespace($class)
     {
         $list = explode('/', $class);
