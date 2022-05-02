@@ -435,17 +435,6 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Register the Zend Autoloader - compat only - does nothing
-     *
-     * @deprecated
-     * @return $this
-     */
-    public function setupZendAutoloader()
-    {
-        return $this;
-    }
-
-    /**
      * Setup module manager
      *
      * @return $this

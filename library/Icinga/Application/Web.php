@@ -81,7 +81,6 @@ class Web extends EmbeddedWeb
     protected function bootstrap()
     {
         return $this
-            ->setupZendAutoloader()
             ->setupLogging()
             ->setupErrorHandling()
             ->loadLibraries()
