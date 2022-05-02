@@ -198,23 +198,6 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     }
 
     /**
-     * Create a backend
-     *
-     * @deprecated
-     *
-     * @param   string $backendName Name of the backend or null for creating the default backend which is the first INI
-     *                              configuration entry not being disabled
-     *
-     * @return  Backend
-     * @throws  ConfigurationError  When no backend has been configured or all backends are disabled or the
-     *                              configuration for the requested backend does either not exist or it's disabled
-     */
-    public static function createBackend($name = null)
-    {
-        return self::instance($name);
-    }
-
-    /**
      * Get this backend's internal resource
      *
      * @return mixed
