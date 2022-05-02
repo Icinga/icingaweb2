@@ -120,6 +120,8 @@ $this->provideSearchUrl($this->translate('Services'), 'monitoring/list/services?
 $this->provideSearchUrl($this->translate('Hostgroups'), 'monitoring/list/hostgroups?limit=10', 97);
 $this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/servicegroups?limit=10', 96);
 
+$this->addFrameworkParams('backend', 'format');
+
 /*
  * Available navigation items
  */

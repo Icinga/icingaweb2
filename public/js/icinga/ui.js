@@ -212,6 +212,16 @@
             this.icinga.behaviors.navigation.trySetActiveAndSelectedByUrl($('#col1').data('icingaUrl'));
         },
 
+        moveToRight: function () {
+            let col1 = document.getElementById('col1'),
+                col2 = document.getElementById('col2'),
+                col1Backup = this.cutContainer($(col1));
+
+            this.cutContainer($(col2)); // Clear col2 states
+            this.pasteContainer($(col2), col1Backup);
+            this.layout2col();
+        },
+
         cutContainer: function ($col) {
             var props = {
               'elements': $('#' + $col.attr('id') + ' > *').detach(),
@@ -221,7 +231,8 @@
                 'data-icinga-refresh': $col.data('icingaRefresh'),
                 'data-last-update': $col.data('lastUpdate'),
                 'data-icinga-module': $col.data('icingaModule'),
-                'data-icinga-container-id': $col[0].dataset.icingaContainerId
+                'data-icinga-container-id': $col[0].dataset.icingaContainerId,
+                'data-icinga-dashlet-id': $col[0].dataset.icingaDashletId
               },
               'class': $col.attr('class')
             };
@@ -232,6 +243,7 @@
             $col.removeData('lastUpdate');
             $col.removeData('icingaModule');
             delete $col[0].dataset.icingaContainerId;
+            delete $col[0].dataset.icingaDashletId;
             $col.removeAttr('class').attr('class', 'container');
             return props;
         },
@@ -245,6 +257,10 @@
             $col.data('lastUpdate', backup['data']['data-last-update']);
             $col.data('icingaModule', backup['data']['data-icinga-module']);
             $col[0].dataset.icingaContainerId = backup['data']['data-icinga-container-id'];
+
+            if (backup['data']['data-icinga-dashlet-id']) {
+                $col[0].dataset.icingaDashletId = backup['data']['data-icinga-dashlet-id'];
+            }
         },
 
         triggerWindowResize: function () {
@@ -331,6 +347,9 @@
             $c.removeData('icingaRefresh');
             $c.removeData('lastUpdate');
             $c.removeData('icingaModule');
+            delete $c[0].dataset.icingaContainerId;
+            delete $c[0].dataset.icingaDashletId;
+            $c.removeAttr('class').attr('class', 'container');
             this.icinga.loader.stopPendingRequestsFor($c);
             $c.trigger('close-column');
             $c.html('');

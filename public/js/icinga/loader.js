@@ -266,6 +266,15 @@
                 headers['X-Icinga-Container'] = id;
             }
 
+            if (method !== 'GET' && $target[0].dataset.icingaDashletId) {
+                let currentUrlPath = this.icinga.utils.parseUrl($target.data('icingaUrl')).path;
+                let newUrlPath = this.icinga.utils.parseUrl(url).path;
+
+                if (newUrlPath === currentUrlPath) {
+                    headers['X-Icinga-DashletId'] = $target[0].dataset.icingaDashletId;
+                }
+            }
+
             if (autorefresh) {
                 headers['X-Icinga-Autorefresh'] = '1';
             }
@@ -776,6 +785,14 @@
                 this.icinga.ui.setWindowId(windowId);
             }
 
+            // Preserve the dashlet identifier if available, clean up if not
+            let dashletId = req.getResponseHeader('X-Icinga-DashletId');
+            if (dashletId) {
+                req.$target[0].dataset.icingaDashletId = decodeURIComponent(dashletId);
+            } else {
+                delete req.$target[0].dataset.icingaDashletId;
+            }
+
             // Handle search requests, still hardcoded.
             if (req.url.match(/^\/search/) && req.$target.data('icingaUrl').match(/^\/search/)) {
                 var $resp = $('<div>' + req.responseText + '</div>'); // div helps getting an XML tree
@@ -986,9 +1003,10 @@
             var extraUpdates = req.getResponseHeader('X-Icinga-Extra-Updates');
             if (!! extraUpdates && req.getResponseHeader('X-Icinga-Redirect-Http') !== 'yes') {
                 $.each(extraUpdates.split(','), function (idx, el) {
-                    var parts = el.trim().split(';');
-                    var $target;
-                    var url;
+                    let parts = el.trim().split(';'),
+                        refreshesView,
+                        $target,
+                        url;
                     if (parts.length === 2) {
                         $target = $('#' + parts[0]);
                         if (! $target.length) {
@@ -997,6 +1015,7 @@
                         }
 
                         url = parts[1];
+                        refreshesView = false;
                     } else if (parts.length === 1) {
                         $target = $(parts[0]).closest(".container").not(req.$target);
                         if (! $target.length) {
@@ -1005,12 +1024,17 @@
                         }
 
                         url = $target.data('icingaUrl');
+                        refreshesView = true;
                     } else {
                         _this.icinga.logger.error('Invalid extra update', el);
                         return;
                     }
 
-                    _this.loadUrl(url, $target).addToHistory = false;
+                    let extraReq = _this.loadUrl(url, $target, undefined, undefined, undefined, refreshesView);
+                    if (extraReq) {
+                        extraReq.addToHistory = false;
+                        extraReq.scripted = true;
+                    }
                 });
             }
 

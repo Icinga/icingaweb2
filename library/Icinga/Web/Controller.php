@@ -3,6 +3,7 @@
 
 namespace Icinga\Web;
 
+use Icinga\Application\Icinga;
 use Icinga\Data\Filterable;
 use Icinga\Data\Sortable;
 use Icinga\Data\QueryInterface;
@@ -234,16 +235,17 @@ class Controller extends ModuleActionController
             'limit', // setupPaginationControl()
             'sort', // setupSortControl()
             'dir', // setupSortControl()
-            'backend', // Framework
-            'showCompact', // Framework
-            '_dev' // Framework
         );
 
         $editor = Widget::create('filterEditor');
         /** @var \Icinga\Web\Widget\FilterEditor $editor */
         call_user_func_array(
             array($editor, 'preserveParams'),
-            array_merge($defaultPreservedParams, $preserveParams ?: array())
+            array_merge(
+                Icinga::app()->getFrameworkParams(),
+                $defaultPreservedParams,
+                $preserveParams ?: array()
+            )
         );
 
         $editor
