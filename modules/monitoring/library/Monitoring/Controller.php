@@ -28,7 +28,7 @@ class Controller extends IcingaWebController
 
     protected function moduleInit()
     {
-        $this->backend = Backend::createBackend($this->_getParam('backend'));
+        $this->backend = Backend::instance($this->_getParam('backend'));
         $this->view->url = Url::fromRequest();
     }
 
