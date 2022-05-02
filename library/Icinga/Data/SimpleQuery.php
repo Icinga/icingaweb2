@@ -5,13 +5,10 @@ namespace Icinga\Data;
 
 use Iterator;
 use IteratorAggregate;
-use Zend_Paginator;
-use Icinga\Application\Icinga;
 use Icinga\Application\Benchmark;
 use Icinga\Data\Filter\Filter;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Paginator\Adapter\QueryAdapter;
 
 class SimpleQuery implements QueryInterface, Queryable, Iterator
 {
@@ -515,43 +512,6 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     public function getOffset()
     {
         return $this->limitOffset;
-    }
-
-    /**
-     * Paginate data
-     *
-     * Auto-detects pagination parameters from request when unset
-     *
-     * @param   int $itemsPerPage   Number of items per page
-     * @param   int $pageNumber     Current page number
-     *
-     * @return  Zend_Paginator
-     *
-     * @deprecated      Use Icinga\Web\Controller::setupPaginationControl() and/or Icinga\Web\Widget\Paginator instead
-     */
-    public function paginate($itemsPerPage = null, $pageNumber = null)
-    {
-        trigger_error(
-            'SimpleQuery::paginate() is deprecated. Use Icinga\Web\Controller::setupPaginationControl()'
-            . ' and/or Icinga\Web\Widget\Paginator instead',
-            E_USER_DEPRECATED
-        );
-
-        if ($itemsPerPage === null || $pageNumber === null) {
-            // Detect parameters from request
-            $request = Icinga::app()->getRequest();
-            if ($itemsPerPage === null) {
-                $itemsPerPage = $request->getParam('limit', 25);
-            }
-            if ($pageNumber === null) {
-                $pageNumber = $request->getParam('page', 0);
-            }
-        }
-        $this->limit($itemsPerPage, $pageNumber * $itemsPerPage);
-        $paginator = new Zend_Paginator(new QueryAdapter($this));
-        $paginator->setItemCountPerPage($itemsPerPage);
-        $paginator->setCurrentPageNumber($pageNumber);
-        return $paginator;
     }
 
     /**
