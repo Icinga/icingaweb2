@@ -22,7 +22,7 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
     protected $queryColumns = array(
         'group' => array(
             'group_id'      => 'g.id',
-            'group'         => 'g.name COLLATE utf8_general_ci',
+            'group'         => 'g.name COLLATE utf8mb4_general_ci',
             'group_name'    => 'g.name',
             'parent'        => 'g.parent',
             'created_at'    => 'UNIX_TIMESTAMP(g.ctime)',
@@ -30,7 +30,7 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
         ),
         'group_membership' => array(
             'group_id'      => 'gm.group_id',
-            'user'          => 'gm.username COLLATE utf8_general_ci',
+            'user'          => 'gm.username COLLATE utf8mb4_general_ci',
             'user_name'     => 'gm.username',
             'created_at'    => 'UNIX_TIMESTAMP(gm.ctime)',
             'last_modified' => 'UNIX_TIMESTAMP(gm.mtime)'

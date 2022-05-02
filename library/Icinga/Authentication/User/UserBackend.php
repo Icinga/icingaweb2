@@ -225,7 +225,7 @@ class UserBackend implements ConfigAwareFactory
 
         $resourceConfig = ResourceFactory::getResourceConfig($backendConfig->resource);
         if ($backendType === 'db' && $resourceConfig->db === 'mysql') {
-            $resourceConfig->charset = 'utf8';
+            $resourceConfig->charset = 'utf8mb4';
         }
 
         $resource = ResourceFactory::createResource($resourceConfig);

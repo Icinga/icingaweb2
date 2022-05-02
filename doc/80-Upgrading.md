@@ -7,6 +7,12 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
 * The Vagrant file and all its assets have been removed.
 
+**Database Schema**
+
+* Please apply the `v2.11.0.sql` upgrade script depending on your database vendor.
+  In package installations this file can be found in `/usr/share/doc/icingaweb2/schema/*-upgrades/`
+  (Debian/Ubuntu: `/usr/share/icingaweb2/etc/schema/*-upgrades/`).
+
 ## Upgrading to Icinga Web 2 2.10.x
 
 **General**

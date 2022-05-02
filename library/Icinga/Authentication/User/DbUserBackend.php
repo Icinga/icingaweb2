@@ -21,7 +21,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
      */
     protected $queryColumns = array(
         'user' => array(
-            'user'          => 'name COLLATE utf8_general_ci',
+            'user'          => 'name COLLATE utf8mb4_general_ci',
             'user_name'     => 'name',
             'is_active'     => 'active',
             'created_at'    => 'UNIX_TIMESTAMP(ctime)',

@@ -132,7 +132,7 @@ abstract class PreferencesStore
         } elseif ($type === 'Db') {
             $resourceConfig = ResourceFactory::getResourceConfig($config->resource);
             if ($resourceConfig->db === 'mysql') {
-                $resourceConfig->charset = 'utf8';
+                $resourceConfig->charset = 'utf8mb4';
             }
 
             $config->connection = ResourceFactory::createResource($resourceConfig);
