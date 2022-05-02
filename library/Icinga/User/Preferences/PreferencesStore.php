@@ -117,7 +117,7 @@ class PreferencesStore
      *
      * @return  ConfigObject
      */
-    public function getStoreConfig()
+    public function getStoreConfig(): ConfigObject
     {
         return $this->config;
     }
@@ -127,7 +127,7 @@ class PreferencesStore
      *
      * @return  User
      */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
@@ -137,7 +137,7 @@ class PreferencesStore
      *
      * @param   string  $table  The table name
      */
-    public function setTable($table)
+    public function setTable(string $table)
     {
         $this->table = $table;
     }
@@ -145,7 +145,7 @@ class PreferencesStore
     /**
      * Initialize the store
      */
-    protected function init()
+    protected function init(): void
     {
     }
 
@@ -156,12 +156,12 @@ class PreferencesStore
      *
      * @throws  NotReadableError    In case the database operation failed
      */
-    public function load()
+    public function load(): array
     {
         try {
             $select = $this->getStoreConfig()->connection->getDbAdapter()->select();
             $result = $select
-                ->from($this->table, array(self::COLUMN_SECTION, self::COLUMN_PREFERENCE, self::COLUMN_VALUE))
+                ->from($this->table, [self::COLUMN_SECTION, self::COLUMN_PREFERENCE, self::COLUMN_VALUE])
                 ->where(self::COLUMN_USERNAME . ' = ?', $this->getUser()->getUsername())
                 ->query()
                 ->fetchAll();
@@ -174,7 +174,7 @@ class PreferencesStore
         }
 
         if ($result !== false) {
-            $values = array();
+            $values = [];
             foreach ($result as $row) {
                 $values[$row->{self::COLUMN_SECTION}][$row->{self::COLUMN_PREFERENCE}] = $row->{self::COLUMN_VALUE};
             }
@@ -189,7 +189,7 @@ class PreferencesStore
      *
      * @param   Preferences     $preferences    The preferences to save
      */
-    public function save(Preferences $preferences)
+    public function save(Preferences $preferences): void
     {
         $preferences = $preferences->toArray();
 
@@ -197,10 +197,10 @@ class PreferencesStore
 
         foreach ($sections as $section) {
             if (! array_key_exists($section, $this->preferences)) {
-                $this->preferences[$section] = array();
+                $this->preferences[$section] = [];
             }
             if (! array_key_exists($section, $preferences)) {
-                $preferences[$section] = array();
+                $preferences[$section] = [];
             }
             $toBeInserted = array_diff_key($preferences[$section], $this->preferences[$section]);
             if (!empty($toBeInserted)) {
@@ -230,7 +230,7 @@ class PreferencesStore
      *
      * @throws  NotWritableError        In case the database operation failed
      */
-    protected function insert(array $preferences, $section)
+    protected function insert(array $preferences, string $section): void
     {
         /** @var \Zend_Db_Adapter_Abstract $db */
         $db = $this->getStoreConfig()->connection->getDbAdapter();
@@ -239,14 +239,14 @@ class PreferencesStore
             foreach ($preferences as $key => $value) {
                 $db->insert(
                     $this->table,
-                    array(
+                    [
                         self::COLUMN_USERNAME => $this->getUser()->getUsername(),
                         $db->quoteIdentifier(self::COLUMN_SECTION) => $section,
                         $db->quoteIdentifier(self::COLUMN_PREFERENCE) => $key,
                         self::COLUMN_VALUE => $value,
                         self::COLUMN_CREATED_TIME => new Zend_Db_Expr('NOW()'),
                         self::COLUMN_MODIFIED_TIME => new Zend_Db_Expr('NOW()')
-                    )
+                    ]
                 );
             }
         } catch (Exception $e) {
@@ -266,7 +266,7 @@ class PreferencesStore
      *
      * @throws  NotWritableError        In case the database operation failed
      */
-    protected function update(array $preferences, $section)
+    protected function update(array $preferences, string $section): void
     {
         /** @var \Zend_Db_Adapter_Abstract $db */
         $db = $this->getStoreConfig()->connection->getDbAdapter();
@@ -275,15 +275,15 @@ class PreferencesStore
             foreach ($preferences as $key => $value) {
                 $db->update(
                     $this->table,
-                    array(
+                    [
                         self::COLUMN_VALUE => $value,
                         self::COLUMN_MODIFIED_TIME => new Zend_Db_Expr('NOW()')
-                    ),
-                    array(
+                    ],
+                    [
                         self::COLUMN_USERNAME . '=?' => $this->getUser()->getUsername(),
                         $db->quoteIdentifier(self::COLUMN_SECTION) . '=?' => $section,
                         $db->quoteIdentifier(self::COLUMN_PREFERENCE) . '=?' => $key
-                    )
+                    ]
                 );
             }
         } catch (Exception $e) {
@@ -303,7 +303,7 @@ class PreferencesStore
      *
      * @throws  NotWritableError            In case the database operation failed
      */
-    protected function delete(array $preferenceKeys, $section)
+    protected function delete(array $preferenceKeys, string $section): void
     {
         /** @var \Zend_Db_Adapter_Abstract $db */
         $db = $this->getStoreConfig()->connection->getDbAdapter();
@@ -311,11 +311,11 @@ class PreferencesStore
         try {
             $db->delete(
                 $this->table,
-                array(
+                [
                     self::COLUMN_USERNAME . '=?' => $this->getUser()->getUsername(),
                     $db->quoteIdentifier(self::COLUMN_SECTION) . '=?' => $section,
                     $db->quoteIdentifier(self::COLUMN_PREFERENCE) . ' IN (?)' => $preferenceKeys
-                )
+                ]
             );
         } catch (Exception $e) {
             throw new NotWritableError(
@@ -336,7 +336,7 @@ class PreferencesStore
      *
      * @throws  ConfigurationError          When the configuration defines an invalid storage type
      */
-    public static function create(ConfigObject $config, User $user)
+    public static function create(ConfigObject $config, User $user): self
     {
         $resourceConfig = ResourceFactory::getResourceConfig($config->resource);
         if ($resourceConfig->db === 'mysql') {
