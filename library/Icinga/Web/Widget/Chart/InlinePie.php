@@ -135,15 +135,6 @@ class InlinePie extends AbstractWidget
     }
 
     /**
-     * Do not display the NoScript fallback html
-     *
-     * @deprecated noop
-     */
-    public function disableNoScript()
-    {
-    }
-
-    /**
      * Set the class to define the
      *
      * @param  $class
