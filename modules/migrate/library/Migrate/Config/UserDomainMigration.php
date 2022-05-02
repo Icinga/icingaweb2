@@ -208,7 +208,7 @@ class UserDomainMigration
             case 'db':
                 $resourceConfig = ResourceFactory::getResourceConfig($config->get('global', 'config_resource'));
                 if ($resourceConfig->db === 'mysql') {
-                    $resourceConfig->charset = 'utf8';
+                    $resourceConfig->charset = 'utf8mb4';
                 }
 
                 /** @var DbConnection $conn */
@@ -295,7 +295,7 @@ class UserDomainMigration
 
             $resourceConfig = ResourceFactory::getResourceConfig($config->resource);
             if ($resourceConfig->db === 'mysql') {
-                $resourceConfig->charset = 'utf8';
+                $resourceConfig->charset = 'utf8mb4';
             }
 
             /** @var DbConnection $conn */
@@ -348,7 +348,7 @@ class UserDomainMigration
 
             $resourceConfig = ResourceFactory::getResourceConfig($config->resource);
             if ($resourceConfig->db === 'mysql') {
-                $resourceConfig->charset = 'utf8';
+                $resourceConfig->charset = 'utf8mb4';
             }
 
             /** @var DbConnection $conn */
