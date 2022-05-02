@@ -204,8 +204,7 @@ Now cherry pick the release commit to `master` so that the changes are transferr
 
 ## Release Tests
 
-* Provision the vagrant boxes and test the release packages.
-* * Start a new docker container and install/run Icinga Web 2 & icingacli.
+* Start a new docker container and install/run Icinga Web 2 & icingacli.
 
 ### CentOS
 
