@@ -235,30 +235,6 @@ abstract class MonitoredObject implements Filterable
     }
 
     /**
-     * Return whether this object matches the given filter
-     *
-     * @param   Filter  $filter
-     *
-     * @return  bool
-     *
-     * @throws  ProgrammingError    In case the object cannot be found
-     *
-     * @deprecated      Use $filter->matches($object) instead
-     */
-    public function matches(Filter $filter)
-    {
-        if ($this->properties === null && $this->fetch() === false) {
-            throw new ProgrammingError(
-                'Unable to apply filter. Object %s of type %s not found.',
-                $this->getName(),
-                $this->getType()
-            );
-        }
-
-        return $filter->matches($this);
-    }
-
-    /**
      * Require the object's type to be one of the given types
      *
      * @param   array $oneOf
@@ -950,18 +926,5 @@ abstract class MonitoredObject implements Filterable
         }
 
         throw new InvalidPropertyException('Can\'t access property \'%s\'. Property does not exist.', $name);
-    }
-
-    /**
-     * @deprecated
-     */
-    public static function fromParams(UrlParams $params)
-    {
-        if ($params->has('service') && $params->has('host')) {
-            return new Service(MonitoringBackend::instance(), $params->get('host'), $params->get('service'));
-        } elseif ($params->has('host')) {
-            return new Host(MonitoringBackend::instance(), $params->get('host'));
-        }
-        return null;
     }
 }
