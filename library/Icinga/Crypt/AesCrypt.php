@@ -245,22 +245,6 @@ class AesCrypt
     }
 
     /**
-     * Decode from Base64 and decrypt the given string
-     *
-     * @param string $data
-     *
-     * @return string The base64 decoded and decrypted string
-     *
-     * @deprecated Use decrypt() instead as it also returns a base64 decoded string
-     *
-     * @throws RuntimeException If decryption fails
-     */
-    public function decryptFromBase64($data)
-    {
-        return $this->decrypt(base64_decode($data));
-    }
-
-    /**
      * Encrypt the given string
      *
      * @param string $data
@@ -282,22 +266,6 @@ class AesCrypt
         }
 
         return $encrypt;
-    }
-
-    /**
-     * Encrypt the given string and encode to Base64
-     *
-     * @param string $data
-     *
-     * @return string encrypted and base64 encoded string
-     *
-     * @deprecated Use encrypt() instead as it also returns a base64 encoded string
-     *
-     * @throws RuntimeException If encryption fails
-     */
-    public function encryptToBase64($data)
-    {
-        return base64_encode($this->encrypt($data));
     }
 
     /**
