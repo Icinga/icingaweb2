@@ -28,9 +28,7 @@ class GeneralConfigStep extends Step
             $config[$section][$property] = $value;
         }
 
-        if ($config['global']['config_backend'] === 'db') {
-            $config['global']['config_resource'] = $this->data['resourceName'];
-        }
+        $config['global']['config_resource'] = $this->data['resourceName'];
 
         try {
             Config::fromArray($config)
@@ -57,12 +55,7 @@ class GeneralConfigStep extends Step
                 ? t('An exception\'s stacktrace is shown to every user by default.')
                 : t('An exception\'s stacktrace is hidden from every user by default.')
             ) . '</li>'
-            . '<li>' . sprintf(
-                $this->data['generalConfig']['global_config_backend'] === 'ini' ? sprintf(
-                    t('Preferences will be stored per user account in INI files at: %s'),
-                    Config::resolvePath('preferences')
-                ) : t('Preferences will be stored using a database.')
-            ) . '</li>'
+            . '<li>' . t('Preferences will be stored using a database.') . '</li>'
             . '</ul>';
 
         $type = $this->data['generalConfig']['logging_log'];
