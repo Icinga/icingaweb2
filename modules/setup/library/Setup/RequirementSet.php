@@ -290,7 +290,7 @@ class RequirementSet implements RecursiveIterator
      */
     public function valid(): bool
     {
-        return $this->key() !== null;
+        return key($this->requirements) !== null;
     }
 
     /**
