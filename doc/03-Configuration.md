@@ -28,8 +28,7 @@ Option                   | Description
 -------------------------|-----------------------------------------------
 show\_stacktraces        | **Optional.** Whether to show debug stacktraces. Defaults to `0`.
 module\_path             | **Optional.** Specifies the directories where modules can be installed. Multiple directories must be separated with colons.
-config\_backend          | **Optional.** Select the user preference storage. Can be set to `ini` (default), `db` or `none`. If `db` is selected, this requires the `config_resource` attribute.
-config\_resource         | **Optional.** Specify a defined [resource](04-Resources.md#resources-configuration-database) name. Can only be used if `config_backend` is set to `db`.
+config\_resource         | **Required.** Specify a defined [resource](04-Resources.md#resources-configuration-database) name.
 
 
 Example for storing the user preferences in the database resource `icingaweb_db`:
@@ -37,7 +36,6 @@ Example for storing the user preferences in the database resource `icingaweb_db`
 ```
 [global]
 show_stacktraces = "0"
-config_backend = "db"
 config_resource = "icingaweb_db"
 module_path = "/usr/share/icingaweb2/modules"
 ```
