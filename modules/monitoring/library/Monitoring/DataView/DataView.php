@@ -3,11 +3,11 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
+use Icinga\Data\Filter\FilterExpression;
 use IteratorAggregate;
 use Icinga\Application\Hook;
 use Icinga\Data\ConnectionInterface;
 use Icinga\Data\Filter\Filter;
-use Icinga\Data\Filter\FilterMatch;
 use Icinga\Data\FilterColumns;
 use Icinga\Data\PivotTable;
 use Icinga\Data\QueryInterface;
@@ -456,7 +456,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      */
     public function validateFilterColumns(Filter $filter)
     {
-        if ($filter instanceof FilterMatch) {
+        if ($filter instanceof FilterExpression) {
             if (! $this->isValidFilterTarget($filter->getColumn())) {
                 throw new QueryException(
                     mt('monitoring', 'The filter column "%s" is not allowed here.'),
