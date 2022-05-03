@@ -6,7 +6,7 @@ $pages = $wizard->getPages();
 $finished = isset($success);
 $configPages = array_slice($pages, 3, count($pages) - 4, true);
 $currentPos = array_search($wizard->getCurrentPage(), $pages, true);
-list($configPagesLeft, $configPagesRight) = array_chunk($configPages, count($configPages) / 2, true);
+list($configPagesLeft, $configPagesRight) = array_chunk($configPages, (int)(count($configPages) / 2), true);
 
 $visitedPages = array_keys($wizard->getPageData());
 $maxProgress = max(array_merge([0], array_keys(array_filter(
