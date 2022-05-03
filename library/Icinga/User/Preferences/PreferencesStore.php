@@ -83,7 +83,7 @@ class PreferencesStore
      *
      * @var array
      */
-    protected $preferences = array();
+    protected $preferences = [];
 
     /**
      * Store config
@@ -168,6 +168,7 @@ class PreferencesStore
             foreach ($result as $row) {
                 $values[$row->{self::COLUMN_SECTION}][$row->{self::COLUMN_PREFERENCE}] = $row->{self::COLUMN_VALUE};
             }
+
             $this->preferences = $values;
         }
 
@@ -189,9 +190,11 @@ class PreferencesStore
             if (! array_key_exists($section, $this->preferences)) {
                 $this->preferences[$section] = [];
             }
+
             if (! array_key_exists($section, $preferences)) {
                 $preferences[$section] = [];
             }
+
             $toBeInserted = array_diff_key($preferences[$section], $this->preferences[$section]);
             if (!empty($toBeInserted)) {
                 $this->insert($toBeInserted, $section);
@@ -201,6 +204,7 @@ class PreferencesStore
                 array_diff_assoc($preferences[$section], $this->preferences[$section]),
                 array_diff_assoc($this->preferences[$section], $preferences[$section])
             );
+
             if (!empty($toBeUpdated)) {
                 $this->update($toBeUpdated, $section);
             }
