@@ -70,10 +70,8 @@ class ApplicationConfigForm extends Form
             )
         );
 
-        $backends = array();
-        foreach (ResourceFactory::getResourceConfigs()->toArray() as $name => $resource) {
-                $backends[$name] = $name;
-        }
+        $backends = array_keys(ResourceFactory::getResourceConfigs()->toArray());
+        $backends = array_combine($backends, $backends);
 
         $this->addElement(
             'select',
