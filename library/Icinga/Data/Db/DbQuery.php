@@ -179,53 +179,10 @@ class DbQuery extends SimpleQuery
 
     protected function applyFilterSql($select)
     {
-        $where = $this->renderFilter($this->filter);
+        $where = $this->getDatasource()->renderFilter($this->filter);
         if ($where !== '') {
             $select->where($where);
         }
-    }
-
-    /**
-     * @deprecated  Use DbConnection::renderFilter() instead!
-     */
-    protected function renderFilter($filter, $level = 0)
-    {
-        $str = '';
-        if ($filter instanceof FilterChain) {
-            if ($filter instanceof FilterAnd) {
-                $op = ' AND ';
-            } elseif ($filter instanceof FilterOr) {
-                $op = ' OR ';
-            } elseif ($filter instanceof FilterNot) {
-                $op = ' AND ';
-                $str .= ' NOT ';
-            } else {
-                throw new QueryException(
-                    'Cannot render filter: %s',
-                    $filter
-                );
-            }
-            $parts = array();
-            if (! $filter->isEmpty()) {
-                foreach ($filter->filters() as $f) {
-                    $filterPart = $this->renderFilter($f, $level + 1);
-                    if ($filterPart !== '') {
-                        $parts[] = $filterPart;
-                    }
-                }
-                if (! empty($parts)) {
-                    if ($level > 0) {
-                        $str .= ' (' . implode($op, $parts) . ') ';
-                    } else {
-                        $str .= implode($op, $parts);
-                    }
-                }
-            }
-        } else {
-            $str .= $this->whereToSql($filter->getColumn(), $filter->getSign(), $filter->getExpression());
-        }
-
-        return $str;
     }
 
     protected function escapeForSql($value)
