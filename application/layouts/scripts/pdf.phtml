@@ -28,7 +28,7 @@ $logo = base64_encode(file_get_contents($logoPath));
   <table>
     <tbody>
       <tr>
-        <th><?= $this->escape($this->title) ?></th>
+        <th class="title"><?= $this->escape($this->title) ?></th>
         <td style="text-align: right;"><img width="75" src="data:image/png;base64,<?= $logo ?>"></td>
       </tr>
     </tbody>
