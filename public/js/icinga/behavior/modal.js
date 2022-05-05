@@ -171,7 +171,10 @@
         var _this = event.data.self;
 
         if (! event.isDefaultPrevented() && event.key === 'Escape') {
-            _this.hide(_this.$layout.children('#modal'));
+            let $modal = _this.$layout.children('#modal');
+            if ($modal.length) {
+                _this.hide($modal);
+            }
         }
     };
 
