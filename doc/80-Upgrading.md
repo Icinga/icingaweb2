@@ -16,6 +16,41 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
   In package installations this file can be found in `/usr/share/doc/icingaweb2/schema/*-upgrades/`
   (Debian/Ubuntu: `/usr/share/icingaweb2/etc/schema/*-upgrades/`).
 
+**Framework changes affecting third-party code**
+
+* All the following deprecated php classes and methods are removed:
+
+  **Methods:**
++ `Url::setBaseUrl()`: Please create a new url from scratch instead.
++ `Url::getBaseUrl()`: Use either `Url::getBasePath()` or `Url::getAbsoluteUrl()` now.
++ `ApplicationBootstrap::setupZendAutoloader()`: Since it does nothing. All uses removed.
++ `ApplicationBootstrap::listLocales()`: Use `\ipl\I18n\GettextTranslator::listLocales()` instead.
++ `Module::registerHook()`: Use `provideHook()` instead.
++ `Web::getMenu()`: Instantiate the menu class `new Menu()` directly instead.
++ `AesCrypt::encryptToBase64()`: Use `AesCrypt::encrypt()` instead as it also returns a base64 encoded string.
++ `AesCrypt::decryptFromBase64()`: Use `AesCrypt::decrypt()` instead as it also returns a base64 decoded string.
++ `InlinePie::disableNoScript()`: Empty method.
++ `SimpleQuery::paginate()`: Use `Icinga\Web\Controller::setupPaginationControl()` and/or `Icinga\Web\Widget\Paginator` instead.
++ `LdapConnection::connect()`: The connection is established lazily now.
++ `MonitoredObject::matches()`: Use `$filter->matches($object)` instead.
++ `MonitoredObject::fromParams()`
++ `DataView::fromRequest()`: Use `$backend->select()->from($viewName)` instead.
++ `DataView::sort()`: Use `DataView::order()` instead.
++ `MonitoringBackend::createBackend()`: Use `MonitoringBackend::instance()` instead.
++ `DbConnection::getConnection()`: Use `Connection::getDbAdapter()` instead.
++ `DbQuery::renderFilter()`: Use `DbConnection::renderFilter()` instead.
+
+  **Classes:**
++ `Icinga\Util\String`: Use `Icinga\Util\StringHelper` instead.
++ `Icinga\Util\Translator`: Use `\ipl\I18n\StaticTranslator::$instance` or `\ipl\I18n\Translation` instead.
++ `Icinga\Module\Migrate\Clicommands\DashboardCommand`
+
+
+* All the following deprecated js classes and methods are removed:
+
+  **Methods:**
++ `loader::addUrlFlag()`: Use `Icinga.Utils.addUrlFlag()` instead.
+
 ## Upgrading to Icinga Web 2 2.10.x
 
 **General**
