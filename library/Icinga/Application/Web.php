@@ -103,7 +103,8 @@ class Web extends EmbeddedWeb
             ->setupUser()
             ->setupTimezone()
             ->setupInternationalization()
-            ->setupFatalErrorHandling();
+            ->setupFatalErrorHandling()
+            ->registerApplicationHooks();
     }
 
     /**
@@ -471,6 +472,19 @@ class Web extends EmbeddedWeb
                 $frontController->dispatch($frontController->getRequest(), $response);
             }
         });
+
+        return $this;
+    }
+
+    /**
+     * Register all hooks provided by the main application
+     *
+     * @return $this
+     */
+    protected function registerApplicationHooks()
+    {
+        $class = 'Icinga\\Application\\ProvidedHook\\LessVarsLoader';
+        Hook::register('Themebuilder\\LessVarsLoader', $class, $class);
 
         return $this;
     }
