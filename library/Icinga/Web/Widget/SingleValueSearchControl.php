@@ -4,6 +4,7 @@
 namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
+use ipl\Html\Attributes;
 use ipl\Html\Form;
 use ipl\Html\FormElement\InputElement;
 use ipl\Html\HtmlElement;
@@ -177,6 +178,7 @@ class SingleValueSearchControl extends Form
                 }
             }
 
+            $index = 0;
             foreach ($entries as list($label, $metaData)) {
                 $attributes = [
                     'value'     => $label,
@@ -187,7 +189,9 @@ class SingleValueSearchControl extends Form
                     $attributes['data-' . $key] = $value;
                 }
 
-                $ul->addHtml(new HtmlElement('li', null, new InputElement(null, $attributes)));
+                $liAtrs = ['class' => $index === 0 ? 'default' : null];
+                $ul->addHtml(new HtmlElement('li', Attributes::create($liAtrs), new InputElement(null, $attributes)));
+                $index++;
             }
         }
 
