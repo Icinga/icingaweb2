@@ -47,7 +47,8 @@ class Options
      * dompdf's "chroot"
      *
      * Prevents dompdf from accessing system files or other files on the webserver.
-     * All local files opened by dompdf must be in a subdirectory of this directory.
+     * All local files opened by dompdf must be in a subdirectory of this directory
+     * or array of directories.
      * DO NOT set it to '/' since this could allow an attacker to use dompdf to
      * read any files on the server.  This should be an absolute path.
      *
@@ -57,7 +58,7 @@ class Options
      * documentation is available on the dompdf wiki at:
      * https://github.com/dompdf/dompdf/wiki
      *
-     * @var string
+     * @var array
      */
     private $chroot;
 
@@ -203,7 +204,7 @@ class Options
      *
      * @var bool
      */
-    private $isFontSubsettingEnabled = false;
+    private $isFontSubsettingEnabled = true;
 
     /**
      * @var bool
@@ -275,28 +276,27 @@ class Options
     private $pdflibLicense = "";
 
     /**
-     * @var string
-     * @deprecated
+     * HTTP context created with stream_context_create()
+     * Will be used for file_get_contents
+     *
+     * @link https://www.php.net/manual/context.php
+     *
+     * @var resource
      */
-    private $adminUsername = "user";
-
-    /**
-     * @var string
-     * @deprecated
-     */
-    private $adminPassword = "password";
+    private $httpContext;
 
     /**
      * @param array $attributes
      */
     public function __construct(array $attributes = null)
     {
-        $this->setChroot(realpath(__DIR__ . "/../"));
-        $this->setRootDir($this->getChroot());
+        $rootDir = realpath(__DIR__ . "/../");
+        $this->setChroot(array($rootDir));
+        $this->setRootDir($rootDir);
         $this->setTempDir(sys_get_temp_dir());
-        $this->setFontDir($this->chroot . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "fonts");
+        $this->setFontDir($rootDir . "/lib/fonts");
         $this->setFontCache($this->getFontDir());
-        $this->setLogOutputFile($this->getTempDir() . DIRECTORY_SEPARATOR . "log.htm");
+        $this->setLogOutputFile($this->getTempDir() . "/log.htm");
 
         if (null !== $attributes) {
             $this->set($attributes);
@@ -311,7 +311,7 @@ class Options
     public function set($attributes, $value = null)
     {
         if (!is_array($attributes)) {
-            $attributes = array($attributes => $value);
+            $attributes = [$attributes => $value];
         }
         foreach ($attributes as $key => $value) {
             if ($key === 'tempDir' || $key === 'temp_dir') {
@@ -366,10 +366,8 @@ class Options
                 $this->setPdfBackend($value);
             } elseif ($key === 'pdflibLicense' || $key === 'pdflib_license') {
                 $this->setPdflibLicense($value);
-            } elseif ($key === 'adminUsername' || $key === 'admin_username') {
-                $this->setAdminUsername($value);
-            } elseif ($key === 'adminPassword' || $key === 'admin_password') {
-                $this->setAdminPassword($value);
+            } elseif ($key === 'httpContext' || $key === 'http_context') {
+                $this->setHttpContext($value);
             }
         }
         return $this;
@@ -433,48 +431,10 @@ class Options
             return $this->getPdfBackend();
         } elseif ($key === 'pdflibLicense' || $key === 'pdflib_license') {
             return $this->getPdflibLicense();
-        } elseif ($key === 'adminUsername' || $key === 'admin_username') {
-            return $this->getAdminUsername();
-        } elseif ($key === 'adminPassword' || $key === 'admin_password') {
-            return $this->getAdminPassword();
+        } elseif ($key === 'httpContext' || $key === 'http_context') {
+            return $this->getHttpContext();
         }
         return null;
-    }
-
-    /**
-     * @param string $adminPassword
-     * @return $this
-     */
-    public function setAdminPassword($adminPassword)
-    {
-        $this->adminPassword = $adminPassword;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAdminPassword()
-    {
-        return $this->adminPassword;
-    }
-
-    /**
-     * @param string $adminUsername
-     * @return $this
-     */
-    public function setAdminUsername($adminUsername)
-    {
-        $this->adminUsername = $adminUsername;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAdminUsername()
-    {
-        return $this->adminUsername;
     }
 
     /**
@@ -514,21 +474,29 @@ class Options
     }
 
     /**
-     * @param string $chroot
+     * @param array|string $chroot
      * @return $this
      */
-    public function setChroot($chroot)
+    public function setChroot($chroot, $delimiter = ',')
     {
-        $this->chroot = $chroot;
+        if (is_string($chroot)) {
+            $this->chroot = explode($delimiter, $chroot);
+        } elseif (is_array($chroot)) {
+            $this->chroot = $chroot;
+        }
         return $this;
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getChroot()
     {
-        return $this->chroot;
+        $chroot = [];
+        if (is_array($this->chroot)) {
+            $chroot = $this->chroot;
+        }
+        return $chroot;
     }
 
     /**
@@ -681,7 +649,11 @@ class Options
      */
     public function setDefaultFont($defaultFont)
     {
-        $this->defaultFont = $defaultFont;
+        if (!($defaultFont === null || trim($defaultFont) === "")) {
+            $this->defaultFont = $defaultFont;
+        } else {
+            $this->defaultFont = "serif";
+        }
         return $this;
     }
 
@@ -1001,5 +973,27 @@ class Options
     public function getRootDir()
     {
         return $this->rootDir;
+    }
+
+    /**
+     * Sets the HTTP context
+     *
+     * @param resource|array $httpContext
+     * @return $this
+     */
+    public function setHttpContext($httpContext)
+    {
+        $this->httpContext = is_array($httpContext) ? stream_context_create($httpContext) : $httpContext;
+        return $this;
+    }
+
+    /**
+     * Returns the HTTP context
+     *
+     * @return resource
+     */
+    public function getHttpContext()
+    {
+        return $this->httpContext;
     }
 }

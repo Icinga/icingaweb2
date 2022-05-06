@@ -33,6 +33,9 @@ class Outline extends BinaryStream {
   public $xMax;
   public $yMax;
 
+  /**
+   * @var string|null
+   */
   public $raw;
 
   /**
@@ -75,11 +78,7 @@ class Outline extends BinaryStream {
   function parse(BinaryStream $font) {
     $font->seek($this->offset);
 
-    if (!$this->size) {
-      return;
-    }
-
-    $this->raw = $font->read($this->size);
+      $this->raw = $font->read($this->size);
   }
 
   function parseData() {
@@ -96,7 +95,7 @@ class Outline extends BinaryStream {
   function encode() {
     $font = $this->getFont();
 
-    return $font->write($this->raw, strlen($this->raw));
+    return $font->write($this->raw, mb_strlen((string) $this->raw, '8bit'));
   }
 
   function getSVGContours() {

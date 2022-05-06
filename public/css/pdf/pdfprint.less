@@ -45,6 +45,10 @@ body {
   top: 0;
   border-bottom: 0.1pt solid #aaa;
 
+  .title {
+    text-align: left;
+  }
+
   img {
     margin-bottom: 3px;
   }
@@ -52,7 +56,11 @@ body {
 
 #footer {
   bottom: 0;
-  border-top: 0.1pt solid #aaa;
+  padding-top: 2em;
+}
+
+.content table {
+  margin-bottom: 3em;
 }
 
 #header table,
@@ -71,6 +79,8 @@ body {
 }
 
 .page-number {
+  padding-top: 0.5em;
+  border-top: 0.1pt solid #aaa;
   text-align: center;
 }
 
@@ -84,7 +94,8 @@ hr {
 }
 
 // General style
-
+.state-icons,
+.overview-performance-data,
 .controls,
 .dontprint, // Compat only, use dont-print instead
 .dont-print {

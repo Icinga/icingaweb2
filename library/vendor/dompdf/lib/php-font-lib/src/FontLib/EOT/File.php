@@ -61,22 +61,21 @@ class File extends \FontLib\TrueType\File {
     // TODO Read font data ...
   }
 
-    /**
-     * Little endian version of the read method
-     *
-     * @param int $n The number of bytes to read
-     *
-     * @return string
-     */
+  /**
+   * Little endian version of the read method
+   *
+   * @param int $n The number of bytes to read
+   *
+   * @return string
+   */
   public function read($n) {
     if ($n < 1) {
       return "";
     }
 
-    $string = fread($this->f, $n);
-    $chunks = str_split($string, 2);
+    $string = (string) fread($this->f, $n);
+    $chunks = mb_str_split($string, 2, '8bit');
     $chunks = array_map("strrev", $chunks);
-
     return implode("", $chunks);
   }
 

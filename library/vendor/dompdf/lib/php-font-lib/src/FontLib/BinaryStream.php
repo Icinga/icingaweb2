@@ -63,7 +63,7 @@ class BinaryStream {
    */
   public function open($filename, $mode = self::modeRead) {
     if (!in_array($mode, array(self::modeRead, self::modeWrite, self::modeReadWrite))) {
-      throw new \Exception("Unkown file open mode");
+      throw new \Exception("Unknown file open mode");
     }
 
     $this->f = fopen($filename, $mode);
@@ -137,12 +137,17 @@ class BinaryStream {
     fseek($this->f, $n, SEEK_CUR);
   }
 
+  /**
+   * @param int $n The number of bytes to read
+   *
+   * @return string
+   */
   public function read($n) {
     if ($n < 1) {
       return "";
     }
 
-    return fread($this->f, $n);
+    return (string) fread($this->f, $n);
   }
 
   public function write($data, $length = null) {
@@ -282,7 +287,7 @@ class BinaryStream {
       $date = 0;
     }
 
-    return strftime("%Y-%m-%d %H:%M:%S", $date);
+    return date("Y-m-d H:i:s", $date);
   }
 
   public function writeLongDateTime($data) {
