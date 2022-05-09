@@ -538,7 +538,11 @@ abstract class MonitoredObject implements Filterable
             ->where('host_name', $this->host_name);
 
         $this->hostVariables = [];
-        $this->customvarsWithOriginalNames = [];
+
+        if ($this->type === static::TYPE_HOST) {
+            $this->customvarsWithOriginalNames = [];
+        }
+
         foreach ($query as $row) {
             if ($row->is_json) {
                 $this->hostVariables[strtolower($row->varname)] = json_decode($row->varvalue);
