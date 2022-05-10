@@ -1,5 +1,6 @@
 <?php
 
+use Icinga\Web\Navigation\ConfigMenu;
 use Icinga\Web\Widget\SearchDashboard;
 
 $searchDashboard = new SearchDashboard();
@@ -14,3 +15,6 @@ if ($searchDashboard->search('dummy')->getPane('search')->hasDashlets()): ?>
     </form>
 <?php endif; ?>
 <?= $menuRenderer->setCssClass('primary-nav')->setElementTag('nav')->setHeading(t('Navigation')); ?>
+<nav class="config-menu">
+    <?= new ConfigMenu() ?>
+</nav>
