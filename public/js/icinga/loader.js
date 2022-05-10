@@ -828,9 +828,7 @@
             if (!! contentSeparator) {
                 var locationQuery = req.getResponseHeader('X-Icinga-Location-Query');
                 if (locationQuery !== null) {
-                    var a = this.icinga.utils.getUrlHelper().cloneNode(true);
-                    a.search = locationQuery ? '?' + locationQuery : '';
-
+                    let url = currentUrl.path + (locationQuery ? '?' + locationQuery : '');
                     if (req.autosubmit || autoSubmit) {
                         // Also update a form's action if it doesn't differ from the container's url
                         var $form = $(referrer.forceFocus).closest('form');
@@ -840,12 +838,12 @@
                             if (formAction.path === currentUrl.path
                                 && this.icinga.utils.arraysEqual(formAction.params, currentUrl.params)
                             ) {
-                                $form.attr('action', a.href);
+                                $form.attr('action', url);
                             }
                         }
                     }
 
-                    req.$target.data('icingaUrl', a.href);
+                    req.$target.data('icingaUrl', url);
                     this.icinga.history.replaceCurrentState();
                 }
 
