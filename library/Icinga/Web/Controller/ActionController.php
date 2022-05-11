@@ -404,10 +404,17 @@ class ActionController extends Zend_Controller_Action
 
     protected function redirectXhr($url)
     {
-        $this->getResponse()
-            ->setReloadCss($this->reloadCss)
-            ->setRerenderLayout($this->rerenderLayout)
-            ->redirectAndExit($url);
+        $response = $this->getResponse();
+
+        if ($this->reloadCss) {
+            $response->setReloadCss(true);
+        }
+
+        if ($this->rerenderLayout) {
+            $response->setRerenderLayout(true);
+        }
+
+        $response->redirectAndExit($url);
     }
 
     protected function redirectHttp($url)
