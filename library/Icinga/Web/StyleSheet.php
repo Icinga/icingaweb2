@@ -290,6 +290,19 @@ class StyleSheet
         $app = Icinga::app();
 
         if ($theme && $theme !== self::DEFAULT_THEME) {
+            if (Hook::has('ThemeLoader')) {
+                try {
+                    $path = Hook::first('ThemeLoader')->getThemeFile($theme);
+                } catch (Exception $e) {
+                    Logger::error('Failed to call ThemeLoader hook: %s', $e);
+                    $path = null;
+                }
+
+                if ($path !== null) {
+                    return $path;
+                }
+            }
+
             if (($pos = strpos($theme, '/')) !== false) {
                 $moduleName = substr($theme, 0, $pos);
                 $theme = substr($theme, $pos + 1);
