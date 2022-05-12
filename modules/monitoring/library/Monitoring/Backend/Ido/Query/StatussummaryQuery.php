@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\FilterExpression;
 use Zend_Db_Expr;
 use Zend_Db_Select;
 use Icinga\Data\Filter\Filter;
@@ -227,6 +228,16 @@ We have to find a better solution here.
         foreach ($this->subQueries as $sub) {
             $sub->where($condition, $value);
         }
+        return $this;
+    }
+
+    public function whereEx(FilterExpression $ex)
+    {
+        $this->requireColumn($ex->getColumn());
+        foreach ($this->subQueries as $sub) {
+            $sub->whereEx($ex);
+        }
+
         return $this;
     }
 }

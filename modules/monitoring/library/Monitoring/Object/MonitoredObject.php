@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use Icinga\Data\Filter\FilterEqual;
 use stdClass;
 use InvalidArgumentException;
 use Icinga\Authentication\Auth;
@@ -334,14 +335,14 @@ abstract class MonitoredObject implements Filterable
         ));
         if ($this->type === self::TYPE_SERVICE) {
             $commentsView
-                ->where('service_host_name', $this->host_name)
-                ->where('service_description', $this->service_description);
+                ->whereEx(new FilterEqual('service_host_name', '=', $this->host_name))
+                ->whereEx(new FilterEqual('service_description', '=', $this->service_description));
         } else {
-            $commentsView->where('host_name', $this->host_name);
+            $commentsView->whereEx(new FilterEqual('host_name', '=', $this->host_name));
         }
         $commentsView
-            ->where('comment_type', array('ack', 'comment'))
-            ->where('object_type', $this->type);
+            ->whereEx(new FilterEqual('comment_type', '=', ['ack', 'comment']))
+            ->whereEx(new FilterEqual('object_type', '=', $this->type));
 
         $comments = $commentsView->fetchAll();
 
@@ -385,10 +386,10 @@ abstract class MonitoredObject implements Filterable
         ));
         if ($this->type === self::TYPE_SERVICE) {
             $contactsGroups
-                ->where('service_host_name', $this->host_name)
-                ->where('service_description', $this->service_description);
+                ->whereEx(new FilterEqual('service_host_name', '=', $this->host_name))
+                ->whereEx(new FilterEqual('service_description', '=', $this->service_description));
         } else {
-            $contactsGroups->where('host_name', $this->host_name);
+            $contactsGroups->whereEx(new FilterEqual('host_name', '=', $this->host_name));
         }
         $this->contactgroups = $contactsGroups;
         return $this;
@@ -409,10 +410,10 @@ abstract class MonitoredObject implements Filterable
         ));
         if ($this->type === self::TYPE_SERVICE) {
             $contacts
-                ->where('service_host_name', $this->host_name)
-                ->where('service_description', $this->service_description);
+                ->whereEx(new FilterEqual('service_host_name', '=', $this->host_name))
+                ->whereEx(new FilterEqual('service_description', '=', $this->service_description));
         } else {
-            $contacts->where('host_name', $this->host_name);
+            $contacts->whereEx(new FilterEqual('host_name', '=', $this->host_name));
         }
         $this->contacts = $contacts;
         return $this;
@@ -534,8 +535,8 @@ abstract class MonitoredObject implements Filterable
             'varvalue',
             'is_json'
         ))
-            ->where('object_type', static::TYPE_HOST)
-            ->where('host_name', $this->host_name);
+            ->whereEx(new FilterEqual('object_type', '=', static::TYPE_HOST))
+            ->whereEx(new FilterEqual('host_name', '=', $this->host_name));
 
         $this->hostVariables = [];
         $this->customvarsWithOriginalNames = [];
@@ -572,9 +573,9 @@ abstract class MonitoredObject implements Filterable
             'varvalue',
             'is_json'
         ))
-            ->where('object_type', static::TYPE_SERVICE)
-            ->where('host_name', $this->host_name)
-            ->where('service_description', $this->service_description);
+            ->whereEx(new FilterEqual('object_type', '=', static::TYPE_SERVICE))
+            ->whereEx(new FilterEqual('host_name', '=', $this->host_name))
+            ->whereEx(new FilterEqual('service_description', '=', $this->service_description));
 
         $this->serviceVariables = [];
         $this->customvarsWithOriginalNames = [];
@@ -614,16 +615,16 @@ abstract class MonitoredObject implements Filterable
             'scheduled_start'   => 'downtime_scheduled_start',
             'start'             => 'downtime_start'
         ))
-            ->where('object_type', $this->type)
+            ->whereEx(new FilterEqual('object_type', '=', $this->type))
             ->order('downtime_is_in_effect', 'DESC')
             ->order('downtime_scheduled_start', 'ASC');
         if ($this->type === self::TYPE_SERVICE) {
             $downtimes
-                ->where('service_host_name', $this->host_name)
-                ->where('service_description', $this->service_description);
+                ->whereEx(new FilterEqual('service_host_name', '=', $this->host_name))
+                ->whereEx(new FilterEqual('service_description', '=', $this->service_description));
         } else {
             $downtimes
-                ->where('host_name', $this->host_name);
+                ->whereEx(new FilterEqual('host_name', '=', $this->host_name));
         }
         $this->downtimes = $downtimes->getQuery()->fetchAll();
         return $this;
@@ -653,11 +654,13 @@ abstract class MonitoredObject implements Filterable
                     'type'
                 )
             )
-            ->where('object_type', $this->type)
-            ->where('host_name', $this->host_name);
+            ->whereEx(new FilterEqual('object_type', '=', $this->type))
+            ->whereEx(new FilterEqual('host_name', '=', $this->host_name));
 
         if ($this->type === self::TYPE_SERVICE) {
-            $eventHistory->where('service_description', $this->service_description);
+            $eventHistory->whereEx(
+                new FilterEqual('service_description', '=', $this->service_description)
+            );
         }
 
         $this->eventhistory = $eventHistory;
@@ -673,7 +676,7 @@ abstract class MonitoredObject implements Filterable
     {
         $this->hostgroups = $this->backend->select()
             ->from('hostgroup', array('hostgroup_name', 'hostgroup_alias'))
-            ->where('host_name', $this->host_name)
+            ->whereEx(new FilterEqual('host_name', '=', $this->host_name))
             ->applyFilter($this->getFilter())
             ->fetchPairs();
         return $this;
@@ -688,10 +691,12 @@ abstract class MonitoredObject implements Filterable
     {
         $query = $this->backend->select()
             ->from('servicegroup', array('servicegroup_name', 'servicegroup_alias'))
-            ->where('host_name', $this->host_name);
+            ->whereEx(new FilterEqual('host_name', '=', $this->host_name));
 
         if ($this->type === self::TYPE_SERVICE) {
-            $query->where('service_description', $this->service_description);
+            $query->whereEx(
+                new FilterEqual('service_description', '=', $this->service_description)
+            );
         }
 
         $this->servicegroups = $query->applyFilter($this->getFilter())->fetchPairs();
@@ -719,7 +724,7 @@ abstract class MonitoredObject implements Filterable
             'services_unknown_handled',
             'services_pending',
         ))
-            ->where('service_host_name', $this->host_name)
+            ->whereEx(new FilterEqual('service_host_name', '=', $this->host_name))
             ->applyFilter($this->getFilter())
             ->fetchRow();
         return $this;

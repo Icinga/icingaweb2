@@ -6,6 +6,8 @@ namespace Icinga\Data\Db;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use Icinga\Data\Filter\FilterMatch;
+use Icinga\Data\Filter\FilterMatchNot;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
 use PDO;
@@ -552,13 +554,13 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             throw new ProgrammingError(
                 'Unable to render array expressions with operators other than equal or not equal'
             );
-        } elseif ($sign === '=' && strpos($value, '*') !== false) {
+        } elseif ($filter instanceof FilterMatch && strpos($value, '*') !== false) {
             if ($value === '*') {
                 return $column . ' IS NOT NULL';
             }
 
             return $column . ' LIKE ' . $this->dbAdapter->quote(preg_replace('~\*~', '%', $value));
-        } elseif ($sign === '!=' && strpos($value, '*') !== false) {
+        } elseif ($filter instanceof FilterMatchNot && strpos($value, '*') !== false) {
             if ($value === '*') {
                 return $column . ' IS NULL';
             }

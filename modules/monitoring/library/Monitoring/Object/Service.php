@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use Icinga\Data\Filter\FilterEqual;
 use InvalidArgumentException;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
@@ -171,8 +172,8 @@ class Service extends MonitoredObject
             'service_state',
             'service_state_type'
         ))
-            ->where('host_name', $this->host->getName())
-            ->where('service_description', $this->service);
+            ->whereEx(new FilterEqual('host_name', '=', $this->host->getName()))
+            ->whereEx(new FilterEqual('service_description', '=', $this->service));
     }
 
     /**

@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Icinga\Data\Filter\FilterEqual;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Security\SecurityException;
@@ -63,7 +64,7 @@ class ShowController extends Controller
             'contact_notify_host_downtime',
         ));
         $this->applyRestriction('monitoring/filter/objects', $query);
-        $query->where('contact_name', $contactName);
+        $query->whereEx(new FilterEqual('contact_name', '=', $contactName));
         $contact = $query->getQuery()->fetchRow();
 
         if ($contact) {

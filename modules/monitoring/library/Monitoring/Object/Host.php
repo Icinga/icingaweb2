@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use Icinga\Data\Filter\FilterEqual;
 use InvalidArgumentException;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
@@ -142,7 +143,7 @@ class Host extends MonitoredObject
             'instance_name'
         );
         return $this->backend->select()->from('hoststatus', $columns)
-            ->where('host_name', $this->host);
+            ->whereEx(new FilterEqual('host_name', '=', $this->host));
     }
 
     /**
