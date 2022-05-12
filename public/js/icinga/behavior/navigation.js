@@ -382,7 +382,6 @@
      * @param {Object} e Event
      */
     Navigation.prototype.hideConfigFlyout = function(e) {
-        console.log('hide config flyout');
         $('#layout').removeClass('config-flyout-open');
         if (e.target) {
             delete $(e.target).closest('.container')[0].dataset.suspendAutorefresh;
@@ -407,7 +406,7 @@
     Navigation.prototype.onKeyDown = function(e) {
         var _this = e.data.self;
 
-        if (e.code == 'Enter' && $(':focus').is('.flyout a')) {
+        if (e.key == 'Enter' && $(document.activeElement).is('.flyout a')) {
             _this.hideConfigFlyout(e);
         }
     }
