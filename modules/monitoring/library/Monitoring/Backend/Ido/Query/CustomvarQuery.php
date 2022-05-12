@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 use Icinga\Application\Config;
+use Icinga\Data\Filter\FilterExpression;
 
 class CustomvarQuery extends IdoQuery
 {
@@ -37,6 +38,20 @@ class CustomvarQuery extends IdoQuery
         } else {
             parent::where($expression, $parameters);
         }
+        return $this;
+    }
+
+    public function whereEx(FilterExpression $ex)
+    {
+        $types = ['host' => 1, 'service' => 2, 'contact' => 10];
+        if ($ex->getColumn() === 'object_type') {
+            $ex = clone $ex;
+            $ex->setColumn('object_type_id');
+            $ex->setExpression($types[$ex->getExpression()]);
+        }
+
+        parent::whereEx($ex);
+
         return $this;
     }
 

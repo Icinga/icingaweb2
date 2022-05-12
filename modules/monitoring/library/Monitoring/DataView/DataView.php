@@ -94,6 +94,20 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
         return $this;
     }
 
+    /**
+     * Add a filter expression, with as less validation as possible
+     *
+     * @param FilterExpression $ex
+     *
+     * @internal If you use this outside the monitoring module, it's your fault if something breaks
+     * @return $this
+     */
+    public function whereEx(FilterExpression $ex)
+    {
+        $this->query->whereEx($ex);
+        return $this;
+    }
+
     public function dump()
     {
         if (! $this->isSorted) {

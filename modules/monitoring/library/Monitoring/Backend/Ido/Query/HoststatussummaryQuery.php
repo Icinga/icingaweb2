@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterExpression;
 
 /**
  * Query for host group summaries
@@ -78,6 +79,13 @@ class HoststatussummaryQuery extends IdoQuery
     public function where($condition, $value = null)
     {
         $this->subSelect->where($condition, $value);
+        return $this;
+    }
+
+    public function whereEx(FilterExpression $ex)
+    {
+        $this->subSelect->whereEx($ex);
+
         return $this;
     }
 }

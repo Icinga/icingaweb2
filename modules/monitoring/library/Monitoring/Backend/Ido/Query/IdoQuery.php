@@ -784,6 +784,30 @@ abstract class IdoQuery extends DbQuery
     }
 
     /**
+     * Add a filter expression, with as less validation as possible
+     *
+     * @param FilterExpression $ex
+     *
+     * @internal If you use this outside the monitoring module, it's your fault if something breaks
+     * @return $this
+     */
+    public function whereEx(FilterExpression $ex)
+    {
+        $this->requireColumn($ex->getColumn());
+        $col = $this->getMappedField($ex->getColumn());
+        if ($col === null) {
+            throw new IcingaException(
+                'No such field: %s',
+                $ex->getColumn()
+            );
+        }
+
+        parent::addFilter((clone $ex)->setColumn($col));
+
+        return $this;
+    }
+
+    /**
      * Return true if an field contains an explicit timestamp
      *
      * @param   string  $field      The field to test for containing an timestamp
