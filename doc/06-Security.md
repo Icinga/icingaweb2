@@ -159,9 +159,6 @@ this, put the macro `$user.local_name$` in the restriction where you want it to 
 This can come in handy if you have e.g. an attribute on hosts or services defining which user is responsible for it:
 `_host_deputy=$user.local_name$|_service_deputy=$user.local_name$`
 
-> Please note that since version 2.9 the use of `user.local_name` instead of `user:local_name` is supported and
-> recommended. `user:local_name` is deprecated and will be removed in version 2.11.
-
 ### Filter Expressions
 
 Filters operate on columns. A complete list of all available filter columns on hosts and services can be found in

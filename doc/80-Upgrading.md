@@ -16,6 +16,10 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
   In package installations this file can be found in `/usr/share/doc/icingaweb2/schema/*-upgrades/`
   (Debian/Ubuntu: `/usr/share/icingaweb2/etc/schema/*-upgrades/`).
 
+**Breaking changes**
+
+* The `user:local_name` macro in restrictions has been removed. Use `user.local_name` now.
+
 **Framework changes affecting third-party code**
 
 * All the following deprecated php classes and methods are removed:
@@ -45,7 +49,6 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 + `Icinga\Util\String`: Use `Icinga\Util\StringHelper` instead.
 + `Icinga\Util\Translator`: Use `\ipl\I18n\StaticTranslator::$instance` or `\ipl\I18n\Translation` instead.
 + `Icinga\Module\Migrate\Clicommands\DashboardCommand`
-
 
 * All the following deprecated js classes and methods are removed:
 
