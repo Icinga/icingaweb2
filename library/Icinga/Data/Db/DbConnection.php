@@ -579,13 +579,13 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             }
 
             return count($sql) === 1 ? $sql[0] : '(' . implode(" $operator ", $sql) . ')';
-        } elseif ($filter instanceof FilterMatch && strpos($value, '*') !== false) {
+        } elseif ($filter instanceof FilterMatch && $value !== null && strpos($value, '*') !== false) {
             if ($value === '*') {
                 return $column . ' IS NOT NULL';
             }
 
             return $column . ' LIKE ' . $this->dbAdapter->quote(preg_replace('~\*~', '%', $value));
-        } elseif ($filter instanceof FilterMatchNot && strpos($value, '*') !== false) {
+        } elseif ($filter instanceof FilterMatchNot && $value !== null && strpos($value, '*') !== false) {
             if ($value === '*') {
                 return $column . ' IS NULL';
             }
