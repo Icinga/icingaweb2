@@ -74,26 +74,18 @@ class ServicestatehistoryQuery extends IdoQuery
             'service_host'          => 'so.name1 COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1',
             'state'                 => 'sh.state',
-            'timestamp'             => 'UNIX_TIMESTAMP(sh.state_time)',
+            'timestamp'             => 'sh.state_time',
             'type'                  => "(CASE WHEN sh.state_type = 1 THEN 'hard_state' ELSE 'soft_state' END)"
         ),
     );
 
-    /**
-     * {@inheritdoc}
-     */
-    public function whereToSql($col, $sign, $expression)
+    public function isTimestamp($field)
     {
-        if ($col === 'UNIX_TIMESTAMP(sh.state_time)') {
-            return 'sh.state_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } elseif ($col === $this->columnMap['statehistory']['type']
-            && ! is_array($expression)
-            && array_key_exists($expression, $this->types)
-        ) {
-            return 'sh.state_type ' . $sign . ' ' . $this->types[$expression];
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
+        if (! parent::isTimestamp($field)) {
+            return $field === 'sh.state_time';
         }
+
+        return true;
     }
 
     /**

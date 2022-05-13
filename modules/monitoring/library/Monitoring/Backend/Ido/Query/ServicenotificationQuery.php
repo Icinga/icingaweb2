@@ -3,6 +3,9 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterExpression;
+
 /**
  * Query for service notifications
  */
@@ -28,7 +31,7 @@ class ServicenotificationQuery extends IdoQuery
         'history' => array(
             'output'    => null,
             'state'     => 'sn.state',
-            'timestamp' => 'UNIX_TIMESTAMP(sn.start_time)',
+            'timestamp' => 'sn.start_time',
             'type'      => '
                 CASE sn.notification_reason
                     WHEN 1 THEN \'notification_ack\'
@@ -60,7 +63,7 @@ class ServicenotificationQuery extends IdoQuery
             'notification_output'       => 'sn.output',
             'notification_reason'       => 'sn.notification_reason',
             'notification_state'        => 'sn.state',
-            'notification_timestamp'    => 'UNIX_TIMESTAMP(sn.start_time)',
+            'notification_timestamp'    => 'sn.start_time',
             'object_type'               => '(\'service\')',
             'service'                   => 'so.name2 COLLATE latin1_general_ci',
             'service_description'       => 'so.name2',
@@ -76,18 +79,24 @@ class ServicenotificationQuery extends IdoQuery
         )
     );
 
-    /**
-     * {@inheritdoc}
-     */
-    public function whereToSql($col, $sign, $expression)
+    protected function requireFilterColumns(Filter $filter)
     {
-        if ($col === 'UNIX_TIMESTAMP(sn.start_time)') {
-            return 'sn.start_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } elseif ($col === $this->columnMap['history']['output']) {
-            return parent::whereToSql('sn.output', $sign, $expression);
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
+        if ($filter instanceof FilterExpression && $filter->getColumn() === 'output') {
+            $this->requireColumn($filter->getColumn());
+            $filter->setColumn('sn.output');
+            return null;
         }
+
+        return parent::requireFilterColumns($filter);
+    }
+
+    public function isTimestamp($field)
+    {
+        if (! parent::isTimestamp($field)) {
+            return $field === 'sn.start_time';
+        }
+
+        return true;
     }
 
     /**

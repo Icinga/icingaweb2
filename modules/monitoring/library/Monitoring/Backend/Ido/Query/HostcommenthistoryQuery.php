@@ -40,7 +40,7 @@ class HostcommenthistoryQuery extends IdoQuery
             'object_type'   => '(\'host\')',
             'output'        => "('[' || hch.author_name || '] ' || hch.comment_data)",
             'state'         => '(-1)',
-            'timestamp'     => 'UNIX_TIMESTAMP(hch.comment_time)',
+            'timestamp'     => 'hch.comment_time',
             'type'          => "(CASE hch.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)"
         ),
         'hostgroups' => array(
@@ -68,16 +68,13 @@ class HostcommenthistoryQuery extends IdoQuery
         )
     );
 
-    /**
-     * {@inheritdoc}
-     */
-    public function whereToSql($col, $sign, $expression)
+    public function isTimestamp($field)
     {
-        if ($col === 'UNIX_TIMESTAMP(hch.comment_time)') {
-            return 'hch.comment_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
+        if (! parent::isTimestamp($field)) {
+            return $field === 'hch.comment_time';
         }
+
+        return true;
     }
 
     /**

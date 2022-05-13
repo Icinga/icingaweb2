@@ -39,6 +39,7 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 + `MonitoringBackend::createBackend()`: Use `MonitoringBackend::instance()` instead.
 + `DbConnection::getConnection()`: Use `Connection::getDbAdapter()` instead.
 + `DbQuery::renderFilter()`: Use `DbConnection::renderFilter()` instead.
++ `DbQuery::whereToSql()`: Use `DbConnection::renderFilter()` instead.
 
   **Classes:**
 + `Icinga\Util\String`: Use `Icinga\Util\StringHelper` instead.

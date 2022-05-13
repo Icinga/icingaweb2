@@ -44,7 +44,7 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
             'service_host'          => 'so.name1 COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1',
             'state'                 => '(-1)',
-            'timestamp'             => 'UNIX_TIMESTAMP(sdh.actual_start_time)',
+            'timestamp'             => 'sdh.actual_start_time',
             'type'                  => "('dt_start')"
         ),
         'hostgroups' => array(
@@ -69,18 +69,13 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
         )
     );
 
-    /**
-     * {@inheritdoc}
-     */
-    public function whereToSql($col, $sign, $expression)
+    public function isTimestamp($field)
     {
-        if ($col === 'UNIX_TIMESTAMP(sdh.actual_start_time)') {
-            return 'sdh.actual_start_time ' . $sign . ' ' . $this->timestampForSql(
-                $this->valueToTimestamp($expression)
-            );
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
+        if (! parent::isTimestamp($field)) {
+            return $field === 'sdh.actual_start_time';
         }
+
+        return true;
     }
 
     /**
