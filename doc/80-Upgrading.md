@@ -50,6 +50,7 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 + `Icinga\Util\Translator`: Use `\ipl\I18n\StaticTranslator::$instance` or `\ipl\I18n\Translation` instead.
 + `Icinga\Module\Migrate\Clicommands\DashboardCommand`
 + `Icinga\Web\Hook\TicketHook`: Use `Icinga\Application\Hook\TicketHook` instead.
++ `Icinga\Web\Hook\GrapherHook`: Use `Icinga\Application\Hook\GrapherHook` instead.
 
 * All the following deprecated js classes and methods are removed:
 
