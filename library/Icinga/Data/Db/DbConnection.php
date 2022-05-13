@@ -545,15 +545,40 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
         $value = $filter->getExpression();
 
         if (is_array($value)) {
-            if ($sign === '=') {
-                return $column . ' IN (' . $this->dbAdapter->quote($value) . ')';
-            } elseif ($sign === '!=') {
-                return sprintf('(%1$s NOT IN (%2$s) OR %1$s IS NULL)', $column, $this->dbAdapter->quote($value));
+            $comp = [];
+            $pattern = [];
+            foreach ($value as $val) {
+                if (strpos($val, '*') === false) {
+                    $comp[] = $val;
+                } else {
+                    $pattern[] = $this->renderFilterExpression(Filter::expression($column, $sign, $val));
+                }
             }
 
-            throw new ProgrammingError(
-                'Unable to render array expressions with operators other than equal or not equal'
-            );
+            $sql = $pattern;
+            if ($sign === '=') {
+                if (! empty($comp)) {
+                    $sql[] = $column . ' IN (' . $this->dbAdapter->quote($comp) . ')';
+                }
+
+                $operator = 'OR';
+            } elseif ($sign === '!=') {
+                if (! empty($comp)) {
+                    $sql[] = sprintf(
+                        '(%1$s NOT IN (%2$s) OR %1$s IS NULL)',
+                        $column,
+                        $this->dbAdapter->quote($comp)
+                    );
+                }
+
+                $operator = 'AND';
+            } else {
+                throw new ProgrammingError(
+                    'Unable to render array expressions with operators other than equal or not equal'
+                );
+            }
+
+            return count($sql) === 1 ? $sql[0] : '(' . implode(" $operator ", $sql) . ')';
         } elseif ($filter instanceof FilterMatch && strpos($value, '*') !== false) {
             if ($value === '*') {
                 return $column . ' IS NOT NULL';
