@@ -97,7 +97,13 @@ abstract class BadgeNavigationItemRenderer extends NavigationItemRenderer
         if ($item === null) {
             $item = $this->getItem();
         }
-        $item->setCssClass('badge-nav-item');
+
+        $cssClass = '';
+        if ($item->getCssClass() !== null) {
+            $cssClass = ' ' . $item->getCssClass();
+        }
+
+        $item->setCssClass('badge-nav-item' . $cssClass);
         $this->setEscapeLabel(false);
         $label = $this->view()->escape($item->getLabel());
         $item->setLabel($this->renderBadge() . $label);

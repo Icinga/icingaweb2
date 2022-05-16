@@ -17,15 +17,6 @@
   overflow-x: hidden;
 }
 
-#layout:not(.minimal-layout) #menu {
-  // Space for the #toggle-sidebar button
-  &:after {
-    content: "";
-    display: block;
-    padding-bottom: 2.25em;
-  }
-}
-
 #menu .nav-item {
   vertical-align: middle;
 
@@ -480,9 +471,10 @@ input[type=text].search-input {
   padding: 0;
   color: @text-color-light;
   position: absolute;
-  bottom: 0.2em;
+  bottom: 0;
   right: 0;
   z-index: 3;
+  line-height: 2;
 
   i {
     background-color: @body-bg-color;

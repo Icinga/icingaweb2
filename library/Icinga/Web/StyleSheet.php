@@ -56,6 +56,7 @@ class StyleSheet
         'css/vendor/normalize.css',
         'css/icinga/base.less',
         'css/icinga/badges.less',
+        'css/icinga/configmenu.less',
         'css/icinga/mixins.less',
         'css/icinga/grid.less',
         'css/icinga/nav.less',

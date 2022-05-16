@@ -33,6 +33,7 @@ class Menu extends Navigation
             'priority'  => 10
         ]);
         $this->addItem('system', [
+            'cssClass'  => 'system-nav-item',
             'label'     => t('System'),
             'icon'      => 'services',
             'priority'  => 700,
@@ -74,6 +75,7 @@ class Menu extends Navigation
             ]
         ]);
         $this->addItem('configuration', [
+            'cssClass'      => 'configuration-nav-item',
             'label'         => t('Configuration'),
             'icon'          => 'wrench',
             'permission'    => 'config/*',

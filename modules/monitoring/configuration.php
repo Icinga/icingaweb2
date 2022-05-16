@@ -290,18 +290,6 @@ $section = $this->menuSection(N_('Reporting'), array(
 ));
 
 /*
- * System Section
- */
-$section = $this->menuSection(N_('System'));
-$section->add(N_('Monitoring Health'), array(
-    'icon'        => 'check',
-    'description' => $this->translate('Open monitoring health'),
-    'url'         => 'monitoring/health/info',
-    'priority'    => 720,
-    'renderer'    => 'BackendAvailabilityNavigationItemRenderer'
-));
-
-/*
  * Current Incidents
  */
 $dashboard = $this->dashboard(N_('Current Incidents'), array('priority' => 50));
