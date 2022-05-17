@@ -85,7 +85,7 @@ class Json
      */
     public static function decode($json, $assoc = false, $depth = 512, $options = 0)
     {
-        $decoded = json_decode($json, $assoc, $depth, $options);
+        $decoded = $json ? json_decode($json, $assoc, $depth, $options) : null;
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new JsonDecodeException('%s: %s', json_last_error_msg(), var_export($json, true));
