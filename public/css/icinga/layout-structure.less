@@ -26,9 +26,12 @@ body {
 #sidebar {
   width: 16em;
   display: flex;
-  flex-direction: column;
   position: relative;
   z-index: 2;
+}
+
+#layout:not(.minimal-layout) #sidebar {
+  flex-direction: column;
 }
 
 #layout:not(.minimal-layout) #sidebar:after {
