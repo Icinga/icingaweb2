@@ -144,15 +144,12 @@
 
                     switch (groupName) {
                         case _this.widgetTypes.DashboardHome:
-                            groupName = _this.widgetTypes.DashboardHome;
                             draggable = '.home-list-control';
                             break;
                         case _this.widgetTypes.Dashboard:
-                            groupName = _this.widgetTypes.Dashboard;
                             draggable = '.dashboard-list-control';
                             break;
                         case _this.widgetTypes.Dashlet:
-                            groupName = _this.widgetTypes.Dashlet;
                             draggable = '.dashlet-list-item';
                     }
 
