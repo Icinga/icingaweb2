@@ -4,6 +4,10 @@
 namespace Icinga\Forms;
 
 use Exception;
+use Icinga\Common\Database;
+use Icinga\Data\ConfigObject;
+use Icinga\Model\ConfigScope;
+use ipl\Stdlib\Filter;
 use Zend_Form_Decorator_Abstract;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\ConfigFormEventsHook;
@@ -16,12 +20,35 @@ use Icinga\Web\Notification;
  */
 class ConfigForm extends Form
 {
+    use Database;
+
     /**
      * The configuration to work with
      *
-     * @var Config
+     * ``ConfigObject`` if ``setConfigScope()`` is called on form
+     *
+     * ``Config`` if ``setIniConfig()`` is called on form
+     *
+     * @var Config|ConfigObject
      */
     protected $config;
+
+    /**
+     * True if resource is ini, false otherwise
+     *
+     * @var bool
+     */
+    protected $isConfigResourceIni = false;
+
+    /**
+     * @var string Scope module name in case config resource is db
+     */
+    protected $moduleName;
+
+    /**
+     * @var string Scope name in case config resource is db
+     */
+    protected $scopeName;
 
     /**
      * {@inheritdoc}
@@ -49,7 +76,56 @@ class ConfigForm extends Form
      */
     public function setIniConfig(Config $config)
     {
+        if ($this->config !== null) {
+            throw new Exception("Cannot call both methods setConfigScope() and setIniConfig() on same form");
+        }
+
         $this->config = $config;
+        $this->isConfigResourceIni = true;
+
+        return $this;
+    }
+
+    public function getModuleName()
+    {
+        return $this->moduleName;
+    }
+
+    public function getScopeName()
+    {
+        return $this->scopeName;
+    }
+
+    /**
+     * Whether the config resource is ini
+     *
+     * @return bool True if resource is ini, false otherwise
+     */
+    public function isConfigResourceIni()
+    {
+        return $this->isConfigResourceIni;
+    }
+
+    /**
+     *
+     * @param string $module Scope module name
+     *
+     * @param string $name Scope name
+     *
+     * @return $this
+     */
+    public function setConfigScope(string $module = 'default', string $name = 'config')
+    {
+        if ($this->config !== null) {
+            throw new Exception("Cannot call both methods setConfigScope() and setIniConfig() on same form");
+        }
+
+        $this->scopeName = $name;
+        $this->moduleName = $module;
+
+        $this->config = self::fromDb();
+
+
         return $this;
     }
 
@@ -70,14 +146,17 @@ class ConfigForm extends Form
 
     public function onSuccess()
     {
-        $sections = array();
-        foreach (static::transformEmptyValuesToNull($this->getValues()) as $sectionAndPropertyName => $value) {
-            list($section, $property) = explode('_', $sectionAndPropertyName, 2);
-            $sections[$section][$property] = $value;
-        }
+        if ($this->isConfigResourceIni()) {
+            $sections = array();
+            foreach (static::transformEmptyValuesToNull($this->getValues()) as $sectionAndPropertyName => $value) {
+                list($section, $property) = explode('_', $sectionAndPropertyName, 2);
+                $sections[$section][$property] = $value;
+            }
 
-        foreach ($sections as $section => $config) {
-            $this->config->setSection($section, $config);
+            foreach ($sections as $section => $config) {
+                $this->config->setSection($section, $config);
+            }
+
         }
 
         if ($this->save()) {
@@ -96,10 +175,15 @@ class ConfigForm extends Form
 
     public function onRequest()
     {
-        $values = array();
+        $values = [];
         foreach ($this->config as $section => $properties) {
             foreach ($properties as $name => $value) {
-                $values[$section . '_' . $name] = $value;
+                $sectionPrefix = '';
+                if ($this->isConfigResourceIni()) {
+                    $sectionPrefix = $section . '_';
+                }
+
+                $values[$sectionPrefix . $name] = $value;
             }
         }
 
@@ -122,6 +206,8 @@ class ConfigForm extends Form
 
             return false;
         } catch (Exception $e) {
+            //TODO: Add exception for db config
+
             $this->addDecorator('ViewScript', array(
                 'viewModule'    => 'default',
                 'viewScript'    => 'showConfiguration.phtml',
@@ -139,11 +225,81 @@ class ConfigForm extends Form
     /**
      * Write the configuration to disk
      *
-     * @param   Config  $config
+     * @param Config|ConfigObject $config
+     *
+     * @throws ConfigurationError
      */
-    protected function writeConfig(Config $config)
+    protected function writeConfig($config)
     {
-        $config->saveIni();
+        if ($this->isConfigResourceIni()) {
+            $config->saveIni();
+
+            return;
+        }
+
+        $values = static::transformEmptyValuesToNull($this->getValues());
+
+        $valuesAsStr = implode(', ', array_map(
+            function ($v, $k) { return sprintf("%s=%s", $k, $v); },
+            $values,
+            array_keys($values)
+        ));
+
+        $hash = sha1($valuesAsStr, true);
+
+        $db = $this->getDb();
+
+        $data = ConfigScope::on($db)->with(['option']);
+        $data->filter(Filter::all(
+            Filter::equal('module', $this->getModuleName()),
+            Filter::equal('name', $this->getScopeName())
+        ));
+
+        $data = $data->first();
+
+        $db->beginTransaction();
+        try {
+            if ($data === null) {
+                $db->insert('icingaweb_config_scope', [
+                    'module'    => $this->getModuleName(),
+                    'name'      => $this->getScopeName(),
+                    'hash'      => $hash
+                ]);
+                $id = $db->lastInsertId();
+
+                foreach ($values as $k => $v) {
+                    if (isset($v)) {
+                        $db->insert('icingaweb_config_option', [
+                            'scope_id'      => $id,
+                            'name'    => $k,
+                            'value'   => $v
+                        ]);
+                    }
+                }
+
+            } elseif ($data->hash !== $hash) {
+                $db->update('icingaweb_config_scope', [
+                    'module'    => $this->getModuleName(),
+                    'name'      => $this->getScopeName(),
+                    'hash'      => $hash
+                ], ['id = ?' => $data->id]);
+
+                $db->delete('icingaweb_config_option', ['scope_id = ?' => $data->id]);
+
+                foreach ($values as $k => $v) {
+                    $db->insert('icingaweb_config_option', [
+                        'scope_id'=>  $data->id,
+                        'name'    => $k,
+                        'value'   => $v
+                    ]);
+                }
+            }
+
+            $db->commitTransaction();
+        } catch (Exception $e) {
+            $db->rollBackTransaction();
+            throw $e;
+        }
     }
 
     /**
@@ -162,5 +318,23 @@ class ConfigForm extends Form
         });
 
         return $values;
+    }
+
+    protected function fromDb()
+    {
+        $options = [];
+        $db = (new self())->getDb();
+
+        $data = ConfigScope::on($db)->with(['option']);
+        $data->filter(Filter::all(
+            Filter::equal('module', $this->getModuleName()),
+            Filter::equal('name', $this->getScopeName())
+        ));
+
+        foreach ($data as $v) {
+            $options[$v->name][$v->option->name] = $v->option->value;
+        }
+
+        return new ConfigObject($options);
     }
 }
