@@ -129,6 +129,18 @@ class ConfigForm extends Form
         return $this;
     }
 
+    public function createElements(array $formData)
+    {
+        $this->addElement(
+            'hidden',
+            'hash',
+            [
+                'value'     => $formData['hash'] ?? '',
+                'required' => true
+            ]
+        );
+    }
+
     public function isValid($formData)
     {
         $valid = parent::isValid($formData);
@@ -206,7 +218,11 @@ class ConfigForm extends Form
 
             return false;
         } catch (Exception $e) {
-            //TODO: Add exception for db config
+            if (! $this->isConfigResourceIni()) {
+                $this->addError($e->getMessage());
+
+                return false;
+            }
 
             $this->addDecorator('ViewScript', array(
                 'viewModule'    => 'default',
@@ -238,6 +254,7 @@ class ConfigForm extends Form
         }
 
         $values = static::transformEmptyValuesToNull($this->getValues());
+        unset($values['hash']);
 
         $valuesAsStr = implode(', ', array_map(
             function ($v, $k) { return sprintf("%s=%s", $k, $v); },
@@ -245,7 +262,7 @@ class ConfigForm extends Form
             array_keys($values)
         ));
 
-        $hash = sha1($valuesAsStr, true);
+        $newHash = sha1($valuesAsStr, true);
 
         $db = $this->getDb();
 
@@ -263,7 +280,7 @@ class ConfigForm extends Form
                 $db->insert('icingaweb_config_scope', [
                     'module'    => $this->getModuleName(),
                     'name'      => $this->getScopeName(),
-                    'hash'      => $hash
+                    'hash'      => $newHash
                 ]);
                 $id = $db->lastInsertId();
 
@@ -277,11 +294,11 @@ class ConfigForm extends Form
                     }
                 }
 
-            } elseif ($data->hash !== $hash) {
+            } elseif ($data->hash !== $newHash) {
                 $db->update('icingaweb_config_scope', [
                     'module'    => $this->getModuleName(),
                     'name'      => $this->getScopeName(),
-                    'hash'      => $hash
+                    'hash'      => $newHash
                 ], ['id = ?' => $data->id]);
 
                 $db->delete('icingaweb_config_option', ['scope_id = ?' => $data->id]);
@@ -322,17 +339,17 @@ class ConfigForm extends Form
 
     protected function fromDb()
     {
-        $options = [];
-        $db = (new self())->getDb();
-
-        $data = ConfigScope::on($db)->with(['option']);
+        $data = ConfigScope::on($this->getDb())->with(['option']);
         $data->filter(Filter::all(
             Filter::equal('module', $this->getModuleName()),
             Filter::equal('name', $this->getScopeName())
         ));
 
-        foreach ($data as $v) {
-            $options[$v->name][$v->option->name] = $v->option->value;
+        $options = [];
+
+        foreach ($data as $values) {
+            $options[$values->name][$values->option->name] = $values->option->value;
+            $options[$values->name]['hash'] = bin2hex($values->hash);
         }
 
         return new ConfigObject($options);
