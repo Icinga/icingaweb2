@@ -26,7 +26,6 @@ class Pane extends Model
             'home_id',
             'name',
             'label',
-            'username',
             'priority'
         ];
     }

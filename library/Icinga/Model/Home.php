@@ -4,8 +4,10 @@
 
 namespace Icinga\Model;
 
+use Icinga\Model\Behavior\BoolCast;
 use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Dashboard;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -24,9 +26,9 @@ class Home extends Model
     public function getColumns()
     {
         return [
+            'user_id',
             'name',
             'label',
-            'username',
             'type',
             'priority',
             'disabled',
@@ -52,10 +54,17 @@ class Home extends Model
         return 'priority';
     }
 
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new BoolCast(['disabled']));
+    }
+
     public function createRelations(Relations $relations)
     {
-        $relations->hasMany(Dashboard\Pane::TABLE, Pane::class);
+        $relations->belongsTo('icingaweb_dashboard_owner', DashboardOwner::class)
+            ->setCandidateKey('user_id');
 
+        $relations->hasMany(Dashboard\Pane::TABLE, Pane::class);
         //$relations->hasMany(Dashboard\Dashlet::TABLE, Dashlet::class);
     }
 }
