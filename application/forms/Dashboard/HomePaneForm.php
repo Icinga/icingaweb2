@@ -7,6 +7,7 @@ namespace Icinga\Forms\Dashboard;
 use Icinga\Application\Logger;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Util\DBUtils;
 use Icinga\Web\Notification;
 use Icinga\Web\Dashboard\Dashboard;
 use ipl\Web\Url;
@@ -115,7 +116,7 @@ class HomePaneForm extends BaseDashboardForm
                 $orgHome->setEntries([]);
             }
 
-            $conn = Dashboard::getConn();
+            $conn = DBUtils::getConn();
             $conn->beginTransaction();
 
             try {

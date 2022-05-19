@@ -9,6 +9,7 @@ use Icinga\Model\Home;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Web\Dashboard\Common\DashboardEntries;
 use Icinga\Web\Dashboard\Common\Sortable;
+use Icinga\Web\Dashboard\Util\DBUtils;
 use ipl\Stdlib\Filter;
 
 use function ipl\Stdlib\get_php_type;
@@ -67,7 +68,7 @@ class DashboardHome extends BaseDashboard implements Sortable
             ->setPriority($home->priority)
             ->setType($home->type)
             ->setUuid($home->id)
-            ->setDisabled((bool) $home->disabled);
+            ->setDisabled($home->disabled);
 
         return $self;
     }
@@ -156,7 +157,7 @@ class DashboardHome extends BaseDashboard implements Sortable
         $pane = $pane instanceof Pane ? $pane : $this->getEntry($pane);
         $pane->removeEntries();
 
-        Dashboard::getConn()->delete(Pane::TABLE, [
+        DBUtils::getConn()->delete(Pane::TABLE, [
             'id = ?'      => $pane->getUuid(),
             'home_id = ?' => $this->getUuid()
         ]);
@@ -167,10 +168,13 @@ class DashboardHome extends BaseDashboard implements Sortable
     public function loadDashboardEntries(string $name = '')
     {
         $this->setEntries([]);
-        $panes = \Icinga\Model\Pane::on(Dashboard::getConn())->utilize(self::TABLE);
+        $panes = \Icinga\Model\Pane::on(DBUtils::getConn())->utilize(self::TABLE);
         $panes
             ->filter(Filter::equal('home_id', $this->getUuid()))
-            ->filter(Filter::equal('username', Dashboard::getUser()->getUsername()));
+            ->filter(Filter::equal(
+                self::TABLE . '.icingaweb_dashboard_owner.id',
+                Dashboard::getUser()->getAdditional('id')
+            ));
 
         foreach ($panes as $pane) {
             $newPane = new Pane($pane->name);
@@ -200,10 +204,10 @@ class DashboardHome extends BaseDashboard implements Sortable
     public function manageEntry($entry, BaseDashboard $origin = null, bool $manageRecursive = false)
     {
         $user = Dashboard::getUser();
-        $conn = Dashboard::getConn();
+        $conn = DBUtils::getConn();
 
         $panes = is_array($entry) ? $entry : [$entry];
-        // highest priority is 0, so count($entries) are all always lowest prio + 1
+        // Highest priority is 0, so count($entries) are all always lowest prio + 1
         $order = count($this->getEntries());
 
         if ($origin && ! $origin instanceof DashboardHome) {
@@ -223,7 +227,6 @@ class DashboardHome extends BaseDashboard implements Sortable
                     'home_id'  => $this->getUuid(),
                     'name'     => $pane->getName(),
                     'label'    => $pane->getTitle(),
-                    'username' => $user->getUsername(),
                     'priority' => $order++
                 ]);
             } elseif (! $this->hasEntry($pane->getName()) || ! $origin || ! $origin->hasEntry($pane->getName())) {

@@ -4,9 +4,9 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Logger;
-use Icinga\Authentication\Auth;
 use Icinga\Model\Home;
 use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Util\DBUtils;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Dashboard\Dashboard;
 use ipl\Stdlib\Filter;
@@ -121,7 +121,7 @@ class Menu extends Navigation
         ]);
         $this->addItem('user', [
             'cssClass'  => 'user-nav-item',
-            'label'     => Auth::getInstance()->getUser()->getUsername(),
+            'label'     => Dashboard::getUser()->getUsername(),
             'icon'      => 'user',
             'priority'  => 900,
             'children'  => [
@@ -160,8 +160,8 @@ class Menu extends Navigation
         $dashboardHomes = [];
 
         try {
-            $homes = Home::on(Dashboard::getConn());
-            $homes->filter(Filter::equal('username', Auth::getInstance()->getUser()->getUsername()));
+            $homes = Home::on(DBUtils::getConn());
+            $homes->filter(Filter::equal('user_id', Dashboard::getUser()->getAdditional('id')));
 
             foreach ($homes as $home) {
                 if ($home->name === DashboardHome::DEFAULT_HOME) {

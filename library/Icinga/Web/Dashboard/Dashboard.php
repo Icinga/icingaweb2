@@ -252,9 +252,8 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
             $this->addHtml(HtmlElement::create('p', null, $message));
 
             $this->addHtml($this->welcomeForm);
-            //$this->addHtml($wrapper);
         } elseif (! $activeHome->hasEntries()) {
-            $this->addHtml(HtmlElement::create('h1', null, t('No dashboard added to this dashboard home')));
+            $this->addHtml(HtmlElement::create('h1', null, t('No dashboard added to this dashboard home.')));
         } else {
             $activePane = $this->getActivePane();
 

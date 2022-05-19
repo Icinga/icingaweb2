@@ -4,8 +4,10 @@
 
 namespace Icinga\Forms\Dashboard;
 
+use Icinga\Application\Modules;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Util\DBUtils;
 use ipl\Html\Form;
 use ipl\Web\Url;
 
@@ -36,20 +38,28 @@ class WelcomeForm extends Form
             'data-no-icinga-ajax' => true
         ]);
 
-        $this->addElement('submit', 'btn_use_defaults', ['label' => t('Use System Defaults')]);
+        $shouldDisabled = empty(Modules\DashletManager::getSystemDefaults());
+        $this->addElement('submit', 'btn_use_defaults', [
+            'label'    => t('Use System Defaults'),
+            'disabled' => $shouldDisabled ?: null,
+            'title'    => $shouldDisabled
+                ? t('It could not be found any system defaults on your system. Please make sure to enable'
+                    .' either icingadb or monitoring module and try it later!')
+                : null
+        ]);
     }
 
     protected function onSuccess()
     {
         if ($this->getPopulatedValue('btn_use_defaults')) {
             $home = $this->dashboard->getEntry(DashboardHome::DEFAULT_HOME);
-            $conn = Dashboard::getConn();
+            $conn = DBUtils::getConn();
             $conn->beginTransaction();
 
             try {
                 // Default Home might have been disabled, so we have to update it first
                 $this->dashboard->manageEntry($home);
-                $home->manageEntry($this->dashboard->getSystemDefaults(), null, true);
+                $home->manageEntry(Modules\DashletManager::getSystemDefaults(), null, true);
 
                 $conn->commitTransaction();
             } catch (\Exception $err) {

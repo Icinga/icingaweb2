@@ -8,6 +8,7 @@ use Icinga\Application\Logger;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Util\DBUtils;
 use Icinga\Web\Notification;
 use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Dashboard\Pane;
@@ -155,7 +156,7 @@ class DashletForm extends SetupNewDashboardForm
 
     protected function onSuccess()
     {
-        $conn = Dashboard::getConn();
+        $conn = DBUtils::getConn();
         $dashboard = $this->dashboard;
 
         $selectedHome = $this->getPopulatedValue('home');
@@ -263,10 +264,12 @@ class DashletForm extends SetupNewDashboardForm
             }
 
             $currentPane->setHome($currentHome);
-            // When the user wishes to create a new dashboard pane, we have to explicitly reset the dashboard panes
-            // of the original home, so that it isn't considered as we want to move the pane even though it isn't
-            // supposed to when the original home contains a dashboard with the same name
-            // @see DashboardHome::manageEntries() for details
+            /**
+             * When the user wishes to create a new dashboard pane, we have to explicitly reset the dashboard panes
+             * of the original home, so that it isn't considered as we want to move the pane even though it isn't
+             * supposed to when the original home contains a dashboard with the same name
+             * {@see DashboardHome::manageEntry()} for details
+             */
             $selectedPane = $this->getPopulatedValue('pane');
             if ((! $selectedPane || $selectedPane === self::CREATE_NEW_PANE)
                 && ! $currentHome->hasEntry($currentPane->getName())) {

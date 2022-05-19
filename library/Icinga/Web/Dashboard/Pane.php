@@ -4,14 +4,15 @@
 
 namespace Icinga\Web\Dashboard;
 
+use Icinga\Application\Icinga;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Model;
 use Icinga\Web\Dashboard\Common\DashboardEntries;
 use Icinga\Web\Dashboard\Common\Sortable;
+use Icinga\Web\Dashboard\Util\DBUtils;
 use ipl\Stdlib\Filter;
-use ipl\Web\Url;
 
 use function ipl\Stdlib\get_php_type;
 
@@ -80,7 +81,7 @@ class Pane extends BaseDashboard implements Sortable
             $dashlet = $this->getEntry($dashlet);
         }
 
-        Dashboard::getConn()->delete(Dashlet::TABLE, [
+        DBUtils::getConn()->delete(Dashlet::TABLE, [
             'id = ?'           => $dashlet->getUuid(),
             'dashboard_id = ?' => $this->getUuid()
         ]);
@@ -90,13 +91,26 @@ class Pane extends BaseDashboard implements Sortable
 
     public function loadDashboardEntries(string $name = '')
     {
-        $dashlets = Model\Dashlet::on(Dashboard::getConn())
+        $dashlets = Model\Dashlet::on(DBUtils::getConn())
             ->utilize(self::TABLE)
             ->with('icingaweb_module_dashlet');
-        $dashlets->filter(Filter::equal('dashboard_id', $this->getUuid()));
+        $dashlets
+            ->filter(Filter::equal('dashboard_id', $this->getUuid()))
+            // Module dashlets can be disabled due to permissions or the module is not loaded
+            ->filter(Filter::equal('icingaweb_module_dashlet.disabled', false));
 
         $this->setEntries([]);
+
+        $user = Dashboard::getUser();
+        $mm = Icinga::app()->getModuleManager();
         foreach ($dashlets as $dashlet) {
+            $module = $dashlet->icingaweb_module_dashlet->module;
+            if ($module && $mm->hasInstalled($module)) {
+                if (! $user->can($mm::MODULE_PERMISSION_NS . $module)) {
+                    continue;
+                }
+            }
+
             $newDashlet = new Dashlet($dashlet->name, $dashlet->url, $this);
             $newDashlet
                 ->setPane($this)
@@ -106,6 +120,9 @@ class Pane extends BaseDashboard implements Sortable
                 ->setDescription($dashlet->icingaweb_module_dashlet->description);
 
             $this->addEntry($newDashlet);
+            if ($module && ! $mm->hasInstalled($module)) {
+                $this->removeEntry($newDashlet);
+            }
         }
 
         return $this;
@@ -129,7 +146,7 @@ class Pane extends BaseDashboard implements Sortable
 
         $home = $this->getHome();
         $user = Dashboard::getUser()->getUsername();
-        $conn = Dashboard::getConn();
+        $conn = DBUtils::getConn();
 
         $dashlets = is_array($entry) ? $entry : [$entry];
         // Highest priority is 0, so count($entries) are always lowest prio + 1
@@ -143,14 +160,17 @@ class Pane extends BaseDashboard implements Sortable
                 break;
             }
 
+            $url = $dashlet->getUrl();
+            $url = is_string($url) ?: $url->getRelativeUrl();
             $uuid = Dashboard::getSHA1($user . $home->getName() . $this->getName() . $dashlet->getName());
+
             if (! $this->hasEntry($dashlet->getName()) && (! $origin || ! $origin->hasEntry($dashlet->getName()))) {
                 $conn->insert(Dashlet::TABLE, [
                     'id'           => $uuid,
                     'dashboard_id' => $this->getUuid(),
                     'name'         => $dashlet->getName(),
                     'label'        => $dashlet->getTitle(),
-                    'url'          => $dashlet->getUrl()->getRelativeUrl(),
+                    'url'          => $url,
                     'priority'     => $order++
                 ]);
 
@@ -188,7 +208,7 @@ class Pane extends BaseDashboard implements Sortable
                     'id'           => $uuid,
                     'dashboard_id' => $this->getUuid(),
                     'label'        => $dashlet->getTitle(),
-                    'url'          => $dashlet->getUrl()->getRelativeUrl(),
+                    'url'          => $url,
                     'priority'     => $dashlet->getPriority()
                 ], $filterCondition);
             } else {

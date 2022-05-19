@@ -6,7 +6,6 @@ namespace Icinga\Web\Dashboard;
 
 use Icinga\Application\Icinga;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
-use Icinga\Web\Request;
 use Icinga\Web\Url;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -80,9 +79,7 @@ class Dashlet extends BaseDashboard
     public function getUrl()
     {
         if ($this->url !== null && ! $this->url instanceof Url) {
-            if (Icinga::app()->isCli()) {
-                $this->url = Url::fromPath($this->url, [], new Request());
-            } else {
+            if (! Icinga::app()->isCli()) {
                 $this->url = Url::fromPath($this->url);
             }
         }
@@ -252,12 +249,12 @@ class Dashlet extends BaseDashboard
     {
         $pane = $this->getPane();
         return [
-            'id'    => $this->getUuid(),
-            'pane'  => ! $stringify ? $pane : ($pane ? $pane->getName() : null),
-            'name'  => $this->getName(),
-            'url'   => $this->getUrl()->getRelativeUrl(),
-            'label' => $this->getTitle(),
-            'order' => $this->getPriority(),
+            'id'       => $this->getUuid(),
+            'pane'     => ! $stringify ? $pane : ($pane ? $pane->getName() : null),
+            'name'     => $this->getName(),
+            'url'      => $this->getUrl()->getRelativeUrl(),
+            'label'    => $this->getTitle(),
+            'priority' => $this->getPriority(),
         ];
     }
 }

@@ -2,12 +2,14 @@
 
 namespace Icinga\Forms\Dashboard;
 
+use Icinga\Application\Modules;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Dashboard\ItemList\DashletListMultiSelect;
 use Icinga\Web\Dashboard\ItemList\EmptyDashlet;
 use Icinga\Web\Dashboard\Pane;
+use Icinga\Util\DBUtils;
 use Icinga\Web\Notification;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
@@ -33,7 +35,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
         parent::init();
 
         if (empty(self::$moduleDashlets)) {
-            self::$moduleDashlets = Dashboard::getModuleDashlets();
+            self::$moduleDashlets = Modules\DashletManager::getDashlets();
         }
 
         $this->setRedirectUrl((string) Url::fromPath(Dashboard::BASE_ROUTE));
@@ -242,7 +244,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
     protected function onSuccess()
     {
         if ($this->getPopulatedValue('submit')) {
-            $conn = Dashboard::getConn();
+            $conn = DBUtils::getConn();
             $pane = new Pane($this->getPopulatedValue('pane'));
             $home = $this->dashboard->getEntry(DashboardHome::DEFAULT_HOME);
 

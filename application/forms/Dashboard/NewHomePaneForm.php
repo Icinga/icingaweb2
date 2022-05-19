@@ -7,6 +7,7 @@ namespace Icinga\Forms\Dashboard;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Dashboard\Pane;
+use Icinga\Util\DBUtils;
 use Icinga\Web\Notification;
 use ipl\Web\Url;
 
@@ -78,7 +79,7 @@ class NewHomePaneForm extends BaseDashboardForm
     protected function onSuccess()
     {
         $requestUrl = Url::fromRequest();
-        $conn = Dashboard::getConn();
+        $conn = DBUtils::getConn();
 
         if ($requestUrl->getPath() === Dashboard::BASE_ROUTE . '/new-pane') {
             $selectedHome = $this->getPopulatedValue('home');

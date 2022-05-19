@@ -11,7 +11,7 @@ use Icinga\Model;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Dashboard\Pane;
-use Icinga\Web\Dashboard\Util\DBUtils;
+use Icinga\Util\DBUtils;
 use ipl\Stdlib\Filter;
 
 trait DashboardManager
@@ -137,7 +137,7 @@ trait DashboardManager
         if ($home->getName() !== DashboardHome::DEFAULT_HOME) {
             DBUtils::getConn()->delete(DashboardHome::TABLE, ['id = ?' => $home->getUuid()]);
         } elseif (! $home->isDisabled()) {
-            DBUtils::getConn()->update(DashboardHome::TABLE, ['disabled' => 1], [
+            DBUtils::getConn()->update(DashboardHome::TABLE, ['disabled' => DBUtils::bool2BoolEnum(true)], [
                 'id = ?' => $home->getUuid()
             ]);
         }
@@ -168,7 +168,7 @@ trait DashboardManager
                 $conn->update(DashboardHome::TABLE, [
                     'label'    => $home->getTitle(),
                     'priority' => $home->getPriority(),
-                    'disabled' => 'n'
+                    'disabled' => DBUtils::bool2BoolEnum(false)
                 ], ['id = ?' => $home->getUuid()]);
             }
         }
