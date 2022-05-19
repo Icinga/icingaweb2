@@ -65,7 +65,7 @@ trait DashboardManager
             }
         }
 
-       Modules\DashletManager::deployDashlets();
+        Modules\DashletManager::deployDashlets();
     }
 
     /**
