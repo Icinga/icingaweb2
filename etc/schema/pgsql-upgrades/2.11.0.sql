@@ -4,7 +4,6 @@ CREATE DOMAIN bytea20 AS bytea CONSTRAINT exactly_20_bytes_long CHECK ( VALUE IS
 CREATE TABLE "icingaweb_config_scope" (
   "id"     serial,
   "module" character varying(254) NOT NULL DEFAULT 'default',
-  "type"   character varying(64) NOT NULL,
   "name"   citext NOT NULL,
   "hash"   bytea20 NOT NULL
 );
@@ -17,11 +16,10 @@ ALTER TABLE ONLY "icingaweb_config_scope"
     "id"
 );
 
-CREATE UNIQUE INDEX idx_module_type_name
+CREATE UNIQUE INDEX idx_module_name
   ON "icingaweb_config_scope"
   USING btree (
     lower((module)::text),
-    lower((type)::text),
     lower((name)::text)
 );
 

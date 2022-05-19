@@ -29,7 +29,6 @@ class ConfigScope extends Model
     {
         return [
             'module',
-            'type',
             'name',
             'hash'
         ];
@@ -39,7 +38,6 @@ class ConfigScope extends Model
     {
         return [
             'module'    => t('Config Scope Module'),
-            'type'      => t('Config Scope Type'),
             'name'      => t('Config Scope Name'),
             'hash'      => t('Config Scope Hash')
         ];
