@@ -4,14 +4,14 @@
 
 namespace Icinga\Web\Dashboard;
 
-use Icinga\Application\Icinga;
+use Icinga\Application\Modules;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Model;
 use Icinga\Web\Dashboard\Common\DashboardEntries;
 use Icinga\Web\Dashboard\Common\Sortable;
-use Icinga\Web\Dashboard\Util\DBUtils;
+use Icinga\Util\DBUtils;
 use ipl\Stdlib\Filter;
 
 use function ipl\Stdlib\get_php_type;
@@ -94,34 +94,55 @@ class Pane extends BaseDashboard implements Sortable
         $dashlets = Model\Dashlet::on(DBUtils::getConn())
             ->utilize(self::TABLE)
             ->with('icingaweb_module_dashlet');
-        $dashlets
-            ->filter(Filter::equal('dashboard_id', $this->getUuid()))
-            // Module dashlets can be disabled due to permissions or the module is not loaded
-            ->filter(Filter::equal('icingaweb_module_dashlet.disabled', false));
+        $dashlets->filter(Filter::equal('dashboard_id', $this->getUuid()));
+
+        // TODO(yh): Qualify those columns properly??
+        $dashlets->getSelectBase()->columns([
+            'system_dashlet_id'        => 'icingaweb_dashlet_icingaweb_system_dashlet.dashlet_id',
+            'system_module_dashlet_id' => 'icingaweb_dashlet_icingaweb_system_dashlet.module_dashlet_id',
+        ]);
 
         $this->setEntries([]);
-
-        $user = Dashboard::getUser();
-        $mm = Icinga::app()->getModuleManager();
         foreach ($dashlets as $dashlet) {
-            $module = $dashlet->icingaweb_module_dashlet->module;
-            if ($module && $mm->hasInstalled($module)) {
-                if (! $user->can($mm::MODULE_PERMISSION_NS . $module)) {
-                    continue;
-                }
-            }
-
             $newDashlet = new Dashlet($dashlet->name, $dashlet->url, $this);
             $newDashlet
                 ->setPane($this)
                 ->setUuid($dashlet->id)
                 ->setTitle($dashlet->label)
                 ->setPriority($dashlet->priority)
+                ->setDisabled($dashlet->disabled)
+                ->setModule($dashlet->icingaweb_module_dashlet->module ?? '')
+                ->setModuleDashlet($dashlet->system_dashlet_id !== null)
                 ->setDescription($dashlet->icingaweb_module_dashlet->description);
 
             $this->addEntry($newDashlet);
-            if ($module && ! $mm->hasInstalled($module)) {
+
+            if (
+                Modules\DashletManager::isOrphaned($newDashlet)
+                || (
+                    $newDashlet->isModuleDashlet()
+                    && $dashlet->system_module_dashlet_id === null
+                )
+            ) {
+                // The module from which this dashlet originates doesn't exist anymore
                 $this->removeEntry($newDashlet);
+
+                unset($this->dashboards[$newDashlet->getName()]);
+            } elseif (! $newDashlet->isDisabled() && ! Modules\DashletManager::isUsable($newDashlet)) {
+                // The module from which this dashlet originates is probably disabled,
+                // so don't load this dashlet anymore and disable it
+                $newDashlet->setDisabled(true);
+
+                $this->manageEntry($newDashlet);
+            } elseif ($newDashlet->isDisabled() && Modules\DashletManager::isUsable($newDashlet)) {
+                // Dashlet was disabled, but it can be used now, so enabled it again
+                $newDashlet->setDisabled(false);
+
+                $this->manageEntry($newDashlet);
+            }
+
+            if ($newDashlet->isDisabled()) {
+                unset($this->dashboards[$newDashlet->getName()]);
             }
         }
 
@@ -171,7 +192,8 @@ class Pane extends BaseDashboard implements Sortable
                     'name'         => $dashlet->getName(),
                     'label'        => $dashlet->getTitle(),
                     'url'          => $url,
-                    'priority'     => $order++
+                    'priority'     => $order++,
+                    'disabled'     => DBUtils::bool2BoolEnum($dashlet->isDisabled())
                 ]);
 
                 if ($dashlet->isModuleDashlet()) {
@@ -209,7 +231,8 @@ class Pane extends BaseDashboard implements Sortable
                     'dashboard_id' => $this->getUuid(),
                     'label'        => $dashlet->getTitle(),
                     'url'          => $url,
-                    'priority'     => $dashlet->getPriority()
+                    'priority'     => $dashlet->getPriority(),
+                    'disabled'     => DBUtils::bool2BoolEnum($dashlet->isDisabled())
                 ], $filterCondition);
             } else {
                 // This should have already been handled by the caller

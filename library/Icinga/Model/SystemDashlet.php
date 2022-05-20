@@ -5,6 +5,8 @@
 namespace Icinga\Model;
 
 use Icinga\Web\Dashboard;
+use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -17,16 +19,20 @@ class SystemDashlet extends Model
 
     public function getKeyName()
     {
-        return 'id';
+        return 'dashlet_id';
     }
 
     public function getColumns()
     {
         return [
             'dashlet_id',
-            'module_dashlet_id',
-            'username'
+            'module_dashlet_id'
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new Binary(['dashlet_id', 'module_dashlet_id']));
     }
 
     public function createRelations(Relations $relations)

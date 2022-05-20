@@ -4,7 +4,10 @@
 
 namespace Icinga\Model;
 
+use Icinga\Model\Behavior\BoolCast;
 use Icinga\Web\Dashboard;
+use ipl\Orm\Behavior\Binary;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
 
@@ -27,7 +30,8 @@ class Dashlet extends Model
             'name',
             'label',
             'url',
-            'priority'
+            'priority',
+            'disabled'
         ];
     }
 
@@ -51,6 +55,13 @@ class Dashlet extends Model
     public function getDefaultSort()
     {
         return 'priority';
+    }
+
+    public function createBehaviors(Behaviors $behaviors)
+    {
+        $behaviors->add(new BoolCast(['disabled']));
+
+        $behaviors->add(new Binary(['id', 'dashboard_id']));
     }
 
     public function createRelations(Relations $relations)

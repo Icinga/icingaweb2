@@ -4,8 +4,8 @@
 
 namespace Icinga\Model;
 
-use Icinga\Model\Behavior\BoolCast;
 use Icinga\Web\Dashboard;
+use ipl\Orm\Behavior\Binary;
 use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 use ipl\Orm\Relations;
@@ -31,7 +31,6 @@ class ModuleDashlet extends Model
             'pane',
             'url',
             'description',
-            'disabled',
             'priority'
         ];
     }
@@ -61,7 +60,7 @@ class ModuleDashlet extends Model
 
     public function createBehaviors(Behaviors $behaviors)
     {
-        $behaviors->add(new BoolCast(['disabled']));
+        $behaviors->add(new Binary(['id']));
     }
 
     public function createRelations(Relations $relations)
