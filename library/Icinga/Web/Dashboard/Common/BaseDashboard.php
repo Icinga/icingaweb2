@@ -286,11 +286,11 @@ abstract class BaseDashboard implements DashboardEntry
     {
     }
 
-    public function manageEntry($entry, BaseDashboard $origin = null, bool $manageRecursive = false)
+    public function manageEntry($entryOrEntries, BaseDashboard $origin = null, bool $manageRecursive = false)
     {
     }
 
-    public function loadDashboardEntries(string $name = '')
+    public function loadDashboardEntries(string $name = null)
     {
     }
 

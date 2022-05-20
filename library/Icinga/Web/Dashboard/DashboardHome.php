@@ -136,7 +136,7 @@ class DashboardHome extends BaseDashboard implements Sortable
         return $this;
     }
 
-    public function loadDashboardEntries(string $name = '')
+    public function loadDashboardEntries(string $name = null)
     {
         $this->setEntries([]);
         $panes = \Icinga\Model\Pane::on(DBUtils::getConn())->utilize(self::TABLE);
@@ -172,12 +172,12 @@ class DashboardHome extends BaseDashboard implements Sortable
         return $this;
     }
 
-    public function manageEntry($entry, BaseDashboard $origin = null, bool $manageRecursive = false)
+    public function manageEntry($entryOrEntries, BaseDashboard $origin = null, bool $manageRecursive = false)
     {
         $user = Dashboard::getUser();
         $conn = DBUtils::getConn();
 
-        $panes = is_array($entry) ? $entry : [$entry];
+        $panes = is_array($entryOrEntries) ? $entryOrEntries : [$entryOrEntries];
         // Highest priority is 0, so count($entries) are all always lowest prio + 1
         $order = count($this->getEntries());
 

@@ -64,7 +64,6 @@ trait Database
 
                     $insert->values(array_combine($insert->getColumns(), $values));
                 });
-
         }
 
         return $conn;

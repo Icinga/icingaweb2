@@ -72,7 +72,7 @@ trait DashboardManager
         return sha1($name, true);
     }
 
-    public function loadDashboardEntries(string $name = '')
+    public function loadDashboardEntries(string $name = null)
     {
         $home = $this->getEntry($name);
         $home->loadDashboardEntries();
@@ -137,10 +137,10 @@ trait DashboardManager
         return $this;
     }
 
-    public function manageEntry($entry, BaseDashboard $origin = null, $manageRecursive = false)
+    public function manageEntry($entryOrEntries, BaseDashboard $origin = null, $manageRecursive = false)
     {
         $conn = DBUtils::getConn();
-        $homes = is_array($entry) ? $entry : [$entry];
+        $homes = is_array($entryOrEntries) ? $entryOrEntries : [$entryOrEntries];
 
         /** @var DashboardHome $home */
         foreach ($homes as $home) {

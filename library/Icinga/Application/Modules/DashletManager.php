@@ -185,7 +185,7 @@ class DashletManager
      *
      * @param Dashlet $dashlet
      *
-     * @return void
+     * @return bool
      */
     public static function ensureItIsNotOrphaned(Dashlet $dashlet): bool
     {
