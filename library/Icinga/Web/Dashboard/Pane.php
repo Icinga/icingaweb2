@@ -183,8 +183,9 @@ class Pane extends BaseDashboard implements Sortable
             $url = $dashlet->getUrl();
             $url = is_string($url) ?: $url->getRelativeUrl();
             $uuid = Dashboard::getSHA1($user . $home->getName() . $this->getName() . $dashlet->getName());
+            $moveDashlet = $origin && $origin->hasEntry($dashlet->getName());
 
-            if (! $this->hasEntry($dashlet->getName()) && (! $origin || ! $origin->hasEntry($dashlet->getName()))) {
+            if (! $this->hasEntry($dashlet->getName()) && ! $moveDashlet) {
                 $conn->insert(Dashlet::TABLE, [
                     'id'           => $uuid,
                     'dashboard_id' => $this->getUuid(),
@@ -211,8 +212,7 @@ class Pane extends BaseDashboard implements Sortable
                         'module_dashlet_id' => $systemUuid
                     ]);
                 }
-            } elseif (! $this->hasEntry($dashlet->getName()) || ! $origin
-                || ! $origin->hasEntry($dashlet->getName())) {
+            } elseif (! $this->hasEntry($dashlet->getName()) || ! $moveDashlet) {
                 $filterCondition = [
                     'id = ?'           => $dashlet->getUuid(),
                     'dashboard_id = ?' => $this->getUuid()
@@ -230,7 +230,7 @@ class Pane extends BaseDashboard implements Sortable
                     'dashboard_id' => $this->getUuid(),
                     'label'        => $dashlet->getTitle(),
                     'url'          => $url,
-                    'priority'     => $dashlet->getPriority(),
+                    'priority'     => $moveDashlet ? $order++ : $dashlet->getPriority(),
                     'disabled'     => DBUtils::bool2BoolEnum($dashlet->isDisabled())
                 ], $filterCondition);
             } else {

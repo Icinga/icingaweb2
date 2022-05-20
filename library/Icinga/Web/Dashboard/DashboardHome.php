@@ -192,7 +192,9 @@ class DashboardHome extends BaseDashboard implements Sortable
         /** @var Pane $pane */
         foreach ($panes as $pane) {
             $uuid = Dashboard::getSHA1($user->getUsername() . $this->getName() . $pane->getName());
-            if (! $this->hasEntry($pane->getName()) && (! $origin || ! $origin->hasEntry($pane->getName()))) {
+            $movePane = $origin && $origin->hasEntry($pane->getName());
+
+            if (! $this->hasEntry($pane->getName()) && ! $movePane) {
                 $conn->insert(Pane::TABLE, [
                     'id'       => $uuid,
                     'home_id'  => $this->getUuid(),
@@ -200,7 +202,7 @@ class DashboardHome extends BaseDashboard implements Sortable
                     'label'    => $pane->getTitle(),
                     'priority' => $order++
                 ]);
-            } elseif (! $this->hasEntry($pane->getName()) || ! $origin || ! $origin->hasEntry($pane->getName())) {
+            } elseif (! $this->hasEntry($pane->getName()) || ! $movePane) {
                 $filterCondition = [
                     'id = ?'      => $pane->getUuid(),
                     'home_id = ?' => $this->getUuid()
@@ -217,7 +219,7 @@ class DashboardHome extends BaseDashboard implements Sortable
                     'id'       => $uuid,
                     'home_id'  => $this->getUuid(),
                     'label'    => $pane->getTitle(),
-                    'priority' => $pane->getPriority()
+                    'priority' => $movePane ? $order++ : $pane->getPriority()
                 ], $filterCondition);
             } else {
                 // Failed to move the pane! Should have been handled already by the caller
