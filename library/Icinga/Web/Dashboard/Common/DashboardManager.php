@@ -10,20 +10,12 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Model;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
-use Icinga\Web\Dashboard\Pane;
 use Icinga\Util\DBUtils;
 use ipl\Stdlib\Filter;
 
 trait DashboardManager
 {
     use DashboardUserManager;
-
-    /**
-     * A list of default panes loaded from monitoring|icingadb module
-     *
-     * @var Pane[]
-     */
-    private static $defaultPanes = [];
 
     /**
      * Load the given or all homes (null)
