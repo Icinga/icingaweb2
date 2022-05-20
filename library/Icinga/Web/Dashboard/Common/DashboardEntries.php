@@ -52,7 +52,7 @@ trait DashboardEntries
     public function addEntry(BaseDashboard $dashboard)
     {
         if ($this->hasEntry($dashboard->getName())) {
-            $this->getEntry($dashboard->getName())->fromArray($dashboard->toArray(false));
+            $this->getEntry($dashboard->getName())->setProperties($dashboard->toArray(false));
         } else {
             $this->dashboards[$dashboard->getName()] = $dashboard;
         }
