@@ -29,6 +29,9 @@ abstract class BaseDashboardForm extends CompatForm
      */
     protected $dashboard;
 
+    /** @var Url */
+    protected $requestUrl;
+
     /**
      * Create a new Dashboard Form
      *
@@ -37,6 +40,7 @@ abstract class BaseDashboardForm extends CompatForm
     public function __construct(Dashboard $dashboard)
     {
         $this->dashboard = $dashboard;
+        $this->requestUrl = Url::fromRequest();
 
         $this->init();
     }
@@ -49,7 +53,7 @@ abstract class BaseDashboardForm extends CompatForm
     protected function init()
     {
         // This is needed for the modal views
-        $this->setAction((string) Url::fromRequest());
+        $this->setAction((string) $this->requestUrl);
         $this->getAttributes()->add('class', 'dashboard-form');
     }
 
@@ -69,6 +73,16 @@ abstract class BaseDashboardForm extends CompatForm
      */
     public function load(BaseDashboard $dashboard)
     {
+    }
+
+    /**
+     * Get whether we are updating an existing widget
+     *
+     * @return bool
+     */
+    protected function isUpdating(): bool
+    {
+        return substr($this->requestUrl->getPath(), 0, 16) === Dashboard::BASE_ROUTE . DIRECTORY_SEPARATOR . 'edit-';
     }
 
     /**

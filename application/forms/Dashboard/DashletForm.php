@@ -13,7 +13,6 @@ use Icinga\Web\Notification;
 use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Dashboard\Pane;
 use ipl\Html\HtmlElement;
-use ipl\Web\Url;
 
 class DashletForm extends SetupNewDashboardForm
 {
@@ -21,15 +20,14 @@ class DashletForm extends SetupNewDashboardForm
     {
         parent::init();
 
-        $this->setAction((string) Url::fromRequest());
+        $this->setAction((string) $this->requestUrl);
     }
 
     public function load(BaseDashboard $dashboard)
     {
-        $home = Url::fromRequest()->getParam('home');
         /** @var Dashlet $dashboard */
         $this->populate(array(
-            'org_home'    => $home,
+            'org_home'    => $this->requestUrl->getParam('home'),
             'org_pane'    => $dashboard->getPane()->getName(),
             'org_dashlet' => $dashboard->getName(),
             'dashlet'     => $dashboard->getTitle(),
@@ -39,11 +37,9 @@ class DashletForm extends SetupNewDashboardForm
 
     protected function assembleNextPageDashboardPart()
     {
-        $requestUrl = Url::fromRequest();
-
         $homes = $this->dashboard->getEntryKeyTitleArr();
         $activeHome = $this->dashboard->getActiveHome();
-        $currentHome = $requestUrl->getParam('home', reset($homes));
+        $currentHome = $this->requestUrl->getParam('home', reset($homes));
         $populatedHome = $this->getPopulatedValue('home', $currentHome);
 
         $panes = [];
@@ -62,14 +58,14 @@ class DashletForm extends SetupNewDashboardForm
         } elseif ($this->dashboard->hasEntry($populatedHome)) {
             $this->dashboard->loadDashboardEntries($populatedHome);
 
-            $panes = $this->dashboard->getActiveHome()->getEntryKeyTitleArr();
+            $panes = $this->dashboard->getEntry($populatedHome)->getEntryKeyTitleArr();
         }
 
         $this->addElement('hidden', 'org_pane', ['required' => false]);
         $this->addElement('hidden', 'org_home', ['required' => false]);
         $this->addElement('hidden', 'org_dashlet', ['required' => false]);
 
-        if ($this->isUpdatingADashlet()) {
+        if ($this->isUpdating()) {
             $this->assembleDashletElements();
 
             $this->addHtml(new HtmlElement('hr'));
@@ -100,7 +96,7 @@ class DashletForm extends SetupNewDashboardForm
             $this->clearPopulatedValue('pane');
         }
 
-        $populatedPane = $this->getPopulatedValue('pane', $requestUrl->getParam('pane', reset($panes)));
+        $populatedPane = $this->getPopulatedValue('pane', $this->requestUrl->getParam('pane', reset($panes)));
         $disable = empty($panes) || $populatedHome === self::CREATE_NEW_HOME;
         $this->addElement('select', 'pane', [
             'class'        => 'autosubmit',
@@ -124,11 +120,11 @@ class DashletForm extends SetupNewDashboardForm
 
     protected function assemble()
     {
-        if ($this->isUpdatingADashlet() || $this->getPopulatedValue('btn_next') || $this->hasBeenSent()) {
+        if ($this->isUpdating() || $this->getPopulatedValue('btn_next') || $this->hasBeenSent()) {
             $this->assembleNextPage();
 
-            if ($this->isUpdatingADashlet()) {
-                $targetUrl = (clone Url::fromRequest())->setPath(Dashboard::BASE_ROUTE . '/remove-dashlet');
+            if ($this->isUpdating()) {
+                $targetUrl = (clone $this->requestUrl)->setPath(Dashboard::BASE_ROUTE . '/remove-dashlet');
                 $removeButton = $this->createRemoveButton($targetUrl, t('Remove Dashlet'));
 
                 $formControls = $this->createFormControls();
@@ -170,21 +166,20 @@ class DashletForm extends SetupNewDashboardForm
             $selectedPane = $this->getPopulatedValue('new_pane');
         }
 
-        if (! $this->isUpdatingADashlet()) {
-            $currentHome = new DashboardHome($selectedHome);
-            if ($dashboard->hasEntry($currentHome->getName())) {
-                $currentHome = clone $dashboard->getEntry($currentHome->getName());
-                if ($currentHome->getName() !== $dashboard->getActiveHome()->getName()) {
-                    $currentHome->setActive();
-                    $currentHome->loadDashboardEntries();
-                }
+        $currentHome = new DashboardHome($selectedHome);
+        if ($dashboard->hasEntry($currentHome->getName())) {
+            $currentHome = clone $dashboard->getEntry($currentHome->getName());
+            if ($currentHome->getName() !== $dashboard->getActiveHome()->getName()) {
+                $currentHome->loadDashboardEntries();
             }
+        }
 
-            $currentPane = new Pane($selectedPane);
-            if ($currentHome->hasEntry($currentPane->getName())) {
-                $currentPane = clone $currentHome->getEntry($currentPane->getName());
-            }
+        $currentPane = new Pane($selectedPane);
+        if ($currentHome->hasEntry($currentPane->getName())) {
+            $currentPane = clone $currentHome->getEntry($currentPane->getName());
+        }
 
+        if (! $this->isUpdating()) {
             $customDashlet = null;
             if (($dashlet = $this->getPopulatedValue('dashlet')) && ($url = $this->getPopulatedValue('url'))) {
                 $customDashlet = new Dashlet($dashlet, $url, $currentPane);
@@ -247,21 +242,6 @@ class DashletForm extends SetupNewDashboardForm
             $orgHome = $dashboard->getEntry($this->getValue('org_home'));
             $orgPane = $orgHome->getEntry($this->getValue('org_pane'));
             $orgDashlet = $orgPane->getEntry($this->getValue('org_dashlet'));
-
-            $currentHome = new DashboardHome($selectedHome);
-            if ($dashboard->hasEntry($currentHome->getName())) {
-                $currentHome = clone $dashboard->getEntry($currentHome->getName());
-                $activeHome = $dashboard->getActiveHome();
-                if ($currentHome->getName() !== $activeHome->getName()) {
-                    $currentHome->setActive();
-                    $currentHome->loadDashboardEntries();
-                }
-            }
-
-            $currentPane = new Pane($selectedPane);
-            if ($currentHome->hasEntry($currentPane->getName())) {
-                $currentPane = clone $currentHome->getEntry($currentPane->getName());
-            }
 
             $currentPane->setHome($currentHome);
             /**

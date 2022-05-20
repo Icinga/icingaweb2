@@ -19,8 +19,6 @@ use ipl\Web\Widget\Icon;
 
 class SetupNewDashboardForm extends BaseDashboardForm
 {
-    const DATA_TOGGLE_ELEMENT = 'dashlets-list-info';
-
     /**
      * Caches all module dashlets
      *
@@ -84,23 +82,13 @@ class SetupNewDashboardForm extends BaseDashboardForm
     }
 
     /**
-     * Get whether we are updating an existing dashlet
-     *
-     * @return bool
-     */
-    protected function isUpdatingADashlet()
-    {
-        return Url::fromRequest()->getPath() === Dashboard::BASE_ROUTE . '/edit-dashlet';
-    }
-
-    /**
      * Assemble the next page of the modal view
      *
      * @return void
      */
     protected function assembleNextPage()
     {
-        $strict = $this->isUpdatingADashlet() || $this->getPopulatedValue('btn_next') || ! $this->hasBeenSent();
+        $strict = $this->isUpdating() || $this->getPopulatedValue('btn_next') || ! $this->hasBeenSent();
         $this->dumpArbitaryDashlets($strict);
         $this->assembleNextPageDashboardPart();
         $this->assembleNexPageDashletPart();
@@ -167,7 +155,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
      */
     protected function assembleNexPageDashletPart()
     {
-        if ($this->getPopulatedValue('custom_url') === 'y') {
+        if ($this->getPopulatedValue('custom_url') === 'y' && ! $this->isUpdating()) {
             $this->addHtml(HtmlElement::create('hr'));
             $this->assembleDashletElements();
         }

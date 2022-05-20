@@ -4,11 +4,12 @@
 
 namespace Icinga\Controllers;
 
+use Icinga\Forms\Dashboard\HomeForm;
 use Icinga\Forms\Dashboard\DashletForm;
-use Icinga\Forms\Dashboard\HomePaneForm;
-use Icinga\Forms\Dashboard\NewHomePaneForm;
+use Icinga\Forms\Dashboard\PaneForm;
+use Icinga\Forms\Dashboard\RemoveHomeForm;
 use Icinga\Forms\Dashboard\RemoveDashletForm;
-use Icinga\Forms\Dashboard\RemoveHomePaneForm;
+use Icinga\Forms\Dashboard\RemovePaneForm;
 use Icinga\Forms\Dashboard\SetupNewDashboardForm;
 use Icinga\Forms\Dashboard\WelcomeForm;
 use Icinga\Util\Json;
@@ -100,8 +101,8 @@ class DashboardsController extends CompatController
     {
         $this->dashboard->load();
 
-        $paneForm = (new NewHomePaneForm($this->dashboard))
-            ->on(NewHomePaneForm::ON_SUCCESS, function () {
+        $paneForm = (new HomeForm($this->dashboard))
+            ->on(HomeForm::ON_SUCCESS, function () {
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest($this->getServerRequest());
@@ -116,8 +117,8 @@ class DashboardsController extends CompatController
 
         $this->dashboard->load($home);
 
-        $homeForm = (new HomePaneForm($this->dashboard))
-            ->on(HomePaneForm::ON_SUCCESS, function () {
+        $homeForm = (new HomeForm($this->dashboard))
+            ->on(HomeForm::ON_SUCCESS, function () {
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest($this->getServerRequest());
@@ -134,8 +135,8 @@ class DashboardsController extends CompatController
 
         $this->dashboard->load($home);
 
-        $homeForm = (new RemoveHomePaneForm($this->dashboard))
-            ->on(RemoveHomePaneForm::ON_SUCCESS, function () {
+        $homeForm = (new RemoveHomeForm($this->dashboard))
+            ->on(RemoveHomeForm::ON_SUCCESS, function () {
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest($this->getServerRequest());
@@ -148,10 +149,10 @@ class DashboardsController extends CompatController
     {
         $home = $this->params->getRequired('home');
 
-        $this->dashboard->load($home);
+        $this->dashboard->load();
 
-        $paneForm = (new NewHomePaneForm($this->dashboard))
-            ->on(NewHomePaneForm::ON_SUCCESS, function () {
+        $paneForm = (new PaneForm($this->dashboard))
+            ->on(PaneForm::ON_SUCCESS, function () {
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest($this->getServerRequest());
@@ -165,14 +166,14 @@ class DashboardsController extends CompatController
         $home = $this->params->getRequired('home');
         $pane = $this->params->getRequired('pane');
 
-        $this->dashboard->load($home);
+        $this->dashboard->load();
 
         if (! $this->dashboard->getActiveHome()->hasEntry($pane)) {
             $this->httpNotFound(t('Pane "%s" not found'), $pane);
         }
 
-        $paneForm = (new HomePaneForm($this->dashboard))
-            ->on(HomePaneForm::ON_SUCCESS, function () {
+        $paneForm = (new PaneForm($this->dashboard))
+            ->on(PaneForm::ON_SUCCESS, function () {
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest($this->getServerRequest());
@@ -194,9 +195,9 @@ class DashboardsController extends CompatController
             $this->httpNotFound(t('Pane "%s" not found'), $paneParam);
         }
 
-        $paneForm = new RemoveHomePaneForm($this->dashboard);
+        $paneForm = new RemovePaneForm($this->dashboard);
         $paneForm->populate(['org_name' => $paneParam]);
-        $paneForm->on(RemoveHomePaneForm::ON_SUCCESS, function () {
+        $paneForm->on(RemovePaneForm::ON_SUCCESS, function () {
             $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
         })->handleRequest($this->getServerRequest());
 
@@ -208,7 +209,7 @@ class DashboardsController extends CompatController
     {
         $home = $this->params->getRequired('home');
 
-        $this->dashboard->load($home);
+        $this->dashboard->load();
 
         $dashletForm = new DashletForm($this->dashboard);
         $dashletForm->populate($this->getRequest()->getPost());
@@ -473,7 +474,7 @@ class DashboardsController extends CompatController
         $pane = $this->params->getRequired('pane');
         $dashlet = $this->params->getRequired('dashlet');
 
-        $this->dashboard->load($home);
+        $this->dashboard->load();
 
         if (! $this->dashboard->getActiveHome()->hasEntry($pane)) {
             $this->httpNotFound(t('Pane "%s" not found'), $pane);
