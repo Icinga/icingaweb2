@@ -6,6 +6,7 @@ namespace Icinga\Web\Dashboard;
 
 use Icinga\Application\Icinga;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
+use Icinga\Web\Dashboard\Common\WidgetState;
 use Icinga\Web\Url;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -18,6 +19,8 @@ use ipl\Web\Widget\Link;
  */
 class Dashlet extends BaseDashboard
 {
+    use WidgetState;
+
     /** @var string Database table name */
     const TABLE = 'icingaweb_dashlet';
 

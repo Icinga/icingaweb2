@@ -9,7 +9,8 @@ use Icinga\Model\Home;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Web\Dashboard\Common\DashboardEntries;
 use Icinga\Web\Dashboard\Common\Sortable;
-use Icinga\Web\Dashboard\Util\DBUtils;
+use Icinga\Util\DBUtils;
+use Icinga\Web\Dashboard\Common\WidgetState;
 use ipl\Stdlib\Filter;
 
 use function ipl\Stdlib\get_php_type;
@@ -17,6 +18,7 @@ use function ipl\Stdlib\get_php_type;
 class DashboardHome extends BaseDashboard implements Sortable
 {
     use DashboardEntries;
+    use WidgetState;
 
     /**
      * Name of the default home
@@ -45,13 +47,6 @@ class DashboardHome extends BaseDashboard implements Sortable
      * @var bool
      */
     protected $active = false;
-
-    /**
-     * A flag whether a home has been disabled (affects only default home)
-     *
-     * @var bool
-     */
-    protected $disabled = false;
 
     /**
      * Create a new dashboard home from the given model
@@ -121,30 +116,6 @@ class DashboardHome extends BaseDashboard implements Sortable
     public function getType(): string
     {
         return $this->type;
-    }
-
-    /**
-     * Set whether this home should be disabled
-     *
-     * @param bool $disabled
-     *
-     * @return $this
-     */
-    public function setDisabled(bool $disabled): self
-    {
-        $this->disabled = $disabled;
-
-        return $this;
-    }
-
-    /**
-     * Get whether this home has been disabled
-     *
-     * @return bool
-     */
-    public function isDisabled(): bool
-    {
-        return $this->disabled;
     }
 
     public function removeEntry($pane)
