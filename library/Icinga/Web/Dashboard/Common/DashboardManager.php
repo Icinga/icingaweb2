@@ -12,6 +12,7 @@ use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Util\DBUtils;
 use ipl\Stdlib\Filter;
+use ipl\Web\Url;
 
 trait DashboardManager
 {
@@ -51,7 +52,14 @@ trait DashboardManager
                 $this->addEntry(DashboardHome::create($row));
             }
 
-            if (($firstHome = $this->rewindEntries())) {
+            $homeParam = Url::fromRequest()->getParam('home');
+            if ($homeParam && $this->hasEntry($homeParam)) {
+                $firstHome = $this->getEntry($homeParam);
+            } else {
+                $firstHome = $this->rewindEntries();
+            }
+
+            if ($firstHome) {
                 $this->activateHome($firstHome);
                 $firstHome->loadDashboardEntries();
             }
