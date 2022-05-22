@@ -431,7 +431,7 @@ class ResourceConfigForm extends ConfigForm
     /**
      * {@inheritDoc}
      */
-    protected function writeConfig(Config $config)
+    protected function writeConfig($config)
     {
         parent::writeConfig($config);
         if ($this->updatedAppConfig !== null) {

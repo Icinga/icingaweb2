@@ -95,7 +95,7 @@ class ConfigController extends Controller
     {
         $this->assertPermission('config/general');
         $form = new GeneralConfigForm();
-        $form->setIniConfig(Config::app());
+        $form->setConfigScope();
         $form->handleRequest();
 
         $this->view->form = $form;

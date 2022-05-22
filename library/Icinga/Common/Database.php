@@ -4,10 +4,9 @@
 namespace Icinga\Common;
 
 use Icinga\Application\Config as IcingaConfig;
-use Icinga\Data\ResourceFactory;
+use Icinga\Exception\ConfigurationError;
 use ipl\Sql\Config as SqlConfig;
 use ipl\Sql\Connection;
-use LogicException;
 use PDO;
 
 /**
@@ -25,12 +24,13 @@ trait Database
     protected function getDb()
     {
         if (! $this->hasDb()) {
-            throw new LogicException('Please check if a db instance exists at all');
+            throw new ConfigurationError('Cannot load resource config "db". Resource does not exist');
         }
 
-        $config = new SqlConfig(ResourceFactory::getResourceConfig(
-            IcingaConfig::app()->get('global', 'config_resource')
-        ));
+        $config = new SqlConfig(
+            IcingaConfig::app()->getSection('db')
+        );
+
         if ($config->db === 'mysql') {
             $config->charset = 'utf8mb4';
         }
@@ -51,6 +51,6 @@ trait Database
      */
     protected function hasDb()
     {
-        return (bool) IcingaConfig::app()->get('global', 'config_resource');
+        return ! IcingaConfig::app()->getSection('db')->isEmpty();
     }
 }

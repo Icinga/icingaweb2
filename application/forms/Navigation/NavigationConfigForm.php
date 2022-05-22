@@ -760,7 +760,7 @@ class NavigationConfigForm extends ConfigForm
     /**
      * {@inheritdoc}
      */
-    protected function writeConfig(Config $config)
+    protected function writeConfig($config)
     {
         parent::writeConfig($config);
 
