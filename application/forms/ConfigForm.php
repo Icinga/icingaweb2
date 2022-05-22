@@ -153,6 +153,38 @@ class ConfigForm extends Form
             $valid = false;
         }
 
+        if (! $this->isConfigResourceIni()) {
+            $query = ConfigScope::on($this->getDb());
+            $query->filter(Filter::all(
+                Filter::equal('module', $this->getModuleName()),
+                Filter::equal('name', $this->getScopeName())
+            ));
+
+            try {
+                $data = $this->getDb()->fetchRow($query->assembleSelect()->for('UPDATE'));
+            } catch (Exception $e) {
+                $this->warning($e->getMessage());
+
+                return false;
+            }
+
+            $oldHash = $formData['hash'] ?? '';
+
+            if ($data && $oldHash !== bin2hex($data->hash)) {
+                $newOptions = self::fromDb()->toArray()['config'];
+                unset($newOptions['hash']);
+                $this->warning($this->translate(sprintf('The general configuration has been updated and the '
+                    . 'updated general configuration is %s', json_encode($newOptions, JSON_PRETTY_PRINT))));
+
+                $this->getElement('hash')->setValue(bin2hex($data->hash));
+                return false;
+            }
+
+            if ($oldHash === '') {
+                $valid = true;
+            }
+        }
+
         return $valid;
     }
 
