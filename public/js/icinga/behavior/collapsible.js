@@ -67,7 +67,7 @@
         var toCollapse = [];
 
         $.each(document.querySelectorAll('.collapsible'), function (_, collapsible) {
-            if ($(collapsible).is('.can-collapse')) {
+            if (collapsible.matches('.can-collapse')) {
                 if (! _this.canCollapse(collapsible)) {
                     var toggleSelector = collapsible.dataset.toggleElement;
                     if (! toggleSelector) {
@@ -98,7 +98,7 @@
     Collapsible.prototype.onExpand = function(collapsiblePath) {
         var collapsible = $(collapsiblePath)[0];
 
-        if (collapsible && $(collapsible).is('.can-collapse')) {
+        if (collapsible && collapsible.matches('.can-collapse')) {
             this.expand(collapsible);
         }
     };
@@ -134,7 +134,7 @@
             _this.icinga.logger.error(
                 '[Collapsible] Collapsible control has no associated .collapsible: ', $target[0]);
         } else if (typeof collapsible.dataset.noPersistence !== 'undefined') {
-            if ($(collapsible).is('.collapsed')) {
+            if (collapsible.matches('.collapsed')) {
                 _this.expand(collapsible);
             } else {
                 _this.collapse(collapsible, _this.calculateCollapsedHeight(collapsible));
@@ -200,9 +200,9 @@
             return '';
         }
 
-        if (collapsible.tagName === 'TABLE') {
+        if (collapsible.matches('table')) {
             return '> tbody > tr';
-        } else if (collapsible.tagName === 'UL' || collapsible.tagName === 'OL') {
+        } else if (collapsible.matches('ul, ol')) {
             return '> li:not(.collapsible-control)';
         }
 
