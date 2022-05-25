@@ -61,7 +61,7 @@ trait PdfExport
                     ' / ',
                     Html::tag('span', ['class' => 'totalPages'])
                 ]),
-                Html::tag('p', null, Url::fromRequest()->setParams($this->params))
+                Html::tag('p', null, rawurldecode(Url::fromRequest()->setParams($this->params)))
             ]))
             ->addHtml($html);
 
