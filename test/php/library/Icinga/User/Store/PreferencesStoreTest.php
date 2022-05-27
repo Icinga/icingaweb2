@@ -1,13 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
-namespace Tests\Icinga\User\Preferences\Store;
+namespace Tests\Icinga\User\Preferences;
 
+use Icinga\User\Preferences\PreferencesStore;
 use Mockery;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\NotWritableError;
 use Icinga\Test\BaseTestCase;
-use Icinga\User\Preferences\Store\DbStore;
 
 class DatabaseMock
 {
@@ -22,19 +22,19 @@ class DatabaseMock
 
     public function insert($table, $row)
     {
-        $this->insertions[$row[DbStore::COLUMN_PREFERENCE]] = $row[DbStore::COLUMN_VALUE];
+        $this->insertions[$row[PreferencesStore::COLUMN_PREFERENCE]] = $row[PreferencesStore::COLUMN_VALUE];
     }
 
     public function update($table, $columns, $where)
     {
-        $this->updates[$where[DbStore::COLUMN_PREFERENCE . '=?']] = $columns[DbStore::COLUMN_VALUE];
+        $this->updates[$where[PreferencesStore::COLUMN_PREFERENCE . '=?']] = $columns[PreferencesStore::COLUMN_VALUE];
     }
 
     public function delete($table, $where)
     {
         $this->deletions = array_merge(
             $this->deletions,
-            $where[DbStore::COLUMN_PREFERENCE . ' IN (?)']
+            $where[PreferencesStore::COLUMN_PREFERENCE . ' IN (?)']
         );
     }
 }
@@ -57,7 +57,7 @@ class FaultyDatabaseMock extends DatabaseMock
     }
 }
 
-class DbStoreWithSetPreferences extends DbStore
+class PreferencesStoreWithSetPreferences extends PreferencesStore
 {
     public function setPreferences(array $preferences)
     {
@@ -65,7 +65,7 @@ class DbStoreWithSetPreferences extends DbStore
     }
 }
 
-class DbStoreTest extends BaseTestCase
+class PreferencesStoreTest extends BaseTestCase
 {
     public function testWhetherPreferenceInsertionWorks()
     {
@@ -78,9 +78,9 @@ class DbStoreTest extends BaseTestCase
             )
         );
 
-        $this->assertArrayHasKey('key', $dbMock->insertions, 'DbStore::save does not insert new preferences');
-        $this->assertEmpty($dbMock->updates, 'DbStore::save updates *new* preferences');
-        $this->assertEmpty($dbMock->deletions, 'DbStore::save deletes *new* preferences');
+        $this->assertArrayHasKey('key', $dbMock->insertions, 'PreferencesStore::save does not insert new preferences');
+        $this->assertEmpty($dbMock->updates, 'PreferencesStore::save updates *new* preferences');
+        $this->assertEmpty($dbMock->deletions, 'PreferencesStore::save deletes *new* preferences');
     }
 
     public function testWhetherPreferenceInsertionThrowsNotWritableError()
@@ -108,9 +108,9 @@ class DbStoreTest extends BaseTestCase
             )
         );
 
-        $this->assertArrayHasKey('key', $dbMock->updates, 'DbStore::save does not update existing preferences');
-        $this->assertEmpty($dbMock->insertions, 'DbStore::save inserts *existing* preferences');
-        $this->assertEmpty($dbMock->deletions, 'DbStore::save inserts *existing* preferneces');
+        $this->assertArrayHasKey('key', $dbMock->updates, 'PreferencesStore::save does not update existing preferences');
+        $this->assertEmpty($dbMock->insertions, 'PreferencesStore::save inserts *existing* preferences');
+        $this->assertEmpty($dbMock->deletions, 'PreferencesStore::save inserts *existing* preferneces');
     }
 
     public function testWhetherPreferenceUpdatesThrowNotWritableError()
@@ -139,9 +139,9 @@ class DbStoreTest extends BaseTestCase
             )
         );
 
-        $this->assertContains('key', $dbMock->deletions, 'DbStore::save does not delete removed preferences');
-        $this->assertEmpty($dbMock->insertions, 'DbStore::save inserts *removed* preferences');
-        $this->assertEmpty($dbMock->updates, 'DbStore::save updates *removed* preferences');
+        $this->assertContains('key', $dbMock->deletions, 'PreferencesStore::save does not delete removed preferences');
+        $this->assertEmpty($dbMock->insertions, 'PreferencesStore::save inserts *removed* preferences');
+        $this->assertEmpty($dbMock->updates, 'PreferencesStore::save updates *removed* preferences');
     }
 
     public function testWhetherPreferenceDeletionThrowsNotWritableError()
@@ -160,7 +160,7 @@ class DbStoreTest extends BaseTestCase
 
     protected function getStore($dbMock)
     {
-        return new DbStoreWithSetPreferences(
+        return new PreferencesStoreWithSetPreferences(
             new ConfigObject(
                 array(
                     'connection' => Mockery::mock(array('getDbAdapter' => $dbMock))

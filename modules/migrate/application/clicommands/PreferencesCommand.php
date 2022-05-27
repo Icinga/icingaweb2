@@ -10,9 +10,9 @@ use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\NotWritableError;
+use Icinga\File\Ini\IniParser;
 use Icinga\User;
-use Icinga\User\Preferences\Store\IniStore;
-use Icinga\User\Preferences\Store\DbStore;
+use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\DirectoryIterator;
 
 class PreferencesCommand extends Command
@@ -61,12 +61,15 @@ class PreferencesCommand extends Command
 
             Logger::info('Migrating INI preferences for user "%s" to database...', $userName);
 
-            $iniStore = new IniStore(new ConfigObject(['location' => $preferencesPath]), new User($userName));
-            $dbStore = new DbStore(new ConfigObject(['connection' => $connection]), new User($userName));
+            $dbStore = new PreferencesStore(new ConfigObject(['connection' => $connection]), new User($userName));
 
             try {
                 $dbStore->load();
-                $dbStore->save(new User\Preferences($iniStore->load()));
+                $dbStore->save(
+                    new User\Preferences(
+                        $this->loadIniFile($preferencesPath, (new User($userName))->getUsername())
+                    )
+                );
             } catch (NotReadableError $e) {
                 if ($e->getPrevious() !== null) {
                     Logger::error('%s: %s', $e->getMessage(), $e->getPrevious()->getMessage());
@@ -89,7 +92,6 @@ class PreferencesCommand extends Command
         if ($this->params->has('resource') && ! $this->params->has('no-set-config-backend')) {
             $appConfig = Config::app();
             $globalConfig = $appConfig->getSection('global');
-            $globalConfig['config_backend'] = 'db';
             $globalConfig['config_resource'] = $resource;
 
             try {
@@ -101,5 +103,29 @@ class PreferencesCommand extends Command
         }
 
         Logger::info('Successfully migrated all local user preferences to database');
+    }
+
+    private function loadIniFile(string $filePath, string $username): array
+    {
+        $preferences = [];
+        $preferencesFile = sprintf(
+            '%s/%s/config.ini',
+            $filePath,
+            strtolower($username)
+        );
+
+        if (file_exists($preferencesFile)) {
+            if (! is_readable($preferencesFile)) {
+                throw new NotReadableError(
+                    'Preferences INI file %s for user %s is not readable',
+                    $preferencesFile,
+                    $username
+                );
+            } else {
+                $preferences = IniParser::parseIniFile($preferencesFile)->toArray();
+            }
+        }
+
+        return $preferences;
     }
 }

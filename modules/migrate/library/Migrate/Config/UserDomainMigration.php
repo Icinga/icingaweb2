@@ -178,80 +178,51 @@ class UserDomainMigration
     {
         $config = Config::app();
 
-        $type = $config->get('global', 'config_backend', 'ini');
+        $resourceConfig = ResourceFactory::getResourceConfig($config->get('global', 'config_resource'));
+        if ($resourceConfig->db === 'mysql') {
+            $resourceConfig->charset = 'utf8mb4';
+        }
 
-        switch ($type) {
-            case 'ini':
-                $directory = Config::resolvePath('preferences');
+        /** @var DbConnection $conn */
+        $conn = ResourceFactory::createResource($resourceConfig);
 
-                $migration = array();
+        $query = $conn
+            ->select()
+            ->from('icingaweb_user_preference', array('username'))
+            ->group('username');
 
-                if (DirectoryIterator::isReadable($directory)) {
-                    foreach (new DirectoryIterator($directory) as $username => $path) {
-                        $user = new User($username);
+        if ($this->map !== null) {
+            $query->applyFilter(Filter::matchAny(Filter::where('username', array_keys($this->map))));
+        }
 
-                        if (! $this->mustMigrate($user)) {
-                            continue;
-                        }
+        $users = $query->fetchColumn();
 
-                        $migrated = $this->migrateUser($user);
+        $migration = array();
 
-                        $migration[$path] = dirname($path) . '/' . $migrated->getUsername();
-                    }
+        foreach ($users as $username) {
+            $user = new User($username);
 
-                    foreach ($migration as $from => $to) {
-                        rename($from, $to);
-                    }
-                }
+            if (! $this->mustMigrate($user)) {
+                continue;
+            }
 
-                break;
-            case 'db':
-                $resourceConfig = ResourceFactory::getResourceConfig($config->get('global', 'config_resource'));
-                if ($resourceConfig->db === 'mysql') {
-                    $resourceConfig->charset = 'utf8mb4';
-                }
+            $migrated = $this->migrateUser($user);
 
-                /** @var DbConnection $conn */
-                $conn = ResourceFactory::createResource($resourceConfig);
+            $migration[$username] = $migrated->getUsername();
+        }
 
-                $query = $conn
-                    ->select()
-                    ->from('icingaweb_user_preference', array('username'))
-                    ->group('username');
+        if (! empty($migration)) {
+            $conn->getDbAdapter()->beginTransaction();
 
-                if ($this->map !== null) {
-                    $query->applyFilter(Filter::matchAny(Filter::where('username', array_keys($this->map))));
-                }
+            foreach ($migration as $originalUsername => $username) {
+                $conn->update(
+                    'icingaweb_user_preference',
+                    array('username' => $username),
+                    Filter::where('username', $originalUsername)
+                );
+            }
 
-                $users = $query->fetchColumn();
-
-                $migration = array();
-
-                foreach ($users as $username) {
-                    $user = new User($username);
-
-                    if (! $this->mustMigrate($user)) {
-                        continue;
-                    }
-
-                    $migrated = $this->migrateUser($user);
-
-                    $migration[$username] = $migrated->getUsername();
-                }
-
-                if (! empty($migration)) {
-                    $conn->getDbAdapter()->beginTransaction();
-
-                    foreach ($migration as $originalUsername => $username) {
-                        $conn->update(
-                            'icingaweb_user_preference',
-                            array('username' => $username),
-                            Filter::where('username', $originalUsername)
-                        );
-                    }
-
-                    $conn->getDbAdapter()->commit();
-                }
+            $conn->getDbAdapter()->commit();
         }
     }
 

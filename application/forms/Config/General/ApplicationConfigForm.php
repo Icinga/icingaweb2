@@ -70,57 +70,23 @@ class ApplicationConfigForm extends Form
             )
         );
 
-        // we do not need this form for setup because we set the database there as default.
-        // this form is only displayed in configuration -> application if preferences backend type of ini is recognized
-        if (isset($formData['global_config_backend']) && $formData['global_config_backend'] === 'ini') {
-            $this->addElement(
-                'select',
-                'global_config_backend',
-                [
-                    'required'      => true,
-                    'autosubmit'    => true,
-                    'label'         => $this->translate('User Preference Storage Type'),
-                    'multiOptions'  => [
-                        'ini'   => $this->translate('File System (INI Files)'),
-                        'db'    => $this->translate('Database')
-                    ]
-                ]
-            );
-        } else {
-            $this->addElement(
-                'hidden',
-                'global_config_backend',
-                [
-                    'required'  => true,
-                    'value'     => 'db',
-                    'disabled'  => true
-                ]
-            );
-        }
+        $backends = array_keys(ResourceFactory::getResourceConfigs()->toArray());
+        $backends = array_combine($backends, $backends);
 
-        if (! isset($formData['global_config_backend']) || $formData['global_config_backend'] === 'db') {
-            $backends = array();
-            foreach (ResourceFactory::getResourceConfigs()->toArray() as $name => $resource) {
-                if ($resource['type'] === 'db') {
-                    $backends[$name] = $name;
-                }
-            }
-
-            $this->addElement(
-                'select',
-                'global_config_resource',
-                array(
-                    'required'      => true,
-                    'multiOptions'  => array_merge(
-                        ['' => sprintf(' - %s - ', $this->translate('Please choose'))],
-                        $backends
-                    ),
-                    'disable'       => [''],
-                    'value'         => '',
-                    'label'         => $this->translate('Configuration Database')
-                )
-            );
-        }
+        $this->addElement(
+            'select',
+            'global_config_resource',
+            array(
+                'required'      => true,
+                'multiOptions'  => array_merge(
+                    ['' => sprintf(' - %s - ', $this->translate('Please choose'))],
+                    $backends
+                ),
+                'disable'       => [''],
+                'value'         => '',
+                'label'         => $this->translate('Configuration Database')
+            )
+        );
 
         return $this;
     }

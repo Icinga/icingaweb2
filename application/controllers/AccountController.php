@@ -69,9 +69,8 @@ class AccountController extends Controller
 
         $form = new PreferenceForm();
         $form->setPreferences($user->getPreferences());
-        if ($config->get('config_backend', 'db') !== 'none' && isset($config->config_resource)) {
+        if (isset($config->config_resource)) {
             $form->setStore(PreferencesStore::create(new ConfigObject(array(
-                'store'     => $config->get('config_backend', 'db'),
                 'resource'  => $config->config_resource
             )), $user));
         }

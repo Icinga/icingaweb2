@@ -376,26 +376,21 @@ class Auth
             $config = new Config();
         }
 
-        if ($config->get('global', 'config_backend', 'db') !== 'none') {
-            $preferencesConfig = new ConfigObject([
-                'store'     => $config->get('global', 'config_backend', 'db'),
-                'resource'  => $config->get('global', 'config_resource')
-            ]);
+        $preferencesConfig = new ConfigObject([
+            'resource'  => $config->get('global', 'config_resource')
+        ]);
 
-            try {
-                $preferencesStore = PreferencesStore::create($preferencesConfig, $user);
-                $preferences = new Preferences($preferencesStore->load());
-            } catch (Exception $e) {
-                Logger::error(
-                    new IcingaException(
-                        'Cannot load preferences for user "%s". An exception was thrown: %s',
-                        $user->getUsername(),
-                        $e
-                    )
-                );
-                $preferences = new Preferences();
-            }
-        } else {
+        try {
+            $preferencesStore = PreferencesStore::create($preferencesConfig, $user);
+            $preferences = new Preferences($preferencesStore->load());
+        } catch (Exception $e) {
+            Logger::error(
+                new IcingaException(
+                    'Cannot load preferences for user "%s". An exception was thrown: %s',
+                    $user->getUsername(),
+                    $e
+                )
+            );
             $preferences = new Preferences();
         }
 

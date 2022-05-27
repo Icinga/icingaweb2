@@ -6,6 +6,8 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 ## Upgrading to Icinga Web 2 2.11.x
 
 * The Vagrant file and all its assets have been removed.
+* The `IniStore` class has been removed due to the deprecation of the Preferences ini backend.
+* The `DbStore` class has been removed and its methods have been added to `PreferencesStore` class.
 
 **Database Schema**
 
