@@ -24,6 +24,11 @@ use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
+/**
+ * Handles all kind of dashboard request actions
+ *
+ * See {@see Dashboard} for more information about dashboards
+ */
 class DashboardsController extends CompatController
 {
     /** @var Dashboard */
@@ -55,7 +60,7 @@ class DashboardsController extends CompatController
             })->handleRequest($this->getServerRequest());
 
             $this->content->getAttributes()->add('class', 'welcome-view');
-            $this->dashboard->setWelcomeForm($welcomeForm);
+            $this->dashboard->addHtml($welcomeForm);
         } else {
             $pane = $this->getParam('pane');
             if (! $pane) {

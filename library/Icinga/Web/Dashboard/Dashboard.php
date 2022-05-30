@@ -10,7 +10,6 @@ use Icinga\Web\Dashboard\Common\DashboardEntries;
 use Icinga\Web\Dashboard\Common\DashboardEntry;
 use Icinga\Web\Dashboard\Common\DashboardManager;
 use ipl\Html\BaseHtmlElement;
-use ipl\Html\Form;
 use ipl\Html\HtmlElement;
 use ipl\Web\Url;
 use ipl\Web\Widget\Tabs;
@@ -83,13 +82,6 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
      * @var string
      */
     private $tabParam = 'pane';
-
-    /**
-     * A welcome form rendered when there is no dashboard panes
-     *
-     * @var Form
-     */
-    private $welcomeForm;
 
     /**
      * Set the given tab name as active
@@ -219,13 +211,6 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
         throw new ConfigurationError('Could not determine active pane');
     }
 
-    public function setWelcomeForm(Form $form)
-    {
-        $this->welcomeForm = $form;
-
-        return $this;
-    }
-
     protected function assemble()
     {
         $activeHome = $this->getActiveHome();
@@ -250,8 +235,6 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
                 . ' You will always be able to edit them afterwards.'
             );
             $this->addHtml(HtmlElement::create('p', null, $message));
-
-            $this->addHtml($this->welcomeForm);
         } elseif (! $activeHome->hasEntries()) {
             $this->addHtml(HtmlElement::create('h1', null, t('No dashboard added to this dashboard home.')));
         } else {
