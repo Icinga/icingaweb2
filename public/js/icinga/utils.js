@@ -371,7 +371,7 @@
             var path = [];
 
             while (true) {
-                var id = element.id;
+                var id = element.getAttribute("id");
 
                 // Only use ids if they're truly unique
                 // TODO: The check used to use document.querySelectorAll, but this resulted in many issues with ids
