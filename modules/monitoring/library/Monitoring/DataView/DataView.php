@@ -135,26 +135,6 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
         return $columns;
     }
 
-    // TODO: This is not the right place for this, move it away
-    protected function applyUrlFilter($request = null)
-    {
-        $url = Url::fromRequest();
-
-        $limit = $url->shift('limit');
-        $sort = $url->shift('sort');
-        $dir = $url->shift('dir');
-        $page = $url->shift('page');
-        $format = $url->shift('format');
-        $view = $url->shift('showCompact');
-        $view = $url->shift('backend');
-        foreach ($url->getParams() as $k => $v) {
-            $this->where($k, $v);
-        }
-        if ($sort) {
-            $this->order($sort, $dir);
-        }
-    }
-
     /**
      * Create view from params
      *
