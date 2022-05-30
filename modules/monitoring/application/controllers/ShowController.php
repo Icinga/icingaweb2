@@ -4,7 +4,7 @@
 namespace Icinga\Module\Monitoring\Controllers;
 
 use Icinga\Data\Filter\FilterEqual;
-use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Security\SecurityException;
 use Icinga\Web\Url;
@@ -17,7 +17,7 @@ use Icinga\Web\Url;
 class ShowController extends Controller
 {
     /**
-     * @var Backend
+     * @var MonitoringBackend
      */
     protected $backend;
 

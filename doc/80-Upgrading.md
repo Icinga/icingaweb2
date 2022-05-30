@@ -52,6 +52,7 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 + `Icinga\Web\Hook\TicketHook`: Use `Icinga\Application\Hook\TicketHook` instead.
 + `Icinga\Web\Hook\GrapherHook`: Use `Icinga\Application\Hook\GrapherHook` instead.
 + `Icinga\Module\Monitoring\Environment`: Not in use.
++ `Icinga\Module\Monitoring\Backend`: Use `Icinga\Module\Monitoring\Backend\MonitoringBackend` instead.
 
 * All the following deprecated js classes and methods are removed:
 

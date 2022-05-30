@@ -9,7 +9,7 @@ require_once realpath(dirname(__FILE__) . '/../../../../../test/php/bootstrap.ph
 
 use Icinga\Application\Config;
 use Icinga\Data\ConfigObject;
-use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Test\BaseTestCase;
 use Mockery;
 
@@ -53,7 +53,7 @@ class Bug7043Test extends BaseTestCase
             )
         )));
 
-        $defaultBackend = Backend::instance();
+        $defaultBackend = MonitoringBackend::instance();
 
         $this->assertEquals('backendName', $defaultBackend->getName(), 'Default backend has name set');
     }

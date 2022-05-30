@@ -9,6 +9,7 @@ use Icinga\Exception\QueryException;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use Icinga\File\Csv;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Module\Monitoring\Data\CustomvarProtectionIterator;
 use Icinga\Util\Json;
 use Icinga\Web\Controller as IcingaWebController;
@@ -22,13 +23,13 @@ class Controller extends IcingaWebController
     /**
      * The backend used for this controller
      *
-     * @var Backend
+     * @var MonitoringBackend
      */
     protected $backend;
 
     protected function moduleInit()
     {
-        $this->backend = Backend::instance($this->_getParam('backend'));
+        $this->backend = MonitoringBackend::instance($this->_getParam('backend'));
         $this->view->url = Url::fromRequest();
     }
 
