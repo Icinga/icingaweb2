@@ -4,10 +4,12 @@
 
 namespace Icinga\Forms\Dashboard;
 
+use Icinga\Application\Logger;
 use Icinga\Application\Modules;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Util\DBUtils;
+use Icinga\Web\Notification;
 use ipl\Html\Form;
 use ipl\Web\Url;
 
@@ -64,8 +66,15 @@ class WelcomeForm extends Form
                 $conn->commitTransaction();
             } catch (\Exception $err) {
                 $conn->rollBackTransaction();
-                throw $err;
+
+                Logger::error('Unable to apply the system defaults into the DB. An error occurred: %s', $err);
+
+                Notification::error(t('Failed to successfully save the data. Please check the logs for details.'));
+
+                return;
             }
+
+            Notification::success(t('Imported system defaults successfully.'));
         }
     }
 }

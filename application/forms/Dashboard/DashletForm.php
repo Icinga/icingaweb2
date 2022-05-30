@@ -26,13 +26,13 @@ class DashletForm extends SetupNewDashboardForm
     public function load(BaseDashboard $dashboard)
     {
         /** @var Dashlet $dashboard */
-        $this->populate(array(
+        $this->populate([
             'org_home'    => $this->requestUrl->getParam('home'),
             'org_pane'    => $dashboard->getPane()->getName(),
             'org_dashlet' => $dashboard->getName(),
             'dashlet'     => $dashboard->getTitle(),
             'url'         => $dashboard->getUrl()->getRelativeUrl()
-        ));
+        ]);
     }
 
     protected function assembleNextPageDashboardPart()
