@@ -26,13 +26,23 @@
     justify-content: space-around;
   }
 
-  input[name="btn_use_defaults"] {
+  input[name="btn_use_defaults"]:not([disabled]) {
     background-color: @icinga-blue;
     color: @text-color-on-icinga-blue;
 
     &:hover, &:focus {
       background-color: @icinga-blue-dark;
     }
+  }
+
+  input[disabled] {
+    cursor: default;
+    border: 1px solid @control-disabled-color;
+  }
+
+  input[disabled], input[disabled]:hover {
+    background: @body-bg-color;
+    color: @control-disabled-color;
   }
 }
 
