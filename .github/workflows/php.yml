@@ -99,7 +99,7 @@ jobs:
           extensions: mysql, pgsql, ldap
 
       - name: Setup dependencies
-        run: composer require -n --no-progress mockery/mockery ipl/i18n:@dev
+        run: composer require -n --no-progress mockery/mockery ipl/i18n:@dev ipl/html:@dev ipl/orm:@dev ipl/web:@dev
 
       - name: PHPUnit
         env:
