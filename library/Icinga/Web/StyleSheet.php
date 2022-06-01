@@ -78,6 +78,7 @@ class StyleSheet
         'css/icinga/compat.less',
         'css/icinga/print.less',
         'css/icinga/responsive.less',
+        'css/icinga/mobileconfigmenu.less',
         'css/icinga/modal.less',
         'css/icinga/audit.less',
         'css/icinga/health.less',
