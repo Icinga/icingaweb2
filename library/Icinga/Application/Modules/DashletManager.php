@@ -43,7 +43,7 @@ class DashletManager
     {
         $query = Model\ModuleDashlet::on(DBUtils::getConn())
             ->disableDefaultSort()
-            ->setColumns([new Expression('1')])
+            ->columns([new Expression('1')])
             ->filter(Filter::equal('id', $dashlet->getUuid()));
 
         return $query->execute()->hasResult();
