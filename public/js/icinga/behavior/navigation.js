@@ -8,11 +8,14 @@
 
     var Navigation = function (icinga) {
         Icinga.EventListener.call(this, icinga);
-        this.on('click', '#menu a', this.linkClicked, this);
-        this.on('click', '#menu tr[href]', this.linkClicked, this);
-        this.on('rendered', '#menu', this.onRendered, this);
-        this.on('mouseenter', '#menu .primary-nav .nav-level-1 > .nav-item', this.showFlyoutMenu, this);
-        this.on('mouseleave', '#menu .primary-nav', this.hideFlyoutMenu, this);
+        this.on('click', '#menu a, #mobile-menu a, #mobile-config-menu a', this.linkClicked, this);
+        this.on('click', '#menu tr[href], #mobile-menu tr[href]', this.linkClicked, this);
+
+        this.on('rendered', '#menu, #mobile-menu', this.onRendered, this);
+
+        this.on('mouseenter', '#menu .primary-nav .nav-level-1 > .nav-item, #mobile-menu .primary-nav .nav-level-1 > .nav-item', this.showFlyoutMenu, this);
+        this.on('mouseleave', '#menu .primary-nav, #mobile-menu .primary-nav', this.hideFlyoutMenu, this);
+
         this.on('click', '#toggle-sidebar', this.toggleSidebar, this);
 
         this.on('click', '#menu .config-nav-item button', this.toggleConfigFlyout, this);
@@ -22,6 +25,10 @@
         this.on('keydown', '#menu .config-menu .config-nav-item', this.onKeyDown, this);
 
         this.on('click', '#toggle-more', this.toggleMoreFlyout, this);
+        this.on('click', '#toggle-more + .flyout a', this.hideMoreFlyout, this);
+
+        this.on('click', '#toggle-mobile-config-flyout', this.toggleMobileConfigMenu, this);
+        this.on('click', '#toggle-mobile-config-flyout ~ .nav-level-1 a', this.hideMobileConfigMenu, this);
 
         /**
          * The DOM-Path of the active item
@@ -64,7 +71,7 @@
     Navigation.prototype.onRendered = function(e) {
         var _this = e.data.self;
 
-        _this.$menu = $(e.target);
+        _this.$menu = $('#menu, #mobile-menu, #mobile-config-menu');
 
         if (! _this.active) {
             // There is no stored menu item, therefore it is assumed that this is the first rendering
@@ -131,7 +138,7 @@
         }
 
         // update target url of the menu container to the clicked link
-        var $menu = $('#menu');
+        var $menu = $('#menu, #mobile-menu, #mobile-config-menu');
         var menuDataUrl = icinga.utils.parseUrl($menu.data('icinga-url'));
         menuDataUrl = icinga.utils.addUrlParams(menuDataUrl.path, { url: href });
         $menu.data('icinga-url', menuDataUrl);
@@ -145,7 +152,7 @@
      * @param url   {String}    The url to match
      */
     Navigation.prototype.setActiveAndSelectedByUrl = function(url) {
-        var $menu = $('#menu');
+        var $menu = $('#menu, #mobile-menu, #mobile-config-menu');
 
         if (! $menu.length) {
             return;
@@ -425,7 +432,19 @@
     }
 
     Navigation.prototype.toggleMoreFlyout = function(e) {
-        $('#layout').toggleClass('more-button-open');
+        $('#layout').toggleClass('more-menu-open');
+    }
+
+    Navigation.prototype.hideMoreFlyout = function(e) {
+        $('#layout').removeClass('more-menu-open');
+    }
+
+    Navigation.prototype.toggleMobileConfigMenu = function(e) {
+        $('#layout').toggleClass('mobile-config-flyout-open');
+    }
+
+    Navigation.prototype.hideMobileConfigMenu = function(e) {
+        $('#layout').removeClass('mobile-config-flyout-open');
     }
 
     /**
