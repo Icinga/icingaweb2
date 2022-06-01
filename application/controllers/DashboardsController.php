@@ -64,7 +64,7 @@ class DashboardsController extends CompatController
         } else {
             $pane = $this->getParam('pane');
             if (! $pane) {
-                $pane = $this->dashboard->getActivePane()->getName();
+                $pane = $activeHome->getActivePane($this->dashboard->getTabs())->getName();
             }
 
             $this->dashboard->activate($pane);
@@ -93,7 +93,7 @@ class DashboardsController extends CompatController
         if ($activeHome->hasEntries()) {
             $pane = $this->getParam('pane');
             if (! $pane) {
-                $pane = $this->dashboard->getActivePane()->getName();
+                $pane = $activeHome->getActivePane($this->dashboard->getTabs())->getName();
             }
 
             $this->dashboard->activate($pane);
