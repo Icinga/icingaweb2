@@ -3,9 +3,12 @@
 #footer {
   bottom: 0;
   right: 0;
-  left: 12em;
-  position: fixed;
   z-index: 999;
+}
+
+.layout:not(.minimal-layout) #footer {
+  position: fixed;
+  left: 12em;
 }
 
 #layout.minimal-layout #footer {
@@ -150,6 +153,8 @@
 // Mobile menu
 #layout.minimal-layout #sidebar {
   background-color: @menu-bg-color;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #mobile-menu-toggle {
