@@ -150,16 +150,17 @@ trait DashboardManager
         $conn = DBUtils::getConn();
         $homes = is_array($entryOrEntries) ? $entryOrEntries : [$entryOrEntries];
 
+        // Highest priority is 0, so count($entries) are always lowest prio + 1
+        $priority = count($this->getEntries());
+
         /** @var DashboardHome $home */
         foreach ($homes as $home) {
             if (! $this->hasEntry($home->getName())) {
-                // Highest priority is 0, so count($entries) are always lowest prio + 1
-                $priority = $home->getName() === DashboardHome::DEFAULT_HOME ? 0 : count($this->getEntries());
                 $conn->insert(DashboardHome::TABLE, [
                     'user_id'  => self::getUser()->getAdditional('id'),
                     'name'     => $home->getName(),
                     'label'    => $home->getTitle(),
-                    'priority' => $priority,
+                    'priority' => $home->getName() === DashboardHome::DEFAULT_HOME ? 0 : $priority++,
                     'type'     => $home->getType() !== Dashboard::SYSTEM ? $home->getType() : Dashboard::PRIVATE_DS
                 ]);
 
