@@ -4,6 +4,7 @@
 
 namespace Icinga\Web\Dashboard;
 
+use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Model\Home;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
@@ -13,6 +14,8 @@ use Icinga\Util\DBUtils;
 use Icinga\Web\Dashboard\Common\WidgetState;
 use ipl\Stdlib\Filter;
 
+use ipl\Web\Url;
+use ipl\Web\Widget\Tabs;
 use function ipl\Stdlib\get_php_type;
 
 class DashboardHome extends BaseDashboard implements Sortable
@@ -116,6 +119,49 @@ class DashboardHome extends BaseDashboard implements Sortable
     public function getType(): string
     {
         return $this->type;
+    }
+
+    /**
+     * @see determineActivePane()
+     */
+    public function getActivePane(Tabs $tabs): Pane
+    {
+        return $this->determineActivePane($tabs);
+    }
+
+    /**
+     * Determine the active pane either by the selected tab or the current request
+     *
+     * @param Tabs $tabs
+     *
+     * @return Pane
+     */
+    public function determineActivePane(Tabs $tabs): Pane
+    {
+        $activeTab = $tabs->getActiveTab();
+        if ($activeTab) {
+            $pane = $activeTab->getName();
+        } else {
+            if (! ($pane = Url::fromRequest()->getParam('pane'))) {
+                if (($firstPane = $this->rewindEntries())) {
+                    $tabs->activate($firstPane->getName());
+
+                    $pane = $firstPane->getName();
+                }
+            } else {
+                if ($this->hasEntry($pane)) {
+                    $tabs->activate($pane);
+                } else {
+                    throw new ProgrammingError('Try to get an inexistent pane.');
+                }
+            }
+        }
+
+        if ($pane && $this->hasEntry($pane)) {
+            return $this->getEntry($pane);
+        }
+
+        throw new ConfigurationError('Could not determine active pane');
     }
 
     public function removeEntry($pane)

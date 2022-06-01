@@ -153,64 +153,6 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
         return $this->tabs;
     }
 
-    /**
-     * Activate the default pane of this dashboard and returns its name
-     *
-     * @return ?string
-     */
-    private function setDefaultPane()
-    {
-        $active = $this->getActiveHome()->rewindEntries();
-        if ($active) {
-            $active = $active->getName();
-            $this->activate($active);
-        }
-
-        return $active;
-    }
-
-    /**
-     * @see determineActivePane()
-     */
-    public function getActivePane()
-    {
-        return $this->determineActivePane();
-    }
-
-    /**
-     * Determine the active pane either by the selected tab or the current request
-     *
-     * @return Pane The currently active pane
-     * @throws \Icinga\Exception\ProgrammingError
-     *
-     * @throws \Icinga\Exception\ConfigurationError
-     */
-    public function determineActivePane()
-    {
-        $active = $this->getTabs()->getActiveTab();
-        $activeHome = $this->getActiveHome();
-
-        if (! $active) {
-            if ($active = Url::fromRequest()->getParam($this->tabParam)) {
-                if ($activeHome->hasEntry($active)) {
-                    $this->activate($active);
-                } else {
-                    throw new ProgrammingError('Try to get an inexistent pane.');
-                }
-            } else {
-                $active = $this->setDefaultPane();
-            }
-        } else {
-            $active = $active->getName();
-        }
-
-        if ($activeHome->hasEntry($active)) {
-            return $activeHome->getEntry($active);
-        }
-
-        throw new ConfigurationError('Could not determine active pane');
-    }
-
     protected function assemble()
     {
         $activeHome = $this->getActiveHome();
@@ -238,7 +180,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
         } elseif (! $activeHome->hasEntries()) {
             $this->addHtml(HtmlElement::create('h1', null, t('No dashboard added to this dashboard home.')));
         } else {
-            $activePane = $this->getActivePane();
+            $activePane = $activeHome->getActivePane($this->getTabs());
 
             if (! $activePane->hasEntries()) {
                 $this->addHtml(HtmlElement::create('h1', null, t('No dashlet added to this pane.')));
