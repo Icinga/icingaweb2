@@ -38,6 +38,20 @@ class DBUtils
     }
 
     /**
+     * Set the database connection
+     *
+     * You can set the DB connection beforehand if you want, but you don't need to. You can just call
+     * the {@see getConn()} method if you have a valid resource factory configured. This is only used
+     * for the unit tests in order to allow to fake the DB connection.
+     *
+     * @param Connection $conn
+     */
+    public static function setConn(Connection $conn): void
+    {
+        self::$conn = $conn;
+    }
+
+    /**
      * Get whether the DB connection being used is an instance of {@see Pgsql}
      *
      * @return bool
