@@ -71,7 +71,7 @@ trait DashboardUserManager
     public static function userExist(): bool
     {
         $query = DashboardOwner::on(DBUtils::getConn())
-            ->columns(['id'])
+            ->columns('id')
             ->filter(Filter::equal('username', self::getUser()->getUsername()));
 
         $found = false;

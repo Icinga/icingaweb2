@@ -4,7 +4,6 @@
 
 namespace Icinga\Web\Dashboard;
 
-use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Model\Home;
@@ -14,7 +13,6 @@ use Icinga\Web\Dashboard\Common\Sortable;
 use Icinga\Util\DBUtils;
 use Icinga\Web\Dashboard\Common\WidgetState;
 use ipl\Stdlib\Filter;
-use ipl\Web\Url;
 
 use function ipl\Stdlib\get_php_type;
 
