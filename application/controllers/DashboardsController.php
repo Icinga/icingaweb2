@@ -45,7 +45,8 @@ class DashboardsController extends CompatController
 
     public function indexAction()
     {
-        $this->dashboard->load(DashboardHome::DEFAULT_HOME);
+        $pane = $this->getParam('pane');
+        $this->dashboard->load(DashboardHome::DEFAULT_HOME, $pane);
 
         $this->createTabs();
 
@@ -62,12 +63,8 @@ class DashboardsController extends CompatController
             $this->content->getAttributes()->add('class', 'welcome-view');
             $this->dashboard->addHtml($welcomeForm);
         } else {
-            $pane = $this->getParam('pane');
-            if (! $pane) {
-                $pane = $activeHome->getActivePane($this->dashboard->getTabs())->getName();
-            }
-
-            $this->dashboard->activate($pane);
+            $pane = $activeHome->getActivePane();
+            $this->dashboard->activate($pane->getName());
         }
 
         $this->addContent($this->dashboard);
@@ -91,12 +88,8 @@ class DashboardsController extends CompatController
         $this->createTabs();
 
         if ($activeHome->hasEntries()) {
-            $pane = $this->getParam('pane');
-            if (! $pane) {
-                $pane = $activeHome->getActivePane($this->dashboard->getTabs())->getName();
-            }
-
-            $this->dashboard->activate($pane);
+            $pane = $activeHome->getActivePane();
+            $this->dashboard->activate($pane->getName());
         }
 
         $this->addContent($this->dashboard);
@@ -154,7 +147,7 @@ class DashboardsController extends CompatController
     {
         $home = $this->params->getRequired('home');
 
-        $this->dashboard->load();
+        $this->dashboard->load($home, null, true);
 
         $paneForm = (new PaneForm($this->dashboard))
             ->on(PaneForm::ON_SUCCESS, function () {
@@ -171,7 +164,7 @@ class DashboardsController extends CompatController
         $home = $this->params->getRequired('home');
         $pane = $this->params->getRequired('pane');
 
-        $this->dashboard->load();
+        $this->dashboard->load($home, $pane, true);
 
         if (! $this->dashboard->getActiveHome()->hasEntry($pane)) {
             $this->httpNotFound(t('Pane "%s" not found'), $pane);
@@ -194,7 +187,7 @@ class DashboardsController extends CompatController
         $home = $this->params->getRequired('home');
         $paneParam = $this->params->getRequired('pane');
 
-        $this->dashboard->load($home);
+        $this->dashboard->load($home, $paneParam);
 
         if (! $this->dashboard->getActiveHome()->hasEntry($paneParam)) {
             $this->httpNotFound(t('Pane "%s" not found'), $paneParam);
@@ -214,7 +207,7 @@ class DashboardsController extends CompatController
     {
         $home = $this->params->getRequired('home');
 
-        $this->dashboard->load();
+        $this->dashboard->load($home, null, true);
 
         $dashletForm = new DashletForm($this->dashboard);
         $dashletForm->populate($this->getRequest()->getPost());
@@ -479,7 +472,7 @@ class DashboardsController extends CompatController
         $pane = $this->params->getRequired('pane');
         $dashlet = $this->params->getRequired('dashlet');
 
-        $this->dashboard->load();
+        $this->dashboard->load($home, $pane, true);
 
         if (! $this->dashboard->getActiveHome()->hasEntry($pane)) {
             $this->httpNotFound(t('Pane "%s" not found'), $pane);

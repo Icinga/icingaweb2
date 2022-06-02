@@ -4,8 +4,6 @@
 
 namespace Icinga\Web\Dashboard;
 
-use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Dashboard\Common\DashboardEntries;
 use Icinga\Web\Dashboard\Common\DashboardEntry;
 use Icinga\Web\Dashboard\Common\DashboardManager;
@@ -180,7 +178,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
         } elseif (! $activeHome->hasEntries()) {
             $this->addHtml(HtmlElement::create('h1', null, t('No dashboard added to this dashboard home.')));
         } else {
-            $activePane = $activeHome->getActivePane($this->getTabs());
+            $activePane = $activeHome->getActivePane();
 
             if (! $activePane->hasEntries()) {
                 $this->addHtml(HtmlElement::create('h1', null, t('No dashlet added to this pane.')));

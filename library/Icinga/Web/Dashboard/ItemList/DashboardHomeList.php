@@ -55,7 +55,7 @@ class DashboardHomeList extends ItemListControl
 
     protected function shouldExpandByDefault(): bool
     {
-        return $this->home->getActive();
+        return $this->home->isActive();
     }
 
     protected function getCollapsibleControlClass(): string

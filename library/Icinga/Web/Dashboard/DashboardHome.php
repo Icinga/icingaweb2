@@ -5,6 +5,7 @@
 namespace Icinga\Web\Dashboard;
 
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Model\Home;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
@@ -13,9 +14,8 @@ use Icinga\Web\Dashboard\Common\Sortable;
 use Icinga\Util\DBUtils;
 use Icinga\Web\Dashboard\Common\WidgetState;
 use ipl\Stdlib\Filter;
-
 use ipl\Web\Url;
-use ipl\Web\Widget\Tabs;
+
 use function ipl\Stdlib\get_php_type;
 
 class DashboardHome extends BaseDashboard implements Sortable
@@ -45,13 +45,6 @@ class DashboardHome extends BaseDashboard implements Sortable
     protected $type = Dashboard::SYSTEM;
 
     /**
-     * A flag whether this home has been activated
-     *
-     * @var bool
-     */
-    protected $active = false;
-
-    /**
      * Create a new dashboard home from the given model
      *
      * @param Home $home
@@ -69,32 +62,6 @@ class DashboardHome extends BaseDashboard implements Sortable
             ->setDisabled($home->disabled);
 
         return $self;
-    }
-
-    /**
-     * Set whether this home is active
-     *
-     * DB dashboards will load only when this home has been activated
-     *
-     * @param bool $active
-     *
-     * @return $this
-     */
-    public function setActive(bool $active = true): self
-    {
-        $this->active = $active;
-
-        return $this;
-    }
-
-    /**
-     * Get whether this home has been activated
-     *
-     * @return bool
-     */
-    public function getActive(): bool
-    {
-        return $this->active;
     }
 
     /**
@@ -122,46 +89,43 @@ class DashboardHome extends BaseDashboard implements Sortable
     }
 
     /**
-     * @see determineActivePane()
+     * Activate the given pane and deactivate all the others
+     *
+     * @param Pane $pane
+     *
+     * @return $this
      */
-    public function getActivePane(Tabs $tabs): Pane
+    public function activatePane(Pane $pane): self
     {
-        return $this->determineActivePane($tabs);
+        if (! $this->hasEntry($pane->getName())) {
+            throw new ProgrammingError('Trying to activate Dashboard Pane "%s" that does not exist.', $pane->getName());
+        }
+
+        $active = $this->getActivePane();
+        if ($active && $active->getName() !== $pane->getName()) {
+            $active->setActive(false);
+        }
+
+        $pane->setActive(true);
+
+        return $this;
     }
 
     /**
-     * Determine the active pane either by the selected tab or the current request
+     * Determine the active pane currently being loaded
      *
-     * @param Tabs $tabs
-     *
-     * @return Pane
+     * @return ?Pane
      */
-    public function determineActivePane(Tabs $tabs): Pane
+    public function getActivePane()
     {
-        $activeTab = $tabs->getActiveTab();
-        if ($activeTab) {
-            $pane = $activeTab->getName();
-        } else {
-            if (! ($pane = Url::fromRequest()->getParam('pane'))) {
-                if (($firstPane = $this->rewindEntries())) {
-                    $tabs->activate($firstPane->getName());
-
-                    $pane = $firstPane->getName();
-                }
-            } else {
-                if ($this->hasEntry($pane)) {
-                    $tabs->activate($pane);
-                } else {
-                    throw new ProgrammingError('Try to get an inexistent pane.');
-                }
+        /** @var Pane $pane */
+        foreach ($this->getEntries() as $pane) {
+            if ($pane->isActive()) {
+                return $pane;
             }
         }
 
-        if ($pane && $this->hasEntry($pane)) {
-            return $this->getEntry($pane);
-        }
-
-        throw new ConfigurationError('Could not determine active pane');
+        return null;
     }
 
     public function removeEntry($pane)
@@ -201,8 +165,21 @@ class DashboardHome extends BaseDashboard implements Sortable
                 ->setTitle($pane->label)
                 ->setPriority($pane->priority);
 
-            $newPane->loadDashboardEntries($name);
             $this->addEntry($newPane);
+        }
+
+        if ($name !== null) {
+            if ($this->hasEntry($name)) {
+                $pane = $this->getEntry($name);
+
+                $this->activatePane($pane);
+                $pane->loadDashboardEntries();
+            } else {
+                throw new HttpNotFoundException(t('Pane "%s" not found'), $name);
+            }
+        } elseif (($firstPane = $this->rewindEntries())) {
+            $this->activatePane($firstPane);
+            $firstPane->loadDashboardEntries();
         }
 
         return $this;

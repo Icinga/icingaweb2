@@ -12,6 +12,7 @@ use Icinga\Model;
 use Icinga\Web\Dashboard\Common\DashboardEntries;
 use Icinga\Web\Dashboard\Common\Sortable;
 use Icinga\Util\DBUtils;
+use Icinga\Web\Dashboard\Common\WidgetState;
 use ipl\Stdlib\Filter;
 
 use function ipl\Stdlib\get_php_type;
@@ -22,6 +23,7 @@ use function ipl\Stdlib\get_php_type;
 class Pane extends BaseDashboard implements Sortable
 {
     use DashboardEntries;
+    use WidgetState;
 
     const TABLE = 'icingaweb_dashboard';
 

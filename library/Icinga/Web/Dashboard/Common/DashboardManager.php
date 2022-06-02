@@ -12,7 +12,6 @@ use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Util\DBUtils;
 use ipl\Stdlib\Filter;
-use ipl\Web\Url;
 
 trait DashboardManager
 {
@@ -25,12 +24,13 @@ trait DashboardManager
      *
      * @return void
      */
-    public function load(string $name = null)
+    public function load(string $name = null, string $activePane = null, bool $loadAll = false)
     {
         $query = Model\Home::on(DBUtils::getConn());
         $query->filter(Filter::equal('icingaweb_dashboard_owner.id', $this::getUser()->getAdditional('id')));
 
-        if ($name !== null) {
+        $this->setEntries([]);
+        if ($name !== null && ! $loadAll) {
             $query->filter(Filter::equal('name', $name));
 
             /** @var Model\Home $row */
@@ -46,22 +46,25 @@ trait DashboardManager
             }
 
             $this->activateHome($home);
-            $home->loadDashboardEntries();
+            $home->loadDashboardEntries($activePane);
         } else {
             foreach ($query as $row) {
                 $this->addEntry(DashboardHome::create($row));
             }
 
-            $homeParam = Url::fromRequest()->getParam('home');
-            if ($homeParam && $this->hasEntry($homeParam)) {
-                $firstHome = $this->getEntry($homeParam);
+            if ($name !== null && $loadAll) {
+                if (! $this->hasEntry($name)) {
+                    throw new HttpNotFoundException(t('Home "%s" not found'), $name);
+                }
+
+                $firstHome = $this->getEntry($name);
             } else {
                 $firstHome = $this->rewindEntries();
             }
 
             if ($firstHome) {
                 $this->activateHome($firstHome);
-                $firstHome->loadDashboardEntries();
+                $firstHome->loadDashboardEntries($activePane);
             }
         }
 
@@ -97,6 +100,10 @@ trait DashboardManager
      */
     public function activateHome(DashboardHome $home): self
     {
+        if (! $this->hasEntry($home->getName())) {
+            throw new ProgrammingError('Trying to activate Dashboard Home "%s" that does not exist.', $home->getName());
+        }
+
         $activeHome = $this->getActiveHome();
         if ($activeHome && $activeHome->getName() !== $home->getName()) {
             $activeHome->setActive(false);
@@ -116,7 +123,7 @@ trait DashboardManager
     {
         /** @var DashboardHome $home */
         foreach ($this->getEntries() as $home) {
-            if ($home->getActive()) {
+            if ($home->isActive()) {
                 return $home;
             }
         }
