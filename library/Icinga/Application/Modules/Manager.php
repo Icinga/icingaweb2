@@ -280,13 +280,17 @@ class Manager
         $target = $this->installedBaseDirs[$name];
         $link = $this->enableDir . DIRECTORY_SEPARATOR . $name;
 
-        if (! is_dir($this->enableDir) && !@mkdir($this->enableDir, 02770, true)) {
-            $error = error_get_last();
-            throw new SystemPermissionException(
-                'Failed to create enabledModules directory "%s" (%s)',
-                $this->enableDir,
-                $error['message']
-            );
+        if (! is_dir($this->enableDir)) {
+            if (!@mkdir($this->enableDir, 0777, true)) {
+                $error = error_get_last();
+                throw new SystemPermissionException(
+                    'Failed to create enabledModules directory "%s" (%s)',
+                    $this->enableDir,
+                    $error['message']
+                );
+            }
+
+            chmod($this->enableDir, 02770);
         } elseif (! is_writable($this->enableDir)) {
             throw new SystemPermissionException(
                 'Cannot enable module "%s". Check the permissions for the enabledModules directory: %s',
