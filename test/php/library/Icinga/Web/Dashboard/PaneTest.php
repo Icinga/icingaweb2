@@ -4,110 +4,173 @@
 
 namespace Tests\Icinga\Web\Dashboard;
 
-// Necessary as some of these tests disable phpunit's preservation
-// of the global state (e.g. autoloaders are in the global state)
-require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
-
 use Icinga\Exception\ProgrammingError;
 use Icinga\Test\BaseDashboardTestCase;
-use Icinga\Web\Dashboard\Dashboard;
+use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Dashboard\Pane;
-use Icinga\Web\Widget\Tab;
-use Mockery;
-
-class DashboardWithPredefinableActiveName extends Dashboard
-{
-    public $activeName = '';
-
-    public function getTabs()
-    {
-        $activeTab = $this->activeName ? new Tab(['name' => $this->activeName]) : null;
-
-        return Mockery::mock('ipl\Web\Widget\Tabs')
-            ->shouldReceive('getActiveTab')->andReturn($activeTab)
-            ->shouldReceive('activate')
-            ->getMock();
-    }
-}
 
 class PaneTest extends BaseDashboardTestCase
 {
-    public function testWhetherDetermineActivePaneThrowsAnExceptionIfCouldNotDetermine()
-    {
-        $this->expectException(\Icinga\Exception\ConfigurationError::class);
+    const TEST_PANE = 'Test Pane';
 
-        $home = $this->getTestHome();
-        $home->determineActivePane($this->dashboard->getTabs());
+    protected function getTestPane(string $name = self::TEST_PANE): Pane
+    {
+        return new Pane($name);
     }
 
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState
-     */
-    public function testWhetherDetermineActivePaneThrowsAnExceptionIfCouldNotDetermineInvalidPane()
+    public function testWhetherActivatePaneThrowsAnExceptionIfNotExists()
     {
         $this->expectException(ProgrammingError::class);
 
-        Mockery::mock('alias:ipl\Web\Url')->shouldReceive('fromRequest->getParam')->andReturn('test');
-
-        $dashboard = new DashboardWithPredefinableActiveName();
         $home = $this->getTestHome();
+        $home->activatePane(new Pane(self::TEST_PANE));
+    }
 
-        $home->determineActivePane($dashboard->getTabs());
+    public function testWhetherActivatePaneActivatesExpectedPane()
+    {
+        $home = $this->getTestHome();
+        $home->addEntry($this->getTestPane());
+
+        $home->activatePane($home->getEntry(self::TEST_PANE));
+
+        $this->assertEquals(
+            self::TEST_PANE,
+            $home->getActivePane()->getName(),
+            'DashboardHome::activatePane() could not activate expected Dashboard Pane'
+        );
     }
 
     /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
+     * @depends testWhetherActivatePaneActivatesExpectedPane
      */
-    public function testWhetherDetermineActivePaneDeterminesActiveValidPane()
+    public function testWhetherLoadDashboardEntriesActivatesFirstPane()
     {
-        Mockery::mock('alias:ipl\Web\Url')->shouldReceive('fromRequest->getParam')->andReturn('test2');
-
         $home = $this->getTestHome();
-        $home->addEntry(new Pane('test1'));
-        $home->addEntry(new Pane('test2'));
+        $this->dashboard->manageEntry($home);
 
-        $dashboard = new DashboardWithPredefinableActiveName();
-        $activePane = $home->determineActivePane($dashboard->getTabs());
+        $home->manageEntry($this->getTestPane());
+        $home->manageEntry($this->getTestPane('Test Me'));
+
+        $this->dashboard->load();
+        $home = $this->dashboard->getActiveHome();
 
         $this->assertEquals(
-            'test2',
-            $activePane->getName(),
-            'DashboardHome::determineActivePane() could not determine valid active pane'
+            self::TEST_PANE,
+            $home->getActivePane()->getName(),
+            'DashboardHome::loadDashboardEntries() could not activate expected Dashboard Pane'
         );
     }
 
-    public function testWhetherDetermineActivePaneActivatesTheFirstPane()
+    /**
+     * @depends testWhetherLoadDashboardEntriesActivatesFirstPane
+     */
+    public function testWhetherActivatePaneActivatesAPaneEntry()
     {
         $home = $this->getTestHome();
-        $home->addEntry(new Pane('test1'));
-        $home->addEntry(new Pane('test2'));
+        $this->dashboard->manageEntry($home);
 
-        $this->dashboard->addEntry($home)->activateHome($home);
+        $home->manageEntry(new Pane(self::TEST_PANE));
 
-        $activePane = $home->determineActivePane($this->dashboard->getTabs());
+        $this->dashboard->load(self::TEST_HOME, self::TEST_PANE);
+        $home = $this->dashboard->getActiveHome();
+
         $this->assertEquals(
-            'test1',
-            $activePane->getName(),
-            'DashboardHome::determineActivePane() could not determine/activate the first pane'
+            self::TEST_PANE,
+            $home->getActivePane()->getName(),
+            'DashboardHome::loadDashboardEntries() could not load and activate expected Dashboard Pane'
         );
     }
 
-    public function testWhetherDetermineActivePaneDeterminesActivePane()
+    /**
+     * @depends testWhetherActivatePaneActivatesAPaneEntry
+     */
+    public function testWhetherGetActivePaneGetsExpectedPane()
     {
-        $dashboard = new DashboardWithPredefinableActiveName();
-        $dashboard->activeName = 'test2';
-
         $home = $this->getTestHome();
-        $home->addEntry(new Pane('test1'));
-        $home->addEntry(new Pane('test2'));
+        $home->addEntry($this->getTestPane());
+        $home->addEntry($this->getTestPane('Test Me'));
 
-        $activePane = $home->determineActivePane($dashboard->getTabs());
+        $home->activatePane($home->getEntry('Test Me'));
+
         $this->assertEquals(
-            'test2',
-            $activePane->getName(),
-            'DashboardHome::determineActivePane() could not determine active pane'
+            'Test Me',
+            $home->getActivePane()->getName(),
+            'DashboardHome::getActivePane() could not determine valid active pane'
+        );
+    }
+
+    /**
+     * @depends testWhetherActivatePaneActivatesAPaneEntry
+     */
+    public function testWhetherManageEntryManagesANewPaneEntry()
+    {
+        $home = $this->getTestHome();
+        $this->dashboard->manageEntry($home);
+
+        $home->manageEntry($this->getTestPane());
+
+        $this->dashboard->load(self::TEST_HOME);
+        $home = $this->dashboard->getActiveHome();
+
+        $this->assertCount(
+            1,
+            $home->getEntries(),
+            'DashboardHome::manageEntry() could not manage a new Dashboard Pane'
+        );
+    }
+
+    /**
+     * @depends testWhetherManageEntryManagesANewPaneEntry
+     */
+    public function testWhetherManageEntryUpdatesExistingPaneEntry()
+    {
+        $home = $this->getTestHome();
+        $this->dashboard->manageEntry($home);
+
+        $home->manageEntry($this->getTestPane());
+
+        $this->dashboard->load(self::TEST_HOME);
+
+        $home = $this->dashboard->getActiveHome();
+        $home->getActivePane()->setTitle('Hello');
+
+        $home->manageEntry($home->getEntries());
+        $this->dashboard->load(self::TEST_HOME);
+
+        $home = $this->dashboard->getActiveHome();
+
+        $this->assertEquals(
+            'Hello',
+            $home->getActivePane()->getTitle(),
+            'DashboardHome::manageEntry() could not update existing Dashboard Pane'
+        );
+    }
+
+    /**
+     * @depends testWhetherManageEntryUpdatesExistingPaneEntry
+     */
+    public function testWhetherManageEntryMovesAPaneToAnotherExistingHome()
+    {
+        $home = $this->getTestHome('Second Home');
+        $this->dashboard->manageEntry([$this->getTestHome(), $home]);
+
+        $home->manageEntry([$this->getTestPane(), $this->getTestPane('Test Me')]);
+
+        $this->dashboard->load('Second Home', null, true);
+
+        $home = $this->dashboard->getActiveHome();
+        /** @var DashboardHome $default */
+        $default = $this->dashboard->getEntry(self::TEST_HOME);
+
+        $default->manageEntry($home->getEntry(self::TEST_PANE), $home);
+        $this->dashboard->load(self::TEST_HOME);
+
+        $default = $this->dashboard->getActiveHome();
+
+        $this->assertCount(
+            1,
+            $default->getEntries(),
+            'DashboardHome::manageEntry() could not move a Dashboard Pane to another existing Dashboard Home'
         );
     }
 }

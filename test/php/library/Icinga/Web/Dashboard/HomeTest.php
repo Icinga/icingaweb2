@@ -30,13 +30,13 @@ class HomeTest extends BaseDashboardTestCase
         $this->dashboard->manageEntry($this->getTestHome());
         $this->dashboard->load(self::TEST_HOME);
 
-        $home = $this->dashboard->getEntry(self::TEST_HOME);
+        $home = $this->dashboard->getActiveHome();
         $home->setTitle('Hello');
 
         $this->dashboard->manageEntry($home);
         $this->dashboard->load(self::TEST_HOME);
 
-        $home = $this->dashboard->getEntry(self::TEST_HOME);
+        $home = $this->dashboard->getActiveHome();
 
         $this->assertEquals(
             'Hello',
@@ -109,6 +109,34 @@ class HomeTest extends BaseDashboardTestCase
         $this->dashboard->load('test');
     }
 
+    /**
+     * @depends testWhetherActivateHomeActivatesAHomeEntry
+     */
+    public function testWhetherLoadHomesByNameAndLoadAllParamSetLoadsAllHomesAndActivatesTheExpectedHome()
+    {
+        $this->dashboard->manageEntry([$this->getTestHome(), $this->getTestHome('Second Home')]);
+        $this->dashboard->load('Second Home', null, true);
+
+        $this->assertCount(
+            2,
+            $this->dashboard->getEntries(),
+            'Dashboard::load() could not all expected Dashboard Homes'
+        );
+
+        $this->assertEquals(
+            'Second Home',
+            $this->dashboard->getActiveHome()->getName(),
+            'Dashboard::load() could not load all expected Dashboard Homes and activate expected Dashboard Home'
+        );
+    }
+
+    public function testWhetherActivateHomeThrowsAnExceptionIfNotExists()
+    {
+        $this->expectException(ProgrammingError::class);
+
+        $this->dashboard->activateHome($this->getTestHome('Activate Home'));
+    }
+
     public function testWhetherLoadHomesActivatesFirstHome()
     {
         $this->dashboard->manageEntry([$this->getTestHome(), $this->getTestHome('Second Home')]);
@@ -133,7 +161,7 @@ class HomeTest extends BaseDashboardTestCase
         $active = $this->dashboard->getEntry('Second Home');
         $this->dashboard->activateHome($active);
 
-        $this->assertTrue($active->getActive(), 'Dashboard::activateHome() could not activate expected Dashboard Home');
+        $this->assertTrue($active->isActive(), 'Dashboard::activateHome() could not activate expected Dashboard Home');
     }
 
     /**
