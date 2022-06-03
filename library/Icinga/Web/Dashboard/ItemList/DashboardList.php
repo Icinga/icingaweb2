@@ -37,12 +37,7 @@ class DashboardList extends ItemListControl
 
     protected function shouldExpandByDefault(): bool
     {
-        return $this->pane->isActive();
-    }
-
-    protected function getCollapsibleControlClass(): string
-    {
-        return 'dashlets-list-info';
+        return $this->pane->getHome()->isActive() && $this->pane->isActive();
     }
 
     protected function createItemList(): BaseHtmlElement

@@ -4,6 +4,7 @@
 
 namespace Icinga\Web\Dashboard\ItemList;
 
+use ipl\Html\BaseHtmlElement;
 use ipl\Html\Contract\FormElement;
 use ipl\Html\HtmlElement;
 
@@ -26,7 +27,7 @@ class DashletListMultiSelect extends DashletListItem
         return $this;
     }
 
-    protected function createLabel(): HtmlElement
+    protected function createLabel(): BaseHtmlElement
     {
         $label = HtmlElement::create('label');
         $label->addHtml($this->checkbox);

@@ -31,13 +31,6 @@ abstract class ItemListControl extends BaseHtmlElement
     abstract protected function shouldExpandByDefault(): bool;
 
     /**
-     * Get a class name for the collapsible control
-     *
-     * @return string
-     */
-    abstract protected function getCollapsibleControlClass(): string;
-
-    /**
      * Create an action link to be added at the end of the list
      *
      * @return BaseHtmlElement

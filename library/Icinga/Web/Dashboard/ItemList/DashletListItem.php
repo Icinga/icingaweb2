@@ -59,9 +59,9 @@ class DashletListItem extends BaseHtmlElement
     /**
      * Assemble header of this dashlet item
      *
-     * @return ValidHtml
+     * @return BaseHtmlElement
      */
-    protected function assembleHeader(): ValidHtml
+    protected function assembleHeader(): BaseHtmlElement
     {
         $header = HtmlElement::create('div', ['class' => 'dashlet-header']);
 
@@ -100,7 +100,7 @@ class DashletListItem extends BaseHtmlElement
         return $header;
     }
 
-    protected function assembleSummary()
+    protected function assembleSummary(): BaseHtmlElement
     {
         $section = HtmlElement::create('section', ['class' => 'caption']);
 

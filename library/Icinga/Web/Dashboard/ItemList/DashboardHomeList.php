@@ -26,7 +26,10 @@ class DashboardHomeList extends ItemListControl
     public function __construct(DashboardHome $home)
     {
         $this->home = $home;
-        $this->home->loadDashboardEntries();
+        if (! $this->home->hasEntries()) {
+            // Just retry to load dashboards
+            $this->home->loadDashboardEntries();
+        }
 
         $this->getAttributes()
             ->registerAttributeCallback('data-icinga-home', function () {
@@ -56,11 +59,6 @@ class DashboardHomeList extends ItemListControl
     protected function shouldExpandByDefault(): bool
     {
         return $this->home->isActive();
-    }
-
-    protected function getCollapsibleControlClass(): string
-    {
-        return 'dashboard-list-info';
     }
 
     protected function createItemList(): BaseHtmlElement

@@ -4,12 +4,12 @@
 
 namespace Icinga\Web\Dashboard\ItemList;
 
+use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
-use ipl\Html\ValidHtml;
 
 class EmptyDashlet extends DashletListMultiSelect
 {
-    protected function assembleHeader(): ValidHtml
+    protected function assembleHeader(): BaseHtmlElement
     {
         $header = HtmlElement::create('div', ['class' => 'dashlet-header']);
         $header->add(t('Custom Url'));
@@ -17,7 +17,7 @@ class EmptyDashlet extends DashletListMultiSelect
         return $header;
     }
 
-    protected function assembleSummary()
+    protected function assembleSummary(): BaseHtmlElement
     {
         $section = HtmlElement::create('section', ['class' => 'caption']);
         $section->add(t('Create a dashlet with custom url and filter'));
