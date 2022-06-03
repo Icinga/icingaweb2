@@ -83,7 +83,7 @@ class HomeTest extends BaseDashboardTestCase
         $this->dashboard->removeEntries();
         $this->dashboard->load();
 
-        $this->assertTrue(
+        $this->assertFalse(
             $this->dashboard->hasEntries(),
             'Dashboard::removeEntries() could not remove all Dashboard Homes'
         );
