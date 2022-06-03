@@ -236,8 +236,13 @@ class Pane extends BaseDashboard implements Sortable
                     'disabled'     => DBUtils::bool2BoolEnum($dashlet->isDisabled())
                 ], $filterCondition);
             } else {
-                // This should have already been handled by the caller
-                break;
+                // Failed to move the pane! Should have already been handled by the caller,
+                // though I think it's better that we raise an exception here!!
+                throw new \LogicException(sprintf(
+                    'Dashlet "%s" could not be managed. Dashboard Pane "%s" has a Dashlet with the same name!',
+                    $dashlet->getTitle(),
+                    $this->getTitle()
+                ));
             }
 
             $dashlet->setPane($this);

@@ -242,8 +242,13 @@ class DashboardHome extends BaseDashboard implements Sortable
                     'priority' => $movePane ? $order++ : $pane->getPriority()
                 ], $filterCondition);
             } else {
-                // Failed to move the pane! Should have been handled already by the caller
-                break;
+                // Failed to move the pane! Should have already been handled by the caller,
+                // though I think it's better that we raise an exception here!!
+                throw new \LogicException(sprintf(
+                    'Dashboard Pane "%s" could not be managed. Dashboard Home "%s" has Pane with the same name!',
+                    $pane->getTitle(),
+                    $this->getTitle()
+                ));
             }
 
             $pane->setHome($this);
