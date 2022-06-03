@@ -136,10 +136,8 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
                 $this->tabs->add(
                     $pane->getName(),
                     [
-                        'title'     => sprintf(
-                            t('Show %s', 'dashboard.pane.tooltip'),
-                            $pane->getTitle()
-                        ),
+                        'active'    => $pane->isActive(),
+                        'title'     => sprintf(t('Show %s', 'dashboard.pane.tooltip'), $pane->getTitle()),
                         'label'     => $pane->getTitle(),
                         'url'       => clone($url),
                         'urlParams' => [$this->tabParam => $pane->getName()]

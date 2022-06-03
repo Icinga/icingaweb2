@@ -164,6 +164,7 @@ class DashboardHome extends BaseDashboard implements Sortable
                 ->setPriority($pane->priority);
 
             $this->addEntry($newPane);
+            $newPane->loadDashboardEntries();
         }
 
         if ($name !== null) {
@@ -171,13 +172,11 @@ class DashboardHome extends BaseDashboard implements Sortable
                 $pane = $this->getEntry($name);
 
                 $this->activatePane($pane);
-                $pane->loadDashboardEntries();
             } else {
                 throw new HttpNotFoundException(t('Pane "%s" not found'), $name);
             }
         } elseif (($firstPane = $this->rewindEntries())) {
             $this->activatePane($firstPane);
-            $firstPane->loadDashboardEntries();
         }
 
         return $this;
