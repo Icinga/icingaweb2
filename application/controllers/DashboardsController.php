@@ -62,9 +62,6 @@ class DashboardsController extends CompatController
 
             $this->content->getAttributes()->add('class', 'welcome-view');
             $this->dashboard->addHtml($welcomeForm);
-        } else {
-            $pane = $activeHome->getActivePane();
-            $this->dashboard->activate($pane->getName());
         }
 
         $this->addContent($this->dashboard);
@@ -77,7 +74,7 @@ class DashboardsController extends CompatController
      */
     public function homeAction()
     {
-        $this->dashboard->load($this->params->getRequired('home'));
+        $this->dashboard->load($this->params->getRequired('home'), $this->getParam('pane'));
 
         $activeHome = $this->dashboard->getActiveHome();
         if (! $activeHome->getEntries()) {
@@ -87,11 +84,6 @@ class DashboardsController extends CompatController
         // Not to render the cog icon before the above tab
         $this->createTabs();
 
-        if ($activeHome->hasEntries()) {
-            $pane = $activeHome->getActivePane();
-            $this->dashboard->activate($pane->getName());
-        }
-
         $this->addContent($this->dashboard);
     }
 
@@ -99,14 +91,15 @@ class DashboardsController extends CompatController
     {
         $this->dashboard->load();
 
-        $paneForm = (new HomeForm($this->dashboard))
-            ->on(HomeForm::ON_SUCCESS, function () {
-                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
-            })
-            ->handleRequest($this->getServerRequest());
+        $homeForm = new HomeForm($this->dashboard);
+        $homeForm->on(HomeForm::ON_SUCCESS, function () use ($homeForm) {
+            $params = ['home' => $homeForm->getPopulatedValue('title')];
+
+            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+        })->handleRequest($this->getServerRequest());
 
         $this->setTitle(t('Add new Dashboard Home'));
-        $this->addContent($paneForm);
+        $this->addContent($homeForm);
     }
 
     public function editHomeAction()
@@ -117,7 +110,8 @@ class DashboardsController extends CompatController
 
         $homeForm = (new HomeForm($this->dashboard))
             ->on(HomeForm::ON_SUCCESS, function () {
-                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+                $params = clone $this->params;
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
             })
             ->handleRequest($this->getServerRequest());
 
@@ -151,7 +145,8 @@ class DashboardsController extends CompatController
 
         $paneForm = (new PaneForm($this->dashboard))
             ->on(PaneForm::ON_SUCCESS, function () {
-                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+                $params = $this->params->without('pane');
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
             })
             ->handleRequest($this->getServerRequest());
 
@@ -172,7 +167,8 @@ class DashboardsController extends CompatController
 
         $paneForm = (new PaneForm($this->dashboard))
             ->on(PaneForm::ON_SUCCESS, function () {
-                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+                $params = $this->params->without('pane');
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
             })
             ->handleRequest($this->getServerRequest());
 
@@ -196,7 +192,8 @@ class DashboardsController extends CompatController
         $paneForm = new RemovePaneForm($this->dashboard);
         $paneForm->populate(['org_name' => $paneParam]);
         $paneForm->on(RemovePaneForm::ON_SUCCESS, function () {
-            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+            $params = $this->params->without('pane');
+            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
         })->handleRequest($this->getServerRequest());
 
         $this->setTitle(t('Remove Pane'));
@@ -207,12 +204,13 @@ class DashboardsController extends CompatController
     {
         $home = $this->params->getRequired('home');
 
-        $this->dashboard->load($home, null, true);
+        $this->dashboard->load($home, $this->getParam('pane'), true);
 
         $dashletForm = new DashletForm($this->dashboard);
         $dashletForm->populate($this->getRequest()->getPost());
         $dashletForm->on(DashletForm::ON_SUCCESS, function () {
-            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+            $params = $this->params->without('dashlet');
+            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
         })->handleRequest($this->getServerRequest());
 
         if (isset($this->getRequest()->getPost()['btn_next'])) {
@@ -231,7 +229,8 @@ class DashboardsController extends CompatController
 
         $dashletForm = (new DashletForm($this->dashboard))
             ->on(DashletForm::ON_SUCCESS, function () {
-                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+                $params = $this->params->without('dashlet');
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
             })
             ->handleRequest($this->getServerRequest());
 
@@ -249,7 +248,8 @@ class DashboardsController extends CompatController
 
         $removeForm = (new RemoveDashletForm($this->dashboard))
             ->on(RemoveDashletForm::ON_SUCCESS, function () {
-                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+                $params = $this->params->without('dashlet');
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
             })
             ->handleRequest($this->getServerRequest());
 
@@ -408,18 +408,10 @@ class DashboardsController extends CompatController
 
     public function settingsAction()
     {
-        $this->dashboard->load();
-
         $highlightHome = $this->params->get('home');
-        if ($highlightHome) {
-            if (! $this->dashboard->hasEntry($highlightHome)) {
-                $this->httpNotFound(t('Home "%s" not found'), $highlightHome);
-            }
+        $highlightPane = $this->params->get('pane');
 
-            $home = $this->dashboard->getEntry($highlightHome);
-            $this->dashboard->activateHome($home);
-            $home->loadDashboardEntries(); // createTabs() won't get the panes otherwise
-        }
+        $this->dashboard->load($highlightHome, $highlightPane, true);
 
         $this->createTabs();
 
@@ -458,6 +450,10 @@ class DashboardsController extends CompatController
             $params = [];
             if ($activeHome->getName() !== DashboardHome::DEFAULT_HOME) {
                 $params['home'] = $activeHome->getName();
+            }
+
+            if (($activePane = $activeHome->getActivePane())) {
+                $params['pane'] = $activePane->getName();
             }
 
             $tabs->extend(new DashboardSettings($params));
