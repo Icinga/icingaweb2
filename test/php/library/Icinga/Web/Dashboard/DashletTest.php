@@ -120,8 +120,6 @@ class DashletTest extends BaseDashboardTestCase
      */
     public function testWhetherManageEntryMovesADashletToAnotherPaneAndAnotherHome()
     {
-        $this->dashboard->load(); // Not to encounter any duplicate errors
-
         $default = $this->getTestHome();
         $home = $this->getTestHome('Home Test');
         $this->dashboard->manageEntry([$default, $home]);
