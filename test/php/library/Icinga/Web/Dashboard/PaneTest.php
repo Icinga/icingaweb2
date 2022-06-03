@@ -173,4 +173,35 @@ class PaneTest extends BaseDashboardTestCase
             'DashboardHome::manageEntry() could not move a Dashboard Pane to another existing Dashboard Home'
         );
     }
+
+    public function testWhetherManageEntryThrowsAnExceptionOnDuplicatedError()
+    {
+        $this->expectException(\LogicException::class);
+
+        $default = $this->getTestHome();
+        $home = $this->getTestHome('Second Home');
+
+        // Dashboard Homes
+        $this->dashboard->manageEntry([$home, $default]);
+
+        // Dashboard Panes
+        $default->manageEntry([$this->getTestPane(), $this->getTestPane('Test Me')]);
+        $home->manageEntry([$this->getTestPane(), $this->getTestPane('Test Me')]);
+
+        $this->dashboard->load();
+
+        $home = $this->dashboard->getActiveHome();
+        $default = $this->dashboard->getEntry(self::TEST_HOME);
+        $default->loadDashboardEntries();
+
+        $default->manageEntry($home->getEntry(self::TEST_PANE), $home);
+    }
+
+    public function testWhetherManageEntryThrowsAnExceptionWhenPassingInvalidArgument()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $default = $this->getTestHome();
+        $default->manageEntry($this->getTestPane(), $this->getTestPane());
+    }
 }
