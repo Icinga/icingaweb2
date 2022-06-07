@@ -47,7 +47,7 @@ trait Database
 
         $conn = new Connection($config);
         if ($conn->getAdapter() instanceof Pgsql) {
-            $valuesTransformer = function (&$values) {
+            $valuesTransformer = function (&$sql, &$values) {
                 DBUtils::transformValues($values);
             };
 
