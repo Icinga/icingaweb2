@@ -1,3 +1,5 @@
+/*! Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
+
 // Welcome view and introduction
 
 .welcome-view {
@@ -35,14 +37,14 @@
     }
   }
 
-  input[disabled] {
+  input[name="btn_use_defaults"]:disabled {
     cursor: default;
     border: 1px solid @control-disabled-color;
-  }
 
-  input[disabled], input[disabled]:hover {
-    background: @body-bg-color;
-    color: @control-disabled-color;
+    &, &:hover {
+      background: @body-bg-color;
+      color: @control-disabled-color;
+    }
   }
 }
 

@@ -28,7 +28,7 @@ class WelcomeForm extends Form
 
     public function hasBeenSubmitted()
     {
-        return parent::hasBeenSubmitted() || $this->getPressedSubmitElement();
+        return parent::hasBeenSent() && $this->getPopulatedValue('btn_use_defaults');
     }
 
     protected function assemble()
@@ -53,28 +53,26 @@ class WelcomeForm extends Form
 
     protected function onSuccess()
     {
-        if ($this->getPopulatedValue('btn_use_defaults')) {
-            $home = $this->dashboard->getEntry(DashboardHome::DEFAULT_HOME);
-            $conn = DBUtils::getConn();
-            $conn->beginTransaction();
+        $home = $this->dashboard->getEntry(DashboardHome::DEFAULT_HOME);
+        $conn = DBUtils::getConn();
+        $conn->beginTransaction();
 
-            try {
-                // Default Home might have been disabled, so we have to update it first
-                $this->dashboard->manageEntry($home);
-                $home->manageEntry(Modules\DashletManager::getSystemDefaults(), null, true);
+        try {
+            // Default Home might have been disabled, so we have to update it first
+            $this->dashboard->manageEntry($home);
+            $home->manageEntry(Modules\DashletManager::getSystemDefaults(), null, true);
 
-                $conn->commitTransaction();
-            } catch (\Exception $err) {
-                $conn->rollBackTransaction();
+            $conn->commitTransaction();
+        } catch (\Exception $err) {
+            $conn->rollBackTransaction();
 
-                Logger::error('Unable to apply the system defaults into the DB. An error occurred: %s', $err);
+            Logger::error('Unable to apply the system defaults into the DB. An error occurred: %s', $err);
 
-                Notification::error(t('Failed to successfully save the data. Please check the logs for details.'));
+            Notification::error(t('Failed to successfully save the data. Please check the logs for details.'));
 
-                return;
-            }
-
-            Notification::success(t('Imported system defaults successfully.'));
+            return;
         }
+
+        Notification::success(t('Imported system defaults successfully.'));
     }
 }
