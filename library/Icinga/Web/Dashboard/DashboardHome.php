@@ -4,6 +4,7 @@
 
 namespace Icinga\Web\Dashboard;
 
+use Icinga\Exception\AlreadyExistsException;
 use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Model\Home;
@@ -244,11 +245,11 @@ class DashboardHome extends BaseDashboard implements Sortable
             } else {
                 // Failed to move the pane! Should have already been handled by the caller,
                 // though I think it's better that we raise an exception here!!
-                throw new \LogicException(sprintf(
+                throw new AlreadyExistsException(
                     'Dashboard Pane "%s" could not be managed. Dashboard Home "%s" has Pane with the same name!',
                     $pane->getTitle(),
                     $this->getTitle()
-                ));
+                );
             }
 
             $pane->setHome($this);

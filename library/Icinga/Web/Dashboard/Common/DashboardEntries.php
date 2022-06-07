@@ -4,9 +4,10 @@
 
 namespace Icinga\Web\Dashboard\Common;
 
+use Icinga\Exception\NotImplementedError;
 use Icinga\Exception\ProgrammingError;
-
 use Icinga\Web\Dashboard\Dashboard;
+
 use function ipl\Stdlib\get_php_type;
 
 trait DashboardEntries
@@ -82,6 +83,7 @@ trait DashboardEntries
 
     public function createEntry(string $name, $url = null)
     {
+        throw new NotImplementedError('Not yet implemented by the concrete class!!');
     }
 
     public function rewindEntries()

@@ -5,6 +5,7 @@
 namespace Icinga\Web\Dashboard;
 
 use Icinga\Application\Modules;
+use Icinga\Exception\AlreadyExistsException;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\ConfigurationError;
@@ -238,11 +239,11 @@ class Pane extends BaseDashboard implements Sortable
             } else {
                 // Failed to move the pane! Should have already been handled by the caller,
                 // though I think it's better that we raise an exception here!!
-                throw new \LogicException(sprintf(
+                throw new AlreadyExistsException(
                     'Dashlet "%s" could not be managed. Dashboard Pane "%s" has a Dashlet with the same name!',
                     $dashlet->getTitle(),
                     $this->getTitle()
-                ));
+                );
             }
 
             $dashlet->setPane($this);

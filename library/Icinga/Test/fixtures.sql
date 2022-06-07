@@ -32,10 +32,11 @@ CREATE TABLE `icingaweb_dashlet` (
      `label`         VARCHAR NOT NULL,
      `url`           VARCHAR NOT NULL,
      `priority`      tinyint NOT NULL,
-     `disabled`  TEXT CHECK ( disabled IN ('n', 'y') ) DEFAULT 'n',
+     `disabled`      TEXT CHECK ( disabled IN ('n', 'y') ) DEFAULT 'n',
      FOREIGN KEY (`dashboard_id`) REFERENCES `icingaweb_dashboard` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- TODO: Remove me once we have decoupled module dashlets (as a daemon job) from the actual dashboards loading action!!
 CREATE TABLE `icingaweb_module_dashlet` (
     `id`            binary(20) NOT NULL PRIMARY KEY,
     `name`          VARCHAR NOT NULL,

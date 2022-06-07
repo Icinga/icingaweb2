@@ -4,6 +4,7 @@
 
 namespace Tests\Icinga\Web\Dashboard;
 
+use Icinga\Exception\AlreadyExistsException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Test\BaseDashboardTestCase;
 use Icinga\Web\Dashboard\DashboardHome;
@@ -176,7 +177,7 @@ class PaneTest extends BaseDashboardTestCase
 
     public function testWhetherManageEntryThrowsAnExceptionOnDuplicatedError()
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(AlreadyExistsException::class);
 
         $default = $this->getTestHome();
         $home = $this->getTestHome('Second Home');

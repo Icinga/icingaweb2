@@ -4,6 +4,7 @@
 
 namespace Tests\Icinga\Web\Dashboard;
 
+use Icinga\Exception\AlreadyExistsException;
 use Icinga\Test\BaseDashboardTestCase;
 use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Dashboard\Pane;
@@ -169,7 +170,7 @@ class DashletTest extends BaseDashboardTestCase
 
     public function testWhetherManageEntryThrowsAnExceptionOnDuplicatedError()
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(AlreadyExistsException::class);
 
         $default = $this->getTestHome();
         $this->dashboard->manageEntry($default);

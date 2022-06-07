@@ -61,8 +61,8 @@ trait WidgetState
     /**
      * Get whether this widget is currently being loaded
      *
-     * This indicates which dashboard tab is currently open if this widget type is a Dashboard Pane
-     * or whether the Dashboard Home in the navigation bar is active/focused
+     * Indicates which dashboard tab is currently open if this widget is a Dashboard Pane type
+     * or whether the Dashboard Home is active/focused in the navigation bar
      *
      * @return bool
      */
