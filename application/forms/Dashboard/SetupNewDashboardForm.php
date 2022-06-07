@@ -54,7 +54,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
         foreach (self::$moduleDashlets as $module => $dashlets) {
             /** @var Dashlet $dashlet */
             foreach ($dashlets as $dashlet) {
-                $element = str_replace(' ', '_', $module . '|' . $dashlet->getName());
+                $element = spl_object_hash($dashlet);
                 if ($this->getPopulatedValue($element) === 'y' || (! $strict && $this->getPopulatedValue($element))) {
                     $title = $this->getPopulatedValue($element);
                     $url = $this->getPopulatedValue($element . '_url');
@@ -123,7 +123,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
                 $multi = new DashletListMultiSelect($dashlet);
                 $multi->setCheckBox($this->createElement(
                     'checkbox',
-                    $module . '|' . $dashlet->getName(),
+                    spl_object_hash($dashlet),
                     ['class' => 'sr-only']
                 ));
 
@@ -161,19 +161,24 @@ class SetupNewDashboardForm extends BaseDashboardForm
         }
 
         if (! empty(self::$moduleDashlets)) {
-            foreach (self::$moduleDashlets as $module => $dashlets) {
+            foreach (self::$moduleDashlets as $_ => $dashlets) {
                 /** @var Dashlet $dashlet */
                 foreach ($dashlets as $dashlet) {
                     $this->addHtml(HtmlElement::create('h3', null, t($dashlet->getTitle())));
 
-                    $this->addElement('text', $module . '|' . $dashlet->getName(), [
+                    $objHash = spl_object_hash($dashlet);
+                    if ($this->getPopulatedValue('btn_next')) {
+                        $this->clearPopulatedValue($objHash);
+                    }
+
+                    $this->addElement('text', $objHash, [
                         'required'    => true,
                         'label'       => t('Dashlet Title'),
                         'value'       => $dashlet->getTitle(),
                         'description' => t('Enter a title for the dashlet'),
                     ]);
 
-                    $this->addElement('textarea', $module . '|' . $dashlet->getName() . '_url', [
+                    $this->addElement('textarea', $objHash . '_url', [
                         'required'    => true,
                         'label'       => t('Url'),
                         'value'       => $dashlet->getUrl()->getRelativeUrl(),

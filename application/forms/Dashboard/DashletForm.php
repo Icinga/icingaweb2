@@ -96,7 +96,11 @@ class DashletForm extends SetupNewDashboardForm
             $this->clearPopulatedValue('pane');
         }
 
-        $populatedPane = $this->requestUrl->getParam('pane', $this->getPopulatedValue('pane', reset($panes)));
+        $populatedPane = $this->getPopulatedValue('pane', $this->requestUrl->getParam('pane'));
+        if (! $populatedPane || ! in_array($populatedPane, $panes)) {
+            $populatedPane = reset($panes);
+        }
+
         $disable = empty($panes) || $populatedHome === self::CREATE_NEW_HOME;
         $this->addElement('select', 'pane', [
             'class'        => 'autosubmit',
@@ -250,9 +254,7 @@ class DashletForm extends SetupNewDashboardForm
              * supposed to when the original home contains a dashboard with the same name
              * {@see DashboardHome::manageEntry()} for details
              */
-            $selectedPane = $this->getPopulatedValue('pane');
-            if ((! $selectedPane || $selectedPane === self::CREATE_NEW_PANE)
-                && ! $currentHome->hasEntry($currentPane->getName())) {
+            if (! $currentHome->hasEntry($currentPane->getName()) || $currentHome->getName() === $orgHome->getName()) {
                 $orgHome->setEntries([]);
             }
 
