@@ -163,7 +163,7 @@
     }
   }
 
-  .flyout {
+  .nav-level-1 {
     bottom: 100%;
     right: -2em;
     width: 15em;
@@ -210,7 +210,7 @@
     }
   }
 
-  .flyout {
+  .nav-level-1 {
     bottom: 0;
     left: 100%;
     width: 14em;
@@ -220,58 +220,6 @@
       bottom: 1em;
       transform: rotate(135deg);
     }
-  }
-}
-
-.flyout {
-  display: none;
-  position: absolute;
-  border: 1px solid @gray-lighter;
-  background: @body-bg-color;
-  box-shadow: 0 0 1em 0 rgba(0,0,0,.25);
-  z-index: 1;
-  .rounded-corners();
-
-  a {
-    font-size: 11/12em;
-    padding: 0.364em 0.545em 0.364em 2em;
-    line-height: 2;
-
-    &:hover {
-      text-decoration: none;
-      background: @menu-2ndlvl-highlight-bg-color;
-    }
-  }
-
-  h3 {
-    font-size: 10/12em;
-    color: @text-color-light;
-    letter-spacing: .1px;
-    padding: 0.364em 0.545em 0.364em 0.545em;
-    margin: 0;
-  }
-
-  .flyout-content {
-    overflow: auto;
-    // Partially escape to have ems calculated
-    max-height: calc(~"100vh - " 50/12em);
-    padding: .5em 0;
-    position: relative;
-  }
-
-  // Caret
-  &:before {
-    content: "";
-    display: block;
-    position: absolute;
-    transform: rotate(45deg);
-    background: @body-bg-color;
-    border-bottom: 1px solid @gray-lighter;
-    border-right: 1px solid @gray-lighter;
-    height: 1.1em;
-    width: 1.1em;
-    bottom: -.6em;
-    right: 2.5em;
   }
 }
 
