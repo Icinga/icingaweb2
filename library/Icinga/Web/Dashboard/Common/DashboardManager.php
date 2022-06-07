@@ -4,6 +4,7 @@
 
 namespace Icinga\Web\Dashboard\Common;
 
+use Icinga\Application\Icinga;
 use Icinga\Application\Modules;
 use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Exception\ProgrammingError;
@@ -68,7 +69,9 @@ trait DashboardManager
             }
         }
 
-        Modules\DashletManager::deployDashlets();
+        if (Icinga::app()->isWeb()) {
+            Modules\DashletManager::deployDashlets();
+        }
     }
 
     /**
