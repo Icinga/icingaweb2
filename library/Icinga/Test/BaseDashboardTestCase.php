@@ -21,7 +21,7 @@ class BaseDashboardTestCase extends BaseTestCase
     protected $dashboard;
 
     /** @var User A test user for the dashboards */
-    protected $user;
+    protected static $user;
 
     public function setUp(): void
     {
@@ -32,30 +32,22 @@ class BaseDashboardTestCase extends BaseTestCase
         $this->dashboard->setUser($this->getUser());
     }
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-        Mockery::close(); // Necessary because some tests run in a separate process
-    }
-
     protected function setupIcingaMock()
     {
         $moduleMock = Mockery::mock('Icinga\Application\Modules\Module');
-        $searchUrl = (object) array(
+        $searchUrl = (object) [
             'title' => 'Hosts',
-            'url'   => 'monitoring/list/hosts?sort=host_severity&limit=10'
-        );
-        $moduleMock->shouldReceive('getSearchUrls')->andReturn(array(
-            $searchUrl
-        ));
+            'url'   => 'icingadb/hosts?host.state.is_problem=y&view=minimal&limit=32&sort=host.state.severity desc'
+        ];
+        $moduleMock->shouldReceive('getSearchUrls')->andReturn([$searchUrl]);
         $moduleMock->shouldReceive('getName')->andReturn('test');
         $moduleMock->shouldReceive('getDashboard')->andReturn([]);
         $moduleMock->shouldReceive('getDashlets')->andReturn([]);
 
         $moduleManagerMock = Mockery::mock('Icinga\Application\Modules\Manager');
-        $moduleManagerMock->shouldReceive('getLoadedModules')->andReturn(array(
+        $moduleManagerMock->shouldReceive('getLoadedModules')->andReturn([
             'test-module' => $moduleMock
-        ));
+        ]);
 
         $bootstrapMock = parent::setupIcingaMock();
         $bootstrapMock->shouldReceive('getModuleManager')->andReturn($moduleManagerMock);
@@ -81,15 +73,15 @@ class BaseDashboardTestCase extends BaseTestCase
 
     protected function getUser(): User
     {
-        if ($this->user === null) {
+        if (self::$user === null) {
             $role = new Role();
             $role->setPermissions(['*']);
 
-            $this->user = new User('test');
-            $this->user->setRoles([$role]);
+            self::$user = new User('test');
+            self::$user->setRoles([$role]);
         }
 
-        return $this->user;
+        return self::$user;
     }
 
     protected function getTestHome(string $name = self::TEST_HOME)
