@@ -2109,7 +2109,7 @@ class Zend_Form implements Iterator, Countable, Zend_Validate_Interface
     protected function _dissolveArrayValue($value, $arrayPath)
     {
         // As long as we have more levels
-        while ($arrayPos = strpos($arrayPath, '[')) {
+        while ($arrayPos = strpos($arrayPath ?? '', '[')) {
             // Get the next key in the path
             $arrayKey = trim(substr($arrayPath, 0, $arrayPos), ']');
 
