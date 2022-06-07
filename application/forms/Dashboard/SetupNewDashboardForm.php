@@ -1,5 +1,7 @@
 <?php
 
+/* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
+
 namespace Icinga\Forms\Dashboard;
 
 use Icinga\Application\Modules;
@@ -26,7 +28,8 @@ class SetupNewDashboardForm extends BaseDashboardForm
      */
     protected static $moduleDashlets = [];
 
-    protected $duplicateCustomDashlet = false;
+    /** @var bool Whether the created custom dashlets with custom url & filter already exists */
+    protected $customDashletAlreadyExists = false;
 
     protected function init()
     {
@@ -70,8 +73,8 @@ class SetupNewDashboardForm extends BaseDashboardForm
                 }
             }
 
-            if (isset($chosenDashlets[$module]) && ! $this->duplicateCustomDashlet) {
-                $this->duplicateCustomDashlet = array_key_exists(
+            if (isset($chosenDashlets[$module]) && ! $this->customDashletAlreadyExists) {
+                $this->customDashletAlreadyExists = array_key_exists(
                     $this->getPopulatedValue('dashlet'),
                     $chosenDashlets[$module]
                 );
@@ -250,9 +253,9 @@ class SetupNewDashboardForm extends BaseDashboardForm
                 $this->dumpArbitaryDashlets(false);
 
                 if (($name = $this->getPopulatedValue('dashlet')) && ($url = $this->getPopulatedValue('url'))) {
-                    if ($this->duplicateCustomDashlet) {
+                    if ($this->customDashletAlreadyExists) {
                         Notification::error(sprintf(
-                            t('Failed to create new dahlets. Dashlet "%s" exists within the selected one'),
+                            t('Failed to create new dahlets. Dashlet "%s" exists within the selected module Dashlets.'),
                             $name
                         ));
 

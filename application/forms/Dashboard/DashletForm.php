@@ -188,12 +188,22 @@ class DashletForm extends SetupNewDashboardForm
             if (($dashlet = $this->getPopulatedValue('dashlet')) && ($url = $this->getPopulatedValue('url'))) {
                 $customDashlet = new Dashlet($dashlet, $url, $currentPane);
 
-                if ($currentPane->hasEntry($customDashlet->getName()) || $this->duplicateCustomDashlet) {
-                    Notification::error(sprintf(
-                        t('Dashlet "%s" already exists within the "%s" dashboard pane'),
-                        $customDashlet->getTitle(),
-                        $currentPane->getTitle()
-                    ));
+                if ($currentPane->hasEntry($customDashlet->getName()) || $this->customDashletAlreadyExists) {
+                    if ($this->customDashletAlreadyExists) {
+                        $message = sprintf(
+                            t('The specified custom Dashlet name "%s" is the same as one of the selected' .
+                                ' module Dashlets.'),
+                            $customDashlet->getName()
+                        );
+                    } else {
+                        $message = sprintf(
+                            t('Dashlet "%s" already exists within the "%s" dashboard pane'),
+                            $customDashlet->getTitle(),
+                            $currentPane->getTitle()
+                        );
+                    }
+
+                    Notification::error($message);
 
                     return;
                 }
@@ -216,7 +226,7 @@ class DashletForm extends SetupNewDashboardForm
                     foreach (self::$moduleDashlets as $_ => $dashlets) {
                         /** @var Dashlet $dashlet */
                         foreach ($dashlets as $dashlet) {
-                            if ($currentPane->hasEntry($dashlet->getName()) || $this->duplicateCustomDashlet) {
+                            if ($currentPane->hasEntry($dashlet->getName())) {
                                 Notification::error(sprintf(
                                     t('Dashlet "%s" already exists within the "%s" dashboard pane'),
                                     $dashlet->getTitle(),
