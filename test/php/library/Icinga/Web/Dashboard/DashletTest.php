@@ -200,4 +200,61 @@ class DashletTest extends BaseDashboardTestCase
         $default = new Pane('Test Pane');
         $default->manageEntry($this->getTestDashlet(), $this->getTestHome());
     }
+
+    public function testWhetherRemoveEntryRemovesExpectedDashletEntry()
+    {
+        $home = $this->getTestHome();
+        $this->dashboard->manageEntry($home);
+
+        $pane = new Pane('Test Pane');
+        $home->manageEntry($pane);
+
+        $pane->manageEntry($this->getTestDashlet());
+
+        $this->dashboard->load(self::TEST_HOME, $pane->getName());
+
+        $home = $this->dashboard->getActiveHome();
+        $pane = $home->getActivePane();
+
+        $pane->removeEntry(self::TEST_DASHLET);
+
+        $this->dashboard->load();
+
+        $home = $this->dashboard->getActiveHome();
+
+        $this->assertFalse(
+            $home->getActivePane()->hasEntry(self::TEST_DASHLET),
+            'Pane::removeEntry() could not remove expected Dashlet'
+        );
+    }
+
+    /**
+     * @depends testWhetherRemoveEntryRemovesExpectedDashletEntry
+     */
+    public function testWhetherRemoveEntriesRemovesAllDashletEntries()
+    {
+        $home = $this->getTestHome();
+        $this->dashboard->manageEntry($home);
+
+        $pane = new Pane('Test Pane');
+        $home->manageEntry($pane);
+
+        $pane->manageEntry([$this->getTestDashlet(), $this->getTestDashlet('Test Me')]);
+
+        $this->dashboard->load(self::TEST_HOME, $pane->getName());
+
+        $home = $this->dashboard->getActiveHome();
+        $pane = $home->getActivePane();
+
+        $pane->removeEntries();
+
+        $this->dashboard->load();
+
+        $home = $this->dashboard->getActiveHome();
+
+        $this->assertFalse(
+            $home->getActivePane()->hasEntries(),
+            'Pane::removeEntries() could not remove all Dashlet Entries'
+        );
+    }
 }

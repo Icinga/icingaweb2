@@ -204,4 +204,51 @@ class PaneTest extends BaseDashboardTestCase
         $default = $this->getTestHome();
         $default->manageEntry($this->getTestPane(), $this->getTestPane());
     }
+
+    public function testWhetherRemoveEntryRemovesExpectedPaneEntry()
+    {
+        $home = $this->getTestHome();
+        $this->dashboard->manageEntry($home);
+
+        $home->manageEntry($this->getTestPane());
+
+        $this->dashboard->load(self::TEST_HOME, self::TEST_PANE);
+
+        $home = $this->dashboard->getActiveHome();
+
+        $home->removeEntry(self::TEST_PANE);
+        $this->dashboard->load();
+
+        $home = $this->dashboard->getActiveHome();
+
+        $this->assertFalse(
+            $home->hasEntry(self::TEST_PANE),
+            'DashboardHome::removeEntry() could not remove expected Dashboard Pane'
+        );
+    }
+
+    /**
+     * @depends testWhetherRemoveEntryRemovesExpectedPaneEntry
+     */
+    public function testWhetherRemoveEntriesRemovesAllDashboardPanes()
+    {
+        $home = $this->getTestHome();
+        $this->dashboard->manageEntry($home);
+
+        $home->manageEntry([$this->getTestPane(), $this->getTestPane('Test Me')]);
+
+        $this->dashboard->load(self::TEST_HOME);
+
+        $home = $this->dashboard->getActiveHome();
+
+        $home->removeEntries();
+        $this->dashboard->load();
+
+        $home = $this->dashboard->getActiveHome();
+
+        $this->assertFalse(
+            $home->hasEntries(),
+            'DashboardHome::removeEntries() could not remove all Dashboard Panes'
+        );
+    }
 }
