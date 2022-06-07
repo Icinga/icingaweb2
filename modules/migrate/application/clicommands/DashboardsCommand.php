@@ -38,6 +38,8 @@ class DashboardsCommand extends Command
      *
      *  --delete              Remove all INI files after successfully migrated
      *                        the dashboards to the database.
+     *
+     *  --silent              Suppress all kind of DB errors and have them handled automatically.
      */
     public function indexAction()
     {
@@ -49,6 +51,7 @@ class DashboardsCommand extends Command
 
         $rc = 0;
         $deleteLegacyFiles = $this->params->get('delete');
+        $silent = $this->params->get('silent');
         $user = $this->params->get('user');
         $home = $this->params->get('home');
         $dashboardDirs = new DirectoryIterator($dashboardsPath);
@@ -76,43 +79,72 @@ class DashboardsCommand extends Command
                 $dashboard->load();
 
                 if ($dashboardHome) {
-                    $dashboard->manageEntry($dashboardHome);
-                    $dashboardHome->loadDashboardEntries();
+                    if ($dashboard->hasEntry($dashboardHome->getName())) {
+                        $dashboardHome = $dashboard->getEntry($dashboardHome->getName());
+                    } else {
+                        $dashboard->manageEntry($dashboardHome);
+                    }
                 } else {
                     $dashboardHome = $dashboard->initGetDefaultHome();
                 }
 
+                $dashboardHome->loadDashboardEntries();
+
+                $panes = [];
                 foreach ($config as $key => $part) {
                     if (strpos($key, '.') === false) { // Panes
-                        $counter = 1;
                         $pane = $key;
-                        while ($dashboardHome->hasEntry($pane)) {
-                            $pane = $key . $counter++;
+                        if ($silent && $dashboardHome->hasEntry($pane)) {
+                            $counter = 1;
+                            while ($dashboardHome->hasEntry($pane)) {
+                                $pane = $key . $counter++;
+                            }
+                        } elseif ($dashboardHome->hasEntry($pane)) {
+                            do {
+                                $pane = readline(sprintf(
+                                    'Dashboard Pane "%s" already exists within the "%s" Dashboard Home.' . "\n" .
+                                    'Please enter another name for this pane or rerun the command with the "silent"' .
+                                    ' param to suppress such errors!: ',
+                                    $pane,
+                                    $dashboardHome->getTitle()
+                                ));
+                            } while (empty($pane) || $dashboardHome->hasEntry($pane));
                         }
 
-                        $dashboardHome->createEntry($pane);
-                        $dashboardHome->getEntry($pane)->setTitle($part->get('title', $pane));
+                        $panes[$pane] = (new Pane($pane))
+                            ->setHome($dashboardHome)
+                            ->setTitle($part->get('title', $pane));
                     } else { // Dashlets
-                        list($pane, $dashlet) = explode('.', $key, 2);
-                        if (! $dashboardHome->hasEntry($pane)) {
+                        list($pane, $dashletName) = explode('.', $key, 2);
+                        if (! isset($panes[$pane])) {
                             continue;
                         }
 
-                        /** @var Pane $dashboardPane */
-                        $dashboardPane = $dashboardHome->getEntry($pane);
-
-                        $counter = 1;
-                        $newDashelt = $dashlet;
-                        while ($dashboardPane->hasEntry($newDashelt)) {
-                            $newDashelt = $dashlet . $counter++;
+                        $pane = $panes[$pane];
+                        $dashlet = $dashletName;
+                        if ($silent && $pane->hasEntry($dashlet)) {
+                            $counter = 1;
+                            while ($pane->hasEntry($dashlet)) {
+                                $dashlet = $dashletName . $counter++;
+                            }
+                        } elseif ($pane->hasEntry($dashlet)) {
+                            do {
+                                $dashlet = readline(sprintf(
+                                    'Dashlet "%s" already exists within the "%s" Dashboard Pane.' . "\n" .
+                                    'Please enter another name for this Dashlet or rerun the command with the' .
+                                    ' "silent" param to suppress such errors!: ',
+                                    $dashlet,
+                                    $pane->getTitle()
+                                ));
+                            } while (empty($dashlet) || $pane->hasEntry($dashlet));
                         }
 
-                        $dashboardPane->createEntry($newDashelt, $part->get('url'));
-                        $dashboardPane->getEntry($newDashelt)->setTitle($part->get('title', $newDashelt));
+                        $dashletName = $dashlet;
+                        $dashlet = $pane->createEntry($dashletName, $part->get('url'))->getEntry($dashletName);
+                        $dashlet->setTitle($part->get('title', $dashletName));
                     }
                 }
 
-                $panes = $dashboardHome->getEntries();
                 $dashboardHome->setEntries([]);
                 $dashboardHome->manageEntry($panes, null, true);
 
