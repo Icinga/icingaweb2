@@ -57,7 +57,7 @@ trait Database
                 ->on(QueryBuilder::ON_ASSEMBLE_INSERT, function (Insert $insert) {
                     $values = $insert->getValues();
                     foreach ($insert->getValues() as $key => $value) {
-                        if (DBUtils::isBinary($value)) {
+                        if (is_string($value) && DBUtils::isBinary($value)) {
                             $values[$key] = DBUtils::getBinaryExpr($value);
                         }
                     }
