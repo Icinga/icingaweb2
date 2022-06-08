@@ -410,6 +410,11 @@ class DashboardsController extends CompatController
     {
         $highlightHome = $this->params->get('home');
         $highlightPane = $this->params->get('pane');
+        if (! $highlightHome && $highlightPane) {
+            // A Dashboard Pane is always requested with home param unless it's part of the "Default Home",
+            // so we just assume here that the user is originating from the base route!!
+            $highlightHome = DashboardHome::DEFAULT_HOME;
+        }
 
         $this->dashboard->load($highlightHome, $highlightPane, true);
 
