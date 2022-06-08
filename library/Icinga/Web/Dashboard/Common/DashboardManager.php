@@ -144,7 +144,7 @@ trait DashboardManager
         $home = $home instanceof DashboardHome ? $home : $this->getEntry($home);
         $home->removeEntries();
 
-        if ($home->getName() !== DashboardHome::DEFAULT_HOME) {
+        if (! $home->isDefaultHome()) {
             DBUtils::getConn()->delete(DashboardHome::TABLE, ['id = ?' => $home->getUuid()]);
         } elseif (! $home->isDisabled()) {
             DBUtils::getConn()->update(DashboardHome::TABLE, ['disabled' => DBUtils::bool2BoolEnum(true)], [

@@ -48,8 +48,6 @@ class DashboardsController extends CompatController
         $pane = $this->getParam('pane');
         $this->dashboard->load(DashboardHome::DEFAULT_HOME, $pane);
 
-        $this->createTabs();
-
         $activeHome = $this->dashboard->getActiveHome();
         if (! $activeHome || ! $activeHome->hasEntries()) {
             $this->addTitleTab(t('Welcome'));
@@ -63,6 +61,8 @@ class DashboardsController extends CompatController
             $this->content->getAttributes()->add('class', 'welcome-view');
             $this->dashboard->addHtml($welcomeForm);
         }
+
+        $this->createTabs();
 
         $this->addContent($this->dashboard);
     }
@@ -472,9 +472,15 @@ class DashboardsController extends CompatController
     {
         $tabs = $this->dashboard->getTabs();
         $activeHome = $this->dashboard->getActiveHome();
-        if ($activeHome && ($activeHome->getName() !== DashboardHome::DEFAULT_HOME || $activeHome->hasEntries())) {
+        if ($activeHome
+            && (
+                ! $activeHome->isDefaultHome()
+                || $activeHome->hasEntries()
+                || count($this->dashboard->getEntries()) > 1
+            )
+        ) {
             $params = [];
-            if ($activeHome->getName() !== DashboardHome::DEFAULT_HOME) {
+            if (! $activeHome->isDefaultHome()) {
                 $params['home'] = $activeHome->getName();
             }
 

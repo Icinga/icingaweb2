@@ -114,7 +114,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
     public function getTabs()
     {
         $activeHome = $this->getActiveHome();
-        if ($activeHome && $activeHome->getName() !== DashboardHome::DEFAULT_HOME) {
+        if ($activeHome && ! $activeHome->isDefaultHome()) {
             $url = Url::fromPath(self::BASE_ROUTE . '/home')->getUrlWithout(['home', $this->tabParam]);
             $url->addParams(['home' => $activeHome->getName()]);
         } else {
