@@ -376,14 +376,15 @@ class DashboardsController extends CompatController
             }
         }
 
+        $params = clone $this->params;
         if ($duplicatedError) {
             // Even though the drop action couldn't be performed successfully from our server, Sortable JS has
             // already dropped the draggable element though, so we need to redirect here to undo it.
-            $this->redirectNow(Dashboard::BASE_ROUTE . '/settings');
+            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
         }
 
         $this->createTabs();
-        $this->getTabs()->setRefreshUrl(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+        $this->getTabs()->setRefreshUrl(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
         $this->dashboard->activate('dashboard_settings');
         $this->sendMultipartUpdate();
     }
