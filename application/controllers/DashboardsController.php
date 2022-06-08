@@ -280,6 +280,7 @@ class DashboardsController extends CompatController
 
         $this->dashboard->load($highlightHome, $highlightPane, true);
 
+        $redirect = false;
         $orgHome = null;
         $orgPane = null;
         if ($originals && isset($originals['originalHome'])) {
@@ -339,6 +340,8 @@ class DashboardsController extends CompatController
                         $pane->manageEntry($pane->getEntries());
                     }
 
+                    $redirect = $orgHome && $pane->getName() === $highlightPane;
+
                     Notification::success(sprintf(
                         t('%s dashboard pane "%s" successfully'),
                         $orgHome ? 'Moved' : 'Updated',
@@ -377,10 +380,15 @@ class DashboardsController extends CompatController
         }
 
         $params = clone $this->params;
-        if ($duplicatedError) {
-            // Even though the drop action couldn't be performed successfully from our server, Sortable JS has
-            // already dropped the draggable element though, so we need to redirect here to undo it.
-            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+        if ($duplicatedError || $redirect) {
+            /**
+             * Even though the drop action couldn't be performed successfully from our server, Sortable JS has
+             * already dropped the draggable element though, so we need to redirect here to undo it.
+             *
+             * When the requested pane is being moved to another home we have to also redirect here in order to
+             * update state history correctly, because we can't load this pane from the requested home anymore
+             */
+            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params->without('pane')));
         }
 
         $this->createTabs();
