@@ -124,6 +124,7 @@ class LinearUnit implements AxisUnit
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->currentTick;
@@ -132,7 +133,7 @@ class LinearUnit implements AxisUnit
     /**
      * Calculate the next tick and tick value
      */
-    public function next()
+    public function next(): void
     {
         $this->currentTick += (100 / $this->nrOfTicks);
         $this->currentValue += (($this->max - $this->min) / $this->nrOfTicks);
@@ -143,6 +144,7 @@ class LinearUnit implements AxisUnit
      *
      * @return string The label for the current tick
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return (string) intval($this->currentValue);
@@ -153,7 +155,7 @@ class LinearUnit implements AxisUnit
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->currentTick >= 0 && $this->currentTick <= 100;
     }
@@ -161,7 +163,7 @@ class LinearUnit implements AxisUnit
     /**
      * Reset the current tick and label value
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->currentTick = 0;
         $this->currentValue = $this->min;

@@ -1221,7 +1221,8 @@ class Form extends Zend_Form
      */
     public function isSubmitted()
     {
-        if (strtolower($this->getRequest()->getMethod()) !== $this->getMethod()) {
+        $requestMethod = $this->getRequest()->getMethod();
+        if (strtolower($requestMethod ?: '') !== $this->getMethod()) {
             return false;
         }
         if ($this->getIsApiTarget() || $this->getRequest()->isApiRequest()) {
@@ -1488,7 +1489,8 @@ class Form extends Zend_Form
      */
     protected function getRequestData()
     {
-        if (strtolower($this->request->getMethod()) === $this->getMethod()) {
+        $requestMethod = $this->getRequest()->getMethod();
+        if (strtolower($requestMethod ?: '') === $this->getMethod()) {
             return $this->request->{'get' . ($this->request->isPost() ? 'Post' : 'Query')}();
         }
 
