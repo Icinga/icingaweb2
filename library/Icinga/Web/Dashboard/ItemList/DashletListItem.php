@@ -12,6 +12,7 @@ use ipl\Html\HtmlElement;
 use ipl\Html\ValidHtml;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
 class DashletListItem extends BaseHtmlElement
@@ -85,7 +86,7 @@ class DashletListItem extends BaseHtmlElement
                 'dashlet' => $this->dashlet->getName()
             ]);
 
-            $header->addHtml(new ActionLink(t('Edit'), $url, null, [
+            $header->addHtml(new ActionLink(new Icon('edit'), $url, null, [
                 'data-icinga-modal'   => true,
                 'data-no-icinga-ajax' => true
             ]));

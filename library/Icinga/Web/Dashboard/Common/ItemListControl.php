@@ -80,7 +80,7 @@ abstract class ItemListControl extends BaseHtmlElement
             new Icon('angle-down', ['class' => 'collapse-icon', 'title' => t('Collapse')])
         );
         $header->addHtml(Text::create($title));
-        $header->addHtml(new ActionLink(t('Edit'), $url, null, [
+        $header->addHtml(new ActionLink(new Icon('edit'), $url, null, [
             'data-icinga-modal'   => true,
             'data-no-icinga-ajax' => true
         ]));
