@@ -98,6 +98,17 @@ trait DashboardEntries
         return reset($dashboards);
     }
 
+    public function unsetEntry(BaseDashboard $dashboard)
+    {
+        if (! $this->hasEntry($dashboard->getName())) {
+            throw new ProgrammingError('Trying to unset an invalid Dashboard entry: "%s"', $dashboard->getName());
+        }
+
+        unset($this->dashboards[$dashboard->getName()]);
+
+        return $this;
+    }
+
     public function reorderWidget(BaseDashboard $dashboard, int $position, Sortable $origin = null)
     {
         if ($origin && ! $origin instanceof $this) {
@@ -125,6 +136,10 @@ trait DashboardEntries
 
             $entries[$item->getName()] = $item;
             $this->manageEntry($item, $dashboard->getName() === $item->getName() ? $origin : null);
+
+            if ($dashboard->getName() === $item->getName() && $origin) {
+                $origin->unsetEntry($dashboard);
+            }
         }
 
         $this->setEntries($entries);

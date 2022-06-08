@@ -129,4 +129,13 @@ interface DashboardEntry
      * @return false|BaseDashboard
      */
     public function rewindEntries();
+
+    /**
+     * Unset the given dashboard entry from this widget dashboard entries
+     *
+     * @param BaseDashboard $dashboard
+     *
+     * @return $this
+     */
+    public function unsetEntry(BaseDashboard $dashboard);
 }

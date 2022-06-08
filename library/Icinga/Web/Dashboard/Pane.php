@@ -129,7 +129,7 @@ class Pane extends BaseDashboard implements Sortable
                 // The module from which this dashlet originates doesn't exist anymore
                 $this->removeEntry($newDashlet);
 
-                unset($this->dashboards[$newDashlet->getName()]);
+                $this->unsetEntry($newDashlet);
             } elseif (! $newDashlet->isDisabled() && ! Modules\DashletManager::isUsable($newDashlet)) {
                 // The module from which this dashlet originates is probably disabled,
                 // so don't load this dashlet anymore and disable it
@@ -144,7 +144,7 @@ class Pane extends BaseDashboard implements Sortable
             }
 
             if ($newDashlet->isDisabled()) {
-                unset($this->dashboards[$newDashlet->getName()]);
+                $this->unsetEntry($newDashlet);
             }
         }
 

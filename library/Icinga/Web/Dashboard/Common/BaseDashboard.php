@@ -297,4 +297,8 @@ abstract class BaseDashboard implements DashboardEntry
     public function rewindEntries()
     {
     }
+
+    public function unsetEntry(BaseDashboard $dashboard)
+    {
+    }
 }

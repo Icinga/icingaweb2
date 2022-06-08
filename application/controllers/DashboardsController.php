@@ -93,6 +93,8 @@ class DashboardsController extends CompatController
 
         $homeForm = new HomeForm($this->dashboard);
         $homeForm->on(HomeForm::ON_SUCCESS, function () use ($homeForm) {
+            $this->getResponse()->setHeader('X-Icinga-Extra-Updates', '#menu');
+
             $params = ['home' => $homeForm->getPopulatedValue('title')];
 
             $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
@@ -129,6 +131,8 @@ class DashboardsController extends CompatController
 
         $homeForm = (new RemoveHomeForm($this->dashboard))
             ->on(RemoveHomeForm::ON_SUCCESS, function () {
+                $this->getResponse()->setHeader('X-Icinga-Extra-Updates', '#menu');
+
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
             })
             ->handleRequest($this->getServerRequest());
