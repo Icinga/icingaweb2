@@ -122,6 +122,11 @@
 
                 data = { dashboardData : JSON.stringify(data) };
                 let url = _this.icinga.config.baseUrl + '/dashboards/reorder-widgets';
+                let urlParams = window.location.search;
+                if (!! urlParams) {
+                    url += urlParams;
+                }
+
                 let req = _this.icinga.loader.loadUrl(url, $('#col1'), data, 'post');
 
                 req.addToHistory = false;

@@ -272,7 +272,13 @@ class DashboardsController extends CompatController
         $originals = $dashboards['originals'];
         unset($dashboards['originals']);
 
-        $this->dashboard->load();
+        $highlightHome = $this->params->get('home');
+        $highlightPane = $this->params->get('pane');
+        if (! $highlightHome) {
+            $highlightHome = DashboardHome::DEFAULT_HOME;
+        }
+
+        $this->dashboard->load($highlightHome, $highlightPane, true);
 
         $orgHome = null;
         $orgPane = null;
@@ -312,6 +318,8 @@ class DashboardsController extends CompatController
 
                 $pane = $home->hasEntry($pane) ? $home->getEntry($pane) : $orgHome->getEntry($pane);
                 /** @var Pane $pane */
+                $pane->loadDashboardEntries();
+
                 if (! is_array($indexOrValues)) {
                     if ($orgHome && $orgHome->hasEntry($pane->getName()) && $home->hasEntry($pane->getName())) {
                         Notification::error(sprintf(
