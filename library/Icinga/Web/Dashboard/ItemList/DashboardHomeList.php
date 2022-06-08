@@ -26,6 +26,12 @@ class DashboardHomeList extends ItemListControl
     public function __construct(DashboardHome $home)
     {
         $this->home = $home;
+
+        $this->init();
+    }
+
+    protected function init()
+    {
         if (! $this->home->hasEntries()) {
             // Just retry to load dashboards
             $this->home->loadDashboardEntries();
@@ -34,6 +40,9 @@ class DashboardHomeList extends ItemListControl
         $this->getAttributes()
             ->registerAttributeCallback('data-icinga-home', function () {
                 return $this->home->getName();
+            })
+            ->registerAttributeCallback('data-disable-widget-sorting', function () {
+                return $this->home->isDefaultHome();
             });
     }
 
@@ -59,6 +68,11 @@ class DashboardHomeList extends ItemListControl
     protected function shouldExpandByDefault(): bool
     {
         return $this->home->isActive();
+    }
+
+    protected function shouldRenderDragInitiator(): bool
+    {
+        return ! $this->home->isDefaultHome();
     }
 
     protected function createItemList(): BaseHtmlElement

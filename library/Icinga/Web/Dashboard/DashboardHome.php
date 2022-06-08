@@ -64,6 +64,16 @@ class DashboardHome extends BaseDashboard implements Sortable
     }
 
     /**
+     * Get whether this home is the default one
+     *
+     * @return bool
+     */
+    public function isDefaultHome(): bool
+    {
+        return $this->getName() === self::DEFAULT_HOME;
+    }
+
+    /**
      * Set the type of this dashboard home
      *
      * @param string $type

@@ -166,7 +166,10 @@
                         draggable   : draggable,
                         handle      : '.widget-drag-initiator',
                         group       : { name : groupName },
-                        chosenClass : 'draggable-widget-chosen'
+                        chosenClass : 'draggable-widget-chosen',
+                        onMove      : function (evt, orgEvt) {
+                            return ! evt.related.matches('[data-disable-widget-sorting]');
+                        }
                     };
 
                     _this.Sortable.create(sortable, options);

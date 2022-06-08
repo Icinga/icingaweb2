@@ -45,6 +45,16 @@ abstract class ItemListControl extends BaseHtmlElement
     abstract protected function createItemList(): BaseHtmlElement;
 
     /**
+     * Get whether to render the drag initiator icon bars
+     *
+     * @return bool
+     */
+    protected function shouldRenderDragInitiator(): bool
+    {
+        return true;
+    }
+
+    /**
      * Get a drag initiator for this widget item
      *
      * @return ValidHtml
@@ -76,7 +86,10 @@ abstract class ItemListControl extends BaseHtmlElement
         ]));
 
         $header->addHtml(HtmlElement::create('div', ['class' => 'spacer']));
-        $header->addHtml(self::createDragInitiator());
+        if ($this->shouldRenderDragInitiator()) {
+            $header->addHtml(self::createDragInitiator());
+        }
+
         $this->addHtml($header);
     }
 

@@ -170,7 +170,7 @@ trait DashboardManager
                     'user_id'  => self::getUser()->getAdditional('id'),
                     'name'     => $home->getName(),
                     'label'    => $home->getTitle(),
-                    'priority' => $home->getName() === DashboardHome::DEFAULT_HOME ? 0 : $priority++,
+                    'priority' => $home->isDefaultHome() ? 0 : $priority++,
                     'type'     => $home->getType() !== Dashboard::SYSTEM ? $home->getType() : Dashboard::PRIVATE_DS
                 ]);
 
