@@ -26,7 +26,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
      *
      * @var array
      */
-    protected static $moduleDashlets = [];
+    protected $moduleDashlets = [];
 
     /** @var bool Whether the created custom dashlets with custom url & filter already exists */
     protected $customDashletAlreadyExists = false;
@@ -34,10 +34,8 @@ class SetupNewDashboardForm extends BaseDashboardForm
     protected function init()
     {
         parent::init();
-
-        if (empty(self::$moduleDashlets)) {
-            self::$moduleDashlets = Modules\DashletManager::getDashlets();
-        }
+        
+        $this->moduleDashlets = Modules\DashletManager::getDashlets();
 
         $this->setRedirectUrl((string) Url::fromPath(Dashboard::BASE_ROUTE));
         $this->setAction($this->getRedirectUrl() . '/setup-dashboard');
@@ -54,10 +52,10 @@ class SetupNewDashboardForm extends BaseDashboardForm
     protected function dumpArbitaryDashlets(bool $strict = true): void
     {
         $chosenDashlets = [];
-        foreach (self::$moduleDashlets as $module => $dashlets) {
+        foreach ($this->moduleDashlets as $module => $dashlets) {
             /** @var Dashlet $dashlet */
             foreach ($dashlets as $dashlet) {
-                $element = spl_object_hash($dashlet);
+                $element = bin2hex($dashlet->getUuid());
                 if ($this->getPopulatedValue($element) === 'y' || (! $strict && $this->getPopulatedValue($element))) {
                     $title = $this->getPopulatedValue($element);
                     $url = $this->getPopulatedValue($element . '_url');
@@ -81,7 +79,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
             }
         }
 
-        self::$moduleDashlets = $chosenDashlets;
+        $this->moduleDashlets = $chosenDashlets;
     }
 
     /**
@@ -117,7 +115,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
 
         $this->addHtml($listControl);
 
-        foreach (self::$moduleDashlets as $module => $dashlets) {
+        foreach ($this->moduleDashlets as $module => $dashlets) {
             $listControl = $this->createFormListControls(ucfirst($module));
             $list = HtmlElement::create('ul', ['class' => 'dashlet-item-list']);
 
@@ -126,7 +124,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
                 $multi = new DashletListMultiSelect($dashlet);
                 $multi->setCheckBox($this->createElement(
                     'checkbox',
-                    spl_object_hash($dashlet),
+                    bin2hex($dashlet->getUuid()),
                     ['class' => 'sr-only']
                 ));
 
@@ -163,25 +161,25 @@ class SetupNewDashboardForm extends BaseDashboardForm
             $this->assembleDashletElements();
         }
 
-        if (! empty(self::$moduleDashlets)) {
-            foreach (self::$moduleDashlets as $_ => $dashlets) {
+        if (! empty($this->moduleDashlets)) {
+            foreach ($this->moduleDashlets as $_ => $dashlets) {
                 /** @var Dashlet $dashlet */
                 foreach ($dashlets as $dashlet) {
                     $this->addHtml(HtmlElement::create('h3', null, t($dashlet->getTitle())));
 
-                    $objHash = spl_object_hash($dashlet);
+                    $elementId = bin2hex($dashlet->getUuid());
                     if ($this->getPopulatedValue('btn_next')) {
-                        $this->clearPopulatedValue($objHash);
+                        $this->clearPopulatedValue($elementId);
                     }
 
-                    $this->addElement('text', $objHash, [
+                    $this->addElement('text', $elementId, [
                         'required'    => true,
                         'label'       => t('Dashlet Title'),
                         'value'       => $dashlet->getTitle(),
                         'description' => t('Enter a title for the dashlet'),
                     ]);
 
-                    $this->addElement('textarea', $objHash . '_url', [
+                    $this->addElement('textarea', $elementId . '_url', [
                         'required'    => true,
                         'label'       => t('Url'),
                         'value'       => $dashlet->getUrl()->getRelativeUrl(),
@@ -266,7 +264,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
                     $pane->manageEntry($dashlet);
                 }
 
-                $pane->manageEntry(self::$moduleDashlets);
+                $pane->manageEntry($this->moduleDashlets);
 
                 $conn->commitTransaction();
             } catch (\Exception $err) {

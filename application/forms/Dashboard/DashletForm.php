@@ -223,7 +223,7 @@ class DashletForm extends SetupNewDashboardForm
                 // Avoid the hassle of iterating through the module dashlets each time to check if exits,
                 // even though the current pane doesn't have any entries
                 if (! $this->getPopulatedValue('new_pane') && $currentPane->hasEntries()) {
-                    foreach (self::$moduleDashlets as $_ => $dashlets) {
+                    foreach ($this->moduleDashlets as $_ => $dashlets) {
                         /** @var Dashlet $dashlet */
                         foreach ($dashlets as $dashlet) {
                             if ($currentPane->hasEntry($dashlet->getName())) {
@@ -240,7 +240,7 @@ class DashletForm extends SetupNewDashboardForm
                         }
                     }
                 } else {
-                    $currentPane->manageEntry(self::$moduleDashlets);
+                    $currentPane->manageEntry($this->moduleDashlets);
                 }
 
                 $conn->commitTransaction();
