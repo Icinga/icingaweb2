@@ -156,7 +156,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
      */
     protected function assembleNexPageDashletPart()
     {
-        if (empty($this->moduleDashlets) || $this->getPopulatedValue('custom_url') === 'y' && ! $this->isUpdating()) {
+        if ((empty($this->moduleDashlets) || $this->getPopulatedValue('custom_url') === 'y') && ! $this->isUpdating()) {
             $this->addHtml(HtmlElement::create('hr'));
             $this->assembleDashletElements();
         }
