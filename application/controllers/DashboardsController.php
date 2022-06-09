@@ -46,7 +46,9 @@ class DashboardsController extends CompatController
     public function indexAction()
     {
         $pane = $this->getParam('pane');
-        $this->dashboard->load(DashboardHome::DEFAULT_HOME, $pane);
+
+        // If we don't load all dashboard homes here, the cog icon won't be rendered in the dashboard tabs
+        $this->dashboard->load(DashboardHome::DEFAULT_HOME, $pane, true);
 
         $activeHome = $this->dashboard->getActiveHome();
         if (! $activeHome || ! $activeHome->hasEntries()) {
