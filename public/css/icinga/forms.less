@@ -100,13 +100,18 @@ form.inline {
 
 #layout.minimal-layout .icinga-form {
   .form-controls {
-    input[type="submit"] {
+    input[type="submit"],
+    button {
       width: 100%;
 
       &:not(:last-child) {
         margin-bottom: 1em;
       }
     }
+  }
+
+  .btn-remove {
+    margin-right: 1em;
   }
 }
 
