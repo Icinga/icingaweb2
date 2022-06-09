@@ -115,9 +115,17 @@ class DashboardsCommand extends Command
                         }
 
                         $parsedPanes[$key] = $pane;
-                        $panes[$pane] = (new Pane($pane))
+                        $newPane = (new Pane($pane))
                             ->setHome($dashboardHome)
                             ->setTitle($part->get('title', $pane));
+
+                        if ($dashboardHome->hasEntry($key)
+                            && $dashboardHome->getEntry($key)->getTitle() === $newPane->getTitle()
+                        ) {
+                            $newPane->setTitle($pane);
+                        }
+
+                        $panes[$pane] = $newPane;
                     } else { // Dashlets
                         list($pane, $dashletName) = explode('.', $key, 2);
                         if (! isset($parsedDashlets[$pane])) {
@@ -139,29 +147,6 @@ class DashboardsCommand extends Command
 
                     /** @var Pane $pane */
                     $pane = $panes[$parsedPanes[$key]];
-                    $pane->loadDashboardEntries();
-
-                    /** @var  Dashlet $dashlet */
-                    foreach ($dashlets as $name => $dashlet) {
-                        if ($silent && $pane->hasEntry($name)) {
-                            while ($pane->hasEntry($name)) {
-                                $name = $this->getUniqueName($name);
-                            }
-                        } elseif ($pane->hasEntry($name)) {
-                            do {
-                                $name = readline(sprintf(
-                                    'Dashlet "%s" already exists within the "%s" Dashboard Pane.' . "\n" .
-                                    'Please enter another name for this Dashlet or rerun the command with the' .
-                                    ' "silent" param to suppress such errors!: ',
-                                    $name,
-                                    $pane->getTitle()
-                                ));
-                            } while (empty($name) || $pane->hasEntry($name));
-                        }
-
-                        $dashlet->setName($name);
-                    }
-
                     $pane->manageEntry($dashlets);
                 }
 
