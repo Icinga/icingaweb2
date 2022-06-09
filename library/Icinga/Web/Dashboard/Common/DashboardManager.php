@@ -28,9 +28,10 @@ trait DashboardManager
     public function load(string $name = null, string $activePane = null, bool $loadAll = false)
     {
         $query = Model\Home::on(DBUtils::getConn());
-        $query->filter(Filter::equal('icingaweb_dashboard_owner.id', $this::getUser()->getAdditional('id')));
+        $query->filter(Filter::equal('user_id', $this::getUser()->getAdditional('id')));
 
         $this->setEntries([]);
+        $home = null;
         if ($name !== null && ! $loadAll) {
             $query->filter(Filter::equal('name', $name));
 
@@ -38,35 +39,30 @@ trait DashboardManager
             if (($row = $query->first()) === null) {
                 if ($name === DashboardHome::DEFAULT_HOME) {
                     $home = $this->initGetDefaultHome();
-                } else {
-                    throw new HttpNotFoundException(t('Home "%s" not found'), $name);
                 }
             } else {
                 $home = DashboardHome::create($row);
                 $this->addEntry($home);
             }
-
-            $this->activateHome($home);
-            $home->loadDashboardEntries($activePane);
         } else {
             foreach ($query as $row) {
                 $this->addEntry(DashboardHome::create($row));
             }
+        }
 
-            if ($name !== null && $loadAll) {
-                if (! $this->hasEntry($name)) {
-                    throw new HttpNotFoundException(t('Home "%s" not found'), $name);
-                }
+        if ($name === null) {
+            $home = $this->rewindEntries();
+        } elseif (! $home && $name === DashboardHome::DEFAULT_HOME) {
+            $home = $this->initGetDefaultHome();
+        } elseif (! $home && $this->hasEntry($name)) {
+            $home = $this->getEntry($name);
+        } elseif (! $home) {
+            throw new HttpNotFoundException(t('Home "%s" not found'), $name);
+        }
 
-                $firstHome = $this->getEntry($name);
-            } else {
-                $firstHome = $this->rewindEntries();
-            }
-
-            if ($firstHome) {
-                $this->activateHome($firstHome);
-                $firstHome->loadDashboardEntries($activePane);
-            }
+        if ($home) {
+            $this->activateHome($home);
+            $home->loadDashboardEntries($activePane);
         }
 
         if (Icinga::app()->isWeb()) {
@@ -122,7 +118,7 @@ trait DashboardManager
      *
      * @return ?DashboardHome
      */
-    public function getActiveHome()
+    public function getActiveHome(): ?DashboardHome
     {
         /** @var DashboardHome $home */
         foreach ($this->getEntries() as $home) {
