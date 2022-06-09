@@ -177,10 +177,7 @@ class Pane extends BaseDashboard implements Sortable
         foreach ($dashlets as $dashlet) {
             if (is_array($dashlet)) {
                 $this->manageEntry($dashlet, $origin);
-            }
-
-            if (! $dashlet instanceof Dashlet) {
-                break;
+                continue;
             }
 
             $url = $dashlet->getUrl();
