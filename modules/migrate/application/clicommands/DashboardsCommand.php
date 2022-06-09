@@ -12,6 +12,7 @@ use Icinga\User;
 use Icinga\Util\DirectoryIterator;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Dashboard\Pane;
 
 class DashboardsCommand extends Command
@@ -49,14 +50,16 @@ class DashboardsCommand extends Command
             return;
         }
 
-        $rc = 0;
-        $deleteLegacyFiles = $this->params->get('delete');
         $silent = $this->params->get('silent');
         $user = $this->params->get('user');
         $home = $this->params->get('home');
-        $dashboardDirs = new DirectoryIterator($dashboardsPath);
+        $deleteLegacyFiles = $this->params->get('delete');
 
+        $dashboardDirs = new DirectoryIterator($dashboardsPath);
+        $dashboardHome = ! $home ? null : new DashboardHome($home);
         $dashboard = new Dashboard();
+
+        $rc = 0;
         foreach ($dashboardDirs as $dashboardDir) {
             $username = $user;
             if ($username && $username !== $dashboardDirs->key()) {
@@ -64,8 +67,7 @@ class DashboardsCommand extends Command
             }
 
             $username = $username ?: $dashboardDirs->key();
-            $dashboardIni = $dashboardDir . DIRECTORY_SEPARATOR . 'dashboard.ini';
-            $dashboardHome = $home ? new DashboardHome($home) : null;
+            $dashboardIni = $dashboardDir . '/dashboard.ini';
 
             Logger::info('Migrating INI dashboards for user "%s" to database...', $username);
 
@@ -91,14 +93,13 @@ class DashboardsCommand extends Command
                 $dashboardHome->loadDashboardEntries();
 
                 $panes = [];
+                $parsedPanes = [];
+                $parsedDashlets = [];
                 foreach ($config as $key => $part) {
                     if (strpos($key, '.') === false) { // Panes
                         $pane = $key;
                         if ($silent && $dashboardHome->hasEntry($pane)) {
-                            $counter = 1;
-                            while ($dashboardHome->hasEntry($pane)) {
-                                $pane = $key . $counter++;
-                            }
+                            $pane = $this->getUniqueName($pane);
                         } elseif ($dashboardHome->hasEntry($pane)) {
                             do {
                                 $pane = readline(sprintf(
@@ -111,41 +112,44 @@ class DashboardsCommand extends Command
                             } while (empty($pane) || $dashboardHome->hasEntry($pane));
                         }
 
+                        $parsedPanes[$key] = $pane;
                         $panes[$pane] = (new Pane($pane))
                             ->setHome($dashboardHome)
                             ->setTitle($part->get('title', $pane));
                     } else { // Dashlets
                         list($pane, $dashletName) = explode('.', $key, 2);
-                        if (! isset($panes[$pane])) {
-                            continue;
+                        if (! isset($parsedDashlets[$pane])) {
+                            $parsedDashlets[$pane] = [];
                         }
 
-                        $pane = $panes[$pane];
-                        $dashlet = $dashletName;
-                        if ($silent && $pane->hasEntry($dashlet)) {
-                            $counter = 1;
-                            while ($pane->hasEntry($dashlet)) {
-                                $dashlet = $dashletName . $counter++;
-                            }
-                        } elseif ($pane->hasEntry($dashlet)) {
+                        if ($silent && isset($parsedDashlets[$pane][$dashletName])) {
+                            $dashletName = $this->getUniqueName($dashletName);
+                        } elseif (isset($parsedDashlets[$pane][$dashletName])) {
                             do {
-                                $dashlet = readline(sprintf(
+                                $dashletName = readline(sprintf(
                                     'Dashlet "%s" already exists within the "%s" Dashboard Pane.' . "\n" .
                                     'Please enter another name for this Dashlet or rerun the command with the' .
                                     ' "silent" param to suppress such errors!: ',
-                                    $dashlet,
-                                    $pane->getTitle()
+                                    $dashletName,
+                                    $pane
                                 ));
-                            } while (empty($dashlet) || $pane->hasEntry($dashlet));
+                            } while (empty($dashletName) || $parsedDashlets[$pane][$dashletName]);
                         }
 
-                        $dashletName = $dashlet;
-                        $dashlet = $pane->createEntry($dashletName, $part->get('url'))->getEntry($dashletName);
+                        $dashlet = new Dashlet($dashletName, $part->get('url'));
                         $dashlet->setTitle($part->get('title', $dashletName));
+                        $parsedDashlets[$pane][$dashlet->getName()] = $dashlet;
                     }
                 }
 
-                $dashboardHome->setEntries([]);
+                foreach ($parsedDashlets as $pane => $dashlets) {
+                    if (! isset($parsedPanes[$pane])) {
+                        continue;
+                    }
+
+                    $panes[$parsedPanes[$pane]]->setEntries($dashlets);
+                }
+
                 $dashboardHome->manageEntry($panes, null, true);
 
                 if ($deleteLegacyFiles) {
@@ -159,6 +163,11 @@ class DashboardsCommand extends Command
                 }
 
                 $rc = 128;
+            } catch (\PDOException $e) {
+                Logger::error($e->getMessage());
+
+                $rc = 128;
+                break;
             }
         }
 
@@ -168,5 +177,23 @@ class DashboardsCommand extends Command
         }
 
         Logger::info('Successfully migrated all local user dashboards to the database');
+    }
+
+    /**
+     * Get a more unique version of the given name
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    protected function getUniqueName(string $name): string
+    {
+        if (preg_match('/(\d+)$/', $name, $matches)) {
+            $name = preg_replace('/\d+$/', $matches[1]++, $name);
+        } else {
+            $name .= 1;
+        }
+
+        return $name;
     }
 }
