@@ -30,12 +30,12 @@ trait DashboardEntries
             throw new ProgrammingError('Trying to retrieve invalid dashboard entry "%s"', $name);
         }
 
-        return $this->dashboards[$name];
+        return $this->dashboards[strtolower($name)];
     }
 
     public function hasEntry(string $name)
     {
-        return array_key_exists($name, $this->dashboards);
+        return array_key_exists(strtolower($name), $this->dashboards);
     }
 
     public function getEntries()
@@ -45,7 +45,7 @@ trait DashboardEntries
 
     public function setEntries(array $entries)
     {
-        $this->dashboards = $entries;
+        $this->dashboards = array_change_key_case($entries);
 
         return $this;
     }
@@ -55,7 +55,7 @@ trait DashboardEntries
         if ($this->hasEntry($dashboard->getName())) {
             $this->getEntry($dashboard->getName())->setProperties($dashboard->toArray(false));
         } else {
-            $this->dashboards[$dashboard->getName()] = $dashboard;
+            $this->dashboards[strtolower($dashboard->getName())] = $dashboard;
         }
 
         return $this;
@@ -65,7 +65,7 @@ trait DashboardEntries
     {
         $dashboards = [];
         foreach ($this->getEntries() as $dashboard) {
-            $dashboards[$dashboard->getName()] = $dashboard->getTitle();
+            $dashboards[ucwords($dashboard->getName())] = $dashboard->getTitle();
         }
 
         return $dashboards;
@@ -104,7 +104,7 @@ trait DashboardEntries
             throw new ProgrammingError('Trying to unset an invalid Dashboard entry: "%s"', $dashboard->getName());
         }
 
-        unset($this->dashboards[$dashboard->getName()]);
+        unset($this->dashboards[strtolower($dashboard->getName())]);
 
         return $this;
     }
