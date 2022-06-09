@@ -54,16 +54,16 @@ class PaneForm extends BaseDashboardForm
         }
 
         $formControls = $this->createFormControls();
-        $formControls->addHtml(
-            $this->registerSubmitButton($this->isUpdating() ? t('Update Pane') : t('Add Dashboard'))
-        );
-
         if ($this->isUpdating()) {
             $removeTargetUrl = (clone $this->requestUrl)->setPath(Dashboard::BASE_ROUTE . '/remove-pane');
             $formControls->addHtml($this->createRemoveButton($removeTargetUrl, t('Remove Pane')));
         }
 
-        $formControls->addHtml($this->createCancelButton());
+        $formControls->addHtml(
+            $this->createCancelButton(),
+            $this->registerSubmitButton($this->isUpdating() ? t('Update Pane') : t('Add Dashboard'))
+        );
+
         $this->addHtml($formControls);
     }
 

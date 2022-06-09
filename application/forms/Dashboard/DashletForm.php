@@ -132,19 +132,16 @@ class DashletForm extends SetupNewDashboardForm
                 $removeButton = $this->createRemoveButton($targetUrl, t('Remove Dashlet'));
 
                 $formControls = $this->createFormControls();
-                $formControls->add([
-                    $this->registerSubmitButton(t('Add to Dashboard')),
+                $formControls->addHtml(
                     $removeButton,
-                    $this->createCancelButton()
-                ]);
+                    $this->createCancelButton(),
+                    $this->registerSubmitButton(t('Add to Dashboard'))
+                );
 
                 $this->addHtml($formControls);
             } else {
                 $formControls = $this->createFormControls();
-                $formControls->add([
-                    $this->registerSubmitButton(t('Add to Dashboard')),
-                    $this->createCancelButton()
-                ]);
+                $formControls->addHtml($this->createCancelButton(), $this->registerSubmitButton(t('Add to Dashboard')));
 
                 $this->addHtml($formControls);
             }
