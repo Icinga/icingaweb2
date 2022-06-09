@@ -70,7 +70,7 @@ class DBUtils
      */
     public static function getBinaryExpr($uuid)
     {
-        if (! self::isPgsql() || ! self::isBinary($uuid)) {
+        if (! self::isPgsql() || (! is_string($uuid) || ! self::isBinary($uuid))) {
             return $uuid;
         }
 
@@ -86,7 +86,7 @@ class DBUtils
      */
     public static function binary2Hex($uuid)
     {
-        if (! self::isPgsql() || ! self::isBinary($uuid)) {
+        if (! self::isPgsql() || (! is_string($uuid) || ! self::isBinary($uuid))) {
             return $uuid;
         }
 
@@ -108,11 +108,11 @@ class DBUtils
     /**
      * Get whether the given data is a binary string
      *
-     * @param $data
+     * @param string $data
      *
      * @return bool
      */
-    public static function isBinary($data): bool
+    public static function isBinary(string $data): bool
     {
         // Stolen from php.net
         $data = preg_replace('/\s/', '', $data ?? '');
@@ -130,6 +130,10 @@ class DBUtils
     public static function transformValues(array &$values): void
     {
         foreach ($values as &$value) {
+            if (! is_string($value)) {
+                continue;
+            }
+
             $value = DBUtils::binary2Hex($value);
         }
     }
