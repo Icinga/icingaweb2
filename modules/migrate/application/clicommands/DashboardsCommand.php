@@ -99,7 +99,9 @@ class DashboardsCommand extends Command
                     if (strpos($key, '.') === false) { // Panes
                         $pane = $key;
                         if ($silent && $dashboardHome->hasEntry($pane)) {
-                            $pane = $this->getUniqueName($pane);
+                            while ($dashboardHome->hasEntry($pane)) {
+                                $pane = $this->getUniqueName($pane);
+                            }
                         } elseif ($dashboardHome->hasEntry($pane)) {
                             do {
                                 $pane = readline(sprintf(
@@ -122,35 +124,46 @@ class DashboardsCommand extends Command
                             $parsedDashlets[$pane] = [];
                         }
 
-                        if ($silent && isset($parsedDashlets[$pane][$dashletName])) {
-                            $dashletName = $this->getUniqueName($dashletName);
-                        } elseif (isset($parsedDashlets[$pane][$dashletName])) {
-                            do {
-                                $dashletName = readline(sprintf(
-                                    'Dashlet "%s" already exists within the "%s" Dashboard Pane.' . "\n" .
-                                    'Please enter another name for this Dashlet or rerun the command with the' .
-                                    ' "silent" param to suppress such errors!: ',
-                                    $dashletName,
-                                    $pane
-                                ));
-                            } while (empty($dashletName) || $parsedDashlets[$pane][$dashletName]);
-                        }
-
                         $dashlet = new Dashlet($dashletName, $part->get('url'));
                         $dashlet->setTitle($part->get('title', $dashletName));
                         $parsedDashlets[$pane][$dashlet->getName()] = $dashlet;
                     }
                 }
 
-                foreach ($parsedDashlets as $pane => $dashlets) {
-                    if (! isset($parsedPanes[$pane])) {
+                $dashboardHome->manageEntry($panes);
+
+                foreach ($parsedDashlets as $key => $dashlets) {
+                    if (! isset($parsedPanes[$key])) {
                         continue;
                     }
 
-                    $panes[$parsedPanes[$pane]]->setEntries($dashlets);
-                }
+                    /** @var Pane $pane */
+                    $pane = $panes[$parsedPanes[$key]];
+                    $pane->loadDashboardEntries();
 
-                $dashboardHome->manageEntry($panes, null, true);
+                    /** @var  Dashlet $dashlet */
+                    foreach ($dashlets as $name => $dashlet) {
+                        if ($silent && $pane->hasEntry($name)) {
+                            while ($pane->hasEntry($name)) {
+                                $name = $this->getUniqueName($name);
+                            }
+                        } elseif ($pane->hasEntry($name)) {
+                            do {
+                                $name = readline(sprintf(
+                                    'Dashlet "%s" already exists within the "%s" Dashboard Pane.' . "\n" .
+                                    'Please enter another name for this Dashlet or rerun the command with the' .
+                                    ' "silent" param to suppress such errors!: ',
+                                    $name,
+                                    $pane->getTitle()
+                                ));
+                            } while (empty($name) || $pane->hasEntry($name));
+                        }
+
+                        $dashlet->setName($name);
+                    }
+
+                    $pane->manageEntry($dashlets);
+                }
 
                 if ($deleteLegacyFiles) {
                     unlink($dashboardIni);
@@ -189,7 +202,7 @@ class DashboardsCommand extends Command
     protected function getUniqueName(string $name): string
     {
         if (preg_match('/(\d+)$/', $name, $matches)) {
-            $name = preg_replace('/\d+$/', $matches[1]++, $name);
+            $name = preg_replace('/\d+$/', ++$matches[1], $name);
         } else {
             $name .= 1;
         }
