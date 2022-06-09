@@ -45,7 +45,7 @@ class DashboardsController extends CompatController
 
     public function indexAction()
     {
-        $pane = $this->getParam('pane');
+        $pane = $this->params->get('pane');
 
         // If we don't load all dashboard homes here, the cog icon won't be rendered in the dashboard tabs
         $this->dashboard->load(DashboardHome::DEFAULT_HOME, $pane, true);
@@ -76,7 +76,7 @@ class DashboardsController extends CompatController
      */
     public function homeAction()
     {
-        $this->dashboard->load($this->params->getRequired('home'), $this->getParam('pane'));
+        $this->dashboard->load($this->params->getRequired('home'), $this->params->get('pane'));
 
         $activeHome = $this->dashboard->getActiveHome();
         if (! $activeHome->getEntries()) {
@@ -210,7 +210,7 @@ class DashboardsController extends CompatController
     {
         $home = $this->params->getRequired('home');
 
-        $this->dashboard->load($home, $this->getParam('pane'), true);
+        $this->dashboard->load($home, $this->params->get('pane'), true);
 
         $dashletForm = new DashletForm($this->dashboard);
         $dashletForm->populate($this->getRequest()->getPost());
@@ -228,10 +228,30 @@ class DashboardsController extends CompatController
         $this->addContent($dashletForm);
     }
 
+    public function addToDashletAction()
+    {
+        $this->dashboard->load(DashboardHome::DEFAULT_HOME, $this->params->get('pane'), true);
+
+        $dashletForm = new DashletForm($this->dashboard);
+        $dashletForm->populate([
+            'url'      => rawurldecode($this->params->shift('url')),
+            'btn_next' => 'y'
+        ]);
+
+        $dashletForm->on(DashletForm::ON_SUCCESS, function () {
+            $params = $this->params->without('dashlet');
+            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+        })->handleRequest($this->getServerRequest());
+
+        $this->setTitle(t('Add Dashlet To Dashboard'));
+
+        $this->addContent($dashletForm);
+    }
+
     public function editDashletAction()
     {
         $pane = $this->validateDashletParams();
-        $dashlet = $pane->getEntry($this->getParam('dashlet'));
+        $dashlet = $pane->getEntry($this->params->get('dashlet'));
 
         $dashletForm = (new DashletForm($this->dashboard))
             ->on(DashletForm::ON_SUCCESS, function () {
