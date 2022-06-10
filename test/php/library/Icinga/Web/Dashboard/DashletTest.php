@@ -43,6 +43,36 @@ class DashletTest extends BaseDashboardTestCase
     /**
      * @depends testWhetherManageEntryManagesANewDashlet
      */
+    public function testWhetherManageEntryManagesNewDashletsFromMultipleModules()
+    {
+        $home = $this->getTestHome();
+        $this->dashboard->manageEntry($home);
+
+        $pane = new Pane('Test Pane');
+        $home->manageEntry($pane);
+
+        $moduleDashlets = [
+            'monitoring' => ['Service Problems' => $this->getTestDashlet('Service Problems')],
+            'icingadb'   => ['Host Problems' => $this->getTestDashlet('Host Problems')]
+        ];
+
+        $pane->manageEntry($moduleDashlets);
+
+        $this->dashboard->load(self::TEST_HOME);
+
+        $home = $this->dashboard->getActiveHome();
+        $pane = $home->getActivePane();
+
+        $this->assertCount(
+            2,
+            $pane->getEntries(),
+            'Pane::manageEntry() could not manage new Dashlets from multiple modules'
+        );
+    }
+
+    /**
+     * @depends testWhetherManageEntryManagesANewDashlet
+     */
     public function testWhetherManageEntryUpdatesExistingDashlet()
     {
         $home = $this->getTestHome();
