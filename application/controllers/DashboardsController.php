@@ -93,14 +93,14 @@ class DashboardsController extends CompatController
     {
         $this->dashboard->load();
 
-        $homeForm = new HomeForm($this->dashboard);
-        $homeForm->on(HomeForm::ON_SUCCESS, function () use ($homeForm) {
-            $this->getResponse()->setHeader('X-Icinga-Extra-Updates', '#menu');
+        $homeForm = (new HomeForm($this->dashboard))
+            ->on(HomeForm::ON_SUCCESS, function () {
+                $this->getResponse()
+                    ->setHeader('X-Icinga-Extra-Updates', '#menu')
+                    ->setHeader('X-Icinga-Container', 'modal-content', true);
 
-            $params = ['home' => $homeForm->getPopulatedValue('title')];
-
-            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
-        })->handleRequest($this->getServerRequest());
+                $this->redirectNow('__CLOSE__');
+            })->handleRequest($this->getServerRequest());
 
         $this->setTitle(t('Add new Dashboard Home'));
         $this->addContent($homeForm);
@@ -114,8 +114,11 @@ class DashboardsController extends CompatController
 
         $homeForm = (new HomeForm($this->dashboard))
             ->on(HomeForm::ON_SUCCESS, function () {
-                $params = clone $this->params;
-                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+                $this->getResponse()
+                    ->setHeader('X-Icinga-Extra-Updates', '#menu')
+                    ->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                $this->redirectNow('__CLOSE__');
             })
             ->handleRequest($this->getServerRequest());
 
@@ -133,9 +136,11 @@ class DashboardsController extends CompatController
 
         $homeForm = (new RemoveHomeForm($this->dashboard))
             ->on(RemoveHomeForm::ON_SUCCESS, function () {
-                $this->getResponse()->setHeader('X-Icinga-Extra-Updates', '#menu');
+                $this->getResponse()
+                    ->setHeader('X-Icinga-Extra-Updates', '#menu')
+                    ->setHeader('X-Icinga-Container', 'modal-content', true);
 
-                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+                $this->redirectNow('__CLOSE__');
             })
             ->handleRequest($this->getServerRequest());
 
@@ -151,8 +156,9 @@ class DashboardsController extends CompatController
 
         $paneForm = (new PaneForm($this->dashboard))
             ->on(PaneForm::ON_SUCCESS, function () {
-                $params = $this->params->without('pane');
-                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+                $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                $this->redirectNow('__CLOSE__');
             })
             ->handleRequest($this->getServerRequest());
 
@@ -173,8 +179,9 @@ class DashboardsController extends CompatController
 
         $paneForm = (new PaneForm($this->dashboard))
             ->on(PaneForm::ON_SUCCESS, function () {
-                $params = $this->params->without('pane');
-                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+                $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                $this->redirectNow('__CLOSE__');
             })
             ->handleRequest($this->getServerRequest());
 
@@ -198,8 +205,9 @@ class DashboardsController extends CompatController
         $paneForm = new RemovePaneForm($this->dashboard);
         $paneForm->populate(['org_name' => $paneParam]);
         $paneForm->on(RemovePaneForm::ON_SUCCESS, function () {
-            $params = $this->params->without('pane');
-            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+            $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+
+            $this->redirectNow('__CLOSE__');
         })->handleRequest($this->getServerRequest());
 
         $this->setTitle(t('Remove Pane'));
@@ -215,8 +223,9 @@ class DashboardsController extends CompatController
         $dashletForm = new DashletForm($this->dashboard);
         $dashletForm->populate($this->getRequest()->getPost());
         $dashletForm->on(DashletForm::ON_SUCCESS, function () {
-            $params = $this->params->without('dashlet');
-            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+            $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+
+            $this->redirectNow('__CLOSE__');
         })->handleRequest($this->getServerRequest());
 
         if (isset($this->getRequest()->getPost()['btn_next'])) {
@@ -255,8 +264,9 @@ class DashboardsController extends CompatController
 
         $dashletForm = (new DashletForm($this->dashboard))
             ->on(DashletForm::ON_SUCCESS, function () {
-                $params = $this->params->without('dashlet');
-                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+                $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                $this->redirectNow('__CLOSE__');
             })
             ->handleRequest($this->getServerRequest());
 
@@ -274,8 +284,9 @@ class DashboardsController extends CompatController
 
         $removeForm = (new RemoveDashletForm($this->dashboard))
             ->on(RemoveDashletForm::ON_SUCCESS, function () {
-                $params = $this->params->without('dashlet');
-                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+                $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                $this->redirectNow('__CLOSE__');
             })
             ->handleRequest($this->getServerRequest());
 
