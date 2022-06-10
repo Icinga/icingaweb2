@@ -243,7 +243,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
         }
 
         $formControls = $this->createFormControls();
-        $formControls->addHtml($this->createCancelButton(), $submitButton);
+        $formControls->add([$submitButton, $this->createCancelButton()]);
 
         $this->addHtml($formControls);
     }

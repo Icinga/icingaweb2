@@ -97,7 +97,9 @@ class DashboardsController extends CompatController
         $homeForm->on(HomeForm::ON_SUCCESS, function () use ($homeForm) {
             $this->getResponse()->setHeader('X-Icinga-Extra-Updates', '#menu');
 
-            $this->redirectNow($homeForm->getRedirectUrl());
+            $params = ['home' => $homeForm->getPopulatedValue('title')];
+
+            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
         })->handleRequest($this->getServerRequest());
 
         $this->setTitle(t('Add new Dashboard Home'));

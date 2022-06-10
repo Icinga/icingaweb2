@@ -8,17 +8,9 @@ use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Notification;
-use ipl\Web\Url;
 
 class HomeForm extends BaseDashboardForm
 {
-    protected function init()
-    {
-        parent::init();
-
-        $this->setRedirectUrl((string) Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
-    }
-
     public function load(BaseDashboard $dashboard)
     {
         $this->populate(['title' => $dashboard->getTitle()]);
@@ -34,16 +26,14 @@ class HomeForm extends BaseDashboardForm
         ]);
 
         $formControls = $this->createFormControls();
+        $formControls->addHtml($this->registerSubmitButton($this->isUpdating() ? t('Update Home') : t('Add Home')));
+
         if ($this->isUpdating()) {
             $removeTargetUrl = (clone $this->requestUrl)->setPath(Dashboard::BASE_ROUTE . '/remove-home');
             $formControls->addHtml($this->createRemoveButton($removeTargetUrl, t('Remove Home')));
         }
 
-        $formControls->addHtml(
-            $this->createCancelButton(),
-            $this->registerSubmitButton($this->isUpdating() ? t('Update Home') : t('Add Home'))
-        );
-
+        $formControls->addHtml($this->createCancelButton());
         $this->addHtml($formControls);
     }
 
@@ -62,9 +52,6 @@ class HomeForm extends BaseDashboardForm
                 Notification::error(sprintf(t('Dashboard home "%s" already exists'), $home->getName()));
                 return;
             }
-
-            $redirect = Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams(['home' => $home->getName()]);
-            $this->setRedirectUrl((string) $redirect);
 
             $this->dashboard->manageEntry($home);
 
