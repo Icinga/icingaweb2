@@ -307,7 +307,9 @@ class DashboardsController extends CompatController
 
         $dashboards = Json::decode($dashboards['dashboardData'], true);
         $originals = $dashboards['originals'];
+        $dashboardType = $dashboards['dashboardType'];
         unset($dashboards['originals']);
+        unset($dashboards['dashboardType']);
 
         $highlightHome = $this->params->get('home');
         $highlightPane = $this->params->get('pane');
@@ -325,7 +327,9 @@ class DashboardsController extends CompatController
             $orgHome = $this->dashboard->getEntry($originals['originalHome']);
             $orgHome->loadDashboardEntries($originals['originalPane'] ?? null);
 
-            if (isset($originals['originalPane'])) {
+            // We need to know the original pane only if it's a Dashlet Widget. In this case
+            // we don't care about the other entries of the original home
+            if (isset($originals['originalPane']) && $dashboardType === /** Keep this with JS in sync */ 'Dashlets') {
                 $orgPane = $orgHome->getEntry($originals['originalPane']);
                 $orgHome->setEntries([$orgPane->getName() => $orgPane]);
             }

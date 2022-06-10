@@ -120,6 +120,7 @@
                     data.originals = null;
                 }
 
+                data.dashboardType = _this.getTypeFor(orgEvt.to);
                 data = { dashboardData : JSON.stringify(data) };
                 let url = _this.icinga.config.baseUrl + '/dashboards/reorder-widgets';
                 let urlParams = window.location.search;
@@ -160,9 +161,7 @@
 
                     let options = {
                         scroll      : true,
-                        invertSwap  : true,
                         dataIdAttr  : 'id',
-                        direction   : 'vertical',
                         draggable   : draggable,
                         handle      : '.widget-drag-initiator',
                         group       : { name : groupName },
