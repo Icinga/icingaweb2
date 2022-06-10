@@ -124,7 +124,7 @@ trait DashboardEntries
             $data = [$dashboard];
         } else {
             $data = array_values($this->getEntries());
-            array_splice($data, array_search($dashboard->getName(), array_keys($this->getEntries())), 1);
+            array_splice($data, array_search(strtolower($dashboard->getName()), array_keys($this->getEntries())), 1);
             array_splice($data, $position, 0, [$dashboard]);
         }
 
