@@ -34,7 +34,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
     protected function init()
     {
         parent::init();
-        
+
         $this->moduleDashlets = Modules\DashletManager::getDashlets();
 
         $this->setRedirectUrl((string) Url::fromPath(Dashboard::BASE_ROUTE));
@@ -291,8 +291,8 @@ class SetupNewDashboardForm extends BaseDashboardForm
         }
 
         $details = HtmlElement::create('details', [
-            'class'                 => ['dashboard-list-control', 'collapsible'],
-            'data-no-persistence'   => true
+            'class'               => ['dashboard-list-control', 'collapsible'],
+            'data-no-persistence' => true
         ]);
         $summary = HtmlElement::create('summary', ['class' => 'collapsible-header']);
         $summary->addHtml(
