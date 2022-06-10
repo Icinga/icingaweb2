@@ -65,7 +65,7 @@ trait DashboardEntries
     {
         $dashboards = [];
         foreach ($this->getEntries() as $dashboard) {
-            $dashboards[ucwords($dashboard->getName())] = $dashboard->getTitle();
+            $dashboards[$dashboard->getName()] = $dashboard->getTitle();
         }
 
         return $dashboards;
