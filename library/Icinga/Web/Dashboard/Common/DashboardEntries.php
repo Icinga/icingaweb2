@@ -119,25 +119,36 @@ trait DashboardEntries
             ));
         }
 
-        if (! $this->hasEntry($dashboard->getName())) {
+        if (! $this->hasEntries() || count($this->getEntries()) === $position) {
             $dashboard->setPriority($position);
-            $data = [$dashboard];
+            $data = array_merge(array_values($this->getEntries()), [$dashboard]);
         } else {
+            if (! $this->hasEntry($dashboard->getName())) {
+                $this->addEntry($dashboard);
+            }
+
             $data = array_values($this->getEntries());
             array_splice($data, array_search(strtolower($dashboard->getName()), array_keys($this->getEntries())), 1);
             array_splice($data, $position, 0, [$dashboard]);
+
+            // We have copied the data with the new dashboard entry, so we need to unset
+            // the passed entry from another entry to prevent duplicate entry errors
+            if ($origin && $origin->hasEntry($dashboard->getName())) {
+                $this->unsetEntry($dashboard);
+            }
         }
 
         $entries = [];
         foreach ($data as $index => $item) {
-            if (count($data) !== 1) {
+            if (count($data) > 1) {
                 $item->setPriority($index);
             }
 
             $entries[$item->getName()] = $item;
             $this->manageEntry($item, $dashboard->getName() === $item->getName() ? $origin : null);
 
-            if ($dashboard->getName() === $item->getName() && $origin) {
+            if ($origin && $dashboard->getName() === $item->getName()) {
+                // The dashboard entry is moved to another one
                 $origin->unsetEntry($dashboard);
             }
         }
