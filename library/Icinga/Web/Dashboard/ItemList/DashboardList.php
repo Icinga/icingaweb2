@@ -43,8 +43,14 @@ class DashboardList extends ItemListControl
     protected function createItemList(): BaseHtmlElement
     {
         $pane = $this->pane;
-        $url = Url::fromPath(Dashboard::BASE_ROUTE . '/edit-pane')
-            ->setParams(['home' => $pane->getHome()->getName(), 'pane' => $pane->getName()]);
+        $url = Url::fromPath(Dashboard::BASE_ROUTE . '/edit-pane')->setParams([
+            'home' => $pane->getHome()->getName(),
+            'pane' => $pane->getName()
+        ]);
+
+        if ($this->pane->isActive()) {
+            $url->addParams(['prevActive' => true]);
+        }
 
         $this->assembleHeader($url, $pane->getTitle());
 

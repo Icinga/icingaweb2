@@ -89,6 +89,8 @@ class Pane extends BaseDashboard implements Sortable
             'dashboard_id = ?' => $this->getUuid()
         ]);
 
+        $this->unsetEntry($dashlet);
+
         return $this;
     }
 
@@ -176,7 +178,7 @@ class Pane extends BaseDashboard implements Sortable
         $order = count($this->getEntries());
         foreach ($dashlets as $dashlet) {
             if (is_array($dashlet)) {
-                $this->manageEntry($dashlet, $origin);
+                $this->manageEntry($dashlet, $origin, $manageRecursive);
                 continue;
             }
 

@@ -34,9 +34,21 @@ class DashboardsController extends CompatController
     /** @var Dashboard */
     protected $dashboard;
 
+    /**
+     * Whether the currently loaded home/pane is also loaded on the previous page
+     *
+     * @var string
+     */
+    protected $prevActive = null;
+
     public function init()
     {
         parent::init();
+
+        // The "prevActive" param indicates whether this home/pane is currently being loaded in the
+        // DM view meanwhile rendering a modal view (update and remove actions). If it's indeed the case,
+        // we have to construct a proper http redirect after successfully removing this home
+        $this->prevActive = $this->params->shift('prevActive');
 
         $this->dashboard = new Dashboard();
         $this->dashboard->setUser($this->Auth()->getUser());
@@ -136,11 +148,16 @@ class DashboardsController extends CompatController
 
         $homeForm = (new RemoveHomeForm($this->dashboard))
             ->on(RemoveHomeForm::ON_SUCCESS, function () {
-                $this->getResponse()
-                    ->setHeader('X-Icinga-Extra-Updates', '#menu')
-                    ->setHeader('X-Icinga-Container', 'modal-content', true);
+                $response = $this->getResponse();
+                $response->setHeader('X-Icinga-Extra-Updates', '#menu');
 
-                $this->redirectNow('__CLOSE__');
+                if ($this->prevActive) {
+                    $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+                } else {
+                    $response->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                    $this->redirectNow('__CLOSE__');
+                }
             })
             ->handleRequest($this->getServerRequest());
 
@@ -179,9 +196,13 @@ class DashboardsController extends CompatController
 
         $paneForm = (new PaneForm($this->dashboard))
             ->on(PaneForm::ON_SUCCESS, function () {
-                $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+                if ($this->prevActive) {
+                    $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+                } else {
+                    $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
 
-                $this->redirectNow('__CLOSE__');
+                    $this->redirectNow('__CLOSE__');
+                }
             })
             ->handleRequest($this->getServerRequest());
 
@@ -205,9 +226,13 @@ class DashboardsController extends CompatController
         $paneForm = new RemovePaneForm($this->dashboard);
         $paneForm->populate(['org_name' => $paneParam]);
         $paneForm->on(RemovePaneForm::ON_SUCCESS, function () {
-            $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+            if ($this->prevActive) {
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+            } else {
+                $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
 
-            $this->redirectNow('__CLOSE__');
+                $this->redirectNow('__CLOSE__');
+            }
         })->handleRequest($this->getServerRequest());
 
         $this->setTitle(t('Remove Pane'));

@@ -78,8 +78,14 @@ class DashboardHomeList extends ItemListControl
     protected function createItemList(): BaseHtmlElement
     {
         if (! $this->headerDisabled) {
-            $url = Url::fromPath(Dashboard::BASE_ROUTE . '/edit-home')
-                ->setParams(['home' => $this->home->getName()]);
+            $url = Url::fromPath(Dashboard::BASE_ROUTE . '/edit-home')->setParams([
+                'home' => $this->home->getName()
+            ]);
+
+            if ($this->home->isActive()) {
+                $url->addParams(['prevActive' => true]);
+            }
+
             $this->assembleHeader($url, $this->home->getTitle());
         }
 

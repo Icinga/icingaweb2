@@ -152,6 +152,8 @@ class DashboardHome extends BaseDashboard implements Sortable
             'home_id = ?' => $this->getUuid()
         ]);
 
+        $this->unsetEntry($pane);
+
         return $this;
     }
 
