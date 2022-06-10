@@ -212,6 +212,8 @@ class Pane extends BaseDashboard implements Sortable
                         'module_dashlet_id' => $systemUuid
                     ]);
                 }
+
+                $this->addEntry($dashlet);
             } elseif (! $this->hasEntry($dashlet->getName()) || ! $moveDashlet) {
                 $filterCondition = [
                     'id = ?'           => $dashlet->getUuid(),

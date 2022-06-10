@@ -63,7 +63,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
                     if (! $strict && $title && $url) {
                         $dashlet
                             ->setUrl($url)
-                            ->setName($title)
+                            ->setName($title . '(' . $module . ')')
                             ->setTitle($title);
                     }
 
