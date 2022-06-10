@@ -33,6 +33,7 @@ CREATE TABLE `icingaweb_dashlet` (
      `url`           VARCHAR NOT NULL,
      `priority`      tinyint NOT NULL,
      `disabled`      TEXT CHECK ( disabled IN ('n', 'y') ) DEFAULT 'n',
+     `description`   text DEFAULT NULL,
      FOREIGN KEY (`dashboard_id`) REFERENCES `icingaweb_dashboard` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 

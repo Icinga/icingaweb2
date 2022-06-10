@@ -116,7 +116,7 @@ class Pane extends BaseDashboard implements Sortable
                 ->setDisabled($dashlet->disabled)
                 ->setModule($dashlet->icingaweb_module_dashlet->module ?? '')
                 ->setModuleDashlet($dashlet->system_dashlet_id !== null)
-                ->setDescription($dashlet->icingaweb_module_dashlet->description);
+                ->setDescription($dashlet->description);
 
             $this->addEntry($newDashlet);
 
@@ -193,7 +193,8 @@ class Pane extends BaseDashboard implements Sortable
                     'label'        => $dashlet->getTitle(),
                     'url'          => $url,
                     'priority'     => $order++,
-                    'disabled'     => DBUtils::bool2BoolEnum($dashlet->isDisabled())
+                    'disabled'     => DBUtils::bool2BoolEnum($dashlet->isDisabled()),
+                    'description'  => $dashlet->getDescription()
                 ]);
 
                 if ($dashlet->isModuleDashlet()) {
@@ -233,7 +234,8 @@ class Pane extends BaseDashboard implements Sortable
                     'label'        => $dashlet->getTitle(),
                     'url'          => $url,
                     'priority'     => $moveDashlet ? $order++ : $dashlet->getPriority(),
-                    'disabled'     => DBUtils::bool2BoolEnum($dashlet->isDisabled())
+                    'disabled'     => DBUtils::bool2BoolEnum($dashlet->isDisabled()),
+                    'description'  => $dashlet->getDescription()
                 ], $filterCondition);
             } else {
                 // Failed to move the pane! Should have already been handled by the caller,

@@ -252,12 +252,13 @@ class Dashlet extends BaseDashboard
     {
         $pane = $this->getPane();
         return [
-            'id'       => $this->getUuid(),
-            'pane'     => ! $stringify ? $pane : ($pane ? $pane->getName() : null),
-            'name'     => $this->getName(),
-            'url'      => $this->getUrl()->getRelativeUrl(),
-            'label'    => $this->getTitle(),
-            'priority' => $this->getPriority(),
+            'id'           => $this->getUuid(),
+            'pane'         => ! $stringify ? $pane : ($pane ? $pane->getName() : null),
+            'name'         => $this->getName(),
+            'url'          => $this->getUrl()->getRelativeUrl(),
+            'label'        => $this->getTitle(),
+            'priority'     => $this->getPriority(),
+            'description'  => $this->getDescription()
         ];
     }
 }

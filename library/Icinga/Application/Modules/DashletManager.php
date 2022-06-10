@@ -160,7 +160,8 @@ class DashletManager
                 ->setTitle($moduleDashlet->label)
                 ->setModuleDashlet(true)
                 ->setModule($moduleDashlet->module)
-                ->setPriority($moduleDashlet->priority);
+                ->setPriority($moduleDashlet->priority)
+                ->setDescription($moduleDashlet->description);
 
             if (! self::ensureItIsNotOrphaned($dashlet)) {
                 continue;

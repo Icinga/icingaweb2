@@ -31,7 +31,8 @@ class Dashlet extends Model
             'label',
             'url',
             'priority',
-            'disabled'
+            'disabled',
+            'description'
         ];
     }
 

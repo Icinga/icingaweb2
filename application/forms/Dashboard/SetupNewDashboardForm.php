@@ -43,7 +43,6 @@ class SetupNewDashboardForm extends BaseDashboardForm
 
     /**
      * Dump all module dashlets which are not selected by the user
-     * from the member variable
      *
      * @param bool $strict Whether to match populated of the dashlet against a 'y'
      *
@@ -59,12 +58,14 @@ class SetupNewDashboardForm extends BaseDashboardForm
                 if ($this->getPopulatedValue($element) === 'y' || (! $strict && $this->getPopulatedValue($element))) {
                     $title = $this->getPopulatedValue($element);
                     $url = $this->getPopulatedValue($element . '_url');
+                    $description = $this->getPopulatedValue($element . '_description');
 
                     if (! $strict && $title && $url) {
                         $dashlet
                             ->setUrl($url)
                             ->setName($title . '(' . $module . ')')
-                            ->setTitle($title);
+                            ->setTitle($title)
+                            ->setDescription($description);
                     }
 
                     $chosenDashlets[$module][$dashlet->getName()] = $dashlet;
@@ -187,6 +188,12 @@ class SetupNewDashboardForm extends BaseDashboardForm
                             'Enter url to be loaded in the dashlet. You can paste the full URL, including filters'
                         )
                     ]);
+
+                    $this->addElement('textarea', $elementId . '_description', [
+                        'label'       => t('Description'),
+                        'value'       => $dashlet->getDescription(),
+                        'description' => t('Enter description for the dashlet')
+                    ]);
                 }
             }
         }
@@ -209,6 +216,12 @@ class SetupNewDashboardForm extends BaseDashboardForm
             'description' => t(
                 'Enter url to be loaded in the dashlet. You can paste the full URL, including filters.'
             ),
+        ]);
+
+        $this->addElement('textarea', 'description', [
+            'label'       => t('Description'),
+            'placeholder' => t('Enter dashlet description'),
+            'description' => t('Enter description for the dashlet'),
         ]);
     }
 

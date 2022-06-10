@@ -31,7 +31,8 @@ class DashletForm extends SetupNewDashboardForm
             'org_pane'    => $dashboard->getPane()->getName(),
             'org_dashlet' => $dashboard->getName(),
             'dashlet'     => $dashboard->getTitle(),
-            'url'         => $dashboard->getUrl()->getRelativeUrl()
+            'url'         => $dashboard->getUrl()->getRelativeUrl(),
+            'description' => $dashboard->getDescription(),
         ]);
     }
 
@@ -184,6 +185,7 @@ class DashletForm extends SetupNewDashboardForm
             $customDashlet = null;
             if (($dashlet = $this->getPopulatedValue('dashlet')) && ($url = $this->getPopulatedValue('url'))) {
                 $customDashlet = new Dashlet($dashlet, $url, $currentPane);
+                $customDashlet->setDescription($this->getPopulatedValue('description'));
 
                 if ($currentPane->hasEntry($customDashlet->getName()) || $this->customDashletAlreadyExists) {
                     if ($this->customDashletAlreadyExists) {
@@ -265,11 +267,14 @@ class DashletForm extends SetupNewDashboardForm
                 $orgHome->setEntries([]);
             }
 
+            /** @var Dashlet $currentDashlet */
             $currentDashlet = clone $orgDashlet;
             $currentDashlet
                 ->setPane($currentPane)
                 ->setUrl($this->getValue('url'))
-                ->setTitle($this->getValue('dashlet'));
+                ->setTitle($this->getValue('dashlet'))
+                ->setDescription($this->getValue('description'));
+
 
             if ($orgPane->getName() !== $currentPane->getName()
                 && $currentPane->hasEntry($currentDashlet->getName())) {
