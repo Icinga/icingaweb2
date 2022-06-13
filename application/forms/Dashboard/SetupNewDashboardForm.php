@@ -44,7 +44,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
     /**
      * Dump all module dashlets which are not selected by the user
      *
-     * @param bool $strict Whether to match populated of the dashlet against a 'y'
+     * @param bool $strict Whether to match the populated value of the dashlet against a 'y'
      *
      * @return void
      */
@@ -162,39 +162,37 @@ class SetupNewDashboardForm extends BaseDashboardForm
             $this->assembleDashletElements();
         }
 
-        if (! empty($this->moduleDashlets)) {
-            foreach ($this->moduleDashlets as $_ => $dashlets) {
-                /** @var Dashlet $dashlet */
-                foreach ($dashlets as $dashlet) {
-                    $this->addHtml(HtmlElement::create('h3', null, t($dashlet->getTitle())));
+        foreach ($this->moduleDashlets as $_ => $dashlets) {
+            /** @var Dashlet $dashlet */
+            foreach ($dashlets as $dashlet) {
+                $this->addHtml(HtmlElement::create('h3', null, t($dashlet->getTitle())));
 
-                    $elementId = bin2hex($dashlet->getUuid());
-                    if ($this->getPopulatedValue('btn_next')) {
-                        $this->clearPopulatedValue($elementId);
-                    }
-
-                    $this->addElement('text', $elementId, [
-                        'required'    => true,
-                        'label'       => t('Dashlet Title'),
-                        'value'       => $dashlet->getTitle(),
-                        'description' => t('Enter a title for the dashlet'),
-                    ]);
-
-                    $this->addElement('textarea', $elementId . '_url', [
-                        'required'    => true,
-                        'label'       => t('Url'),
-                        'value'       => $dashlet->getUrl()->getRelativeUrl(),
-                        'description' => t(
-                            'Enter url to be loaded in the dashlet. You can paste the full URL, including filters'
-                        )
-                    ]);
-
-                    $this->addElement('textarea', $elementId . '_description', [
-                        'label'       => t('Description'),
-                        'value'       => $dashlet->getDescription(),
-                        'description' => t('Enter description for the dashlet')
-                    ]);
+                $elementId = bin2hex($dashlet->getUuid());
+                if ($this->getPopulatedValue('btn_next')) {
+                    $this->clearPopulatedValue($elementId);
                 }
+
+                $this->addElement('text', $elementId, [
+                    'required'    => true,
+                    'label'       => t('Dashlet Title'),
+                    'value'       => $dashlet->getTitle(),
+                    'description' => t('Enter a title for the dashlet'),
+                ]);
+
+                $this->addElement('textarea', $elementId . '_url', [
+                    'required'    => true,
+                    'label'       => t('Url'),
+                    'value'       => $dashlet->getUrl()->getRelativeUrl(),
+                    'description' => t(
+                        'Enter url to be loaded in the dashlet. You can paste the full URL, including filters'
+                    )
+                ]);
+
+                $this->addElement('textarea', $elementId . '_description', [
+                    'label'       => t('Description'),
+                    'value'       => $dashlet->getDescription(),
+                    'description' => t('Enter description for the dashlet')
+                ]);
             }
         }
     }
@@ -243,7 +241,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
         }
 
         $formControls = $this->createFormControls();
-        $formControls->add([$submitButton, $this->createCancelButton()]);
+        $formControls->addHtml($submitButton, $this->createCancelButton());
 
         $this->addHtml($formControls);
     }
