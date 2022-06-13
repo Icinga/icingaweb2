@@ -88,11 +88,17 @@ class PaneForm extends BaseDashboardForm
 
         if ($this->isUpdating()) {
             $orgHome = $dashboard->getEntry($this->requestUrl->getParam('home'));
+            $orgPane = $orgHome->getEntry($this->getValue('org_name'));
 
-            $currentPane = clone $orgHome->getEntry($this->getValue('org_name'));
+            $currentPane = clone $orgPane;
             $currentPane
                 ->setHome($currentHome)
                 ->setTitle($this->getValue('title'));
+
+            $diff = array_filter(array_diff_assoc($currentPane->toArray(), $orgPane->toArray()));
+            if (empty($diff)) {
+                return;
+            }
 
             if ($orgHome->getName() !== $currentHome->getName() && $currentHome->hasEntry($currentPane->getName())) {
                 Notification::error(sprintf(
@@ -102,12 +108,6 @@ class PaneForm extends BaseDashboardForm
                 ));
 
                 return;
-            }
-
-            if ($currentHome->getName() === $orgHome->getName()) {
-                // There is no dashboard home diff so clear all the dashboard pane
-                // of the org home
-                $orgHome->setEntries([]);
             }
 
             $conn->beginTransaction();

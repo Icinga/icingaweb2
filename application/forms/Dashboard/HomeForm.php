@@ -41,6 +41,10 @@ class HomeForm extends BaseDashboardForm
     {
         if ($this->isUpdating()) {
             $home = $this->dashboard->getActiveHome();
+            if ($home->getTitle() === $this->getPopulatedValue('title')) {
+                return;
+            }
+
             $home->setTitle($this->getPopulatedValue('title'));
 
             $this->dashboard->manageEntry($home);
