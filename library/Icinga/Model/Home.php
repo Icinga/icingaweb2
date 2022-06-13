@@ -65,6 +65,5 @@ class Home extends Model
             ->setCandidateKey('user_id');
 
         $relations->hasMany(Dashboard\Pane::TABLE, Pane::class);
-        //$relations->hasMany(Dashboard\Dashlet::TABLE, Dashlet::class);
     }
 }

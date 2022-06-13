@@ -69,7 +69,6 @@ class Dashlet extends Model
     {
         $relations->belongsTo(Dashboard\Pane::TABLE, Pane::class)
             ->setCandidateKey('dashboard_id');
-        //$relations->belongsTo(Dashboard\DashboardHome::TABLE, Home::class);
 
         $relations->belongsToMany('icingaweb_module_dashlet', ModuleDashlet::class)
             ->through(SystemDashlet::class)
