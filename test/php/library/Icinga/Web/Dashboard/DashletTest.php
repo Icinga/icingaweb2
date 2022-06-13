@@ -132,6 +132,7 @@ class DashletTest extends BaseDashboardTestCase
         $default = $this->dashboard->getActiveHome();
         $pane1 = $default->getActivePane();
         $pane2 = $default->getEntry('Test2');
+        $pane2->loadDashboardEntries();
 
         $this->assertCount(
             1,
@@ -220,6 +221,7 @@ class DashletTest extends BaseDashboardTestCase
         $default = $this->dashboard->getActiveHome();
         $pane1 = $default->getActivePane();
         $pane2 = $default->getEntry('Test2');
+        $pane2->loadDashboardEntries();
 
         $pane1->manageEntry($this->getTestDashlet(), $pane2);
     }
