@@ -23,6 +23,9 @@ class DashboardList extends ItemListControl
     public function __construct(Pane $pane)
     {
         $this->pane = $pane;
+        if (! $this->pane->hasEntries()) {
+            $this->pane->loadDashboardEntries();
+        }
 
         $this->getAttributes()
             ->registerAttributeCallback('data-icinga-pane', function () {
