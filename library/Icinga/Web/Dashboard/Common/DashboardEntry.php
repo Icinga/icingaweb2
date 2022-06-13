@@ -4,6 +4,9 @@
 
 namespace Icinga\Web\Dashboard\Common;
 
+use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Web\Dashboard\Dashlet;
+use Icinga\Web\Dashboard\Pane;
 use ipl\Web\Url;
 
 /**
@@ -12,18 +15,25 @@ use ipl\Web\Url;
 interface DashboardEntry
 {
     /**
-     * Check whether this widget doesn't contain any dashboard entries
+     * Check whether this widget contains any dashboard entries
      *
      * @return bool
      */
-    public function hasEntries();
+    public function hasEntries(): bool;
+
+    /**
+     * Get size of the dashboard entries assigned to this widget
+     *
+     * @return int
+     */
+    public function countEntries(): int;
 
     /**
      * Get a dashboard entry by the given name if exists
      *
      * @param string $name
      *
-     * @return BaseDashboard
+     * @return DashboardHome|Pane|Dashlet
      */
     public function getEntry(string $name);
 
@@ -34,14 +44,14 @@ interface DashboardEntry
      *
      * @return bool
      */
-    public function hasEntry(string $name);
+    public function hasEntry(string $name): bool;
 
     /**
      * Get all dashboard entries of this widget
      *
      * @return BaseDashboard[]
      */
-    public function getEntries();
+    public function getEntries(): array;
 
     /**
      * Set dashboard entries of this widget
@@ -76,7 +86,7 @@ interface DashboardEntry
      *
      * @return string[]
      */
-    public function getEntryKeyTitleArr();
+    public function getEntryKeyTitleArr(): array;
 
     /**
      * Remove the given entry from this widget
