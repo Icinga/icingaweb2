@@ -544,9 +544,6 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
         $sign = $filter->getSign();
         $value = $filter->getExpression();
 
-        $matchWildcard = $sign === '=' && ! $filter instanceof FilterEqual
-            || $sign === '!=' && ! $filter instanceof FilterNotEqual;
-
         if (is_array($value)) {
             $comp = [];
             $pattern = [];
@@ -582,13 +579,21 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             }
 
             return count($sql) === 1 ? $sql[0] : '(' . implode(" $operator ", $sql) . ')';
-        } elseif ($matchWildcard && $value !== null && strpos($value, '*') !== false) {
+        } elseif ($sign === '='
+            && ! $filter instanceof FilterEqual
+            && $value !== null
+            && strpos($value, '*') !== false
+        ) {
             if ($value === '*') {
                 return $column . ' IS NOT NULL';
             }
 
             return $column . ' LIKE ' . $this->dbAdapter->quote(preg_replace('~\*~', '%', $value));
-        } elseif ($matchWildcard && $value !== null && strpos($value, '*') !== false) {
+        } elseif ($sign === '!='
+            && ! $filter instanceof FilterNotEqual
+            && $value !== null
+            && strpos($value, '*') !== false
+        ) {
             if ($value === '*') {
                 return $column . ' IS NULL';
             }
