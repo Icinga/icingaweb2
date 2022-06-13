@@ -194,17 +194,17 @@ class DashboardsController extends CompatController
             $this->httpNotFound(t('Pane "%s" not found'), $pane);
         }
 
-        $paneForm = (new PaneForm($this->dashboard))
-            ->on(PaneForm::ON_SUCCESS, function () {
-                if ($this->prevActive) {
-                    $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
-                } else {
-                    $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+        $paneForm = new PaneForm($this->dashboard);
+        $paneForm->on(PaneForm::ON_SUCCESS, function () use ($paneForm, $home) {
+            if ($this->prevActive && $home !== $paneForm->getPopulatedValue('home')) {
+                $params = $this->params->without('pane');
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+            } else {
+                $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
 
-                    $this->redirectNow('__CLOSE__');
-                }
-            })
-            ->handleRequest($this->getServerRequest());
+                $this->redirectNow('__CLOSE__');
+            }
+        })->handleRequest($this->getServerRequest());
 
         $paneForm->load($this->dashboard->getActiveHome()->getEntry($pane));
 
