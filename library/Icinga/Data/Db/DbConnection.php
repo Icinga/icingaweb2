@@ -6,8 +6,8 @@ namespace Icinga\Data\Db;
 use DateTime;
 use DateTimeZone;
 use Exception;
-use Icinga\Data\Filter\FilterMatch;
-use Icinga\Data\Filter\FilterMatchNot;
+use Icinga\Data\Filter\FilterEqual;
+use Icinga\Data\Filter\FilterNotEqual;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
 use PDO;
@@ -544,6 +544,9 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
         $sign = $filter->getSign();
         $value = $filter->getExpression();
 
+        $matchWildcard = $sign === '=' && ! $filter instanceof FilterEqual
+            || $sign === '!=' && ! $filter instanceof FilterNotEqual;
+
         if (is_array($value)) {
             $comp = [];
             $pattern = [];
@@ -579,13 +582,13 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             }
 
             return count($sql) === 1 ? $sql[0] : '(' . implode(" $operator ", $sql) . ')';
-        } elseif ($filter instanceof FilterMatch && $value !== null && strpos($value, '*') !== false) {
+        } elseif ($matchWildcard && $value !== null && strpos($value, '*') !== false) {
             if ($value === '*') {
                 return $column . ' IS NOT NULL';
             }
 
             return $column . ' LIKE ' . $this->dbAdapter->quote(preg_replace('~\*~', '%', $value));
-        } elseif ($filter instanceof FilterMatchNot && $value !== null && strpos($value, '*') !== false) {
+        } elseif ($matchWildcard && $value !== null && strpos($value, '*') !== false) {
             if ($value === '*') {
                 return $column . ' IS NULL';
             }
