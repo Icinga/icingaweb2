@@ -10,6 +10,7 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Model\Home;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Web\Dashboard\Common\DashboardEntries;
+use Icinga\Web\Dashboard\Common\DashboardEntry;
 use Icinga\Web\Dashboard\Common\Sortable;
 use Icinga\Util\DBUtils;
 use Icinga\Web\Dashboard\Common\WidgetState;
@@ -17,7 +18,7 @@ use ipl\Stdlib\Filter;
 
 use function ipl\Stdlib\get_php_type;
 
-class DashboardHome extends BaseDashboard implements Sortable
+class DashboardHome extends BaseDashboard implements DashboardEntry, Sortable
 {
     use DashboardEntries;
     use WidgetState;
@@ -125,7 +126,7 @@ class DashboardHome extends BaseDashboard implements Sortable
      *
      * @return ?Pane
      */
-    public function getActivePane()
+    public function getActivePane(): ?Pane
     {
         /** @var Pane $pane */
         foreach ($this->getEntries() as $pane) {
@@ -177,7 +178,6 @@ class DashboardHome extends BaseDashboard implements Sortable
                 ->setPriority($pane->priority);
 
             $this->addEntry($newPane);
-            $newPane->loadDashboardEntries();
         }
 
         if ($name !== null) {
@@ -185,11 +185,13 @@ class DashboardHome extends BaseDashboard implements Sortable
                 $pane = $this->getEntry($name);
 
                 $this->activatePane($pane);
+                $pane->loadDashboardEntries();
             } else {
                 throw new HttpNotFoundException(t('Pane "%s" not found'), $name);
             }
         } elseif (($firstPane = $this->rewindEntries())) {
             $this->activatePane($firstPane);
+            $firstPane->loadDashboardEntries();
         }
 
         return $this;
@@ -207,13 +209,6 @@ class DashboardHome extends BaseDashboard implements Sortable
 
     public function manageEntry($entryOrEntries, BaseDashboard $origin = null, bool $manageRecursive = false)
     {
-        $user = Dashboard::getUser();
-        $conn = DBUtils::getConn();
-
-        $panes = is_array($entryOrEntries) ? $entryOrEntries : [$entryOrEntries];
-        // Highest priority is 0, so count($entries) are all always lowest prio + 1
-        $order = count($this->getEntries());
-
         if ($origin && ! $origin instanceof DashboardHome) {
             throw new \InvalidArgumentException(sprintf(
                 __METHOD__ . ' expects parameter "$origin" to be an instance of "%s". Got "%s" instead.',
@@ -222,10 +217,17 @@ class DashboardHome extends BaseDashboard implements Sortable
             ));
         }
 
+        $user = Dashboard::getUser();
+        $conn = DBUtils::getConn();
+
+        $panes = is_array($entryOrEntries) ? $entryOrEntries : [$entryOrEntries];
+        // Highest priority is 0, so count($entries) are all always lowest prio + 1
+        $order = $this->countEntries();
+
         /** @var Pane $pane */
         foreach ($panes as $pane) {
             $uuid = Dashboard::getSHA1($user->getUsername() . $this->getName() . $pane->getName());
-            $movePane = $origin && $origin->hasEntry($pane->getName());
+            $movePane = $origin && $origin->hasEntry($pane->getName()) && $this->getName() !== $origin->getName();
 
             if (! $this->hasEntry($pane->getName()) && ! $movePane) {
                 $conn->insert(Pane::TABLE, [
@@ -235,6 +237,8 @@ class DashboardHome extends BaseDashboard implements Sortable
                     'label'    => $pane->getTitle(),
                     'priority' => $order++
                 ]);
+
+                $this->addEntry($pane);
             } elseif (! $this->hasEntry($pane->getName()) || ! $movePane) {
                 $filterCondition = [
                     'id = ?'      => $pane->getUuid(),
@@ -275,15 +279,7 @@ class DashboardHome extends BaseDashboard implements Sortable
                 $pane->manageEntry($dashlets);
             }
         }
-    }
 
-    public function toArray(bool $stringify = true): array
-    {
-        return [
-            'id'       => $this->getUuid(),
-            'name'     => $this->getName(),
-            'title'    => $this->getTitle(),
-            'priority' => $this->getPriority()
-        ];
+        return $this;
     }
 }
