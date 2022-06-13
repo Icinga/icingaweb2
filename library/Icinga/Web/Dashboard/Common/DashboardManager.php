@@ -157,13 +157,13 @@ trait DashboardManager
         $homes = is_array($entryOrEntries) ? $entryOrEntries : [$entryOrEntries];
 
         // Highest priority is 0, so count($entries) are always lowest prio + 1
-        $priority = count($this->getEntries());
+        $priority = $this->countEntries();
 
         /** @var DashboardHome $home */
         foreach ($homes as $home) {
             if (! $this->hasEntry($home->getName())) {
                 $conn->insert(DashboardHome::TABLE, [
-                    'user_id'  => self::getUser()->getAdditional('id'),
+                    'user_id'  => $this::getUser()->getAdditional('id'),
                     'name'     => $home->getName(),
                     'label'    => $home->getTitle(),
                     'priority' => $home->isDefaultHome() ? 0 : $priority++,
@@ -184,7 +184,7 @@ trait DashboardManager
     }
 
     /**
-     * Get and|or init the default dashboard home
+     * Initialize and get the default dashboard home
      *
      * @return DashboardHome
      */

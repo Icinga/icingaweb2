@@ -505,7 +505,7 @@ class DashboardsController extends CompatController
 
         $activeHome = $this->dashboard->getActiveHome();
         // We can't grant access the user to the dashboard manager if there aren't any dashboards to manage
-        if (! $activeHome || (! $activeHome->hasEntries() && count($this->dashboard->getEntries()) === 1)) {
+        if (! $activeHome || (! $activeHome->hasEntries() && $this->dashboard->countEntries() === 1)) {
             $this->redirectNow(Dashboard::BASE_ROUTE);
         }
 
@@ -538,7 +538,7 @@ class DashboardsController extends CompatController
             && (
                 ! $activeHome->isDefaultHome()
                 || $activeHome->hasEntries()
-                || count($this->dashboard->getEntries()) > 1
+                || $this->dashboard->countEntries() > 1
             )
         ) {
             $params = [];
