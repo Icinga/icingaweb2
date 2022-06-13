@@ -5,6 +5,7 @@ namespace Icinga\Web\Widget;
 
 use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Application\Icinga;
+use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
 use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Url;
@@ -12,7 +13,7 @@ use Icinga\Web\Url;
 /**
  * Class SearchDashboard display multiple search views on a single search page
  */
-class SearchDashboard extends \Icinga\Web\Dashboard\Dashboard
+class SearchDashboard extends Dashboard
 {
     /**
      * Name for the search home
@@ -58,7 +59,7 @@ class SearchDashboard extends \Icinga\Web\Dashboard\Dashboard
         return $this->tabs;
     }
 
-    public function getActiveHome()
+    public function getActiveHome(): ?DashboardHome
     {
         return $this->searchHome;
     }
@@ -70,7 +71,7 @@ class SearchDashboard extends \Icinga\Web\Dashboard\Dashboard
      *
      * @return  $this
      */
-    public function search($searchString = '')
+    public function search(string $searchString = ''): self
     {
         $pane = $this->searchHome->createEntry(self::SEARCH_PANE)->getEntry(self::SEARCH_PANE);
         $pane->setTitle(t('Search'));
