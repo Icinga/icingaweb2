@@ -414,13 +414,11 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     public function load($type)
     {
         $user = Auth::getInstance()->getUser();
-        if ($type !== 'dashboard-pane') {
-            // Shareables
-            $this->merge(Icinga::app()->getSharedNavigation($type));
+        // Shareables
+        $this->merge(Icinga::app()->getSharedNavigation($type));
 
-            // User Preferences
-            $this->merge($user->getNavigation($type));
-        }
+        // User Preferences
+        $this->merge($user->getNavigation($type));
 
         // Modules
         $moduleManager = Icinga::app()->getModuleManager();
@@ -428,8 +426,6 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
             if ($user->can($moduleManager::MODULE_PERMISSION_NS . $module->getName())) {
                 if ($type === 'menu-item') {
                     $this->merge($module->getMenu());
-                } elseif ($type === 'dashboard-pane') {
-                    $this->merge($module->getDashboard());
                 }
             }
         }
@@ -448,11 +444,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
             'menu-item' => array(
                 'label'     => t('Menu Entry'),
                 'config'    => 'menu'
-            )/*, // Disabled, until it is able to fully replace the old implementation
-            'dashlet'   => array(
-                'label'     => 'Dashlet',
-                'config'    => 'dashboard'
-            )*/
+            )
         );
 
         $moduleItemTypes = array();

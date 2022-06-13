@@ -238,48 +238,24 @@ class Web extends EmbeddedWeb
      */
     public function getSharedNavigation($type)
     {
-        $config = Config::navigation($type === 'dashboard-pane' ? 'dashlet' : $type);
-
-        if ($type === 'dashboard-pane') {
-            $panes = array();
-            foreach ($config as $dashletName => $dashletConfig) {
-                if ($this->hasAccessToSharedNavigationItem($dashletConfig)) {
-                    // TODO: Throw ConfigurationError if pane or url is missing
-                    $panes[$dashletConfig->pane][$dashletName] = $dashletConfig->url;
+        $config = Config::navigation($type);
+        $items = array();
+        foreach ($config as $name => $typeConfig) {
+            if (isset($this->accessibleMenuItems[$name])) {
+                if ($this->accessibleMenuItems[$name]) {
+                    $items[$name] = $typeConfig;
                 }
-            }
-
-            $navigation = new Navigation();
-            foreach ($panes as $paneName => $dashlets) {
-                $navigation->addItem(
-                    $paneName,
-                    array(
-                        'type'      => 'dashboard-pane',
-                        'dashlets'  => $dashlets
-                    )
-                );
-            }
-        } else {
-            $items = array();
-            foreach ($config as $name => $typeConfig) {
-                if (isset($this->accessibleMenuItems[$name])) {
-                    if ($this->accessibleMenuItems[$name]) {
-                        $items[$name] = $typeConfig;
-                    }
+            } else {
+                if ($this->hasAccessToSharedNavigationItem($typeConfig, $config)) {
+                    $this->accessibleMenuItems[$name] = true;
+                    $items[$name] = $typeConfig;
                 } else {
-                    if ($this->hasAccessToSharedNavigationItem($typeConfig, $config)) {
-                        $this->accessibleMenuItems[$name] = true;
-                        $items[$name] = $typeConfig;
-                    } else {
-                        $this->accessibleMenuItems[$name] = false;
-                    }
+                    $this->accessibleMenuItems[$name] = false;
                 }
             }
-
-            $navigation = Navigation::fromConfig($items);
         }
 
-        return $navigation;
+        return Navigation::fromConfig($items);
     }
 
     /**
