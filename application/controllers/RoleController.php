@@ -8,6 +8,7 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Authentication\AdmissionLoader;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\RolesConfig;
+use Icinga\Authentication\User\DomainAwareInterface;
 use Icinga\Data\Selectable;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Security\RoleForm;
@@ -274,9 +275,14 @@ class RoleController extends AuthBackendController
                 continue;
             }
 
+            $domain = '';
+            if ($backend instanceof DomainAwareInterface) {
+                $domain = '@' . $backend->getDomain();
+            }
+
             $users = [];
             foreach ($names as $name) {
-                $users[] = [$name, [
+                $users[] = [$name . $domain, [
                     'type'      => 'user',
                     'backend'   => $backend->getName()
                 ]];
