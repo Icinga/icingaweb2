@@ -37,7 +37,7 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 + `SimpleQuery::paginate()`: Use `Icinga\Web\Controller::setupPaginationControl()` and/or `Icinga\Web\Widget\Paginator` instead.
 + `LdapConnection::connect()`: The connection is established lazily now.
 + `MonitoredObject::matches()`: Use `$filter->matches($object)` instead.
-+ `MonitoredObject::fromParams()`
++ `MonitoredObject::fromParams()`: Deleted without substitution.
 + `DataView::fromRequest()`: Use `$backend->select()->from($viewName)` instead.
 + `DataView::sort()`: Use `DataView::order()` instead.
 + `MonitoringBackend::createBackend()`: Use `MonitoringBackend::instance()` instead.
@@ -49,7 +49,7 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
   **Classes:**
 + `Icinga\Util\String`: Use `Icinga\Util\StringHelper` instead.
 + `Icinga\Util\Translator`: Use `\ipl\I18n\StaticTranslator::$instance` or `\ipl\I18n\Translation` instead.
-+ `Icinga\Module\Migrate\Clicommands\DashboardCommand`
++ `Icinga\Module\Migrate\Clicommands\DashboardCommand`: Deleted without substitution.
 + `Icinga\Web\Hook\TicketHook`: Use `Icinga\Application\Hook\TicketHook` instead.
 + `Icinga\Web\Hook\GrapherHook`: Use `Icinga\Application\Hook\GrapherHook` instead.
 + `Icinga\Module\Monitoring\Environment`: Not in use.
