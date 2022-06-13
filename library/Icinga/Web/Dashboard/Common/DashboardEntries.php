@@ -8,6 +8,9 @@ use Icinga\Exception\NotImplementedError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Dashboard\Dashboard;
 
+use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Web\Dashboard\Dashlet;
+use Icinga\Web\Dashboard\Pane;
 use function ipl\Stdlib\get_php_type;
 
 trait DashboardEntries
@@ -15,13 +18,18 @@ trait DashboardEntries
     /**
      * A list of @see BaseDashboard assigned to this dashboard widget
      *
-     * @var BaseDashboard
+     * @var DashboardHome[]|Pane[]|Dashlet[]
      */
     private $dashboards = [];
 
-    public function hasEntries()
+    public function hasEntries(): bool
     {
         return ! empty($this->dashboards);
+    }
+
+    public function countEntries(): int
+    {
+        return count($this->dashboards);
     }
 
     public function getEntry(string $name)
@@ -33,12 +41,12 @@ trait DashboardEntries
         return $this->dashboards[strtolower($name)];
     }
 
-    public function hasEntry(string $name)
+    public function hasEntry(string $name): bool
     {
         return array_key_exists(strtolower($name), $this->dashboards);
     }
 
-    public function getEntries()
+    public function getEntries(): array
     {
         return $this->dashboards;
     }
@@ -61,7 +69,7 @@ trait DashboardEntries
         return $this;
     }
 
-    public function getEntryKeyTitleArr()
+    public function getEntryKeyTitleArr(): array
     {
         $dashboards = [];
         foreach ($this->getEntries() as $dashboard) {
@@ -119,9 +127,13 @@ trait DashboardEntries
             ));
         }
 
-        if (! $this->hasEntries() || count($this->getEntries()) === $position) {
-            $dashboard->setPriority($position);
-            $data = array_merge(array_values($this->getEntries()), [$dashboard]);
+        if ($this->countEntries() <= 1 || $this->countEntries() === $position) {
+            $data = array_values($this->getEntries());
+            if (! $this->hasEntries() || $this->countEntries() === $position) {
+                $data[] = $dashboard;
+            } else {
+                array_unshift($data, $dashboard);
+            }
         } else {
             if (! $this->hasEntry($dashboard->getName())) {
                 $this->addEntry($dashboard);
@@ -132,7 +144,7 @@ trait DashboardEntries
             array_splice($data, $position, 0, [$dashboard]);
 
             // We have copied the data with the new dashboard entry, so we need to unset
-            // the passed entry from another entry to prevent duplicate entry errors
+            // the passed entry to prevent duplicate entry errors
             if ($origin && $origin->hasEntry($dashboard->getName())) {
                 $this->unsetEntry($dashboard);
             }
@@ -140,17 +152,15 @@ trait DashboardEntries
 
         $entries = [];
         foreach ($data as $index => $item) {
-            if (count($data) > 1) {
-                $item->setPriority($index);
-            }
+            $item->setPriority($index);
 
             $entries[$item->getName()] = $item;
             $this->manageEntry($item, $dashboard->getName() === $item->getName() ? $origin : null);
+        }
 
-            if ($origin && $dashboard->getName() === $item->getName()) {
-                // The dashboard entry is moved to another one
-                $origin->unsetEntry($dashboard);
-            }
+        if ($origin && $origin->hasEntry($dashboard->getName())) {
+            // The dashboard entry is moved to another one
+            $origin->unsetEntry($dashboard);
         }
 
         $this->setEntries($entries);
