@@ -79,7 +79,7 @@ class Dashlet extends BaseDashboard
      *
      * @return ?Url
      */
-    public function getUrl()
+    public function getUrl(): ?Url
     {
         if ($this->url !== null && ! $this->url instanceof Url) {
             if (! Icinga::app()->isCli()) {
@@ -151,7 +151,7 @@ class Dashlet extends BaseDashboard
      *
      * @return ?Pane
      */
-    public function getPane()
+    public function getPane(): ?Pane
     {
         return $this->pane;
     }
@@ -161,7 +161,7 @@ class Dashlet extends BaseDashboard
      *
      * @return ?string
      */
-    public function getModule()
+    public function getModule(): ?string
     {
         return $this->module;
     }
@@ -250,15 +250,11 @@ class Dashlet extends BaseDashboard
 
     public function toArray(bool $stringify = true): array
     {
+        $arr = parent::toArray($stringify);
         $pane = $this->getPane();
-        return [
-            'id'           => $this->getUuid(),
-            'pane'         => ! $stringify ? $pane : ($pane ? $pane->getName() : null),
-            'name'         => $this->getName(),
-            'url'          => $this->getUrl()->getRelativeUrl(),
-            'label'        => $this->getTitle(),
-            'priority'     => $this->getPriority(),
-            'description'  => $this->getDescription()
-        ];
+        $arr['pane'] = ! $stringify ? $pane : ($pane ? $pane->getName() : null);
+        $arr['url'] = $this->getUrl()->getRelativeUrl();
+
+        return $arr;
     }
 }
