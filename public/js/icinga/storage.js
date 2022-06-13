@@ -44,7 +44,7 @@
      */
     window.addEventListener('storage', function(event) {
         var url = icinga.utils.parseUrl(event.url);
-        if (! url.path.substring(0, icinga.config.baseUrl.length) === icinga.config.baseUrl) {
+        if (! url.path.startsWith(icinga.config.baseUrl)) {
             // A localStorage is shared between all paths on the same origin.
             // So we need to make sure it's us who made a change.
             return;

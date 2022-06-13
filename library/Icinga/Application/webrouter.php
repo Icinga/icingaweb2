@@ -56,22 +56,18 @@ if (in_array($path, $special)) {
 
     switch ($path) {
         case 'css/icinga.css':
-            $forIe11 = (bool) preg_match('/Trident\/7.0;.*rv:11/', $_SERVER['HTTP_USER_AGENT']);
-            Stylesheet::send(false, $forIe11);
+            Stylesheet::send();
             exit;
         case 'css/icinga.min.css':
-            $forIe11 = (bool) preg_match('/Trident\/7.0;.*rv:11/', $_SERVER['HTTP_USER_AGENT']);
-            Stylesheet::send(true, $forIe11);
+            Stylesheet::send(true);
             exit;
 
         case 'js/icinga.dev.js':
-            $forIe11 = (bool) preg_match('/Trident\/7.0;.*rv:11/', $_SERVER['HTTP_USER_AGENT']);
-            JavaScript::send(false, $forIe11);
+            JavaScript::send();
             exit;
 
         case 'js/icinga.min.js':
-            $forIe11 = (bool) preg_match('/Trident\/7.0;.*rv:11/', $_SERVER['HTTP_USER_AGENT']);
-            JavaScript::sendMinified($forIe11);
+            JavaScript::sendMinified();
             break;
 
         default:

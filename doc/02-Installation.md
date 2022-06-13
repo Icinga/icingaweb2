@@ -23,10 +23,6 @@ or sub-category here:
 If your desired browser and its version is showing up in green when visiting the respective link,
 it's probably okay to use it for Icinga Web 2.
 
-!!! note
-
-    Support for Internet Explorer will be completely dropped with version 2.11
-
 ## Upgrade <a id="upgrade"></a>
 
 In case you are upgrading from an older version of Icinga Web 2

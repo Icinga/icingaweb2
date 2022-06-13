@@ -448,7 +448,6 @@
             // the highest precedence before hrefs defined in the tr itself and regular links
             var $a = $('a[href].rowaction', el).first();
             if ($a.length) {
-                // TODO: Find out whether we leak memory on IE with this:
                 $(el).attr('href', $a.attr('href'));
                 return;
             }
@@ -459,11 +458,6 @@
             if ($a.length) {
                 $(el).attr('href', $a.attr('href'));
             }
-        });
-
-        // IE will not ignore user-select unless we cancel selectstart
-        $('table.action.multiselect tr, table.table-row-selectable.multiselect tr', container).each(function(idx, el) {
-            $(el).on('selectstart', false);
         });
 
         // draw all active selections that have disappeared on reload

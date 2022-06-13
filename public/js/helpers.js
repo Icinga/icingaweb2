@@ -1,11 +1,5 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
-/* IE11 Polyfills */
-
-if (window.NodeList && !NodeList.prototype.forEach) {
-    NodeList.prototype.forEach = Array.prototype.forEach;
-}
-
 /* jQuery Plugins */
 (function ($) {
 
