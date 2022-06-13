@@ -9,7 +9,7 @@ namespace Icinga\Web\Dashboard\Common;
  *
  * All Icinga Web dashboard widgets should extend this class
  */
-abstract class BaseDashboard implements DashboardEntry
+abstract class BaseDashboard
 {
     /**
      * Not translatable name of this widget
@@ -160,7 +160,7 @@ abstract class BaseDashboard implements DashboardEntry
      *
      * @return ?string
      */
-    public function getOwner()
+    public function getOwner(): ?string
     {
         return $this->owner;
     }
@@ -170,7 +170,7 @@ abstract class BaseDashboard implements DashboardEntry
      *
      * @return ?string
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -224,7 +224,7 @@ abstract class BaseDashboard implements DashboardEntry
     {
         foreach ($data as $name => $value) {
             $func = 'set' . ucfirst($name);
-            if (method_exists($this, $func)) {
+            if ($value && method_exists($this, $func)) {
                 $this->$func($value);
             }
         }
@@ -237,68 +237,19 @@ abstract class BaseDashboard implements DashboardEntry
      *
      * Stringifies the attrs or set to null if it doesn't have a value, when $stringify is true
      *
-     * @param bool $stringify Whether, the attributes should be returned unmodified
+     * @param bool $stringify Whether the attributes should be returned unmodified
      *
      * @return array
      */
     public function toArray(bool $stringify = true): array
     {
-        return [];
-    }
-
-    public function hasEntries()
-    {
-    }
-
-    public function getEntry(string $name)
-    {
-    }
-
-    public function hasEntry(string $name)
-    {
-    }
-
-    public function getEntries()
-    {
-    }
-
-    public function setEntries(array $entries)
-    {
-    }
-
-    public function addEntry(BaseDashboard $dashboard)
-    {
-    }
-
-    public function createEntry(string $name, $url = null)
-    {
-    }
-
-    public function getEntryKeyTitleArr()
-    {
-    }
-
-    public function removeEntry($entry)
-    {
-    }
-
-    public function removeEntries(array $entries = [])
-    {
-    }
-
-    public function manageEntry($entryOrEntries, BaseDashboard $origin = null, bool $manageRecursive = false)
-    {
-    }
-
-    public function loadDashboardEntries(string $name = null)
-    {
-    }
-
-    public function rewindEntries()
-    {
-    }
-
-    public function unsetEntry(BaseDashboard $dashboard)
-    {
+        return [
+            'id'          => $this->getUuid(),
+            'name'        => $this->getName(),
+            'label'       => $this->getTitle(),
+            'owner'       => $this->getOwner(),
+            'priority'    => $this->getPriority(),
+            'description' => $this->getDescription()
+        ];
     }
 }
