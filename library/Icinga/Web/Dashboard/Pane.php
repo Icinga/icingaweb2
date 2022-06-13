@@ -11,8 +11,9 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Model;
 use Icinga\Web\Dashboard\Common\DashboardEntries;
-use Icinga\Web\Dashboard\Common\Sortable;
 use Icinga\Util\DBUtils;
+use Icinga\Web\Dashboard\Common\DashboardEntry;
+use Icinga\Web\Dashboard\Common\Sortable;
 use Icinga\Web\Dashboard\Common\WidgetState;
 use ipl\Stdlib\Filter;
 
@@ -21,7 +22,7 @@ use function ipl\Stdlib\get_php_type;
 /**
  * A pane, displaying different Dashboard dashlets
  */
-class Pane extends BaseDashboard implements Sortable
+class Pane extends BaseDashboard implements DashboardEntry, Sortable
 {
     use DashboardEntries;
     use WidgetState;
@@ -42,7 +43,7 @@ class Pane extends BaseDashboard implements Sortable
      *
      * @return ?DashboardHome
      */
-    public function getHome()
+    public function getHome(): ?DashboardHome
     {
         return $this->home;
     }
@@ -175,7 +176,9 @@ class Pane extends BaseDashboard implements Sortable
 
         $dashlets = is_array($entryOrEntries) ? $entryOrEntries : [$entryOrEntries];
         // Highest priority is 0, so count($entries) are always lowest prio + 1
-        $order = count($this->getEntries());
+        $order = $this->countEntries();
+
+        /** @var Dashlet $dashlet */
         foreach ($dashlets as $dashlet) {
             if (is_array($dashlet)) {
                 $this->manageEntry($dashlet, $origin, $manageRecursive);
@@ -183,9 +186,9 @@ class Pane extends BaseDashboard implements Sortable
             }
 
             $url = $dashlet->getUrl();
-            $url = is_string($url) ?: $url->getRelativeUrl();
+            $url = is_string($url ?? '') ?: $url->getRelativeUrl();
             $uuid = Dashboard::getSHA1($user . $home->getName() . $this->getName() . $dashlet->getName());
-            $moveDashlet = $origin && $origin->hasEntry($dashlet->getName());
+            $moveDashlet = $origin && $origin->hasEntry($dashlet->getName()) && $this->getHome() !== $origin->getName();
 
             if (! $this->hasEntry($dashlet->getName()) && ! $moveDashlet) {
                 $conn->insert(Dashlet::TABLE, [
@@ -257,13 +260,10 @@ class Pane extends BaseDashboard implements Sortable
 
     public function toArray(bool $stringify = true): array
     {
+        $arr = parent::toArray($stringify);
         $home = $this->getHome();
-        return [
-            'id'       => $this->getUuid(),
-            'name'     => $this->getName(),
-            'label'    => $this->getTitle(),
-            'home'     => ! $stringify ? $home : ($home ? $home->getName() : null),
-            'priority' => $this->getPriority(),
-        ];
+        $arr['home'] = ! $stringify ? $home : ($home ? $home->getName() : null);
+
+        return $arr;
     }
 }
