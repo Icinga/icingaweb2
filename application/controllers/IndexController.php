@@ -4,6 +4,7 @@
 namespace Icinga\Controllers;
 
 use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Url;
 
 /**
@@ -18,7 +19,7 @@ class IndexController extends ActionController
     {
         if ($this->getRequest()->getActionName() !== 'welcome') {
             // @TODO(el): Avoid landing page redirects: https://dev.icinga.com/issues/9656
-            $this->redirectNow(Url::fromRequest()->setPath('dashboard'));
+            $this->redirectNow(Url::fromRequest()->setPath(Dashboard::BASE_ROUTE));
         }
     }
 
