@@ -24,7 +24,7 @@
      * @param icinga
      * @constructor
      */
-    var InputEnrichment = function (icinga) {
+    let InputEnrichment = function (icinga) {
         Icinga.EventListener.call(this, icinga);
 
         this.on('beforerender', '#main > .container, #modal-content', this.onBeforeRender, this);
@@ -76,8 +76,8 @@
         let inputs = event.target.querySelectorAll('[data-enrichment-type]');
 
         // Remember current instances
-        inputs.forEach(function (input) {
-            var enrichment = _this._enrichments.get(input);
+        inputs.forEach((input) => {
+            let enrichment = _this._enrichments.get(input);
             if (enrichment) {
                 _this._cachedEnrichments[_this.icinga.utils.getDomPath(input).join(' > ')] = enrichment;
             }
@@ -95,9 +95,9 @@
 
         if (autorefresh) {
             // Apply remembered instances
-            for (var inputPath in _this._cachedEnrichments) {
-                var enrichment = _this._cachedEnrichments[inputPath];
-                var input = container.querySelector(inputPath);
+            for (let inputPath in _this._cachedEnrichments) {
+                let enrichment = _this._cachedEnrichments[inputPath];
+                let input = container.querySelector(inputPath);
                 if (input !== null) {
                     enrichment.refresh(input);
                     _this._enrichments.set(input, enrichment);
@@ -110,9 +110,9 @@
         }
 
         // Create new instances
-        var inputs = container.querySelectorAll('[data-enrichment-type]');
-        inputs.forEach(function (input) {
-            var enrichment = _this._enrichments.get(input);
+        let inputs = container.querySelectorAll('[data-enrichment-type]');
+        inputs.forEach((input) => {
+            let enrichment = _this._enrichments.get(input);
             if (! enrichment) {
                 switch (input.dataset.enrichmentType) {
                     case 'search-bar':
