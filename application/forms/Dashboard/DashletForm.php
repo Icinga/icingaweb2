@@ -133,19 +133,19 @@ class DashletForm extends SetupNewDashboardForm
                 $removeButton = $this->createRemoveButton($targetUrl, t('Remove Dashlet'));
 
                 $formControls = $this->createFormControls();
-                $formControls->add([
+                $formControls->addHtml(
                     $this->registerSubmitButton(t('Add to Dashboard')),
                     $removeButton,
                     $this->createCancelButton()
-                ]);
+                );
 
                 $this->addHtml($formControls);
             } else {
                 $formControls = $this->createFormControls();
-                $formControls->add([
+                $formControls->addHtml(
                     $this->registerSubmitButton(t('Add to Dashboard')),
                     $this->createCancelButton()
-                ]);
+                );
 
                 $this->addHtml($formControls);
             }
@@ -172,16 +172,22 @@ class DashletForm extends SetupNewDashboardForm
         }
 
         $currentHome = new DashboardHome($selectedHome);
+        $currentPane = new Pane($selectedPane);
+
         if ($dashboard->hasEntry($currentHome->getName())) {
             $currentHome = clone $dashboard->getEntry($currentHome->getName());
-            if ($currentHome->getName() !== $dashboard->getActiveHome()->getName()) {
-                $currentHome->loadDashboardEntries();
-            }
-        }
+            $activatePane = $currentHome->hasEntry($selectedPane)
+            && $currentHome->getActivePane()->getName() !== $selectedPane
+                ? $selectedPane
+                : null;
 
-        $currentPane = new Pane($selectedPane);
-        if ($currentHome->hasEntry($currentPane->getName())) {
-            $currentPane = clone $currentHome->getEntry($currentPane->getName());
+            if ($currentHome->getName() !== $dashboard->getActiveHome()->getName() || $activatePane) {
+                $currentHome->loadDashboardEntries($activatePane);
+            }
+
+            if ($currentHome->hasEntry($currentPane->getName())) {
+                $currentPane = clone $currentHome->getActivePane();
+            }
         }
 
         if (! $this->isUpdating()) {
@@ -257,16 +263,22 @@ class DashletForm extends SetupNewDashboardForm
         } else {
             $orgHome = $dashboard->getEntry($this->getValue('org_home'));
             $orgPane = $orgHome->getEntry($this->getValue('org_pane'));
-            $orgDashlet = $orgPane->getEntry($this->getValue('org_dashlet'));
+            if ($orgHome->getActivePane()->getName() !== $orgPane->getName()) {
+                $orgHome->loadDashboardEntries($orgPane->getName());
 
+                $orgPane = $orgHome->getActivePane();
+            }
+
+            $orgDashlet = $orgPane->getEntry($this->getValue('org_dashlet'));
             $currentPane->setHome($currentHome);
-            /**
-             * When the user wishes to create a new dashboard pane, we have to explicitly reset the dashboard panes
-             * of the original home, so that it isn't considered as we want to move the pane even though it isn't
-             * supposed to when the original home contains a dashboard with the same name
-             * {@see DashboardHome::manageEntry()} for details
-             */
-            if (! $currentHome->hasEntry($currentPane->getName()) || $currentHome->getName() === $orgHome->getName()) {
+
+            if (! $currentHome->hasEntry($currentPane->getName())) {
+                /**
+                 * When the user is going to move the Dashlet into a new pane in a different home, it might be possible
+                 * that the original Home contains a Pane with the same name and in {@see DashboardHome::manageEntry()}
+                 * this would be interpreted as if we wanted to move the Pane from the original Home. Therefore, we need
+                 * to explicitly reset all dashboard entries of the org Home here.
+                 */
                 $orgHome->setEntries([]);
             }
 
@@ -277,7 +289,6 @@ class DashletForm extends SetupNewDashboardForm
                 ->setUrl($this->getValue('url'))
                 ->setTitle($this->getValue('dashlet'))
                 ->setDescription($this->getValue('description'));
-
 
             if ($orgPane->getName() !== $currentPane->getName()
                 && $currentPane->hasEntry($currentDashlet->getName())) {
@@ -302,12 +313,6 @@ class DashletForm extends SetupNewDashboardForm
             // e.g. when the user just presses the update button without changing anything
             if (empty($dashletDiff) && empty($paneDiff)) {
                 return;
-            }
-
-            if (empty($paneDiff)) {
-                // No dashboard diff means the dashlet is still in the same pane, so just
-                // reset the dashlets of the original pane
-                $orgPane->setEntries([]);
             }
 
             $conn->beginTransaction();
