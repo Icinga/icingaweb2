@@ -97,6 +97,9 @@ class StyleSheet
      */
     protected $app;
 
+    /** @var string[] Pre-compiled CSS files */
+    protected $cssFiles = [];
+
     /**
      * Less compiler
      *
@@ -131,7 +134,11 @@ class StyleSheet
     {
         foreach ($this->app->getLibraries() as $library) {
             foreach ($library->getCssAssets() as $lessFile) {
-                $this->lessCompiler->addLessFile($lessFile);
+                if (substr($lessFile, -4) === '.css') {
+                    $this->cssFiles[] = $lessFile;
+                } else {
+                    $this->lessCompiler->addLessFile($lessFile);
+                }
             }
         }
 
@@ -199,6 +206,16 @@ class StyleSheet
     }
 
     /**
+     * Get all collected files
+     *
+     * @return string[]
+     */
+    protected function getFiles(): array
+    {
+        return array_merge($this->cssFiles, $this->lessCompiler->getLessFiles());
+    }
+
+    /**
      * Get the stylesheet for PDF export
      *
      * @return  $this
@@ -223,7 +240,13 @@ class StyleSheet
         if ($minified) {
             $this->lessCompiler->compress();
         }
-        return $this->lessCompiler->render();
+
+        $css = '';
+        foreach ($this->cssFiles as $cssFile) {
+            $css .= file_get_contents($cssFile);
+        }
+
+        return $css . $this->lessCompiler->render();
     }
 
     /**
@@ -243,14 +266,15 @@ class StyleSheet
 
         $noCache = $request->getHeader('Cache-Control') === 'no-cache' || $request->getHeader('Pragma') === 'no-cache';
 
-        if (! $noCache && FileCache::etagMatchesFiles($styleSheet->lessCompiler->getLessFiles())) {
+        $collectedFiles = $styleSheet->getFiles();
+        if (! $noCache && FileCache::etagMatchesFiles($collectedFiles)) {
             $response
                 ->setHttpResponseCode(304)
                 ->sendHeaders();
             return;
         }
 
-        $etag = FileCache::etagForFiles($styleSheet->lessCompiler->getLessFiles());
+        $etag = FileCache::etagForFiles($collectedFiles);
 
         $response->setHeader('ETag', $etag, true)
             ->setHeader('Content-Type', 'text/css', true);
