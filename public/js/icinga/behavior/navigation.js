@@ -221,8 +221,19 @@
     };
 
     Navigation.prototype.setActiveAndSelected = function ($el) {
-        this.setActive($el);
-        this.setSelected($el);
+        if ($el.length > 1) {
+            $el.each(el => {
+                if (! this.active) {
+                    this.setActiveAndSelected($(el));
+                }
+            });
+        } else if ($el.length) {
+            if ($el[0].offsetWidth || $el[0].offsetHeight || $el.closest('.config-menu').length) {
+                // It's either a visible menu item or a config menu item
+                this.setActive($el);
+                this.setSelected($el);
+            }
+        }
     };
 
     /**
