@@ -1,10 +1,11 @@
 <?php
 
-use Icinga\Web\Navigation\Mobile\MobileConfigMenu;
-use Icinga\Web\Navigation\Mobile\MobileNavigation;
-use Icinga\Web\Url;
-use Icinga\Web\Notification;
 use Icinga\Authentication\Auth;
+use Icinga\Web\Navigation\Mobile\MobileConfigMenu;
+use Icinga\Web\Navigation\Mobile\MobileMenu;
+use Icinga\Web\Notification;
+use Icinga\Web\Url;
+use Icinga\Web\Widget\SearchDashboard;
 use ipl\Html\HtmlString;
 use ipl\Web\Widget\Icon;
 
@@ -25,6 +26,9 @@ if ($this->layout()->inlineLayout) {
 } else {
     $inlineLayoutScript = 'inline.phtml';
 }
+
+$searchDashboard = new SearchDashboard();
+$searchDashboard->setUser($this->Auth()->getUser());
 
 ?>
 <div id="header">
@@ -47,13 +51,18 @@ if ($this->layout()->inlineLayout) {
                 )
             ); ?>
         </div>
+    <?php if ($searchDashboard->search('dummy')->getPane('search')->hasDashlets()): ?>
         <form id="mobile-searchbar" action="<?= $this->href('search') ?>" method="get" role="search" class="search-control">
             <input type="text" name="q" id="search" class="search search-input" required
                    placeholder="<?= $this->translate('Search everything') ?> &hellip;"
                    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
             <button class="search-reset icon-cancel" type="reset"></button>
         </form>
-        <?= new MobileConfigMenu() ?>
+    <?php endif; ?>
+        <div id="mobile-config-menu" data-last-update="-1" data-base-target="_main" class="container"
+             data-icinga-url="<?= $this->href('layout/mobile-config-menu') ?>"  data-icinga-refresh="15">
+            <?= new MobileConfigMenu() ?>
+        </div>
         <?= $this->render('parts/navigation.phtml'); ?>
     </div>
 <?php endif ?>
@@ -100,5 +109,8 @@ if ($this->layout()->inlineLayout) {
     }
   ?></ul>
   <div id="application-state-summary" class="container" data-icinga-url="<?= $this->url('application-state/summary') ?>" data-last-update="-1" data-icinga-refresh="60"></div>
+    <div id="mobile-menu" data-last-update="-1" data-base-target="_main" class="container"
+         data-icinga-url="<?= $this->href('layout/mobile-menu') ?>"  data-icinga-refresh="15">
+        <?= new MobileMenu() ?>
+    </div>
 </div>
-<?= new MobileNavigation() ?>
