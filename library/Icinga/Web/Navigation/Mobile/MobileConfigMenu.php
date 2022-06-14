@@ -1,10 +1,12 @@
 <?php
+/* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Web\Navigation\Mobile;
 
 use Icinga\Application\Icinga;
 use Icinga\Authentication\Auth;
 use Icinga\Common\HealthBadgeTrait;
+use Icinga\Web\Navigation\ConfigMenu;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -12,7 +14,7 @@ use ipl\Html\Text;
 use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
 
-class MobileConfigMenu extends BaseHtmlElement
+class MobileConfigMenu extends ConfigMenu
 {
     use HealthBadgeTrait;
 
@@ -23,122 +25,7 @@ class MobileConfigMenu extends BaseHtmlElement
         'id' => 'mobile-config-menu'
     ];
 
-    protected $children;
-
-    protected $healthBadge;
-
-    public function __construct()
-    {
-        $this->children = [
-            'system' => [
-                'title' => t('System'),
-                'items' => [
-                    'about' => [
-                        'label' => t('About'),
-                        'url' => 'about'
-                    ],
-                    'health' => [
-                        'label' => t('Health'),
-                        'url' => 'health',
-                    ],
-                    'announcements' => [
-                        'label' => t('Announcements'),
-                        'url' => 'announcements'
-                    ],
-                    'sessions' => [
-                        'label' => t('User Sessions'),
-                        'permission' => 'application/sessions',
-                        'url' => 'manage-user-devices'
-                    ]
-                ]
-            ],
-            'configuration' => [
-                'title' => t('Configuration'),
-                'permission' => 'config/*',
-                'items' => [
-                    'application' => [
-                        'label' => t('Application'),
-                        'url' => 'config/general'
-                    ],
-                    'authentication' => [
-                        'label' => t('Access Control'),
-                        'permission'  => 'config/access-control/*',
-                        'url' => 'role/list'
-                    ],
-                    'navigation' => [
-                        'label' => t('Shared Navigation'),
-                        'permission'  => 'config/navigation',
-                        'url' => 'navigation'
-                    ],
-                    'modules' => [
-                        'label' => t('Modules'),
-                        'permission'  => 'config/modules',
-                        'url' => 'config/modules'
-                    ]
-                ]
-            ],
-            'logout' => [
-                'items' => [
-                    'logout' => [
-                        'label' => t('Logout'),
-                        'icon' => 'power-off',
-                        'atts'  => [
-                            'target' => '_self',
-                            'class' => 'nav-item-logout'
-                        ],
-                        'url'         => 'authentication/logout'
-                    ]
-                ]
-            ]
-        ];
-
-        $this->healthBadge = $this->createHealthBadge();
-    }
-
-    protected function createLevel2MenuItem($item, $key)
-    {
-        if (isset($item['permission']) && ! Auth::getInstance()->hasPermission($item['permission'])) {
-            return null;
-        }
-
-        $class = null;
-        if ($key === 'health') {
-            $class = 'badge-nav-item';
-        }
-
-        $icon = null;
-        $iconClass = null;
-        if (isset($item['icon'])) {
-            $icon =  new Icon($item['icon']);
-            $iconClass = 'has-icon';
-        }
-
-        $li = HtmlElement::create(
-            'li',
-            isset($item['atts']) ? $item['atts'] : null,
-            [
-                HtmlElement::create(
-                    'a',
-                    Attributes::create(['href' => Url::fromPath($item['url'])]),
-                    [
-                        $icon,
-                        $item['label'],
-                        $key === 'health' ? $this->healthBadge : null
-                    ]
-                ),
-            ]
-        );
-
-        $li->addAttributes(['class' => $class]);
-        $li->addAttributes(['class' => $iconClass]);
-
-        if ($this->isSelectedItem($item)) {
-            $li->addAttributes(['class' => 'selected']);
-            $this->cogItemActive = true;
-        }
-
-        return $li;
-    }
+    protected $flyoutID = 'mobile-config-menu-flyout';
 
     protected function isSelectedItem($item)
     {
@@ -150,23 +37,11 @@ class MobileConfigMenu extends BaseHtmlElement
         return false;
     }
 
-    protected function createLevel2Menu()
-    {
-        $level2Nav = HtmlElement::create(
-            'div',
-            Attributes::create(['class' => 'nav-level-1 flyout'])
-        );
-
-        $this->assembleLevel2Nav($level2Nav);
-
-        return $level2Nav;
-    }
-
     protected function assembleLevel2Nav(BaseHtmlElement $level2Nav)
     {
         $username = Auth::getInstance()->getUser()->getUsername();
         $navContent = HtmlElement::create('div', ['class' => 'flyout-content']);
-        $navContent->add(HtmlElement::create('ul', ['class' => 'nav'], [
+        $navContent->add(HtmlElement::create('ul', ['class' => 'nav flyout-menu'], [
             HtmlElement::create('li', ['class' => 'has-icon'], [
                 HtmlElement::create(
                     'a',
@@ -191,7 +66,7 @@ class MobileConfigMenu extends BaseHtmlElement
                 ));
             }
 
-            $ul = HtmlElement::create('ul', ['class' => 'nav']);
+            $ul = HtmlElement::create('ul', ['class' => 'nav flyout-menu']);
             foreach ($c['items'] as $key => $item) {
                 $ul->add($this->createLevel2MenuItem($item, $key));
             }
