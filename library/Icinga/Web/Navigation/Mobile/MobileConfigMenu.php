@@ -2,7 +2,6 @@
 
 namespace Icinga\Web\Navigation\Mobile;
 
-use Icinga\Application\Hook\HealthHook;
 use Icinga\Application\Icinga;
 use Icinga\Authentication\Auth;
 use Icinga\Common\HealthBadgeTrait;
@@ -12,16 +11,10 @@ use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
-use ipl\Web\Widget\StateBadge;
 
 class MobileConfigMenu extends BaseHtmlElement
 {
-    // Maybe states as a trait?, see also in ConfigMenu.php
-    const STATE_OK = 'ok';
-    const STATE_CRITICAL = 'critical';
-    const STATE_WARNING = 'warning';
-    const STATE_PENDING = 'pending';
-    const STATE_UNKNOWN = 'unknown';
+    use HealthBadgeTrait;
 
     protected $tag = 'ul';
 
@@ -100,52 +93,6 @@ class MobileConfigMenu extends BaseHtmlElement
         ];
 
         $this->healthBadge = $this->createHealthBadge();
-    }
-
-    protected function createHealthBadge()
-    {
-        $stateBadge = null;
-        if ($this->getHealthCount() > 0) {
-            $stateBadge = new StateBadge($this->getHealthCount(), $this->state);
-            $stateBadge->addAttributes(['class' => 'disabled']);
-        }
-
-        return $stateBadge;
-    }
-
-    protected function getHealthCount()
-    {
-        $count = 0;
-        $title = null;
-        $worstState = null;
-        foreach (HealthHook::collectHealthData()->select() as $result) {
-            if ($worstState === null || $result->state > $worstState) {
-                $worstState = $result->state;
-                $title = $result->message;
-                $count = 1;
-            } elseif ($worstState === $result->state) {
-                $count++;
-            }
-        }
-
-        switch ($worstState) {
-            case HealthHook::STATE_OK:
-                $count = 0;
-                break;
-            case HealthHook::STATE_WARNING:
-                $this->state = self::STATE_WARNING;
-                break;
-            case HealthHook::STATE_CRITICAL:
-                $this->state = self::STATE_CRITICAL;
-                break;
-            case HealthHook::STATE_UNKNOWN:
-                $this->state = self::STATE_UNKNOWN;
-                break;
-        }
-
-        $this->title = $title;
-
-        return $count;
     }
 
     protected function createLevel2MenuItem($item, $key)
