@@ -14,7 +14,7 @@ use ipl\Html\HtmlString;
 use ipl\Html\Text;
 use ipl\Web\Widget\Icon;
 
-class MobileNavigation extends BaseHtmlElement
+class MobileMenu extends BaseHtmlElement
 {
     use HealthBadgeTrait;
 
