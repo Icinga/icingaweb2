@@ -93,8 +93,8 @@ class MobileConfigMenu extends ConfigMenu
         );
 
         $this->add(HtmlElement::create('li', null, [
-            $button,
             $this->createLevel2Menu(),
+            $button,
             $this->healthBadge
         ]));
     }
