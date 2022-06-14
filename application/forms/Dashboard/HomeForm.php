@@ -4,6 +4,7 @@
 
 namespace Icinga\Forms\Dashboard;
 
+use Icinga\Application\Logger;
 use Icinga\Web\Dashboard\Common\BaseDashboard;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
@@ -11,7 +12,7 @@ use Icinga\Web\Notification;
 
 class HomeForm extends BaseDashboardForm
 {
-    public function load(BaseDashboard $dashboard)
+    public function load(BaseDashboard $dashboard): void
     {
         $this->populate(['title' => $dashboard->getTitle()]);
     }
@@ -47,19 +48,49 @@ class HomeForm extends BaseDashboardForm
 
             $home->setTitle($this->getPopulatedValue('title'));
 
-            $this->dashboard->manageEntry($home);
+            try {
+                $this->dashboard->manageEntry($home);
+            } catch (\Exception $err) {
+                Logger::error(
+                    'Unable to update Dashboard Home "%s". An unexpected error occurred: %s',
+                    $home->getTitle(),
+                    $err
+                );
 
-            Notification::success(sprintf(t('Updated dashboard home "%s" successfully'), $home->getTitle()));
-        } else {
-            $home = new DashboardHome($this->getPopulatedValue('title'));
-            if ($this->dashboard->hasEntry($home->getName())) {
-                Notification::error(sprintf(t('Dashboard home "%s" already exists'), $home->getName()));
+                Notification::error(
+                    t('Failed to successfully update the Dashboard Home. Please check the logs for details!')
+                );
+
                 return;
             }
 
-            $this->dashboard->manageEntry($home);
+            Notification::success(sprintf(t('Updated Dashboard Home "%s" successfully'), $home->getTitle()));
+        } else {
+            $home = new DashboardHome($this->getPopulatedValue('title'));
+            if ($this->dashboard->hasEntry($home->getName())) {
+                Notification::error(sprintf(t('Dashboard Home "%s" already exists'), $home->getTitle()));
+                return;
+            }
 
-            Notification::success(sprintf(t('Added dashboard home "%s" successfully'), $home->getName()));
+            try {
+                $this->dashboard->manageEntry($home);
+
+                $this->requestSucceeded = true;
+
+                Notification::success(sprintf(t('Added Dashboard Home "%s" successfully'), $home->getTitle()));
+            } catch (\Exception $err) {
+                Logger::error(
+                    'Unable to add Dashboard Home "%s". An unexpected error occurred: %s',
+                    $home->getTitle(),
+                    $err
+                );
+
+                Notification::error(
+                    t('Failed to successfully add the Dashboard Home. Please check the logs for details!')
+                );
+
+                return;
+            }
         }
     }
 }

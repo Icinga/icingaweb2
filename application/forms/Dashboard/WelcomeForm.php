@@ -68,11 +68,11 @@ class WelcomeForm extends Form
 
             Logger::error('Unable to apply the system defaults into the DB. An error occurred: %s', $err);
 
-            Notification::error(t('Failed to successfully save the data. Please check the logs for details.'));
+            Notification::error(t('Failed to successfully save the data. Please check the logs for details!'));
 
             return;
         }
 
-        Notification::success(t('Imported system defaults successfully.'));
+        Notification::success(t('Imported system defaults successfully'));
     }
 }

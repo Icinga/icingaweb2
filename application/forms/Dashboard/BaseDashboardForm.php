@@ -18,9 +18,9 @@ use ipl\Web\Widget\Icon;
  */
 abstract class BaseDashboardForm extends CompatForm
 {
-    const CREATE_NEW_HOME = 'Create new Home';
+    public const CREATE_NEW_HOME = 'Create new Home';
 
-    const CREATE_NEW_PANE = 'Create new Dashboard';
+    public const CREATE_NEW_PANE = 'Create new Dashboard';
 
     /**
      * Dashboard instance for which this form is being rendered
@@ -31,6 +31,8 @@ abstract class BaseDashboardForm extends CompatForm
 
     /** @var Url */
     protected $requestUrl;
+
+    protected $requestSucceeded = false;
 
     /**
      * Create a new Dashboard Form
@@ -50,7 +52,7 @@ abstract class BaseDashboardForm extends CompatForm
      *
      * @return void
      */
-    protected function init()
+    protected function init(): void
     {
         // This is needed for the modal views
         $this->setAction((string) $this->requestUrl);
@@ -71,8 +73,18 @@ abstract class BaseDashboardForm extends CompatForm
      *
      * @return void
      */
-    public function load(BaseDashboard $dashboard)
+    public function load(BaseDashboard $dashboard): void
     {
+    }
+
+    /**
+     * Get whether the current request was successfully processed
+     *
+     * @return bool
+     */
+    public function requestSucceeded(): bool
+    {
+        return $this->requestSucceeded;
     }
 
     /**

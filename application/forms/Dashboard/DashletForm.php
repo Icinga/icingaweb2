@@ -16,14 +16,14 @@ use ipl\Html\HtmlElement;
 
 class DashletForm extends SetupNewDashboardForm
 {
-    protected function init()
+    protected function init(): void
     {
         parent::init();
 
         $this->setAction((string) $this->requestUrl);
     }
 
-    public function load(BaseDashboard $dashboard)
+    public function load(BaseDashboard $dashboard): void
     {
         /** @var Dashlet $dashboard */
         $this->populate([
@@ -79,7 +79,7 @@ class DashletForm extends SetupNewDashboardForm
             'value'        => $populatedHome,
             'multiOptions' => array_merge([self::CREATE_NEW_HOME => self::CREATE_NEW_HOME], $homes),
             'label'        => t('Select Home'),
-            'description'  => t('Select a dashboard home you want to add the dashboard pane to.')
+            'description'  => t('Select a dashboard home you want to add the pane to.')
         ]);
 
         if (empty($homes) || $populatedHome === self::CREATE_NEW_HOME) {
@@ -134,7 +134,7 @@ class DashletForm extends SetupNewDashboardForm
 
                 $formControls = $this->createFormControls();
                 $formControls->addHtml(
-                    $this->registerSubmitButton(t('Add to Dashboard')),
+                    $this->registerSubmitButton(t('Update Dashlet')),
                     $removeButton,
                     $this->createCancelButton()
                 );
@@ -192,6 +192,8 @@ class DashletForm extends SetupNewDashboardForm
 
         if (! $this->isUpdating()) {
             $customDashlet = null;
+            $countDashlets = $currentPane->countEntries();
+
             if (($dashlet = $this->getPopulatedValue('dashlet')) && ($url = $this->getPopulatedValue('url'))) {
                 $customDashlet = new Dashlet($dashlet, $url, $currentPane);
                 $customDashlet->setDescription($this->getPopulatedValue('description'));
@@ -199,15 +201,14 @@ class DashletForm extends SetupNewDashboardForm
                 if ($currentPane->hasEntry($customDashlet->getName()) || $this->customDashletAlreadyExists) {
                     if ($this->customDashletAlreadyExists) {
                         $message = sprintf(
-                            t('The specified custom Dashlet name "%s" is the same as one of the selected' .
-                                ' module Dashlets.'),
-                            $customDashlet->getName()
+                            t('Failed to create custom Dashlet! The selected module Dashlet(s) contains Dashlet "%s"'),
+                            $customDashlet->getTitle()
                         );
                     } else {
                         $message = sprintf(
-                            t('Dashlet "%s" already exists within the "%s" dashboard pane'),
-                            $customDashlet->getTitle(),
-                            $currentPane->getTitle()
+                            t('Dashboard pane "%s" has already a Dashlet called "%s"'),
+                            $currentPane->getTitle(),
+                            $customDashlet->getTitle()
                         );
                     }
 
@@ -236,9 +237,9 @@ class DashletForm extends SetupNewDashboardForm
                         foreach ($dashlets as $dashlet) {
                             if ($currentPane->hasEntry($dashlet->getName())) {
                                 Notification::error(sprintf(
-                                    t('Dashlet "%s" already exists within the "%s" dashboard pane'),
-                                    $dashlet->getTitle(),
-                                    $currentPane->getTitle()
+                                    t('Pane "%s" has already a Dashlet called "%s"'),
+                                    $currentPane->getTitle(),
+                                    $dashlet->getTitle()
                                 ));
 
                                 return;
@@ -253,13 +254,27 @@ class DashletForm extends SetupNewDashboardForm
 
                 $conn->commitTransaction();
             } catch (Exception $err) {
-                Logger::error($err);
                 $conn->rollBackTransaction();
 
-                throw $err;
+                Logger::error('Unable to add new Dashlet(s). An unexpected error occurred: %s', $err);
+
+                Notification::error(
+                    t('Failed to successfully add new Dashlet(s). Please check the logs for details!')
+                );
+
+                return;
             }
 
-            Notification::success(t('Created dashlet(s) successfully'));
+            $countDashlets = $currentPane->countEntries() - $countDashlets;
+            $dashlet = $currentPane->getEntries();
+            $dashlet = end($dashlet);
+
+            $this->requestSucceeded = true;
+
+            Notification::success(sprintf(
+                tp('Added Dashlet "%s" successfully', 'Added %d Dashlets successfully', $countDashlets),
+                $countDashlets === 1 ? $dashlet->getTitle() : $countDashlets
+            ));
         } else {
             $orgHome = $dashboard->getEntry($this->getValue('org_home'));
             $orgPane = $orgHome->getEntry($this->getValue('org_pane'));
@@ -290,12 +305,16 @@ class DashletForm extends SetupNewDashboardForm
                 ->setTitle($this->getValue('dashlet'))
                 ->setDescription($this->getValue('description'));
 
-            if ($orgPane->getName() !== $currentPane->getName()
-                && $currentPane->hasEntry($currentDashlet->getName())) {
+            if ($currentPane->hasEntry($currentDashlet->getName())
+                && (
+                    $currentHome->getName() !== $orgHome->getName()
+                    || $orgPane->getName() !== $currentPane->getName()
+                )
+            ) {
                 Notification::error(sprintf(
-                    t('Failed to move dashlet "%s": Dashlet already exists within the "%s" dashboard pane'),
-                    $currentDashlet->getTitle(),
-                    $currentPane->getTitle()
+                    t('Failed to move a Dashlet: Pane "%s" has already a Dashlet called "%s"'),
+                    $currentPane->getTitle(),
+                    $currentDashlet->getTitle()
                 ));
 
                 return;
@@ -324,13 +343,22 @@ class DashletForm extends SetupNewDashboardForm
 
                 $conn->commitTransaction();
             } catch (Exception $err) {
-                Logger::error($err);
                 $conn->rollBackTransaction();
 
-                throw $err;
+                Logger::error(
+                    'Unable to update Dashlet "%s". An unexpected error occurred: %s',
+                    $currentDashlet->getTitle(),
+                    $err
+                );
+
+                Notification::error(t('Failed to update the Dashlet. Please check the logs for details!'));
+
+                return;
             }
 
-            Notification::success(sprintf(t('Updated dashlet "%s" successfully'), $currentDashlet->getTitle()));
+            $this->requestSucceeded = true;
+
+            Notification::success(sprintf(t('Updated Dashlet "%s" successfully'), $currentDashlet->getTitle()));
         }
     }
 }

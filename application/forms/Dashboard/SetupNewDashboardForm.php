@@ -4,6 +4,7 @@
 
 namespace Icinga\Forms\Dashboard;
 
+use Icinga\Application\Logger;
 use Icinga\Application\Modules;
 use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Dashboard\DashboardHome;
@@ -31,7 +32,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
     /** @var bool Whether the created custom dashlets with custom url & filter already exists */
     protected $customDashletAlreadyExists = false;
 
-    protected function init()
+    protected function init(): void
     {
         parent::init();
 
@@ -73,6 +74,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
             }
 
             if (isset($chosenDashlets[$module]) && ! $this->customDashletAlreadyExists) {
+                // This should never ever happen, but hey, it never harms to play it save!!
                 $this->customDashletAlreadyExists = array_key_exists(
                     $this->getPopulatedValue('dashlet'),
                     $chosenDashlets[$module]
@@ -92,6 +94,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
     {
         $strict = $this->isUpdating() || $this->getPopulatedValue('btn_next') || ! $this->hasBeenSent();
         $this->dumpArbitaryDashlets($strict);
+
         $this->assembleNextPageDashboardPart();
         $this->assembleNexPageDashletPart();
     }
@@ -146,7 +149,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
         $this->addElement('text', 'pane', [
             'required'    => true,
             'label'       => t('Dashboard Title'),
-            'description' => t('Enter a title for the new dashboard you want to add the dashlets to')
+            'description' => t('Enter a title for the new dashboard you want to add the dashlets to.')
         ]);
     }
 
@@ -184,14 +187,14 @@ class SetupNewDashboardForm extends BaseDashboardForm
                     'label'       => t('Url'),
                     'value'       => $dashlet->getUrl()->getRelativeUrl(),
                     'description' => t(
-                        'Enter url to be loaded in the dashlet. You can paste the full URL, including filters'
+                        'Enter url to be loaded in the dashlet. You can paste the full URL, including filters.'
                     )
                 ]);
 
                 $this->addElement('textarea', $elementId . '_description', [
                     'label'       => t('Description'),
                     'value'       => $dashlet->getDescription(),
-                    'description' => t('Enter description for the dashlet')
+                    'description' => t('Enter description for the dashlet.')
                 ]);
             }
         }
@@ -219,7 +222,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
         $this->addElement('textarea', 'description', [
             'label'       => t('Description'),
             'placeholder' => t('Enter dashlet description'),
-            'description' => t('Enter description for the dashlet'),
+            'description' => t('Enter description for the dashlet.'),
         ]);
     }
 
@@ -264,7 +267,7 @@ class SetupNewDashboardForm extends BaseDashboardForm
                 if (($name = $this->getPopulatedValue('dashlet')) && ($url = $this->getPopulatedValue('url'))) {
                     if ($this->customDashletAlreadyExists) {
                         Notification::error(sprintf(
-                            t('Failed to create new dahlets. Dashlet "%s" exists within the selected module Dashlets.'),
+                            t('Failed to create custom Dashlet! The selected module Dashlet(s) contains Dashlet "%s"'),
                             $name
                         ));
 
@@ -280,10 +283,24 @@ class SetupNewDashboardForm extends BaseDashboardForm
                 $conn->commitTransaction();
             } catch (\Exception $err) {
                 $conn->rollBackTransaction();
-                throw $err;
+
+                Logger::error('Unable to create new Dashlet(s). An unexpected error occurred: %s', $err);
+
+                Notification::error(t('Failed to create new Dashlet(s). Please check the logs for details!'));
+
+                return;
             }
 
-            Notification::success(t('Added new dashlet(s) successfully'));
+            $this->requestSucceeded = true;
+
+            $count = $pane->countEntries();
+            $dashlet = $pane->getEntries();
+            $dashlet = end($dashlet);
+
+            Notification::success(sprintf(
+                tp('Added Dashlet %s successfully', 'Added %d Dashlets successfully', $count),
+                $count === 1 ? $dashlet->getTitle() : $count
+            ));
         }
     }
 

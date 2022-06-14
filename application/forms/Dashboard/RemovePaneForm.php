@@ -4,10 +4,10 @@
 
 namespace Icinga\Forms\Dashboard;
 
+use Exception;
+use Icinga\Application\Logger;
 use Icinga\Web\Notification;
-use Icinga\Web\Dashboard\Dashboard;
 use ipl\Html\HtmlElement;
-use ipl\Web\Url;
 
 class RemovePaneForm extends BaseDashboardForm
 {
@@ -21,7 +21,7 @@ class RemovePaneForm extends BaseDashboardForm
         $this->addHtml(HtmlElement::create(
             'h2',
             null,
-            sprintf(t('Please confirm removal of dashboard pane "%s"'), $this->requestUrl->getParam('pane'))
+            sprintf(t('Please confirm removal of pane "%s"'), $this->requestUrl->getParam('pane'))
         ));
 
         $this->addHtml($this->registerSubmitButton(t('Remove Pane'))->setName('btn_remove'));
@@ -30,10 +30,22 @@ class RemovePaneForm extends BaseDashboardForm
     protected function onSuccess()
     {
         $home = $this->dashboard->getActiveHome();
+        $pane = $home->getActivePane();
 
-        $pane = $home->getEntry($this->requestUrl->getParam('pane'));
-        $home->removeEntry($pane);
+        try {
+            $home->removeEntry($pane);
 
-        Notification::success(sprintf(t('Removed dashboard pane "%s" successfully'), $pane->getTitle()));
+            $this->requestSucceeded = true;
+
+            Notification::success(sprintf(t('Removed pane "%s" successfully'), $pane->getTitle()));
+        } catch (Exception $err) {
+            Logger::error(
+                'Unable to remove pane "%s". An unexpected error occurred: %s',
+                $pane->getTitle(),
+                $err
+            );
+
+            Notification::error(t('Failed to successfully remove the pane. Please check the logs for details!'));
+        }
     }
 }

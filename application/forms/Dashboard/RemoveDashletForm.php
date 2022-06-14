@@ -4,9 +4,9 @@
 
 namespace Icinga\Forms\Dashboard;
 
+use Icinga\Application\Logger;
 use Icinga\Web\Notification;
 use ipl\Html\HtmlElement;
-use ipl\Web\Url;
 
 class RemoveDashletForm extends BaseDashboardForm
 {
@@ -18,8 +18,8 @@ class RemoveDashletForm extends BaseDashboardForm
     protected function assemble()
     {
         $this->addHtml(HtmlElement::create('h1', null, sprintf(
-            t('Please confirm removal of dashlet "%s"'),
-            Url::fromRequest()->getParam('dashlet')
+            t('Please confirm removal of Dashlet "%s"'),
+            $this->requestUrl->getParam('dashlet')
         )));
 
         $submit = $this->registerSubmitButton(t('Remove Dashlet'));
@@ -30,13 +30,27 @@ class RemoveDashletForm extends BaseDashboardForm
 
     protected function onSuccess()
     {
-        $requestUrl = Url::fromRequest();
         $home = $this->dashboard->getActiveHome();
-        $pane = $home->getEntry($requestUrl->getParam('pane'));
+        $pane = $home->getActivePane();
 
-        $dashlet = $requestUrl->getParam('dashlet');
-        $pane->removeEntry($dashlet);
+        $dashlet = $pane->getEntry($this->requestUrl->getParam('dashlet'));
 
-        Notification::success(sprintf(t('Removed dashlet "%s" successfully'), $dashlet));
+        try {
+            $pane->removeEntry($dashlet);
+
+            $this->requestSucceeded = true;
+        } catch (\Exception $err) {
+            Logger::error(
+                'Unable to remove Dashlet "%s". An unexpected error occurred: %s',
+                $dashlet->getTitle(),
+                $err
+            );
+
+            Notification::error(t('Failed to successfully remove the Dashlet. Please check the logs for details!'));
+
+            return;
+        }
+
+        Notification::success(sprintf(t('Removed Dashlet "%s" successfully'), $dashlet->getTitle()));
     }
 }

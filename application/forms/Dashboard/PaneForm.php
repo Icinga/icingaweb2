@@ -14,6 +14,15 @@ use Icinga\Web\Dashboard\Dashboard;
 
 class PaneForm extends BaseDashboardForm
 {
+    public function load(BaseDashboard $dashboard): void
+    {
+        $this->populate([
+            'org_title' => $dashboard->getTitle(),
+            'title'     => $dashboard->getTitle(),
+            'org_name'  => $dashboard->getName()
+        ]);
+    }
+
     protected function assemble()
     {
         $this->addElement('hidden', 'org_name', ['required' => false]);
@@ -24,7 +33,7 @@ class PaneForm extends BaseDashboardForm
             'label'       => t('Title'),
             'placeholder' => t('Create new Dashboard'),
             'description' => $this->isUpdating()
-                ? t('Edit the title of this dashboard pane.')
+                ? t('Edit the title of this pane.')
                 : t('Add new dashboard to this home.')
         ]);
 
@@ -55,7 +64,7 @@ class PaneForm extends BaseDashboardForm
 
         $formControls = $this->createFormControls();
         $formControls->addHtml(
-            $this->registerSubmitButton($this->isUpdating() ? t('Update Pane') : t('Add Dashboard'))
+            $this->registerSubmitButton($this->isUpdating() ? t('Update Pane') : t('Add Pane'))
         );
 
         if ($this->isUpdating()) {
@@ -102,9 +111,9 @@ class PaneForm extends BaseDashboardForm
 
             if ($orgHome->getName() !== $currentHome->getName() && $currentHome->hasEntry($currentPane->getName())) {
                 Notification::error(sprintf(
-                    t('Failed to move dashboard "%s": Dashbaord pane already exists within the "%s" dashboard home'),
-                    $currentPane->getTitle(),
-                    $currentHome->getTitle()
+                    t('Failed to move a pane: Dashboard Home "%s" has already a Pane called "%s"'),
+                    $currentHome->getTitle(),
+                    $currentPane->getTitle()
                 ));
 
                 return;
@@ -120,18 +129,29 @@ class PaneForm extends BaseDashboardForm
 
                 $conn->commitTransaction();
             } catch (\Exception $err) {
-                Logger::error($err);
                 $conn->rollBackTransaction();
+
+                Logger::error(
+                    'Unable to update pane "%s". An unexpected error occurred: %s',
+                    $currentPane->getTitle(),
+                    $err
+                );
+
+                Notification::error(t('Failed to successfully update the pane. Please check the logs for details!'));
+
+                return;
             }
 
-            Notification::success(sprintf(t('Updated dashboard pane "%s" successfully'), $currentPane->getTitle()));
+            $this->requestSucceeded = true;
+
+            Notification::success(sprintf(t('Updated pane "%s" successfully'), $currentPane->getTitle()));
         } else {
             $pane = new Pane($this->getPopulatedValue('title'));
             if ($currentHome->hasEntry($pane->getName())) {
                 Notification::error(sprintf(
-                    t('Failed to create dashboard "%s": Dashbaord pane already exists within the "%s" dashboard home'),
-                    $pane->getTitle(),
-                    $currentHome->getTitle()
+                    t('Failed to add pane: Dashboard Home "%s" has already a Pane called "%s"'),
+                    $currentHome->getTitle(),
+                    $pane->getTitle()
                 ));
 
                 return;
@@ -146,19 +166,21 @@ class PaneForm extends BaseDashboardForm
                 $conn->commitTransaction();
             } catch (\Exception $err) {
                 $conn->rollBackTransaction();
-                throw $err;
+
+                Logger::error(
+                    'Unable to add pane "%s". An unexpected error occurred: %s',
+                    $pane->getTitle(),
+                    $err
+                );
+
+                Notification::error(t('Failed to successfully add the pane. Please check the logs for details!'));
+
+                return;
             }
 
-            Notification::success(sprintf(t('Added dashboard pane "%s" successfully'), $pane->getName()));
-        }
-    }
+            $this->requestSucceeded = true;
 
-    public function load(BaseDashboard $dashboard)
-    {
-        $this->populate([
-            'org_title' => $dashboard->getTitle(),
-            'title'     => $dashboard->getTitle(),
-            'org_name'  => $dashboard->getName()
-        ]);
+            Notification::success(sprintf(t('Added pane "%s" successfully'), $pane->getTitle()));
+        }
     }
 }
