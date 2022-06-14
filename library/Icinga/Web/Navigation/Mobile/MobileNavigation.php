@@ -85,7 +85,7 @@ class MobileNavigation extends BaseHtmlElement
     protected function assembleMoreFlyout($moreFlyout)
     {
         $flyoutContent = HtmlElement::create('div', ['class' => 'flyout-content']);
-        $ul = HtmlElement::create('ul', ['class' => 'nav nav-level-2']);
+        $ul = HtmlElement::create('ul', ['class' => 'nav flyout-menu nav-level-2']);
 
         $startIndex = 0;
         foreach ($this->items as $key => $item) {
@@ -115,7 +115,9 @@ class MobileNavigation extends BaseHtmlElement
             ' '.
             ($item->getActive() ? ' active' : '') .
             ' ' .
-            ($item->getSelected() ? ' selected' : '');
+            ($item->getSelected() ? ' selected' : '') .
+            ' ' .
+            (!empty($item->getIcon()) ? ' has-icon' : '');
 
         $menuItem = HtmlElement::create(
             'li',
