@@ -1,4 +1,8 @@
 #mobile-searchbar {
+  flex: 1 1 auto;
+  margin-right: 1em;
+  margin-left: auto;
+
   input.search {
     @height: 2.5em;
 
@@ -30,6 +34,7 @@
 
 #mobile-config-menu {
   position: relative;
+  margin-left: auto;
 
   button {
     .appearance(none);
@@ -71,57 +76,15 @@
     margin: -1px;
     border: 1px solid @text-color-inverted;
     font-style: normal;
-    line-height: 1.2;
+    vertical-align: baseline;
 
     font-size: 1.75em;
   }
 
   .nav-level-1 {
-    position: fixed;
     right: 1em;
     left: 1em;
     top: 4em;
-
-    li {
-      &.badge-nav-item > a {
-        display: flex;
-        align-items: baseline;
-        width: 100%;
-
-        .state-badge {
-          margin-left: auto;
-        }
-      }
-    }
-
-    li:not(.has-icon) a {
-      padding-left: 2em;
-    }
-
-    li .icon {
-      width: 1em;
-      margin-left: .3em;
-      margin-right: .2em;
-    }
-
-    li .user-ball {
-      .ball-size-m();
-      line-height: .25;
-      margin-right: .2em;
-    }
-
-    &:before {
-      transform: rotate(225deg);
-      height: 1.1em;
-      width: 1.1em;
-      top: -.6em;
-      right: .6em;
-    }
-
-    .nav-item-logout {
-      color: @color-critical;
-      border-top: 1px solid @gray-lighter;
-    }
   }
 
   > li.active button {
@@ -130,6 +93,27 @@
 
   .nav-level-1 li.active.selected {
     background: @menu-2ndlvl-active-bg-color
+  }
+}
+
+#layout.minimal-layout #mobile-config-menu {
+  .nav-level-1 {
+    position: fixed;
+
+    &:before {
+      transform: rotate(225deg);
+      height: 1.1em;
+      width: 1.1em;
+      top: -.6em;
+      right: .6em;
+    }
+  }
+
+  li.has-icon .user-ball {
+    font-size: 1em;
+    height: 1.5em;
+    width: 1.5em;
+    margin-right: .2em;
   }
 }
 
