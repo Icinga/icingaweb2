@@ -147,6 +147,19 @@
     .button();
   }
 
+  .control-button[disabled] {
+    background: none;
+    cursor: default;
+    color: @control-disabled-color;
+    border: 1px solid @control-disabled-color;
+
+    &:hover {
+      color: @control-disabled-color;
+      background: none;
+      border: 1px solid @control-disabled-color;
+    }
+  }
+
   button.finish, a.button-like.login {
     min-width: 25em;
   }
