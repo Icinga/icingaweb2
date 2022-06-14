@@ -88,7 +88,10 @@ class DashboardsController extends CompatController
      */
     public function homeAction()
     {
-        $this->dashboard->load($this->params->getRequired('home'), $this->params->get('pane'));
+        $home = $this->params->getRequired('home');
+        $pane = $this->params->get('pane');
+
+        $this->dashboard->load($home, $pane);
 
         $activeHome = $this->dashboard->getActiveHome();
         if (! $activeHome->getEntries()) {
@@ -190,10 +193,6 @@ class DashboardsController extends CompatController
 
         $this->dashboard->load($home, $pane, true);
 
-        if (! $this->dashboard->getActiveHome()->hasEntry($pane)) {
-            $this->httpNotFound(t('Pane "%s" not found'), $pane);
-        }
-
         $paneForm = new PaneForm($this->dashboard);
         $paneForm->on(PaneForm::ON_SUCCESS, function () use ($paneForm, $home) {
             if ($this->prevActive && $home !== $paneForm->getPopulatedValue('home')) {
@@ -219,10 +218,6 @@ class DashboardsController extends CompatController
 
         $this->dashboard->load($home, $paneParam);
 
-        if (! $this->dashboard->getActiveHome()->hasEntry($paneParam)) {
-            $this->httpNotFound(t('Pane "%s" not found'), $paneParam);
-        }
-
         $paneForm = new RemovePaneForm($this->dashboard);
         $paneForm->populate(['org_name' => $paneParam]);
         $paneForm->on(RemovePaneForm::ON_SUCCESS, function () {
@@ -242,8 +237,9 @@ class DashboardsController extends CompatController
     public function newDashletAction()
     {
         $home = $this->params->getRequired('home');
+        $pane = $this->params->get('pane');
 
-        $this->dashboard->load($home, $this->params->get('pane'), true);
+        $this->dashboard->load($home, $pane, true);
 
         $dashletForm = new DashletForm($this->dashboard);
         $dashletForm->populate($this->getRequest()->getPost());
@@ -284,8 +280,18 @@ class DashboardsController extends CompatController
 
     public function editDashletAction()
     {
-        $pane = $this->validateDashletParams();
-        $dashlet = $pane->getEntry($this->params->get('dashlet'));
+        $home = $this->params->getRequired('home');
+        $pane = $this->params->getRequired('pane');
+        $dashlet = $this->params->getRequired('dashlet');
+
+        $this->dashboard->load($home, $pane, true);
+
+        $pane = $this->dashboard->getActiveHome()->getActivePane();
+        if (! $pane->hasEntry($dashlet)) {
+            $this->httpNotFound(t('Dashlet "%s" not found'), $dashlet);
+        }
+
+        $dashlet = $pane->getEntry($dashlet);
 
         $dashletForm = (new DashletForm($this->dashboard))
             ->on(DashletForm::ON_SUCCESS, function () {
@@ -295,8 +301,6 @@ class DashboardsController extends CompatController
             })
             ->handleRequest($this->getServerRequest());
 
-        $dashletForm->getElement('submit')->setLabel(t('Update Dashlet'));
-
         $dashletForm->load($dashlet);
 
         $this->setTitle(t('Edit Dashlet'));
@@ -305,7 +309,16 @@ class DashboardsController extends CompatController
 
     public function removeDashletAction()
     {
-        $this->validateDashletParams();
+        $home = $this->params->getRequired('home');
+        $pane = $this->params->getRequired('pane');
+        $dashlet = $this->params->getRequired('dashlet');
+
+        $this->dashboard->load($home, $pane);
+
+        $pane = $this->dashboard->getActiveHome()->getActivePane();
+        if (! $pane->hasEntry($dashlet)) {
+            $this->httpNotFound(t('Dashlet "%s" not found'), $dashlet);
+        }
 
         $removeForm = (new RemoveDashletForm($this->dashboard))
             ->on(RemoveDashletForm::ON_SUCCESS, function () {
@@ -469,6 +482,13 @@ class DashboardsController extends CompatController
      */
     public function setupDashboardAction()
     {
+        $this->dashboard->load(DashboardHome::DEFAULT_HOME);
+
+        $setupForm = new SetupNewDashboardForm($this->dashboard);
+        $setupForm->on(SetupNewDashboardForm::ON_SUCCESS, function () use ($setupForm) {
+            $this->redirectNow($setupForm->getRedirectUrl());
+        })->handleRequest($this->getServerRequest());
+
         if (isset($this->getRequest()->getPost()['btn_next'])) {
             // Set compact view to prevent the controls from being
             // rendered in the modal view when redirecting
@@ -478,13 +498,6 @@ class DashboardsController extends CompatController
         } else {
             $this->setTitle(t('Add Dashlet'));
         }
-
-        $this->dashboard->load();
-
-        $setupForm = new SetupNewDashboardForm($this->dashboard);
-        $setupForm->on(SetupNewDashboardForm::ON_SUCCESS, function () use ($setupForm) {
-            $this->redirectNow($setupForm->getRedirectUrl());
-        })->handleRequest($this->getServerRequest());
 
         $this->addContent($setupForm);
     }
@@ -554,25 +567,5 @@ class DashboardsController extends CompatController
         }
 
         return $tabs;
-    }
-
-    private function validateDashletParams()
-    {
-        $home = $this->params->getRequired('home');
-        $pane = $this->params->getRequired('pane');
-        $dashlet = $this->params->getRequired('dashlet');
-
-        $this->dashboard->load($home, $pane, true);
-
-        if (! $this->dashboard->getActiveHome()->hasEntry($pane)) {
-            $this->httpNotFound(t('Pane "%s" not found'), $pane);
-        }
-
-        $pane = $this->dashboard->getActiveHome()->getEntry($pane);
-        if (! $pane->hasEntry($dashlet)) {
-            $this->httpNotFound(t('Dashlet "%s" not found'), $dashlet);
-        }
-
-        return $pane;
     }
 }
