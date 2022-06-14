@@ -23,7 +23,7 @@ class MobileMenu extends BaseHtmlElement
     const EXCLUDED_ITEMS = [
         'configuration',
         'system',
-        'user'
+//        'user'
     ];
 
     protected $tag = 'nav';
@@ -49,7 +49,8 @@ class MobileMenu extends BaseHtmlElement
 
     protected function assembleMoreItem(BaseHtmlElement $moreMenu)
     {
-        $moreMenu->add(
+        $moreMenu->add([
+            $this->createMoreFlyout(),
             HtmlElement::create(
                 'button',
                 Attributes::create(['id' => 'toggle-more']),
@@ -58,9 +59,7 @@ class MobileMenu extends BaseHtmlElement
                     Text::create('More')
                 ]
             )
-        );
-
-        $moreMenu->add($this->createMoreFlyout());
+        ]);
     }
 
     protected function createNavItemIcon($item)
@@ -75,7 +74,7 @@ class MobileMenu extends BaseHtmlElement
 
     protected function createMoreFlyout()
     {
-        $moreFlyout = new HtmlElement('div', Attributes::create(['class' => 'flyout']));
+        $moreFlyout = new HtmlElement('div', Attributes::create(['class' => 'flyout', 'id' => 'more-flyout']));
 
         $this->assembleMoreFlyout($moreFlyout);
 
