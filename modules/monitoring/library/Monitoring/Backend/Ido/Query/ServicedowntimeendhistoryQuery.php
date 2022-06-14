@@ -8,18 +8,13 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
  */
 class ServicedowntimeendhistoryQuery extends ServicedowntimestarthistoryQuery
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function whereToSql($col, $sign, $expression)
+    public function isTimestamp($field)
     {
-        if ($col === 'UNIX_TIMESTAMP(sdh.actual_end_time)') {
-            return 'sdh.actual_end_time ' . $sign . ' ' . $this->timestampForSql(
-                $this->valueToTimestamp($expression)
-            );
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
+        if (! parent::isTimestamp($field)) {
+            return $field === 'sdh.actual_end_time';
         }
+
+        return true;
     }
 
     /**

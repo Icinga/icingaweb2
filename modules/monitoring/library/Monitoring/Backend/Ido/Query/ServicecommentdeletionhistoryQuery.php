@@ -8,16 +8,13 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
  */
 class ServicecommentdeletionhistoryQuery extends ServicecommenthistoryQuery
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function whereToSql($col, $sign, $expression)
+    public function isTimestamp($field)
     {
-        if ($col === 'UNIX_TIMESTAMP(sch.deletion_time)') {
-            return 'sch.deletion_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
+        if (! parent::isTimestamp($field)) {
+            return $field === 'sch.deletion_time';
         }
+
+        return true;
     }
 
     /**

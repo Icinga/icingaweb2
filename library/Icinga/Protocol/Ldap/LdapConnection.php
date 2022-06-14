@@ -322,18 +322,6 @@ class LdapConnection implements Selectable, Inspectable
     }
 
     /**
-     * Establish a connection
-     *
-     * @throws  LdapException   In case the connection could not be established
-     *
-     * @deprecated              The connection is established lazily now
-     */
-    public function connect()
-    {
-        $this->getConnection();
-    }
-
-    /**
      * Perform a LDAP bind on the current connection
      *
      * @throws  LdapException   In case the LDAP bind was unsuccessful or insecure

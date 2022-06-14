@@ -7,13 +7,10 @@ use DateInterval;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use Icinga\Data\Filter\Filter;
 use Zend_Db_Expr;
 use Zend_Db_Select;
 use Icinga\Application\Logger;
-use Icinga\Data\Filter\FilterAnd;
-use Icinga\Data\Filter\FilterChain;
-use Icinga\Data\Filter\FilterNot;
-use Icinga\Data\Filter\FilterOr;
 use Icinga\Data\SimpleQuery;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\QueryException;
@@ -116,6 +113,23 @@ class DbQuery extends SimpleQuery
         return parent::where($condition, $value);
     }
 
+    public function addFilter(Filter $filter)
+    {
+        $this->expressionsToTimestamp($filter);
+        return parent::addFilter($filter);
+    }
+
+    private function expressionsToTimestamp(Filter $filter)
+    {
+        if ($filter->isChain()) {
+            foreach ($filter->filters() as $child) {
+                $this->expressionsToTimestamp($child);
+            }
+        } elseif ($this->isTimestamp($filter->getColumn())) {
+            $filter->setExpression($this->valueToTimestamp($filter->getExpression()));
+        }
+    }
+
     protected function dbSelect()
     {
         return clone $this->select;
@@ -179,53 +193,10 @@ class DbQuery extends SimpleQuery
 
     protected function applyFilterSql($select)
     {
-        $where = $this->renderFilter($this->filter);
+        $where = $this->getDatasource()->renderFilter($this->filter);
         if ($where !== '') {
             $select->where($where);
         }
-    }
-
-    /**
-     * @deprecated  Use DbConnection::renderFilter() instead!
-     */
-    protected function renderFilter($filter, $level = 0)
-    {
-        $str = '';
-        if ($filter instanceof FilterChain) {
-            if ($filter instanceof FilterAnd) {
-                $op = ' AND ';
-            } elseif ($filter instanceof FilterOr) {
-                $op = ' OR ';
-            } elseif ($filter instanceof FilterNot) {
-                $op = ' AND ';
-                $str .= ' NOT ';
-            } else {
-                throw new QueryException(
-                    'Cannot render filter: %s',
-                    $filter
-                );
-            }
-            $parts = array();
-            if (! $filter->isEmpty()) {
-                foreach ($filter->filters() as $f) {
-                    $filterPart = $this->renderFilter($f, $level + 1);
-                    if ($filterPart !== '') {
-                        $parts[] = $filterPart;
-                    }
-                }
-                if (! empty($parts)) {
-                    if ($level > 0) {
-                        $str .= ' (' . implode($op, $parts) . ') ';
-                    } else {
-                        $str .= implode($op, $parts);
-                    }
-                }
-            }
-        } else {
-            $str .= $this->whereToSql($filter->getColumn(), $filter->getSign(), $filter->getExpression());
-        }
-
-        return $str;
     }
 
     protected function escapeForSql($value)
@@ -253,20 +224,16 @@ class DbQuery extends SimpleQuery
 
     protected function valueToTimestamp($value)
     {
-        // We consider integers as valid timestamps. Does not work for URL params
-        if (! is_string($value) || ctype_digit($value)) {
-            return $value;
+        if (ctype_digit($value)) {
+            $value = (int) $value;
+        } elseif (is_string($value)) {
+            $value = strtotime($value);
         }
-        $value = strtotime($value);
-        if (! $value) {
-            /*
-            NOTE: It's too late to throw exceptions, we might finish in __toString
-            throw new QueryException(sprintf(
-                '"%s" is not a valid time expression',
-                $value
-            ));
-            */
+
+        if (is_int($value)) {
+            $value = $this->timestampForSql($value);
         }
+
         return $value;
     }
 
@@ -301,7 +268,7 @@ class DbQuery extends SimpleQuery
             }
         }
 
-        return $this->escapeForSql($dateTime->format('Y-m-d H:i:s'));
+        return $dateTime->format('Y-m-d H:i:s');
     }
 
     /**
@@ -320,63 +287,6 @@ class DbQuery extends SimpleQuery
     public function isTimestamp($field)
     {
         return false;
-    }
-
-    public function whereToSql($col, $sign, $expression)
-    {
-        if ($this->isTimestamp($col)) {
-            $expression = $this->valueToTimestamp($expression);
-        }
-
-        if (is_array($expression)) {
-            $comp = [];
-            $pattern = [];
-            foreach ($expression as $value) {
-                if (strpos($value, '*') === false) {
-                    $comp[] = $value;
-                } else {
-                    $pattern[] = $this->whereToSql($col, $sign, $value);
-                }
-            }
-            $sql = $pattern;
-            if ($sign === '=') {
-                if (! empty($comp)) {
-                    $sql[] = $col . ' IN (' . $this->escapeForSql($comp) . ')';
-                }
-                $operator = 'OR';
-            } elseif ($sign === '!=') {
-                if (! empty($comp)) {
-                    $sql[] = sprintf('(%1$s NOT IN (%2$s) OR %1$s IS NULL)', $col, $this->escapeForSql($comp));
-                }
-                $operator = 'AND';
-            } else {
-                throw new QueryException(
-                    'Unable to render array expressions with operators other than equal or not equal'
-                );
-            }
-
-            return '(' . implode(" $operator ", $sql) . ')';
-        } elseif ($sign === '=' && $expression !== null && strpos($expression, '*') !== false) {
-            if ($expression === '*') {
-                return $col . ' IS NOT NULL';
-            }
-
-            return $col . ' LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
-        } elseif ($sign === '!=' && $expression !== null && strpos($expression, '*') !== false) {
-            if ($expression === '*') {
-                return $col . ' IS NULL';
-            }
-
-            return sprintf(
-                '(%1$s NOT LIKE %2$s OR %1$s IS NULL)',
-                $col,
-                $this->escapeForSql($this->escapeWildcards($expression))
-            );
-        } elseif ($sign === '!=') {
-            return sprintf('(%1$s %2$s %3$s OR %1$s IS NULL)', $col, $sign, $this->escapeForSql($expression));
-        } else {
-            return sprintf('%s %s %s', $col, $sign, $this->escapeForSql($expression));
-        }
     }
 
     /**

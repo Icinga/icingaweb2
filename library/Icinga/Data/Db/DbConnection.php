@@ -269,14 +269,6 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     }
 
     /**
-     * @deprecated Use Connection::getDbAdapter() instead
-     */
-    public function getConnection()
-    {
-        return $this->dbAdapter;
-    }
-
-    /**
      * Getter for the table prefix
      *
      * @return string

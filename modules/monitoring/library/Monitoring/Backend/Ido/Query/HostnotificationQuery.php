@@ -3,6 +3,9 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterExpression;
+
 /**
  * Query for host notifications
  */
@@ -37,7 +40,7 @@ class HostnotificationQuery extends IdoQuery
         'history' => array(
             'output'    => null,
             'state'     => 'hn.state',
-            'timestamp' => 'UNIX_TIMESTAMP(hn.start_time)',
+            'timestamp' => 'hn.start_time',
             'type'      => '
                 CASE hn.notification_reason
                     WHEN 1 THEN \'notification_ack\'
@@ -60,7 +63,7 @@ class HostnotificationQuery extends IdoQuery
             'notification_output'       => 'hn.output',
             'notification_reason'       => 'hn.notification_reason',
             'notification_state'        => 'hn.state',
-            'notification_timestamp'    => 'UNIX_TIMESTAMP(hn.start_time)',
+            'notification_timestamp'    => 'hn.start_time',
             'object_type'               => '(\'host\')'
         ),
         'servicegroups' => array(
@@ -76,18 +79,24 @@ class HostnotificationQuery extends IdoQuery
         )
     );
 
-    /**
-     * {@inheritdoc}
-     */
-    public function whereToSql($col, $sign, $expression)
+    protected function requireFilterColumns(Filter $filter)
     {
-        if ($col === 'UNIX_TIMESTAMP(hn.start_time)') {
-            return 'hn.start_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } elseif ($col === $this->columnMap['history']['output']) {
-            return parent::whereToSql('hn.output', $sign, $expression);
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
+        if ($filter instanceof FilterExpression && $filter->getColumn() === 'output') {
+            $this->requireColumn($filter->getColumn());
+            $filter->setColumn('hn.output');
+            return null;
         }
+
+        return parent::requireFilterColumns($filter);
+    }
+
+    public function isTimestamp($field)
+    {
+        if (! parent::isTimestamp($field)) {
+            return $field === 'hn.start_time';
+        }
+
+        return true;
     }
 
     /**

@@ -25,7 +25,7 @@ class BaseTestCaseTest extends BaseTestCase
     public function testWhetherMySqlProviderAnnotationSetsUpZendDbAdapter($resource)
     {
         $this->setupDbProvider($resource);
-        $this->assertInstanceOf('Zend_Db_Adapter_Pdo_Mysql', $resource->getConnection());
+        $this->assertInstanceOf('Zend_Db_Adapter_Pdo_Mysql', $resource->getDbAdapter());
     }
 
     /**
@@ -43,7 +43,7 @@ class BaseTestCaseTest extends BaseTestCase
     public function testWhetherCreatingTablesWithMySqlAdapterWorks($resource)
     {
         $this->setupDbProvider($resource);
-        $adapter = $resource->getConnection();
+        $adapter = $resource->getDbAdapter();
         $adapter->exec('CREATE TABLE test(uid INT NOT NULL PRIMARY KEY);');
 
         $tables = $adapter->listTables();
@@ -58,7 +58,7 @@ class BaseTestCaseTest extends BaseTestCase
     {
         $this->setupDbProvider($resource);
 
-        $tables = $resource->getConnection()->listTables();
+        $tables = $resource->getDbAdapter()->listTables();
         $this->assertCount(0, $tables);
     }
 
@@ -68,7 +68,7 @@ class BaseTestCaseTest extends BaseTestCase
     public function testWhetherPgSqlProviderAnnotationSetsUpZendDbAdapter($resource)
     {
         $this->setupDbProvider($resource);
-        $this->assertInstanceOf('Zend_Db_Adapter_Pdo_Pgsql', $resource->getConnection());
+        $this->assertInstanceOf('Zend_Db_Adapter_Pdo_Pgsql', $resource->getDbAdapter());
     }
 
     /**
@@ -86,7 +86,7 @@ class BaseTestCaseTest extends BaseTestCase
     public function testWhetherCreatingTablesWithPgSqlAdapterWorks($resource)
     {
         $this->setupDbProvider($resource);
-        $adapter = $resource->getConnection();
+        $adapter = $resource->getDbAdapter();
         $adapter->exec('CREATE TABLE test(uid INT NOT NULL PRIMARY KEY);');
 
         $tables = $adapter->listTables();
@@ -101,7 +101,7 @@ class BaseTestCaseTest extends BaseTestCase
     {
         $this->setupDbProvider($resource);
 
-        $tables = $resource->getConnection()->listTables();
+        $tables = $resource->getDbAdapter()->listTables();
         $this->assertCount(0, $tables);
     }
 
@@ -111,7 +111,7 @@ class BaseTestCaseTest extends BaseTestCase
     public function testWhetherOciProviderAnnotationSetsUpZendDbAdapter($resource)
     {
         $this->setupDbProvider($resource);
-        $this->assertInstanceOf('Zend_Db_Adapter_Pdo_Oci', $resource->getConnection());
+        $this->assertInstanceOf('Zend_Db_Adapter_Pdo_Oci', $resource->getDbAdapter());
     }
 
     /**
@@ -129,7 +129,7 @@ class BaseTestCaseTest extends BaseTestCase
     public function testWhetherCreatingTablesWithOciAdapterWorks($resource)
     {
         $this->setupDbProvider($resource);
-        $adapter = $resource->getConnection();
+        $adapter = $resource->getDbAdapter();
         $adapter->exec('CREATE TABLE test(uid INT NOT NULL PRIMARY KEY);');
 
         $tables = $adapter->listTables();
@@ -144,7 +144,7 @@ class BaseTestCaseTest extends BaseTestCase
     {
         $this->setupDbProvider($resource);
 
-        $tables = $resource->getConnection()->listTables();
+        $tables = $resource->getDbAdapter()->listTables();
         $this->assertCount(0, $tables);
     }
 
@@ -176,7 +176,7 @@ class BaseTestCaseTest extends BaseTestCase
 
         $this->loadSql($resource, $tempFile);
 
-        $count = (int) $resource->getConnection()->fetchOne('SELECT COUNT(*) as cntX from dummyData;');
+        $count = (int) $resource->getDbAdapter()->fetchOne('SELECT COUNT(*) as cntX from dummyData;');
         $this->assertSame(20, $count);
 
         $this->assertTrue(unlink($tempFile));

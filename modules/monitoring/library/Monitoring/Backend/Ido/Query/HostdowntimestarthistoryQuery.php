@@ -40,7 +40,7 @@ class HostdowntimestarthistoryQuery extends IdoQuery
             'object_type'   => '(\'host\')',
             'output'        => "('[' || hdh.author_name || '] ' || hdh.comment_data)",
             'state'         => '(-1)',
-            'timestamp'     => 'UNIX_TIMESTAMP(hdh.actual_start_time)',
+            'timestamp'     => 'hdh.actual_start_time',
             'type'          => "('dt_start')"
         ),
         'hostgroups' => array(
@@ -68,18 +68,13 @@ class HostdowntimestarthistoryQuery extends IdoQuery
         )
     );
 
-    /**
-     * {@inheritdoc}
-     */
-    public function whereToSql($col, $sign, $expression)
+    public function isTimestamp($field)
     {
-        if ($col === 'UNIX_TIMESTAMP(hdh.actual_start_time)') {
-            return 'hdh.actual_start_time ' . $sign . ' ' . $this->timestampForSql(
-                $this->valueToTimestamp($expression)
-            );
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
+        if (! parent::isTimestamp($field)) {
+            return $field === 'hdh.actual_start_time';
         }
+
+        return true;
     }
 
     /**

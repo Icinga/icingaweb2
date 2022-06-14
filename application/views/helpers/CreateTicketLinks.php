@@ -12,12 +12,12 @@ class Zend_View_Helper_CreateTicketLinks extends Zend_View_Helper_Abstract
      * @param   string $text
      *
      * @return  string
-     * @see     \Icinga\Web\Hook\TicketHook::createLinks()
+     * @see     \Icinga\Application\Hook\TicketHook::createLinks()
      */
     public function createTicketLinks($text)
     {
         $tickets = $this->view->tickets;
-        /** @var \Icinga\Web\Hook\TicketHook $tickets */
+        /** @var \Icinga\Application\Hook\TicketHook $tickets */
         return isset($tickets) ? $tickets->createLinks($text) : $text;
     }
 }

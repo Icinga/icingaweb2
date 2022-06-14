@@ -20,7 +20,6 @@ use Icinga\User;
 use Icinga\Util\DirectoryIterator;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Controller\Dispatcher;
-use Icinga\Web\Menu;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
@@ -82,7 +81,6 @@ class Web extends EmbeddedWeb
     protected function bootstrap()
     {
         return $this
-            ->setupZendAutoloader()
             ->setupLogging()
             ->setupErrorHandling()
             ->loadLibraries()
@@ -282,18 +280,6 @@ class Web extends EmbeddedWeb
         }
 
         return $navigation;
-    }
-
-    /**
-     * Return the app's menu
-     *
-     * @deprecated Instantiate the returned class directly instead of using this method.
-     *
-     * @return  Menu
-     */
-    public function getMenu()
-    {
-        return new Menu();
     }
 
     /**

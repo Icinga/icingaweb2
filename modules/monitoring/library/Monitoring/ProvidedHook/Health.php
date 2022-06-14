@@ -5,7 +5,7 @@ namespace Icinga\Module\Monitoring\ProvidedHook;
 
 use Icinga\Application\Hook\HealthHook;
 use Icinga\Date\DateFormatter;
-use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use ipl\Web\Url;
 
 class Health extends HealthHook
@@ -25,7 +25,7 @@ class Health extends HealthHook
 
     public function checkHealth()
     {
-        $backendName = Backend::instance()->getName();
+        $backendName = MonitoringBackend::instance()->getName();
         $programStatus = $this->getProgramStatus();
         if ($programStatus === false) {
             $this->setState(self::STATE_UNKNOWN);
@@ -55,7 +55,7 @@ class Health extends HealthHook
     protected function getProgramStatus()
     {
         if ($this->programStatus === null) {
-            $this->programStatus = Backend::instance()->select()
+            $this->programStatus = MonitoringBackend::instance()->select()
                 ->from('programstatus', [
                     'program_version',
                     'status_update_time',

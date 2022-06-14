@@ -435,17 +435,6 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Register the Zend Autoloader - compat only - does nothing
-     *
-     * @deprecated
-     * @return $this
-     */
-    public function setupZendAutoloader()
-    {
-        return $this;
-    }
-
-    /**
      * Setup module manager
      *
      * @return $this
@@ -765,20 +754,5 @@ abstract class ApplicationBootstrap
     {
         $localedir = $this->getLocaleDir();
         return $localedir !== false && file_exists($localedir) && is_dir($localedir);
-    }
-
-    /**
-     * List all available locales
-     *
-     * @return array Locale list
-     *
-     * @deprecated Use {@see \ipl\I18n\GettextTranslator::listLocales()} instead
-     */
-    public function listLocales()
-    {
-        /** @var GettextTranslator $translator */
-        $translator = StaticTranslator::$instance;
-
-        return $translator->listLocales();
     }
 }

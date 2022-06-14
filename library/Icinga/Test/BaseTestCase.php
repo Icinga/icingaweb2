@@ -305,7 +305,7 @@ namespace Icinga\Test {
                 );
             }
 
-            $resource->getConnection()->exec($sqlData);
+            $resource->getDbAdapter()->exec($sqlData);
         }
 
         /**
@@ -324,7 +324,7 @@ namespace Icinga\Test {
                 return;
             }
 
-            $adapter = $resource->getConnection();
+            $adapter = $resource->getDbAdapter();
 
             try {
                 $adapter->getConnection();

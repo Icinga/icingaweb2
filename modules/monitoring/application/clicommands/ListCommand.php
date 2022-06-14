@@ -3,7 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Clicommands;
 
-use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Module\Monitoring\Cli\CliUtils;
 use Icinga\Date\DateFormatter;
 use Icinga\Cli\Command;
@@ -25,8 +25,7 @@ class ListCommand extends Command
 
     public function init()
     {
-        $this->app->setupZendAutoloader();
-        $this->backend = Backend::createBackend($this->params->shift('backend'));
+        $this->backend = MonitoringBackend::instance($this->params->shift('backend'));
         $this->dumpSql = $this->params->shift('showsql');
     }
 

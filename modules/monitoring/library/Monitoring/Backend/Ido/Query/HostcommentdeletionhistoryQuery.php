@@ -8,16 +8,13 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
  */
 class HostcommentdeletionhistoryQuery extends HostcommenthistoryQuery
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function whereToSql($col, $sign, $expression)
+    public function isTimestamp($field)
     {
-        if ($col === 'UNIX_TIMESTAMP(hch.deletion_time)') {
-            return 'hch.deletion_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
+        if (! parent::isTimestamp($field)) {
+            return $field === 'hch.deletion_time';
         }
+
+        return true;
     }
 
     /**

@@ -40,7 +40,7 @@ class HostflappingstarthistoryQuery extends IdoQuery
             'object_type'   => '(\'host\')',
             'output'        => '(hfh.percent_state_change || \'\')',
             'state'         => '(-1)',
-            'timestamp'     => 'UNIX_TIMESTAMP(hfh.event_time)',
+            'timestamp'     => 'hfh.event_time',
             'type'          => '(\'flapping\')'
         ),
         'hostgroups' => array(
@@ -68,16 +68,13 @@ class HostflappingstarthistoryQuery extends IdoQuery
         )
     );
 
-    /**
-     * {@inheritdoc}
-     */
-    public function whereToSql($col, $sign, $expression)
+    public function isTimestamp($field)
     {
-        if ($col === 'UNIX_TIMESTAMP(hfh.event_time)') {
-            return 'hfh.event_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
+        if (! parent::isTimestamp($field)) {
+            return $field === 'hfh.event_time';
         }
+
+        return true;
     }
 
     /**

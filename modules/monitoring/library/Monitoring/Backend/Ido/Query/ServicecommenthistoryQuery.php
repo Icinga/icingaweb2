@@ -44,7 +44,7 @@ class ServicecommenthistoryQuery extends IdoQuery
             'service_host'          => 'so.name1 COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1',
             'state'                 => '(-1)',
-            'timestamp'             => 'UNIX_TIMESTAMP(sch.comment_time)',
+            'timestamp'             => 'sch.comment_time',
             'type'                  => "(CASE sch.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)"
         ),
         'hostgroups' => array(
@@ -69,16 +69,13 @@ class ServicecommenthistoryQuery extends IdoQuery
         )
     );
 
-    /**
-     * {@inheritdoc}
-     */
-    public function whereToSql($col, $sign, $expression)
+    public function isTimestamp($field)
     {
-        if ($col === 'UNIX_TIMESTAMP(sch.comment_time)') {
-            return 'sch.comment_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
+        if (! parent::isTimestamp($field)) {
+            return $field === 'sch.comment_time';
         }
+
+        return true;
     }
 
     /**

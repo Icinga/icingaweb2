@@ -444,21 +444,6 @@
         },
 
         /**
-         * Add the specified flag to the given URL
-         *
-         * @param {string} url
-         * @param {string} flag
-         *
-         * @returns {string}
-         *
-         * @deprecated since version 2.8.0. Use {@link Icinga.Utils.addUrlFlag()} instead
-         */
-        addUrlFlag: function(url, flag)
-        {
-            return this.icinga.utils.addUrlFlag(url, flag);
-        },
-
-        /**
          * Process the X-Icinga-Redirect HTTP Response Header
          *
          * If the response includes the X-Icinga-Redirect header, redirects to the URL associated with the header.

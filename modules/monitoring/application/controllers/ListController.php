@@ -3,12 +3,12 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Security\SecurityException;
 use Icinga\Util\GlobFilter;
 use Icinga\Web\Form;
 use Zend_Form;
 use Icinga\Data\Filter\Filter;
-use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\DataView\DataView;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
@@ -34,7 +34,7 @@ class ListController extends Controller
     /**
      * Overwrite the backend to use (used for testing)
      *
-     * @param Backend $backend      The Backend that should be used for querying
+     * @param MonitoringBackend $backend      The Backend that should be used for querying
      */
     public function setBackend($backend)
     {

@@ -123,23 +123,6 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      */
     abstract public function getColumns();
 
-    /**
-     * Create view from request
-     *
-     * @param   Request $request
-     * @param   array $columns
-     *
-     * @return  static
-     * @deprecated Use $backend->select()->from($viewName) instead
-     */
-    public static function fromRequest($request, array $columns = null)
-    {
-        $view = new static(MonitoringBackend::instance($request->getParam('backend')), $columns);
-        $view->applyUrlFilter($request);
-
-        return $view;
-    }
-
     protected function getHookedColumns()
     {
         $columns = array();
@@ -150,26 +133,6 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
         }
 
         return $columns;
-    }
-
-    // TODO: This is not the right place for this, move it away
-    protected function applyUrlFilter($request = null)
-    {
-        $url = Url::fromRequest();
-
-        $limit = $url->shift('limit');
-        $sort = $url->shift('sort');
-        $dir = $url->shift('dir');
-        $page = $url->shift('page');
-        $format = $url->shift('format');
-        $view = $url->shift('showCompact');
-        $view = $url->shift('backend');
-        foreach ($url->getParams() as $k => $v) {
-            $this->where($k, $v);
-        }
-        if ($sort) {
-            $this->order($sort, $dir);
-        }
     }
 
     /**
@@ -200,7 +163,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
                 }
             }
 
-            $view->sort($params['sort'], $order);
+            $view->order($params['sort'], $order);
         }
         return $view;
     }
@@ -324,18 +287,14 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
     }
 
     /**
-     * Sort the rows, according to the specified sort column and order
+     * Sort result set either by the given column (and direction) or the sort defaults
      *
-     * @param   string  $column Sort column
-     * @param   string  $order  Sort order, one of the SORT_ constants
+     * @param  string   $column
+     * @param  string   $direction
      *
-     * @return  $this
-     * @throws  QueryException  If the sort column is not allowed
-     * @see     DataView::SORT_ASC
-     * @see     DataView::SORT_DESC
-     * @deprecated Use DataView::order() instead
+     * @return $this
      */
-    public function sort($column = null, $order = null)
+    public function order($column = null, $direction = null)
     {
         $sortRules = $this->getSortRules();
         if ($column === null) {
@@ -356,16 +315,16 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
             } else {
                 $sortColumns = array(
                     'columns' => array($column),
-                    'order' => $order
+                    'order' => $direction
                 );
             };
         }
 
-        $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : static::SORT_ASC) : $order;
-        $order = (strtoupper($order) === static::SORT_ASC) ? 'ASC' : 'DESC';
+        $direction = $direction === null ? ($sortColumns['order'] ?? static::SORT_ASC) : $direction;
+        $direction = (strtoupper($direction) === static::SORT_ASC) ? 'ASC' : 'DESC';
 
         foreach ($sortColumns['columns'] as $column) {
-            list($column, $direction) = $this->query->splitOrder($column);
+            list($column, $order) = $this->query->splitOrder($column);
             if (! $this->isValidFilterTarget($column)) {
                 throw new QueryException(
                     mt('monitoring', 'The sort column "%s" is not allowed in "%s".'),
@@ -373,7 +332,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
                     get_class($this)
                 );
             }
-            $this->query->order($column, $direction !== null ? $direction : $order);
+            $this->query->order($column, $order !== null ? $order : $direction);
         }
         $this->isSorted = true;
         return $this;
@@ -387,19 +346,6 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
     public function getSortRules()
     {
         return array();
-    }
-
-    /**
-     * Sort result set either by the given column (and direction) or the sort defaults
-     *
-     * @param  string   $column
-     * @param  string   $direction
-     *
-     * @return $this
-     */
-    public function order($column = null, $direction = null)
-    {
-        return $this->sort($column, $direction);
     }
 
     /**
