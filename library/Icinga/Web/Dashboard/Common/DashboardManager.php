@@ -100,7 +100,10 @@ trait DashboardManager
     public function activateHome(DashboardHome $home): self
     {
         if (! $this->hasEntry($home->getName())) {
-            throw new ProgrammingError('Trying to activate Dashboard Home "%s" that does not exist.', $home->getName());
+            throw new ProgrammingError(
+                'Trying to activate Dashboard Home "%s" that does not exist.',
+                $home->getTitle()
+            );
         }
 
         $activeHome = $this->getActiveHome();

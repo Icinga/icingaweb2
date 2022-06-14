@@ -109,7 +109,7 @@ trait DashboardEntries
     public function unsetEntry(BaseDashboard $dashboard)
     {
         if (! $this->hasEntry($dashboard->getName())) {
-            throw new ProgrammingError('Trying to unset an invalid Dashboard entry: "%s"', $dashboard->getName());
+            throw new ProgrammingError('Trying to unset an invalid Dashboard entry: "%s"', $dashboard->getTitle());
         }
 
         unset($this->dashboards[strtolower($dashboard->getName())]);

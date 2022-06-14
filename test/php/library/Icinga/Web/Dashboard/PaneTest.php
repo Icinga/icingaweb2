@@ -37,7 +37,7 @@ class PaneTest extends BaseDashboardTestCase
         $this->assertEquals(
             self::TEST_PANE,
             $home->getActivePane()->getName(),
-            'DashboardHome::activatePane() could not activate expected Dashboard Pane'
+            'DashboardHome::activatePane() could not activate expected Pane'
         );
     }
 
@@ -58,7 +58,7 @@ class PaneTest extends BaseDashboardTestCase
         $this->assertEquals(
             self::TEST_PANE,
             $home->getActivePane()->getName(),
-            'DashboardHome::loadDashboardEntries() could not activate expected Dashboard Pane'
+            'DashboardHome::loadDashboardEntries() could not activate expected Pane'
         );
     }
 
@@ -78,7 +78,7 @@ class PaneTest extends BaseDashboardTestCase
         $this->assertEquals(
             self::TEST_PANE,
             $home->getActivePane()->getName(),
-            'DashboardHome::loadDashboardEntries() could not load and activate expected Dashboard Pane'
+            'DashboardHome::loadDashboardEntries() could not load and activate expected Pane'
         );
     }
 
@@ -116,7 +116,7 @@ class PaneTest extends BaseDashboardTestCase
         $this->assertCount(
             1,
             $home->getEntries(),
-            'DashboardHome::manageEntry() could not manage a new Dashboard Pane'
+            'DashboardHome::manageEntry() could not manage a new Pane'
         );
     }
 
@@ -143,7 +143,7 @@ class PaneTest extends BaseDashboardTestCase
         $this->assertEquals(
             'Hello',
             $home->getActivePane()->getTitle(),
-            'DashboardHome::manageEntry() could not update existing Dashboard Pane'
+            'DashboardHome::manageEntry() could not update existing Pane'
         );
     }
 
@@ -171,7 +171,7 @@ class PaneTest extends BaseDashboardTestCase
         $this->assertCount(
             1,
             $default->getEntries(),
-            'DashboardHome::manageEntry() could not move a Dashboard Pane to another existing Dashboard Home'
+            'DashboardHome::manageEntry() could not move a Pane to another existing Dashboard Home'
         );
     }
 
@@ -224,7 +224,7 @@ class PaneTest extends BaseDashboardTestCase
 
         $this->assertFalse(
             $home->hasEntry(self::TEST_PANE),
-            'DashboardHome::removeEntry() could not remove expected Dashboard Pane'
+            'DashboardHome::removeEntry() could not remove expected Pane'
         );
     }
 
@@ -249,7 +249,7 @@ class PaneTest extends BaseDashboardTestCase
 
         $this->assertFalse(
             $home->hasEntries(),
-            'DashboardHome::removeEntries() could not remove all Dashboard Panes'
+            'DashboardHome::removeEntries() could not remove all Panes'
         );
     }
 }

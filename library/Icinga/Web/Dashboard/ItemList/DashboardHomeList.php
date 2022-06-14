@@ -83,7 +83,7 @@ class DashboardHomeList extends ItemListControl
             ]);
 
             if ($this->home->isActive()) {
-                $url->addParams(['prevActive' => true]);
+                $url->addParams(['highlighted' => true]);
             }
 
             $this->assembleHeader($url, $this->home->getTitle());
@@ -106,7 +106,7 @@ class DashboardHomeList extends ItemListControl
         $url->setParams(['home' => $this->home->getName()]);
 
         return new Link(
-            [new Icon('plus'), t('Add Dashboard')],
+            [new Icon('plus'), t('Add Pane')],
             $url,
             ['class' => ['button-link', 'add-dashboard']]
         );

@@ -31,14 +31,14 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
      *
      * @var string
      */
-    const BASE_ROUTE = 'dashboards';
+    public const BASE_ROUTE = 'dashboards';
 
     /**
      * System dashboards are provided by the modules in PHP code and are available to all users
      *
      * @var string
      */
-    const SYSTEM = 'system';
+    public const SYSTEM = 'system';
 
     /**
      * Public dashboards are created by authorized users and are available
@@ -46,14 +46,14 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
      *
      * @var string
      */
-    const PUBLIC_DS = 'public';
+    public const PUBLIC_DS = 'public';
 
     /**
      * Private dashboards are created by any user and are only available to this user
      *
      * @var string
      */
-    const PRIVATE_DS = 'private';
+    public const PRIVATE_DS = 'private';
 
     /**
      * Shared dashboards are available to users who have accepted a share or who
@@ -61,7 +61,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
      *
      * @var string
      */
-    const SHARED = 'shared';
+    public const SHARED = 'shared';
 
     protected $tag = 'div';
 
@@ -130,7 +130,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
             return $this->tabs;
         }
 
-        /*** @var Pane $pane */
+        /** @var Pane $pane */
         foreach ($activeHome->getEntries() as $pane) {
             if (! $this->tabs->get($pane->getName())) {
                 $this->tabs->add(
@@ -173,9 +173,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
                 . ' You will always be able to edit them afterwards.'
             );
             $this->addHtml(HtmlElement::create('p', null, $message));
-        } elseif (! $activeHome->hasEntries()) {
-            $this->addHtml(HtmlElement::create('h1', null, t('No dashboard added to this dashboard home.')));
-        } else {
+        } elseif ($activeHome->hasEntries()) {
             $activePane = $activeHome->getActivePane();
 
             if (! $activePane->hasEntries()) {
@@ -185,6 +183,8 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
                     $this->addHtml($dashlet->getHtml());
                 }
             }
+        } else {
+            $this->addHtml(HtmlElement::create('h1', null, t('No dashboard added to this dashboard home.')));
         }
     }
 }

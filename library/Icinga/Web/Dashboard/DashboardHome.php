@@ -14,10 +14,16 @@ use Icinga\Web\Dashboard\Common\DashboardEntry;
 use Icinga\Web\Dashboard\Common\Sortable;
 use Icinga\Util\DBUtils;
 use Icinga\Web\Dashboard\Common\WidgetState;
+use Icinga\Web\Navigation\NavigationItem;
 use ipl\Stdlib\Filter;
 
 use function ipl\Stdlib\get_php_type;
 
+/**
+ * A Dashboard Home groups various Dashboard Panes and provides the ability
+ * to load Panes from different entry point of view. Dashboard Homes are
+ * rendered as child of {@see NavigationItem}s of the main dashboard menu.
+ */
 class DashboardHome extends BaseDashboard implements DashboardEntry, Sortable
 {
     use DashboardEntries;
@@ -108,7 +114,10 @@ class DashboardHome extends BaseDashboard implements DashboardEntry, Sortable
     public function activatePane(Pane $pane): self
     {
         if (! $this->hasEntry($pane->getName())) {
-            throw new ProgrammingError('Trying to activate Dashboard Pane "%s" that does not exist.', $pane->getName());
+            throw new ProgrammingError(
+                'Trying to activate Dashboard Pane "%s" that does not exist.',
+                $pane->getTitle()
+            );
         }
 
         $active = $this->getActivePane();
@@ -116,7 +125,7 @@ class DashboardHome extends BaseDashboard implements DashboardEntry, Sortable
             $active->setActive(false);
         }
 
-        $pane->setActive(true);
+        $pane->setActive();
 
         return $this;
     }
@@ -142,7 +151,7 @@ class DashboardHome extends BaseDashboard implements DashboardEntry, Sortable
     {
         $name = $pane instanceof Pane ? $pane->getName() : $pane;
         if (! $this->hasEntry($name)) {
-            throw new ProgrammingError('Trying to remove invalid dashboard pane "%s"', $name);
+            throw new ProgrammingError('Trying to remove invalid pane "%s"', $name);
         }
 
         $pane = $pane instanceof Pane ? $pane : $this->getEntry($pane);
@@ -250,6 +259,8 @@ class DashboardHome extends BaseDashboard implements DashboardEntry, Sortable
                         'id = ?'      => $origin->getEntry($pane->getName())->getUuid(),
                         'home_id = ?' => $origin->getUuid()
                     ];
+
+                    $this->addEntry($pane);
                 }
 
                 $conn->update(Pane::TABLE, [
@@ -262,9 +273,10 @@ class DashboardHome extends BaseDashboard implements DashboardEntry, Sortable
                 // Failed to move the pane! Should have already been handled by the caller,
                 // though I think it's better that we raise an exception here!!
                 throw new AlreadyExistsException(
-                    'Dashboard Pane "%s" could not be managed. Dashboard Home "%s" has Pane with the same name!',
-                    $pane->getTitle(),
-                    $this->getTitle()
+                    'Failed to successfully manage the pane. Dashboard Home "%s" has already' .
+                    ' a Pane named "%s"!',
+                    $this->getTitle(),
+                    $pane->getTitle()
                 );
             }
 

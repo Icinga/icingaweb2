@@ -52,7 +52,7 @@ class DashboardList extends ItemListControl
         ]);
 
         if ($this->pane->isActive()) {
-            $url->addParams(['prevActive' => true]);
+            $url->addParams(['highlighted' => true]);
         }
 
         $this->assembleHeader($url, $pane->getTitle());

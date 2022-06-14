@@ -34,21 +34,17 @@ class DashboardsController extends CompatController
     /** @var Dashboard */
     protected $dashboard;
 
-    /**
-     * Whether the currently loaded home/pane is also loaded on the previous page
-     *
-     * @var string
-     */
-    protected $prevActive = null;
+    /** @var string Whether the currently loaded home/pane is also loaded on the previous page */
+    protected $highlighted = null;
 
     public function init()
     {
         parent::init();
 
-        // The "prevActive" param indicates whether this home/pane is currently being loaded in the
+        // The "highlighted" param indicates whether this home/pane is currently being loaded in the
         // DM view meanwhile rendering a modal view (update and remove actions). If it's indeed the case,
-        // we have to construct a proper http redirect after successfully removing this home
-        $this->prevActive = $this->params->shift('prevActive');
+        // we have to construct a proper http redirect after successfully removing this home/pane.
+        $this->highlighted = $this->params->shift('highlighted');
 
         $this->dashboard = new Dashboard();
         $this->dashboard->setUser($this->Auth()->getUser());
@@ -117,7 +113,7 @@ class DashboardsController extends CompatController
                 $this->redirectNow('__CLOSE__');
             })->handleRequest($this->getServerRequest());
 
-        $this->setTitle(t('Add new Dashboard Home'));
+        $this->addTitleTab(t('Add new Dashboard Home'));
         $this->addContent($homeForm);
     }
 
@@ -139,7 +135,7 @@ class DashboardsController extends CompatController
 
         $homeForm->load($this->dashboard->getActiveHome());
 
-        $this->setTitle(t('Update Home'));
+        $this->addTitleTab(t('Update Home'));
         $this->addContent($homeForm);
     }
 
@@ -149,22 +145,22 @@ class DashboardsController extends CompatController
 
         $this->dashboard->load($home);
 
-        $homeForm = (new RemoveHomeForm($this->dashboard))
-            ->on(RemoveHomeForm::ON_SUCCESS, function () {
-                $response = $this->getResponse();
-                $response->setHeader('X-Icinga-Extra-Updates', '#menu');
+        $homeForm = new RemoveHomeForm($this->dashboard);
+        $homeForm->on(RemoveHomeForm::ON_SUCCESS, function () use ($homeForm) {
+            $response = $this->getResponse();
+            $response->setHeader('X-Icinga-Extra-Updates', '#menu');
 
-                if ($this->prevActive) {
-                    $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
-                } else {
-                    $response->setHeader('X-Icinga-Container', 'modal-content', true);
+            if ($this->highlighted && $homeForm->requestSucceeded()) {
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+            } else {
+                $response->setHeader('X-Icinga-Container', 'modal-content', true);
 
-                    $this->redirectNow('__CLOSE__');
-                }
-            })
+                $this->redirectNow('__CLOSE__');
+            }
+        })
             ->handleRequest($this->getServerRequest());
 
-        $this->setTitle(t('Remove Home'));
+        $this->addTitleTab(t('Remove Home'));
         $this->addContent($homeForm);
     }
 
@@ -182,7 +178,7 @@ class DashboardsController extends CompatController
             })
             ->handleRequest($this->getServerRequest());
 
-        $this->setTitle(t('Add new Dashboard'));
+        $this->addTitleTab(t('Add new Pane'));
         $this->addContent($paneForm);
     }
 
@@ -195,7 +191,7 @@ class DashboardsController extends CompatController
 
         $paneForm = new PaneForm($this->dashboard);
         $paneForm->on(PaneForm::ON_SUCCESS, function () use ($paneForm, $home) {
-            if ($this->prevActive && $home !== $paneForm->getPopulatedValue('home')) {
+            if ($paneForm->requestSucceeded() && $this->highlighted && $home !== $paneForm->getValue('home')) {
                 $params = $this->params->without('pane');
                 $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
             } else {
@@ -207,7 +203,7 @@ class DashboardsController extends CompatController
 
         $paneForm->load($this->dashboard->getActiveHome()->getEntry($pane));
 
-        $this->setTitle(t('Update Pane'));
+        $this->addTitleTab(t('Update Pane'));
         $this->addContent($paneForm);
     }
 
@@ -220,9 +216,10 @@ class DashboardsController extends CompatController
 
         $paneForm = new RemovePaneForm($this->dashboard);
         $paneForm->populate(['org_name' => $paneParam]);
-        $paneForm->on(RemovePaneForm::ON_SUCCESS, function () {
-            if ($this->prevActive) {
-                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+        $paneForm->on(RemovePaneForm::ON_SUCCESS, function () use ($paneForm) {
+            if ($this->highlighted && $paneForm->requestSucceeded()) {
+                $params = $this->params->without('pane');
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
             } else {
                 $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
 
@@ -230,7 +227,7 @@ class DashboardsController extends CompatController
             }
         })->handleRequest($this->getServerRequest());
 
-        $this->setTitle(t('Remove Pane'));
+        $this->addTitleTab(t('Remove Pane'));
         $this->addContent($paneForm);
     }
 
@@ -250,9 +247,9 @@ class DashboardsController extends CompatController
         })->handleRequest($this->getServerRequest());
 
         if (isset($this->getRequest()->getPost()['btn_next'])) {
-            $this->setTitle(t('Add Dashlet To Dashboard'));
+            $this->addTitleTab(t('Add Dashlet To Dashboard'));
         } else {
-            $this->setTitle(t('Select Dashlets'));
+            $this->addTitleTab(t('Select Dashlets'));
         }
 
         $this->addContent($dashletForm);
@@ -273,8 +270,7 @@ class DashboardsController extends CompatController
             $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
         })->handleRequest($this->getServerRequest());
 
-        $this->setTitle(t('Add Dashlet To Dashboard'));
-
+        $this->addTitleTab(t('Add Dashlet To Dashboard'));
         $this->addContent($dashletForm);
     }
 
@@ -303,7 +299,7 @@ class DashboardsController extends CompatController
 
         $dashletForm->load($dashlet);
 
-        $this->setTitle(t('Edit Dashlet'));
+        $this->addTitleTab(t('Edit Dashlet'));
         $this->addContent($dashletForm);
     }
 
@@ -328,7 +324,7 @@ class DashboardsController extends CompatController
             })
             ->handleRequest($this->getServerRequest());
 
-        $this->setTitle(t('Remove Dashlet'));
+        $this->addTitleTab(t('Remove Dashlet'));
         $this->addContent($removeForm);
     }
 
@@ -421,11 +417,9 @@ class DashboardsController extends CompatController
 
                     $redirect = $orgHome && $pane->getName() === $highlightPane;
 
-                    Notification::success(sprintf(
-                        t('%s dashboard pane "%s" successfully'),
-                        $orgHome ? 'Moved' : 'Updated',
-                        $pane->getTitle()
-                    ));
+                    Notification::success(
+                        sprintf(t('%s pane "%s" successfully'), $orgHome ? 'Moved' : 'Updated', $pane->getTitle())
+                    );
                     break;
                 }
 
@@ -437,9 +431,9 @@ class DashboardsController extends CompatController
 
                     if ($orgPane && $orgPane->hasEntry($dashlet) && $pane->hasEntry($dashlet)) {
                         Notification::error(sprintf(
-                            t('Dashlet "%s" already exists within "%s" dashboard pane'),
-                            $dashlet,
-                            $pane->getTitle()
+                            t('Pane "%s" has already a Dashlet called "%s"'),
+                            $pane->getTitle(),
+                            $dashlet
                         ));
 
                         $duplicatedError = true;
@@ -494,9 +488,9 @@ class DashboardsController extends CompatController
             // rendered in the modal view when redirecting
             $this->view->compact = true;
 
-            $this->setTitle(t('Configure Dashlets'));
+            $this->addTitleTab(t('Configure Dashlets'));
         } else {
-            $this->setTitle(t('Add Dashlet'));
+            $this->addTitleTab(t('Add Dashlet'));
         }
 
         $this->addContent($setupForm);

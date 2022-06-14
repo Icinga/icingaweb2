@@ -10,7 +10,6 @@ use Icinga\User;
 use Icinga\Util\DBUtils;
 use ipl\Stdlib\Filter;
 
-// TODO: Remove this completely as soon as we have introduced a daemon in Icinga Web 2.
 trait DashboardUserManager
 {
     /** @var User */

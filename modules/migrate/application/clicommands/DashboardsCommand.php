@@ -105,7 +105,7 @@ class DashboardsCommand extends Command
                         } elseif ($dashboardHome->hasEntry($pane)) {
                             do {
                                 $pane = readline(sprintf(
-                                    'Dashboard Pane "%s" already exists within the "%s" Dashboard Home.' . "\n" .
+                                    'Pane "%s" already exists within the "%s" Dashboard Home.' . "\n" .
                                     'Please enter another name for this pane or rerun the command with the "silent"' .
                                     ' param to suppress such errors!: ',
                                     $pane,

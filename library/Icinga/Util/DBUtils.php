@@ -19,6 +19,10 @@ class DBUtils
     /** @var Connection */
     private static $conn;
 
+    private function __construct()
+    {
+    }
+
     /**
      * Get Database connection
      *
@@ -114,9 +118,7 @@ class DBUtils
      */
     public static function isBinary(string $data): bool
     {
-        // Stolen from php.net
-        $data = preg_replace('/\s/', '', $data ?? '');
-
+        $data = preg_replace('/\s/', '', $data);
         return ! empty($data) && ! ctype_print($data);
     }
 

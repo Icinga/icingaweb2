@@ -13,16 +13,15 @@ use ipl\Html\HtmlElement;
 use ipl\Web\Widget\Link;
 
 /**
- * A dashboard pane dashlet
- *
- * This is the new element being used for the Dashlets view
+ * A Dashlet/View is basically an Url which is being visualized
+ * into a single View by Icinga Web 2
  */
 class Dashlet extends BaseDashboard
 {
     use WidgetState;
 
     /** @var string Database table name */
-    const TABLE = 'icingaweb_dashlet';
+    public const TABLE = 'icingaweb_dashlet';
 
     /**
      * The url of this Dashlet
@@ -91,7 +90,7 @@ class Dashlet extends BaseDashboard
     }
 
     /**
-     * Set the dashlets URL
+     * Set the URL of this dashlet
      *
      * @param string|Url $url The url to use, either as an Url object or as a path
      *
@@ -191,7 +190,7 @@ class Dashlet extends BaseDashboard
     }
 
     /**
-     * Set whether this dashlet widget is provided by a module
+     * Set whether this dashlet is provided by a module
      *
      * @param bool $moduleDashlet
      *
@@ -213,22 +212,22 @@ class Dashlet extends BaseDashboard
     {
         $dashletHtml = HtmlElement::create('div', ['class' => 'container']);
         if (! $this->getUrl()) {
-            $dashletHtml->addHtml(HtmlElement::create('h1', null, t($this->getTitle())));
+            $dashletHtml->addHtml(HtmlElement::create('h1', null, $this->getTitle()));
             $dashletHtml->addHtml(HtmlElement::create(
                 'p',
                 ['class' => 'error-message'],
-                sprintf(t('Cannot create dashboard dashlet "%s" without valid URL'), t($this->getTitle()))
+                sprintf(t('Cannot create dashboard dashlet "%s" without valid URL'), $this->getTitle())
             ));
         } else {
             $url = $this->getUrl();
 
             $dashletHtml->setAttribute('data-icinga-url', $url->with('showCompact', true));
             $dashletHtml->addHtml(new HtmlElement('h1', null, new Link(
-                t($this->getTitle()),
+                $this->getTitle(),
                 $url->without(['limit', 'view'])->getRelativeUrl(),
                 [
-                    'aria-label'       => t($this->getTitle()),
-                    'title'            => t($this->getTitle()),
+                    'aria-label'       => $this->getTitle(),
+                    'title'            => $this->getTitle(),
                     'data-base-target' => 'col1'
                 ]
             )));

@@ -15,7 +15,7 @@ use PDO;
 
 class BaseDashboardTestCase extends BaseTestCase
 {
-    const TEST_HOME = 'Test Home';
+    public const TEST_HOME = 'Test Home';
 
     /** @var Dashboard */
     protected $dashboard;
