@@ -45,9 +45,7 @@ class JavaScript
         'js/icinga/behavior/datetime-picker.js'
     ];
 
-    protected static $vendorFiles = [
-        'js/vendor/jquery-3.4.1'
-    ];
+    protected static $vendorFiles = [];
 
     protected static $baseFiles = [
         'js/define.js'
