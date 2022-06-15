@@ -5,6 +5,7 @@ namespace Icinga\Web\Navigation;
 
 use Icinga\Application\Hook\HealthHook;
 use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
@@ -97,6 +98,14 @@ class ConfigMenu extends BaseHtmlElement
                 ]
             ]
         ];
+
+        if (Logger::writesToFile()) {
+            $this->children['system']['items']['application_log'] = [
+                'label'       => t('Application Log'),
+                'url'         => 'list/applicationlog',
+                'permission'  => 'application/log'
+            ];
+        }
     }
 
     protected function assembleUserMenuItem(BaseHtmlElement $userMenuItem)
