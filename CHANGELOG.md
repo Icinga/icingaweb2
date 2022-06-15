@@ -4,6 +4,44 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.11.0
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/70?closed=1).
+
+#### Enhancements, Some
+
+Many of you were waiting for it: PHP 8.1 Support. This means that Icinga Web should be available soon on e.g.
+Ubuntu 22.04. You'll also notice that we changed the sidebar, as the user menu went to the very bottom of it.
+With it moved the less frequently used menu entries (system and configuration) to a section that pops up by
+hovering over the :gear: icon. We did that in order to prepare an area where we can add further functionality
+in the future. Oh, and announcements are now visible in fullscreen mode. :upside_down_face:
+
+* Support for PHP 8.1 [#4609](https://github.com/Icinga/icingaweb2/issues/4609)
+* Redesign User Menu [#4651](https://github.com/Icinga/icingaweb2/issues/4651)
+* &showFullscreen suppresses announcements [#4596](https://github.com/Icinga/icingaweb2/issues/4596)
+
+#### Fixes, More
+
+There are also bug fixes of course. The first mentioned here is one we fixed *accidentally*, as by adding support for
+PHP 8.1 we avoided a common PHP quirk responsible for it. If you have a host or service with an asterisk in the name,
+it will show up correctly in the detail view now. There was also a remaining issue with the theme mode selection in the
+user preferences which is fixed now.
+
+* Navigation item filter `*` not working [#4772](https://github.com/Icinga/icingaweb2/issues/4772)
+* Objects with a `*` in the name are not found [#4682](https://github.com/Icinga/icingaweb2/issues/4682)
+* Theme mode switch disabled on theme with mode support [#4744](https://github.com/Icinga/icingaweb2/issues/4744)
+
+#### When developers become cleaning maniacs
+
+Usually I write a short note at the start of release notes to make you read the upgrading documentation. This time
+however, a more prominent hint is required. We've removed so much (legacy) stuff, anyone tasked with upgrading is
+obliged to read [the upgrading documentation](https://icinga.com/docs/icinga-web-2/latest/doc/80-Upgrading/#upgrading-to-icinga-web-211x).
+The changes mentioned below only provide a glimpse at it.
+
+* User preferences in INI files not supported anymore [#4765](https://github.com/Icinga/icingaweb2/pull/4765)
+* mysql: use of utf8 vs utfmb4 [#4680](https://github.com/Icinga/icingaweb2/issues/4680)
+* Remove Vagrant file and its assets [#4762](https://github.com/Icinga/icingaweb2/pull/4762)
+
 ### What's New in Version 2.10.1
 
 It's a rather small update this time without any critical bugs. :tada: So let's get straight to the fixes:
