@@ -4,7 +4,6 @@
 namespace Icinga\Web\Navigation;
 
 use Icinga\Application\Icinga;
-use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Common\HealthBadgeTrait;
 use ipl\Html\Attributes;
@@ -31,6 +30,8 @@ class ConfigMenu extends BaseHtmlElement
     protected $state;
 
     protected $healthBadge;
+
+    protected $flyoutID = 'config-menu-flyout';
 
     public function __construct()
     {
@@ -182,7 +183,7 @@ class ConfigMenu extends BaseHtmlElement
     {
         $level2Nav = HtmlElement::create(
             'div',
-            Attributes::create(['class' => 'nav-level-1 flyout'])
+            Attributes::create(['class' => 'nav-level-1 flyout', 'id' => $this->flyoutID ])
         );
 
         $this->assembleLevel2Nav($level2Nav);
@@ -245,7 +246,10 @@ class ConfigMenu extends BaseHtmlElement
 
     protected function createCogMenuItem()
     {
-        $cogMenuItem = HtmlElement::create('li', ['class' => 'config-nav-item']);
+        $cogMenuItem = HtmlElement::create('li', [
+            'class' => 'config-nav-item',
+            'data-flyout-target' => $this->flyoutID
+        ]);
 
         $this->assembleCogMenuItem($cogMenuItem);
 
