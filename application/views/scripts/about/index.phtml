@@ -22,7 +22,7 @@ use ipl\Web\Widget\Icon;
         <?php if (isset($version['gitCommitID'])): ?>
             <tr>
                 <th><?= $this->translate('Git commit') ?></th>
-                <td><?= $this->escape($version['gitCommitID']) ?></td>
+                <td class="col-commit-id"><?= $this->escape($version['gitCommitID']) ?></td>
             </tr>
         <?php endif ?>
             <tr>
