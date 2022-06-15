@@ -263,7 +263,7 @@ class ConfigMenu extends BaseHtmlElement
             [
                 HtmlElement::create(
                     'a',
-                    Attributes::create(['href' => $item['url']]),
+                    Attributes::create(['href' => Url::fromPath($item['url'])]),
                     [
                         $item['label'],
                         isset($healthBadge) ? $healthBadge : ''
