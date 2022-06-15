@@ -3,12 +3,12 @@
 Specific version upgrades are described below. Please note that upgrades are incremental. An upgrade from
 v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
-## Upgrading to Icinga Web 2 2.11.x
+## Upgrading to Icinga Web 2.11.x
+
+**General**
 
 * Support for Internet Explorer 11 has been removed.
 * The Vagrant file and all its assets have been removed.
-* The `IniStore` class has been removed due to the deprecation of the Preferences ini backend.
-* The `DbStore` class has been removed and its methods have been added to `PreferencesStore` class.
 
 **Database Schema**
 
@@ -19,46 +19,49 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 **Breaking changes**
 
 * The `user:local_name` macro in restrictions has been removed. Use `user.local_name` now.
+* User preferences stored in INI files are not loaded anymore. Migrate yours with
+  `icingacli migrate preferences` before the upgrade, if you haven't already.
 
 **Framework changes affecting third-party code**
 
-* All the following deprecated php classes and methods are removed:
+* When loading library CSS assets, CSS files and LESS files are handled differently now. Only the latter
+  is parsed as LESS.
+* jQuery is not bundled anymore as it's now part of the library icinga-php-thirdparty v0.11.0. It's shipped there
+  in version 3.6.0. (Previously bundled was jQuery 3.4.1)
+* All the following classes and methods were removed:
 
   **Methods:**
-+ `Url::setBaseUrl()`: Please create a new url from scratch instead.
-+ `Url::getBaseUrl()`: Use either `Url::getBasePath()` or `Url::getAbsoluteUrl()` now.
-+ `ApplicationBootstrap::setupZendAutoloader()`: Since it does nothing. All uses removed.
-+ `ApplicationBootstrap::listLocales()`: Use `\ipl\I18n\GettextTranslator::listLocales()` instead.
-+ `Module::registerHook()`: Use `provideHook()` instead.
-+ `Web::getMenu()`: Instantiate the menu class `new Menu()` directly instead.
-+ `AesCrypt::encryptToBase64()`: Use `AesCrypt::encrypt()` instead as it also returns a base64 encoded string.
-+ `AesCrypt::decryptFromBase64()`: Use `AesCrypt::decrypt()` instead as it also returns a base64 decoded string.
-+ `InlinePie::disableNoScript()`: Empty method.
-+ `SimpleQuery::paginate()`: Use `Icinga\Web\Controller::setupPaginationControl()` and/or `Icinga\Web\Widget\Paginator` instead.
-+ `LdapConnection::connect()`: The connection is established lazily now.
-+ `MonitoredObject::matches()`: Use `$filter->matches($object)` instead.
-+ `MonitoredObject::fromParams()`: Deleted without substitution.
-+ `DataView::fromRequest()`: Use `$backend->select()->from($viewName)` instead.
-+ `DataView::sort()`: Use `DataView::order()` instead.
-+ `MonitoringBackend::createBackend()`: Use `MonitoringBackend::instance()` instead.
-+ `DbConnection::getConnection()`: Use `Connection::getDbAdapter()` instead.
-+ `DbQuery::renderFilter()`: Use `DbConnection::renderFilter()` instead.
-+ `DbQuery::whereToSql()`: Use `DbConnection::renderFilter()` instead.
-+ `DataView::applyUrlFilter()`: Not in use.
+  * `loader.js.addUrlFlag()`: Use `Icinga.Utils.addUrlFlag()` instead.
+  * `Url::setBaseUrl()`: Please create a new url from scratch instead.
+  * `Url::getBaseUrl()`: Use either `Url::getBasePath()` or `Url::getAbsoluteUrl()` now.
+  * `ApplicationBootstrap::setupZendAutoloader()`: Since it does nothing, all usages removed.
+  * `ApplicationBootstrap::listLocales()`: Use `\ipl\I18n\GettextTranslator::listLocales()` instead.
+  * `Module::registerHook()`: Use `provideHook()` instead.
+  * `Web::getMenu()`: Instantiate the menu class `new Menu()` directly instead.
+  * `AesCrypt::encryptToBase64()`: Use `AesCrypt::encrypt()` instead as it also returns a base64 encoded string.
+  * `AesCrypt::decryptFromBase64()`: Use `AesCrypt::decrypt()` instead as it also returns a base64 decoded string.
+  * `InlinePie::disableNoScript()`: Empty method.
+  * `SimpleQuery::paginate()`: Use `Icinga\Web\Controller::setupPaginationControl()` and/or `Icinga\Web\Widget\Paginator` instead.
+  * `LdapConnection::connect()`: The connection is established lazily since .. a long time.
+  * `MonitoredObject::matches()`: Use `$filter->matches($object)` instead.
+  * `MonitoredObject::fromParams()`: Deleted without substitution.
+  * `DataView::fromRequest()`: Use `$backend->select()->from($viewName)` instead.
+  * `DataView::sort()`: Use `DataView::order()` instead.
+  * `MonitoringBackend::createBackend()`: Use `MonitoringBackend::instance()` instead.
+  * `DbConnection::getConnection()`: Use `Connection::getDbAdapter()` instead.
+  * `DbQuery::renderFilter()`: Use `DbConnection::renderFilter()` instead.
+  * `DbQuery::whereToSql()`: Use `DbConnection::renderFilter()` instead.
 
   **Classes:**
-+ `Icinga\Util\String`: Use `Icinga\Util\StringHelper` instead.
-+ `Icinga\Util\Translator`: Use `\ipl\I18n\StaticTranslator::$instance` or `\ipl\I18n\Translation` instead.
-+ `Icinga\Module\Migrate\Clicommands\DashboardCommand`: Deleted without substitution.
-+ `Icinga\Web\Hook\TicketHook`: Use `Icinga\Application\Hook\TicketHook` instead.
-+ `Icinga\Web\Hook\GrapherHook`: Use `Icinga\Application\Hook\GrapherHook` instead.
-+ `Icinga\Module\Monitoring\Environment`: Not in use.
-+ `Icinga\Module\Monitoring\Backend`: Use `Icinga\Module\Monitoring\Backend\MonitoringBackend` instead.
-
-* All the following deprecated js classes and methods are removed:
-
-  **Methods:**
-+ `loader::addUrlFlag()`: Use `Icinga.Utils.addUrlFlag()` instead.
+  * `Icinga\User\Preferences\Store\IniStore`: Preferences in INI files are not supported anymore.
+  * `Icinga\User\Preferences\Store\DbStore`: Its methods have been added to the `PreferencesStore` class.
+  * `Icinga\Util\String`: Use `Icinga\Util\StringHelper` instead.
+  * `Icinga\Util\Translator`: Use `\ipl\I18n\StaticTranslator::$instance` or `\ipl\I18n\Translation` instead.
+  * `Icinga\Module\Migrate\Clicommands\DashboardCommand`: Deleted without substitution.
+  * `Icinga\Web\Hook\TicketHook`: Use `Icinga\Application\Hook\TicketHook` instead.
+  * `Icinga\Web\Hook\GrapherHook`: Use `Icinga\Application\Hook\GrapherHook` instead.
+  * `Icinga\Module\Monitoring\Environment`: Not in use.
+  * `Icinga\Module\Monitoring\Backend`: Use `Icinga\Module\Monitoring\Backend\MonitoringBackend` instead.
 
 ## Upgrading to Icinga Web 2 2.10.x
 
