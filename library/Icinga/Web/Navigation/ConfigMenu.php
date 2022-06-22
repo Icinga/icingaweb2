@@ -28,6 +28,10 @@ class ConfigMenu extends BaseHtmlElement
 
     protected $state;
 
+    protected $healthBadge;
+
+    protected $flyoutID = 'config-menu-flyout';
+
     public function __construct()
     {
         $this->children = [
@@ -82,6 +86,7 @@ class ConfigMenu extends BaseHtmlElement
                 'items' => [
                     'logout' => [
                         'label' => t('Logout'),
+                        'icon' => 'power-off',
                         'atts'  => [
                             'target' => '_self',
                             'class' => 'nav-item-logout'
@@ -154,7 +159,7 @@ class ConfigMenu extends BaseHtmlElement
                 ));
             }
 
-            $ul = HtmlElement::create('ul', ['class' => 'nav']);
+            $ul = HtmlElement::create('ul', ['class' => ['nav', 'flyout-menu']]);
             foreach ($c['items'] as $key => $item) {
                 $ul->add($this->createLevel2MenuItem($item, $key));
             }
@@ -179,7 +184,7 @@ class ConfigMenu extends BaseHtmlElement
     {
         $level2Nav = HtmlElement::create(
             'div',
-            Attributes::create(['class' => 'nav-level-1 flyout'])
+            Attributes::create(['class' => 'nav-level-1 flyout', 'id' => $this->flyoutID ])
         );
 
         $this->assembleLevel2Nav($level2Nav);
@@ -194,10 +199,16 @@ class ConfigMenu extends BaseHtmlElement
         }
 
         $healthBadge = null;
-        $class = null;
+        $class = [];
         if ($key === 'health') {
             $class = 'badge-nav-item';
-            $healthBadge = $this->createHealthBadge();
+            $healthBadge = $this->healthBadge;
+        }
+
+        $icon = null;
+        if (isset($item['icon'])) {
+            $icon = new Icon($item['icon']);
+            $class[] = 'has-icon';
         }
 
         $li = HtmlElement::create(
@@ -208,6 +219,7 @@ class ConfigMenu extends BaseHtmlElement
                     'a',
                     Attributes::create(['href' => Url::fromPath($item['url'])]),
                     [
+                        $icon,
                         $item['label'],
                         isset($healthBadge) ? $healthBadge : ''
                     ]
@@ -234,7 +246,10 @@ class ConfigMenu extends BaseHtmlElement
 
     protected function createCogMenuItem()
     {
-        $cogMenuItem = HtmlElement::create('li', ['class' => 'config-nav-item']);
+        $cogMenuItem = HtmlElement::create('li', [
+            'class' => 'config-nav-item',
+            'data-flyout-target' => $this->flyoutID
+        ]);
 
         $this->assembleCogMenuItem($cogMenuItem);
 
@@ -243,6 +258,8 @@ class ConfigMenu extends BaseHtmlElement
 
     protected function assemble()
     {
+        $this->healthBadge = $this->createHealthBadge();
+
         $this->add([
             $this->createUserMenuItem(),
             $this->createCogMenuItem()
