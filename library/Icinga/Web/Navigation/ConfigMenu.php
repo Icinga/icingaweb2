@@ -30,6 +30,8 @@ class ConfigMenu extends BaseHtmlElement
 
     protected $state;
 
+    protected $healthBadge;
+
     public function __construct()
     {
         $this->children = [
@@ -84,6 +86,7 @@ class ConfigMenu extends BaseHtmlElement
                 'items' => [
                     'logout' => [
                         'label' => t('Logout'),
+                        'icon' => 'power-off',
                         'atts'  => [
                             'target' => '_self',
                             'class' => 'nav-item-logout'
@@ -94,13 +97,7 @@ class ConfigMenu extends BaseHtmlElement
             ]
         ];
 
-        if (Logger::writesToFile()) {
-            $this->children['system']['items']['application_log'] = [
-                'label'       => t('Application Log'),
-                'url'         => 'list/applicationlog',
-                'permission'  => 'application/log'
-            ];
-        }
+        $this->healthBadge = $this->createHealthBadge();
     }
 
     protected function assembleUserMenuItem(BaseHtmlElement $userMenuItem)
@@ -160,7 +157,7 @@ class ConfigMenu extends BaseHtmlElement
                 ));
             }
 
-            $ul = HtmlElement::create('ul', ['class' => 'nav']);
+            $ul = HtmlElement::create('ul', ['class' => 'nav flyout-menu']);
             foreach ($c['items'] as $key => $item) {
                 $ul->add($this->createLevel2MenuItem($item, $key));
             }
@@ -200,10 +197,16 @@ class ConfigMenu extends BaseHtmlElement
         }
 
         $healthBadge = null;
-        $class = null;
+        $class = '';
         if ($key === 'health') {
             $class = 'badge-nav-item';
-            $healthBadge = $this->createHealthBadge();
+            $healthBadge = $this->healthBadge;
+        }
+
+        $icon = null;
+        if (isset($item['icon'])) {
+            $icon = new Icon($item['icon']);
+            $class .= ' has-icon';
         }
 
         $li = HtmlElement::create(
@@ -214,6 +217,7 @@ class ConfigMenu extends BaseHtmlElement
                     'a',
                     Attributes::create(['href' => Url::fromPath($item['url'])]),
                     [
+                        $icon,
                         $item['label'],
                         isset($healthBadge) ? $healthBadge : ''
                     ]
