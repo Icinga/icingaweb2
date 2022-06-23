@@ -32,9 +32,10 @@ thoroughly.
 
 ## Installation Requirements <a id="installation-requirements"></a>
 
-* [Icinga 2](https://icinga.com/products/icinga-2/) with the IDO database backend (MySQL or PostgreSQL)
+* [Icinga 2](https://icinga.com/docs/icinga-2) and [Icinga DB](https://icinga.com/docs/icinga-db) to
+  monitor your infrastructure
 * A web server, e.g. Apache or Nginx
-* PHP version >= 7.2
+* PHP version ≥ 7.2
 
 ### Optional Requirements
 * For exports to PDF also the following PHP modules are required: mbstring, GD, Imagick
@@ -381,11 +382,12 @@ mv icingaweb2-2.9.5 icingaweb2
 
 You will need to install certain dependencies depending on your setup:
 
-* [Icinga 2](https://icinga.com/products/icinga-2/) with the IDO database backend (MySQL or PostgreSQL)
+* [Icinga 2](https://github.com/Icinga/icinga2) and [Icinga DB](https://github.com/Icinga/icingadb) to
+  monitor your infrastructure
 * A web server, e.g. Apache or Nginx
-* PHP version >= 7.2
-* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (>= 0.9)
-* [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) (>= 0.11)
+* PHP version ≥ 7.2
+* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (≥ 0.9)
+* [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) (≥ 0.11)
 * The following PHP modules must be installed: cURL, json, gettext, fileinfo, intl, dom, OpenSSL and xml
 * For exports to PDF also the following PHP modules are required: mbstring, GD, Imagick
 * LDAP PHP library when using Active Directory or LDAP for authentication
