@@ -604,7 +604,7 @@ class User
                 return false;
             }
 
-            if (! $granted && $role->grants($requiredPermission)) {
+            if (! $granted && $role->grants($requiredPermission, false, false)) {
                 $granted = true;
             }
         }
