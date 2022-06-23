@@ -282,9 +282,16 @@ yum install icingaweb2 icingacli
 
 ## Install the Web Server <a id="install-the-web-server"></a>
 
-Make sure you have a web server with PHP up and running before moving on.
-Please refer to the [installation requirements](#installation-requirements) for details about supported versions.
-Depending on your OS you might have to install, and configure the web server separately.
+Ensure that you have a web server with PHP installed before proceeding,
+such as Apache or Nginx with PHP version ≥ 7.2. Depending on your operating system,
+you may need to install and configure the web server separately.
+An Apache configuration file to serve Icinga Web is already installed.
+If you want to use Nginx, you must manually create a configuration file using the following command.
+Save the output as a new file in the web server configuration directory:
+
+```bash
+icingacli setup config webserver nginx --document-root /usr/share/icingaweb2/public
+```
 
 ## Prepare Web Setup <a id="prepare-web-setup-from-package"></a>
 
