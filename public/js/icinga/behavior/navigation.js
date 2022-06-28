@@ -222,13 +222,15 @@
 
     Navigation.prototype.setActiveAndSelected = function ($el) {
         if ($el.length > 1) {
-            $el.each(el => {
+            $el.each((key, el) => {
                 if (! this.active) {
                     this.setActiveAndSelected($(el));
                 }
             });
         } else if ($el.length) {
-            if ($el[0].offsetWidth || $el[0].offsetHeight || $el.closest('.config-menu').length) {
+            let parent = $el[0].closest('.nav-level-1 > .nav-item, .config-menu');
+
+            if ($el[0].offsetHeight || $el[0].offsetWidth || parent.offsetHeight || parent.offsetWidth) {
                 // It's either a visible menu item or a config menu item
                 this.setActive($el);
                 this.setSelected($el);
