@@ -30,13 +30,14 @@ class AboutController extends Controller
     {
         $less = <<<LESS
 @button-bg-color: black;
+@foobar: @button-bg-color;
 
-.button(@bg-color) {
+.button(@bg-color: @foobar) {
   background-color: @bg-color;
 }
 
 .button {
-  .button(@button-bg-color);
+  .button();
 }
 LESS;
 

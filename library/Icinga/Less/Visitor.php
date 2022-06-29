@@ -60,6 +60,8 @@ CSS;
     /** @var null|string CSS module selector if any */
     protected $moduleSelector;
 
+    protected $inMixinDefinition = false;
+
     public function __construct()
     {
         parent::__construct();
@@ -133,7 +135,14 @@ CSS;
             $p['value'] = $this->visitObj($p['value']);
         }
 
+        $this->inMixinDefinition = true;
+
         return $m;
+    }
+
+    public function visitMixinDefinitionOut($m)
+    {
+        $this->inMixinDefinition = false;
     }
 
     public function visitRule($r)
@@ -179,7 +188,7 @@ CSS;
 
     public function visitVariable($v)
     {
-        if ($this->callingVar !== false || $this->definingVariable !== false) {
+        if ($this->callingVar !== false || $this->definingVariable !== false || $this->inMixinDefinition !== false) {
             return $v;
         }
 
@@ -191,7 +200,7 @@ CSS;
     {
         $this->lightMode = new LightMode();
 
-        var_dump($node);die;
+        //var_dump($node);die;
 
         $evald = $this->visitObj($node);
 
