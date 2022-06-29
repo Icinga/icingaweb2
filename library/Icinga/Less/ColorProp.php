@@ -14,7 +14,7 @@ use Less_Tree_Keyword;
  */
 class ColorProp extends Less_Tree_Color
 {
-    /** @var Less_Tree_Color Color with which we created the ColorProp */
+    /** @var Less_Tree_Color|ColorProp Color with which we created the ColorProp */
     protected $color;
 
     /** @var int */
@@ -23,7 +23,7 @@ class ColorProp extends Less_Tree_Color
     /** @var string Color variable name */
     protected $name;
 
-    public function __construct()
+    private function __construct()
     {
     }
 
@@ -38,6 +38,28 @@ class ColorProp extends Less_Tree_Color
         $self->color = $color;
 
         foreach ($color as $k => $v) {
+            $self->$k = $v;
+        }
+
+        return $self;
+    }
+
+    /**
+     * @param ColorProp $color
+     *
+     * @return static
+     */
+    public static function fromColorProp(ColorProp $color)
+    {
+        $self = new static();
+        $self->color = $color;
+
+        $lessColor = $color;
+        do {
+            $lessColor = $lessColor->color;
+        } while ($lessColor instanceof ColorProp);
+
+        foreach ($lessColor as $k => $v) {
             $self->$k = $v;
         }
 
@@ -90,7 +112,7 @@ class ColorProp extends Less_Tree_Color
             'var',
             [
                 new Less_Tree_Keyword('--' . $this->getName()),
-                // Use the Less_Tree_Color with which we created the ColorProp so that we don't get into genCSS() loops.
+                // Use the color with which we created the ColorProp so that we don't get into genCSS() loops.
                 $this->color
             ],
             $this->getIndex()
