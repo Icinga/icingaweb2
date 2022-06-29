@@ -1,5 +1,7 @@
 <?php
 
+/* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
+
 namespace Icinga\Less;
 
 use Less_Exception_Compiler;
@@ -79,7 +81,7 @@ class DeferredColorProp extends Less_Tree_Variable
             return $this;
         }
 
-        if ($this->evaluating) {
+        if ($this->evaluating) { // Just like the parent method
             throw new Less_Exception_Compiler(
                 "Recursive variable definition for " . $this->name,
                 null,
