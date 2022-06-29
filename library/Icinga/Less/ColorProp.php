@@ -3,7 +3,6 @@
 
 namespace Icinga\Less;
 
-use Less_Tree;
 use Less_Tree_Call;
 use Less_Tree_Color;
 use Less_Tree_Keyword;
@@ -15,7 +14,7 @@ use Less_Tree_Keyword;
  */
 class ColorProp extends Less_Tree_Color
 {
-    /** @var Less_Tree Color with which we created the ColorProp */
+    /** @var Less_Tree_Color Color with which we created the ColorProp */
     protected $color;
 
     /** @var int */
@@ -39,11 +38,7 @@ class ColorProp extends Less_Tree_Color
         $self->color = $color;
 
         foreach ($color as $k => $v) {
-            if ($k === 'name') {
-                $self->setName($v); // Removes the @ char from the name
-            } else {
-                $self->$k = $v;
-            }
+            $self->$k = $v;
         }
 
         return $self;
@@ -84,10 +79,6 @@ class ColorProp extends Less_Tree_Color
      */
     public function setName($name)
     {
-        if ($name[0] === '@') {
-            $name = substr($name, 1);
-        }
-
         $this->name = $name;
 
         return $this;

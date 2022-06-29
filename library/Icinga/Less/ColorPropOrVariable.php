@@ -45,12 +45,7 @@ class ColorPropOrVariable extends Less_Tree
             // Evaluate variable variable as in Less_Tree_Variable:28.
             $vv = new Less_Tree_Variable(substr($v->name, 1), $v->index + 1, $v->currentFileInfo);
             // Overwrite the name so that the variable variable is not evaluated again.
-            $result = $vv->compile($env);
-            if ($result instanceof DeferredColorProp) {
-                $v->name = $result->name;
-            } else {
-                $v->name = '@' . $result->value;
-            }
+            $v->name = '@' . $vv->compile($env)->value;
         }
 
         $compiled = $v->compile($env);
@@ -63,7 +58,7 @@ class ColorPropOrVariable extends Less_Tree
         if ($compiled instanceof Less_Tree_Color) {
             return ColorProp::fromColor($compiled)
                 ->setIndex($v->index)
-                ->setName($v->name);
+                ->setName(substr($v->name, 1));
         }
 
         return $compiled;
