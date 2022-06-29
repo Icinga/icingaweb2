@@ -36,8 +36,21 @@ class AboutController extends Controller
   background-color: @bg-color;
 }
 
+.foobar() {
+  &.foobar {
+    .child {
+      color: @button-bg-color;
+      &:before {
+        color: @foobar;
+      }
+    }
+  }
+}
+
 .button {
   .button();
+  .foobar();
+  border-color: var(--foobar, @foobar);
 }
 LESS;
 

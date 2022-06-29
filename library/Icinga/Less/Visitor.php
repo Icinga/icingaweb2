@@ -6,7 +6,6 @@ namespace Icinga\Less;
 use Less_Parser;
 use Less_Tree_Rule;
 use Less_VisitorReplacing;
-use LogicException;
 use ReflectionProperty;
 
 /**
@@ -30,26 +29,8 @@ CSS;
 
     public $isPreEvalVisitor = true;
 
-    /**
-     * Whether calling var() CSS function
-     *
-     * If that's the case, don't try to replace compiled Less colors with CSS var() function calls.
-     *
-     * @var bool|string
-     */
-    protected $callingVar = false;
-
-    /**
-     * Whether defining a variable
-     *
-     * If that's the case, don't try to replace compiled Less colors with CSS var() function calls.
-     *
-     * @var false|string
-     */
-    protected $definingVariable = false;
-
-    /** @var Less_Tree_Rule If defining a variable, determines the origin rule of the variable */
-    protected $variableOrigin;
+    /** @var bool Whether to disable visitVariable() */
+    protected $disableVisitVariable = false;
 
     /** @var LightMode Light mode registry */
     protected $lightMode;
@@ -60,7 +41,8 @@ CSS;
     /** @var null|string CSS module selector if any */
     protected $moduleSelector;
 
-    protected $inMixinDefinition = false;
+    /** @var Less_Tree_Rule If defining a variable, determines the origin rule of the variable */
+    protected $variableOrigin;
 
     public function __construct()
     {
@@ -69,26 +51,6 @@ CSS;
         ini_set('xdebug.var_display_max_children', -1);
         ini_set('xdebug.var_display_max_data', -1);
         ini_set('xdebug.var_display_max_depth', -1);
-    }
-
-    public function visitCall($c)
-    {
-        if ($c->name === 'var') {
-            if ($this->callingVar !== false) {
-                throw new LogicException('Already calling var');
-            }
-
-            $this->callingVar = spl_object_hash($c);
-        }
-
-        return $c;
-    }
-
-    public function visitCallOut($c)
-    {
-        if ($this->callingVar !== false && $this->callingVar === spl_object_hash($c)) {
-            $this->callingVar = false;
-        }
     }
 
     public function visitDetachedRuleset($drs)
@@ -107,10 +69,6 @@ CSS;
                 ->setName($this->variableOrigin->name);
         }
 
-        // Since a detached ruleset is a variable definition in the first place,
-        // just reset that we define a variable.
-        $this->definingVariable = false;
-
         return $drs;
     }
 
@@ -126,6 +84,8 @@ CSS;
 
     public function visitMixinDefinition($m)
     {
+        $disableVisitVariable = false;
+
         // Less_Tree_Mixin_Definition::accept() does not visit params, but we have to replace them if necessary.
         foreach ($m->params as $p) {
             if (! isset($p['value'])) {
@@ -133,16 +93,18 @@ CSS;
             }
 
             $p['value'] = $this->visitObj($p['value']);
+
+            $disableVisitVariable = true;
         }
 
-        $this->inMixinDefinition = true;
+        $this->disableVisitVariable = $disableVisitVariable;
 
         return $m;
     }
 
     public function visitMixinDefinitionOut($m)
     {
-        $this->inMixinDefinition = false;
+        $this->disableVisitVariable = false;
     }
 
     public function visitRule($r)
@@ -188,7 +150,7 @@ CSS;
 
     public function visitVariable($v)
     {
-        if ($this->callingVar !== false || $this->definingVariable !== false || $this->inMixinDefinition !== false) {
+        if ($this->disableVisitVariable) {
             return $v;
         }
 
@@ -199,8 +161,6 @@ CSS;
     public function run($node)
     {
         $this->lightMode = new LightMode();
-
-        //var_dump($node);die;
 
         $evald = $this->visitObj($node);
 
