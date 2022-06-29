@@ -34,7 +34,7 @@ class Call extends Less_Tree_Call
             }
 
             if ($name) {
-                foreach (array_reverse($env->frames) as $frame) {
+                foreach ($env->frames as $frame) {
                     if (($v = $frame->variable($name))) {
                         // Variables from the frame stack are always of type LESS Tree Rule
                         $vr = $v->value;
