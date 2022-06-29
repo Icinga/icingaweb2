@@ -90,6 +90,40 @@ LESS
         );
     }
 
+    public function testNestedVariablesInMixinCalls()
+    {
+        $this->assertEquals(
+            <<<CSS
+.button1 {
+  background-color: var(--my-color, var(--black, #000000));
+}
+.button2 {
+  background-color: var(--my-black-color, var(--my-color, var(--black, #000000)));
+}
+
+CSS
+            ,
+            $this->compileLess(<<<LESS
+@black: black;
+@my-color: @black;
+@my-black-color: @my-color;
+
+.button(@bg-color: @my-color) {
+  background-color: @bg-color;
+}
+
+.button1 {
+  .button();
+}
+
+.button2 {
+  .button(@my-black-color)
+}
+LESS
+            )
+        );
+    }
+
     public function testDefiningVariablesWithLessCallables()
     {
         $this->assertEquals(
