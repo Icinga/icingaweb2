@@ -4,7 +4,10 @@
 namespace Icinga\Less;
 
 use Less_Parser;
+use Less_Tree_Expression;
 use Less_Tree_Rule;
+use Less_Tree_Value;
+use Less_Tree_Variable;
 use Less_VisitorReplacing;
 use LogicException;
 use ReflectionProperty;
@@ -68,6 +71,10 @@ CSS;
             }
 
             $this->callingVar = spl_object_hash($c);
+        } else {
+            // We need to use our own tree call class , so that we can precompile the arguments before making
+            // the actual LESS function calls. Otherwise, it will produce lots of invalid argument exceptions!
+            $c = Call::fromCall($c);
         }
 
         return $c;
@@ -136,6 +143,15 @@ CSS;
 
             $this->definingVariable = spl_object_hash($r);
             $this->variableOrigin = $r;
+
+            if ($r->value instanceof Less_Tree_Value) {
+                if ($r->value->value[0] instanceof Less_Tree_Expression) {
+                    if ($r->value->value[0]->value[0] instanceof Less_Tree_Variable) {
+                        // Transform the variable definition rule into our own class
+                        $r->value->value[0]->value[0] = new DeferredColorProp($r->name, $r->value->value[0]->value[0]);
+                    }
+                }
+            }
         }
 
         return $r;
@@ -184,6 +200,15 @@ CSS;
 
         return (new ColorPropOrVariable())
             ->setVariable($v);
+    }
+
+    public function visitColor($c)
+    {
+        if ($this->definingVariable !== false) {
+            $c->name = $this->variableOrigin->name;
+        }
+
+        return $c;
     }
 
     public function run($node)
