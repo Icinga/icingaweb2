@@ -5,6 +5,7 @@ namespace Icinga\Controllers;
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Version;
+use Icinga\Util\LessParser;
 use Icinga\Web\Controller;
 
 class AboutController extends Controller
@@ -23,5 +24,24 @@ class AboutController extends Controller
                 'url'   => 'about'
             )
         )->activate('about');
+    }
+
+    public function lessAction()
+    {
+        $less = <<<LESS
+@button-bg-color: black;
+
+.button(@bg-color) {
+  background-color: @bg-color;
+}
+
+.button {
+  .button(@button-bg-color);
+}
+LESS;
+
+        $parser = new LessParser();
+        echo '<pre>' . $parser->compile($less) . '</pre>';die;
+
     }
 }

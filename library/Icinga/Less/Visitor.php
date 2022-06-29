@@ -60,6 +60,15 @@ CSS;
     /** @var null|string CSS module selector if any */
     protected $moduleSelector;
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        ini_set('xdebug.var_display_max_children', -1);
+        ini_set('xdebug.var_display_max_data', -1);
+        ini_set('xdebug.var_display_max_depth', -1);
+    }
+
     public function visitCall($c)
     {
         if ($c->name === 'var') {
@@ -181,6 +190,8 @@ CSS;
     public function run($node)
     {
         $this->lightMode = new LightMode();
+
+        var_dump($node);die;
 
         $evald = $this->visitObj($node);
 
