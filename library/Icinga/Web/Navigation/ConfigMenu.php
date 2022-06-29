@@ -31,8 +31,6 @@ class ConfigMenu extends BaseHtmlElement
 
     protected $selected;
 
-    protected $cogItemActive = false;
-
     protected $state;
 
     public function __construct()
@@ -143,10 +141,6 @@ class ConfigMenu extends BaseHtmlElement
             ),
             $this->createLevel2Menu()
         ]);
-
-        if ($this->cogItemActive) {
-            $cogMenuItem->addAttributes([ 'class' => 'active' ]);
-        }
     }
 
     protected function assembleLevel2Nav(BaseHtmlElement $level2Nav)
@@ -275,7 +269,6 @@ class ConfigMenu extends BaseHtmlElement
 
         if ($this->isSelectedItem($item)) {
             $li->addAttributes(['class' => 'selected']);
-            $this->cogItemActive = true;
         }
 
         return $li;
