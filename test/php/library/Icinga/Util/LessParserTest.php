@@ -60,6 +60,59 @@ LESS
         );
     }
 
+    public function testNestedVariables()
+    {
+        $this->assertEquals(
+            <<<CSS
+.black {
+  color: var(--my-color, var(--black, #000000));
+}
+.notBlack {
+  color: var(--my-black-color, var(--my-color, var(--black, #000000)));
+}
+
+CSS
+            ,
+            $this->compileLess(<<<LESS
+@black: black;
+@my-color: @black;
+@my-black-color: @my-color;
+
+.black {
+  color: @my-color;
+}
+
+.notBlack {
+  color: @my-black-color;
+}
+LESS
+            )
+        );
+    }
+
+    public function testDefiningVariablesWithLessCallables()
+    {
+        $this->assertEquals(
+            <<<CSS
+.my-rule {
+  color: var(--fade-color, rgba(221, 221, 221, 0.5));
+}
+
+CSS
+            ,
+            $this->compileLess(<<<LESS
+@color: #ddd;
+@my-color: @color;
+@fade-color: fade(@my-color, 50%);
+
+.my-rule {
+    color: @fade-color;
+}
+LESS
+            )
+        );
+    }
+
     public function testVariablesUsedInFunctions()
     {
         $this->assertEquals(
