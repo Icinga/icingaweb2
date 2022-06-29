@@ -31,6 +31,12 @@ class AboutController extends Controller
         $less = <<<LESS
 @button-bg-color: black;
 @foobar: @button-bg-color;
+@fade-color: fade(@foobar, 50%);
+@default-text-color: @fade-color;
+
+.foobar {
+    background-color: @default-text-color;
+}
 
 .button(@bg-color: @foobar) {
   background-color: @bg-color;
