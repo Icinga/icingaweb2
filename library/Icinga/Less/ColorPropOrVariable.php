@@ -43,14 +43,14 @@ class ColorPropOrVariable extends Less_Tree
 
         $compiled = $v->compile($env);
 
-        if ($compiled instanceof Less_Tree_Color) {
-            return ColorProp::fromColor($compiled)
+        if ($compiled instanceof ColorProp) {
+            return ColorProp::fromColorProp($compiled)
                 ->setIndex($v->index)
                 ->setName(substr($v->name, 1));
         }
 
-        if ($compiled instanceof ColorProp) {
-            return ColorProp::fromColorProp($compiled)
+        if ($compiled instanceof Less_Tree_Color) {
+            return ColorProp::fromColor($compiled)
                 ->setIndex($v->index)
                 ->setName(substr($v->name, 1));
         }
