@@ -706,7 +706,6 @@
                 announceReq.scripted = true;
             }
 
-            var rendered = false;
             var classes;
 
             if (target !== 'layout') {
@@ -756,35 +755,6 @@
                 this.icinga.ui.setWindowId(windowId);
             }
 
-            // Handle search requests, still hardcoded.
-            if (req.url.match(/^\/search/) && req.$target.data('icingaUrl').match(/^\/search/)) {
-                var $resp = $('<div>' + req.responseText + '</div>'); // div helps getting an XML tree
-                if ($('.dashboard', $resp).length > 0 && $('.dashboard .container', req.$target).length > 0) {
-                    // TODO: We need dashboard pane and container identifiers (not ids)
-                    var targets = [];
-                    $('.dashboard .container', req.$target).each(function (idx, el) {
-                        targets.push($(el));
-                    });
-
-                    var i = 0;
-                    // Searching for '.dashboard .container' in $resp doesn't dork?!
-                    $('.dashboard .container', $resp).each(function (idx, el) {
-                        var $el = $(el);
-                        if ($el.hasClass('dashboard')) {
-                            return;
-                        }
-                        var url = $el.data('icingaUrl');
-                        targets[i].data('icingaUrl', url);
-                        var title = $('h1', $el).first();
-                        $('h1', targets[i]).first().replaceWith(title);
-
-                        _this.loadUrl(url, targets[i]);
-                        i++;
-                    });
-                    rendered = true;
-                }
-            }
-
             var referrer = req.referrer;
             if (typeof referrer === 'undefined') {
                 referrer = req;
@@ -800,10 +770,6 @@
             }
 
             req.$target.data('icingaUrl', req.url);
-
-            if (rendered) {
-                return;
-            }
 
             if (typeof req.progressTimer !== 'undefined') {
                 this.icinga.timer.unregister(req.progressTimer);
