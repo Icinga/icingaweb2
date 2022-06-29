@@ -130,11 +130,6 @@ CSS;
     public function visitRule($r)
     {
         if ($r->name[0] === '@' && $r->variable) {
-            if ($this->definingVariable !== false) {
-                throw new LogicException('Already defining a variable');
-            }
-
-            $this->definingVariable = spl_object_hash($r);
             $this->variableOrigin = $r;
         }
 
@@ -143,10 +138,7 @@ CSS;
 
     public function visitRuleOut($r)
     {
-        if ($this->definingVariable !== false && $this->definingVariable === spl_object_hash($r)) {
-            $this->definingVariable = false;
-            $this->variableOrigin = null;
-        }
+        $this->variableOrigin = null;
     }
 
     public function visitRuleset($rs)
