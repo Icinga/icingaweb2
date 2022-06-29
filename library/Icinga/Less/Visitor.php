@@ -1,5 +1,5 @@
 <?php
-/* Icinga Web 2 | (c) 2022 Icinga Development Team | GPLv2+ */
+/* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Less;
 
@@ -65,26 +65,13 @@ CSS;
 
     public function visitCall($c)
     {
-        if ($c->name === 'var') {
-            if ($this->callingVar !== false) {
-                throw new LogicException('Already calling var');
-            }
-
-            $this->callingVar = spl_object_hash($c);
-        } else {
+        if ($c->name !== 'var') {
             // We need to use our own tree call class , so that we can precompile the arguments before making
             // the actual LESS function calls. Otherwise, it will produce lots of invalid argument exceptions!
             $c = Call::fromCall($c);
         }
 
         return $c;
-    }
-
-    public function visitCallOut($c)
-    {
-        if ($this->callingVar !== false && $this->callingVar === spl_object_hash($c)) {
-            $this->callingVar = false;
-        }
     }
 
     public function visitDetachedRuleset($drs)
@@ -194,7 +181,7 @@ CSS;
 
     public function visitVariable($v)
     {
-        if ($this->callingVar !== false || $this->definingVariable !== false) {
+        if ($this->definingVariable !== false) {
             return $v;
         }
 
@@ -205,6 +192,7 @@ CSS;
     public function visitColor($c)
     {
         if ($this->definingVariable !== false) {
+            // Make sure that all less tree colors do have a proper name
             $c->name = $this->variableOrigin->name;
         }
 
