@@ -1,4 +1,4 @@
-/* Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
+/* Icinga Web 2 | (c) 2014 Icinga GmbH | GPLv2+ */
 
 CREATE OR REPLACE FUNCTION unix_timestamp(timestamp with time zone) RETURNS bigint AS '
         SELECT EXTRACT(EPOCH FROM $1)::bigint AS result
@@ -117,3 +117,14 @@ ALTER TABLE ONLY "icingaweb_rememberme"
   PRIMARY KEY (
     "id"
 );
+
+CREATE TABLE "icingaweb_schema" (
+  "id"          serial,
+  "version"     smallint NOT NULL,
+  "timestamp"   int NOT NULL,
+
+  CONSTRAINT pk_icingaweb_schema PRIMARY KEY ("id")
+);
+
+INSERT INTO icingaweb_schema (version, timestamp)
+  VALUES (6, extract(epoch from now()));
