@@ -5,6 +5,7 @@ namespace Icinga\Less;
 use Less_Exception_Compiler;
 use Less_Tree_Call;
 use Less_Tree_Color;
+use Less_Tree_Keyword;
 use Less_Tree_Value;
 use Less_Tree_Variable;
 
@@ -89,7 +90,7 @@ class DeferredColorProp extends Less_Tree_Variable
 
         $this->evaluating = true;
 
-        foreach (array_reverse($env->frames) as $frame) {
+        foreach ($env->frames as $frame) {
             if (($v = $frame->variable($this->getRef()->name))) {
                 $rv = $v->value;
                 if ($rv instanceof Less_Tree_Value) {
@@ -122,7 +123,7 @@ class DeferredColorProp extends Less_Tree_Variable
         $css = (new Less_Tree_Call(
             'var',
             [
-                new \Less_Tree_Keyword('--' . $this->getName()),
+                new Less_Tree_Keyword('--' . $this->getName()),
                 $this->getRef() // Each of the references will be generated recursively
             ],
             $this->index
