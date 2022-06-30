@@ -24,6 +24,10 @@ class Call extends Less_Tree_Call
         }
 
         foreach ($this->args as $arg) {
+            if (! is_array($arg->value)) {
+                continue;
+            }
+
             $name = null;
             if ($arg->value[0] instanceof Less_Tree_Variable) {
                 // This is the case when defining a variable with a callable LESS rules such as fade, fadeout..
