@@ -1,4 +1,4 @@
-# Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+
+# Icinga Web 2 | (c) 2014 Icinga GmbH | GPLv2+
 
 CREATE TABLE `icingaweb_group`(
   `id`     int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -52,3 +52,14 @@ CREATE TABLE `icingaweb_rememberme`(
   mtime             timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE icingaweb_schema (
+  id int unsigned NOT NULL AUTO_INCREMENT,
+  version smallint unsigned NOT NULL,
+  timestamp int unsigned NOT NULL,
+
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+INSERT INTO icingaweb_schema (version, timestamp)
+  VALUES (6, UNIX_TIMESTAMP());

@@ -14,3 +14,14 @@ ALTER TABLE `icingaweb_user_preference`
     MODIFY COLUMN `username` varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL,
     MODIFY COLUMN `section`  varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
     MODIFY COLUMN `name`     varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL;
+
+CREATE TABLE icingaweb_schema (
+  id int unsigned NOT NULL AUTO_INCREMENT,
+  version smallint unsigned NOT NULL,
+  timestamp int unsigned NOT NULL,
+
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+INSERT INTO icingaweb_schema (version, timestamp)
+  VALUES (6, UNIX_TIMESTAMP());
