@@ -119,12 +119,14 @@ class TimeRange implements Iterator
     /**
      * Return whether the given time is within this range of time
      *
-     * @param   int|DateTime    $time   The timestamp or date and time to check
+     * @param   string|int|DateTime    $time   The timestamp or date and time to check
      */
     public function validateTime($time)
     {
         if ($time instanceof DateTime) {
             $dateTime = $time;
+        } elseif (is_string($time)) {
+            $dateTime = DateTime::createFromFormat('d/m/Y g:i A', $time);
         } else {
             $dateTime = new DateTime();
             $dateTime->setTimestamp($time);
