@@ -224,17 +224,17 @@ class DbQuery extends SimpleQuery
 
     protected function valueToTimestamp($value)
     {
-        if (ctype_digit($value)) {
+        if (is_string($value)) {
+            if (ctype_digit($value)) {
+                $value = (int) $value;
+            } else {
+                $value = strtotime($value);
+            }
+        } elseif (! is_int($value)) {
             $value = (int) $value;
-        } elseif (is_string($value)) {
-            $value = strtotime($value);
         }
 
-        if (is_int($value)) {
-            $value = $this->timestampForSql($value);
-        }
-
-        return $value;
+        return $this->timestampForSql($value);
     }
 
     /**
