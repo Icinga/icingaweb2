@@ -1,10 +1,13 @@
 <?php
-/* Icinga Web 2 | (c) 2022 Icinga Development Team | GPLv2+ */
+/* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Less;
 
 use Less_Parser;
+use Less_Tree_Expression;
 use Less_Tree_Rule;
+use Less_Tree_Value;
+use Less_Tree_Variable;
 use Less_VisitorReplacing;
 use LogicException;
 use ReflectionProperty;
@@ -62,22 +65,13 @@ CSS;
 
     public function visitCall($c)
     {
-        if ($c->name === 'var') {
-            if ($this->callingVar !== false) {
-                throw new LogicException('Already calling var');
-            }
-
-            $this->callingVar = spl_object_hash($c);
+        if ($c->name !== 'var') {
+            // We need to use our own tree call class , so that we can precompile the arguments before making
+            // the actual LESS function calls. Otherwise, it will produce lots of invalid argument exceptions!
+            $c = Call::fromCall($c);
         }
 
         return $c;
-    }
-
-    public function visitCallOut($c)
-    {
-        if ($this->callingVar !== false && $this->callingVar === spl_object_hash($c)) {
-            $this->callingVar = false;
-        }
     }
 
     public function visitDetachedRuleset($drs)
@@ -136,6 +130,15 @@ CSS;
 
             $this->definingVariable = spl_object_hash($r);
             $this->variableOrigin = $r;
+
+            if ($r->value instanceof Less_Tree_Value) {
+                if ($r->value->value[0] instanceof Less_Tree_Expression) {
+                    if ($r->value->value[0]->value[0] instanceof Less_Tree_Variable) {
+                        // Transform the variable definition rule into our own class
+                        $r->value->value[0]->value[0] = new DeferredColorProp($r->name, $r->value->value[0]->value[0]);
+                    }
+                }
+            }
         }
 
         return $r;
@@ -178,12 +181,22 @@ CSS;
 
     public function visitVariable($v)
     {
-        if ($this->callingVar !== false || $this->definingVariable !== false) {
+        if ($this->definingVariable !== false) {
             return $v;
         }
 
         return (new ColorPropOrVariable())
             ->setVariable($v);
+    }
+
+    public function visitColor($c)
+    {
+        if ($this->definingVariable !== false) {
+            // Make sure that all less tree colors do have a proper name
+            $c->name = $this->variableOrigin->name;
+        }
+
+        return $c;
     }
 
     public function run($node)

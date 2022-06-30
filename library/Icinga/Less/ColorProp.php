@@ -1,5 +1,5 @@
 <?php
-/* Icinga Web 2 | (c) 2022 Icinga Development Team | GPLv2+ */
+/* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Less;
 
@@ -38,7 +38,11 @@ class ColorProp extends Less_Tree_Color
         $self->color = $color;
 
         foreach ($color as $k => $v) {
-            $self->$k = $v;
+            if ($k === 'name') {
+                $self->setName($v); // Removes the @ char from the name
+            } else {
+                $self->$k = $v;
+            }
         }
 
         return $self;
@@ -79,6 +83,10 @@ class ColorProp extends Less_Tree_Color
      */
     public function setName($name)
     {
+        if ($name[0] === '@') {
+            $name = substr($name, 1);
+        }
+
         $this->name = $name;
 
         return $this;
