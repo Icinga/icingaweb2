@@ -28,9 +28,17 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
   is parsed as LESS.
 * jQuery is not bundled anymore as it's now part of the library icinga-php-thirdparty v0.11.0. It's shipped there
   in version 3.6.0. (Previously bundled was jQuery 3.4.1)
-* All the following classes and methods were removed:
-
-  **Methods:**
+* All the following classes have been removed:
+  * `Icinga\User\Preferences\Store\IniStore`: Preferences in INI files are not supported anymore.
+  * `Icinga\User\Preferences\Store\DbStore`: Its methods have been added to the `PreferencesStore` class.
+  * `Icinga\Util\String`: Use `Icinga\Util\StringHelper` instead.
+  * `Icinga\Util\Translator`: Use `\ipl\I18n\StaticTranslator::$instance` or `\ipl\I18n\Translation` instead.
+  * `Icinga\Module\Migrate\Clicommands\DashboardCommand`: Deleted without substitution.
+  * `Icinga\Web\Hook\TicketHook`: Use `Icinga\Application\Hook\TicketHook` instead.
+  * `Icinga\Web\Hook\GrapherHook`: Use `Icinga\Application\Hook\GrapherHook` instead.
+  * `Icinga\Module\Monitoring\Environment`: Not in use.
+  * `Icinga\Module\Monitoring\Backend`: Use `Icinga\Module\Monitoring\Backend\MonitoringBackend` instead.
+* All the following methods have been removed:
   * `loader.js.addUrlFlag()`: Use `Icinga.Utils.addUrlFlag()` instead.
   * `Url::setBaseUrl()`: Please create a new url from scratch instead.
   * `Url::getBaseUrl()`: Use either `Url::getBasePath()` or `Url::getAbsoluteUrl()` now.
@@ -51,17 +59,6 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
   * `DbConnection::getConnection()`: Use `Connection::getDbAdapter()` instead.
   * `DbQuery::renderFilter()`: Use `DbConnection::renderFilter()` instead.
   * `DbQuery::whereToSql()`: Use `DbConnection::renderFilter()` instead.
-
-  **Classes:**
-  * `Icinga\User\Preferences\Store\IniStore`: Preferences in INI files are not supported anymore.
-  * `Icinga\User\Preferences\Store\DbStore`: Its methods have been added to the `PreferencesStore` class.
-  * `Icinga\Util\String`: Use `Icinga\Util\StringHelper` instead.
-  * `Icinga\Util\Translator`: Use `\ipl\I18n\StaticTranslator::$instance` or `\ipl\I18n\Translation` instead.
-  * `Icinga\Module\Migrate\Clicommands\DashboardCommand`: Deleted without substitution.
-  * `Icinga\Web\Hook\TicketHook`: Use `Icinga\Application\Hook\TicketHook` instead.
-  * `Icinga\Web\Hook\GrapherHook`: Use `Icinga\Application\Hook\GrapherHook` instead.
-  * `Icinga\Module\Monitoring\Environment`: Not in use.
-  * `Icinga\Module\Monitoring\Backend`: Use `Icinga\Module\Monitoring\Backend\MonitoringBackend` instead.
 
 ## Upgrading to Icinga Web 2 2.10.x
 
