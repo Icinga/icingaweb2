@@ -11,7 +11,7 @@ abstract class EventgridQuery extends StatehistoryQuery
      * @var array
      */
     protected $additionalColumns = array(
-        'day'                   => 'DATE(FROM_UNIXTIME(sth.timestamp))',
+        'day'                   => 'DATE(sth.timestamp)',
         'cnt_up'                => "SUM(CASE WHEN sth.state = 0 THEN 1 ELSE 0 END)",
         'cnt_down_hard'         => "SUM(CASE WHEN sth.state = 1 AND sth.type = 'hard_state' THEN 1 ELSE 0 END)",
         'cnt_down'              => "SUM(CASE WHEN sth.state = 1 THEN 1 ELSE 0 END)",
@@ -35,7 +35,7 @@ abstract class EventgridQuery extends StatehistoryQuery
         parent::joinBaseTables();
         $this->requireVirtualTable('history');
         $this->columnMap['statehistory'] += $this->additionalColumns;
-        $this->select->group(array('DATE(FROM_UNIXTIME(sth.timestamp))'));
+        $this->select->group(array('DATE(sth.timestamp)'));
     }
 
     /**
