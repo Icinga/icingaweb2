@@ -3,18 +3,24 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterExpression;
+
 /**
  * Query for service comment removal records
  */
 class ServicecommentdeletionhistoryQuery extends ServicecommenthistoryQuery
 {
-    public function isTimestamp($field)
+    protected function requireFilterColumns(Filter $filter)
     {
-        if (! parent::isTimestamp($field)) {
-            return $field === 'sch.deletion_time';
+        if ($filter instanceof FilterExpression && $filter->getColumn() === 'timestamp') {
+            $this->requireColumn('timestamp');
+            $filter->setColumn('sch.deletion_time');
+            $filter->setExpression($this->timestampForSql($this->valueToTimestamp($filter->getExpression())));
+            return null;
         }
 
-        return true;
+        return parent::requireFilterColumns($filter);
     }
 
     /**

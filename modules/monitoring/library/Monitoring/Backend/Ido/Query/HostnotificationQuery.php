@@ -40,7 +40,7 @@ class HostnotificationQuery extends IdoQuery
         'history' => array(
             'output'    => null,
             'state'     => 'hn.state',
-            'timestamp' => 'hn.start_time',
+            'timestamp' => 'UNIX_TIMESTAMP(hn.start_time)',
             'type'      => '
                 CASE hn.notification_reason
                     WHEN 1 THEN \'notification_ack\'
@@ -63,7 +63,7 @@ class HostnotificationQuery extends IdoQuery
             'notification_output'       => 'hn.output',
             'notification_reason'       => 'hn.notification_reason',
             'notification_state'        => 'hn.state',
-            'notification_timestamp'    => 'hn.start_time',
+            'notification_timestamp'    => 'UNIX_TIMESTAMP(hn.start_time)',
             'object_type'               => '(\'host\')'
         ),
         'servicegroups' => array(
@@ -81,22 +81,22 @@ class HostnotificationQuery extends IdoQuery
 
     protected function requireFilterColumns(Filter $filter)
     {
-        if ($filter instanceof FilterExpression && $filter->getColumn() === 'output') {
-            $this->requireColumn($filter->getColumn());
-            $filter->setColumn('hn.output');
-            return null;
+        if ($filter instanceof FilterExpression) {
+            switch ($filter->getColumn()) {
+                case 'output':
+                    $this->requireColumn('output');
+                    $filter->setColumn('hn.output');
+                    return null;
+                case 'timestamp':
+                case 'notification_timestamp':
+                    $this->requireColumn($filter->getColumn());
+                    $filter->setColumn('hn.start_time');
+                    $filter->setExpression($this->timestampForSql($this->valueToTimestamp($filter->getExpression())));
+                    return null;
+            }
         }
 
         return parent::requireFilterColumns($filter);
-    }
-
-    public function isTimestamp($field)
-    {
-        if (! parent::isTimestamp($field)) {
-            return $field === 'hn.start_time';
-        }
-
-        return true;
     }
 
     /**
