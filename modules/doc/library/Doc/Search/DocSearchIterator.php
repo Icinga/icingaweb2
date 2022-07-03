@@ -61,7 +61,7 @@ class DocSearchIterator extends RecursiveFilterIterator
         }
         if (! empty($matches)) {
             $this->matches = $matches;
-            return $this;
+            return true;
         }
         if ($section->hasChildren()) {
             $this->matches = null;
