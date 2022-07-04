@@ -1036,7 +1036,7 @@ class Module
     public function providesSetupWizard()
     {
         $this->launchConfigScript();
-        if (class_exists($this->setupWizard)) {
+        if ($this->setupWizard && class_exists($this->setupWizard)) {
             $wizard = new $this->setupWizard;
             return $wizard instanceof SetupWizard;
         }
