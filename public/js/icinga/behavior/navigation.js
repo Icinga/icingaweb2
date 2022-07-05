@@ -24,12 +24,6 @@
 
         this.on('keydown', '#menu .config-menu .config-nav-item', this.onKeyDown, this);
 
-        this.on('click', '#toggle-more', this.toggleMoreFlyout, this);
-        this.on('click', '#toggle-more + .flyout a', this.hideMoreFlyout, this);
-
-        this.on('click', '#toggle-mobile-config-flyout', this.toggleMobileConfigMenu, this);
-        this.on('click', '#toggle-mobile-config-flyout ~ .nav-level-1 a', this.hideMobileConfigMenu, this);
-
         /**
          * The DOM-Path of the active item
          *
@@ -431,14 +425,6 @@
         if (e.key == 'Enter' && $(document.activeElement).is('.flyout a')) {
             _this.hideConfigFlyout(e);
         }
-    }
-
-    Navigation.prototype.toggleMoreFlyout = function(e) {
-        $('#layout').toggleClass('more-menu-open');
-    }
-
-    Navigation.prototype.hideMoreFlyout = function(e) {
-        $('#layout').removeClass('more-menu-open');
     }
 
     Navigation.prototype.toggleMobileConfigMenu = function(e) {
