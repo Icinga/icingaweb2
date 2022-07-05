@@ -3,6 +3,9 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterExpression;
+
 /**
  * Query for service state history records
  */
@@ -74,18 +77,36 @@ class ServicestatehistoryQuery extends IdoQuery
             'service_host'          => 'so.name1 COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1',
             'state'                 => 'sh.state',
-            'timestamp'             => 'sh.state_time',
+            'timestamp'             => 'UNIX_TIMESTAMP(sh.state_time)',
             'type'                  => "(CASE WHEN sh.state_type = 1 THEN 'hard_state' ELSE 'soft_state' END)"
         ),
     );
 
-    public function isTimestamp($field)
+    protected function requireFilterColumns(Filter $filter)
     {
-        if (! parent::isTimestamp($field)) {
-            return $field === 'sh.state_time';
+        if ($filter instanceof FilterExpression) {
+            switch ($filter->getColumn()) {
+                case 'timestamp':
+                    $this->requireColumn('timestamp');
+                    $filter->setColumn('sh.state_time');
+                    $filter->setExpression($this->timestampForSql($this->valueToTimestamp($filter->getExpression())));
+                    return null;
+                case 'type':
+                    if (! is_array($filter->getExpression())) {
+                        $this->requireColumn('type');
+                        $filter->setColumn('sh.state_type');
+                        if (isset($this->types[$filter->getExpression()])) {
+                            $filter->setExpression($this->types[$filter->getExpression()]);
+                        } else {
+                            $filter->setExpression(-1);
+                        }
+
+                        return null;
+                    }
+            }
         }
 
-        return true;
+        return parent::requireFilterColumns($filter);
     }
 
     /**

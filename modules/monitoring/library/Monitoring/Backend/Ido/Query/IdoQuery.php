@@ -1049,7 +1049,7 @@ abstract class IdoQuery extends DbQuery
      *
      * This calls requireVirtualTable if needed
      *
-     * @param $alias                                The alias of the column to require
+     * @param string $alias                          The alias of the column to require
      *
      * @return $this                                 Fluent interface
      * @see    IdoQuery::requireVirtualTable        The method initializing required joins

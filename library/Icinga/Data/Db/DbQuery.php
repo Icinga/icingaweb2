@@ -234,7 +234,7 @@ class DbQuery extends SimpleQuery
             $value = (int) $value;
         }
 
-        return $this->timestampForSql($value);
+        return $value;
     }
 
     /**

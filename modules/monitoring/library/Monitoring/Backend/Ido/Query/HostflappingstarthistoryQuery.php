@@ -3,6 +3,9 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterExpression;
+
 /**
  * Query for host flapping start history records
  */
@@ -40,7 +43,7 @@ class HostflappingstarthistoryQuery extends IdoQuery
             'object_type'   => '(\'host\')',
             'output'        => '(hfh.percent_state_change || \'\')',
             'state'         => '(-1)',
-            'timestamp'     => 'hfh.event_time',
+            'timestamp'     => 'UNIX_TIMESTAMP(hfh.event_time)',
             'type'          => '(\'flapping\')'
         ),
         'hostgroups' => array(
@@ -68,13 +71,16 @@ class HostflappingstarthistoryQuery extends IdoQuery
         )
     );
 
-    public function isTimestamp($field)
+    protected function requireFilterColumns(Filter $filter)
     {
-        if (! parent::isTimestamp($field)) {
-            return $field === 'hfh.event_time';
+        if ($filter instanceof FilterExpression && $filter->getColumn() === 'timestamp') {
+            $this->requireColumn('timestamp');
+            $filter->setColumn('hfh.event_time');
+            $filter->setExpression($this->timestampForSql($this->valueToTimestamp($filter->getExpression())));
+            return null;
         }
 
-        return true;
+        return parent::requireFilterColumns($filter);
     }
 
     /**

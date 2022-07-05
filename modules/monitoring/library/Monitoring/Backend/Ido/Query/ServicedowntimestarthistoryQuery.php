@@ -3,6 +3,9 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterExpression;
+
 /**
  * Query for service downtime start history records
  */
@@ -44,7 +47,7 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
             'service_host'          => 'so.name1 COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1',
             'state'                 => '(-1)',
-            'timestamp'             => 'sdh.actual_start_time',
+            'timestamp'             => 'UNIX_TIMESTAMP(sdh.actual_start_time)',
             'type'                  => "('dt_start')"
         ),
         'hostgroups' => array(
@@ -69,13 +72,16 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
         )
     );
 
-    public function isTimestamp($field)
+    protected function requireFilterColumns(Filter $filter)
     {
-        if (! parent::isTimestamp($field)) {
-            return $field === 'sdh.actual_start_time';
+        if ($filter instanceof FilterExpression && $filter->getColumn() === 'timestamp') {
+            $this->requireColumn('timestamp');
+            $filter->setColumn('sdh.actual_start_time');
+            $filter->setExpression($this->timestampForSql($this->valueToTimestamp($filter->getExpression())));
+            return null;
         }
 
-        return true;
+        return parent::requireFilterColumns($filter);
     }
 
     /**

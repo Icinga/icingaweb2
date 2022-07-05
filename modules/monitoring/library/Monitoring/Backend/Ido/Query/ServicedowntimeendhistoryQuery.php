@@ -3,18 +3,24 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterExpression;
+
 /**
  * Query for host downtime end history records
  */
 class ServicedowntimeendhistoryQuery extends ServicedowntimestarthistoryQuery
 {
-    public function isTimestamp($field)
+    protected function requireFilterColumns(Filter $filter)
     {
-        if (! parent::isTimestamp($field)) {
-            return $field === 'sdh.actual_end_time';
+        if ($filter instanceof FilterExpression && $filter->getColumn() === 'timestamp') {
+            $this->requireColumn('timestamp');
+            $filter->setColumn('sdh.actual_end_time');
+            $filter->setExpression($this->timestampForSql($this->valueToTimestamp($filter->getExpression())));
+            return null;
         }
 
-        return true;
+        return parent::requireFilterColumns($filter);
     }
 
     /**
