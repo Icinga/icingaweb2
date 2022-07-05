@@ -1,3 +1,9 @@
+ALTER TABLE `icingaweb_group` ROW_FORMAT=DYNAMIC;
+ALTER TABLE `icingaweb_group_membership` ROW_FORMAT=DYNAMIC;
+ALTER TABLE `icingaweb_user` ROW_FORMAT=DYNAMIC;
+ALTER TABLE `icingaweb_user_preference` ROW_FORMAT=DYNAMIC;
+ALTER TABLE `icingaweb_rememberme` ROW_FORMAT=DYNAMIC;
+
 ALTER TABLE `icingaweb_group` CONVERT TO CHARACTER SET utf8mb4;
 ALTER TABLE `icingaweb_group_membership` CONVERT TO CHARACTER SET utf8mb4;
 ALTER TABLE `icingaweb_user` CONVERT TO CHARACTER SET utf8mb4;
@@ -21,7 +27,7 @@ CREATE TABLE icingaweb_schema (
   timestamp int unsigned NOT NULL,
 
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 INSERT INTO icingaweb_schema (version, timestamp)
   VALUES (6, UNIX_TIMESTAMP());
