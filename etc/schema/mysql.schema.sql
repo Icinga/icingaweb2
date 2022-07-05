@@ -10,7 +10,7 @@ CREATE TABLE `icingaweb_group`(
   UNIQUE KEY `idx_name` (`name`),
   CONSTRAINT `fk_icingaweb_group_parent_id` FOREIGN KEY (`parent`)
     REFERENCES `icingaweb_group` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE `icingaweb_group_membership`(
   `group_id`   int(10) unsigned NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE `icingaweb_group_membership`(
   PRIMARY KEY (`group_id`,`username`),
   CONSTRAINT `fk_icingaweb_group_membership_icingaweb_group` FOREIGN KEY (`group_id`)
     REFERENCES `icingaweb_group` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE `icingaweb_user`(
   `name`          varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE `icingaweb_user`(
   `ctime`         timestamp NULL DEFAULT NULL,
   `mtime`         timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE `icingaweb_user_preference`(
   `username` varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE `icingaweb_user_preference`(
   `ctime`    timestamp NULL DEFAULT NULL,
   `mtime`    timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`username`,`section`,`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE `icingaweb_rememberme`(
   id                int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -51,7 +51,7 @@ CREATE TABLE `icingaweb_rememberme`(
   ctime             timestamp NULL DEFAULT NULL,
   mtime             timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE icingaweb_schema (
   id int unsigned NOT NULL AUTO_INCREMENT,
@@ -59,7 +59,7 @@ CREATE TABLE icingaweb_schema (
   timestamp int unsigned NOT NULL,
 
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 INSERT INTO icingaweb_schema (version, timestamp)
   VALUES (6, UNIX_TIMESTAMP());
