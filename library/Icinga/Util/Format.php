@@ -54,6 +54,10 @@ class Format
 
     public static function seconds($value)
     {
+        if ($value === null) {
+            return '';
+        }
+
         $absValue = abs($value);
 
         if ($absValue < 60) {
@@ -70,6 +74,10 @@ class Format
 
     protected static function formatForUnits($value, &$units, $base)
     {
+        if ($value === null) {
+            return '';
+        }
+
         $sign = '';
         if ($value < 0) {
             $value = abs($value);
@@ -105,6 +113,10 @@ class Format
      */
     public static function secondsByMonth($dateTimeOrTimestamp)
     {
+        if ($dateTimeOrTimestamp === null) {
+            return 0;
+        }
+
         if (!($dt = $dateTimeOrTimestamp) instanceof DateTime) {
             $dt = new DateTime();
             $dt->setTimestamp($dateTimeOrTimestamp);
@@ -122,6 +134,10 @@ class Format
      */
     public static function secondsByYear($dateTimeOrTimestamp)
     {
+        if ($dateTimeOrTimestamp === null) {
+            return 0;
+        }
+
         return (self::isLeapYear($dateTimeOrTimestamp) ? 366 : 365) * 24 * 3600;
     }
 
@@ -134,6 +150,10 @@ class Format
      */
     public static function isLeapYear($dateTimeOrTimestamp)
     {
+        if ($dateTimeOrTimestamp === null) {
+            return false;
+        }
+
         if (!($dt = $dateTimeOrTimestamp) instanceof DateTime) {
             $dt = new DateTime();
             $dt->setTimestamp($dateTimeOrTimestamp);
