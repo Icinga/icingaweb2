@@ -4,6 +4,13 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.11.1
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/75?closed=1).
+
+This update's main focus is to solve the issue that all history views didn't work correctly or showed invalid
+time and dates. ([#4853](https://github.com/Icinga/icingaweb2/issues/4853))
+
 ### What's New in Version 2.11.0
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/70?closed=1).
