@@ -27,3 +27,23 @@
 .processinfo .process > div.backend-running {
   color: @text-color;
 }
+
+header-logo {
+  height: 90%;
+  width: auto;
+}
+
+#header-logo-container {
+  text-align: center;
+  &:after {
+    content: 'srv01.localdomain';
+    color: #00C3ED;
+    display: block;
+  }
+}
+
+@light-mode: {
+  :root {
+    --body-bg-color: #f5f9fa;
+  }
+};
