@@ -18,6 +18,7 @@ use Icinga\User;
 use Icinga\Web\Controller\AuthBackendController;
 use Icinga\Web\View\PrivilegeAudit;
 use Icinga\Web\Widget\SingleValueSearchControl;
+use Icinga\Web\Widget\Tabextension\OutputFormat;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
 use ipl\Web\Url;
@@ -143,6 +144,7 @@ class RoleController extends AuthBackendController
 
     public function auditAction()
     {
+        $this->getTabs()->extend(new OutputFormat(["csv","json"]));
         $this->assertPermission('config/access-control/roles');
         $this->createListTabs()->activate('role/audit');
         $this->view->title = t('Audit');
@@ -244,11 +246,13 @@ class RoleController extends AuthBackendController
             ]
         ));
 
-        $this->addControl($header);
-        $this->addContent(
+        $wrapper = Html::tag('div');
+        $wrapper->addHtml($header);
+        $wrapper->addHtml(
             (new PrivilegeAudit($chosenRole !== null ? [$chosenRole] : $assignedRoles))
-                ->addAttributes(['id' => 'role-audit'])
-        );
+            ->addAttributes(['id' => 'role-audit']));
+
+        $this->addContent($wrapper);
     }
 
     public function suggestRoleMemberAction()
