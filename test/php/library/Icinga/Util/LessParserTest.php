@@ -90,6 +90,66 @@ LESS
         );
     }
 
+    public function testNestedCssDefinitions()
+    {
+        $this->assertEquals(
+            <<<CSS
+.black {
+  color: var(--my-color, var(--black, #000000));
+}
+.notBlack {
+  color: var(--my-black-color, var(--my-color, var(--black, #000000)));
+}
+
+CSS
+            ,
+            $this->compileLess(<<<LESS
+@black: black;
+@my-color: @black;
+@my-black-color: @my-color;
+
+.black {
+  color: var(--my-color, @black);
+}
+
+.notBlack {
+  color: var(--my-black-color, @my-color);
+}
+LESS
+            )
+        );
+    }
+
+    public function testNestedDuplcateCssDefinitions()
+    {
+        $this->assertEquals(
+            <<<CSS
+.black {
+  color: var(--my-color, var(--black, #000000));
+}
+.notBlack {
+  color: var(--my-black-color, var(--my-color, var(--black, #000000)));
+}
+
+CSS
+            ,
+            $this->compileLess(<<<LESS
+@black: black;
+@my-color: @black;
+@my-black-color: @my-color;
+
+.black {
+  color: var(--my-color, @my-color);
+}
+
+.notBlack {
+  color: var(--my-black-color, @my-black-color);
+}
+LESS
+            )
+        );
+    }
+
     public function testNestedVariablesInMixinCalls()
     {
         $this->assertEquals(

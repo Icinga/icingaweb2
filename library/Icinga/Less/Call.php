@@ -6,6 +6,7 @@ namespace Icinga\Less;
 
 use Less_Tree_Call;
 use Less_Tree_Color;
+use Less_Tree_Keyword;
 use Less_Tree_Value;
 use Less_Tree_Variable;
 
@@ -23,12 +24,17 @@ class Call extends Less_Tree_Call
             return parent::compile($env);
         }
 
+        $keyWord = null;
         foreach ($this->args as $arg) {
             if (! is_array($arg->value)) {
                 continue;
             }
 
             $name = null;
+            if ($arg->value[0] instanceof Less_Tree_Keyword) {
+                $keyWord = $arg->value[0]->value;
+            }
+
             if ($arg->value[0] instanceof Less_Tree_Variable) {
                 // This is the case when defining a variable with a callable LESS rules such as fade, fadeout..
                 // Example: `@foo: #fff; @foo-bar: fade(@foo, 10);`
@@ -55,13 +61,28 @@ class Call extends Less_Tree_Call
                                 $vr->compile($env);
                             }
 
-                            // Get the uppermost variable of the variable references
-                            while (! $vr instanceof ColorProp) {
-                                $vr = $vr->getRef();
+                            if ($this->name === 'var') {
+                                // If calling var() CSS function, get the next variable in variable references
+                                // if keyword value and color property name are same
+                                if (substr($keyWord ?? '', 2) === $vr->getName()) {
+                                    // Get the uppermost variable of the variable references in case the keyword
+                                    // value and color property name are same.
+                                    $vr = $vr->getRef();
+                                }
+                            } else {
+                                // If not calling var() CSS function get the uppermost variable of the
+                                // variable references
+                                while (! $vr instanceof ColorProp) {
+                                    $vr = $vr->getRef();
+                                }
                             }
                         } elseif ($vr instanceof Less_Tree_Color) {
-                            $vr = ColorProp::fromColor($vr);
-                            $vr->setName($name);
+                            // Only if keyword value and color property name are not same then set variable to
+                            // ColorProp::fromColor($vr)
+                            if (substr($keyWord ?? '', 2) !== substr($name, 1)) {
+                                $vr = ColorProp::fromColor($vr);
+                                $vr->setName($name);
+                            }
                         }
 
                         $arg->value[0] = $vr;
