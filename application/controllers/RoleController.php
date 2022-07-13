@@ -144,7 +144,7 @@ class RoleController extends AuthBackendController
 
     public function auditAction()
     {
-        $this->getTabs()->extend(new OutputFormat(["csv", "json"]));
+        $this->getTabs()->extend(new OutputFormat(["csv","json"]));
         $this->assertPermission('config/access-control/roles');
         $this->createListTabs()->activate('role/audit');
         $this->view->title = t('Audit');
@@ -194,13 +194,13 @@ class RoleController extends AuthBackendController
         }
 
         if ($type === 'user') {
-            $header = Html::tag('h2', sprintf(t('Privilege Audit for User "%s"'), $name));
+            $title = sprintf(t('Privilege Audit for User "%s"'), $name);
 
             $user = new User($name);
             $user->setAdditional('backend_name', $backend);
             Auth::getInstance()->setupUser($user);
         } else {
-            $header = Html::tag('h2', sprintf(t('Privilege Audit for Group "%s"'), $name));
+            $title = sprintf(t('Privilege Audit for Group "%s"'), $name);
 
             $user = new User((string) time());
             $user->setGroups([$name]);
@@ -246,14 +246,13 @@ class RoleController extends AuthBackendController
             ]
         ));
 
-        $wrapper = Html::tag('div');
-        $wrapper->addHtml($header);
-        $wrapper->addHtml(
-            (new PrivilegeAudit($chosenRole !== null ? [$chosenRole] : $assignedRoles))
-                ->addAttributes(['id' => 'role-audit'])
-        );
+        $this->view->title = $title;
 
-        $this->addContent($wrapper);
+        $header = Html::tag('h2', $title);
+        $this->addControl($header);
+        $this->addContent(
+            (new PrivilegeAudit($chosenRole !== null ? [$chosenRole] : $assignedRoles))
+                ->addAttributes(['id' => 'role-audit']));
     }
 
     public function suggestRoleMemberAction()
