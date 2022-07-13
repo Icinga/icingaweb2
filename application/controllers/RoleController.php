@@ -144,7 +144,7 @@ class RoleController extends AuthBackendController
 
     public function auditAction()
     {
-        $this->getTabs()->extend(new OutputFormat(["csv","json"]));
+        $this->getTabs()->extend(new OutputFormat(["csv", "json"]));
         $this->assertPermission('config/access-control/roles');
         $this->createListTabs()->activate('role/audit');
         $this->view->title = t('Audit');
