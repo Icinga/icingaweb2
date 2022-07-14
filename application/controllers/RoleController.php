@@ -246,7 +246,7 @@ class RoleController extends AuthBackendController
             ]
         ));
 
-        $this->view->title = $title;
+        $this->setTitle($title);
 
         $header = Html::tag('h2', $title);
         $this->addControl($header);
