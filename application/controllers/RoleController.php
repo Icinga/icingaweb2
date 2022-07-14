@@ -247,7 +247,7 @@ class RoleController extends AuthBackendController
         ));
 
         $this->setTitle($title);
-        $this->addControl(Html::tag('h2', $title);
+        $this->addControl(Html::tag('h2', $title));
         $this->addContent(
             (new PrivilegeAudit($chosenRole !== null ? [$chosenRole] : $assignedRoles))
                 ->addAttributes(['id' => 'role-audit'])
