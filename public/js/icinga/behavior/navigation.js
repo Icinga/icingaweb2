@@ -18,12 +18,6 @@
 
         this.on('click', '#toggle-sidebar', this.toggleSidebar, this);
 
-        this.on('click', '#menu .config-nav-item button', this.toggleConfigFlyout, this);
-        this.on('mouseenter', '#menu .config-menu .config-nav-item', this.showConfigFlyout, this);
-        this.on('mouseleave', '#menu .config-menu .config-nav-item', this.hideConfigFlyout, this);
-
-        this.on('keydown', '#menu .config-menu .config-nav-item', this.onKeyDown, this);
-
         /**
          * The DOM-Path of the active item
          *
@@ -377,63 +371,6 @@
         _this.storage.set('sidebar-collapsed', $layout.is('.sidebar-collapsed'));
         $(window).trigger('resize');
     };
-
-    /**
-     * Toggle config flyout visibility
-     *
-     * @param {Object} e Event
-     */
-    Navigation.prototype.toggleConfigFlyout = function(e) {
-        var _this = e.data.self;
-        if ($('#layout').is('.config-flyout-open')) {
-            _this.hideConfigFlyout(e);
-        } else {
-            _this.showConfigFlyout(e);
-        }
-    }
-
-    /**
-     * Hide config flyout
-     *
-     * @param {Object} e Event
-     */
-    Navigation.prototype.hideConfigFlyout = function(e) {
-        $('#layout').removeClass('config-flyout-open');
-        if (e.target) {
-            delete $(e.target).closest('.container')[0].dataset.suspendAutorefresh;
-        }
-    }
-
-    /**
-     * Show config flyout
-     *
-     * @param {Object} e Event
-     */
-    Navigation.prototype.showConfigFlyout = function(e) {
-        $('#layout').addClass('config-flyout-open');
-        $(e.target).closest('.container')[0].dataset.suspendAutorefresh = '';
-    }
-
-    /**
-     * Hide, config flyout when "Enter" key is pressed to follow `.flyout` nav item link
-     *
-     * @param {Object} e Event
-     */
-    Navigation.prototype.onKeyDown = function(e) {
-        var _this = e.data.self;
-
-        if (e.key == 'Enter' && $(document.activeElement).is('.flyout a')) {
-            _this.hideConfigFlyout(e);
-        }
-    }
-
-    Navigation.prototype.toggleMobileConfigMenu = function(e) {
-        $('#layout').toggleClass('mobile-config-flyout-open');
-    }
-
-    Navigation.prototype.hideMobileConfigMenu = function(e) {
-        $('#layout').removeClass('mobile-config-flyout-open');
-    }
 
     /**
      * Called when the history changes
