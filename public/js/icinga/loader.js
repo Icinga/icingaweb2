@@ -628,7 +628,8 @@
                     this.loadUrl(parts.shift(), $('#col2'));
                 } else {
                     if ($target.attr('id') === 'col2') { // TODO: multicol
-                        if (($target.data('icingaUrl') || '').split('?')[0] === url.split('?')[0]) {
+                        let previousTargetUrl = $target.data('icingaUrl');
+                        if (! previousTargetUrl || previousTargetUrl.split('?')[0] === url.split('?')[0]) {
                             // Don't do anything in this case
                         } else if ($('#col1').data('icingaUrl').split('?')[0] === url.split('?')[0]) {
                             icinga.ui.layout1col();
