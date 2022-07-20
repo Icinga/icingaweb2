@@ -926,56 +926,9 @@
                 req = reqOrError;
             }
 
-            // Remove 'impact' class if there was such
-            if (req.$target.hasClass('impact')) {
-                req.$target.removeClass('impact');
-            } else {
-                var $impact = req.$target.find('.impact').first();
-                if ($impact.length) {
-                    $impact.removeClass('impact');
-                }
-            }
-
             if (req.getResponseHeader('X-Icinga-Reload-Window') === 'yes') {
                 window.location.reload();
                 return;
-            }
-
-            if (! req.autorefresh && ! req.autosubmit) {
-                // TODO: Hook for response/url?
-                var url = req.url;
-
-                if (req.$target[0].id === 'col1') {
-                    this.icinga.behaviors.navigation.trySetActiveAndSelectedByUrl(url);
-                }
-
-                var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
-                var $matches = $.merge($('[href="' + url + '"]'), $forms);
-                $matches.each(function (idx, el) {
-                    var $el = $(el);
-                    if ($el.closest('#menu').length) {
-                        if ($el.is('form')) {
-                            $('input', $el).addClass('active');
-                        }
-                        // Interrupt .each, only one menu item shall be active
-                        return false;
-                    }
-                });
-            }
-
-            // Update history when necessary
-            if (! req.autorefresh && req.addToHistory) {
-                if (req.$target.hasClass('container')) {
-                    // We only want to care about top-level containers
-                    if (req.$target.parent().closest('.container').length === 0) {
-                        this.icinga.history.pushCurrentState();
-                    }
-                } else {
-                    // Request wasn't for a container, so it's usually the body
-                    // or the full layout. Push request URL to history:
-                    var url = typeof req.historyUrl !== 'undefined' ? req.historyUrl : req.url;
-                    this.icinga.history.pushUrl(url);
-                }
             }
 
             req.$target.data('lastUpdate', (new Date()).getTime());
@@ -1026,6 +979,53 @@
 
             if (this.processRedirectHeader(req)) {
                 return;
+            }
+
+            // Remove 'impact' class if there was such
+            if (req.$target.hasClass('impact')) {
+                req.$target.removeClass('impact');
+            } else {
+                var $impact = req.$target.find('.impact').first();
+                if ($impact.length) {
+                    $impact.removeClass('impact');
+                }
+            }
+
+            if (! req.autorefresh && ! req.autosubmit) {
+                // TODO: Hook for response/url?
+                var url = req.url;
+
+                if (req.$target[0].id === 'col1') {
+                    this.icinga.behaviors.navigation.trySetActiveAndSelectedByUrl(url);
+                }
+
+                var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
+                var $matches = $.merge($('[href="' + url + '"]'), $forms);
+                $matches.each(function (idx, el) {
+                    var $el = $(el);
+                    if ($el.closest('#menu').length) {
+                        if ($el.is('form')) {
+                            $('input', $el).addClass('active');
+                        }
+                        // Interrupt .each, only one menu item shall be active
+                        return false;
+                    }
+                });
+            }
+
+            // Update history when necessary
+            if (! req.autorefresh && req.addToHistory) {
+                if (req.$target.hasClass('container')) {
+                    // We only want to care about top-level containers
+                    if (req.$target.parent().closest('.container').length === 0) {
+                        this.icinga.history.pushCurrentState();
+                    }
+                } else {
+                    // Request wasn't for a container, so it's usually the body
+                    // or the full layout. Push request URL to history:
+                    var url = typeof req.historyUrl !== 'undefined' ? req.historyUrl : req.url;
+                    this.icinga.history.pushUrl(url);
+                }
             }
 
             if (typeof req.loadNext !== 'undefined' && req.loadNext.length) {
