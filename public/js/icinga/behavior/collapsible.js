@@ -43,9 +43,9 @@
             toCollapse = [],
             toExpand = [];
 
-        $.each(event.target.querySelectorAll('.collapsible:not(.can-collapse)'), function (_, collapsible) {
+        event.target.querySelectorAll('.collapsible').forEach(collapsible => {
             // Assumes that any newly rendered elements are expanded
-            if (_this.canCollapse(collapsible)) {
+            if (! ('canCollapse' in collapsible.dataset) && _this.canCollapse(collapsible)) {
                 if (_this.setupCollapsible(collapsible)) {
                     toCollapse.push([collapsible, _this.calculateCollapsedHeight(collapsible)]);
                 } else if (_this.isDetails(collapsible)) {
@@ -77,14 +77,14 @@
         var toCollapse = [];
 
         $.each(document.querySelectorAll('.collapsible'), function (_, collapsible) {
-            if (collapsible.matches('.can-collapse')) {
+            if ('canCollapse' in collapsible.dataset) {
                 if (! _this.canCollapse(collapsible)) {
                     var toggleSelector = collapsible.dataset.toggleElement;
                     if (! toggleSelector && ! this.isDetails(collapsible)) {
                         $(collapsible).next('.collapsible-control').remove();
                     }
 
-                    collapsible.classList.remove('can-collapse');
+                    delete collapsible.dataset.canCollapse;
                     _this.expand(collapsible);
                 }
             } else if (_this.canCollapse(collapsible) && _this.setupCollapsible(collapsible)) {
@@ -108,7 +108,7 @@
     Collapsible.prototype.onExpand = function(collapsiblePath) {
         var collapsible = $(collapsiblePath)[0];
 
-        if (collapsible && collapsible.matches('.can-collapse')) {
+        if (collapsible && 'canCollapse' in collapsible.dataset) {
             if ('stateCollapses' in collapsible.dataset) {
                 this.collapse(collapsible, this.calculateCollapsedHeight(collapsible));
             } else {
@@ -228,7 +228,7 @@
             }, 0);
         }
 
-        collapsible.classList.add('can-collapse');
+        collapsible.dataset.canCollapse = '';
 
         if ('noPersistence' in collapsible.dataset) {
             return ! ('stateCollapses' in collapsible.dataset);
