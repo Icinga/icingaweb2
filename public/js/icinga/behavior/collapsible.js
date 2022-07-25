@@ -154,7 +154,7 @@
 
             return;
         } else if (typeof collapsible.dataset.noPersistence !== 'undefined') {
-            if (collapsible.matches('.collapsed')) {
+            if (collapsible.classList.contains('collapsed')) {
                 _this.expand(collapsible);
             } else {
                 _this.collapse(collapsible, _this.calculateCollapsedHeight(collapsible));
@@ -253,9 +253,9 @@
             return '';
         }
 
-        if (collapsible.matches('table')) {
+        if (collapsible.tagName === 'TABLE') {
             return '> tbody > tr';
-        } else if (collapsible.matches('ul, ol')) {
+        } else if (collapsible.tagName === 'UL' || collapsible.tagName === 'OL') {
             return '> li:not(.collapsible-control)';
         }
 
@@ -279,18 +279,22 @@
             var visibleRows = Number(collapsible.dataset.visibleRows);
             if (isNaN(visibleRows)) {
                 visibleRows = this.defaultVisibleRows;
+            } else if (visibleRows === 0) {
+                return true;
             }
 
             return $(rowSelector, collapsible).length > visibleRows * 2;
         } else {
-            var actualHeight = collapsible.scrollHeight - parseFloat(
-                window.getComputedStyle(collapsible).getPropertyValue('padding-top')
-            );
-
             var maxHeight = Number(collapsible.dataset.visibleHeight);
             if (isNaN(maxHeight)) {
                 maxHeight = this.defaultVisibleHeight;
+            } else if (maxHeight === 0) {
+                return true;
             }
+
+            var actualHeight = collapsible.scrollHeight - parseFloat(
+                window.getComputedStyle(collapsible).getPropertyValue('padding-top')
+            );
 
             return actualHeight >= maxHeight * 2;
         }
