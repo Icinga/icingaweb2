@@ -1,6 +1,6 @@
 /*! Icinga Web 2 | (c) 2019 Icinga GmbH | GPLv2+ */
 
-;(function(Icinga, $) {
+;(function(Icinga) {
 
     'use strict';
 
@@ -39,7 +39,7 @@
      * @param event  Event  The `onRender` event triggered by the rendered container
      */
     Collapsible.prototype.onRendered = function(event) {
-        var _this = event.data.self,
+        let _this = event.data.self,
             toCollapse = [],
             toExpand = [];
 
@@ -58,12 +58,12 @@
         // Elements are all collapsed in a row now, after height calculations are done.
         // This avoids reflows since instantly collapsing an element will cause one if
         // the height of the next element is being calculated.
-        for (var i = 0; i < toCollapse.length; i++) {
-            _this.collapse(toCollapse[i][0], toCollapse[i][1]);
+        for (const collapseInfo of toCollapse) {
+            _this.collapse(collapseInfo[0], collapseInfo[1]);
         }
 
-        for (i = 0; i < toExpand.length; i++) {
-            _this.expand(toExpand[i]);
+        for (const collapsible of toExpand) {
+            _this.expand(collapsible);
         }
     };
 
@@ -73,15 +73,15 @@
      * @param event  Event  The `layout-change` event triggered by window resizing or column changes
      */
     Collapsible.prototype.onLayoutChange = function(event) {
-        var _this = event.data.self;
-        var toCollapse = [];
+        let _this = event.data.self;
+        let toCollapse = [];
 
-        $.each(document.querySelectorAll('.collapsible'), function (_, collapsible) {
+        document.querySelectorAll('.collapsible').forEach(collapsible => {
             if ('canCollapse' in collapsible.dataset) {
                 if (! _this.canCollapse(collapsible)) {
-                    var toggleSelector = collapsible.dataset.toggleElement;
+                    let toggleSelector = collapsible.dataset.toggleElement;
                     if (! toggleSelector && ! this.isDetails(collapsible)) {
-                        $(collapsible).next('.collapsible-control').remove();
+                        collapsible.nextElementSibling.remove();
                     }
 
                     delete collapsible.dataset.canCollapse;
@@ -94,8 +94,8 @@
         });
 
         setTimeout(function () {
-            for (var i = 0; i < toCollapse.length; i++) {
-                _this.collapse(toCollapse[i][0], toCollapse[i][1]);
+            for (const collapseInfo of toCollapse) {
+                _this.collapse(collapseInfo[0], collapseInfo[1]);
             }
         }, 0);
     };
@@ -106,7 +106,7 @@
      * @param   {string}    collapsiblePath
      */
     Collapsible.prototype.onExpand = function(collapsiblePath) {
-        var collapsible = $(collapsiblePath)[0];
+        let collapsible = document.querySelector(collapsiblePath);
 
         if (collapsible && 'canCollapse' in collapsible.dataset) {
             if ('stateCollapses' in collapsible.dataset) {
@@ -123,7 +123,7 @@
      * @param   {string}    collapsiblePath
      */
     Collapsible.prototype.onCollapse = function(collapsiblePath) {
-        var collapsible = $(collapsiblePath)[0];
+        let collapsible = document.querySelector(collapsiblePath);
 
         if (collapsible && this.canCollapse(collapsible)) {
             if ('stateCollapses' in collapsible.dataset) {
@@ -140,27 +140,27 @@
      * @param event  Event  The `onClick` event triggered by the clicked collapsible-control element
      */
     Collapsible.prototype.onControlClicked = function(event) {
-        var _this = event.data.self;
-        var $target = $(event.currentTarget);
+        let _this = event.data.self,
+            target = event.currentTarget;
 
-        var collapsible = $target.prev('.collapsible')[0];
+        let collapsible = target.previousElementSibling;
         if (! collapsible) {
-            collapsible = $target.parent('.collapsible')[0];
+            collapsible = target.closest('.collapsible');
         }
 
         if (! collapsible) {
             _this.icinga.logger.error(
-                '[Collapsible] Collapsible control has no associated .collapsible: ', $target[0]);
+                '[Collapsible] Collapsible control has no associated .collapsible: ', target);
 
             return;
-        } else if (typeof collapsible.dataset.noPersistence !== 'undefined') {
+        } else if ('noPersistence' in collapsible.dataset) {
             if (collapsible.classList.contains('collapsed')) {
                 _this.expand(collapsible);
             } else {
                 _this.collapse(collapsible, _this.calculateCollapsedHeight(collapsible));
             }
         } else {
-            var collapsiblePath = _this.icinga.utils.getCSSPath(collapsible),
+            let collapsiblePath = _this.icinga.utils.getCSSPath(collapsible),
                 stateCollapses = 'stateCollapses' in collapsible.dataset;
 
             if (_this.state.has(collapsiblePath)) {
@@ -197,7 +197,7 @@
      */
     Collapsible.prototype.setupCollapsible = function (collapsible) {
         if (this.isDetails(collapsible)) {
-            var summary = collapsible.querySelector(':scope > summary');
+            let summary = collapsible.querySelector(':scope > summary');
             if (! summary.classList.contains('collapsible-control')) {
                 summary.classList.add('collapsible-control');
             }
@@ -206,10 +206,10 @@
                 collapsible.dataset.stateCollapses = '';
             }
         } else if (!! collapsible.dataset.toggleElement) {
-            var toggleSelector = collapsible.dataset.toggleElement,
-                toggle = $(collapsible).children(toggleSelector)[0];
-            if (! toggle && $(collapsible.nextSibling).is(toggleSelector)) {
-                toggle = collapsible.nextSibling;
+            let toggleSelector = collapsible.dataset.toggleElement,
+                toggle = collapsible.querySelector(toggleSelector);
+            if (! toggle && collapsible.nextElementSibling && collapsible.nextElementSibling.matches(toggleSelector)) {
+                toggle = collapsible.nextElementSibling;
             }
 
             if (! toggle) {
@@ -220,7 +220,7 @@
             }
         } else {
             setTimeout(function () {
-                var collapsibleControl = document
+                let collapsibleControl = document
                     .getElementById('collapsible-control-ghost')
                     .cloneNode(true);
                 collapsibleControl.removeAttribute('id');
@@ -274,25 +274,25 @@
             return collapsible.querySelector(':scope > summary') !== null;
         }
 
-        var rowSelector = this.getRowSelector(collapsible);
+        let rowSelector = this.getRowSelector(collapsible);
         if (!! rowSelector) {
-            var visibleRows = Number(collapsible.dataset.visibleRows);
+            let visibleRows = Number(collapsible.dataset.visibleRows);
             if (isNaN(visibleRows)) {
                 visibleRows = this.defaultVisibleRows;
             } else if (visibleRows === 0) {
                 return true;
             }
 
-            return $(rowSelector, collapsible).length > visibleRows * 2;
+            return collapsible.querySelectorAll(rowSelector).length > visibleRows * 2;
         } else {
-            var maxHeight = Number(collapsible.dataset.visibleHeight);
+            let maxHeight = Number(collapsible.dataset.visibleHeight);
             if (isNaN(maxHeight)) {
                 maxHeight = this.defaultVisibleHeight;
             } else if (maxHeight === 0) {
                 return true;
             }
 
-            var actualHeight = collapsible.scrollHeight - parseFloat(
+            let actualHeight = collapsible.scrollHeight - parseFloat(
                 window.getComputedStyle(collapsible).getPropertyValue('padding-top')
             );
 
@@ -306,31 +306,31 @@
      * @param collapsible
      */
     Collapsible.prototype.calculateCollapsedHeight = function (collapsible) {
-        var height;
+        let height;
 
         if (this.isDetails(collapsible)) {
             return -1;
         }
 
-        var rowSelector = this.getRowSelector(collapsible);
+        let rowSelector = this.getRowSelector(collapsible);
         if (!! rowSelector) {
             height = collapsible.scrollHeight;
             height -= parseFloat(window.getComputedStyle(collapsible).getPropertyValue('padding-bottom'));
 
-            var visibleRows = Number(collapsible.dataset.visibleRows);
+            let visibleRows = Number(collapsible.dataset.visibleRows);
             if (isNaN(visibleRows)) {
                 visibleRows = this.defaultVisibleRows;
             }
 
-            var $rows = $(rowSelector, collapsible).slice(visibleRows);
-            for (var i = 0; i < $rows.length; i++) {
-                var row = $rows[i];
+            let rows = Array.from(collapsible.querySelectorAll(rowSelector)).slice(visibleRows);
+            for (let i = 0; i < rows.length; i++) {
+                let row = rows[i];
 
                 if (row.previousElementSibling === null) { // very first element
                     height -= row.offsetHeight;
                     height -= parseFloat(window.getComputedStyle(row).getPropertyValue('margin-top'));
-                } else if (i < $rows.length - 1) { // every element but the last one
-                    var prevBottomBorderAt = row.previousElementSibling.offsetTop;
+                } else if (i < rows.length - 1) { // every element but the last one
+                    let prevBottomBorderAt = row.previousElementSibling.offsetTop;
                     prevBottomBorderAt += row.previousElementSibling.offsetHeight;
                     height -= row.offsetTop - prevBottomBorderAt + row.offsetHeight;
                 } else { // the last element
@@ -349,9 +349,10 @@
 
             if (
                 !! collapsible.dataset.toggleElement
-                && ! $(collapsible.nextSibling).is(collapsible.dataset.toggleElement)
+                && (! collapsible.nextElementSibling
+                    || ! collapsible.nextElementSibling.matches(collapsible.dataset.toggleElement))
             ) {
-                var toggle = $(collapsible).children(collapsible.dataset.toggleElement)[0];
+                let toggle = collapsible.querySelector(collapsible.dataset.toggleElement);
                 height += toggle.offsetHeight; // TODO: Very expensive at times. (50ms+) Check why!
                 height += parseFloat(window.getComputedStyle(toggle).getPropertyValue('margin-top'));
                 height += parseFloat(window.getComputedStyle(toggle).getPropertyValue('margin-bottom'));
@@ -405,4 +406,4 @@
 
     Icinga.Behaviors.Collapsible = Collapsible;
 
-})(Icinga, jQuery);
+})(Icinga);
