@@ -272,7 +272,7 @@ class RoleForm extends RepositoryForm
                 $moduleName . '_header',
                 [
                     'decorators'    => ['ViewHelper'],
-                    'value'         => '<h3>'
+                    'value'         => '<summary class="collapsible-control">'
                         . '<span>' . ($moduleName !== 'application'
                             ? sprintf('%s <em>%s</em>', $moduleName, $this->translate('Module'))
                             :  'Icinga Web 2'
@@ -285,18 +285,20 @@ class RoleForm extends RepositoryForm
                             : ''
                         )
                         . '</span>'
-                        . '</h3>'
+                        . new Icon('angles-down', ['class' => 'collapse-icon'])
+                        . new Icon('angles-left', ['class' => 'expand-icon'])
+                        . '</summary>'
                 ]
             );
 
             $this->addDisplayGroup($elements, $moduleName . '_elements', [
                 'decorators'    => [
                     'FormElements',
-                    ['Fieldset', [
-                        'class'                 => 'collapsible',
-                        'data-toggle-element'   => 'h3',
-                        'data-visible-height'   => 0
-                    ]]
+                    ['HtmlTag', [
+                        'tag'   => 'details',
+                        'class' => 'collapsible'
+                    ]],
+                    ['Fieldset']
                 ]
             ]);
         }
