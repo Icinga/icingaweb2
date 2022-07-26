@@ -371,15 +371,19 @@
             var path = [];
 
             while (true) {
-                var id = element.getAttribute("id");
+                let id = element.id;
+                if (typeof id !== 'undefined' && typeof id !== 'string') {
+                    // Sometimes there may be a form element with the name "id"
+                    id = element.getAttribute("id");
+                }
 
-                // Only use ids if they're truly unique
-                // TODO: The check used to use document.querySelectorAll, but this resulted in many issues with ids
-                //       that start with a decimal. jQuery seems to escape those correctly, so this is the only reason
-                //       why it's still.. jQuery.
-                if (!! id && $('* #' + id).length === 1) {
-                    path.push('#' + id);
-                    break;
+                if (!! id) {
+                    // Only use ids if they're truly unique
+                    let results = document.querySelectorAll('* #' + this.escapeCSSSelector(id));
+                    if (results.length === 1) {
+                        path.push('#' + id);
+                        break;
+                    }
                 }
 
                 var tagName = element.tagName;
@@ -407,6 +411,20 @@
             }
 
             return path.reverse().join(' > ');
+        },
+
+        /**
+         * Escape the given string to be used in a CSS selector
+         *
+         * @param {string} selector
+         * @returns {string}
+         */
+        escapeCSSSelector: function (selector) {
+            if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') {
+                return CSS.escape(selector);
+            }
+
+            return selector.replaceAll(/^(\d)/, '\\\\3$1 ');
         },
 
         /**
