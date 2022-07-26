@@ -34,6 +34,7 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Icinga Web 2">
   <meta name="apple-mobile-web-app-title" content="Icinga">
+  <link rel="manifest" href=<?= $this->baseUrl('img/manifest.json') ?>>
   <link rel="mask-icon" href="<?= $this->baseUrl('img/website-icon.svg') ?>" color="#0096BF">
 <?php if ($isIframe): ?>
   <base target="_parent">
