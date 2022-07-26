@@ -1,6 +1,7 @@
 #mobile-menu {
   border-top: 1px solid @gray-lighter;
   background: @body-bg-color;
+  padding-bottom: env(safe-area-inset-bottom);
 
   .nav-level-1 {
     display: flex;
@@ -57,7 +58,7 @@
 
   .flyout {
     position: fixed;
-    bottom: 3.5em;
+    bottom: ~"calc(env(safe-area-inset-bottom) + 3.5em)";
     left: 1em;
     right: 1em;
     font-size: 12em/16;
