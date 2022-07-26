@@ -54,7 +54,7 @@ class PrivilegeAudit extends BaseHtmlElement
             }
         }
 
-        $header = new HtmlElement('div');
+        $header = new HtmlElement('summary');
         if (! empty($refusedBy)) {
             $header->add([
                 new Icon('times-circle', ['class' => 'refused']),
@@ -171,15 +171,24 @@ class PrivilegeAudit extends BaseHtmlElement
             ]));
         }
 
+        if (empty($rolePaths)) {
+            return [
+                empty($refusedBy) ? (empty($grantedBy) ? null : true) : false,
+                new HtmlElement(
+                    'div',
+                    Attributes::create(['class' => 'inheritance-paths']),
+                    $header->setTag('div')
+                )
+            ];
+        }
+
         return [
             empty($refusedBy) ? (empty($grantedBy) ? null : true) : false,
-            HtmlElement::create('div', [
-                'class' => [empty($rolePaths) ? null : 'collapsible', 'inheritance-paths'],
-                'data-toggle-element' => '.collapsible-control',
-                'data-no-persistence' => true,
-                'data-visible-height' => 0
+            HtmlElement::create('details', [
+                'class' => ['collapsible', 'inheritance-paths'],
+                'data-no-persistence' => true
             ], [
-                empty($rolePaths) ? $header : $header->addAttributes(['class' => 'collapsible-control']),
+                $header->addAttributes(['class' => 'collapsible-control']),
                 $rolePaths
             ])
         ];
@@ -202,7 +211,7 @@ class PrivilegeAudit extends BaseHtmlElement
             }
         }
 
-        $header = new HtmlElement('div');
+        $header = new HtmlElement('summary');
         if (! empty($restrictedBy)) {
             $header->add([
                 new Icon('filter', ['class' => 'restricted']),
@@ -277,17 +286,26 @@ class PrivilegeAudit extends BaseHtmlElement
             ]);
         }
 
+        if (empty($roles)) {
+            return [
+                ! empty($restrictedBy),
+                new HtmlElement(
+                    'div',
+                    Attributes::create(['class' => 'restrictions']),
+                    $header->setTag('div')
+                )
+            ];
+        }
+
         return [
             ! empty($restrictedBy),
             new HtmlElement(
-                'div',
+                'details',
                 Attributes::create([
-                    'class' => [empty($roles) ? null : 'collapsible', 'restrictions'],
-                    'data-toggle-element' => '.collapsible-control',
-                    'data-no-persistence' => true,
-                    'data-visible-height' => 0
+                    'class' => ['collapsible', 'restrictions'],
+                    'data-no-persistence' => true
                 ]),
-                empty($roles) ? $header : $header->addAttributes(['class' => 'collapsible-control']),
+                $header->addAttributes(['class' => 'collapsible-control']),
                 new HtmlElement('ul', null, ...$roles)
             )
         ];
@@ -301,39 +319,45 @@ class PrivilegeAudit extends BaseHtmlElement
 
         $this->addHtml(new HtmlElement(
             'li',
-            Attributes::create([
-                'class' => 'collapsible',
-                'data-toggle-element' => 'h3',
-                'data-visible-height' => 0
-            ]),
+            null,
             new HtmlElement(
-                'h3',
-                null,
-                new HtmlElement('span', null, Text::create(t('Administrative Privileges'))),
-                HtmlElement::create(
-                    'span',
-                    ['class' => 'audit-preview'],
-                    $wildcardState || $unrestrictedState
-                        ? new Icon('check-circle', ['class' => 'granted'])
-                        : null
-                )
-            ),
-            new HtmlElement(
-                'ol',
-                Attributes::create(['class' => 'privilege-list']),
+                'details',
+                Attributes::create([
+                    'class' => ['collapsible', 'privilege-section']
+                ]),
                 new HtmlElement(
-                    'li',
-                    null,
-                    HtmlElement::create('p', ['class' => 'privilege-label'], t('Administrative Access')),
-                    HtmlElement::create('div', ['class' => 'spacer']),
-                    $wildcardAudit
+                    'summary',
+                    Attributes::create(['class' => [
+                        'collapsible-control', // Helps JS, improves performance a bit
+                    ]]),
+                    new HtmlElement('span', null, Text::create(t('Administrative Privileges'))),
+                    HtmlElement::create(
+                        'span',
+                        ['class' => 'audit-preview'],
+                        $wildcardState || $unrestrictedState
+                            ? new Icon('check-circle', ['class' => 'granted'])
+                            : null
+                    ),
+                    new Icon('angles-down', ['class' => 'collapse-icon']),
+                    new Icon('angles-left', ['class' => 'expand-icon'])
                 ),
                 new HtmlElement(
-                    'li',
-                    null,
-                    HtmlElement::create('p', ['class' => 'privilege-label'], t('Unrestricted Access')),
-                    HtmlElement::create('div', ['class' => 'spacer']),
-                    $unrestrictedAudit
+                    'ol',
+                    Attributes::create(['class' => 'privilege-list']),
+                    new HtmlElement(
+                        'li',
+                        null,
+                        HtmlElement::create('p', ['class' => 'privilege-label'], t('Administrative Access')),
+                        HtmlElement::create('div', ['class' => 'spacer']),
+                        $wildcardAudit
+                    ),
+                    new HtmlElement(
+                        'li',
+                        null,
+                        HtmlElement::create('p', ['class' => 'privilege-label'], t('Unrestricted Access')),
+                        HtmlElement::create('div', ['class' => 'spacer']),
+                        $unrestrictedAudit
+                    )
                 )
             )
         ));
@@ -420,30 +444,36 @@ class PrivilegeAudit extends BaseHtmlElement
                 $label = [$source, ' ', HtmlElement::create('em', null, t('Module'))];
             }
 
-            $this->addHtml(HtmlElement::create('li', [
-                'class' => 'collapsible',
-                'data-toggle-element' => 'h3',
-                'data-visible-height' => 0
-            ], [
-                new HtmlElement(
-                    'h3',
-                    null,
-                    HtmlElement::create('span', null, $label),
-                    HtmlElement::create('span', ['class' => 'audit-preview'], [
-                        $anythingGranted ? new Icon('check-circle', ['class' => 'granted']) : null,
-                        $anythingRefused ? new Icon('times-circle', ['class' => 'refused']) : null,
-                        $anythingRestricted ? new Icon('filter', ['class' => 'restricted']) : null
-                    ])
-                ),
-                $permissionList->isEmpty() ? null : [
-                    HtmlElement::create('h4', null, t('Permissions')),
-                    $permissionList
-                ],
-                $restrictionList->isEmpty() ? null : [
-                    HtmlElement::create('h4', null, t('Restrictions')),
-                    $restrictionList
-                ]
-            ]));
+            $this->addHtml(new HtmlElement(
+                'li',
+                null,
+                HtmlElement::create('details', [
+                    'class' => ['collapsible', 'privilege-section']
+                ], [
+                    new HtmlElement(
+                        'summary',
+                        Attributes::create(['class' => [
+                            'collapsible-control', // Helps JS, improves performance a bit
+                        ]]),
+                        HtmlElement::create('span', null, $label),
+                        HtmlElement::create('span', ['class' => 'audit-preview'], [
+                            $anythingGranted ? new Icon('check-circle', ['class' => 'granted']) : null,
+                            $anythingRefused ? new Icon('times-circle', ['class' => 'refused']) : null,
+                            $anythingRestricted ? new Icon('filter', ['class' => 'restricted']) : null
+                        ]),
+                        new Icon('angles-down', ['class' => 'collapse-icon']),
+                        new Icon('angles-left', ['class' => 'expand-icon'])
+                    ),
+                    $permissionList->isEmpty() ? null : [
+                        HtmlElement::create('h4', null, t('Permissions')),
+                        $permissionList
+                    ],
+                    $restrictionList->isEmpty() ? null : [
+                        HtmlElement::create('h4', null, t('Restrictions')),
+                        $restrictionList
+                    ]
+                ])
+            ));
         }
     }
 
