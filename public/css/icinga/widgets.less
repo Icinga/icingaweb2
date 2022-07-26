@@ -255,10 +255,30 @@ form.role-form {
     display: inline-block;
   }
 
-  h3 {
+  summary {
+    border-bottom: 1px solid @gray-light;
+    .user-select(none);
+    cursor: pointer;
+
+    font-weight: @font-weight-bold;
+    margin: 0.556em 0 0.333em;
+    font-size: 1.167em;
+
+    display: flex;
+    align-items: baseline;
+    .privilege-preview {
+      flex: 1 1 auto;
+    }
+
     > :first-child {
       display: inline-block;
-      width: 20em / 1.167em; // element label width / h3 font-size
+      width: 20em / 1.167em; // element label width / summary font-size
+    }
+
+    > :nth-last-child(1),
+    > :nth-last-child(2) {
+      font-size: .75em;
+      opacity: .6;
     }
 
     .privilege-preview .icon {
@@ -276,12 +296,8 @@ form.role-form {
     }
   }
 
-  fieldset.collapsible {
-    border: none;
-    padding: 0;
-    margin: 0;
-
-    h3 em {
+  .collapsible {
+    summary em {
       font-size: .857em;
       font-weight: normal;
       color: @text-color-light;
@@ -308,33 +324,6 @@ form.role-form {
           color: @color-refused;
         }
       }
-    }
-
-    .collapsible-control {
-      border-bottom: 1px solid @gray-light;
-      cursor: pointer;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-
-    .collapsible-control:after {
-      content: "\f103";
-      display: inline-block;
-      font-family: 'ifont';
-      font-weight: normal;
-      padding: 0 .25em;
-      margin-right: .25em;
-      width: 1em;
-      opacity: .6;
-      float: right;
-    }
-
-    &.collapsed .collapsible-control:after {
-      content: "\e87a";
     }
   }
 }
