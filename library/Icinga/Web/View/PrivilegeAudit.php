@@ -186,7 +186,8 @@ class PrivilegeAudit extends BaseHtmlElement
             empty($refusedBy) ? (empty($grantedBy) ? null : true) : false,
             HtmlElement::create('details', [
                 'class' => ['collapsible', 'inheritance-paths'],
-                'data-no-persistence' => true
+                'data-no-persistence' => true,
+                'open' => getenv('ICINGAWEB_EXPORT_FORMAT') === 'pdf'
             ], [
                 $header->addAttributes(['class' => 'collapsible-control']),
                 $rolePaths
@@ -303,7 +304,8 @@ class PrivilegeAudit extends BaseHtmlElement
                 'details',
                 Attributes::create([
                     'class' => ['collapsible', 'restrictions'],
-                    'data-no-persistence' => true
+                    'data-no-persistence' => true,
+                    'open' => getenv('ICINGAWEB_EXPORT_FORMAT') === 'pdf'
                 ]),
                 $header->addAttributes(['class' => 'collapsible-control']),
                 new HtmlElement('ul', null, ...$roles)
@@ -323,7 +325,8 @@ class PrivilegeAudit extends BaseHtmlElement
             new HtmlElement(
                 'details',
                 Attributes::create([
-                    'class' => ['collapsible', 'privilege-section']
+                    'class' => ['collapsible', 'privilege-section'],
+                    'open' => ($wildcardState || $unrestrictedState) && getenv('ICINGAWEB_EXPORT_FORMAT') === 'pdf'
                 ]),
                 new HtmlElement(
                     'summary',
@@ -448,7 +451,9 @@ class PrivilegeAudit extends BaseHtmlElement
                 'li',
                 null,
                 HtmlElement::create('details', [
-                    'class' => ['collapsible', 'privilege-section']
+                    'class' => ['collapsible', 'privilege-section'],
+                    'open' => ($anythingGranted || $anythingRefused || $anythingRestricted)
+                        && getenv('ICINGAWEB_EXPORT_FORMAT') === 'pdf'
                 ], [
                     new HtmlElement(
                         'summary',
