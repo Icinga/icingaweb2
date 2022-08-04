@@ -32,7 +32,7 @@ if ($this->hasPermission('monitoring/command/downtime/schedule')) {
         );
     }
 }
-if (empty($object->comments) && ! $addLink) {
+if (empty($object->downtimes) && ! $addLink) {
     return;
 }
 ?>
