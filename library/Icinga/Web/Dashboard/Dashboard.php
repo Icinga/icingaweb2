@@ -113,7 +113,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
      */
     public function getTabs()
     {
-        $activeHome = $this->getActiveHome();
+        $activeHome = $this->getActiveEntry();
         if ($activeHome && ! $activeHome->isDefaultHome()) {
             $url = Url::fromPath(self::BASE_ROUTE . '/home')->getUrlWithout(['home', $this->tabParam]);
             $url->addParams(['home' => $activeHome->getName()]);
@@ -139,7 +139,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
                         'active'    => $pane->isActive(),
                         'title'     => sprintf(t('Show %s', 'dashboard.pane.tooltip'), $pane->getTitle()),
                         'label'     => $pane->getTitle(),
-                        'url'       => clone($url),
+                        'url'       => clone $url,
                         'urlParams' => [$this->tabParam => $pane->getName()]
                     ]
                 );
@@ -151,7 +151,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
 
     protected function assemble()
     {
-        $activeHome = $this->getActiveHome();
+        $activeHome = $this->getActiveEntry();
         if (! $activeHome || (! $activeHome->hasEntries() && $activeHome->isDefaultHome())) {
             $this->setAttribute('class', 'dashboard-introduction');
 
@@ -174,7 +174,7 @@ class Dashboard extends BaseHtmlElement implements DashboardEntry
             );
             $this->addHtml(HtmlElement::create('p', null, $message));
         } elseif ($activeHome->hasEntries()) {
-            $activePane = $activeHome->getActivePane();
+            $activePane = $activeHome->getActiveEntry();
 
             if (! $activePane->hasEntries()) {
                 $this->addHtml(HtmlElement::create('h1', null, t('No dashlet added to this pane.')));

@@ -30,8 +30,8 @@ class RemoveDashletForm extends BaseDashboardForm
 
     protected function onSuccess()
     {
-        $home = $this->dashboard->getActiveHome();
-        $pane = $home->getActivePane();
+        $home = $this->dashboard->getActiveEntry();
+        $pane = $home->getActiveEntry();
 
         $dashlet = $pane->getEntry($this->requestUrl->getParam('dashlet'));
 

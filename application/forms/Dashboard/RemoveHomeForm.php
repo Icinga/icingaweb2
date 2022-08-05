@@ -20,7 +20,7 @@ class RemoveHomeForm extends BaseDashboardForm
         $this->addHtml(HtmlElement::create(
             'h2',
             null,
-            sprintf(t('Please confirm removal of Dashboard Home "%s"'), $this->dashboard->getActiveHome()->getTitle())
+            sprintf(t('Please confirm removal of Dashboard Home "%s"'), $this->dashboard->getActiveEntry()->getTitle())
         ));
 
         $this->addHtml($this->registerSubmitButton('Remove Home')->setName('btn_remove'));
@@ -28,7 +28,7 @@ class RemoveHomeForm extends BaseDashboardForm
 
     protected function onSuccess()
     {
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
 
         try {
             $this->dashboard->removeEntry($home);

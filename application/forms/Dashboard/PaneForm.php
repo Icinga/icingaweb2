@@ -38,7 +38,7 @@ class PaneForm extends BaseDashboardForm
         ]);
 
         $homes = $this->dashboard->getEntryKeyTitleArr();
-        $activeHome = $this->dashboard->getActiveHome();
+        $activeHome = $this->dashboard->getActiveEntry();
         $populatedHome = $this->getPopulatedValue('home', $activeHome->getName());
 
         $this->addElement('select', 'home', [
@@ -90,7 +90,7 @@ class PaneForm extends BaseDashboardForm
         if ($dashboard->hasEntry($currentHome->getName())) {
             /** @var DashboardHome $currentHome */
             $currentHome = clone $dashboard->getEntry($currentHome->getName());
-            if ($currentHome->getName() !== $dashboard->getActiveHome()->getName()) {
+            if ($currentHome->getName() !== $dashboard->getActiveEntry()->getName()) {
                 $currentHome->loadDashboardEntries();
             }
         }

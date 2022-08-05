@@ -61,7 +61,7 @@ trait DashboardManager
         }
 
         if ($home) {
-            $this->activateHome($home);
+            $this->activateEntry($home);
             $home->loadDashboardEntries($activePane);
         }
 
@@ -88,49 +88,6 @@ trait DashboardManager
         $home->loadDashboardEntries();
 
         return $this;
-    }
-
-    /**
-     * Activates the given home and deactivates all other active homes
-     *
-     * @param DashboardHome $home
-     *
-     * @return $this
-     */
-    public function activateHome(DashboardHome $home): self
-    {
-        if (! $this->hasEntry($home->getName())) {
-            throw new ProgrammingError(
-                'Trying to activate Dashboard Home "%s" that does not exist.',
-                $home->getTitle()
-            );
-        }
-
-        $activeHome = $this->getActiveHome();
-        if ($activeHome && $activeHome->getName() !== $home->getName()) {
-            $activeHome->setActive(false);
-        }
-
-        $home->setActive();
-
-        return $this;
-    }
-
-    /**
-     * Get the active home currently being loaded
-     *
-     * @return ?DashboardHome
-     */
-    public function getActiveHome(): ?DashboardHome
-    {
-        /** @var DashboardHome $home */
-        foreach ($this->getEntries() as $home) {
-            if ($home->isActive()) {
-                return $home;
-            }
-        }
-
-        return null;
     }
 
     public function removeEntry($home)

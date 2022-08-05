@@ -30,8 +30,8 @@ class DashletTest extends BaseDashboardTestCase
 
         $this->dashboard->load(self::TEST_HOME);
 
-        $home = $this->dashboard->getActiveHome();
-        $pane = $home->getActivePane();
+        $home = $this->dashboard->getActiveEntry();
+        $pane = $home->getActiveEntry();
 
         $this->assertCount(
             2,
@@ -60,8 +60,8 @@ class DashletTest extends BaseDashboardTestCase
 
         $this->dashboard->load(self::TEST_HOME);
 
-        $home = $this->dashboard->getActiveHome();
-        $pane = $home->getActivePane();
+        $home = $this->dashboard->getActiveEntry();
+        $pane = $home->getActiveEntry();
 
         $this->assertCount(
             2,
@@ -85,16 +85,16 @@ class DashletTest extends BaseDashboardTestCase
 
         $this->dashboard->load(self::TEST_HOME);
 
-        $home = $this->dashboard->getActiveHome();
-        $pane = $home->getActivePane();
+        $home = $this->dashboard->getActiveEntry();
+        $pane = $home->getActiveEntry();
         $pane->getEntry(self::TEST_DASHLET)->setTitle('Hello');
 
         $pane->manageEntry($pane->getEntries());
 
         $this->dashboard->load(self::TEST_HOME);
 
-        $home = $this->dashboard->getActiveHome();
-        $pane = $home->getActivePane();
+        $home = $this->dashboard->getActiveEntry();
+        $pane = $home->getActiveEntry();
 
         $this->assertEquals(
             'Hello',
@@ -120,8 +120,8 @@ class DashletTest extends BaseDashboardTestCase
 
         $this->dashboard->load(self::TEST_HOME);
 
-        $default = $this->dashboard->getActiveHome();
-        $pane1 = $default->getActivePane();
+        $default = $this->dashboard->getActiveEntry();
+        $pane1 = $default->getActiveEntry();
         $pane2 = $default->getEntry('Test2');
 
         // Move the dashlet from pane1 -> pane2
@@ -129,8 +129,8 @@ class DashletTest extends BaseDashboardTestCase
 
         $this->dashboard->load(self::TEST_HOME);
 
-        $default = $this->dashboard->getActiveHome();
-        $pane1 = $default->getActivePane();
+        $default = $this->dashboard->getActiveEntry();
+        $pane1 = $default->getActiveEntry();
         $pane2 = $default->getEntry('Test2');
         $pane2->loadDashboardEntries();
 
@@ -166,23 +166,23 @@ class DashletTest extends BaseDashboardTestCase
 
         $this->dashboard->load(self::TEST_HOME, $pane1->getName(), true);
 
-        $default = $this->dashboard->getActiveHome();
+        $default = $this->dashboard->getActiveEntry();
         $home = $this->dashboard->getEntry($home->getName());
         $home->loadDashboardEntries();
 
-        $pane1 = $default->getActivePane();
-        $pane2 = $home->getActivePane();
+        $pane1 = $default->getActiveEntry();
+        $pane2 = $home->getActiveEntry();
 
         // Move the dashlet from pane1 -> pane2
         $pane2->manageEntry($pane1->getEntries(), $pane1);
 
         $this->dashboard->load(self::TEST_HOME, $pane1->getName(), true);
 
-        //$default = $this->dashboard->getActiveHome();
+        //$default = $this->dashboard->getActiveEntry();
         $home = $this->dashboard->getEntry($home->getName());
         $home->loadDashboardEntries();
 
-        $pane2 = $home->getActivePane();
+        $pane2 = $home->getActiveEntry();
 
         $this->assertCount(
             1,
@@ -218,8 +218,8 @@ class DashletTest extends BaseDashboardTestCase
 
         $this->dashboard->load($default->getName());
 
-        $default = $this->dashboard->getActiveHome();
-        $pane1 = $default->getActivePane();
+        $default = $this->dashboard->getActiveEntry();
+        $pane1 = $default->getActiveEntry();
         $pane2 = $default->getEntry('Test2');
         $pane2->loadDashboardEntries();
 
@@ -246,17 +246,17 @@ class DashletTest extends BaseDashboardTestCase
 
         $this->dashboard->load(self::TEST_HOME, $pane->getName());
 
-        $home = $this->dashboard->getActiveHome();
-        $pane = $home->getActivePane();
+        $home = $this->dashboard->getActiveEntry();
+        $pane = $home->getActiveEntry();
 
         $pane->removeEntry(self::TEST_DASHLET);
 
         $this->dashboard->load();
 
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
 
         $this->assertFalse(
-            $home->getActivePane()->hasEntry(self::TEST_DASHLET),
+            $home->getActiveEntry()->hasEntry(self::TEST_DASHLET),
             'Pane::removeEntry() could not remove expected Dashlet'
         );
     }
@@ -276,17 +276,17 @@ class DashletTest extends BaseDashboardTestCase
 
         $this->dashboard->load(self::TEST_HOME, $pane->getName());
 
-        $home = $this->dashboard->getActiveHome();
-        $pane = $home->getActivePane();
+        $home = $this->dashboard->getActiveEntry();
+        $pane = $home->getActiveEntry();
 
         $pane->removeEntries();
 
         $this->dashboard->load();
 
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
 
         $this->assertFalse(
-            $home->getActivePane()->hasEntries(),
+            $home->getActiveEntry()->hasEntries(),
             'Pane::removeEntries() could not remove all Dashlet Entries'
         );
     }

@@ -6,7 +6,7 @@ use Icinga\Web\Widget\SearchDashboard;
 $searchDashboard = new SearchDashboard();
 $searchDashboard->setUser($this->Auth()->getUser());
 
-$searchPane = $searchDashboard->search('dummy')->getActiveHome()->getEntry(SearchDashboard::SEARCH_PANE);
+$searchPane = $searchDashboard->search('dummy')->getActiveEntry()->getEntry(SearchDashboard::SEARCH_PANE);
 if ($searchPane->hasEntries()): ?>
     <form action="<?= $this->href('search') ?>" method="get" role="search" class="search-control">
         <input type="text" name="q" id="search" class="search search-input" required

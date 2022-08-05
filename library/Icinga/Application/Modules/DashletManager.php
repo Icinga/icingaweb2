@@ -75,7 +75,6 @@ class DashletManager
                         ->setPriority($priority++)
                         ->setModule($module->getName());
 
-                    // As we don't have a setter for labels, this might be ignored by the data extractor
                     if (isset($configPart['label'])) {
                         $dashlet->setTitle($configPart['label']);
                     }

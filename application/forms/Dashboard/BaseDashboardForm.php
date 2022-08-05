@@ -94,7 +94,7 @@ abstract class BaseDashboardForm extends CompatForm
      */
     protected function isUpdating(): bool
     {
-        return substr($this->requestUrl->getPath(), 0, 16) === Dashboard::BASE_ROUTE . '/edit-';
+        return strpos($this->requestUrl->getPath(), Dashboard::BASE_ROUTE . '/edit-') !== false;
     }
 
     /**

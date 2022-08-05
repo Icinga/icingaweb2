@@ -39,7 +39,7 @@ class DashletForm extends SetupNewDashboardForm
     protected function assembleNextPageDashboardPart()
     {
         $homes = $this->dashboard->getEntryKeyTitleArr();
-        $activeHome = $this->dashboard->getActiveHome();
+        $activeHome = $this->dashboard->getActiveEntry();
         $currentHome = $this->requestUrl->getParam('home', reset($homes));
         $populatedHome = $this->getPopulatedValue('home', $currentHome);
 
@@ -177,16 +177,16 @@ class DashletForm extends SetupNewDashboardForm
         if ($dashboard->hasEntry($currentHome->getName())) {
             $currentHome = clone $dashboard->getEntry($currentHome->getName());
             $activatePane = $currentHome->hasEntry($selectedPane)
-            && $currentHome->getActivePane()->getName() !== $selectedPane
+            && $currentHome->getActiveEntry()->getName() !== $selectedPane
                 ? $selectedPane
                 : null;
 
-            if ($currentHome->getName() !== $dashboard->getActiveHome()->getName() || $activatePane) {
+            if ($currentHome->getName() !== $dashboard->getActiveEntry()->getName() || $activatePane) {
                 $currentHome->loadDashboardEntries($activatePane);
             }
 
             if ($currentHome->hasEntry($currentPane->getName())) {
-                $currentPane = clone $currentHome->getActivePane();
+                $currentPane = clone $currentHome->getActiveEntry();
             }
         }
 
@@ -229,8 +229,8 @@ class DashletForm extends SetupNewDashboardForm
                 }
 
                 $this->dumpArbitaryDashlets(false);
-                // Avoid the hassle of iterating through the module dashlets each time to check if exits,
-                // even though the current pane doesn't have any entries
+                // Avoid the overhead of traversing the module Dashlets each time to check if they already exist,
+                // even the current Dashboard Pane doesn't contain any records
                 if (! $this->getPopulatedValue('new_pane') && $currentPane->hasEntries()) {
                     foreach ($this->moduleDashlets as $_ => $dashlets) {
                         /** @var Dashlet $dashlet */
@@ -278,10 +278,10 @@ class DashletForm extends SetupNewDashboardForm
         } else {
             $orgHome = $dashboard->getEntry($this->getValue('org_home'));
             $orgPane = $orgHome->getEntry($this->getValue('org_pane'));
-            if ($orgHome->getActivePane()->getName() !== $orgPane->getName()) {
+            if ($orgHome->getActiveEntry()->getName() !== $orgPane->getName()) {
                 $orgHome->loadDashboardEntries($orgPane->getName());
 
-                $orgPane = $orgHome->getActivePane();
+                $orgPane = $orgHome->getActiveEntry();
             }
 
             $orgDashlet = $orgPane->getEntry($this->getValue('org_dashlet'));

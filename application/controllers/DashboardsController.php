@@ -58,7 +58,7 @@ class DashboardsController extends CompatController
         // If we don't load all dashboard homes here, the cog icon won't be rendered in the dashboard tabs
         $this->dashboard->load(DashboardHome::DEFAULT_HOME, $pane, true);
 
-        $activeHome = $this->dashboard->getActiveHome();
+        $activeHome = $this->dashboard->getActiveEntry();
         if (! $activeHome || ! $activeHome->hasEntries()) {
             $this->addTitleTab(t('Welcome'));
 
@@ -89,7 +89,7 @@ class DashboardsController extends CompatController
 
         $this->dashboard->load($home, $pane);
 
-        $activeHome = $this->dashboard->getActiveHome();
+        $activeHome = $this->dashboard->getActiveEntry();
         if (! $activeHome->getEntries()) {
             $this->addTitleTab($activeHome->getTitle());
         }
@@ -133,7 +133,7 @@ class DashboardsController extends CompatController
             })
             ->handleRequest($this->getServerRequest());
 
-        $homeForm->load($this->dashboard->getActiveHome());
+        $homeForm->load($this->dashboard->getActiveEntry());
 
         $this->addTitleTab(t('Update Home'));
         $this->addContent($homeForm);
@@ -201,7 +201,7 @@ class DashboardsController extends CompatController
             }
         })->handleRequest($this->getServerRequest());
 
-        $paneForm->load($this->dashboard->getActiveHome()->getEntry($pane));
+        $paneForm->load($this->dashboard->getActiveEntry()->getEntry($pane));
 
         $this->addTitleTab(t('Update Pane'));
         $this->addContent($paneForm);
@@ -282,7 +282,7 @@ class DashboardsController extends CompatController
 
         $this->dashboard->load($home, $pane, true);
 
-        $pane = $this->dashboard->getActiveHome()->getActivePane();
+        $pane = $this->dashboard->getActiveEntry()->getActiveEntry();
         if (! $pane->hasEntry($dashlet)) {
             $this->httpNotFound(t('Dashlet "%s" not found'), $dashlet);
         }
@@ -311,7 +311,7 @@ class DashboardsController extends CompatController
 
         $this->dashboard->load($home, $pane);
 
-        $pane = $this->dashboard->getActiveHome()->getActivePane();
+        $pane = $this->dashboard->getActiveEntry()->getActiveEntry();
         if (! $pane->hasEntry($dashlet)) {
             $this->httpNotFound(t('Dashlet "%s" not found'), $dashlet);
         }
@@ -510,7 +510,7 @@ class DashboardsController extends CompatController
 
         $this->createTabs();
 
-        $activeHome = $this->dashboard->getActiveHome();
+        $activeHome = $this->dashboard->getActiveEntry();
         // We can't grant access the user to the dashboard manager if there aren't any dashboards to manage
         if (! $activeHome || (! $activeHome->hasEntries() && $this->dashboard->countEntries() === 1)) {
             $this->redirectNow(Dashboard::BASE_ROUTE);
@@ -540,7 +540,7 @@ class DashboardsController extends CompatController
     private function createTabs()
     {
         $tabs = $this->dashboard->getTabs();
-        $activeHome = $this->dashboard->getActiveHome();
+        $activeHome = $this->dashboard->getActiveEntry();
         if ($activeHome
             && (
                 ! $activeHome->isDefaultHome()
@@ -553,7 +553,7 @@ class DashboardsController extends CompatController
                 $params['home'] = $activeHome->getName();
             }
 
-            if (($activePane = $activeHome->getActivePane())) {
+            if (($activePane = $activeHome->getActiveEntry())) {
                 $params['pane'] = $activePane->getName();
             }
 

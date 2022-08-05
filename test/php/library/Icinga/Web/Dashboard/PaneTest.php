@@ -24,7 +24,7 @@ class PaneTest extends BaseDashboardTestCase
         $this->expectException(ProgrammingError::class);
 
         $home = $this->getTestHome();
-        $home->activatePane(new Pane(self::TEST_PANE));
+        $home->activateEntry(new Pane(self::TEST_PANE));
     }
 
     public function testWhetherActivatePaneActivatesExpectedPane()
@@ -32,11 +32,11 @@ class PaneTest extends BaseDashboardTestCase
         $home = $this->getTestHome();
         $home->addEntry($this->getTestPane());
 
-        $home->activatePane($home->getEntry(self::TEST_PANE));
+        $home->activateEntry($home->getEntry(self::TEST_PANE));
 
         $this->assertEquals(
             self::TEST_PANE,
-            $home->getActivePane()->getName(),
+            $home->getActiveEntry()->getName(),
             'DashboardHome::activatePane() could not activate expected Pane'
         );
     }
@@ -53,11 +53,11 @@ class PaneTest extends BaseDashboardTestCase
         $home->manageEntry($this->getTestPane('Test Me'));
 
         $this->dashboard->load();
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
 
         $this->assertEquals(
             self::TEST_PANE,
-            $home->getActivePane()->getName(),
+            $home->getActiveEntry()->getName(),
             'DashboardHome::loadDashboardEntries() could not activate expected Pane'
         );
     }
@@ -73,11 +73,11 @@ class PaneTest extends BaseDashboardTestCase
         $home->manageEntry(new Pane(self::TEST_PANE));
 
         $this->dashboard->load(self::TEST_HOME, self::TEST_PANE);
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
 
         $this->assertEquals(
             self::TEST_PANE,
-            $home->getActivePane()->getName(),
+            $home->getActiveEntry()->getName(),
             'DashboardHome::loadDashboardEntries() could not load and activate expected Pane'
         );
     }
@@ -85,18 +85,18 @@ class PaneTest extends BaseDashboardTestCase
     /**
      * @depends testWhetherActivatePaneActivatesAPaneEntry
      */
-    public function testWhetherGetActivePaneGetsExpectedPane()
+    public function testWhethergetActiveEntryGetsExpectedPane()
     {
         $home = $this->getTestHome();
         $home->addEntry($this->getTestPane());
         $home->addEntry($this->getTestPane('Test Me'));
 
-        $home->activatePane($home->getEntry('Test Me'));
+        $home->activateEntry($home->getEntry('Test Me'));
 
         $this->assertEquals(
             'Test Me',
-            $home->getActivePane()->getName(),
-            'DashboardHome::getActivePane() could not determine valid active pane'
+            $home->getActiveEntry()->getName(),
+            'DashboardHome::getActiveEntry() could not determine valid active pane'
         );
     }
 
@@ -111,7 +111,7 @@ class PaneTest extends BaseDashboardTestCase
         $home->manageEntry($this->getTestPane());
 
         $this->dashboard->load(self::TEST_HOME);
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
 
         $this->assertCount(
             1,
@@ -132,17 +132,17 @@ class PaneTest extends BaseDashboardTestCase
 
         $this->dashboard->load(self::TEST_HOME);
 
-        $home = $this->dashboard->getActiveHome();
-        $home->getActivePane()->setTitle('Hello');
+        $home = $this->dashboard->getActiveEntry();
+        $home->getActiveEntry()->setTitle('Hello');
 
         $home->manageEntry($home->getEntries());
         $this->dashboard->load(self::TEST_HOME);
 
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
 
         $this->assertEquals(
             'Hello',
-            $home->getActivePane()->getTitle(),
+            $home->getActiveEntry()->getTitle(),
             'DashboardHome::manageEntry() could not update existing Pane'
         );
     }
@@ -159,14 +159,14 @@ class PaneTest extends BaseDashboardTestCase
 
         $this->dashboard->load('Second Home', null, true);
 
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
         /** @var DashboardHome $default */
         $default = $this->dashboard->getEntry(self::TEST_HOME);
 
         $default->manageEntry($home->getEntry(self::TEST_PANE), $home);
         $this->dashboard->load(self::TEST_HOME);
 
-        $default = $this->dashboard->getActiveHome();
+        $default = $this->dashboard->getActiveEntry();
 
         $this->assertCount(
             1,
@@ -191,7 +191,7 @@ class PaneTest extends BaseDashboardTestCase
 
         $this->dashboard->load();
 
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
         $default = $this->dashboard->getEntry(self::TEST_HOME);
         $default->loadDashboardEntries();
 
@@ -215,12 +215,12 @@ class PaneTest extends BaseDashboardTestCase
 
         $this->dashboard->load(self::TEST_HOME, self::TEST_PANE);
 
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
 
         $home->removeEntry(self::TEST_PANE);
         $this->dashboard->load();
 
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
 
         $this->assertFalse(
             $home->hasEntry(self::TEST_PANE),
@@ -240,12 +240,12 @@ class PaneTest extends BaseDashboardTestCase
 
         $this->dashboard->load(self::TEST_HOME);
 
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
 
         $home->removeEntries();
         $this->dashboard->load();
 
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
 
         $this->assertFalse(
             $home->hasEntries(),

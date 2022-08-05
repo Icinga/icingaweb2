@@ -59,7 +59,7 @@ class SearchDashboard extends Dashboard
         return $this->tabs;
     }
 
-    public function getActiveHome(): ?DashboardHome
+    public function getActiveEntry()
     {
         return $this->searchHome;
     }

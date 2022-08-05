@@ -58,6 +58,36 @@ trait DashboardEntries
         return $this;
     }
 
+    public function activateEntry(BaseDashboard $dashboard)
+    {
+        if (! $this->hasEntry($dashboard->getName())) {
+            throw new ProgrammingError(
+                'Trying to activate Dashboard Entry "%s" that does not exist.',
+                $dashboard->getTitle()
+            );
+        }
+
+        $activeEntry = $this->getActiveEntry();
+        if ($activeEntry && $activeEntry->getName() !== $dashboard->getName()) {
+            $activeEntry->setActive(false);
+        }
+
+        $dashboard->setActive();
+
+        return $this;
+    }
+
+    public function getActiveEntry()
+    {
+        foreach ($this->getEntries() as $entry) {
+            if ($entry->isActive()) {
+                return $entry;
+            }
+        }
+
+        return null;
+    }
+
     public function addEntry(BaseDashboard $dashboard)
     {
         if ($this->hasEntry($dashboard->getName())) {

@@ -30,13 +30,13 @@ class HomeTest extends BaseDashboardTestCase
         $this->dashboard->manageEntry($this->getTestHome());
         $this->dashboard->load(self::TEST_HOME);
 
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
         $home->setTitle('Hello');
 
         $this->dashboard->manageEntry($home);
         $this->dashboard->load(self::TEST_HOME);
 
-        $home = $this->dashboard->getActiveHome();
+        $home = $this->dashboard->getActiveEntry();
 
         $this->assertEquals(
             'Hello',
@@ -125,7 +125,7 @@ class HomeTest extends BaseDashboardTestCase
 
         $this->assertEquals(
             'Second Home',
-            $this->dashboard->getActiveHome()->getName(),
+            $this->dashboard->getActiveEntry()->getName(),
             'Dashboard::load() could not load all expected Dashboard Homes and activate expected Dashboard Home'
         );
     }
@@ -134,7 +134,7 @@ class HomeTest extends BaseDashboardTestCase
     {
         $this->expectException(ProgrammingError::class);
 
-        $this->dashboard->activateHome($this->getTestHome('Activate Home'));
+        $this->dashboard->activateEntry($this->getTestHome('Activate Home'));
     }
 
     public function testWhetherLoadHomesActivatesFirstHome()
@@ -145,7 +145,7 @@ class HomeTest extends BaseDashboardTestCase
 
         $this->assertEquals(
             self::TEST_HOME,
-            $this->dashboard->getActiveHome()->getName(),
+            $this->dashboard->getActiveEntry()->getName(),
             'Dashboard::load() could not activate expected Dashboard Home'
         );
     }
@@ -159,9 +159,9 @@ class HomeTest extends BaseDashboardTestCase
         $this->dashboard->load();
 
         $active = $this->dashboard->getEntry('Second Home');
-        $this->dashboard->activateHome($active);
+        $this->dashboard->activateEntry($active);
 
-        $this->assertTrue($active->isActive(), 'Dashboard::activateHome() could not activate expected Dashboard Home');
+        $this->assertTrue($active->isActive(), 'Dashboard::activateEntry() could not activate expected Dashboard Home');
     }
 
     /**
@@ -173,12 +173,12 @@ class HomeTest extends BaseDashboardTestCase
         $this->dashboard->addEntry($this->getTestHome('Second Home'));
 
         $active = $this->dashboard->getEntry(self::TEST_HOME);
-        $this->dashboard->activateHome($active);
+        $this->dashboard->activateEntry($active);
 
         $this->assertEquals(
             self::TEST_HOME,
-            $this->dashboard->getActiveHome()->getName(),
-            'Dashboard::getActiveHome() could not return expected Dashboard Home'
+            $this->dashboard->getActiveEntry()->getName(),
+            'Dashboard::getActiveEntry() could not return expected Dashboard Home'
         );
     }
 }

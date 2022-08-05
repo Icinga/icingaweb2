@@ -54,6 +54,20 @@ abstract class BaseDashboard
     protected $owner;
 
     /**
+     * A flag whether this widget is currently being loaded
+     *
+     * @var bool
+     */
+    protected $active = false;
+
+    /**
+     * A flag whether this widget has been disabled (affects only default home)
+     *
+     * @var bool
+     */
+    protected $disabled = false;
+
+    /**
      * Create a new widget
      *
      * @param string $name
@@ -230,6 +244,57 @@ abstract class BaseDashboard
         }
 
         return $this;
+    }
+
+    /**
+     * Set whether this widget should be disabled
+     *
+     * @param bool $disabled
+     *
+     * @return $this
+     */
+    public function setDisabled(bool $disabled): self
+    {
+        $this->disabled = $disabled;
+
+        return $this;
+    }
+
+    /**
+     * Get whether this widget has been disabled
+     *
+     * @return bool
+     */
+    public function isDisabled(): bool
+    {
+        return $this->disabled;
+    }
+
+    /**
+     * Set whether this widget is currently being loaded
+     *
+     * @param bool $active
+     *
+     * @return $this
+     */
+    public function setActive(bool $active = true): self
+    {
+        $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * Get whether this widget is currently being loaded
+     *
+     * Indicates which dashboard tab is currently open if this widget is a Dashboard Pane type
+     * or whether the Dashboard Home is active/focused in the navigation bar
+     *
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->active;
     }
 
     /**

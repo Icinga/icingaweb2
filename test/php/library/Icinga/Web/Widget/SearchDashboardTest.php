@@ -28,7 +28,7 @@ class SearchDashboardTest extends BaseDashboardTestCase
         $dashboard->setUser($this->getUser());
         $dashboard->search('pending');
 
-        $searchHome = $dashboard->getActiveHome();
+        $searchHome = $dashboard->getActiveEntry();
         $searchHome->getEntry(SearchDashboard::SEARCH_PANE)->setEntries([]);
         $dashboard->render();
     }
@@ -39,7 +39,7 @@ class SearchDashboardTest extends BaseDashboardTestCase
         $dashboard->setUser($this->getUser());
         $dashboard->search('pending');
 
-        $searchHome = $dashboard->getActiveHome();
+        $searchHome = $dashboard->getActiveEntry();
         $result = $searchHome->getEntry(SearchDashboard::SEARCH_PANE)->hasEntry('Hosts: pending');
 
         $this->assertTrue($result, 'SearchDashboard::search() could not load search dashlets from modules');
@@ -51,7 +51,7 @@ class SearchDashboardTest extends BaseDashboardTestCase
         $dashboard->setUser($this->getUser());
         $dashboard->search();
 
-        $searchHome = $dashboard->getActiveHome();
+        $searchHome = $dashboard->getActiveEntry();
         $result = $searchHome->getEntry(SearchDashboard::SEARCH_PANE)->hasEntry('Ready to search');
 
         $this->assertTrue($result, 'SearchDashboard::search() could not get hint for search');

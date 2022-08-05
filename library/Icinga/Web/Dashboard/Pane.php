@@ -14,7 +14,6 @@ use Icinga\Web\Dashboard\Common\DashboardEntries;
 use Icinga\Util\DBUtils;
 use Icinga\Web\Dashboard\Common\DashboardEntry;
 use Icinga\Web\Dashboard\Common\Sortable;
-use Icinga\Web\Dashboard\Common\WidgetState;
 use InvalidArgumentException;
 use ipl\Stdlib\Filter;
 use LogicException;
@@ -28,7 +27,6 @@ use function ipl\Stdlib\get_php_type;
 class Pane extends BaseDashboard implements DashboardEntry, Sortable
 {
     use DashboardEntries;
-    use WidgetState;
 
     public const TABLE = 'icingaweb_dashboard';
 
@@ -132,11 +130,8 @@ class Pane extends BaseDashboard implements DashboardEntry, Sortable
                     $newDashlet->isModuleDashlet()
                     && $dashlet->system_module_dashlet_id === null
                 )
-            ) {
-                // The module from which this dashlet originates doesn't exist anymore
+            ) { // The module from which this dashlet originates doesn't exist anymore
                 $this->removeEntry($newDashlet);
-
-                $this->unsetEntry($newDashlet);
             } elseif (! $newDashlet->isDisabled() && ! Modules\DashletManager::isUsable($newDashlet)) {
                 // The module from which this dashlet originates is probably disabled,
                 // so don't load this dashlet anymore and disable it
@@ -250,7 +245,7 @@ class Pane extends BaseDashboard implements DashboardEntry, Sortable
                     'description'  => $dashlet->getDescription()
                 ], $filterCondition);
             } else {
-                // Failed to move the pane! Should have already been handled by the caller,
+                // Failed to move the dashlet! Should have already been handled by the caller,
                 // though I think it's better that we raise an exception here!!
                 throw new AlreadyExistsException(
                     'Failed to successfully manage the Dashlet. Pane "%s" has already a Dashlet called "%s"!',

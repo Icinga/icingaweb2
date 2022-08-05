@@ -41,7 +41,7 @@ class HomeForm extends BaseDashboardForm
     protected function onSuccess()
     {
         if ($this->isUpdating()) {
-            $home = $this->dashboard->getActiveHome();
+            $home = $this->dashboard->getActiveEntry();
             if ($home->getTitle() === $this->getPopulatedValue('title')) {
                 return;
             }

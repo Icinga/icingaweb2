@@ -148,4 +148,20 @@ interface DashboardEntry
      * @return $this
      */
     public function unsetEntry(BaseDashboard $dashboard);
+
+    /**
+     * Activates the given dashboard entry and deactivates all other active ones
+     *
+     * @param BaseDashboard $dashboard
+     *
+     * @return $this
+     */
+    public function activateEntry(BaseDashboard $dashboard);
+
+    /**
+     * Get the active dashboard entry currently being loaded
+     *
+     * @return ?DashboardEntry
+     */
+    public function getActiveEntry();
 }

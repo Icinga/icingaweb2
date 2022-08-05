@@ -23,7 +23,7 @@ class Settings extends BaseHtmlElement
 
     protected function assemble()
     {
-        $activeHome = $this->dashboard->getActiveHome();
+        $activeHome = $this->dashboard->getActiveEntry();
         if ($this->dashboard->countEntries() === 1 && $activeHome->isDefaultHome()) {
             $this->setAttribute('data-icinga-home', DashboardHome::DEFAULT_HOME);
             $this->addFrom((new DashboardHomeList($activeHome))->setHeaderDisabled());
