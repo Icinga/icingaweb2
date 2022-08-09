@@ -295,7 +295,7 @@ $section = $this->menuSection(N_('Reporting'), array(
 $dashboard = $this->dashboard(N_('Current Incidents'), array('priority' => 50));
 $dashboard->add(
     N_('Service Problems'),
-    'monitoring/list/services?service_problem=1&limit=10&sort=service_severity',
+    'monitoring/list/services?service_problem=1&service_in_downtime!=1&limit=10&sort=service_severity',
     100
 );
 $dashboard->add(
@@ -305,7 +305,7 @@ $dashboard->add(
 );
 $dashboard->add(
     N_('Host Problems'),
-    'monitoring/list/hosts?host_problem=1&sort=host_severity',
+    'monitoring/list/hosts?host_problem=1&host_in_downtime!=1&sort=host_severity',
     120
 );
 
