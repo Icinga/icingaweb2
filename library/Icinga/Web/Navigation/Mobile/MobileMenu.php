@@ -14,7 +14,7 @@ use ipl\Html\HtmlString;
 use ipl\Html\Text;
 use ipl\Web\Widget\Icon;
 
-class MobileNavigation extends BaseHtmlElement
+class MobileMenu extends BaseHtmlElement
 {
     use HealthBadgeTrait;
 
@@ -49,7 +49,8 @@ class MobileNavigation extends BaseHtmlElement
 
     protected function assembleMoreItem(BaseHtmlElement $moreMenu)
     {
-        $moreMenu->add(
+        $moreMenu->add([
+            $this->createMoreFlyout(),
             HtmlElement::create(
                 'button',
                 Attributes::create(['id' => 'toggle-more']),
@@ -58,9 +59,7 @@ class MobileNavigation extends BaseHtmlElement
                     Text::create('More')
                 ]
             )
-        );
-
-        $moreMenu->add($this->createMoreFlyout());
+        ]);
     }
 
     protected function createNavItemIcon($item)
@@ -75,7 +74,7 @@ class MobileNavigation extends BaseHtmlElement
 
     protected function createMoreFlyout()
     {
-        $moreFlyout = new HtmlElement('div', Attributes::create(['class' => 'flyout']));
+        $moreFlyout = new HtmlElement('div', Attributes::create(['class' => 'flyout', 'id' => 'more-flyout']));
 
         $this->assembleMoreFlyout($moreFlyout);
 
