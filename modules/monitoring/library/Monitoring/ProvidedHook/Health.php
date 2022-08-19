@@ -44,6 +44,27 @@ class Health extends HealthHook
                 $programStatus->process_id,
                 DateFormatter::timeSince($programStatus->program_start_time)
             ));
+
+            $warningMessages = [];
+
+            if (! $programStatus->active_host_checks_enabled) {
+                $this->setState(self::STATE_WARNING);
+                $warningMessages[] = t('Active host checks are disabled');
+            }
+
+            if (! $programStatus->active_service_checks_enabled) {
+                $this->setState(self::STATE_WARNING);
+                $warningMessages[] = t('Active service checks are disabled');
+            }
+
+            if (! $programStatus->notifications_enabled) {
+                $this->setState(self::STATE_WARNING);
+                $warningMessages[] = t('Notifications are disabled');
+            }
+
+            if ($this->getState() === self::STATE_WARNING) {
+                $this->setMessage(implode("; ", $warningMessages));
+            }
         } else {
             $this->setState(self::STATE_CRITICAL);
             $this->setMessage(sprintf(t('Backend %s is not running'), $backendName));
