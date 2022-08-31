@@ -164,6 +164,8 @@ class TestController extends CompatController
             ->setHeader('Content-Disposition', 'inline')
             ->sendResponse();
 
+        ob_end_flush();
+
         echo '[';
         foreach ($query as $i => $result) {
             $users = [];
