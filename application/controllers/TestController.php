@@ -204,6 +204,10 @@ class TestController extends CompatController
             foreach ($query as $i => $result) {
                 $users = [];
                 foreach ($roles as $username => $_) {
+                    if (substr($username, 0, 1) === '_') {
+                        continue;
+                    }
+
                     if ($result->$username) {
                         $users[] = $username;
                     }
