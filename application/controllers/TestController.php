@@ -116,6 +116,7 @@ class TestController extends CompatController
     {
         $type = $this->params->shiftRequired('type');
         $objectId = $this->params->shift('object_id');
+        $limit = $this->params->shift('limit');
 
         $roles = Json::decode(file_get_contents(Icinga::app()->getConfigDir() . '/' . 'roles.json'));
 
@@ -131,6 +132,9 @@ class TestController extends CompatController
         }
 
         $query->columns('id');
+        if ($limit) {
+            $query->limit((int) $limit);
+        }
 
         $userQueries = [];
         foreach ($roles as $username => $restrictions) {
@@ -170,8 +174,9 @@ class TestController extends CompatController
         $query->withColumns($userQueries);
         $query->disableDefaultSort();
 
-        file_get_contents('http://localhost/');
-        usleep(200000);
+        //file_get_contents('http://localhost/');
+        //usleep(200000);
+
 
         if ($this->params->get('export') === 'sql') {
             list($sql, $values) = $query->dump();
