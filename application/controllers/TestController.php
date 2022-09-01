@@ -171,7 +171,7 @@ class TestController extends CompatController
         $query->disableDefaultSort();
 
         file_get_contents('http://localhost/');
-        sleep(0.2);
+        usleep(200000);
 
         if ($this->params->get('export') === 'sql') {
             list($sql, $values) = $query->dump();
