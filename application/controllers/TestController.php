@@ -133,8 +133,16 @@ class TestController extends CompatController
 
         $userQueries = [];
         foreach ($roles as $username => $restrictions) {
+            if (substr($username, 0, 1) === '_') {
+                continue;
+            }
+
             $filter = \ipl\Stdlib\Filter::any();
             foreach ($restrictions as $restriction) {
+                if (substr($restriction, 0, 1) === '_') {
+                    continue;
+                }
+
                 $filter->add(QueryString::parse($restriction));
             }
 
