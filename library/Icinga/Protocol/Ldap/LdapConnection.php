@@ -884,6 +884,17 @@ class LdapConnection implements Selectable, Inspectable
 
         $controls = [];
         $legacyControlHandling = version_compare(PHP_VERSION, '7.3.0') < 0;
+        if ($serverSorting && $query->hasOrder()) {
+            $control = [
+                'oid'   => LDAP_CONTROL_SORTREQUEST,
+                'value' => $this->encodeSortRules($query->getOrder())
+            ];
+            if ($legacyControlHandling) {
+                ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, [$control]);
+            } else {
+                $controls[LDAP_CONTROL_SORTREQUEST] = $control;
+            }
+        }
 
         $count = 0;
         $cookie = '';
@@ -902,15 +913,6 @@ class LdapConnection implements Selectable, Inspectable
                         'cookie' => $cookie
                     ]
                 ];
-            }
-
-            if ($serverSorting && $query->hasOrder()) {
-                ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
-                    array(
-                        'oid'   => LdapCapabilities::LDAP_SERVER_SORT_OID,
-                        'value' => $this->encodeSortRules($query->getOrder())
-                    )
-                ));
             }
 
             $results = $this->ldapSearch(
