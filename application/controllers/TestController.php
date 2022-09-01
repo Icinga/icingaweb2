@@ -2,6 +2,7 @@
 
 namespace Icinga\Controllers;
 
+use Icinga\Application\Benchmark;
 use Icinga\Application\Icinga;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\Database;
@@ -10,6 +11,7 @@ use Icinga\Module\Icingadb\Model\Service;
 use Icinga\Util\Format;
 use Icinga\Util\Json;
 use Icinga\Web\Notification;
+use ipl\Html\Html;
 use ipl\Sql\Expression;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Filter\QueryString;
@@ -157,35 +159,72 @@ class TestController extends CompatController
         }
 
         $query->withColumns($userQueries);
+        $query->disableDefaultSort();
 
-        $this->getResponse()
-            ->setHeader('Content-Type', 'application/json')
-            ->setHeader('Cache-Control', 'no-store')
-            ->setHeader('Content-Disposition', 'inline')
-            ->sendResponse();
+        if ($this->params->get('export') === 'sql') {
+            list($sql, $values) = $query->dump();
 
-        ob_end_flush();
+            $unused = [];
+            foreach ($values as $value) {
+                $pos = strpos($sql, '?');
+                if ($pos !== false) {
+                    if (is_string($value)) {
+                        $value = "'" . $value . "'";
+                    }
 
-        echo '[';
-        foreach ($query as $i => $result) {
-            $users = [];
-            foreach ($roles as $username => $_) {
-                if ($result->$username) {
-                    $users[] = $username;
+                    $sql = substr_replace($sql, $value, $pos, 1);
+                } else {
+                    $unused[] = $value;
                 }
             }
 
-            if ($i > 0) {
-                echo PHP_EOL . ',';
+            if (! empty($unused)) {
+                $sql .= ' /* Unused values: "' . join('", "', $unused) . '" */';
             }
 
-            echo json_encode([
-                'id' => bin2hex($result->id),
-                'users' => $users
-            ]);
-        }
+            $this->addContent(Html::tag('pre', $sql));
+        } elseif ($this->params->get('export') === 'json') {
+            $this->getResponse()
+                ->setHeader('Content-Type', 'application/json')
+                ->setHeader('Cache-Control', 'no-store')
+                ->setHeader('Content-Disposition', 'inline')
+                ->sendResponse();
 
-        echo ']';
-        exit;
+            ob_end_flush();
+
+            echo '[';
+            foreach ($query as $i => $result) {
+                $users = [];
+                foreach ($roles as $username => $_) {
+                    if ($result->$username) {
+                        $users[] = $username;
+                    }
+                }
+
+                if ($i > 0) {
+                    echo PHP_EOL . ',';
+                }
+
+                echo json_encode([
+                    'id' => bin2hex($result->id),
+                    'users' => $users
+                ]);
+            }
+
+            echo ']';
+            exit;
+        } else {
+            Benchmark::measure('starting query');
+            foreach ($query as $i => $result) {
+                if ($i === 0) {
+                    Benchmark::measure('starting loop');
+                }
+            }
+
+            Benchmark::measure('finished loop');
+
+            Benchmark::dump();
+            exit;
+        }
     }
 }
