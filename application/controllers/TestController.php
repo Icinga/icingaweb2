@@ -170,6 +170,8 @@ class TestController extends CompatController
         $query->withColumns($userQueries);
         $query->disableDefaultSort();
 
+        file_get_contents('http://localhost/');
+
         if ($this->params->get('export') === 'sql') {
             list($sql, $values) = $query->dump();
 
