@@ -8,6 +8,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Module\Icingadb\Common\Database;
 use Icinga\Module\Icingadb\Model\Host;
 use Icinga\Module\Icingadb\Model\Service;
+use Icinga\Util\Environment;
 use Icinga\Util\Format;
 use Icinga\Util\Json;
 use Icinga\Web\Notification;
@@ -198,7 +199,8 @@ class TestController extends CompatController
                 ->setHeader('Content-Disposition', 'inline')
                 ->sendResponse();
 
-            ob_end_flush();
+            ob_end_clean();
+            Environment::raiseExecutionTime();
 
             echo '[';
             foreach ($query as $i => $result) {
