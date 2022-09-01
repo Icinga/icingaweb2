@@ -201,6 +201,7 @@ class TestController extends CompatController
 
             ob_end_clean();
             Environment::raiseExecutionTime();
+            Environment::raiseMemoryLimit('1024M');
 
             echo '[';
             foreach ($query as $i => $result) {
