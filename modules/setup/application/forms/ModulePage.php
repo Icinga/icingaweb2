@@ -101,7 +101,7 @@ class ModulePage extends Form
         foreach ($checked as $name => $module) {
             if ($module->providesSetupWizard()) {
                 $wizards[$name] = $module->getSetupWizard();
-            } elseif (! empty($module->getRequiredModules())) {
+            } elseif (! empty($module->getRequiredModules()) || ! empty($module->getRequiredLibraries())) {
                 $wizards[$name] = new ModuleDependency($module, array_keys($checked));
             }
         }

@@ -5,6 +5,7 @@ namespace Icinga\Module\Setup;
 use Icinga\Application\Modules\Module;
 use Icinga\Module\Setup\Requirement\ModuleMissingRequirement;
 use Icinga\Module\Setup\Requirement\SetRequirement;
+use Icinga\Module\Setup\Requirement\WebLibraryRequirement;
 use Icinga\Module\Setup\Requirement\WebModuleRequirement;
 
 class ModuleDependency
@@ -92,6 +93,14 @@ class ModuleDependency
             ]));
 
             $set->add($requirement);
+        }
+
+        foreach ($this->module->getRequiredLibraries() as $name => $requiredVersion) {
+            $set->add(new WebLibraryRequirement([
+                'condition'     => [$name, $requiredVersion],
+                'alias'         => $name,
+                'description'   => sprintf(t('The %s library (%s) is required'), $name, $requiredVersion)
+            ]));
         }
 
         return $set;
