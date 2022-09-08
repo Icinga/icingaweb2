@@ -34,6 +34,7 @@ class JavaScript
         'js/icinga/behavior/collapsible.js',
         'js/icinga/behavior/detach.js',
         'js/icinga/behavior/dropdown.js',
+        'js/icinga/behavior/listRefresh.js',
         'js/icinga/behavior/navigation.js',
         'js/icinga/behavior/form.js',
         'js/icinga/behavior/flyout-menu.js',
