@@ -289,19 +289,6 @@ class Stylesheet
     }
 
     /**
-     * Lookup a specific Style collection
-     *
-     * @deprecated
-     * @param string $key the selector of the requested Style collection
-     *
-     * @return Style[]
-     */
-    function lookup(string $key): array
-    {
-        return $this->_styles[$key] ?? [];
-    }
-
-    /**
      * load and parse a CSS string
      *
      * @param string $css
@@ -338,46 +325,26 @@ class Stylesheet
             $parsed = Helpers::parse_data_uri($file);
             $css = $parsed["data"];
         } else {
-            $parsed_url = Helpers::explode_url($file);
-
-            [$this->_protocol, $this->_base_host, $this->_base_path, $filename] = $parsed_url;
-
-            $file = Helpers::build_url($this->_protocol, $this->_base_host, $this->_base_path, $filename);
-
             $options = $this->_dompdf->getOptions();
-            // Download the remote file
-            if (!$options->isRemoteEnabled() && ($this->_protocol !== "" && $this->_protocol !== "file://")) {
-                Helpers::record_warnings(E_USER_WARNING, "Remote CSS resource '$file' referenced, but remote file download is disabled.", __FILE__, __LINE__);
-                return;
-            }
-            if ($this->_protocol === "" || $this->_protocol === "file://") {
-                $realfile = realpath($file);
 
-                $rootDir = realpath($options->getRootDir());
-                if (strpos($realfile, $rootDir) !== 0) {
-                    $chroot = $options->getChroot();
-                    $chrootValid = false;
-                    foreach ($chroot as $chrootPath) {
-                        $chrootPath = realpath($chrootPath);
-                        if ($chrootPath !== false && strpos($realfile, $chrootPath) === 0) {
-                            $chrootValid = true;
-                            break;
-                        }
-                    }
-                    if ($chrootValid !== true) {
-                        Helpers::record_warnings(E_USER_WARNING, "Permission denied on $file. The file could not be found under the paths specified by Options::chroot.", __FILE__, __LINE__);
+            $parsed_url = Helpers::explode_url($file);
+            $protocol = $parsed_url["protocol"];
+
+            if ($file !== $this->getDefaultStylesheet()) {
+                $allowed_protocols = $options->getAllowedProtocols();
+                if (!array_key_exists($protocol, $allowed_protocols)) {
+                    Helpers::record_warnings(E_USER_WARNING, "Permission denied on $file. The communication protocol is not supported.", __FILE__, __LINE__);
+                    return;
+                }
+                foreach ($allowed_protocols[$protocol]["rules"] as $rule) {
+                    [$result, $message] = $rule($file);
+                    if (!$result) {
+                        Helpers::record_warnings(E_USER_WARNING, "Error loading $file: $message", __FILE__, __LINE__);
                         return;
                     }
                 }
-
-                if (!$realfile) {
-                    Helpers::record_warnings(E_USER_WARNING, "File '$realfile' not found.", __FILE__, __LINE__);
-                    return;
-                }
-
-                $file = $realfile;
             }
-            
+
             [$css, $http_response_header] = Helpers::getFileContent($file, $this->_dompdf->getHttpContext());
 
             $good_mime_type = true;
@@ -392,11 +359,12 @@ class Stylesheet
                     }
                 }
             }
-
             if (!$good_mime_type || $css === null) {
                 Helpers::record_warnings(E_USER_WARNING, "Unable to load css file $file", __FILE__, __LINE__);
                 return;
             }
+
+            [$this->_protocol, $this->_base_host, $this->_base_path] = $parsed_url;
         }
 
         $this->_parse_css($css);
@@ -577,7 +545,7 @@ class Stylesheet
                     // class=".* $tok .*" and class=".* $tok"
 
                     // This doesn't work because libxml only supports XPath 1.0...
-                    //$query .= "[matches(@$attr,\"^${tok}\$|^${tok}[ ]+|[ ]+${tok}\$|[ ]+${tok}[ ]+\")]";
+                    //$query .= "[matches(@$attr,\"^{$tok}\$|^{$tok}[ ]+|[ ]+{$tok}\$|[ ]+{$tok}[ ]+\")]";
 
                     $query .= "[contains(concat(' ', normalize-space(@$attr), ' '), concat(' ', '$tok', ' '))]";
                     $tok = "";
@@ -620,7 +588,7 @@ class Stylesheet
                     switch ($tok) {
 
                         case "first-child":
-                            $query .= "[1]";
+                            $query .= "[not(preceding-sibling::*)]";
                             $tok = "";
                             break;
 
@@ -653,16 +621,17 @@ class Stylesheet
                             $pseudo_classes[$tok] = true;
                             $p = $i + 1;
                             $nth = trim(mb_substr($selector, $p, strpos($selector, ")", $i) - $p));
+                            $position = $last ? "(last()-position()+1)" : "position()";
 
                             // 1
                             if (preg_match("/^\d+$/", $nth)) {
-                                $condition = "position() = $nth";
+                                $condition = "$position = $nth";
                             } // odd
                             elseif ($nth === "odd") {
-                                $condition = "(position() mod 2) = 1";
+                                $condition = "($position mod 2) = 1";
                             } // even
                             elseif ($nth === "even") {
-                                $condition = "(position() mod 2) = 0";
+                                $condition = "($position mod 2) = 0";
                             } // an+b
                             else {
                                 $condition = $this->_selector_an_plus_b($nth, $last);
@@ -684,16 +653,17 @@ class Stylesheet
                             $pseudo_classes[$tok] = true;
                             $p = $i + 1;
                             $nth = trim(mb_substr($selector, $p, strpos($selector, ")", $i) - $p));
+                            $position = $last ? "(last()-position()+1)" : "position()";
 
                             // 1
                             if (preg_match("/^\d+$/", $nth)) {
-                                $condition = "position() = $nth";
+                                $condition = "$position = $nth";
                             } // odd
                             elseif ($nth === "odd") {
-                                $condition = "(position() mod 2) = 1";
+                                $condition = "($position mod 2) = 1";
                             } // even
                             elseif ($nth === "even") {
-                                $condition = "(position() mod 2) = 0";
+                                $condition = "($position mod 2) = 0";
                             } // an+b
                             else {
                                 $condition = $this->_selector_an_plus_b($nth, $last);
@@ -920,26 +890,27 @@ class Stylesheet
     /**
      * https://github.com/tenderlove/nokogiri/blob/master/lib/nokogiri/css/xpath_visitor.rb
      *
-     * @param $expr
+     * @param string $expr
      * @param bool $last
+     *
      * @return string
      */
-    protected function _selector_an_plus_b($expr, $last = false)
+    protected function _selector_an_plus_b(string $expr, bool $last = false): string
     {
         $expr = preg_replace("/\s/", "", $expr);
         if (!preg_match("/^(?P<a>-?[0-9]*)?n(?P<b>[-+]?[0-9]+)?$/", $expr, $matches)) {
             return "false()";
         }
 
-        $a = ((isset($matches["a"]) && $matches["a"] !== "") ? intval($matches["a"]) : 1);
-        $b = ((isset($matches["b"]) && $matches["b"] !== "") ? intval($matches["b"]) : 0);
+        $a = (isset($matches["a"]) && $matches["a"] !== "") ? ($matches["a"] !== "-" ? intval($matches["a"]) : -1) : 1;
+        $b = (isset($matches["b"]) && $matches["b"] !== "") ? intval($matches["b"]) : 0;
 
-        $position = ($last ? "(last()-position()+1)" : "position()");
+        $position = $last ? "(last()-position()+1)" : "position()";
 
         if ($b == 0) {
             return "($position mod $a) = 0";
         } else {
-            $compare = (($a < 0) ? "<=" : ">=");
+            $compare = ($a < 0) ? "<=" : ">=";
             $b2 = -$b;
             if ($b2 >= 0) {
                 $b2 = "+$b2";
@@ -1006,7 +977,7 @@ class Stylesheet
                             continue;
                         }
 
-                        $content = $style->get_prop("content");
+                        $content = $style->get_specified("content");
 
                         // Do not create non-displayed before/after pseudo elements
                         // https://www.w3.org/TR/CSS21/generate.html#content
@@ -1075,7 +1046,7 @@ class Stylesheet
         // Now create the styles and assign them to the appropriate frames. (We
         // iterate over the tree using an implicit FrameTree iterator.)
         $root_flg = false;
-        foreach ($tree->get_frames() as $frame) {
+        foreach ($tree as $frame) {
             // Helpers::pre_r($frame->get_node()->nodeName . ":");
             if (!$root_flg && $this->_page_styles["base"]) {
                 $style = $this->_page_styles["base"];
@@ -1330,7 +1301,7 @@ class Stylesheet
                                             $media_query_feature = strtolower($media_query_match[3]);
                                             $media_query_value = strtolower($media_query_match[2]);
                                             $mq[] = [$media_query_feature, $media_query_value];
-                                        } else if (empty($media_query_match[4]) === false) {
+                                        } elseif (empty($media_query_match[4]) === false) {
                                             $media_query_feature = strtolower($media_query_match[5]);
                                             $media_query_value = (array_key_exists(8, $media_query_match) ? strtolower($media_query_match[8]) : null);
                                             $mq[] = [$media_query_feature, $media_query_value];
@@ -1431,20 +1402,16 @@ class Stylesheet
             $val = preg_replace("/url\(\s*['\"]?([^'\")]+)['\"]?\s*\)/", "\\1", trim($val));
 
             // Resolve the url now in the context of the current stylesheet
-            $parsed_url = Helpers::explode_url($val);
             $path = Helpers::build_url($this->_protocol,
                 $this->_base_host,
                 $this->_base_path,
                 $val);
-            if (($parsed_url["protocol"] === "" || $parsed_url["protocol"] === "file://") && ($this->_protocol === "" || $this->_protocol === "file://")) {
-                $path = realpath($path);
-                // If realpath returns FALSE then specifically state that there is no background image
-                if ($path === false) {
-                    $path = "none";
-                }
+            if ($path === null) {
+                $path = "none";
             }
         }
         if ($DEBUGCSS) {
+            $parsed_url = Helpers::explode_url($path);
             print "<pre>[_image\n";
             print_r($parsed_url);
             print $this->_protocol . "\n" . $this->_base_path . "\n" . $path . "\n";
@@ -1493,9 +1460,9 @@ class Stylesheet
             // Above does not work for subfolders and absolute urls.
             // Todo: As above, do we need to replace php or file to an empty protocol for local files?
 
-            $url = $this->resolve_url($url);
-
-            $this->load_css_file($url);
+            if (($url = $this->resolve_url($url)) !== "none") {
+                $this->load_css_file($url);
+            }
 
             // Restore the current base url
             $this->_protocol = $protocol;
@@ -1516,9 +1483,7 @@ class Stylesheet
 
         preg_match_all("/(url|local)\s*\([\"\']?([^\"\'\)]+)[\"\']?\)\s*(format\s*\([\"\']?([^\"\'\)]+)[\"\']?\))?/i", $descriptors->src, $src);
 
-        $sources = [];
         $valid_sources = [];
-
         foreach ($src[0] as $i => $value) {
             $source = [
                 "local" => strtolower($src[1][$i]) === "local",
@@ -1527,11 +1492,9 @@ class Stylesheet
                 "path" => Helpers::build_url($this->_protocol, $this->_base_host, $this->_base_path, $src[2][$i]),
             ];
 
-            if (!$source["local"] && in_array($source["format"], ["", "truetype"])) {
+            if (!$source["local"] && in_array($source["format"], ["", "truetype"]) && $source["path"] !== null) {
                 $valid_sources[] = $source;
             }
-
-            $sources[] = $source;
         }
 
         // No valid sources
@@ -1685,7 +1648,7 @@ class Stylesheet
     {
         $options = $this->_dompdf->getOptions();
         $rootDir = realpath($options->getRootDir());
-        return $rootDir . self::DEFAULT_STYLESHEET;
+        return Helpers::build_url("file://", "", $rootDir, $rootDir . self::DEFAULT_STYLESHEET);
     }
 
     /**

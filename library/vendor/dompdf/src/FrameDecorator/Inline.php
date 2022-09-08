@@ -70,18 +70,22 @@ class Inline extends AbstractFrameDecorator
         $split = $this->copy($node->cloneNode());
 
         $style = $this->_frame->get_style();
-        $split_style = $split->get_original_style();
+        $split_style = $split->get_style();
 
         // Unset the current node's right style properties
-        $style->margin_right = 0;
-        $style->padding_right = 0;
-        $style->border_right_width = 0;
+        $style->margin_right = 0.0;
+        $style->padding_right = 0.0;
+        $style->border_right_width = 0.0;
+        $style->border_top_right_radius = 0.0;
+        $style->border_bottom_right_radius = 0.0;
 
         // Unset the split node's left style properties since we don't want them
         // to propagate
-        $split_style->margin_left = 0;
-        $split_style->padding_left = 0;
-        $split_style->border_left_width = 0;
+        $split_style->margin_left = 0.0;
+        $split_style->padding_left = 0.0;
+        $split_style->border_left_width = 0.0;
+        $split_style->border_top_left_radius = 0.0;
+        $split_style->border_bottom_left_radius = 0.0;
 
         // If this is a generated node don't propagate the content style
         if ($split->get_node()->nodeName == "dompdf_generated") {
@@ -91,13 +95,11 @@ class Inline extends AbstractFrameDecorator
         //On continuation of inline element on next line,
         //don't repeat non-horizontally repeatable background images
         //See e.g. in testcase image_variants, long descriptions
-        if (($url = $split->get_style()->background_image) && $url !== "none"
-            && ($repeat = $split->get_style()->background_repeat) && $repeat !== "repeat" && $repeat !== "repeat-x"
+        if (($url = $style->background_image) && $url !== "none"
+            && ($repeat = $style->background_repeat) && $repeat !== "repeat" && $repeat !== "repeat-x"
         ) {
             $split_style->background_image = "none";
         }
-
-        $split->set_style(clone $split_style);
 
         $this->get_parent()->insert_child_after($split, $this);
 

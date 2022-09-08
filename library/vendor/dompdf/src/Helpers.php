@@ -57,28 +57,45 @@ class Helpers
     public static function build_url($protocol, $host, $base_path, $url)
     {
         $protocol = mb_strtolower($protocol);
-        if ($url === "") {
-            //return $protocol . $host . rtrim($base_path, "/\\") . "/";
-            return $protocol . $host . $base_path;
+        if (empty($protocol)) {
+            $protocol = "file://";
         }
+        if ($url === "") {
+            return null;
+        }
+
+        $url_lc = mb_strtolower($url);
 
         // Is the url already fully qualified, a Data URI, or a reference to a named anchor?
         // File-protocol URLs may require additional processing (e.g. for URLs with a relative path)
-        if ((mb_strpos($url, "://") !== false && substr($url, 0, 7) !== "file://") || mb_substr($url, 0, 1) === "#" || mb_strpos($url, "data:") === 0 || mb_strpos($url, "mailto:") === 0 || mb_strpos($url, "tel:") === 0) {
+        if (
+            (
+                mb_strpos($url_lc, "://") !== false
+                && !in_array(substr($url_lc, 0, 7), ["file://", "phar://"], true)
+            )
+            || mb_substr($url_lc, 0, 1) === "#"
+            || mb_strpos($url_lc, "data:") === 0
+            || mb_strpos($url_lc, "mailto:") === 0
+            || mb_strpos($url_lc, "tel:") === 0
+        ) {
             return $url;
         }
 
-        if (strpos($url, "file://") === 0) {
+        $res = "";
+        if (strpos($url_lc, "file://") === 0) {
             $url = substr($url, 7);
-            $protocol = "";
+            $protocol = "file://";
+        } elseif (strpos($url_lc, "phar://") === 0) {
+            $res = substr($url, strpos($url_lc, ".phar")+5);
+            $url = substr($url, 7, strpos($url_lc, ".phar")-2);
+            $protocol = "phar://";
         }
 
         $ret = "";
-        if ($protocol !== "file://") {
-            $ret = $protocol;
-        }
 
-        if (!in_array(mb_strtolower($protocol), ["http://", "https://", "ftp://", "ftps://"], true)) {
+        $is_local_path = in_array($protocol, ["file://", "phar://"], true);
+
+        if ($is_local_path) {
             //On Windows local file, an abs path can begin also with a '\' or a drive letter and colon
             //drive: followed by a relative path would be a drive specific default folder.
             //not known in php app code, treat as abs path
@@ -89,9 +106,18 @@ class Helpers
             }
             $ret .= $url;
             $ret = preg_replace('/\?(.*)$/', "", $ret);
+
+            $filepath = realpath($ret);
+            if ($filepath === false) {
+                return null;
+            }
+
+            $ret = "$protocol$filepath$res";
+
             return $ret;
         }
 
+        $ret = $protocol;
         // Protocol relative urls (e.g. "//example.org/style.css")
         if (strpos($url, '//') === 0) {
             $ret .= substr($url, 2);
@@ -431,14 +457,14 @@ class Helpers
         $host = "";
         $path = "";
         $file = "";
+        $res = "";
 
         $arr = parse_url($url);
         if ( isset($arr["scheme"]) ) {
             $arr["scheme"] = mb_strtolower($arr["scheme"]);
         }
 
-        // Exclude windows drive letters...
-        if (isset($arr["scheme"]) && $arr["scheme"] !== "file" && strlen($arr["scheme"]) > 1) {
+        if (isset($arr["scheme"]) && $arr["scheme"] !== "file" && $arr["scheme"] !== "phar" && strlen($arr["scheme"]) > 1) {
             $protocol = $arr["scheme"] . "://";
 
             if (isset($arr["user"])) {
@@ -480,42 +506,32 @@ class Helpers
 
         } else {
 
-            $i = mb_stripos($url, "file://");
-            if ($i !== false) {
-                $url = mb_substr($url, $i + 7);
-            }
-
-            $protocol = ""; // "file://"; ? why doesn't this work... It's because of
-            // network filenames like //COMPU/SHARENAME
-
+            $protocol = "";
             $host = ""; // localhost, really
-            $file = basename($url);
 
-            $path = dirname($url);
-
-            // Check that the path exists
-            if ($path !== false) {
-                $path .= '/';
-
+            $i = mb_stripos($url, "://");
+            if ($i !== false) {
+                $protocol = mb_strtolower(mb_substr($url, 0, $i + 3));
+                $url = mb_substr($url, $i + 3);
             } else {
-                // generate a url to access the file if no real path found.
-                $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
-
-                $host = isset($_SERVER["HTTP_HOST"]) ? $_SERVER["HTTP_HOST"] : php_uname("n");
-
-                if (substr($arr["path"], 0, 1) === '/') {
-                    $path = dirname($arr["path"]);
-                } else {
-                    $path = '/' . rtrim(dirname($_SERVER["SCRIPT_NAME"]), '/') . '/' . $arr["path"];
-                }
+                $protocol = "file://";
             }
+
+            if ($protocol === "phar://") {
+                $res = substr($url, stripos($url, ".phar")+5);
+                $url = substr($url, 7, stripos($url, ".phar")-2);
+            }
+
+            $file = basename($url);
+            $path = dirname($url) . "/";
         }
 
         $ret = [$protocol, $host, $path, $file,
             "protocol" => $protocol,
             "host" => $host,
             "path" => $path,
-            "file" => $file];
+            "file" => $file,
+            "resource" => $res];
         return $ret;
     }
 
@@ -576,12 +592,12 @@ class Helpers
     {
         if ($c <= 0x7F) {
             return chr($c);
-        } else if ($c <= 0x7FF) {
+        } elseif ($c <= 0x7FF) {
             return chr(0xC0 | $c >> 6) . chr(0x80 | $c & 0x3F);
-        } else if ($c <= 0xFFFF) {
+        } elseif ($c <= 0xFFFF) {
             return chr(0xE0 | $c >> 12) . chr(0x80 | $c >> 6 & 0x3F)
             . chr(0x80 | $c & 0x3F);
-        } else if ($c <= 0x10FFFF) {
+        } elseif ($c <= 0x10FFFF) {
             return chr(0xF0 | $c >> 18) . chr(0x80 | $c >> 12 & 0x3F)
             . chr(0x80 | $c >> 6 & 0x3F)
             . chr(0x80 | $c & 0x3F);
@@ -868,9 +884,9 @@ class Helpers
      *  - curl: if allow_url_fopen is false and curl is available
      *
      * @param string $uri
-     * @param resource $context (ignored if curl is used)
+     * @param resource $context
      * @param int $offset
-     * @param int $maxlen (ignored if curl is used)
+     * @param int $maxlen
      * @return string[]
      */
     public static function getFileContent($uri, $context = null, $offset = 0, $maxlen = null)
@@ -878,12 +894,13 @@ class Helpers
         $content = null;
         $headers = null;
         [$protocol] = Helpers::explode_url($uri);
-        $is_local_path = ($protocol === "" || $protocol === "file://");
+        $is_local_path = in_array(strtolower($protocol), ["", "file://", "phar://"], true);
+        $can_use_curl = in_array(strtolower($protocol), ["http://", "https://"], true);
 
         set_error_handler([self::class, 'record_warnings']);
 
         try {
-            if ($is_local_path || ini_get('allow_url_fopen')) {
+            if ($is_local_path || ini_get('allow_url_fopen') || !$can_use_curl) {
                 if ($is_local_path === false) {
                     $uri = Helpers::encodeURI($uri);
                 }
@@ -899,16 +916,59 @@ class Helpers
                     $headers = $http_response_header;
                 }
 
-            } elseif (function_exists('curl_exec')) {
+            } elseif ($can_use_curl && function_exists('curl_exec')) {
                 $curl = curl_init($uri);
 
-                //TODO: use $context to define additional curl options
-                curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-                curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($curl, CURLOPT_HEADER, true);
                 if ($offset > 0) {
                     curl_setopt($curl, CURLOPT_RESUME_FROM, $offset);
+                }
+
+                if ($maxlen > 0) {
+                    curl_setopt($curl, CURLOPT_BUFFERSIZE, 128);
+                    curl_setopt($curl, CURLOPT_NOPROGRESS, false);
+                    curl_setopt($curl, CURLOPT_PROGRESSFUNCTION, function ($res, $download_size_total, $download_size, $upload_size_total, $upload_size) use ($maxlen) {
+                        return ($download_size > $maxlen) ? 1 : 0;
+                    });
+                }
+
+                $context_options = [];
+                if (!is_null($context)) {
+                    $context_options = stream_context_get_options($context);
+                }
+                foreach ($context_options as $stream => $options) {
+                    foreach ($options as $option => $value) {
+                        $key = strtolower($stream) . ":" . strtolower($option);
+                        switch ($key) {
+                            case "curl:curl_verify_ssl_host":
+                                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, !$value ? 0 : 2);
+                                break;
+                            case "curl:max_redirects":
+                                curl_setopt($curl, CURLOPT_MAXREDIRS, $value);
+                                break;
+                            case "http:follow_location":
+                                curl_setopt($curl, CURLOPT_FOLLOWLOCATION, $value);
+                                break;
+                            case "http:header":
+                                if (is_string($value)) {
+                                    curl_setopt($curl, CURLOPT_HTTPHEADER, [$value]);
+                                } else {
+                                    curl_setopt($curl, CURLOPT_HTTPHEADER, $value);
+                                }
+                                break;
+                            case "http:timeout":
+                                curl_setopt($curl, CURLOPT_TIMEOUT, $value);
+                                break;
+                            case "http:user_agent":
+                                curl_setopt($curl, CURLOPT_USERAGENT, $value);
+                                break;
+                            case "curl:curl_verify_ssl_peer":
+                            case "ssl:verify_peer":
+                                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, $value);
+                                break;
+                        }
+                    }
                 }
 
                 $data = curl_exec($curl);

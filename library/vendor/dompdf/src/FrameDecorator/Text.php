@@ -22,9 +22,9 @@ use Dompdf\Exception;
 class Text extends AbstractFrameDecorator
 {
     /**
-     * @var float|null
+     * @var float
      */
-    protected $_text_spacing;
+    protected $text_spacing;
 
     /**
      * Text constructor.
@@ -39,23 +39,23 @@ class Text extends AbstractFrameDecorator
         }
 
         parent::__construct($frame, $dompdf);
-        $this->_text_spacing = null;
+        $this->text_spacing = 0.0;
     }
 
     function reset()
     {
         parent::reset();
-        $this->_text_spacing = null;
+        $this->text_spacing = 0.0;
     }
 
     // Accessor methods
 
     /**
-     * @return float|null
+     * @return float
      */
-    function get_text_spacing()
+    public function get_text_spacing(): float
     {
-        return $this->_text_spacing;
+        return $this->text_spacing;
     }
 
     /**
@@ -118,15 +118,10 @@ class Text extends AbstractFrameDecorator
     /**
      * @param float $spacing
      */
-    function set_text_spacing($spacing)
+    public function set_text_spacing(float $spacing): void
     {
-        $style = $this->_frame->get_style();
-
-        $this->_text_spacing = $spacing;
-        $char_spacing = (float)$style->length_in_pt($style->letter_spacing);
-
-        // Re-adjust our width to account for the change in spacing
-        $style->width = $this->_dompdf->getFontMetrics()->getTextWidth($this->get_text(), $style->font_family, $style->font_size, $spacing, $char_spacing);
+        $this->text_spacing = $spacing;
+        $this->recalculate_width();
     }
 
     /**
@@ -134,16 +129,19 @@ class Text extends AbstractFrameDecorator
      *
      * @return float
      */
-    function recalculate_width()
+    public function recalculate_width(): float
     {
+        $fontMetrics = $this->_dompdf->getFontMetrics();
         $style = $this->get_style();
         $text = $this->get_text();
-        $size = $style->font_size;
         $font = $style->font_family;
-        $word_spacing = (float)$style->length_in_pt($style->word_spacing);
-        $char_spacing = (float)$style->length_in_pt($style->letter_spacing);
+        $size = $style->font_size;
+        $word_spacing = $this->text_spacing + $style->word_spacing;
+        $letter_spacing = $style->letter_spacing;
+        $text_width = $fontMetrics->getTextWidth($text, $font, $size, $word_spacing, $letter_spacing);
 
-        return $style->width = $this->_dompdf->getFontMetrics()->getTextWidth($text, $font, $size, $word_spacing, $char_spacing);
+        $style->set_used("width", $text_width);
+        return $text_width;
     }
 
     // Text manipulation methods

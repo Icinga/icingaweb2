@@ -35,10 +35,13 @@
         "php": "^7.1 || ^8.0",
         "ext-dom": "*",
         "ext-mbstring": "*",
+        "masterminds/html5": "^2.0",
         "phenx/php-font-lib": "^0.5.4",
         "phenx/php-svg-lib": "^0.3.3 || ^0.4.0"
     },
     "require-dev": {
+        "ext-json": "*",
+        "ext-zip": "*",
         "phpunit/phpunit": "^7.5 || ^8 || ^9",
         "squizlabs/php_codesniffer": "^3.5",
         "mockery/mockery": "^1.3"

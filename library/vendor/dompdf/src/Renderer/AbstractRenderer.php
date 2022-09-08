@@ -60,14 +60,224 @@ abstract class AbstractRenderer
     abstract function render(Frame $frame);
 
     /**
+     * @param Frame   $frame
+     * @param float[] $border_box
+     */
+    protected function _render_background(Frame $frame, array $border_box): void
+    {
+        $style = $frame->get_style();
+        $color = $style->background_color;
+        $image = $style->background_image;
+        [$x, $y, $w, $h] = $border_box;
+
+        if ($color === "transparent" && $image === "none") {
+            return;
+        }
+
+        if ($style->has_border_radius()) {
+            [$tl, $tr, $br, $bl] = $style->resolve_border_radius($border_box);
+            $this->_canvas->clipping_roundrectangle($x, $y, $w, $h, $tl, $tr, $br, $bl);
+        }
+
+        if ($color !== "transparent") {
+            $this->_canvas->filled_rectangle($x, $y, $w, $h, $color);
+        }
+
+        if ($image !== "none") {
+            $this->_background_image($image, $x, $y, $w, $h, $style);
+        }
+
+        if ($style->has_border_radius()) {
+            $this->_canvas->clipping_end();
+        }
+    }
+
+    /**
+     * @param Frame   $frame
+     * @param float[] $border_box
+     * @param string  $corner_style
+     */
+    protected function _render_border(Frame $frame, array $border_box, string $corner_style = "bevel"): void
+    {
+        $style = $frame->get_style();
+        $bp = $style->get_border_properties();
+        [$x, $y, $w, $h] = $border_box;
+        [$tl, $tr, $br, $bl] = $style->resolve_border_radius($border_box);
+
+        // Short-cut: If all the borders are "solid" with the same color and
+        // style, and no radius, we'd better draw a rectangle
+        if ($bp["top"]["style"] === "solid" &&
+            $bp["top"] === $bp["right"] &&
+            $bp["right"] === $bp["bottom"] &&
+            $bp["bottom"] === $bp["left"] &&
+            !$style->has_border_radius()
+        ) {
+            $props = $bp["top"];
+            if ($props["color"] === "transparent" || $props["width"] <= 0) {
+                return;
+            }
+
+            $width = (float)$style->length_in_pt($props["width"]);
+            $this->_canvas->rectangle($x + $width / 2, $y + $width / 2, $w - $width, $h - $width, $props["color"], $width);
+            return;
+        }
+
+        // Do it the long way
+        $widths = [
+            (float)$style->length_in_pt($bp["top"]["width"]),
+            (float)$style->length_in_pt($bp["right"]["width"]),
+            (float)$style->length_in_pt($bp["bottom"]["width"]),
+            (float)$style->length_in_pt($bp["left"]["width"])
+        ];
+
+        foreach ($bp as $side => $props) {
+            if ($props["style"] === "none" ||
+                $props["style"] === "hidden" ||
+                $props["color"] === "transparent" ||
+                $props["width"] <= 0
+            ) {
+                continue;
+            }
+
+            [$x, $y, $w, $h] = $border_box;
+            $method = "_border_" . $props["style"];
+
+            switch ($side) {
+                case "top":
+                    $length = $w;
+                    $r1 = $tl;
+                    $r2 = $tr;
+                    break;
+
+                case "bottom":
+                    $length = $w;
+                    $y += $h;
+                    $r1 = $bl;
+                    $r2 = $br;
+                    break;
+
+                case "left":
+                    $length = $h;
+                    $r1 = $tl;
+                    $r2 = $bl;
+                    break;
+
+                case "right":
+                    $length = $h;
+                    $x += $w;
+                    $r1 = $tr;
+                    $r2 = $br;
+                    break;
+
+                default:
+                    break;
+            }
+
+            // draw rounded corners
+            $this->$method($x, $y, $length, $props["color"], $widths, $side, $corner_style, $r1, $r2);
+        }
+    }
+
+    /**
+     * @param Frame   $frame
+     * @param float[] $border_box
+     * @param string  $corner_style
+     */
+    protected function _render_outline(Frame $frame, array $border_box, string $corner_style = "bevel"): void
+    {
+        $style = $frame->get_style();
+
+        $width = $style->outline_width;
+        $outline_style = $style->outline_style;
+        $color = $style->outline_color;
+
+        if ($outline_style === "none" || $color === "transparent" || $width <= 0) {
+            return;
+        }
+
+        $offset = $style->outline_offset;
+
+        [$x, $y, $w, $h] = $border_box;
+        $d = $width + $offset;
+        $outline_box = [$x - $d, $y - $d, $w + $d * 2, $h + $d * 2];
+        [$tl, $tr, $br, $bl] = $style->resolve_border_radius($border_box, $outline_box);
+
+        $x -= $offset;
+        $y -= $offset;
+        $w += $offset * 2;
+        $h += $offset * 2;
+
+        // For a simple outline, we can draw a rectangle
+        if ($outline_style === "solid" && !$style->has_border_radius()) {
+            $x -= $width / 2;
+            $y -= $width / 2;
+            $w += $width;
+            $h += $width;
+
+            $this->_canvas->rectangle($x, $y, $w, $h, $color, $width);
+            return;
+        }
+
+        $x -= $width;
+        $y -= $width;
+        $w += $width * 2;
+        $h += $width * 2;
+
+        $method = "_border_" . $outline_style;
+        $widths = array_fill(0, 4, $width);
+        $sides = ["top", "right", "left", "bottom"];
+
+        foreach ($sides as $side) {
+            switch ($side) {
+                case "top":
+                    $length = $w;
+                    $side_x = $x;
+                    $side_y = $y;
+                    $r1 = $tl;
+                    $r2 = $tr;
+                    break;
+
+                case "bottom":
+                    $length = $w;
+                    $side_x = $x;
+                    $side_y = $y + $h;
+                    $r1 = $bl;
+                    $r2 = $br;
+                    break;
+
+                case "left":
+                    $length = $h;
+                    $side_x = $x;
+                    $side_y = $y;
+                    $r1 = $tl;
+                    $r2 = $bl;
+                    break;
+
+                case "right":
+                    $length = $h;
+                    $side_x = $x + $w;
+                    $side_y = $y;
+                    $r1 = $tr;
+                    $r2 = $br;
+                    break;
+
+                default:
+                    break;
+            }
+
+            $this->$method($side_x, $side_y, $length, $color, $widths, $side, $corner_style, $r1, $r2);
+        }
+    }
+
+    /**
      * Render a background image over a rectangular area
      *
-     * @param string $url   The background image to load
-     * @param float $x      The left edge of the rectangular area
-     * @param float $y      The top edge of the rectangular area
-     * @param float $width  The width of the rectangular area
-     * @param float $height The height of the rectangular area
-     * @param Style $style  The associated Style object
+     * @param string $url    The background image to load
+     * @param float  $x      The left edge of the rectangular area
+     * @param float  $y      The top edge of the rectangular area
+     * @param float  $width  The width of the rectangular area
+     * @param float  $height The height of the rectangular area
+     * @param Style  $style  The associated Style object
      *
      * @throws \Exception
      */
@@ -97,7 +307,7 @@ abstract class AbstractRenderer
             $sheet->get_protocol(),
             $sheet->get_host(),
             $sheet->get_base_path(),
-            $this->_dompdf
+            $this->_dompdf->getOptions()
         );
 
         // Bail if the image is no good
@@ -358,7 +568,7 @@ abstract class AbstractRenderer
                 // Simply place the image on the background
                 imagecopy($bg, $src, $dst_x, $dst_y, $src_x, $src_y, $img_w, $img_h);
 
-            } else if ($repeat === "repeat-x") {
+            } elseif ($repeat === "repeat-x") {
                 for ($bg_x = $start_x; $bg_x < $bg_width; $bg_x += $img_w) {
                     if ($bg_x < 0) {
                         $dst_x = 0;
@@ -371,7 +581,7 @@ abstract class AbstractRenderer
                     }
                     imagecopy($bg, $src, $dst_x, $dst_y, $src_x, $src_y, $w, $img_h);
                 }
-            } else if ($repeat === "repeat-y") {
+            } elseif ($repeat === "repeat-y") {
 
                 for ($bg_y = $start_y; $bg_y < $bg_height; $bg_y += $img_h) {
                     if ($bg_y < 0) {
@@ -385,7 +595,7 @@ abstract class AbstractRenderer
                     }
                     imagecopy($bg, $src, $dst_x, $dst_y, $src_x, $src_y, $img_w, $h);
                 }
-            } else if ($repeat === "repeat") {
+            } elseif ($repeat === "repeat") {
                 for ($bg_y = $start_y; $bg_y < $bg_height; $bg_y += $img_h) {
                     for ($bg_x = $start_x; $bg_x < $bg_width; $bg_x += $img_w) {
                         if ($bg_x < 0) {
@@ -456,183 +666,68 @@ abstract class AbstractRenderer
         $this->_canvas->clipping_end();
     }
 
-    /**
-     * @param $style
-     * @param $width
-     * @return array
-     */
-    protected function _get_dash_pattern($style, $width)
-    {
-        $pattern = [];
-
-        switch ($style) {
-            default:
-                /*case "solid":
-                case "double":
-                case "groove":
-                case "inset":
-                case "outset":
-                case "ridge":*/
-            case "none":
-                break;
-
-            case "dotted":
-                if ($width <= 1) {
-                    $pattern = [$width, $width * 2];
-                } else {
-                    $pattern = [$width];
-                }
-                break;
-
-            case "dashed":
-                $pattern = [3 * $width];
-                break;
-        }
-
-        return $pattern;
-    }
-
-    /**
-     * @param $x
-     * @param $y
-     * @param $length
-     * @param $color
-     * @param $widths
-     * @param $side
-     * @param string $corner_style
-     * @param int $r1
-     * @param int $r2
-     */
-    protected function _border_none($x, $y, $length, $color, $widths, $side, $corner_style = "bevel", $r1 = 0, $r2 = 0)
-    {
-        return;
-    }
-
-    /**
-     * @param $x
-     * @param $y
-     * @param $length
-     * @param $color
-     * @param $widths
-     * @param $side
-     * @param string $corner_style
-     * @param int $r1
-     * @param int $r2
-     */
-    protected function _border_hidden($x, $y, $length, $color, $widths, $side, $corner_style = "bevel", $r1 = 0, $r2 = 0)
-    {
-        return;
-    }
-
     // Border rendering functions
 
     /**
-     * @param $x
-     * @param $y
-     * @param $length
-     * @param $color
-     * @param $widths
-     * @param $side
-     * @param string $corner_style
-     * @param int $r1
-     * @param int $r2
+     * @param float   $x
+     * @param float   $y
+     * @param float   $length
+     * @param array   $color
+     * @param float[] $widths
+     * @param string  $side
+     * @param string  $corner_style
+     * @param float   $r1
+     * @param float   $r2
      */
     protected function _border_dotted($x, $y, $length, $color, $widths, $side, $corner_style = "bevel", $r1 = 0, $r2 = 0)
     {
         $this->_border_line($x, $y, $length, $color, $widths, $side, $corner_style, "dotted", $r1, $r2);
     }
 
-
     /**
-     * @param $x
-     * @param $y
-     * @param $length
-     * @param $color
-     * @param $widths
-     * @param $side
-     * @param string $corner_style
-     * @param int $r1
-     * @param int $r2
+     * @param float   $x
+     * @param float   $y
+     * @param float   $length
+     * @param array   $color
+     * @param float[] $widths
+     * @param string  $side
+     * @param string  $corner_style
+     * @param float   $r1
+     * @param float   $r2
      */
     protected function _border_dashed($x, $y, $length, $color, $widths, $side, $corner_style = "bevel", $r1 = 0, $r2 = 0)
     {
         $this->_border_line($x, $y, $length, $color, $widths, $side, $corner_style, "dashed", $r1, $r2);
     }
 
-
     /**
-     * @param $x
-     * @param $y
-     * @param $length
-     * @param $color
-     * @param $widths
-     * @param $side
-     * @param string $corner_style
-     * @param int $r1
-     * @param int $r2
+     * @param float   $x
+     * @param float   $y
+     * @param float   $length
+     * @param array   $color
+     * @param float[] $widths
+     * @param string  $side
+     * @param string  $corner_style
+     * @param float   $r1
+     * @param float   $r2
      */
     protected function _border_solid($x, $y, $length, $color, $widths, $side, $corner_style = "bevel", $r1 = 0, $r2 = 0)
     {
-        // TODO: Solve rendering where one corner is beveled (radius == 0), one corner isn't.
-        if ($corner_style !== "bevel" || $r1 > 0 || $r2 > 0) {
-            // do it the simple way
-            $this->_border_line($x, $y, $length, $color, $widths, $side, $corner_style, "solid", $r1, $r2);
-            return;
-        }
-
-        list($top, $right, $bottom, $left) = $widths;
-
-        // All this polygon business is for beveled corners...
-        switch ($side) {
-            case "top":
-                $points = [$x, $y,
-                    $x + $length, $y,
-                    $x + $length - $right, $y + $top,
-                    $x + $left, $y + $top];
-                $this->_canvas->polygon($points, $color, null, null, true);
-                break;
-
-            case "bottom":
-                $points = [$x, $y,
-                    $x + $length, $y,
-                    $x + $length - $right, $y - $bottom,
-                    $x + $left, $y - $bottom];
-                $this->_canvas->polygon($points, $color, null, null, true);
-                break;
-
-            case "left":
-                $points = [$x, $y,
-                    $x, $y + $length,
-                    $x + $left, $y + $length - $bottom,
-                    $x + $left, $y + $top];
-                $this->_canvas->polygon($points, $color, null, null, true);
-                break;
-
-            case "right":
-                $points = [$x, $y,
-                    $x, $y + $length,
-                    $x - $right, $y + $length - $bottom,
-                    $x - $right, $y + $top];
-                $this->_canvas->polygon($points, $color, null, null, true);
-                break;
-
-            default:
-                return;
-        }
+        $this->_border_line($x, $y, $length, $color, $widths, $side, $corner_style, "solid", $r1, $r2);
     }
 
     /**
-     * @param $side
-     * @param $ratio
-     * @param $top
-     * @param $right
-     * @param $bottom
-     * @param $left
-     * @param $x
-     * @param $y
-     * @param $length
-     * @param $r1
-     * @param $r2
+     * @param string $side
+     * @param float  $ratio
+     * @param float  $top
+     * @param float  $right
+     * @param float  $bottom
+     * @param float  $left
+     * @param float  $x
+     * @param float  $y
+     * @param float  $length
+     * @param float  $r1
+     * @param float  $r2
      */
     protected function _apply_ratio($side, $ratio, $top, $right, $bottom, $left, &$x, &$y, &$length, &$r1, &$r2)
     {
@@ -675,15 +770,15 @@ abstract class AbstractRenderer
     }
 
     /**
-     * @param $x
-     * @param $y
-     * @param $length
-     * @param $color
-     * @param $widths
-     * @param $side
-     * @param string $corner_style
-     * @param int $r1
-     * @param int $r2
+     * @param float   $x
+     * @param float   $y
+     * @param float   $length
+     * @param array   $color
+     * @param float[] $widths
+     * @param string  $side
+     * @param string  $corner_style
+     * @param float   $r1
+     * @param float   $r2
      */
     protected function _border_double($x, $y, $length, $color, $widths, $side, $corner_style = "bevel", $r1 = 0, $r2 = 0)
     {
@@ -700,15 +795,15 @@ abstract class AbstractRenderer
     }
 
     /**
-     * @param $x
-     * @param $y
-     * @param $length
-     * @param $color
-     * @param $widths
-     * @param $side
-     * @param string $corner_style
-     * @param int $r1
-     * @param int $r2
+     * @param float   $x
+     * @param float   $y
+     * @param float   $length
+     * @param array   $color
+     * @param float[] $widths
+     * @param string  $side
+     * @param string  $corner_style
+     * @param float   $r1
+     * @param float   $r2
      */
     protected function _border_groove($x, $y, $length, $color, $widths, $side, $corner_style = "bevel", $r1 = 0, $r2 = 0)
     {
@@ -724,15 +819,15 @@ abstract class AbstractRenderer
     }
 
     /**
-     * @param $x
-     * @param $y
-     * @param $length
-     * @param $color
-     * @param $widths
-     * @param $side
-     * @param string $corner_style
-     * @param int $r1
-     * @param int $r2
+     * @param float   $x
+     * @param float   $y
+     * @param float   $length
+     * @param array   $color
+     * @param float[] $widths
+     * @param string  $side
+     * @param string  $corner_style
+     * @param float   $r1
+     * @param float   $r2
      */
     protected function _border_ridge($x, $y, $length, $color, $widths, $side, $corner_style = "bevel", $r1 = 0, $r2 = 0)
     {
@@ -774,15 +869,15 @@ abstract class AbstractRenderer
     }
 
     /**
-     * @param $x
-     * @param $y
-     * @param $length
-     * @param $color
-     * @param $widths
-     * @param $side
-     * @param string $corner_style
-     * @param int $r1
-     * @param int $r2
+     * @param float   $x
+     * @param float   $y
+     * @param float   $length
+     * @param array   $color
+     * @param float[] $widths
+     * @param string  $side
+     * @param string  $corner_style
+     * @param float   $r1
+     * @param float   $r2
      */
     protected function _border_inset($x, $y, $length, $color, $widths, $side, $corner_style = "bevel", $r1 = 0, $r2 = 0)
     {
@@ -805,15 +900,15 @@ abstract class AbstractRenderer
     }
 
     /**
-     * @param $x
-     * @param $y
-     * @param $length
-     * @param $color
-     * @param $widths
-     * @param $side
-     * @param string $corner_style
-     * @param int $r1
-     * @param int $r2
+     * @param float   $x
+     * @param float   $y
+     * @param float   $length
+     * @param array   $color
+     * @param float[] $widths
+     * @param string  $side
+     * @param string  $corner_style
+     * @param float   $r1
+     * @param float   $r2
      */
     protected function _border_outset($x, $y, $length, $color, $widths, $side, $corner_style = "bevel", $r1 = 0, $r2 = 0)
     {
@@ -836,112 +931,237 @@ abstract class AbstractRenderer
     }
 
     /**
+     * Get the dash pattern and cap style for the given border style, width, and
+     * line length.
+     *
+     * The base pattern is adjusted so that it fits the given line length
+     * symmetrically.
+     *
+     * @param string $style
+     * @param float  $width
+     * @param float  $length
+     *
+     * @return array
+     */
+    protected function dashPattern(string $style, float $width, float $length): array
+    {
+        if ($style === "dashed") {
+            $w = 3 * $width;
+
+            if ($length < $w) {
+                $s = $w;
+            } else {
+                // Scale dashes and gaps
+                $r = round($length / $w);
+                $r = $r % 2 === 0 ? $r + 1 : $r;
+                $s = $length / $r;
+            }
+
+            return [[$s], "butt"];
+        }
+
+        if ($style === "dotted") {
+            // Draw circles along the line
+            // Round caps extend outwards by half line width, so a zero dash
+            // width results in a circle
+            $gap = $width <= 1 ? 2 : 1;
+            $w = ($gap + 1) * $width;
+
+            if ($length < $w) {
+                $s = $w;
+            } else {
+                // Only scale gaps
+                $l = $length - $width;
+                $r = max(round($l / $w), 1);
+                $s = $l / $r;
+            }
+
+            return [[0, $s], "round"];
+        }
+
+        return [[], "butt"];
+    }
+
+    /**
      * Draws a solid, dotted, or dashed line, observing the border radius
      *
-     * @param $x
-     * @param $y
-     * @param $length
-     * @param $color
-     * @param $widths
-     * @param $side
-     * @param string $corner_style
-     * @param $pattern_name
-     * @param int $r1
-     * @param int $r2
-     *
-     * @var $top
+     * @param float   $x
+     * @param float   $y
+     * @param float   $length
+     * @param array   $color
+     * @param float[] $widths
+     * @param string  $side
+     * @param string  $corner_style
+     * @param string  $pattern_name
+     * @param float   $r1
+     * @param float   $r2
      */
     protected function _border_line($x, $y, $length, $color, $widths, $side, $corner_style = "bevel", $pattern_name = "none", $r1 = 0, $r2 = 0)
     {
         /** used by $$side */
-        list($top, $right, $bottom, $left) = $widths;
+        [$top, $right, $bottom, $left] = $widths;
         $width = $$side;
 
-        $pattern = $this->_get_dash_pattern($pattern_name, $width);
+        // No need to clip corners if border radius is large enough
+        $cornerClip = $corner_style === "bevel" && ($r1 < $width || $r2 < $width);
+        $lineLength = $length - $r1 - $r2;
+        [$pattern, $cap] = $this->dashPattern($pattern_name, $width, $lineLength);
 
-        $half_width = $width / 2;
-        $r1 -= $half_width;
-        $r2 -= $half_width;
-        $adjust = $r1 / 80;
-        $length -= $width;
+        // Determine arc border radius for corner arcs
+        $halfWidth = $width / 2;
+        $ar1 = max($r1 - $halfWidth, 0);
+        $ar2 = max($r2 - $halfWidth, 0);
+
+        // Small angle adjustments to prevent the background from shining through
+        $adj1 = $ar1 / 80;
+        $adj2 = $ar2 / 80;
+
+        // Adjust line width and corner angles to account for the fact that
+        // round caps extend outwards. The line is actually only shifted below,
+        // not shortened, as otherwise the end dash (circle) will vanish
+        // occasionally
+        $dl = $cap === "round" ? $halfWidth : 0;
+
+        if ($cap === "round" && $ar1 > 0) {
+            $adj1 -= rad2deg(asin($halfWidth / $ar1));
+        }
+        if ($cap === "round" && $ar2 > 0) {
+            $adj2 -= rad2deg(asin($halfWidth / $ar2));
+        }
 
         switch ($side) {
             case "top":
-                $x += $half_width;
-                $y += $half_width;
-
-                if ($r1 > 0) {
-                    $this->_canvas->arc($x + $r1, $y + $r1, $r1, $r1, 90 - $adjust, 135 + $adjust, $color, $width, $pattern);
+                if ($cornerClip) {
+                    $points = [
+                        $x, $y,
+                        $x, $y - 1, // Extend outwards to avoid gaps
+                        $x + $length, $y - 1, // Extend outwards to avoid gaps
+                        $x + $length, $y,
+                        $x + $length - max($right, $r2), $y + max($width, $r2),
+                        $x + max($left, $r1), $y + max($width, $r1)
+                    ];
+                    $this->_canvas->clipping_polygon($points);
                 }
 
-                $this->_canvas->line($x + $r1, $y, $x + $length - $r2, $y, $color, $width, $pattern);
+                $y += $halfWidth;
 
-                if ($r2 > 0) {
-                    $this->_canvas->arc($x + $length - $r2, $y + $r2, $r2, $r2, 45 - $adjust, 90 + $adjust, $color, $width, $pattern);
+                if ($ar1 > 0 && $adj1 > -22.5) {
+                    $this->_canvas->arc($x + $r1, $y + $ar1, $ar1, $ar1, 90 - $adj1, 135 + $adj1, $color, $width, $pattern, $cap);
+                }
+
+                if ($lineLength > 0) {
+                    $this->_canvas->line($x + $dl + $r1, $y, $x + $dl + $length - $r2, $y, $color, $width, $pattern, $cap);
+                }
+
+                if ($ar2 > 0 && $adj2 > -22.5) {
+                    $this->_canvas->arc($x + $length - $r2, $y + $ar2, $ar2, $ar2, 45 - $adj2, 90 + $adj2, $color, $width, $pattern, $cap);
                 }
                 break;
 
             case "bottom":
-                $x += $half_width;
-                $y -= $half_width;
-
-                if ($r1 > 0) {
-                    $this->_canvas->arc($x + $r1, $y - $r1, $r1, $r1, 225 - $adjust, 270 + $adjust, $color, $width, $pattern);
+                if ($cornerClip) {
+                    $points = [
+                        $x, $y,
+                        $x, $y + 1, // Extend outwards to avoid gaps
+                        $x + $length, $y + 1, // Extend outwards to avoid gaps
+                        $x + $length, $y,
+                        $x + $length - max($right, $r2), $y - max($width, $r2),
+                        $x + max($left, $r1), $y - max($width, $r1)
+                    ];
+                    $this->_canvas->clipping_polygon($points);
                 }
 
-                $this->_canvas->line($x + $r1, $y, $x + $length - $r2, $y, $color, $width, $pattern);
+                $y -= $halfWidth;
 
-                if ($r2 > 0) {
-                    $this->_canvas->arc($x + $length - $r2, $y - $r2, $r2, $r2, 270 - $adjust, 315 + $adjust, $color, $width, $pattern);
+                if ($ar1 > 0 && $adj1 > -22.5) {
+                    $this->_canvas->arc($x + $r1, $y - $ar1, $ar1, $ar1, 225 - $adj1, 270 + $adj1, $color, $width, $pattern, $cap);
+                }
+
+                if ($lineLength > 0) {
+                    $this->_canvas->line($x + $dl + $r1, $y, $x + $dl + $length - $r2, $y, $color, $width, $pattern, $cap);
+                }
+
+                if ($ar2 > 0 && $adj2 > -22.5) {
+                    $this->_canvas->arc($x + $length - $r2, $y - $ar2, $ar2, $ar2, 270 - $adj2, 315 + $adj2, $color, $width, $pattern, $cap);
                 }
                 break;
 
             case "left":
-                $y += $half_width;
-                $x += $half_width;
-
-                if ($r1 > 0) {
-                    $this->_canvas->arc($x + $r1, $y + $r1, $r1, $r1, 135 - $adjust, 180 + $adjust, $color, $width, $pattern);
+                if ($cornerClip) {
+                    $points = [
+                        $x, $y,
+                        $x - 1, $y, // Extend outwards to avoid gaps
+                        $x - 1, $y + $length, // Extend outwards to avoid gaps
+                        $x, $y + $length,
+                        $x + max($width, $r2), $y + $length - max($bottom, $r2),
+                        $x + max($width, $r1), $y + max($top, $r1)
+                    ];
+                    $this->_canvas->clipping_polygon($points);
                 }
 
-                $this->_canvas->line($x, $y + $r1, $x, $y + $length - $r2, $color, $width, $pattern);
+                $x += $halfWidth;
 
-                if ($r2 > 0) {
-                    $this->_canvas->arc($x + $r2, $y + $length - $r2, $r2, $r2, 180 - $adjust, 225 + $adjust, $color, $width, $pattern);
+                if ($ar1 > 0 && $adj1 > -22.5) {
+                    $this->_canvas->arc($x + $ar1, $y + $r1, $ar1, $ar1, 135 - $adj1, 180 + $adj1, $color, $width, $pattern, $cap);
+                }
+
+                if ($lineLength > 0) {
+                    $this->_canvas->line($x, $y + $dl + $r1, $x, $y + $dl + $length - $r2, $color, $width, $pattern, $cap);
+                }
+
+                if ($ar2 > 0 && $adj2 > -22.5) {
+                    $this->_canvas->arc($x + $ar2, $y + $length - $r2, $ar2, $ar2, 180 - $adj2, 225 + $adj2, $color, $width, $pattern, $cap);
                 }
                 break;
 
             case "right":
-                $y += $half_width;
-                $x -= $half_width;
-
-                if ($r1 > 0) {
-                    $this->_canvas->arc($x - $r1, $y + $r1, $r1, $r1, 0 - $adjust, 45 + $adjust, $color, $width, $pattern);
+                if ($cornerClip) {
+                    $points = [
+                        $x, $y,
+                        $x + 1, $y, // Extend outwards to avoid gaps
+                        $x + 1, $y + $length, // Extend outwards to avoid gaps
+                        $x, $y + $length,
+                        $x - max($width, $r2), $y + $length - max($bottom, $r2),
+                        $x - max($width, $r1), $y + max($top, $r1)
+                    ];
+                    $this->_canvas->clipping_polygon($points);
                 }
 
-                $this->_canvas->line($x, $y + $r1, $x, $y + $length - $r2, $color, $width, $pattern);
+                $x -= $halfWidth;
 
-                if ($r2 > 0) {
-                    $this->_canvas->arc($x - $r2, $y + $length - $r2, $r2, $r2, 315 - $adjust, 360 + $adjust, $color, $width, $pattern);
+                if ($ar1 > 0 && $adj1 > -22.5) {
+                    $this->_canvas->arc($x - $ar1, $y + $r1, $ar1, $ar1, 0 - $adj1, 45 + $adj1, $color, $width, $pattern, $cap);
+                }
+
+                if ($lineLength > 0) {
+                    $this->_canvas->line($x, $y + $dl + $r1, $x, $y + $dl + $length - $r2, $color, $width, $pattern, $cap);
+                }
+
+                if ($ar2 > 0 && $adj2 > -22.5) {
+                    $this->_canvas->arc($x - $ar2, $y + $length - $r2, $ar2, $ar2, 315 - $adj2, 360 + $adj2, $color, $width, $pattern, $cap);
                 }
                 break;
+        }
+
+        if ($cornerClip) {
+            $this->_canvas->clipping_end();
         }
     }
 
     /**
-     * @param $opacity
+     * @param float $opacity
      */
-    protected function _set_opacity($opacity)
+    protected function _set_opacity(float $opacity): void
     {
-        if (is_numeric($opacity) && $opacity <= 1.0 && $opacity >= 0.0) {
+        if ($opacity >= 0.0 && $opacity <= 1.0) {
             $this->_canvas->set_opacity($opacity);
         }
     }
 
     /**
-     * @param array $box
-     * @param string $color
-     * @param array $style
+     * @param float[] $box
+     * @param string  $color
+     * @param array   $style
      */
     protected function _debug_layout($box, $color = "red", $style = [])
     {
@@ -949,12 +1169,13 @@ abstract class AbstractRenderer
     }
 
     /**
-     * @param float $img_width
-     * @param float $img_height
-     * @param float $container_width
-     * @param float $container_height
+     * @param float        $img_width
+     * @param float        $img_height
+     * @param float        $container_width
+     * @param float        $container_height
      * @param array|string $bg_resize
-     * @param int $dpi
+     * @param int          $dpi
+     *
      * @return array
      */
     protected function _resize_background_image(

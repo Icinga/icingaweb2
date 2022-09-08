@@ -119,8 +119,7 @@ class Page extends AbstractFrameReflower
 
             // Only if it's the first page, we save the nodes with a fixed position
             if ($current_page == 0) {
-                $children = $child->get_children();
-                foreach ($children as $onechild) {
+                foreach ($child->get_children() as $onechild) {
                     if ($onechild->get_style()->position === "fixed") {
                         $fixed_children[] = $onechild->deep_copy();
                     }
@@ -182,20 +181,18 @@ class Page extends AbstractFrameReflower
     protected function _check_callbacks(string $event, Frame $frame): void
     {
         if (!isset($this->_callbacks)) {
-            $dompdf = $this->_frame->get_dompdf();
+            $dompdf = $this->get_dompdf();
             $this->_callbacks = $dompdf->getCallbacks();
             $this->_canvas = $dompdf->getCanvas();
         }
 
         if (isset($this->_callbacks[$event])) {
             $fs = $this->_callbacks[$event];
-            $info = [
-                0 => $this->_canvas, "canvas" => $this->_canvas,
-                1 => $frame,         "frame"  => $frame,
-            ];
+            $canvas = $this->_canvas;
+            $fontMetrics = $this->get_dompdf()->getFontMetrics();
 
             foreach ($fs as $f) {
-                $f($info);
+                $f($frame, $canvas, $fontMetrics);
             }
         }
     }

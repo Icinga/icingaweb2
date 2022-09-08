@@ -57,15 +57,21 @@ class Image extends AbstractFrameDecorator
             $dompdf->getProtocol(),
             $dompdf->getBaseHost(),
             $dompdf->getBasePath(),
-            $dompdf
+            $dompdf->getOptions()
         );
 
         if (Cache::is_broken($this->_image_url) &&
             $alt = $frame->get_node()->getAttribute("alt")
         ) {
+            $fontMetrics = $dompdf->getFontMetrics();
             $style = $frame->get_style();
-            $style->width = (4 / 3) * $dompdf->getFontMetrics()->getTextWidth($alt, $style->font_family, $style->font_size, $style->word_spacing);
-            $style->height = $dompdf->getFontMetrics()->getFontHeight($style->font_family, $style->font_size);
+            $font = $style->font_family;
+            $size = $style->font_size;
+            $word_spacing = $style->word_spacing;
+            $letter_spacing = $style->letter_spacing;
+
+            $style->width = (4 / 3) * $fontMetrics->getTextWidth($alt, $font, $size, $word_spacing, $letter_spacing);
+            $style->height = $fontMetrics->getFontHeight($font, $size);
         }
     }
 

@@ -93,7 +93,7 @@ class Table extends AbstractFrameReflower
         } else {
             if ($max_width + $delta < $cb["w"]) {
                 $width = $max_width;
-            } else if ($cb["w"] - $delta > $min_width) {
+            } elseif ($cb["w"] - $delta > $min_width) {
                 $width = $cb["w"] - $delta;
             } else {
                 $width = $min_width;
@@ -106,7 +106,7 @@ class Table extends AbstractFrameReflower
         }
 
         // Store our resolved width
-        $style->width = $width;
+        $style->set_used("width", $width);
 
         $cellmap = $this->_frame->get_cellmap();
 
@@ -116,8 +116,8 @@ class Table extends AbstractFrameReflower
 
         // If the whole table fits on the page, then assign each column it's max width
         if ($width == $max_width) {
-            foreach (array_keys($columns) as $i) {
-                $cellmap->set_column_width($i, $columns[$i]["max-width"]);
+            foreach ($columns as $i => $col) {
+                $cellmap->set_column_width($i, $col["max-width"]);
             }
 
             return;
@@ -179,10 +179,9 @@ class Table extends AbstractFrameReflower
                 $increment = $width - $absolute_used;
 
                 foreach ($absolute as $i) {
-                    $min = $columns[$i]["min-width"];
-                    $abs = $columns[$i]["absolute"];
+                    $abs = $columns[$i]["min-width"];
                     $f = $absolute_used > 0 ? $abs / $absolute_used : 1 / count($absolute);
-                    $w = $min + $increment * $f;
+                    $w = $abs + $increment * $f;
                     $cellmap->set_column_width($i, $w);
                 }
                 return;
@@ -246,8 +245,8 @@ class Table extends AbstractFrameReflower
         } else {
             // We are over-constrained:
             // Each column gets its minimum width
-            foreach (array_keys($columns) as $i) {
-                $cellmap->set_column_width($i, $columns[$i]["min-width"]);
+            foreach ($columns as $i => $col) {
+                $cellmap->set_column_width($i, $col["min-width"]);
             }
         }
     }
@@ -341,15 +340,14 @@ class Table extends AbstractFrameReflower
         // border-spacing to the table as padding.  The other half is added to
         // the cells themselves.
         if ($style->border_collapse === "separate") {
-            list($h, $v) = $style->border_spacing;
+            [$h, $v] = $style->border_spacing;
+            $v = $v / 2;
+            $h = $h / 2;
 
-            $v = (float)$style->length_in_pt($v) / 2;
-            $h = (float)$style->length_in_pt($h) / 2;
-
-            $style->padding_left = (float)$style->length_in_pt($style->padding_left, $cb["w"]) + $h;
-            $style->padding_right = (float)$style->length_in_pt($style->padding_right, $cb["w"]) + $h;
-            $style->padding_top = (float)$style->length_in_pt($style->padding_top, $cb["w"]) + $v;
-            $style->padding_bottom = (float)$style->length_in_pt($style->padding_bottom, $cb["w"]) + $v;
+            $style->set_used("padding_left", (float)$style->length_in_pt($style->padding_left, $cb["w"]) + $h);
+            $style->set_used("padding_right", (float)$style->length_in_pt($style->padding_right, $cb["w"]) + $h);
+            $style->set_used("padding_top", (float)$style->length_in_pt($style->padding_top, $cb["w"]) + $v);
+            $style->set_used("padding_bottom", (float)$style->length_in_pt($style->padding_bottom, $cb["w"]) + $v);
         }
 
         $this->_assign_widths();
@@ -378,11 +376,11 @@ class Table extends AbstractFrameReflower
             }
         }
 
-        $style->margin_left = $left;
-        $style->margin_right = $right;
+        $style->set_used("margin_left", $left);
+        $style->set_used("margin_right", $right);
 
         $frame->position();
-        list($x, $y) = $frame->get_position();
+        [$x, $y] = $frame->get_position();
 
         // Determine the content edge
         $offset_x = (float)$left + (float)$style->length_in_pt([
@@ -435,7 +433,7 @@ class Table extends AbstractFrameReflower
         }
 
         // Assign heights to our cells:
-        $style->height = $this->_calculate_height();
+        $style->set_used("height", $this->_calculate_height());
 
         $page->table_reflow_end();
 
@@ -478,19 +476,19 @@ class Table extends AbstractFrameReflower
         $this->_state["auto"] = [];
 
         $columns =& $cellmap->get_columns();
-        foreach (array_keys($columns) as $i) {
-            $this->_state["min_width"] += $columns[$i]["min-width"];
-            $this->_state["max_width"] += $columns[$i]["max-width"];
+        foreach ($columns as $i => $col) {
+            $this->_state["min_width"] += $col["min-width"];
+            $this->_state["max_width"] += $col["max-width"];
 
-            if ($columns[$i]["absolute"] > 0) {
+            if ($col["absolute"] > 0) {
                 $this->_state["absolute"][] = $i;
-                $this->_state["absolute_used"] += $columns[$i]["absolute"];
-            } else if ($columns[$i]["percent"] > 0) {
+                $this->_state["absolute_used"] += $col["min-width"];
+            } elseif ($col["percent"] > 0) {
                 $this->_state["percent"][] = $i;
-                $this->_state["percent_used"] += $columns[$i]["percent"];
+                $this->_state["percent_used"] += $col["percent"];
             } else {
                 $this->_state["auto"][] = $i;
-                $this->_state["auto_min"] += $columns[$i]["min-width"];
+                $this->_state["auto_min"] += $col["min-width"];
             }
         }
 

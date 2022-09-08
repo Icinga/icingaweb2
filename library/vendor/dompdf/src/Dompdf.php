@@ -14,11 +14,10 @@ use Dompdf\Adapter\CPDF;
 use DOMXPath;
 use Dompdf\Frame\Factory;
 use Dompdf\Frame\FrameTree;
-use HTML5_Tokenizer;
-use HTML5_TreeBuilder;
 use Dompdf\Image\Cache;
 use Dompdf\Css\Stylesheet;
 use Dompdf\Helpers;
+use Masterminds\HTML5;
 
 /**
  * Dompdf - PHP5 HTML to PDF renderer
@@ -198,16 +197,6 @@ class Dompdf
     private $quirksmode = false;
 
     /**
-    * Protocol whitelist
-    *
-    * Protocols and PHP wrappers allowed in URLs. Full support is not
-    * guaranteed for the protocols/wrappers contained in this array.
-    *
-    * @var array
-    */
-    private $allowedProtocols = ["", "file://", "http://", "https://"];
-
-    /**
     * Local file extension whitelist
     *
     * File extensions supported by dompdf for local files.
@@ -259,7 +248,7 @@ class Dompdf
     /**
      * Class constructor
      *
-     * @param array|Options $options
+     * @param Options|array|null $options
      */
     public function __construct($options = null)
     {
@@ -272,8 +261,11 @@ class Dompdf
         }
 
         $versionFile = realpath(__DIR__ . '/../VERSION');
-        if (file_exists($versionFile) && ($version = trim(file_get_contents($versionFile))) !== false && $version !== '$Format:<%h>$') {
-            $this->version = sprintf('dompdf %s', $version);
+        if (($version = file_get_contents($versionFile)) !== false) {
+            $version = trim($version);
+            if ($version !== '$Format:<%h>$') {
+                $this->version = sprintf('dompdf %s', $version);
+            }
         }
 
         $this->setPhpConfig();
@@ -281,8 +273,8 @@ class Dompdf
         $this->paperSize = $this->options->getDefaultPaperSize();
         $this->paperOrientation = $this->options->getDefaultPaperOrientation();
 
-        $this->setCanvas(CanvasFactory::get_instance($this, $this->paperSize, $this->paperOrientation));
-        $this->setFontMetrics(new FontMetrics($this->getCanvas(), $this->getOptions()));
+        $this->canvas = CanvasFactory::get_instance($this, $this->paperSize, $this->paperOrientation);
+        $this->fontMetrics = new FontMetrics($this->canvas, $this->options);
         $this->css = new Stylesheet($this);
 
         $this->restorePhpConfig();
@@ -353,43 +345,25 @@ class Dompdf
             [$this->protocol, $this->baseHost, $this->basePath] = Helpers::explode_url($file);
         }
         $protocol = strtolower($this->protocol);
-        
         $uri = Helpers::build_url($this->protocol, $this->baseHost, $this->basePath, $file);
 
-        if (!in_array($protocol, $this->allowedProtocols, true)) {
+        $allowed_protocols = $this->options->getAllowedProtocols();
+        if (!array_key_exists($protocol, $allowed_protocols)) {
             throw new Exception("Permission denied on $file. The communication protocol is not supported.");
         }
 
-        if (!$this->options->isRemoteEnabled() && ($protocol !== "" && $protocol !== "file://")) {
-            throw new Exception("Remote file requested, but remote file download is disabled.");
+        if ($protocol === "file://") {
+            $ext = strtolower(pathinfo($uri, PATHINFO_EXTENSION));
+            if (!in_array($ext, $this->allowedLocalFileExtensions)) {
+                throw new Exception("Permission denied on $file: The file extension is forbidden.");
+            }
         }
 
-        if ($protocol === "" || $protocol === "file://") {
-            $realfile = realpath($uri);
-
-            $chroot = $this->options->getChroot();
-            $chrootValid = false;
-            foreach ($chroot as $chrootPath) {
-                $chrootPath = realpath($chrootPath);
-                if ($chrootPath !== false && strpos($realfile, $chrootPath) === 0) {
-                    $chrootValid = true;
-                    break;
-                }
+        foreach ($allowed_protocols[$protocol]["rules"] as $rule) {
+            [$result, $message] = $rule($uri);
+            if (!$result) {
+                throw new Exception("Error loading $file: $message");
             }
-            if ($chrootValid !== true) {
-                throw new Exception("Permission denied on $file. The file could not be found under the paths specified by Options::chroot.");
-            }
-
-            $ext = strtolower(pathinfo($realfile, PATHINFO_EXTENSION));
-            if (!in_array($ext, $this->allowedLocalFileExtensions)) {
-                throw new Exception("Permission denied on $file. This file extension is forbidden");
-            }
-
-            if (!$realfile) {
-                throw new Exception("File '$file' not found.");
-            }
-
-            $uri = $realfile;
         }
 
         [$contents, $http_response_header] = Helpers::getFileContent($uri, $this->options->getHttpContext());
@@ -498,43 +472,18 @@ class Dompdf
 
         try {
             // @todo Take the quirksmode into account
+            // https://quirks.spec.whatwg.org/
             // http://hsivonen.iki.fi/doctype/
-            // https://developer.mozilla.org/en/mozilla's_quirks_mode
             $quirksmode = false;
 
-            if ($this->options->isHtml5ParserEnabled() && class_exists(HTML5_Tokenizer::class)) {
-                $tokenizer = new HTML5_Tokenizer($str);
-                $tokenizer->parse();
-                $doc = $tokenizer->save();
+            $html5 = new HTML5(['encoding' => $encoding, 'disable_html_ns' => true]);
+            $dom = $html5->loadHTML($str);
 
-                $quirksmode = ($tokenizer->getTree()->getQuirksMode() > HTML5_TreeBuilder::NO_QUIRKS);
-            } else {
-                // loadHTML assumes ISO-8859-1 unless otherwise specified on the HTML document header.
-                // http://devzone.zend.com/1538/php-dom-xml-extension-encoding-processing/ (see #4)
-                // http://stackoverflow.com/a/11310258/264628
-                $doc = new DOMDocument("1.0", $encoding);
-                $doc->preserveWhiteSpace = true;
-                $doc->loadHTML($str);
-                $doc->encoding = $encoding;
-
-                // If some text is before the doctype, we are in quirksmode
-                if (preg_match("/^(.+)<!doctype/i", ltrim($str), $matches)) {
-                    $quirksmode = true;
-                } // If no doctype is provided, we are in quirksmode
-                elseif (!preg_match("/^<!doctype/i", ltrim($str), $matches)) {
-                    $quirksmode = true;
-                } else {
-                    // HTML5 <!DOCTYPE html>
-                    if (!$doc->doctype->publicId && !$doc->doctype->systemId) {
-                        $quirksmode = false;
-                    }
-
-                    // not XHTML
-                    if (!preg_match("/xhtml/i", $doc->doctype->publicId)) {
-                        $quirksmode = true;
-                    }
-                }
-            }
+            // extra step to normalize the HTML document structure
+            // see Masterminds/html5-php#166
+            $doc = new DOMDocument("1.0", $encoding);
+            $doc->preserveWhiteSpace = true;
+            $doc->loadHTML($html5->saveHTML($dom), LIBXML_NOWARNING | LIBXML_NOERROR);
 
             $this->loadDOM($doc, $quirksmode);
         } finally {
@@ -584,9 +533,11 @@ class Dompdf
         $acceptedmedia[] = $this->options->getDefaultMediaType();
 
         // <base href="" />
-        $base_nodes = $this->dom->getElementsByTagName("base");
-        if ($base_nodes->length && ($href = $base_nodes->item(0)->getAttribute("href"))) {
-            [$this->protocol, $this->baseHost, $this->basePath] = Helpers::explode_url($href);
+        /** @var \DOMElement|null */
+        $baseNode = $this->dom->getElementsByTagName("base")->item(0);
+        $baseHref = $baseNode ? $baseNode->getAttribute("href") : "";
+        if ($baseHref !== "") {
+            [$this->protocol, $this->baseHost, $this->basePath] = Helpers::explode_url($baseHref);
         }
 
         // Set the base path of the Stylesheet to that of the file being processed
@@ -628,7 +579,9 @@ class Dompdf
                         $url = $tag->getAttribute("href");
                         $url = Helpers::build_url($this->protocol, $this->baseHost, $this->basePath, $url);
 
-                        $this->css->load_css_file($url, Stylesheet::ORIG_AUTHOR);
+                        if ($url !== null) {
+                            $this->css->load_css_file($url, Stylesheet::ORIG_AUTHOR);
+                        }
                     }
                     break;
 
@@ -726,9 +679,8 @@ class Dompdf
     public function render()
     {
         $this->setPhpConfig();
-        $options = $this->options;
 
-        $logOutputFile = $options->getLogOutputFile();
+        $logOutputFile = $this->options->getLogOutputFile();
         if ($logOutputFile) {
             if (!file_exists($logOutputFile) && is_writable(dirname($logOutputFile))) {
                 touch($logOutputFile);
@@ -753,29 +705,27 @@ class Dompdf
             $pageStyle->inherit($basePageStyle);
         }
 
-        $defaultOptionPaperSize = $this->getPaperSize($options->getDefaultPaperSize());
-        // If there is a CSS defined paper size compare to the paper size used to create the canvas to determine a
-        // recreation need
+        // Set paper size if defined via CSS
         if (is_array($basePageStyle->size)) {
-            $basePageStyleSize = $basePageStyle->size;
-            $this->setPaper([0, 0, $basePageStyleSize[0], $basePageStyleSize[1]]);
+            [$width, $height] = $basePageStyle->size;
+            $this->setPaper([0, 0, $width, $height]);
         }
 
-        $paperSize = $this->getPaperSize();
-        if (
-            $defaultOptionPaperSize[2] !== $paperSize[2] ||
-            $defaultOptionPaperSize[3] !== $paperSize[3] ||
-            $options->getDefaultPaperOrientation() !== $this->paperOrientation
-        ) {
-            $this->setCanvas(CanvasFactory::get_instance($this, $this->paperSize, $this->paperOrientation));
-            $this->fontMetrics->setCanvas($this->getCanvas());
+        // Create a new canvas instance if the current one does not match the
+        // desired paper size
+        $canvasWidth = $this->canvas->get_width();
+        $canvasHeight = $this->canvas->get_height();
+        $size = $this->getPaperSize();
+
+        if ($canvasWidth !== $size[2] || $canvasHeight !== $size[3]) {
+            $this->canvas = CanvasFactory::get_instance($this, $this->paperSize, $this->paperOrientation);
+            $this->fontMetrics->setCanvas($this->canvas);
         }
 
-        $canvas = $this->getCanvas();
-
+        $canvas = $this->canvas;
         $root = null;
 
-        foreach ($this->tree->get_frames() as $frame) {
+        foreach ($this->tree as $frame) {
             // Set up the root frame
             if (is_null($root)) {
                 $root = Factory::decorate_root($this->tree->get_root(), $this);
@@ -819,6 +769,14 @@ class Dompdf
         // This is where the magic happens:
         $root->reflow();
 
+        if (isset($this->callbacks["end_document"])) {
+            $fs = $this->callbacks["end_document"];
+
+            foreach ($fs as $f) {
+                $canvas->page_script($f);
+            }
+        }
+
         // Clean up cached images
         if (!$this->options->getDebugKeepTemp()) {
             Cache::clear($this->options->getDebugPng());
@@ -844,17 +802,6 @@ class Dompdf
         }
 
         $this->restorePhpConfig();
-    }
-
-    /**
-     * Add meta information to the PDF after rendering
-     */
-    public function add_info($label, $value)
-    {
-        $canvas = $this->getCanvas();
-        if (!is_null($canvas)) {
-            $canvas->add_info($label, $value);
-        }
     }
 
     /**
@@ -884,6 +831,27 @@ class Dompdf
     }
 
     /**
+     * Add meta information to the PDF after rendering.
+     *
+     * @deprecated
+     */
+    public function add_info($label, $value)
+    {
+        $this->addInfo($label, $value);
+    }
+
+    /**
+     * Add meta information to the PDF after rendering.
+     *
+     * @param string $label Label of the value (Creator, Producer, etc.)
+     * @param string $value The text to set
+     */
+    public function addInfo(string $label, string $value): void
+    {
+        $this->canvas->add_info($label, $value);
+    }
+
+    /**
      * Streams the PDF to the client.
      *
      * The file will open a download dialog by default. The options
@@ -903,10 +871,7 @@ class Dompdf
     {
         $this->setPhpConfig();
 
-        $canvas = $this->getCanvas();
-        if (!is_null($canvas)) {
-            $canvas->stream($filename, $options);
-        }
+        $this->canvas->stream($filename, $options);
 
         $this->restorePhpConfig();
     }
@@ -927,12 +892,7 @@ class Dompdf
     {
         $this->setPhpConfig();
 
-        $canvas = $this->getCanvas();
-        if (is_null($canvas)) {
-            return null;
-        }
-
-        $output = $canvas->output($options);
+        $output = $this->canvas->output($options);
 
         $this->restorePhpConfig();
 
@@ -1006,7 +966,7 @@ class Dompdf
     /**
      * Sets the paper size & orientation
      *
-     * @param string|array $size 'letter', 'legal', 'A4', etc. {@link Dompdf\Adapter\CPDF::$PAPER_SIZES}
+     * @param string|float[] $size 'letter', 'legal', 'A4', etc. {@link Dompdf\Adapter\CPDF::$PAPER_SIZES}
      * @param string $orientation 'portrait' or 'landscape'
      * @return $this
      */
@@ -1020,19 +980,25 @@ class Dompdf
     /**
      * Gets the paper size
      *
-     * @param null|string|array $paperSize
-     * @return int[] A four-element integer array
+     * @return float[] A four-element float array
      */
-    public function getPaperSize($paperSize = null)
+    public function getPaperSize()
     {
-        $size = $paperSize !== null ? $paperSize : $this->paperSize;
-        if (is_array($size)) {
-            return $size;
-        } else if (isset(Adapter\CPDF::$PAPER_SIZES[mb_strtolower($size)])) {
-            return Adapter\CPDF::$PAPER_SIZES[mb_strtolower($size)];
+        $paper = $this->paperSize;
+        $orientation = $this->paperOrientation;
+
+        if (is_array($paper)) {
+            $size = array_map("floatval", $paper);
         } else {
-            return Adapter\CPDF::$PAPER_SIZES["letter"];
+            $paper = strtolower($paper);
+            $size = CPDF::$PAPER_SIZES[$paper] ?? CPDF::$PAPER_SIZES["letter"];
         }
+
+        if (strtolower($orientation) === "landscape") {
+            [$size[2], $size[3]] = [$size[3], $size[2]];
+        }
+
+        return $size;
     }
 
     /**
@@ -1265,6 +1231,11 @@ class Dompdf
     }
 
     /**
+     * Set a custom `Canvas` instance to render the document to.
+     *
+     * Be aware that the instance will be replaced on render if the document
+     * defines a paper size different from the canvas.
+     *
      * @param Canvas $canvas
      * @return $this
      */
@@ -1361,7 +1332,7 @@ class Dompdf
         }
 
         $this->options = $options;
-        $fontMetrics = $this->getFontMetrics();
+        $fontMetrics = $this->fontMetrics;
         if (isset($fontMetrics)) {
             $fontMetrics->setOptions($options);
         }
@@ -1397,15 +1368,16 @@ class Dompdf
 
     /**
      * @param array $callbacks the set of callbacks to set
+     * @return $this
      * @deprecated
      */
     public function set_callbacks($callbacks)
     {
-        $this->setCallbacks($callbacks);
+        return $this->setCallbacks($callbacks);
     }
 
     /**
-     * Sets callbacks for events like rendering of pages and elements.
+     * Define callbacks that allow modifying the document during render.
      *
      * The callbacks array should contain arrays with `event` set to a callback
      * event name and `f` set to a function or any other callable.
@@ -1416,27 +1388,31 @@ class Dompdf
      * * `end_frame`: called after frame rendering is complete
      * * `begin_page_render`: called before a page is rendered
      * * `end_page_render`: called after page rendering is complete
+     * * `end_document`: called for every page after rendering is complete
      *
-     * The function `f` must take an array as argument, which contains info
-     * about the event (`[0 => Canvas, 1 => Frame, "canvas" => Canvas,
-     * "frame" => Frame]`).
+     * The function `f` receives three arguments `Frame $frame`, `Canvas $canvas`,
+     * and `FontMetrics $fontMetrics` for all events but `end_document`. For
+     * `end_document`, the function receives four arguments `int $pageNumber`,
+     * `int $pageCount`, `Canvas $canvas`, and `FontMetrics $fontMetrics` instead.
      *
-     * @param array $callbacks The set of callbacks to set
+     * @param array $callbacks The set of callbacks to set.
+     * @return $this
      */
-    public function setCallbacks($callbacks)
+    public function setCallbacks(array $callbacks): self
     {
-        if (is_array($callbacks)) {
-            $this->callbacks = [];
-            foreach ($callbacks as $c) {
-                if (is_array($c) && isset($c["event"]) && isset($c["f"])) {
-                    $event = $c["event"];
-                    $f = $c["f"];
-                    if (is_string($event) && is_callable($f)) {
-                        $this->callbacks[$event][] = $f;
-                    }
+        $this->callbacks = [];
+
+        foreach ($callbacks as $c) {
+            if (is_array($c) && isset($c["event"]) && isset($c["f"])) {
+                $event = $c["event"];
+                $f = $c["f"];
+                if (is_string($event) && is_callable($f)) {
+                    $this->callbacks[$event][] = $f;
                 }
             }
         }
+
+        return $this;
     }
 
     /**

@@ -69,7 +69,9 @@ class Image extends AbstractFrameReflower
         [$width] = $this->calculate_size(null, null);
         $min_width = $this->resolve_min_width(null);
         $percent_width = Helpers::is_percent($style->width)
-            || Helpers::is_percent($style->max_width);
+            || Helpers::is_percent($style->max_width)
+            || ($style->width === "auto"
+                && (Helpers::is_percent($style->height) || Helpers::is_percent($style->max_height)));
 
         // Use the specified min width as minimum when width or max width depend
         // on the containing block and cannot be resolved yet. This mimics
@@ -186,8 +188,8 @@ class Image extends AbstractFrameReflower
             print $width . " " . $height . ";";
         }
 
-        $style->width = $width;
-        $style->height = $height;
+        $style->set_used("width", $width);
+        $style->set_used("height", $height);
     }
 
     protected function resolve_margins(): void
@@ -198,16 +200,16 @@ class Image extends AbstractFrameReflower
         $style = $this->_frame->get_style();
 
         if ($style->margin_left === "auto") {
-            $style->margin_left = 0;
+            $style->set_used("margin_left", 0.0);
         }
         if ($style->margin_right === "auto") {
-            $style->margin_right = 0;
+            $style->set_used("margin_right", 0.0);
         }
         if ($style->margin_top === "auto") {
-            $style->margin_top = 0;
+            $style->set_used("margin_top", 0.0);
         }
         if ($style->margin_bottom === "auto") {
-            $style->margin_bottom = 0;
+            $style->set_used("margin_bottom", 0.0);
         }
     }
 }

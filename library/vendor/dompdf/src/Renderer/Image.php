@@ -46,7 +46,9 @@ class Image extends Block
         ) {
             $font = $style->font_family;
             $size = $style->font_size;
-            $spacing = $style->word_spacing;
+            $word_spacing = $style->word_spacing;
+            $letter_spacing = $style->letter_spacing;
+
             $this->_canvas->text(
                 $x,
                 $y,
@@ -54,7 +56,8 @@ class Image extends Block
                 $font,
                 $size,
                 $style->color,
-                $spacing
+                $word_spacing,
+                $letter_spacing
             );
         } elseif ($w > 0 && $h > 0) {
             if ($style->has_border_radius()) {
@@ -71,11 +74,12 @@ class Image extends Block
 
         if ($msg = $frame->get_image_msg()) {
             $parts = preg_split("/\s*\n\s*/", $msg);
+            $font = $style->font_family;
             $height = 10;
             $_y = $alt ? $y + $h - count($parts) * $height : $y;
 
             foreach ($parts as $i => $_part) {
-                $this->_canvas->text($x, $_y + $i * $height, $_part, "times", $height * 0.8, [0.5, 0.5, 0.5]);
+                $this->_canvas->text($x, $_y + $i * $height, $_part, $font, $height * 0.8, [0.5, 0.5, 0.5]);
             }
         }
 

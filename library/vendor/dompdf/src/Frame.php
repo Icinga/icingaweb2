@@ -3,7 +3,7 @@
 namespace Dompdf;
 
 use Dompdf\Css\Style;
-use Dompdf\Frame\FrameList;
+use Dompdf\Frame\FrameListIterator;
 
 /**
  * @package dompdf
@@ -58,26 +58,11 @@ class Frame
     protected $_style;
 
     /**
-     * This frame's original style.  Needed for cases where frames are
-     * split across pages.
-     *
-     * @var Style
-     */
-    protected $_original_style;
-
-    /**
      * This frame's parent in the document tree.
      *
      * @var Frame
      */
     protected $_parent;
-
-    /**
-     * This frame's children
-     *
-     * @var Frame[]
-     */
-    protected $_frame_list;
 
     /**
      * This frame's first child.  All children are handled as a
@@ -133,7 +118,7 @@ class Frame
     /**
      * This frame's decorator
      *
-     * @var \Dompdf\FrameDecorator\AbstractFrameDecorator
+     * @var FrameDecorator\AbstractFrameDecorator
      */
     protected $_decorator;
 
@@ -162,13 +147,6 @@ class Frame
     public $_float_next_line = false;
 
     /**
-     * Whether the frame is a split-off frame
-     *
-     * @var bool
-     */
-    public $_splitted;
-
-    /**
      * @var int
      */
     public static $_ws_state = self::WS_SPACE;
@@ -188,7 +166,6 @@ class Frame
         $this->_prev_sibling = $this->_next_sibling = null;
 
         $this->_style = null;
-        $this->_original_style = null;
 
         $this->_containing_block = [
             "x" => null,
@@ -301,13 +278,8 @@ class Frame
             $this->_parent->get_node()->removeChild($this->_node);
         }
 
-        $this->_style->dispose();
         $this->_style = null;
         unset($this->_style);
-
-        $this->_original_style->dispose();
-        $this->_original_style = null;
-        unset($this->_original_style);
     }
 
     /**
@@ -323,9 +295,7 @@ class Frame
         $this->_containing_block["w"] = null;
         $this->_containing_block["h"] = null;
 
-        $this->_style = null;
-        unset($this->_style);
-        $this->_style = clone $this->_original_style;
+        $this->_style->reset();
     }
 
     /**
@@ -353,11 +323,12 @@ class Frame
     }
 
     /**
+     * @deprecated
      * @return Style
      */
     public function get_original_style()
     {
-        return $this->_original_style;
+        return $this->_style;
     }
 
     /**
@@ -369,7 +340,7 @@ class Frame
     }
 
     /**
-     * @return \Dompdf\FrameDecorator\AbstractFrameDecorator
+     * @return FrameDecorator\AbstractFrameDecorator
      */
     public function get_decorator()
     {
@@ -409,17 +380,11 @@ class Frame
     }
 
     /**
-     * @return FrameList|Frame[]
+     * @return FrameListIterator
      */
-    public function get_children()
+    public function get_children(): FrameListIterator
     {
-        if (isset($this->_frame_list)) {
-            return $this->_frame_list;
-        }
-
-        $this->_frame_list = new FrameList($this);
-
-        return $this->_frame_list;
+        return new FrameListIterator($this);
     }
 
     // Layout property accessors
@@ -650,11 +615,11 @@ class Frame
     }
 
     /**
-     * @param null $opacity
+     * @param float|null $opacity
      *
      * @return float
      */
-    public function get_opacity($opacity = null)
+    public function get_opacity(?float $opacity = null): float
     {
         if ($opacity !== null) {
             $this->set_opacity($opacity);
@@ -692,18 +657,14 @@ class Frame
     /**
      * @param Style $style
      */
-    public function set_style(Style $style)
+    public function set_style(Style $style): void
     {
-        if (is_null($this->_style)) {
-            $this->_original_style = clone $style;
-        }
-
-        //$style->set_frame($this);
+        // $style->set_frame($this);
         $this->_style = $style;
     }
 
     /**
-     * @param \Dompdf\FrameDecorator\AbstractFrameDecorator $decorator
+     * @param FrameDecorator\AbstractFrameDecorator $decorator
      */
     public function set_decorator(FrameDecorator\AbstractFrameDecorator $decorator)
     {
@@ -761,12 +722,12 @@ class Frame
     }
 
     /**
-     * @param $opacity
+     * @param float $opacity
      */
-    public function set_opacity($opacity)
+    public function set_opacity(float $opacity): void
     {
         $parent = $this->get_parent();
-        $base_opacity = (($parent && $parent->_opacity !== null) ? $parent->_opacity : 1.0);
+        $base_opacity = $parent && $parent->_opacity !== null ? $parent->_opacity : 1.0;
         $this->_opacity = $base_opacity * $opacity;
     }
 
@@ -833,7 +794,7 @@ class Frame
      *
      * @return bool
      */
-    public function is_text_node()
+    public function is_text_node(): bool
     {
         if (isset($this->_is_cache["text_node"])) {
             return $this->_is_cache["text_node"];
@@ -845,21 +806,21 @@ class Frame
     /**
      * @return bool
      */
-    public function is_positionned()
+    public function is_positioned(): bool
     {
-        if (isset($this->_is_cache["positionned"])) {
-            return $this->_is_cache["positionned"];
+        if (isset($this->_is_cache["positioned"])) {
+            return $this->_is_cache["positioned"];
         }
 
         $position = $this->get_style()->position;
 
-        return $this->_is_cache["positionned"] = in_array($position, Style::$POSITIONNED_TYPES, true);
+        return $this->_is_cache["positioned"] = in_array($position, Style::POSITIONED_TYPES, true);
     }
 
     /**
      * @return bool
      */
-    public function is_absolute()
+    public function is_absolute(): bool
     {
         if (isset($this->_is_cache["absolute"])) {
             return $this->_is_cache["absolute"];
@@ -873,13 +834,13 @@ class Frame
      *
      * @return bool
      */
-    public function is_block()
+    public function is_block(): bool
     {
         if (isset($this->_is_cache["block"])) {
             return $this->_is_cache["block"];
         }
 
-        return $this->_is_cache["block"] = in_array($this->get_style()->display, Style::$BLOCK_TYPES, true);
+        return $this->_is_cache["block"] = in_array($this->get_style()->display, Style::BLOCK_TYPES, true);
     }
 
     /**
@@ -915,22 +876,9 @@ class Frame
     }
 
     /**
-     * @deprecated
      * @return bool
      */
-    public function is_inline_block()
-    {
-        if (isset($this->_is_cache["inline_block"])) {
-            return $this->_is_cache["inline_block"];
-        }
-
-        return $this->_is_cache["inline_block"] = ($this->get_style()->display === "inline-block");
-    }
-
-    /**
-     * @return bool
-     */
-    public function is_in_flow()
+    public function is_in_flow(): bool
     {
         if (isset($this->_is_cache["in_flow"])) {
             return $this->_is_cache["in_flow"];
@@ -942,7 +890,7 @@ class Frame
     /**
      * @return bool
      */
-    public function is_pre()
+    public function is_pre(): bool
     {
         if (isset($this->_is_cache["pre"])) {
             return $this->_is_cache["pre"];
@@ -956,7 +904,7 @@ class Frame
     /**
      * @return bool
      */
-    public function is_table()
+    public function is_table(): bool
     {
         if (isset($this->_is_cache["table"])) {
             return $this->_is_cache["table"];
@@ -964,7 +912,7 @@ class Frame
 
         $display = $this->get_style()->display;
 
-        return $this->_is_cache["table"] = in_array($display, Style::$TABLE_TYPES, true);
+        return $this->_is_cache["table"] = in_array($display, Style::TABLE_TYPES, true);
     }
 
 
