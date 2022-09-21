@@ -3,9 +3,11 @@
 
 namespace Icinga\Web;
 
+use ArrayIterator;
 use Closure;
 use Icinga\Application\Icinga;
 use ipl\I18n\Translation;
+use IteratorAggregate;
 use Zend_View_Abstract;
 use Icinga\Authentication\Auth;
 use Icinga\Exception\ProgrammingError;
@@ -52,7 +54,7 @@ use Icinga\Exception\ProgrammingError;
  *  @param  string  $value
  * }
  */
-class View extends Zend_View_Abstract
+class View extends Zend_View_Abstract implements IteratorAggregate
 {
     use Translation;
 
@@ -60,6 +62,11 @@ class View extends Zend_View_Abstract
      * Charset to be used - we only support UTF-8
      */
     const CHARSET = 'UTF-8';
+
+    /**
+     * @var array
+     */
+    private $dynamicProperties = [];
 
     /**
      * Registered helper functions
@@ -84,6 +91,79 @@ class View extends Zend_View_Abstract
         $config['helperPath']['Icinga\\Web\\View\\Helper\\'] = Icinga::app()->getLibraryDir('Icinga/Web/View/Helper');
 
         parent::__construct($config);
+    }
+
+    public function __set($key, $val): void
+    {
+        if ('_' != substr($key, 0, 1)) {
+            $this->dynamicProperties[$key] = $val;
+
+            return;
+        }
+
+        // trigger exception
+        parent::__set($key, $val);
+    }
+
+    public function __get($key)
+    {
+        return array_key_exists($key, $this->dynamicProperties)
+            ? $this->dynamicProperties[$key]
+            : parent::__get($key); // trigger error
+    }
+
+    public function __isset($key): bool
+    {
+        return isset($this->dynamicProperties[$key]);
+    }
+
+    public function __unset($key): void
+    {
+        if ('_' != substr($key, 0, 1) && isset($this->dynamicProperties[$key])) {
+            unset($this->dynamicProperties[$key]);
+        }
+    }
+
+    public function getIterator(): ArrayIterator
+    {
+        return new ArrayIterator($this->dynamicProperties);
+    }
+
+    public function assign($spec, $value = null): self
+    {
+        if (is_string($spec)) {
+            if ('_' == substr($spec, 0, 1)) {
+                // trigger exception
+                return parent::assign($spec, $value);
+            }
+
+            $this->dynamicProperties[$spec] = $value;
+        } elseif (is_array($spec)) {
+            foreach ($spec as $key => $val) {
+                if ('_' == substr($key, 0, 1)) {
+                    // trigger exception
+                    return parent::assign($spec, $value);
+                }
+
+                $this->dynamicProperties[$key] = $val;
+                unset($spec[$key]);
+            }
+        } else {
+            // trigger exception
+            return parent::assign($spec, $value);
+        }
+
+        return $this;
+    }
+
+    public function getVars(): array
+    {
+        return $this->dynamicProperties;
+    }
+
+    public function clearVars(): void
+    {
+        $this->dynamicProperties = [];
     }
 
     /**
