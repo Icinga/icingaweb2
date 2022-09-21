@@ -77,6 +77,13 @@ class Module
     private $libdir;
 
     /**
+     * Config directory
+     *
+     * @var string
+     */
+    private $configdir;
+
+    /**
      * Directory containing translations
      *
      * @var string
