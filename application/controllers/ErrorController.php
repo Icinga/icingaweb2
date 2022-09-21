@@ -116,22 +116,25 @@ class ErrorController extends ActionController
                     }
                 }
 
-                $this->view->messages = array();
+                $messages = [];
 
                 if ($this->getInvokeArg('displayExceptions')) {
-                    $this->view->stackTraces = array();
+                    $stackTraces = [];
 
                     do {
-                        $this->view->messages[] = $exception->getMessage();
-                        $this->view->stackTraces[] = IcingaException::getConfidentialTraceAsString($exception);
+                        $messages[] = $exception->getMessage();
+                        $stackTraces[] = IcingaException::getConfidentialTraceAsString($exception);
                         $exception = $exception->getPrevious();
                     } while ($exception !== null);
                 } else {
                     do {
-                        $this->view->messages[] = $exception->getMessage();
+                        $messages[] = $exception->getMessage();
                         $exception = $exception->getPrevious();
                     } while ($exception !== null);
                 }
+
+                $this->view->messages = $messages;
+                $this->view->stackTraces = $stackTraces;
 
                 break;
         }
