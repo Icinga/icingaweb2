@@ -68,8 +68,13 @@ class Macro
         try {
             $value = $object->$macro;
         } catch (Exception $e) {
+            $objectName = $object->getName();
+            if ($object instanceof Service) {
+                $objectName = $object->getHost()->getName() . '!' . $objectName;
+            }
+
             $value = null;
-            Logger::debug('Unable to resolve macro "%s". An error occured: %s', $macro, $e);
+            Logger::debug('Unable to resolve macro "%s" on object "%s". An error occured: %s', $macro, $objectName, $e);
         }
 
         return $value !== null ? $value : $macro;
