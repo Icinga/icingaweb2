@@ -70,6 +70,19 @@ class ApplicationConfigForm extends Form
             )
         );
 
+        $this->addElement(
+            'text',
+            'global_landing_page',
+            array(
+                'label'         => $this->translate('Landing Page'),
+                'required'      => false,
+                'value'         => 'dashboard',
+                'description'   => $this->translate(
+                    'Default Landing Page.'
+                )
+            )
+        );
+
         $backends = array_keys(ResourceFactory::getResourceConfigs()->toArray());
         $backends = array_combine($backends, $backends);
 

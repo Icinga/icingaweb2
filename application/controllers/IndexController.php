@@ -17,8 +17,11 @@ class IndexController extends ActionController
     public function preDispatch()
     {
         if ($this->getRequest()->getActionName() !== 'welcome') {
+            $globalConfig = Icinga::app()->getConfig()->getSection('global');
+            $landingPage = $globalConfig->get('landing_page', 'dashboard');
+
             // @TODO(el): Avoid landing page redirects: https://dev.icinga.com/issues/9656
-            $this->redirectNow(Url::fromRequest()->setPath('dashboard'));
+            $this->redirectNow(Url::fromRequest()->setPath($landingPage));
         }
     }
 
