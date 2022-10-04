@@ -9,6 +9,7 @@ This chapter provides details for advanced Icinga Web 2 topics.
 * [Source installation](20-Advanced-Topics.md#installing-from-source)
 * [Automated setup](20-Advanced-Topics.md#web-setup-automation)
 * [Kiosk Mode Configuration](20-Advanced-Topics.md#kiosk-mode)
+* [Customizing the Landing Page](20-Advanced-Topics.md#landing-page)
 
 ## Global URL Parameters <a id="global-url-parameters"></a>
 
@@ -412,3 +413,28 @@ If you want to show a specific Dashboard you can enforce this onto the kiosk use
 ```
 
 Replace Remote_Addr with the IP where the kiosk user is accessing the Web to restrict further usage from other IPs.
+
+## Customizing the Landing Page <a id="landing-page"></a>
+
+The default landing page of `dashboard` can be customized using the environment variable `ICINGAWEB_LANDING_PAGE`.
+
+Example on RHEL/CentOS:
+
+```
+vim /etc/httpd/conf.d/web.icinga.com.conf
+
+<VirtualHost *:80>
+
+  ...
+
+  <Directory "/usr/share/icingaweb2/public">
+
+      ...
+
+      SetEnv ICINGAWEB_LANDING_PAGE "icingadb/services/grid?problems"
+
+      ...
+
+  </Directory>
+</VirtualHost>
+```
