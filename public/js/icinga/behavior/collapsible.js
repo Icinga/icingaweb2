@@ -17,7 +17,7 @@
 
             this.on('layout-change', this.onLayoutChange, this);
             this.on('rendered', '#main > .container, #modal-content', this.onRendered, this);
-            this.on('click', '.collapsible + .collapsible-control, .collapsible > .collapsible-control',
+            this.on('click', '.collapsible + .collapsible-control, .collapsible .collapsible-control',
                 this.onControlClicked, this);
 
             this.icinga = icinga;
