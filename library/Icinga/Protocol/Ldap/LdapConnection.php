@@ -882,7 +882,19 @@ class LdapConnection implements Selectable, Inspectable
             }
         }
 
+        $controls = [];
         $legacyControlHandling = version_compare(PHP_VERSION, '7.3.0') < 0;
+        if ($serverSorting && $query->hasOrder()) {
+            $control = [
+                'oid'   => LDAP_CONTROL_SORTREQUEST,
+                'value' => $this->encodeSortRules($query->getOrder())
+            ];
+            if ($legacyControlHandling) {
+                ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, [$control]);
+            } else {
+                $controls[LDAP_CONTROL_SORTREQUEST] = $control;
+            }
+        }
 
         $count = 0;
         $cookie = '';
@@ -892,15 +904,15 @@ class LdapConnection implements Selectable, Inspectable
                 // Do not request the pagination control as a critical extension, as we want the
                 // server to return results even if the paged search request cannot be satisfied
                 ldap_control_paged_result($ds, $pageSize, false, $cookie);
-            }
-
-            if ($serverSorting && $query->hasOrder()) {
-                ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
-                    array(
-                        'oid'   => LdapCapabilities::LDAP_SERVER_SORT_OID,
-                        'value' => $this->encodeSortRules($query->getOrder())
-                    )
-                ));
+            } else {
+                $controls[LDAP_CONTROL_PAGEDRESULTS] = [
+                    'oid'        => LDAP_CONTROL_PAGEDRESULTS,
+                    'iscritical' => false, // See above
+                    'value'      => [
+                        'size'   => $pageSize,
+                        'cookie' => $cookie
+                    ]
+                ];
             }
 
             $results = $this->ldapSearch(
@@ -910,7 +922,7 @@ class LdapConnection implements Selectable, Inspectable
                 ($serverSorting || ! $query->hasOrder()) && $limit ? $offset + $limit : 0,
                 0,
                 LDAP_DEREF_NEVER,
-                $legacyControlHandling ? null : $pageSize
+                empty($controls) ? null : $controls
             );
             if ($results === false) {
                 if (ldap_errno($ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -976,18 +988,23 @@ class LdapConnection implements Selectable, Inspectable
                 && ($entry = ldap_next_entry($ds, $entry))
             );
 
-            if ($legacyControlHandling && false === @ldap_control_paged_result_response($ds, $results, $cookie)) {
-                // If the page size is greater than or equal to the sizeLimit value, the server should ignore the
-                // control as the request can be satisfied in a single page: https://www.ietf.org/rfc/rfc2696.txt
-                // This applies no matter whether paged search requests are permitted or not. You're done once you
-                // got everything you were out for.
-                if ($serverSorting && count($entries) !== $limit) {
-                    // The server does not support pagination, but still returned a response by ignoring the
-                    // pagedResultsControl. We output a warning to indicate that the pagination control was ignored.
-                    Logger::warning(
-                        'Unable to request paged LDAP results. Does the server allow paged search requests?'
-                    );
+            if ($legacyControlHandling) {
+                if (false === @ldap_control_paged_result_response($ds, $results, $cookie)) {
+                    // If the page size is greater than or equal to the sizeLimit value, the server should ignore the
+                    // control as the request can be satisfied in a single page: https://www.ietf.org/rfc/rfc2696.txt
+                    // This applies no matter whether paged search requests are permitted or not. You're done once you
+                    // got everything you were out for.
+                    if ($serverSorting && count($entries) !== $limit) {
+                        // The server does not support pagination, but still returned a response by ignoring the
+                        // pagedResultsControl. We output a warning to indicate that the pagination control was ignored.
+                        Logger::warning(
+                            'Unable to request paged LDAP results. Does the server allow paged search requests?'
+                        );
+                    }
                 }
+            } else {
+                ldap_parse_result($ds, $results, $errno, $dn, $errmsg, $refs, $controlsReturned);
+                $cookie = $controlsReturned[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'];
             }
 
             ldap_free_result($results);
@@ -1219,7 +1236,7 @@ class LdapConnection implements Selectable, Inspectable
      * @param   int         $sizelimit      Enables you to limit the count of entries fetched
      * @param   int         $timelimit      Sets the number of seconds how long is spend on the search
      * @param   int         $deref
-     * @param   int         $pageSize       The page size to request (Only supported with PHP v7.3+)
+     * @param   array       $controls       LDAP Controls to send with the request (Only supported with PHP v7.3+)
      *
      * @return  resource|bool               A search result identifier or false on error
      *
@@ -1232,7 +1249,7 @@ class LdapConnection implements Selectable, Inspectable
         $sizelimit = 0,
         $timelimit = 0,
         $deref = LDAP_DEREF_NEVER,
-        $pageSize = null
+        $controls = null
     ) {
         $queryString = (string) $query;
         $baseDn = $query->getBase() ?: $this->getDn();
@@ -1287,18 +1304,11 @@ class LdapConnection implements Selectable, Inspectable
                 throw new LogicException('LDAP scope %s not supported by ldapSearch', $scope);
         }
 
-        if ($pageSize !== null) {
-            $serverctrls[] = [
-                'oid' => LDAP_CONTROL_PAGEDRESULTS,
-                // Do not request the pagination control as a critical extension, as we want the
-                // server to return results even if the paged search request cannot be satisfied
-                'iscritical' => false,
-                'value' => [
-                    'size' => $pageSize,
-                    'cookie' => ''
-                ]
-            ];
-
+        // Explicit calls with and without controls,
+        // because the parameter is only supported since PHP 7.3.
+        // Since it is a public method,
+        // providing controls will naturally fail if the parameter is not supported by PHP.
+        if ($controls !== null) {
             return @$function(
                 $this->getConnection(),
                 $baseDn,
@@ -1308,7 +1318,7 @@ class LdapConnection implements Selectable, Inspectable
                 $sizelimit,
                 $timelimit,
                 $deref,
-                $serverctrls
+                $controls
             );
         } else {
             return @$function(
