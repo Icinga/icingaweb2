@@ -6,6 +6,14 @@
 
     Icinga.Behaviors = Icinga.Behaviors || {};
 
+    let $ = window.$;
+
+    try {
+        $ = require('icinga/icinga-php-library/notjQuery');
+    } catch (e) {
+        console.warn('[Collapsible] notjQuery unavailable. Using jQuery for now');
+    }
+
     /**
      * Behavior for collapsible containers.
      *
@@ -79,8 +87,16 @@
                 if ('canCollapse' in collapsible.dataset) {
                     if (! _this.canCollapse(collapsible)) {
                         let toggleSelector = collapsible.dataset.toggleElement;
-                        if (! toggleSelector && ! this.isDetails(collapsible)) {
-                            collapsible.nextElementSibling.remove();
+                        if (! this.isDetails(collapsible)) {
+                            if (! toggleSelector) {
+                                collapsible.nextElementSibling.remove();
+                            } else {
+                                let toggle = document.getElementById(toggleSelector);
+                                if (toggle) {
+                                    toggle.classList.remove('collapsed');
+                                    delete toggle.dataset.canCollapse;
+                                }
+                            }
                         }
 
                         delete collapsible.dataset.canCollapse;
@@ -143,7 +159,9 @@
                 target = event.currentTarget;
 
             let collapsible = target.previousElementSibling;
-            if (! collapsible) {
+            if ('collapsibleAt' in target.dataset) {
+                collapsible = document.querySelector(target.dataset.collapsibleAt);
+            } else if (! collapsible) {
                 collapsible = target.closest('.collapsible');
             }
 
@@ -206,14 +224,41 @@
                 }
             } else if (!! collapsible.dataset.toggleElement) {
                 let toggleSelector = collapsible.dataset.toggleElement,
-                    toggle = collapsible.querySelector(toggleSelector);
-                if (! toggle && collapsible.nextElementSibling && collapsible.nextElementSibling.matches(toggleSelector)) {
-                    toggle = collapsible.nextElementSibling;
+                    toggle = collapsible.querySelector(toggleSelector),
+                    externalToggle = false;
+                if (! toggle) {
+                    if (collapsible.nextElementSibling && collapsible.nextElementSibling.matches(toggleSelector)) {
+                        toggle = collapsible.nextElementSibling;
+                    } else {
+                        externalToggle = true;
+                        toggle = document.getElementById(toggleSelector);
+                    }
                 }
 
                 if (! toggle) {
-                    this.icinga.logger.error(
-                        '[Collapsible] Control `' + toggleSelector + '` not found in .collapsible', collapsible);
+                    if (externalToggle) {
+                        this.icinga.logger.error(
+                            '[Collapsible] External control with id `'
+                                + toggleSelector
+                                + '` not found for .collapsible',
+                            collapsible
+                        );
+                    } else {
+                        this.icinga.logger.error(
+                            '[Collapsible] Control `' + toggleSelector + '` not found in .collapsible', collapsible);
+                    }
+
+                    return false;
+                } else if (externalToggle) {
+                    collapsible.dataset.hasExternalToggle = '';
+
+                    toggle.dataset.canCollapse = '';
+                    toggle.dataset.collapsibleAt = this.icinga.utils.getCSSPath(collapsible);
+                    $(toggle).on('click', e => {
+                        // Only required as onControlClicked() is compatible with Icinga.EventListener
+                        e.data = { self: this };
+                        this.onControlClicked(e);
+                    });
                 } else if (! toggle.classList.contains('collapsible-control')) {
                     toggle.classList.add('collapsible-control');
                 }
@@ -348,6 +393,7 @@
 
                 if (
                     !! collapsible.dataset.toggleElement
+                    && ! ('hasExternalToggle' in collapsible.dataset)
                     && (! collapsible.nextElementSibling
                         || ! collapsible.nextElementSibling.matches(collapsible.dataset.toggleElement))
                 ) {
@@ -372,6 +418,10 @@
                 collapsible.open = false;
             } else {
                 collapsible.style.cssText = 'display: block; height: ' + toHeight + 'px; padding-bottom: 0';
+
+                if ('hasExternalToggle' in collapsible.dataset) {
+                    document.getElementById(collapsible.dataset.toggleElement).classList.add('collapsed');
+                }
             }
 
             collapsible.classList.add('collapsed');
@@ -389,6 +439,10 @@
                 collapsible.open = true;
             } else {
                 collapsible.style.cssText = '';
+
+                if ('hasExternalToggle' in collapsible.dataset) {
+                    document.getElementById(collapsible.dataset.toggleElement).classList.remove('collapsed');
+                }
             }
         }
 
