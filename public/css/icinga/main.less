@@ -303,7 +303,7 @@ a:hover > .icon-cancel {
   display: none;
 }
 
-.collapsible-control {
+.collapsible + .collapsible-control {
   position: relative;
   z-index: 1;
 
@@ -334,33 +334,39 @@ a:hover > .icon-cancel {
   }
 }
 
-.collapsible.can-collapse:not(.collapsed) + .collapsible-control button {
-  > i.expand-icon {
+.collapsible[data-can-collapse]:not(.collapsed) + .collapsible-control button,
+.collapsible[data-can-collapse]:not(.collapsed) > .collapsible-control,
+details.collapsible[open] + .collapsible-control button,
+details.collapsible[open] > .collapsible-control {
+  i.expand-icon {
     display: none;
   }
 
-  > i.collapse-icon {
-    display: unset;
+  i.collapse-icon {
+    display: inline;
   }
 }
 
-.collapsible.collapsed + .collapsible-control button {
-  > i.expand-icon {
-    display: unset;
+.collapsible.collapsed + .collapsible-control button,
+.collapsible.collapsed > .collapsible-control,
+details.collapsible:not([open]) + .collapsible-control button,
+details.collapsible:not([open]) > .collapsible-control {
+  i.expand-icon {
+    display: inline;
   }
 
-  > i.collapse-icon {
+  i.collapse-icon {
     display: none;
   }
 }
 
 // Collapsibles
 
-.collapsible.collapsed {
+.collapsible.collapsed:not(details) {
   overflow: hidden;
 }
 
-.collapsible.collapsed:not([data-toggle-element]) {
+.collapsible.collapsed:not([data-toggle-element], details) {
   position: relative;
 
   &:after {

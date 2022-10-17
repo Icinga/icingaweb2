@@ -194,6 +194,10 @@
 html {
   box-sizing: border-box;
 }
+details > * {
+  // children somehow default to content-box no matter the inheritance
+  box-sizing: border-box;
+}
 *,
 *:before,
 *:after {
