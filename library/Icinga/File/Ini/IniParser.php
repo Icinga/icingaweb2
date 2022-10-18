@@ -153,7 +153,7 @@ class IniParser
                             $state = self::LINE_START;
                             $line ++;
                         } elseif ($s === ';') {
-                            $state = self::COMMENT;
+                            $state = self::COMMENT_END;
                         }
                     } else {
                         $token .= $s;
