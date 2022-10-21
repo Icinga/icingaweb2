@@ -3,6 +3,8 @@
 
 namespace Icinga\Cli\Documentation;
 
+use Icinga\Cli\Screen;
+
 class CommentParser
 {
     protected $raw;
@@ -75,7 +77,7 @@ class CommentParser
         }
 
         foreach ($this->paragraphs as $p) {
-            $res .= wordwrap($p, 72) . "\n\n";
+            $res .= wordwrap($p, Screen::instance()->getColumns()) . "\n\n";
         }
 
         return $res;
