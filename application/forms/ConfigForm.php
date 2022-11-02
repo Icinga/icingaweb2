@@ -77,7 +77,11 @@ class ConfigForm extends Form
         }
 
         foreach ($sections as $section => $config) {
-            $this->config->setSection($section, $config);
+            if ($this->isEmptyConfig($config)) {
+                $this->config->removeSection($section);
+            } else {
+                $this->config->setSection($section, $config);
+            }
         }
 
         if ($this->save()) {
@@ -144,6 +148,28 @@ class ConfigForm extends Form
     protected function writeConfig(Config $config)
     {
         $config->saveIni();
+    }
+
+    /**
+     * Get whether the given config is empty or has only empty values
+     *
+     * @param array|Config $config
+     *
+     * @return bool
+     */
+    protected function isEmptyConfig($config)
+    {
+        if ($config instanceof Config) {
+            $config = $config->toArray();
+        }
+
+        foreach ($config as $value) {
+            if ($value !== null) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
