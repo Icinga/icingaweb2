@@ -298,9 +298,9 @@
             }
 
             if (collapsible.tagName === 'TABLE') {
-                return '> tbody > tr';
+                return ':scope > tbody > tr';
             } else if (collapsible.tagName === 'UL' || collapsible.tagName === 'OL') {
-                return '> li:not(.collapsible-control)';
+                return ':scope > li:not(.collapsible-control)';
             }
 
             return '';
