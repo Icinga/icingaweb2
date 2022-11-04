@@ -4,6 +4,13 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.11.2
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/76?closed=1).
+
+It brings performance improvements and general fixes. Most notable of which are that having e.g. notifications
+disabled globally is now visible in the menu again and that the event history is grouped by days again.
+
 ### What's New in Version 2.11.1
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/75?closed=1).
