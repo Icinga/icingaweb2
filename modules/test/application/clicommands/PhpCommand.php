@@ -80,22 +80,20 @@ class PhpCommand extends Command
             . " -c {$temp->resolvePath('phpunit.xml')}"
             . ' ' . join(' ', array_merge($options, $this->params->getAllStandalone()));
         
-        if ($this->isVerbose) {
-            $res = `$command`;
-            foreach (preg_split('/\n/', $res) as $line) {
-                if (preg_match('~\s+\[([x\s])\]\s~', $line, $m)) {
-                    if ($m[1] === 'x') {
-                        echo $this->screen->colorize($line, 'green') . "\n";
-                    } else {
-                        echo $this->screen->colorize($line, 'red') . "\n";
-                    }
-                } else {
-                    echo $line . "\n";
-                }
+        exec($command, $output, $resultCode);
+
+        foreach ($output as $line) {
+            if ($this->isVerbose && preg_match('~\s+\[([x\s])\]\s~', $line, $m)) {
+                echo $this->screen->colorize($line, $m[1] === 'x' ? 'green' : 'red');
+            } else {
+                echo $line;
             }
-        } else {
-            passthru($command);
+
+            echo "\n";
         }
+
+        $temp = null;
+        exit($resultCode);
     }
 
     /**
