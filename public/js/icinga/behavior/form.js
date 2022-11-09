@@ -81,7 +81,6 @@
         if ($container.has(origFocus).length
             && $(origFocus).length
             && ! $(origFocus).hasClass('autofocus')
-            && ! $(origFocus).hasClass('autosubmit')
             && $(origFocus).closest('form').length
             && $(origFocus).not(':input[type=button], :input[type=submit], :input[type=reset]').length
         ) {
