@@ -23,6 +23,14 @@ form.icinga-form {
     // Negative margin-right because every child gets 1em right but we can't exclude
     // the last element as it's impossible to identify the last *visible* element
     margin: 1em -1em 1em 0;
+
+    .crontab {
+      flex: 2;
+
+      .crontab-number-specifier {
+        margin-left: 14em;
+      }
+    }
   }
 
   .control-group > :not(.control-label-group) {
