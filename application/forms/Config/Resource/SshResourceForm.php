@@ -87,9 +87,9 @@ class SshResourceForm extends Form
                     'value'         => sprintf(
                         '<a href="%1$s" data-base-target="_next" title="%2$s" aria-label="%2$s">%3$s</a>',
                         $this->getView()->url('config/removeresource', array('resource' => $resourceName)),
-                        sprintf($this->translate(
+                        $this->getView()->escape(sprintf($this->translate(
                             'Remove the %s resource'
-                        ), $resourceName),
+                        ), $resourceName)),
                         $this->translate('To modify the private key you must recreate this resource.')
                     )
                 )
