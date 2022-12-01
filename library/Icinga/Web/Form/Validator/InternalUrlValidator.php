@@ -3,6 +3,7 @@
 
 namespace Icinga\Web\Form\Validator;
 
+use Icinga\Application\Icinga;
 use Zend_Validate_Abstract;
 use Icinga\Web\Url;
 
@@ -16,7 +17,8 @@ class InternalUrlValidator extends Zend_Validate_Abstract
      */
     public function isValid($value)
     {
-        if (Url::fromPath($value)->getRelativeUrl() === '') {
+        $url = Url::fromPath($value);
+        if ($url->getRelativeUrl() === '' || $url->getScheme() !== Icinga::app()->getRequest()->getScheme()) {
             $this->_error('IS_EXTERNAL');
 
             return false;
