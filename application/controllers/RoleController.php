@@ -31,6 +31,7 @@ class RoleController extends AuthBackendController
 {
     public function init()
     {
+        $this->assertPermission('config/access-control/roles');
         $this->view->title = $this->translate('Roles');
 
         parent::init();
@@ -56,7 +57,6 @@ class RoleController extends AuthBackendController
      */
     public function listAction()
     {
-        $this->assertPermission('config/access-control/roles');
         $this->createListTabs()->activate('role/list');
         $this->view->roles = (new RolesConfig())
             ->select();
@@ -81,8 +81,6 @@ class RoleController extends AuthBackendController
      */
     public function addAction()
     {
-        $this->assertPermission('config/access-control/roles');
-
         $role = new RoleForm();
         $role->setRedirectUrl('__CLOSE__');
         $role->setRepository(new RolesConfig());
@@ -99,8 +97,6 @@ class RoleController extends AuthBackendController
      */
     public function editAction()
     {
-        $this->assertPermission('config/access-control/roles');
-
         $name = $this->params->getRequired('role');
         $role = new RoleForm();
         $role->setRedirectUrl('__CLOSE__');
@@ -122,8 +118,6 @@ class RoleController extends AuthBackendController
      */
     public function removeAction()
     {
-        $this->assertPermission('config/access-control/roles');
-
         $name = $this->params->getRequired('role');
         $role = new RoleForm();
         $role->setRedirectUrl('__CLOSE__');
@@ -142,7 +136,6 @@ class RoleController extends AuthBackendController
 
     public function auditAction()
     {
-        $this->assertPermission('config/access-control/roles');
         $this->createListTabs()->activate('role/audit');
         $this->view->title = t('Audit');
 
