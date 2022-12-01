@@ -10,6 +10,7 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Common\Database;
+use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\User;
 use Icinga\Web\Form;
 use Icinga\Web\RememberMe;
@@ -119,10 +120,17 @@ class LoginForm extends Form
         if ($this->created) {
             $redirect = $this->getElement('redirect')->getValue();
         }
+
         if (empty($redirect) || strpos($redirect, 'authentication/logout') !== false) {
             $redirect = static::REDIRECT_URL;
         }
-        return Url::fromPath($redirect);
+
+        $redirectUrl = Url::fromPath($redirect);
+        if ($redirectUrl->isExternal()) {
+            throw new HttpBadRequestException('nope');
+        }
+
+        return $redirectUrl;
     }
 
     /**

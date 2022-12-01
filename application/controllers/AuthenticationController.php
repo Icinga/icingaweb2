@@ -68,7 +68,18 @@ class AuthenticationController extends Controller
             // Call provided AuthenticationHook(s) when login action is called
             // but icinga web user is already authenticated
             AuthenticationHook::triggerLogin($this->Auth()->getUser());
-            $this->redirectNow($this->params->get('redirect', $form->getRedirectUrl()));
+
+            $redirect = $this->params->get('redirect');
+            if ($redirect) {
+                $redirectUrl = Url::fromPath($redirect, [], $this->getRequest());
+                if ($redirectUrl->isExternal()) {
+                    $this->httpBadRequest('nope');
+                }
+            } else {
+                $redirectUrl = $form->getRedirectUrl();
+            }
+
+            $this->redirectNow($redirectUrl);
         }
         if (! $requiresSetup) {
             $cookies = new CookieHelper($this->getRequest());
