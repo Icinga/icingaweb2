@@ -74,7 +74,7 @@ class ConfigMenu extends BaseHtmlElement
                     'navigation' => [
                         'label' => t('Shared Navigation'),
                         'permission'  => 'config/navigation',
-                        'url' => 'navigation'
+                        'url' => 'navigation/shared'
                     ],
                     'modules' => [
                         'label' => t('Modules'),
