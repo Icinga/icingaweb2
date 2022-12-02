@@ -18,6 +18,7 @@ use Icinga\User;
 use Icinga\Web\Controller\AuthBackendController;
 use Icinga\Web\View\PrivilegeAudit;
 use Icinga\Web\Widget\SingleValueSearchControl;
+use Icinga\Web\Widget\Tabextension\OutputFormat;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
 use ipl\Web\Url;
@@ -143,6 +144,7 @@ class RoleController extends AuthBackendController
 
     public function auditAction()
     {
+        $this->getTabs()->extend(new OutputFormat(["csv", "json"]));
         $this->assertPermission('config/access-control/roles');
         $this->createListTabs()->activate('role/audit');
         $this->view->title = t('Audit');
@@ -192,13 +194,13 @@ class RoleController extends AuthBackendController
         }
 
         if ($type === 'user') {
-            $header = Html::tag('h2', sprintf(t('Privilege Audit for User "%s"'), $name));
+            $title = sprintf(t('Privilege Audit for User "%s"'), $name);
 
             $user = new User($name);
             $user->setAdditional('backend_name', $backend);
             Auth::getInstance()->setupUser($user);
         } else {
-            $header = Html::tag('h2', sprintf(t('Privilege Audit for Group "%s"'), $name));
+            $title = sprintf(t('Privilege Audit for Group "%s"'), $name);
 
             $user = new User((string) time());
             $user->setGroups([$name]);
@@ -244,7 +246,8 @@ class RoleController extends AuthBackendController
             ]
         ));
 
-        $this->addControl($header);
+        $this->setTitle($title);
+        $this->addControl(Html::tag('h2', $title));
         $this->addContent(
             (new PrivilegeAudit($chosenRole !== null ? [$chosenRole] : $assignedRoles))
                 ->addAttributes(['id' => 'role-audit'])
