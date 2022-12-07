@@ -540,7 +540,7 @@ LESS
     {
         $this->assertEquals(
             <<<CSS
-@media (min-height: 999999px), (prefers-color-scheme: light) and (min-height: 999999px) {
+@media (min-height: 999999px), print, (prefers-color-scheme: light) and (min-height: 999999px) {
   :root {
     --my-color: orange;
   }
