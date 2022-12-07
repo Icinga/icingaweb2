@@ -1,10 +1,34 @@
 /*! Icinga Web 2 | (c) 2015 Icinga GmbH | GPLv2+ */
 
 @media print {
+  #sidebar,
+  #migrate-popup, // Icinga DB Web
   .controls,
+  .footer, // ipl
   .dontprint, // Compat only, use dont-print instead
   .dont-print {
     display: none !important;
+  }
+
+  #main > .container {
+    overflow: visible !important;
+
+    > .content {
+      overflow: visible !important;
+    }
+  }
+
+  :root {
+    --body-bg-color: #fff !important;
+    --text-color: #535353 !important;
+    --text-color-light: #7F7F7F !important;
+    --tr-active-color: #fff !important;
+    --tr-hover-color: #fff !important;
+
+    // ipl-web overrides
+    --default-bg: #fff !important;
+    --default-text-color: #535353 !important;
+    --default-text-color-inverted: #fff !important;
   }
 }
 

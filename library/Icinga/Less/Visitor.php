@@ -23,7 +23,7 @@ use ReflectionProperty;
 class Visitor extends Less_VisitorReplacing
 {
     const LIGHT_MODE_CSS = <<<'CSS'
-@media (min-height: @prefer-light-color-scheme),
+@media (min-height: @prefer-light-color-scheme), print,
 (prefers-color-scheme: light) and (min-height: @enable-color-preference) {
     %s
 }
