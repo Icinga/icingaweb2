@@ -3,7 +3,6 @@
 
 namespace Icinga\File;
 
-use Dompdf\Autoloader;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Icinga\Application\Icinga;
@@ -24,12 +23,7 @@ call_user_func(function () {
 
     $baseDir = Icinga::app()->getBaseDir('library/vendor/dompdf');
 
-    require_once "$baseDir/lib/html5lib/Parser.php";
-    require_once "$baseDir/lib/php-font-lib/src/FontLib/Autoloader.php";
-    require_once "$baseDir/lib/php-svg-lib/src/autoload.php";
-    require_once "$baseDir/src/Autoloader.php";
-
-    Autoloader::register();
+    require_once "$baseDir/vendor/autoload.php";
 });
 
 class Pdf
