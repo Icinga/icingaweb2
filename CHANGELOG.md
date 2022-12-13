@@ -4,6 +4,16 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.9.8
+
+**Notice**: This is a security release. It is recommended to upgrade immediately.
+
+Please see [the release notes for v2.11.3](https://github.com/Icinga/icingaweb2/releases/tag/v2.11.3) for details.
+
+### What's New in Version 2.9.7
+
+This release only ensures compatibility with [icinga-php-library v0.9.0](https://github.com/Icinga/icinga-php-library/releases/tag/v0.9.0) and Icinga DB Web v1.0.0.
+
 ### What's New in Version 2.9.6
 
 **Notice**: This is a security release. It is recommended to upgrade immediately.
