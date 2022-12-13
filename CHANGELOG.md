@@ -4,6 +4,17 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.10.4
+
+**Notice**: This is a security release. It is recommended to upgrade immediately.
+
+Please see [the release notes for v2.11.3](https://github.com/Icinga/icingaweb2/releases/tag/v2.11.3) for details.
+
+### What's New in Version 2.10.3
+
+This release mainly ensures compatibility with [icinga-php-library v0.9.0](https://github.com/Icinga/icinga-php-library/releases/tag/v0.9.0)
+and Icinga DB Web 1.0.0. Two fixes regarding the theme mode support are also included (#4744 and #4835)
+
 ### What's New in Version 2.10.1
 
 It's a rather small update this time without any critical bugs. :tada: So let's get straight to the fixes:
