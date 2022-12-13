@@ -3,25 +3,27 @@
 // Print styles
 
 @media print {
-  #fileupload-frame-target,
-  #header,
-  #responsive-debug,
   #sidebar,
-  .controls > .tabs,
-  .controls .filter,
-  .controls .limiter-control,
-  .controls .pagination-control,
-  .controls .selection-info,
-  .controls .sort-control,
+  #migrate-popup, // Icinga DB Web
+  .controls,
+  .footer, // ipl
   .dontprint, // Compat only, use dont-print instead
   .dont-print {
-    display: none;
+    display: none !important;
   }
 
   #layout,
   #main,
   .controls {
     position: static;
+  }
+
+  #main > .container {
+    overflow: visible !important;
+
+    > .content {
+      overflow: visible !important;
+    }
   }
 
   .container {
