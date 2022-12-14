@@ -23,6 +23,16 @@ form.icinga-form {
     // Negative margin-right because every child gets 1em right but we can't exclude
     // the last element as it's impossible to identify the last *visible* element
     margin: 1em -1em 1em 0;
+
+    > fieldset {
+      > .control-group:first-of-type {
+        margin-top: 0;
+      }
+
+      > .control-group:last-of-type {
+        margin-bottom: 0;
+      }
+    }
   }
 
   .control-group > :not(.control-label-group) {
@@ -174,6 +184,7 @@ form.icinga-form {
   input[type="date"],
   input[type="time"],
   input[type="file"],
+  .control-group > fieldset,
   textarea,
   select {
     flex: 1 1 auto;
