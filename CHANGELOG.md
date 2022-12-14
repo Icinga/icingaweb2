@@ -4,6 +4,53 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.11.3
+
+**Notice**: This is a security release. It is recommended to upgrade immediately.
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/77?closed=1).
+
+#### Minor to Medium Vulnerabilities
+
+In late November we received multiple security vulnerability reports. They are listed below in order of severity
+where you can also find further notes:
+
+* Open Redirects for logged in users [#4945](https://github.com/Icinga/icingaweb2/issues/4945)
+  This one is quite old, though got worse and easier to exploit since v2.9. It is for this reason that
+  this fix has been backported all the way down to v2.9.8. It can be used to exploit incautious users,
+  no matter their browser and its security settings. They need to click a specifically crafted link
+  (in the easiest form) and log in to Icinga Web by filling in their access credentials. If they're
+  already logged in, (due to an existing session or SSO) the browser prevents the exploit from happening.
+  We encourage you to update to the latest release as soon as possible to mitigate any potential harm.
+
+* SSH Resource Configuration form XSS Bug [#4947](https://github.com/Icinga/icingaweb2/issues/4947)
+  Dashlets allow the user to run Javascript code [#4959](https://github.com/Icinga/icingaweb2/issues/4959)
+  These two are very similar. Both revolve around Javascript getting injected by logged in users
+  interacting with forms. The SSH resource configuration requires configuration access though and, since
+  custom dashlets are only shown to the user who created them, the dashlet configuration cannot affect
+  other users. Note that both interactions cannot be initiated externally by CSRF, the forms are protected
+  against this. Because of this we assess the severity of these two very low.
+
+* Role member suggestion endpoint is reachable for unauthorized users [#4961](https://github.com/Icinga/icingaweb2/issues/4961)
+  This is more a case of missing authorization checks than a full fledged security flaw. But nevertheless,
+  it allows any logged-in user, by use of a manually crafted request, to retrieve the names of all available
+  users and usergroups.
+
+#### The More Usual Dose of Fixes
+
+* Browser print dialog result broken [#4957](https://github.com/Icinga/icingaweb2/issues/4957)
+  If you tried to export a view using the browser's builtin print dialog, (e.g. Ctrl+P) you may have
+  noticed a degradation of fanciness since the update to v2.10. This looks nicer than ever now.
+
+* Shared navigation items are not accessible [#4953](https://github.com/Icinga/icingaweb2/issues/4953)
+  Since v2.11.0 the shared navigation overview hasn't been accessible using the configuration menu.
+  It is now accessible again.
+
+* While using dropdown filter menu it gets closed automatically due to autorefresh [#4942](https://github.com/Icinga/icingaweb2/issues/4942)
+  Are you annoyed by the filter editor repeatedly closing the column selection while you're looking for
+  something? We have you covered with a fix for this and the column selection should stay open as long
+  as you don't click anywhere else.
+
 ### What's New in Version 2.11.2
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/76?closed=1).
