@@ -13,8 +13,9 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 **Database Schema**
 
 * Please apply the `v2.11.0.sql` upgrade script depending on your database vendor.
-  In package installations this file can be found in `/usr/share/doc/icingaweb2/schema/*-upgrades/`
-  (Debian/Ubuntu: `/usr/share/icingaweb2/etc/schema/*-upgrades/`).
+  As of version `2.11.4`, upgrade scripts can be found at `/usr/share/icingaweb2/schema/*-upgrades/`.
+  Older versions install these files to `/usr/share/doc/icingaweb2/schema/*-upgrades/` for RPM-based systems 
+  and `/usr/share/icingaweb2/etc/schema/*-upgrades/` for Debian or Ubuntu.
 
 **Breaking changes**
 
