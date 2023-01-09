@@ -18,7 +18,7 @@ class InternalUrlValidator extends Zend_Validate_Abstract
     public function isValid($value)
     {
         $url = Url::fromPath($value);
-        if ($url->getRelativeUrl() === '' || $url->getScheme() !== Icinga::app()->getRequest()->getScheme()) {
+        if ($url->getRelativeUrl() === '' || $url->isExternal()) {
             $this->_error('IS_EXTERNAL');
 
             return false;
