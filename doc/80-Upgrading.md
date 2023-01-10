@@ -35,8 +35,9 @@ currently supported distributions.
 **Database Schema**
 
 * Please apply the `v2.9.1.sql` upgrade script depending on your database vendor.
-  In package installations this file can be found in `/usr/share/doc/icingaweb2/schema/*-upgrades/`
-  (Debian/Ubuntu: `/usr/share/icingaweb2/etc/schema/*-upgrades/`).
+  As of version `2.9.9`, upgrade scripts can be found at `/usr/share/icingaweb2/schema/*-upgrades/`.
+  Older versions install these files to `/usr/share/doc/icingaweb2/schema/*-upgrades/` for RPM-based systems
+  and `/usr/share/icingaweb2/etc/schema/*-upgrades/` for Debian or Ubuntu.
 
 ## Upgrading to Icinga Web 2 2.9.x
 
@@ -61,8 +62,9 @@ currently supported distributions.
 
 * Icinga Web 2 now permits its users to stay logged in. This requires a new database table.
   * Please apply the `v2.9.0.sql` upgrade script depending on your database vendor.
-    In package installations this file can be found in `/usr/share/doc/icingaweb2/schema/*-upgrades/`
-    (Debian/Ubuntu: `/usr/share/icingaweb2/etc/schema/*-upgrades/`).
+    As of version `2.9.9`, upgrade scripts can be found at `/usr/share/icingaweb2/schema/*-upgrades/`.
+    Older versions install these files to `/usr/share/doc/icingaweb2/schema/*-upgrades/` for RPM-based systems
+    and `/usr/share/icingaweb2/etc/schema/*-upgrades/` for Debian or Ubuntu.
 
 **Breaking changes**
 

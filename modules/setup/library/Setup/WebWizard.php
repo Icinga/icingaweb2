@@ -445,7 +445,7 @@ class WebWizard extends Wizard implements SetupWizard
                         ? $pageData['setup_auth_db_creation']['password']
                         : null,
                     'schemaPath'        => Config::module('setup')
-                        ->get('schema', 'path', Icinga::app()->getBaseDir('etc' . DIRECTORY_SEPARATOR . 'schema'))
+                        ->get('schema', 'path', Icinga::app()->getBaseDir('schema'))
                 ))
             );
         } elseif (isset($pageData['setup_config_db_resource'])
@@ -466,7 +466,7 @@ class WebWizard extends Wizard implements SetupWizard
                         ? $pageData['setup_config_db_creation']['password']
                         : null,
                     'schemaPath'        => Config::module('setup')
-                        ->get('schema', 'path', Icinga::app()->getBaseDir('etc' . DIRECTORY_SEPARATOR . 'schema'))
+                        ->get('schema', 'path', Icinga::app()->getBaseDir('schema'))
                 ))
             );
         }
