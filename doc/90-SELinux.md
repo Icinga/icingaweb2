@@ -13,65 +13,13 @@ For a simplified (and funny) introduction download the [SELinux Coloring Book](h
 
 ## Policy <a id="selinux-policy"></a>
 
-Icinga Web 2 is providing its own SELinux policy for Red Hat Enterprise Linux 7 and its derivates running the targeted
-policy which confines Icinga Web 2 with support for all its modules. All other distributions will require some tweaks.
-It is not upstreamed to the reference policies yet.
+Icinga Web 2 is providing its own SELinux policy for RPM-based systems running the targeted policy
+which confines Icinga Web 2 with support for all its modules.
 
 The policy for Icinga Web 2 will also require the policy for Icinga 2 which provides access to its interfaces.
 It covers only the scenario running Icinga Web 2 in Apache HTTP Server with mod_php.
 
-## Installation <a id="selinux-policy-installation"></a>
-
-There are two ways to install the SELinux Policy for Icinga Web 2 on Enterprise Linux 7.
-Either install it from the provided package which is the preferred option or intall the policy manually, if you need
-fixes which are not yet released.
-
-Verify that the system runs in enforcing mode.
-
-    sestatus
-    # SELinux status:                 enabled
-    # SELinuxfs mount:                /sys/fs/selinux
-    # SELinux root directory:         /etc/selinux
-    # Loaded policy name:             targeted
-    # Current mode:                   enforcing
-    # Mode from config file:          enforcing
-    # Policy MLS status:              enabled
-    # Policy deny_unknown status:     allowed
-    # Max kernel policy version:      28
-
-If problems occur, you can set icinga2 or httpd to run to run its domain in permissive mode.
-You can change the configured mode by editing `/etc/selinux/config` and the current mode by executing `setenforce 0`.
-
-### Package installation <a id="selinux-policy-installation-package"></a>
-
-Simply add the `selinux` subpackage to your installation.
-
-    yum install icingaweb2-selinux
-
-### Manual installation <a id="selinux-policy-installation-manual"></a>
-
-This section describes the manual installation to support development and testing.
-
-As a prerequisite install the `git`, `selinux-policy-devel` and `audit` package. Enable and start the audit daemon
-afterwards.
-
-    yum install git selinux-policy-devel audit
-    systemctl enable auditd.service
-    systemctl start auditd.service
-
-To create and install the policy package run the installation script from the Icinga Web 2 source which also labels the
-resources.
-
-    cd packages/selinux/
-    ./icingaweb2.sh
-
-Verify that Apache runs in its own domain `httpd_t` and the Icinga Web 2 configuration has its own context
-`icingaweb2_config_t`.
-
-    ps -eZ | grep http
-    # system_u:system_r:httpd_t:s0     9785 ?        00:00:00 httpd
-    ls -ldZ /etc/icingaweb2/
-    # drwxrws---. root icingaweb2 system_u:object_r:icingaweb2_config_t:s0 /etc/icingaweb2/
+Use your distribution's package manager to install the `icingaweb2-selinux` package.
 
 ## General <a id="selinux-policy-general"></a>
 
