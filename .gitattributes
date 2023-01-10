@@ -1,5 +1,10 @@
-# Exclude files related to git when generating an archive
+test/ export-ignore
 .git* export-ignore
+CONTRIBUTING.md export-ignore
+icingaweb2-ruleset.xml export-ignore
+phpcs.xml export-ignore
+RELEASE.md export-ignore
+
 # Exclude Vagrant and Puppet related files when generating an archive
 .puppet* export-ignore
 Vagrantfile export-ignore
