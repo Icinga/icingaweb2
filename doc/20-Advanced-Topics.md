@@ -183,7 +183,7 @@ CREATE DATABASE icingaweb2;
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE VIEW, INDEX, EXECUTE ON icingaweb2.* TO 'icingaweb2'@'localhost' IDENTIFIED BY 'icingaweb2';
 quit
 
-mysql -p icingaweb2 < /usr/share/doc/icingaweb2/schema/mysql.schema.sql
+mysql -p icingaweb2 < /usr/share/icingaweb2/schema/mysql.schema.sql
 ```
 
 
@@ -318,7 +318,7 @@ and all the other steps described above first.
 1. Install PHP dependencies: `php`, `php-intl`, `php-imagick`, `php-gd`, `php-mysql`, `php-curl`, `php-mbstring` used
 by Icinga Web 2.
 2. Create a database for Icinga Web 2, i.e. `icingaweb2`.
-3. Import the database schema: `mysql -D icingaweb2 < /usr/share/icingaweb2/etc/schema/mysql.schema.sql`.
+3. Import the database schema: `mysql -D icingaweb2 < /usr/share/icingaweb2/schema/mysql.schema.sql`.
 4. Insert administrator user in the `icingaweb2` database:
 `INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('admin', 1, '<hash>')`, where `<hash>` is the output
 of `php -r 'echo password_hash("yourtopsecretpassword", PASSWORD_DEFAULT);'`.
