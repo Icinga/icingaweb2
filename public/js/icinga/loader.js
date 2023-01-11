@@ -130,7 +130,7 @@
             // Disable all form controls to prevent resubmission except for our search input
             // Note that disabled form inputs will not be enabled via JavaScript again
             if (! $form.is('[role="search"]') && $target.attr('id') === $form.closest('.container').attr('id')) {
-                $form.find('input:not(:disabled)').prop('disabled', true);
+                $form.find('input[type=submit],button[type=submit],button:not([type])').prop('disabled', true);
             }
 
             // Show a spinner depending on how the form is being submitted
