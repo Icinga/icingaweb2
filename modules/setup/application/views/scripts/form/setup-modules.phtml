@@ -4,11 +4,11 @@ use Icinga\Web\Wizard;
 
 ?>
 <form
- id="<?= $form->getName(); ?>"
- name="<?= $form->getName(); ?>"
- enctype="<?= $form->getEncType(); ?>"
- method="<?= $form->getMethod(); ?>"
- action="<?= $form->getAction(); ?>"
+ id="<?= $this->escape($form->getName()); ?>"
+ name="<?= $this->escape($form->getName()); ?>"
+ enctype="<?= $this->escape($form->getEncType()); ?>"
+ method="<?= $this->escape($form->getMethod()); ?>"
+ action="<?= $this->escape($form->getAction()); ?>"
  class="icinga-controls"
  data-progress-element="<?= Wizard::PROGRESS_ELEMENT; ?>"
 >
