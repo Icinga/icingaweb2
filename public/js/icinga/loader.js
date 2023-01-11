@@ -184,7 +184,12 @@
                 }
             }
 
-            var req = this.loadUrl(url, $target, data, method);
+            var extraHeaders = {};
+            if ($autoSubmittedBy && ($autoSubmittedBy.attr('name') || $autoSubmittedBy.attr('id'))) {
+                extraHeaders['X-Icinga-AutoSubmittedBy'] = $autoSubmittedBy.attr('name') || $autoSubmittedBy.attr('id');
+            }
+
+            var req = this.loadUrl(url, $target, data, method, undefined, undefined, undefined, extraHeaders);
             req.forceFocus = $autoSubmittedBy ? $autoSubmittedBy : $button.length ? $button : null;
             req.autosubmit = !! $autoSubmittedBy;
             req.addToHistory = method === 'GET';
@@ -211,8 +216,9 @@
          * @param {string}  action          How to handle the response ('replace' or 'append'), default is 'replace'
          * @param {boolean} autorefresh     Whether the cause is a autorefresh or not
          * @param {object}  progressTimer   A timer to be stopped when the request is done
+         * @param {object}  extraHeaders    Extra header entries
          */
-        loadUrl: function (url, $target, data, method, action, autorefresh, progressTimer) {
+        loadUrl: function (url, $target, data, method, action, autorefresh, progressTimer, extraHeaders) {
             var id = null;
 
             // Default method is GET
@@ -278,6 +284,10 @@
                 headers['X-Icinga-WindowId'] = windowId;
             } else {
                 headers['X-Icinga-WindowId'] = 'undefined';
+            }
+
+            if (typeof extraHeaders !== 'undefined') {
+                headers = $.extend(headers, extraHeaders);
             }
 
             // This is jQuery's default content type
