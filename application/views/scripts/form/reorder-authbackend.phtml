@@ -1,4 +1,14 @@
-<form id="<?= $form->getId() ?>" name="<?= $form->getName() ?>" enctype="<?= $form->getEncType() ?>" method="<?= $form->getMethod() ?>" action="<?= $form->getAction() ?>">
+<form id="<?=
+$this->escape($form->getId())
+?>" name="<?=
+$this->escape($form->getName())
+?>" enctype="<?=
+$this->escape($form->getEncType())
+?>" method="<?=
+$this->escape($form->getMethod())
+?>" action="<?=
+$this->escape($form->getAction())
+?>">
   <table class="table-row-selectable common-table" data-base-target="_next">
     <thead>
       <th><?= $this->translate('Backend') ?></th>
