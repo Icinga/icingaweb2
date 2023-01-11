@@ -80,7 +80,7 @@ class Libraries implements IteratorAggregate
             $libraryName = $library->getName();
             if ($libraryName === $name) {
                 return $library;
-            } elseif (explode('/', $libraryName)[1] === $name) {
+            } elseif (strpos($libraryName, '/') !== false && explode('/', $libraryName)[1] === $name) {
                 // Also return libs which only partially match
                 $candidate = $library;
             }
