@@ -3,15 +3,15 @@
 /** @var \Icinga\Module\Monitoring\Forms\Config\TransportReorderForm $form */
 ?>
 <form id="<?=
-    $form->getId()
+$this->escape($form->getId())
 ?>" name="<?=
-    $form->getName()
+$this->escape($form->getName())
 ?>" enctype="<?=
-    $form->getEncType()
+$this->escape($form->getEncType())
 ?>" method="<?=
-    $form->getMethod()
+$this->escape($form->getMethod())
 ?>" action="<?=
-    $form->getAction()
+$this->escape($form->getAction())
 ?>">
     <table class="table-row-selectable common-table" data-base-target="_next">
         <thead>
