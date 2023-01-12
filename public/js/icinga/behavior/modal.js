@@ -114,8 +114,10 @@
             }
         });
 
-        // otherwise the form is submitted several times by clicking the "Submit" button several times
-        $form.find('input:not(:disabled)').prop('disabled', true);
+        if (typeof $autoSubmittedBy === 'undefined') {
+            // otherwise the form is submitted several times by clicking the "Submit" button several times
+            $form.find('input[type=submit],button[type=submit],button:not([type])').prop('disabled', true);
+        }
 
         event.stopPropagation();
         event.preventDefault();
