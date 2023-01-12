@@ -4,6 +4,16 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.9.9
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/78?closed=1).
+
+#### Notable Fixes
+
+* Add/Edit dashlet not possible [#4970](https://github.com/Icinga/icingaweb2/issues/4970)
+* Custom library path + custom library, without slash in its name, results in exception [#4971](https://github.com/Icinga/icingaweb2/issues/4971)
+* Reflected XSS vulnerability in User Backends config page [#4979](https://github.com/Icinga/icingaweb2/issues/4979)
+
 ### What's New in Version 2.9.8
 
 **Notice**: This is a security release. It is recommended to upgrade immediately.
