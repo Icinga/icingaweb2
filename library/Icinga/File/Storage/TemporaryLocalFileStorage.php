@@ -28,6 +28,12 @@ class TemporaryLocalFileStorage extends LocalFileStorage
      */
     public function __destruct()
     {
+        // Some classes may have cleaned up the tmp file, so we need to check this
+        // beforehand to prevent an unexpected crash.
+        if (! @realpath($this->baseDir)) {
+            return;
+        }
+
         $directoryIterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
                 $this->baseDir,
