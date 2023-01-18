@@ -133,7 +133,14 @@ namespace Icinga\Test {
             self::$etcDir = $baseDir . '/etc';
             self::$testDir = $baseDir . '/test/php';
             self::$shareDir = $baseDir . '/share/icinga2-web';
-            self::$moduleDir = getenv('ICINGAWEB_MODULES_DIR') ?: $baseDir . '/modules';
+
+            $modulesDir = getenv('ICINGAWEB_MODULES_DIR');
+            if ($modulesDir && strpos($modulesDir, ':') !== false) {
+                // Only use the env variable if it contains a single path
+                $modulesDir = false;
+            }
+
+            self::$moduleDir = $modulesDir ?: $baseDir . '/modules';
         }
 
         /**

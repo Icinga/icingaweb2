@@ -71,15 +71,14 @@ if ($modulePaths) {
 }
 
 if (! $modulePaths) {
-    $modulePaths = array_flip(scandir($modulePath));
-    unset($modulePaths['.']);
-    unset($modulePaths['..']);
-    $modulePaths = array_keys($modulePaths);
-
-    foreach ($modulePaths as &$path) {
-        $path = "$modulePath/$path";
+    $modulePaths = [];
+    foreach (preg_split('/:/', $modulePath, -1, PREG_SPLIT_NO_EMPTY) as $path) {
+        $candidates = array_flip(scandir($path));
+        unset($candidates['.'], $candidates['..']);
+        foreach ($candidates as $candidate => $_) {
+            $modulePaths[] = "$path/$candidate";
+        }
     }
-    unset($path);
 }
 
 foreach ($modulePaths as $path) {
@@ -92,9 +91,9 @@ foreach ($modulePaths as $path) {
         $loader->registerNamespace($moduleNamespace, $moduleLibraryPath);
     }
 
-    $moduleTestPath = "$path/test/php";
+    $moduleTestPath = "$path/test/php/Lib";
     if (is_dir($moduleTestPath)) {
-        $loader->registerNamespace('Tests\\' . $moduleNamespace, $moduleTestPath);
+        $loader->registerNamespace('Tests\\' . $moduleNamespace . '\\Lib', $moduleTestPath);
     }
 
     $moduleFormPath = "$path/application/forms";
@@ -111,13 +110,6 @@ set_include_path(
         array($libraryPath . '/vendor', get_include_path())
     )
 );
-
-if (! class_exists('Mockery')) {
-    require_once 'Mockery/Loader.php';
-
-    $mockeryLoader = new \Mockery\Loader;
-    $mockeryLoader->register();
-}
 
 require_once 'Zend/Loader/Autoloader.php';
 \Zend_Loader_Autoloader::getInstance();
