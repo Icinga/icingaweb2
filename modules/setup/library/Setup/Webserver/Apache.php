@@ -16,7 +16,7 @@ class Apache extends Webserver
     {
         if (! $this->enableFpm) {
             return  <<<'EOD'
-Alias {urlPath} "{documentRoot}"
+Alias {urlPath} "{aliasDocumentRoot}"
 
 # Remove comments if you want to use PHP FPM and your Apache version is older than 2.4
 #<IfVersion < 2.4>
@@ -79,7 +79,7 @@ Alias {urlPath} "{documentRoot}"
 EOD;
         } else {
             return <<<'EOD'
-Alias {urlPath} "{documentRoot}"
+Alias {urlPath} "{aliasDocumentRoot}"
 
 <IfVersion < 2.4>
     # Forward PHP requests to FPM
