@@ -92,9 +92,9 @@ foreach ($modulePaths as $path) {
         $loader->registerNamespace($moduleNamespace, $moduleLibraryPath);
     }
 
-    $moduleTestPath = "$path/test/php";
+    $moduleTestPath = "$path/test/php/Lib";
     if (is_dir($moduleTestPath)) {
-        $loader->registerNamespace('Tests\\' . $moduleNamespace, $moduleTestPath);
+        $loader->registerNamespace('Tests\\' . $moduleNamespace . '\\Lib', $moduleTestPath);
     }
 
     $moduleFormPath = "$path/application/forms";
