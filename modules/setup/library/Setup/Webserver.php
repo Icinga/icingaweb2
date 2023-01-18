@@ -76,12 +76,14 @@ abstract class Webserver
         $searchTokens = array(
             '{urlPath}',
             '{documentRoot}',
+            '{aliasDocumentRoot}',
             '{configDir}',
             '{fpmUri}'
         );
         $replaceTokens = array(
             $this->getUrlPath(),
             $this->getDocumentRoot(),
+            preg_match('~/$~', $this->getUrlPath()) ? $this->getDocumentRoot() . '/' : $this->getDocumentRoot(),
             $this->getConfigDir(),
             $this->getFpmUri()
         );
