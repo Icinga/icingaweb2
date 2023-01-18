@@ -112,13 +112,6 @@ set_include_path(
     )
 );
 
-if (! class_exists('Mockery')) {
-    require_once 'Mockery/Loader.php';
-
-    $mockeryLoader = new \Mockery\Loader;
-    $mockeryLoader->register();
-}
-
 require_once 'Zend/Loader/Autoloader.php';
 \Zend_Loader_Autoloader::getInstance();
 
