@@ -30,6 +30,8 @@ class LoggingConfigForm extends Form
      */
     public function createElements(array $formData)
     {
+        $defaultType = getenv('ICINGAWEB_OFFICIAL_DOCKER_IMAGE') ? 'php' : 'syslog';
+
         $this->addElement(
             'select',
             'logging_log',
@@ -38,6 +40,7 @@ class LoggingConfigForm extends Form
                 'autosubmit'    => true,
                 'label'         => $this->translate('Logging Type'),
                 'description'   => $this->translate('The type of logging to utilize.'),
+                'value'         => $defaultType,
                 'multiOptions'  => array(
                     'syslog'    => 'Syslog',
                     'php'       => $this->translate('Webserver Log', 'app.config.logging.type'),
@@ -94,7 +97,7 @@ class LoggingConfigForm extends Form
                 )
             );
 
-            if (! isset($formData['logging_log']) || $formData['logging_log'] === 'syslog') {
+            if ((isset($formData['logging_log']) ? $formData['logging_log'] : $defaultType) === 'syslog') {
                 if (Platform::isWindows()) {
                     /* @see https://secure.php.net/manual/en/function.openlog.php */
                     $this->addElement(
