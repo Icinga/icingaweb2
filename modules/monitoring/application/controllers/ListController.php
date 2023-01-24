@@ -712,12 +712,82 @@ class ListController extends Controller
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
         $this->view->verticalPaginator = $pivot->paginateYAxis();
         list($pivotData, $pivotHeader) = $pivot->toArray();
+
+        if (true) {
+            $keySort = ($this->params->get('flipped', false) ? 'cols' : 'rows');
+
+            uksort($pivotData, [ $this, "compareByDnsHierarchy" ]);
+            uksort($pivotHeader[$keySort], [ $this, "compareByDnsHierarchy" ]);
+
+            $pivotHeader[$keySort] = $this->addGroupHeader($pivotHeader[$keySort]);
+
+        }
+
         $this->view->pivotData = $pivotData;
         $this->view->pivotHeader = $pivotHeader;
         if ($this->params->get('flipped', false)) {
             $this->render('servicegrid-flipped');
         }
     }
+
+    /**
+     * Add group headers to the header array
+     * The group name will be the FQDN without the the part before the first dot.
+     */
+
+    private function addGroupHeader($header) {
+        $newHeader = [];
+        $previousGroup = null;
+        foreach ($header as $key => $val) {
+            $hostnameElements = explode('.', $key);
+            if (count($hostnameElements) > 2) {
+                array_shift($hostnameElements);
+                $group = join('.', $hostnameElements);
+                if (is_null($previousGroup) || $previousGroup != $group) {
+                    $newHeader['GROUP:' . $group] = $group;
+                    $previousGroup = $group;
+                }
+            }
+            $newHeader[$key] = $val;
+        }
+        return $newHeader;
+    }
+
+    /**
+     * Split a FQDN by dots and compare each part beginning from top level
+     */
+
+    private function compareByDnsHierarchy($a, $b) {
+        $keysA = explode('.', $a);
+        $keysA = array_reverse($keysA);
+
+        $keysB = explode('.', $b);
+        $keysB = array_reverse($keysB);
+
+        $cnt = min([$cntA = count($keysA), $cntB = count($keysB)]);
+
+        $firstDiff = -1;
+        $cmp = [ -1 => 0 ];
+
+        for ($i = 0; $i <= $cnt; $i++) {
+            $ka = isset($keysA[$i]) ? $keysA[$i] : "";
+            $kb = isset($keysB[$i]) ? $keysB[$i] : "";
+
+            if ($cmp[$i] = $ka <=> $kb) {
+                if ($firstDiff === -1) {
+                    $firstDiff = $i;
+                }
+            }
+        }
+
+        if (count($keysA) != count($keysB)) {
+            return count($keysA) <=> count($keysB);
+        }
+        else {
+            return ($cmp[$firstDiff]);
+        }
+    }
+
 
     /**
      * Apply filters on a DataView

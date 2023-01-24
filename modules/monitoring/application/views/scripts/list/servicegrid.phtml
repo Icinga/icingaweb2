@@ -55,6 +55,9 @@ foreach ($pivotData as $hostName => $_) {
 
     <?php $i = 0 ?>
     <?php foreach ($pivotHeader['rows'] as $hostName => $hostDisplayName): ?>
+        <?php if (strpos($hostName, "GROUP:") === 0): ?>
+            <tr class='groupheader'><th class='groupheader'><?= $hostDisplayName; ?></th><td colspan="<?= count($pivotHeader['cols']); ?>"></td></tr>
+        <?php continue; endif; ?>
         <tr>
             <th><?php
                 $serviceFilter = Filter::matchAny();
