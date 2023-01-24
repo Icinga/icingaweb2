@@ -756,7 +756,12 @@ class ListController extends Controller
         foreach ($header as $key => $val) {
             $hostnameElements = explode('.', $key);
             if (count($hostnameElements) > 2) {
-                array_shift($hostnameElements);
+                if (filter_var($key, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                    array_pop($hostnameElements);
+                }
+                else {
+                    array_shift($hostnameElements);
+                }
                 $group = join('.', $hostnameElements);
                 if (is_null($previousGroup) || $previousGroup != $group) {
                     $newHeader['GROUP:' . $group] = $group;
@@ -774,10 +779,14 @@ class ListController extends Controller
 
     private function compareByDnsHierarchy($a, $b) {
         $keysA = explode('.', $a);
-        $keysA = array_reverse($keysA);
+        if (!filter_var($a, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $keysA = array_reverse($keysA);
+        }
 
         $keysB = explode('.', $b);
-        $keysB = array_reverse($keysB);
+        if (!filter_var($b, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $keysB = array_reverse($keysB);
+        }
 
         $cnt = min([$cntA = count($keysA), $cntB = count($keysB)]);
 
