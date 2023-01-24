@@ -684,6 +684,20 @@ class ListController extends Controller
             'decorators'    => ['ViewHelper', ['Label', ['placement' => 'APPEND']]]
         ]);
 
+
+        $sortByDns = (bool) $this->params->get('sortbydnshierarchy', false) ? true : null;
+        $this->view->sortByDnsToggle = $sortByDnsToggle = new Form(['method' => 'GET']);
+        $sortByDnsToggle->setUidDisabled();
+        $sortByDnsToggle->setTokenDisabled();
+        $sortByDnsToggle->setAttrib('class', 'filter-toggle inline icinga-controls');
+        $sortByDnsToggle->addElement('checkbox', 'sortbydnshierarchy', [
+            'disableHidden' => true,
+            'autosubmit'    => true,
+            'value'         => $sortByDns !== null,
+            'label'         => $this->translate('Sort by DNS hierarchy'),
+            'decorators'    => ['ViewHelper', ['Label', ['placement' => 'APPEND']]]
+        ]);
+
         if ($this->params->get('flipped', false)) {
             $pivot = $query
                 ->pivot(
@@ -713,7 +727,8 @@ class ListController extends Controller
         $this->view->verticalPaginator = $pivot->paginateYAxis();
         list($pivotData, $pivotHeader) = $pivot->toArray();
 
-        if (true) {
+        $sortByDns = (bool) $this->params->get('sortbydnshierarchy', false) ? !true : null;
+        if ($sortByDns !== null) {
             $keySort = ($this->params->get('flipped', false) ? 'cols' : 'rows');
 
             uksort($pivotData, [ $this, "compareByDnsHierarchy" ]);
@@ -803,7 +818,8 @@ class ListController extends Controller
             'stateType', // hostsAction() and servicesAction()
             'addColumns', // addColumns()
             'problems', // servicegridAction()
-            'flipped' // servicegridAction()
+            'flipped', // servicegridAction()
+            'sortbydnshierarchy' // servicegridAction()
         ));
 
         if ($this->params->get('format') !== 'sql' || $this->hasPermission('config/authentication/roles/show')) {
