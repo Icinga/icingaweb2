@@ -1,5 +1,5 @@
 Module: monitoring
-Version: 2.9.8
+Version: 2.9.9
 Description: Icinga monitoring module
  IDO accessor and UI for your monitoring. This is the initial instalment for a
  graphical presentation of Icinga environments. The predecessor of Icinga DB.
