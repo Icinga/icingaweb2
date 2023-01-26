@@ -11,6 +11,8 @@ $setupTokenPath = rtrim($configDir, '/') . '/setup.token';
 $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
 
 $groupadd = null;
+$docker = getenv('ICINGAWEB_OFFICIAL_DOCKER_IMAGE');
+
 if (! (false === ($distro = Platform::getLinuxDistro(1)) || $distro === 'linux')) {
     foreach (array(
         'groupadd -r icingaweb2' => array(
@@ -79,6 +81,7 @@ if (! (false === ($distro = Platform::getLinuxDistro(1)) || $distro === 'linux')
           'To run this wizard a user needs to authenticate using a token which is usually'
           . ' provided to him by an administrator who\'d followed the instructions below.'
       ); ?></p>
+      <?php if (! $docker): ?>
       <p><?= $this->translate('In any case, make sure that all of the following applies to your environment:'); ?></p>
       <ul>
         <li><?= $this->translate('A system group called "icingaweb2" exists'); ?></li>
@@ -95,14 +98,19 @@ if (! (false === ($distro = Platform::getLinuxDistro(1)) || $distro === 'linux')
       </div>
       <?php } ?>
       <p><?= $this->translate('If you\'ve got the IcingaCLI installed you can do the following:'); ?></p>
+      <?php endif; ?>
       <div class="code">
+        <?php if (! $docker): ?>
         <span><?= $cliPath ? $cliPath : 'icingacli'; ?> setup config directory --group icingaweb2<?= $configDir !== '/etc/icingaweb2' ? ' --config ' . $configDir : ''; ?>;</span>
+        <?php endif; ?>
         <span><?= $cliPath ? $cliPath : 'icingacli'; ?> setup token create;</span>
       </div>
+      <?php if (! $docker): ?>
       <p><?= $this->translate('In case the IcingaCLI is missing you can create the token manually:'); ?></p>
       <div class="code">
         <span>su <?= $phpUser ?: $this->translate('<your-webserver-user>'); ?> -s /bin/sh -c "mkdir -m 2770 <?= dirname($setupTokenPath); ?>; chgrp icingaweb2 <?= dirname($setupTokenPath); ?>; head -c 12 /dev/urandom | base64 | tee <?= $setupTokenPath; ?>; chmod 0660 <?= $setupTokenPath; ?>;";</span>
       </div>
+      <?php endif; ?>
       <p><?= sprintf(
         $this->translate('Please see the %s for an extensive description on how to access and use this wizard.'),
         '<a href="http://docs.icinga.com/">' . $this->translate('Icinga Web 2 documentation') . '</a>' // TODO: Add link to iw2 docs which points to the installation topic
