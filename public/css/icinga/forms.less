@@ -171,6 +171,7 @@ form.icinga-form .control-group .toggle-switch ~ .control-info {
   input[type="date"],
   input[type="time"],
   input[type="file"],
+  .uploaded-files,
   textarea,
   select {
     background-color: @low-sat-blue;
@@ -185,6 +186,7 @@ form.icinga-form {
   input[type="date"],
   input[type="time"],
   input[type="file"],
+  .uploaded-files,
   .control-group > fieldset,
   textarea,
   select {
@@ -207,6 +209,7 @@ form.icinga-form {
 
 .icinga-controls {
   input:not([type="checkbox"]),
+  .uploaded-files,
   .toggle-switch,
   select,
   textarea,
@@ -325,6 +328,10 @@ form.icinga-form .form-controls {
   input[type="submit"],
   input[type="submit"].btn-confirm {
     .button();
+  }
+
+  button[type="submit"].remove-uploaded-file {
+    all: unset;
   }
 
   input[type="submit"].btn-remove {
