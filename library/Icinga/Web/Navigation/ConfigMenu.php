@@ -33,6 +33,8 @@ class ConfigMenu extends BaseHtmlElement
 
     protected $state;
 
+    protected $title;
+
     public function __construct()
     {
         $this->children = [
