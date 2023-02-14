@@ -84,6 +84,7 @@ class View extends Zend_View_Abstract implements IteratorAggregate
      * Create a new view object
      *
      * @param array $config
+     *
      * @see Zend_View_Abstract::__construct
      */
     public function __construct($config = array())
@@ -105,11 +106,13 @@ class View extends Zend_View_Abstract implements IteratorAggregate
         parent::__set($key, $val);
     }
 
-    public function __get($key)
+    public function &__get($key)
     {
-        return array_key_exists($key, $this->dynamicProperties)
+        $value = array_key_exists($key, $this->dynamicProperties)
             ? $this->dynamicProperties[$key]
             : parent::__get($key); // trigger error
+
+        return $value;
     }
 
     public function __isset($key): bool
@@ -179,7 +182,8 @@ class View extends Zend_View_Abstract implements IteratorAggregate
     /**
      * Escape the given value top be safely used in view scripts
      *
-     * @param  string $value  The output to be escaped
+     * @param string $value The output to be escaped
+     *
      * @return string
      */
     public function escape($value)
@@ -190,7 +194,8 @@ class View extends Zend_View_Abstract implements IteratorAggregate
     /**
      * Whether a specific helper (closure) has been registered
      *
-     * @param  string $name The desired function name
+     * @param string $name The desired function name
+     *
      * @return boolean
      */
     public function hasHelperFunction($name)
@@ -201,8 +206,9 @@ class View extends Zend_View_Abstract implements IteratorAggregate
     /**
      * Add a new helper function
      *
-     * @param  string  $name     The desired function name
-     * @param  Closure $function An anonymous function
+     * @param string $name The desired function name
+     * @param Closure $function An anonymous function
+     *
      * @return $this
      */
     public function addHelperFunction($name, Closure $function)
@@ -215,41 +221,45 @@ class View extends Zend_View_Abstract implements IteratorAggregate
         }
 
         $this->helperFunctions[$name] = $function;
+
         return $this;
     }
 
     /**
      * Set or overwrite a helper function
      *
-     * @param   string  $name
-     * @param   Closure $function
+     * @param string $name
+     * @param Closure $function
      *
      * @return  $this
      */
     public function setHelperFunction($name, Closure $function)
     {
         $this->helperFunctions[$name] = $function;
+
         return $this;
     }
 
     /**
      * Drop a helper function
      *
-     * @param   string  $name
+     * @param string $name
      *
      * @return  $this
      */
     public function dropHelperFunction($name)
     {
         unset($this->helperFunctions[$name]);
+
         return $this;
     }
 
     /**
      * Call a helper function
      *
-     * @param  string  $name The desired function name
-     * @param  Array   $args Function arguments
+     * @param string $name The desired function name
+     * @param Array $args Function arguments
+     *
      * @return mixed
      */
     public function callHelperFunction($name, $args)
@@ -282,13 +292,14 @@ class View extends Zend_View_Abstract implements IteratorAggregate
         if ($this->auth === null) {
             $this->auth = Auth::getInstance();
         }
+
         return $this->auth;
     }
 
     /**
      * Whether the current user has the given permission
      *
-     * @param   string  $permission Name of the permission
+     * @param string $permission Name of the permission
      *
      * @return  bool
      */
@@ -302,7 +313,6 @@ class View extends Zend_View_Abstract implements IteratorAggregate
      * members.
      *
      * @return mixed
-     *
      * @see Zend_View_Abstract::run
      */
     protected function _run()
@@ -319,7 +329,7 @@ class View extends Zend_View_Abstract implements IteratorAggregate
      * Accesses a helper object from within a script
      *
      * @param string $name
-     * @param array  $args
+     * @param array $args
      *
      * @return string
      */
