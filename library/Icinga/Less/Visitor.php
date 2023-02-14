@@ -193,7 +193,7 @@ CSS;
     {
         if ($this->definingVariable !== false) {
             // Make sure that all less tree colors do have a proper name
-            $c->name = $this->variableOrigin->name;
+            // $c->name = $this->variableOrigin->name;
         }
 
         return $c;
