@@ -22,6 +22,7 @@
 /**
  * @see Zend_Filter_Compress_CompressAbstract
  */
+require_once 'Zend/Filter/Compress/CompressAbstract.php';
 
 /**
  * Compression adapter for Gzip (ZLib)
@@ -43,11 +44,11 @@ class Zend_Filter_Compress_Gz extends Zend_Filter_Compress_CompressAbstract
      *
      * @var array
      */
-    protected $_options = array(
+    protected $_options = [
         'level'   => 9,
         'mode'    => 'compress',
         'archive' => null,
-    );
+    ];
 
     /**
      * Class constructor
@@ -57,6 +58,7 @@ class Zend_Filter_Compress_Gz extends Zend_Filter_Compress_CompressAbstract
     public function __construct($options = null)
     {
         if (!extension_loaded('zlib')) {
+            require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('This filter needs the zlib extension');
         }
         parent::__construct($options);
@@ -81,6 +83,7 @@ class Zend_Filter_Compress_Gz extends Zend_Filter_Compress_CompressAbstract
     public function setLevel($level)
     {
         if (($level < 0) || ($level > 9)) {
+            require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Level must be between 0 and 9');
         }
 
@@ -106,6 +109,7 @@ class Zend_Filter_Compress_Gz extends Zend_Filter_Compress_CompressAbstract
     public function setMode($mode)
     {
         if (($mode != 'compress') && ($mode != 'deflate')) {
+            require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Given compression mode not supported');
         }
 
@@ -147,6 +151,7 @@ class Zend_Filter_Compress_Gz extends Zend_Filter_Compress_CompressAbstract
         if (!empty($archive)) {
             $file = gzopen($archive, 'w' . $this->getLevel());
             if (!$file) {
+                require_once 'Zend/Filter/Exception.php';
                 throw new Zend_Filter_Exception("Error opening the archive '" . $this->_options['archive'] . "'");
             }
 
@@ -160,6 +165,7 @@ class Zend_Filter_Compress_Gz extends Zend_Filter_Compress_CompressAbstract
         }
 
         if (!$compressed) {
+            require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Error during compression');
         }
 
@@ -176,13 +182,15 @@ class Zend_Filter_Compress_Gz extends Zend_Filter_Compress_CompressAbstract
     {
         $archive = $this->getArchive();
         $mode    = $this->getMode();
-        if (@file_exists($content)) {
+        // check $content for NULL bytes or else file_exists will error out
+        if (strpos((string) $content, '/\0/') === false && @file_exists($content)) {
             $archive = $content;
         }
 
         if (@file_exists($archive)) {
             $handler = fopen($archive, "rb");
             if (!$handler) {
+                require_once 'Zend/Filter/Exception.php';
                 throw new Zend_Filter_Exception("Error opening the archive '" . $archive . "'");
             }
 
@@ -202,6 +210,7 @@ class Zend_Filter_Compress_Gz extends Zend_Filter_Compress_CompressAbstract
         }
 
         if (!$compressed) {
+            require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Error during compression');
         }
 

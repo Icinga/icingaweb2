@@ -22,10 +22,12 @@
 /**
  * @see Zend_Validate_Abstract
  */
+require_once 'Zend/Validate/Abstract.php';
 
 /**
  * @see Zend_Validate_Hostname
  */
+require_once 'Zend/Validate/Hostname.php';
 
 /**
  * @category   Zend
@@ -48,7 +50,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
     /**
      * @var array
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::INVALID            => "Invalid type given. String expected",
         self::INVALID_FORMAT     => "'%value%' is not a valid email address in the basic format local-part@hostname",
         self::INVALID_HOSTNAME   => "'%hostname%' is not a valid hostname for email address '%value%'",
@@ -58,7 +60,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
         self::QUOTED_STRING      => "'%localPart%' can not be matched against quoted-string format",
         self::INVALID_LOCAL_PART => "'%localPart%' is not a valid local part for email address '%value%'",
         self::LENGTH_EXCEEDED    => "'%value%' exceeds the allowed length",
-    );
+    ];
 
     /**
      * As of RFC5753 (JAN 2010), the following blocks are no longer reserved:
@@ -74,31 +76,31 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      * @see http://en.wikipedia.org/wiki/IPv4
      * @var array
      */
-    protected $_invalidIp = array(
+    protected $_invalidIp = [
         '0'   => '0.0.0.0/8',
         '10'  => '10.0.0.0/8',
         '100' => '100.64.0.0/10',
         '127' => '127.0.0.0/8',
         '169' => '169.254.0.0/16',
         '172' => '172.16.0.0/12',
-        '192' => array(
+        '192' => [
             '192.0.0.0/24',
             '192.0.2.0/24',
             '192.88.99.0/24',
             '192.168.0.0/16'
-        ),
+        ],
         '198' => '198.18.0.0/15',
         '224' => '224.0.0.0/4',
         '240' => '240.0.0.0/4'
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $_messageVariables = array(
+    protected $_messageVariables = [
         'hostname'  => '_hostname',
         'localPart' => '_localPart'
-    );
+    ];
 
     /**
      * @var string
@@ -113,13 +115,13 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
     /**
      * Internal options array
      */
-    protected $_options = array(
+    protected $_options = [
         'mx'       => false,
         'deep'     => false,
         'domain'   => true,
         'allow'    => Zend_Validate_Hostname::ALLOW_DNS,
         'hostname' => null
-    );
+    ];
 
     /**
      * Instantiates hostname validator for local use
@@ -132,7 +134,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      *
      * @param array|string|Zend_Config $options OPTIONAL
      */
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         if ($options instanceof Zend_Config) {
             $options = $options->toArray();
@@ -168,9 +170,9 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      * Set options for the email validator
      *
      * @param array $options
-     * @return Zend_Validate_EmailAddress Provides a fluent inteface
+     * @return $this
      */
-    public function setOptions(array $options = array())
+    public function setOptions(array $options = [])
     {
         if (array_key_exists('messages', $options)) {
             $this->setMessages($options['messages']);
@@ -207,7 +209,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      *
      * @param  string $messageString
      * @param  string $messageKey     OPTIONAL
-     * @return Zend_Validate_Abstract Provides a fluent interface
+     * @return $this
      * @throws Zend_Validate_Exception
      */
     public function setMessage($messageString, $messageKey = null)
@@ -281,11 +283,12 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      *
      * @param boolean $mx Set allowed to true to validate for MX records, and false to not validate them
      * @throws Zend_Validate_Exception
-     * @return Zend_Validate_EmailAddress Provides a fluent inteface
+     * @return $this
      */
     public function setValidateMx($mx)
     {
         if ((bool) $mx && !$this->validateMxSupported()) {
+            require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception('MX checking not available on this system');
         }
 
@@ -307,7 +310,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      * Set whether we check MX record should be a deep validation
      *
      * @param boolean $deep Set deep to true to perform a deep validation process for MX records
-     * @return Zend_Validate_EmailAddress Provides a fluent inteface
+     * @return $this
      */
     public function setDeepMxCheck($deep)
     {
@@ -330,7 +333,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      * or only the local part of the email address
      *
      * @param boolean $domain
-     * @return Zend_Validate_EmailAddress Provides a fluent inteface
+     * @return $this
      */
     public function setDomainCheck($domain = true)
     {
@@ -368,10 +371,10 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
                     $binaryHost .= str_pad(decbin($tmp[$i]), 8, "0", STR_PAD_LEFT);
                 }
 
-                $segmentData = array(
+                $segmentData = [
                     'network'   => (int)$this->_toIp(str_pad(substr($binaryHost, 0, $host[1]), 32, 0)),
                     'broadcast' => (int)$this->_toIp(str_pad(substr($binaryHost, 0, $host[1]), 32, 1))
-                );
+                ];
 
                 for ($j = $i; $j < 4; $j++) {
                     if ((int)$octet[$j] < $segmentData['network'][$j] ||
@@ -391,11 +394,11 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      * Converts a binary string to an IP address
      *
      * @param string $binary
-     * @return mixed
+     * @return array
      */
     private function _toIp($binary)
     {
-        $ip  = array();
+        $ip  = [];
         $tmp = explode(".", chunk_split($binary, 8, "."));
         for ($i = 0; $i < 4 ; $i++) {
             $ip[$i] = bindec($tmp[$i]);
@@ -445,7 +448,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      */
     private function _validateMXRecords()
     {
-        $mxHosts = array();
+        $mxHosts = [];
         $hostname = $this->_hostname;
 
         //decode IDN domain name if possible
@@ -533,12 +536,12 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
             return false;
         }
 
-        $matches = array();
+        $matches = [];
         $length  = true;
         $this->_setValue($value);
 
         // Split email address up and disallow '..'
-        if ((strpos($value, '..') !== false) or
+        if ((strpos($value, '..') !== false) ||
             (!preg_match('/^(.+)@([^@]+)$/', $value, $matches))) {
             $this->_error(self::INVALID_FORMAT);
             return false;

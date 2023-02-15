@@ -41,9 +41,9 @@ abstract class Zend_Uri
      *
      * @var array
      */
-    static protected $_config = array(
+    static protected $_config = [
         'allow_unwise' => false
-    );
+    ];
 
     /**
      * Return a string representation of this URI.
@@ -96,16 +96,18 @@ abstract class Zend_Uri
     public static function factory($uri = 'http', $className = null)
     {
         // Separate the scheme from the scheme-specific parts
-        $uri            = explode(':', $uri, 2);
+        $uri            = explode(':', (string) $uri, 2);
         $scheme         = strtolower($uri[0]);
         $schemeSpecific = isset($uri[1]) === true ? $uri[1] : '';
 
         if (strlen($scheme) === 0) {
+            require_once 'Zend/Uri/Exception.php';
             throw new Zend_Uri_Exception('An empty string was supplied for the scheme');
         }
 
         // Security check: $scheme is used to load a class file, so only alphanumerics are allowed.
         if (ctype_alnum($scheme) === false) {
+            require_once 'Zend/Uri/Exception.php';
             throw new Zend_Uri_Exception('Illegal scheme supplied, only alphanumeric characters are permitted');
         }
 
@@ -124,20 +126,24 @@ abstract class Zend_Uri
                 case 'mailto':
                     // TODO
                 default:
+                    require_once 'Zend/Uri/Exception.php';
                     throw new Zend_Uri_Exception("Scheme \"$scheme\" is not supported");
                     break;
             }
         }
 
+        require_once 'Zend/Loader.php';
         try {
             Zend_Loader::loadClass($className);
         } catch (Exception $e) {
+            require_once 'Zend/Uri/Exception.php';
             throw new Zend_Uri_Exception("\"$className\" not found");
         }
 
         $schemeHandler = new $className($scheme, $schemeSpecific);
 
         if (! $schemeHandler instanceof Zend_Uri) {
+            require_once 'Zend/Uri/Exception.php';
             throw new Zend_Uri_Exception("\"$className\" is not an instance of Zend_Uri");
         }
 

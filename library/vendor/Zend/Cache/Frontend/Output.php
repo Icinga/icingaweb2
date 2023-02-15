@@ -24,6 +24,7 @@
 /**
  * @see Zend_Cache_Core
  */
+require_once 'Zend/Cache/Core.php';
 
 
 /**
@@ -35,7 +36,7 @@
 class Zend_Cache_Frontend_Output extends Zend_Cache_Core
 {
 
-    private $_idStack = array();
+    private $_idStack = [];
 
     /**
      * Constructor
@@ -43,10 +44,10 @@ class Zend_Cache_Frontend_Output extends Zend_Cache_Core
      * @param  array $options Associative array of options
      * @return void
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         parent::__construct($options);
-        $this->_idStack = array();
+        $this->_idStack = [];
     }
 
     /**
@@ -84,7 +85,7 @@ class Zend_Cache_Frontend_Output extends Zend_Cache_Core
      * @param  int     $priority         integer between 0 (very low priority) and 10 (maximum priority) used by some particular backends
      * @return void
      */
-    public function end($tags = array(), $specificLifetime = false, $forcedDatas = null, $echoData = true, $priority = 8)
+    public function end($tags = [], $specificLifetime = false, $forcedDatas = null, $echoData = true, $priority = 8)
     {
         if ($forcedDatas === null) {
             $data = ob_get_clean();

@@ -22,6 +22,7 @@
 /**
  * @see Zend_Filter_Interface
  */
+require_once 'Zend/Filter/Interface.php';
 
 /**
  * @category   Zend
@@ -42,6 +43,6 @@ class Zend_Filter_StripNewlines implements Zend_Filter_Interface
      */
     public function filter ($value)
     {
-        return str_replace(array("\n", "\r"), '', $value);
+        return str_replace(["\n", "\r"], '', $value);
     }
 }

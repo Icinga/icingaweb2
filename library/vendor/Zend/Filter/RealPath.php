@@ -22,6 +22,7 @@
 /**
  * @see Zend_Filter_Interface
  */
+require_once 'Zend/Filter/Interface.php';
 
 /**
  * @category   Zend
@@ -116,7 +117,7 @@ class Zend_Filter_RealPath implements Zend_Filter_Interface
             $path = getcwd() . DIRECTORY_SEPARATOR . $path;
         }
 
-        $stack = array();
+        $stack = [];
         $parts = explode(DIRECTORY_SEPARATOR, $path);
         foreach ($parts as $dir) {
             if (strlen($dir) && $dir !== '.') {

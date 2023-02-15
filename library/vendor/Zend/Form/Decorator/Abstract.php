@@ -19,6 +19,7 @@
  */
 
 /** Zend_Form_Decorator_Interface */
+require_once 'Zend/Form/Decorator/Interface.php';
 
 /**
  * Zend_Form_Decorator_Abstract
@@ -53,7 +54,7 @@ abstract class Zend_Form_Decorator_Abstract implements Zend_Form_Decorator_Inter
      * Decorator options
      * @var array
      */
-    protected $_options = array();
+    protected $_options = [];
 
     /**
      * Separator between new content and old
@@ -142,7 +143,7 @@ abstract class Zend_Form_Decorator_Abstract implements Zend_Form_Decorator_Inter
      * Remove single option
      *
      * @param mixed $key
-     * @return void
+     * @return bool
      */
     public function removeOption($key)
     {
@@ -161,7 +162,7 @@ abstract class Zend_Form_Decorator_Abstract implements Zend_Form_Decorator_Inter
      */
     public function clearOptions()
     {
-        $this->_options = array();
+        $this->_options = [];
         return $this;
     }
 
@@ -178,6 +179,7 @@ abstract class Zend_Form_Decorator_Abstract implements Zend_Form_Decorator_Inter
             && (!$element instanceof Zend_Form)
             && (!$element instanceof Zend_Form_DisplayGroup))
         {
+            require_once 'Zend/Form/Decorator/Exception.php';
             throw new Zend_Form_Decorator_Exception('Invalid element type passed to decorator');
         }
 
@@ -246,6 +248,7 @@ abstract class Zend_Form_Decorator_Abstract implements Zend_Form_Decorator_Inter
      */
     public function render($content)
     {
+        require_once 'Zend/Form/Decorator/Exception.php';
         throw new Zend_Form_Decorator_Exception('render() not implemented');
     }
 }

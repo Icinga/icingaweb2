@@ -22,6 +22,7 @@
 /**
  * @see Zend_Validate_Abstract
  */
+require_once 'Zend/Validate/Abstract.php';
 
 /**
  * Validator for the file extension of a file
@@ -42,10 +43,10 @@ class Zend_Validate_File_Extension extends Zend_Validate_Abstract
     /**
      * @var array Error message templates
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::FALSE_EXTENSION => "File '%value%' has a false extension",
         self::NOT_FOUND       => "File '%value%' is not readable or does not exist",
-    );
+    ];
 
     /**
      * Internal list of extensions
@@ -63,9 +64,9 @@ class Zend_Validate_File_Extension extends Zend_Validate_Abstract
     /**
      * @var array Error message template variables
      */
-    protected $_messageVariables = array(
+    protected $_messageVariables = [
         'extension' => '_extension'
-    );
+    ];
 
     /**
      * Sets validator options
@@ -83,7 +84,7 @@ class Zend_Validate_File_Extension extends Zend_Validate_Abstract
             $this->setCase($case);
         }
 
-        if (is_array($options) and isset($options['case'])) {
+        if (is_array($options) && isset($options['case'])) {
             $this->setCase($options['case']);
             unset($options['case']);
         }
@@ -105,7 +106,7 @@ class Zend_Validate_File_Extension extends Zend_Validate_Abstract
      * Sets the case to use
      *
      * @param  boolean $case
-     * @return Zend_Validate_File_Extension Provides a fluent interface
+     * @return $this
      */
     public function setCase($case)
     {
@@ -120,16 +121,16 @@ class Zend_Validate_File_Extension extends Zend_Validate_Abstract
      */
     public function getExtension()
     {
-        $extension = explode(',', $this->_extension);
-
-        return $extension;
+        return $this->_extension !== null
+            ? explode(',', $this->_extension)
+            : [];
     }
 
     /**
      * Sets the file extensions
      *
      * @param  string|array $extension The extensions to validate
-     * @return Zend_Validate_File_Extension Provides a fluent interface
+     * @return $this
      */
     public function setExtension($extension)
     {
@@ -142,7 +143,7 @@ class Zend_Validate_File_Extension extends Zend_Validate_Abstract
      * Adds the file extensions
      *
      * @param  string|array $extension The extensions to add for validation
-     * @return Zend_Validate_File_Extension Provides a fluent interface
+     * @return $this
      */
     public function addExtension($extension)
     {
@@ -185,6 +186,7 @@ class Zend_Validate_File_Extension extends Zend_Validate_Abstract
     public function isValid($value, $file = null)
     {
         // Is file readable ?
+        require_once 'Zend/Loader.php';
         if (!Zend_Loader::isReadable($value)) {
             return $this->_throw($file, self::NOT_FOUND);
         }

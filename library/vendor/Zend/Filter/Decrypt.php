@@ -22,6 +22,7 @@
 /**
  * @see Zend_Filter_Encrypt
  */
+require_once 'Zend/Filter/Encrypt.php';
 
 /**
  * Decrypts a given string

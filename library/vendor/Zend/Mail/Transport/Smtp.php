@@ -24,14 +24,17 @@
 /**
  * @see Zend_Mime
  */
+require_once 'Zend/Mime.php';
 
 /**
  * @see Zend_Mail_Protocol_Smtp
  */
+require_once 'Zend/Mail/Protocol/Smtp.php';
 
 /**
  * @see Zend_Mail_Transport_Abstract
  */
+require_once 'Zend/Mail/Transport/Abstract.php';
 
 
 /**
@@ -112,7 +115,7 @@ class Zend_Mail_Transport_Smtp extends Zend_Mail_Transport_Abstract
      * @todo Someone please make this compatible
      *       with the SendMail transport class.
      */
-    public function __construct($host = '127.0.0.1', Array $config = array())
+    public function __construct($host = '127.0.0.1', Array $config = [])
     {
         if (isset($config['name'])) {
             $this->_name = $config['name'];
@@ -163,7 +166,7 @@ class Zend_Mail_Transport_Smtp extends Zend_Mail_Transport_Abstract
     /**
      * Gets the connection protocol instance
      *
-     * @return Zend_Mail_Protocol|null
+     * @return Zend_Mail_Protocol_Smtp
      */
     public function getConnection()
     {
@@ -189,6 +192,7 @@ class Zend_Mail_Transport_Smtp extends Zend_Mail_Transport_Abstract
                 $connectionClass .= '_Auth_' . ucwords($this->_auth);
             }
             if (!class_exists($connectionClass)) {
+                require_once 'Zend/Loader.php';
                 Zend_Loader::loadClass($connectionClass);
             }
             $this->setConnection(new $connectionClass($this->_host, $this->_port, $this->_config));
@@ -227,6 +231,7 @@ class Zend_Mail_Transport_Smtp extends Zend_Mail_Transport_Abstract
             /**
              * @see Zend_Mail_Transport_Exception
              */
+            require_once 'Zend/Mail/Transport/Exception.php';
             throw new Zend_Mail_Transport_Exception('_prepareHeaders requires a registered Zend_Mail object');
         }
 

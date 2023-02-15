@@ -22,6 +22,7 @@
 /**
  * @see Zend_Filter_Interface
  */
+require_once 'Zend/Filter/Interface.php';
 
 /**
  * @category   Zend
@@ -76,7 +77,7 @@ class Zend_Filter_StringTrim implements Zend_Filter_Interface
      * Sets the charList option
      *
      * @param  string|null $charList
-     * @return Zend_Filter_StringTrim Provides a fluent interface
+     * @return $this
      */
     public function setCharList($charList)
     {
@@ -112,8 +113,8 @@ class Zend_Filter_StringTrim implements Zend_Filter_Interface
     protected function _unicodeTrim($value, $charlist = '\\\\s')
     {
         $chars = preg_replace(
-            array( '/[\^\-\]\\\]/S', '/\\\{4}/S', '/\//'),
-            array( '\\\\\\0', '\\', '\/' ),
+            [ '/[\^\-\]\\\]/S', '/\\\{4}/S', '/\//'],
+            [ '\\\\\\0', '\\', '\/' ],
             $charlist
         );
 

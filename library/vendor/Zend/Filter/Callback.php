@@ -22,6 +22,7 @@
 /**
  * @see Zend_Filter_Interface
  */
+require_once 'Zend/Filter/Interface.php';
 
 /**
  * @category   Zend
@@ -66,6 +67,7 @@ class Zend_Filter_Callback implements Zend_Filter_Interface
         }
 
         if (!array_key_exists('callback', $options)) {
+            require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Missing callback to use');
         }
 
@@ -88,15 +90,10 @@ class Zend_Filter_Callback implements Zend_Filter_Interface
     /**
      * Sets a new callback for this filter
      *
-     * @param unknown_type $callback
-     * @return unknown
+     * @return Zend_Filter_Callback
      */
-    public function setCallback($callback, $options = null)
+    public function setCallback(callable $callback, $options = null)
     {
-        if (!is_callable($callback)) {
-            throw new Zend_Filter_Exception('Callback can not be accessed');
-        }
-
         $this->_callback = $callback;
         $this->setOptions($options);
         return $this;
@@ -132,11 +129,11 @@ class Zend_Filter_Callback implements Zend_Filter_Interface
      */
     public function filter($value)
     {
-        $options = array();
+        $options = [];
 
         if ($this->_options !== null) {
             if (!is_array($this->_options)) {
-                $options = array($this->_options);
+                $options = [$this->_options];
             } else {
                 $options = $this->_options;
             }

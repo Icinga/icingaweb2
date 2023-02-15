@@ -52,7 +52,7 @@ abstract class Zend_Session_Abstract
      *
      * @var array
      */
-    protected static $_expiringData = array();
+    protected static $_expiringData = [];
 
 
     /**
@@ -82,6 +82,7 @@ abstract class Zend_Session_Abstract
             /**
              * @see Zend_Session_Exception
              */
+            require_once 'Zend/Session/Exception.php';
             throw new Zend_Session_Exception(self::_THROW_NOT_READABLE_MSG);
         }
 
@@ -107,6 +108,7 @@ abstract class Zend_Session_Abstract
             /**
              * @see Zend_Session_Exception
              */
+            require_once 'Zend/Session/Exception.php';
             throw new Zend_Session_Exception(self::_THROW_NOT_WRITABLE_MSG);
         }
 
@@ -141,6 +143,7 @@ abstract class Zend_Session_Abstract
             /**
              * @see Zend_Session_Exception
              */
+            require_once 'Zend/Session/Exception.php';
             throw new Zend_Session_Exception(self::_THROW_NOT_READABLE_MSG);
         }
 
@@ -169,14 +172,14 @@ abstract class Zend_Session_Abstract
      *
      * @param string $namespace
      * @param string $name
-     * @return mixed
+     * @return array
      */
     protected static function _namespaceGetAll($namespace)
     {
         $currentData  = (isset($_SESSION[$namespace]) && is_array($_SESSION[$namespace])) ?
-            $_SESSION[$namespace] : array();
+            $_SESSION[$namespace] : [];
         $expiringData = (isset(self::$_expiringData[$namespace]) && is_array(self::$_expiringData[$namespace])) ?
-            self::$_expiringData[$namespace] : array();
+            self::$_expiringData[$namespace] : [];
         return array_merge($currentData, $expiringData);
     }
 }

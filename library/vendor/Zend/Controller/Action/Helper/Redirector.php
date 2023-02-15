@@ -23,6 +23,7 @@
 /**
  * @see Zend_Controller_Action_Helper_Abstract
  */
+require_once 'Zend/Controller/Action/Helper/Abstract.php';
 
 /**
  * @category   Zend
@@ -91,6 +92,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
     {
         $code = (int)$code;
         if ((300 > $code) || (307 < $code) || (304 == $code) || (306 == $code)) {
+            require_once 'Zend/Controller/Action/Exception.php';
             throw new Zend_Controller_Action_Exception('Invalid redirect HTTP status code (' . $code  . ')');
         }
 
@@ -101,7 +103,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * Set HTTP status code for {@link _redirect()} behaviour
      *
      * @param  int $code
-     * @return Zend_Controller_Action_Helper_Redirector Provides a fluent interface
+     * @return $this
      */
     public function setCode($code)
     {
@@ -124,7 +126,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * Set exit flag for {@link _redirect()} behaviour
      *
      * @param  boolean $flag
-     * @return Zend_Controller_Action_Helper_Redirector Provides a fluent interface
+     * @return $this
      */
     public function setExit($flag)
     {
@@ -147,7 +149,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * Set 'prepend base' flag for {@link _redirect()} behaviour
      *
      * @param  boolean $flag
-     * @return Zend_Controller_Action_Helper_Redirector Provides a fluent interface
+     * @return $this
      */
     public function setPrependBase($flag)
     {
@@ -170,7 +172,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * Set flag for whether or not {@link redirectAndExit()} shall close the session before exiting.
      *
      * @param  boolean $flag
-     * @return Zend_Controller_Action_Helper_Redirector Provides a fluent interface
+     * @return $this
      */
     public function setCloseSessionOnExit($flag)
     {
@@ -192,7 +194,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * Set use absolute URI flag
      *
      * @param  boolean $flag
-     * @return Zend_Controller_Action_Helper_Redirector Provides a fluent interface
+     * @return $this
      */
     public function setUseAbsoluteUri($flag = true)
     {
@@ -266,7 +268,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * @param  array  $params
      * @return void
      */
-    public function setGotoSimple($action, $controller = null, $module = null, array $params = array())
+    public function setGotoSimple($action, $controller = null, $module = null, array $params = [])
     {
         $dispatcher = $this->getFrontController()->getDispatcher();
         $request    = $this->getRequest();
@@ -311,7 +313,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * @param  boolean $encode
      * @return void
      */
-    public function setGotoRoute(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
+    public function setGotoRoute(array $urlOptions = [], $name = null, $reset = false, $encode = true)
     {
         $router = $this->getFrontController()->getRouter();
         $url    = $router->assemble($urlOptions, $name, $reset, $encode);
@@ -343,10 +345,10 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * @param  array  $options
      * @return void
      */
-    public function setGotoUrl($url, array $options = array())
+    public function setGotoUrl($url, array $options = [])
     {
         // prevent header injections
-        $url = str_replace(array("\n", "\r"), '', $url);
+        $url = str_replace(["\n", "\r"], '', $url);
 
         if (null !== $options) {
             if (isset($options['exit'])) {
@@ -361,7 +363,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
         }
 
         // If relative URL, decide if we should prepend base URL
-        if (!preg_match('|^[a-z]+://|', $url)) {
+        if (!preg_match('|^[a-z]+://|i', $url)) {
             $url = $this->_prependBase($url);
         }
 
@@ -377,7 +379,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * @param  array  $params
      * @return void
      */
-    public function gotoSimple($action, $controller = null, $module = null, array $params = array())
+    public function gotoSimple($action, $controller = null, $module = null, array $params = [])
     {
         $this->setGotoSimple($action, $controller, $module, $params);
 
@@ -395,7 +397,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * @param  array $params
      * @return void
      */
-    public function gotoSimpleAndExit($action, $controller = null, $module = null, array $params = array())
+    public function gotoSimpleAndExit($action, $controller = null, $module = null, array $params = [])
     {
         $this->setGotoSimple($action, $controller, $module, $params);
         $this->redirectAndExit();
@@ -413,7 +415,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * @param  boolean $encode
      * @return void
      */
-    public function gotoRoute(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
+    public function gotoRoute(array $urlOptions = [], $name = null, $reset = false, $encode = true)
     {
         $this->setGotoRoute($urlOptions, $name, $reset, $encode);
 
@@ -433,7 +435,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * @param  boolean $reset
      * @return void
      */
-    public function gotoRouteAndExit(array $urlOptions = array(), $name = null, $reset = false)
+    public function gotoRouteAndExit(array $urlOptions = [], $name = null, $reset = false)
     {
         $this->setGotoRoute($urlOptions, $name, $reset);
         $this->redirectAndExit();
@@ -446,7 +448,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * @param  array  $options
      * @return void
      */
-    public function gotoUrl($url, array $options = array())
+    public function gotoUrl($url, array $options = [])
     {
         $this->setGotoUrl($url, $options);
 
@@ -462,7 +464,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * @param  array  $options
      * @return void
      */
-    public function gotoUrlAndExit($url, array $options = array())
+    public function gotoUrlAndExit($url, array $options = [])
     {
         $this->setGotoUrl($url, $options);
         $this->redirectAndExit();
@@ -498,7 +500,7 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
      * @param  array  $params
      * @return void
      */
-    public function direct($action, $controller = null, $module = null, array $params = array())
+    public function direct($action, $controller = null, $module = null, array $params = [])
     {
         $this->gotoSimple($action, $controller, $module, $params);
     }
@@ -517,15 +519,16 @@ class Zend_Controller_Action_Helper_Redirector extends Zend_Controller_Action_He
     {
         $method = strtolower($method);
         if ('goto' == $method) {
-            return call_user_func_array(array($this, 'gotoSimple'), $args);
+            return call_user_func_array([$this, 'gotoSimple'], $args);
         }
         if ('setgoto' == $method) {
-            return call_user_func_array(array($this, 'setGotoSimple'), $args);
+            return call_user_func_array([$this, 'setGotoSimple'], $args);
         }
         if ('gotoandexit' == $method) {
-            return call_user_func_array(array($this, 'gotoSimpleAndExit'), $args);
+            return call_user_func_array([$this, 'gotoSimpleAndExit'], $args);
         }
 
+        require_once 'Zend/Controller/Action/Exception.php';
         throw new Zend_Controller_Action_Exception(sprintf('Invalid method "%s" called on redirector', $method));
     }
 }

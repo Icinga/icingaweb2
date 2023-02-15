@@ -23,6 +23,7 @@
 /**
  * @see Zend_Db_Statement_Pdo
  */
+require_once 'Zend/Db/Statement/Pdo.php';
 
 /**
  * Proxy class to wrap a PDOStatement object for IBM Databases.
@@ -54,7 +55,7 @@ class Zend_Db_Statement_Pdo_Oci extends Zend_Db_Statement_Pdo
     public function fetchAll($style = null, $col = null)
     {
         $data = parent::fetchAll($style, $col);
-        $results = array();
+        $results = [];
         $remove = $this->_adapter->foldCase('zend_db_rownum');
 
         foreach ($data as $row) {

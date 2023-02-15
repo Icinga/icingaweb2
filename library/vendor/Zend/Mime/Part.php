@@ -22,6 +22,7 @@
 /**
  * Zend_Mime
  */
+require_once 'Zend/Mime.php';
 
 /**
  * Class representing a MIME part.
@@ -160,6 +161,7 @@ class Zend_Mime_Part
     public function getEncodedStream()
     {
         if (!$this->_isStream) {
+            require_once 'Zend/Mime/Exception.php';
             throw new Zend_Mime_Exception(
                 'Attempt to get a stream from a string part'
             );
@@ -172,12 +174,13 @@ class Zend_Mime_Part
                     $this->_content,
                     'convert.quoted-printable-encode',
                     STREAM_FILTER_READ,
-                    array(
+                    [
                         'line-length'      => 76,
                         'line-break-chars' => Zend_Mime::LINEEND
-                    )
+                    ]
                 );
                 if (!is_resource($filter)) {
+                    require_once 'Zend/Mime/Exception.php';
                     throw new Zend_Mime_Exception(
                         'Failed to append quoted-printable filter'
                     );
@@ -189,12 +192,13 @@ class Zend_Mime_Part
                     $this->_content,
                     'convert.base64-encode',
                     STREAM_FILTER_READ,
-                    array(
+                    [
                         'line-length'      => 76,
                         'line-break-chars' => Zend_Mime::LINEEND
-                    )
+                    ]
                 );
                 if (!is_resource($filter)) {
+                    require_once 'Zend/Mime/Exception.php';
                     throw new Zend_Mime_Exception(
                         'Failed to append base64 filter'
                     );
@@ -245,7 +249,7 @@ class Zend_Mime_Part
      */
     public function getHeadersArray($EOL = Zend_Mime::LINEEND)
     {
-        $headers = array();
+        $headers = [];
 
         $contentType = $this->type;
         if ($this->charset) {
@@ -257,23 +261,23 @@ class Zend_Mime_Part
                             . " boundary=\"" . $this->boundary . '"';
         }
 
-        $headers[] = array(
+        $headers[] = [
             'Content-Type',
             $contentType
-        );
+        ];
 
         if ($this->encoding) {
-            $headers[] = array(
+            $headers[] = [
                 'Content-Transfer-Encoding',
                 $this->encoding
-            );
+            ];
         }
 
         if ($this->id) {
-            $headers[] = array(
+            $headers[] = [
                 'Content-ID',
                 '<' . $this->id . '>'
-            );
+            ];
         }
 
         if ($this->disposition) {
@@ -281,31 +285,31 @@ class Zend_Mime_Part
             if ($this->filename) {
                 $disposition .= '; filename="' . $this->filename . '"';
             }
-            $headers[] = array(
+            $headers[] = [
                 'Content-Disposition',
                 $disposition
-            );
+            ];
         }
 
         if ($this->description) {
-            $headers[] = array(
+            $headers[] = [
                 'Content-Description',
                 $this->description
-            );
+            ];
         }
 
         if ($this->location) {
-            $headers[] = array(
+            $headers[] = [
                 'Content-Location',
                 $this->location
-            );
+            ];
         }
 
         if ($this->language) {
-            $headers[] = array(
+            $headers[] = [
                 'Content-Language',
                 $this->language
-            );
+            ];
         }
 
         return $headers;

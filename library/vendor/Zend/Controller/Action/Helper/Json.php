@@ -23,6 +23,7 @@
 /**
  * @see Zend_Controller_Action_Helper_Abstract
  */
+require_once 'Zend/Controller/Action/Helper/Abstract.php';
 
 /**
  * Simplify AJAX context switching based on requested format
@@ -67,6 +68,7 @@ class Zend_Controller_Action_Helper_Json extends Zend_Controller_Action_Helper_A
         /**
          * @see Zend_View_Helper_Json
          */
+        require_once 'Zend/View/Helper/Json.php';
         $jsonHelper = new Zend_View_Helper_Json();
         $data = $jsonHelper->json($data, $keepLayouts, $encodeData);
 
@@ -74,6 +76,7 @@ class Zend_Controller_Action_Helper_Json extends Zend_Controller_Action_Helper_A
             /**
              * @see Zend_Controller_Action_HelperBroker
              */
+            require_once 'Zend/Controller/Action/HelperBroker.php';
             Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->setNoRender(true);
         }
 
@@ -85,7 +88,7 @@ class Zend_Controller_Action_Helper_Json extends Zend_Controller_Action_Helper_A
      *
      * @param  mixed   $data
      * @param  boolean|array $keepLayouts
-     * @param  $encodeData Encode $data as JSON?
+     * @param  bool $encodeData Encode $data as JSON?
      * NOTE:   if boolean, establish $keepLayouts to true|false
      *         if array, admit params for Zend_Json::encode as enableJsonExprFinder=>true|false
      *         if $keepLayouts and parmas for Zend_Json::encode are required

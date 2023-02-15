@@ -21,6 +21,7 @@
  */
 
 /** Zend_Controller_Router_Route_Abstract */
+require_once 'Zend/Controller/Router/Route/Abstract.php';
 
 /**
  * Chain route is used for managing route chaining.
@@ -38,26 +39,31 @@ class Zend_Controller_Router_Route_Chain extends Zend_Controller_Router_Route_Ab
      *
      * @var array
      */
-    protected $_routes = array();
+    protected $_routes = [];
 
     /**
      * Separators
      *
      * @var array
      */
-    protected $_separators = array();
+    protected $_separators = [];
+
+    /**
+     * @var Zend_Controller_Request_Abstract
+     */
+    protected $_request = null;
 
     /**
      * Instantiates route based on passed Zend_Config structure
      *
      * @param  Zend_Config $config Configuration object
-     * @return Zend_Controller_Router_Route_Chain
+     * @return static
      */
     public static function getInstance(Zend_Config $config)
     {
-        $defs = ($config->defaults instanceof Zend_Config) ? $config->defaults->toArray() : array();
+        $defs = ($config->defaults instanceof Zend_Config) ? $config->defaults->toArray() : [];
 
-        return new self($config->route, $defs);
+        return new static($config->route, $defs);
     }
 
     /**
@@ -88,7 +94,7 @@ class Zend_Controller_Router_Route_Chain extends Zend_Controller_Router_Route_Ab
         $rawPath     = $request->getPathInfo();
         $path        = trim($request->getPathInfo(), self::URI_DELIMITER);
         $subPath     = $path;
-        $values      = array();
+        $values      = [];
         $matchedPath = null;
 
         foreach ($this->_routes as $key => $route) {
@@ -147,7 +153,7 @@ class Zend_Controller_Router_Route_Chain extends Zend_Controller_Router_Route_Ab
      * @param  bool  $encode
      * @return string Route path with user submitted parameters
      */
-    public function assemble($data = array(), $reset = false, $encode = false)
+    public function assemble($data = [], $reset = false, $encode = false)
     {
         $value     = '';
         $numRoutes = count($this->_routes);
@@ -192,7 +198,7 @@ class Zend_Controller_Router_Route_Chain extends Zend_Controller_Router_Route_Ab
      * Return a single parameter of route's defaults
      *
      * @param  string $name Array key of the parameter
-     * @return string Previously set default
+     * @return string|null Previously set default
      */
     public function getDefault($name)
     {
@@ -216,7 +222,7 @@ class Zend_Controller_Router_Route_Chain extends Zend_Controller_Router_Route_Ab
      */
     public function getDefaults()
     {
-        $defaults = array();
+        $defaults = [];
         foreach ($this->_routes as $route) {
             if (method_exists($route, 'getDefaults')) {
                 $defaults = array_merge($defaults, $route->getDefaults());

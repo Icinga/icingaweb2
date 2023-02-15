@@ -21,8 +21,10 @@
  */
 
 /** Zend_Loader_PluginLoader_Interface */
+require_once 'Zend/Loader/PluginLoader/Interface.php';
 
 /** Zend_Loader */
+require_once 'Zend/Loader.php';
 
 /**
  * Generic plugin class loader
@@ -52,42 +54,42 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
      *
      * @var array
      */
-    protected $_loadedPluginPaths = array();
+    protected $_loadedPluginPaths = [];
 
     /**
      * Instance loaded plugins
      *
      * @var array
      */
-    protected $_loadedPlugins = array();
+    protected $_loadedPlugins = [];
 
     /**
      * Instance registry property
      *
      * @var array
      */
-    protected $_prefixToPaths = array();
+    protected $_prefixToPaths = [];
 
     /**
      * Statically loaded plugin path mappings
      *
      * @var array
      */
-    protected static $_staticLoadedPluginPaths = array();
+    protected static $_staticLoadedPluginPaths = [];
 
     /**
      * Statically loaded plugins
      *
      * @var array
      */
-    protected static $_staticLoadedPlugins = array();
+    protected static $_staticLoadedPlugins = [];
 
     /**
      * Static registry property
      *
      * @var array
      */
-    protected static $_staticPrefixToPaths = array();
+    protected static $_staticPrefixToPaths = [];
 
     /**
      * Whether to use a statically named registry for loading plugins
@@ -102,15 +104,15 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
      * @param array $prefixToPaths
      * @param string $staticRegistryName OPTIONAL
      */
-    public function __construct(Array $prefixToPaths = array(), $staticRegistryName = null)
+    public function __construct(Array $prefixToPaths = [], $staticRegistryName = null)
     {
         if (is_string($staticRegistryName) && !empty($staticRegistryName)) {
             $this->_useStaticRegistry = $staticRegistryName;
             if(!isset(self::$_staticPrefixToPaths[$staticRegistryName])) {
-                self::$_staticPrefixToPaths[$staticRegistryName] = array();
+                self::$_staticPrefixToPaths[$staticRegistryName] = [];
             }
             if(!isset(self::$_staticLoadedPlugins[$staticRegistryName])) {
-                self::$_staticLoadedPlugins[$staticRegistryName] = array();
+                self::$_staticLoadedPlugins[$staticRegistryName] = [];
             }
         }
 
@@ -151,6 +153,7 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
     public function addPrefixPath($prefix, $path)
     {
         if (!is_string($prefix) || !is_string($path)) {
+            require_once 'Zend/Loader/PluginLoader/Exception.php';
             throw new Zend_Loader_PluginLoader_Exception('Zend_Loader_PluginLoader::addPrefixPath() method only takes strings for prefix and path.');
         }
 
@@ -161,7 +164,7 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
             self::$_staticPrefixToPaths[$this->_useStaticRegistry][$prefix][] = $path;
         } else {
             if (!isset($this->_prefixToPaths[$prefix])) {
-                $this->_prefixToPaths[$prefix] = array();
+                $this->_prefixToPaths[$prefix] = [];
             }
             if (!in_array($path, $this->_prefixToPaths[$prefix])) {
                 $this->_prefixToPaths[$prefix][] = $path;
@@ -230,9 +233,9 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
         }
 
         if ($this->_useStaticRegistry) {
-            self::$_staticPrefixToPaths[$this->_useStaticRegistry] = array();
+            self::$_staticPrefixToPaths[$this->_useStaticRegistry] = [];
         } else {
-            $this->_prefixToPaths = array();
+            $this->_prefixToPaths = [];
         }
 
         return true;
@@ -255,12 +258,14 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
         }
 
         if (!isset($registry[$prefix])) {
+            require_once 'Zend/Loader/PluginLoader/Exception.php';
             throw new Zend_Loader_PluginLoader_Exception('Prefix ' . $prefix . ' was not found in the PluginLoader.');
         }
 
         if ($path != null) {
             $pos = array_search($path, $registry[$prefix]);
             if (false === $pos) {
+                require_once 'Zend/Loader/PluginLoader/Exception.php';
                 throw new Zend_Loader_PluginLoader_Exception('Prefix ' . $prefix . ' / Path ' . $path . ' was not found in the PluginLoader.');
             }
             unset($registry[$prefix][$pos]);
@@ -286,7 +291,7 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
      * Whether or not a Plugin by a specific name is loaded
      *
      * @param string $name
-     * @return Zend_Loader_PluginLoader
+     * @return bool
      */
     public function isLoaded($name)
     {
@@ -415,6 +420,7 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
             foreach ($registry as $prefix => $paths) {
                 $message .= "\n$prefix: " . implode(PATH_SEPARATOR, $paths);
             }
+            require_once 'Zend/Loader/PluginLoader/Exception.php';
             throw new Zend_Loader_PluginLoader_Exception($message);
        }
 
@@ -451,12 +457,15 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
         }
 
         if (!file_exists($file) && !file_exists(dirname($file))) {
+            require_once 'Zend/Loader/PluginLoader/Exception.php';
             throw new Zend_Loader_PluginLoader_Exception('Specified file does not exist and/or directory does not exist (' . $file . ')');
         }
         if (file_exists($file) && !is_writable($file)) {
+            require_once 'Zend/Loader/PluginLoader/Exception.php';
             throw new Zend_Loader_PluginLoader_Exception('Specified file is not writeable (' . $file . ')');
         }
         if (!file_exists($file) && file_exists(dirname($file)) && !is_writable(dirname($file))) {
+            require_once 'Zend/Loader/PluginLoader/Exception.php';
             throw new Zend_Loader_PluginLoader_Exception('Specified file is not writeable (' . $file . ')');
         }
 

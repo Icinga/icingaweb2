@@ -54,7 +54,7 @@ class Zend_Server_Method_Callback
     /**
      * @var array Valid callback types
      */
-    protected $_types = array('function', 'static', 'instance');
+    protected $_types = ['function', 'static', 'instance'];
 
     /**
      * Constructor
@@ -166,6 +166,7 @@ class Zend_Server_Method_Callback
     public function setType($type)
     {
         if (!in_array($type, $this->_types)) {
+            require_once 'Zend/Server/Exception.php';
             throw new Zend_Server_Exception('Invalid method callback type  passed to ' . __CLASS__ . '::' . __METHOD__);
         }
         $this->_type = $type;
@@ -190,9 +191,9 @@ class Zend_Server_Method_Callback
     public function toArray()
     {
         $type = $this->getType();
-        $array = array(
+        $array = [
             'type' => $type,
-        );
+        ];
         if ('function' == $type) {
             $array['function'] = $this->getFunction();
         } else {

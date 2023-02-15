@@ -23,6 +23,7 @@
 /**
  * @see Zend_Session_Validator_Abstract
  */
+require_once 'Zend/Session/Validator/Abstract.php';
 
 /**
  * Zend_Session_Validator_HttpUserAgent

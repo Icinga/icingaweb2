@@ -22,6 +22,7 @@
 /**
  * @see Zend_Validate_Barcode_AdapterAbstract
  */
+require_once 'Zend/Validate/Barcode/AdapterAbstract.php';
 
 /**
  * @category   Zend

@@ -23,6 +23,7 @@
 /**
  * @see Zend_Soap_Wsdl_Strategy_Interface
  */
+require_once "Zend/Soap/Wsdl/Strategy/Interface.php";
 
 /**
  * Zend_Soap_Wsdl_Strategy_AnyType

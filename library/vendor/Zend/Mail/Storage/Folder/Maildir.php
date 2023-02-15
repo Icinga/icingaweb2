@@ -24,14 +24,17 @@
 /**
  * @see Zend_Mail_Storage_Folder
  */
+require_once 'Zend/Mail/Storage/Folder.php';
 
 /**
  * @see Zend_Mail_Storage_Folder_Interface
  */
+require_once 'Zend/Mail/Storage/Folder/Interface.php';
 
 /**
  * @see Zend_Mail_Storage_Maildir
  */
+require_once 'Zend/Mail/Storage/Maildir.php';
 
 
 /**
@@ -87,6 +90,7 @@ class Zend_Mail_Storage_Folder_Maildir extends Zend_Mail_Storage_Maildir impleme
             /**
              * @see Zend_Mail_Storage_Exception
              */
+            require_once 'Zend/Mail/Storage/Exception.php';
             throw new Zend_Mail_Storage_Exception('no valid dirname given in params');
         }
 
@@ -119,9 +123,10 @@ class Zend_Mail_Storage_Folder_Maildir extends Zend_Mail_Storage_Maildir impleme
             /**
              * @see Zend_Mail_Storage_Exception
              */
+            require_once 'Zend/Mail/Storage/Exception.php';
             throw new Zend_Mail_Storage_Exception("can't read folders in maildir");
         }
-        $dirs = array();
+        $dirs = [];
         while (($entry = readdir($dh)) !== false) {
             // maildir++ defines folders must start with .
             if ($entry[0] != '.' || $entry == '.' || $entry == '..') {
@@ -134,8 +139,8 @@ class Zend_Mail_Storage_Folder_Maildir extends Zend_Mail_Storage_Maildir impleme
         closedir($dh);
 
         sort($dirs);
-        $stack = array(null);
-        $folderStack = array(null);
+        $stack = [null];
+        $folderStack = [null];
         $parentFolder = $this->_rootFolder;
         $parent = '.';
 
@@ -147,6 +152,7 @@ class Zend_Mail_Storage_Folder_Maildir extends Zend_Mail_Storage_Maildir impleme
                         /**
                          * @see Zend_Mail_Storage_Exception
                          */
+                        require_once 'Zend/Mail/Storage/Exception.php';
                         throw new Zend_Mail_Storage_Exception('error while reading maildir');
                     }
                     array_push($stack, $parent);
@@ -165,6 +171,7 @@ class Zend_Mail_Storage_Folder_Maildir extends Zend_Mail_Storage_Maildir impleme
                 /**
                  * @see Zend_Mail_Storage_Exception
                  */
+                require_once 'Zend/Mail/Storage/Exception.php';
                 throw new Zend_Mail_Storage_Exception('error while reading maildir');
             }
         }
@@ -201,6 +208,7 @@ class Zend_Mail_Storage_Folder_Maildir extends Zend_Mail_Storage_Maildir impleme
             /**
              * @see Zend_Mail_Storage_Exception
              */
+            require_once 'Zend/Mail/Storage/Exception.php';
             throw new Zend_Mail_Storage_Exception("folder $rootFolder not found");
         }
         return $currentFolder;
@@ -230,6 +238,7 @@ class Zend_Mail_Storage_Folder_Maildir extends Zend_Mail_Storage_Maildir impleme
                 /**
                  * @see Zend_Mail_Storage_Exception
                  */
+                require_once 'Zend/Mail/Storage/Exception.php';
                 throw new Zend_Mail_Storage_Exception("{$this->_currentFolder} is not selectable", 0, $e);
             }
             // seems like file has vanished; rebuilding folder tree - but it's still an exception
@@ -237,6 +246,7 @@ class Zend_Mail_Storage_Folder_Maildir extends Zend_Mail_Storage_Maildir impleme
             /**
              * @see Zend_Mail_Storage_Exception
              */
+            require_once 'Zend/Mail/Storage/Exception.php';
             throw new Zend_Mail_Storage_Exception('seems like the maildir has vanished, I\'ve rebuild the ' .
                                                          'folder tree, search for an other folder and try again', 0, $e);
         }
@@ -245,7 +255,7 @@ class Zend_Mail_Storage_Folder_Maildir extends Zend_Mail_Storage_Maildir impleme
     /**
      * get Zend_Mail_Storage_Folder instance for current folder
      *
-     * @return Zend_Mail_Storage_Folder instance of current folder
+     * @return string instance of current folder
      * @throws Zend_Mail_Storage_Exception
      */
     public function getCurrentFolder()

@@ -22,12 +22,15 @@
 /**
  * @see Zend_Soap_Wsdl_Strategy_Interface
  */
+require_once "Zend/Soap/Wsdl/Strategy/Interface.php";
 
 /**
  * @see Zend_Soap_Wsdl_Strategy_Abstract
  */
+require_once "Zend/Soap/Wsdl/Strategy/Abstract.php";
 
 /** @see Zend_Xml_Security */
+require_once "Zend/Xml/Security.php";
 
 /**
  * Zend_Soap_Wsdl
@@ -62,7 +65,7 @@ class Zend_Soap_Wsdl
      *
      * @var array
      */
-    private $_includedTypes = array();
+    private $_includedTypes = [];
 
     /**
      * Strategy for detection of complex types
@@ -98,8 +101,9 @@ class Zend_Soap_Wsdl
                     xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/'></definitions>";
         $this->_dom = new DOMDocument();
         if (!$this->_dom = Zend_Xml_Security::scan($wsdl, $this->_dom)) {
+            require_once 'Zend/Server/Exception.php';
             throw new Zend_Server_Exception('Unable to create DomDocument');
-        } 
+        }
         $this->_wsdl = $this->_dom->documentElement;
 
         $this->setComplexTypeStrategy($strategy);
@@ -109,7 +113,7 @@ class Zend_Soap_Wsdl
      * Set a new uri for this WSDL
      *
      * @param  string|Zend_Uri_Http $uri
-     * @return Zend_Server_Wsdl
+     * @return Zend_Soap_Wsdl
      */
     public function setUri($uri)
     {
@@ -140,13 +144,16 @@ class Zend_Soap_Wsdl
     public function setComplexTypeStrategy($strategy)
     {
         if($strategy === true) {
+            require_once "Zend/Soap/Wsdl/Strategy/DefaultComplexType.php";
             $strategy = new Zend_Soap_Wsdl_Strategy_DefaultComplexType();
         } else if($strategy === false) {
+            require_once "Zend/Soap/Wsdl/Strategy/AnyType.php";
             $strategy = new Zend_Soap_Wsdl_Strategy_AnyType();
         } else if(is_string($strategy)) {
             if(class_exists($strategy)) {
                 $strategy = new $strategy();
             } else {
+                require_once "Zend/Soap/Wsdl/Exception.php";
                 throw new Zend_Soap_Wsdl_Exception(
                     sprintf("Strategy with name '%s does not exist.", $strategy
                 ));
@@ -154,6 +161,7 @@ class Zend_Soap_Wsdl
         }
 
         if(!($strategy instanceof Zend_Soap_Wsdl_Strategy_Interface)) {
+            require_once "Zend/Soap/Wsdl/Exception.php";
             throw new Zend_Soap_Wsdl_Exception("Set a strategy that is not of type 'Zend_Soap_Wsdl_Strategy_Interface'");
         }
         $this->_strategy = $strategy;
@@ -163,7 +171,7 @@ class Zend_Soap_Wsdl
     /**
      * Get the current complex type strategy
      *
-     * @return Zend_Soap_Wsdl_Strategy_Interface
+     * @return Zend_Soap_Wsdl_Strategy_Interface|null
      */
     public function getComplexTypeStrategy()
     {
@@ -424,7 +432,7 @@ class Zend_Soap_Wsdl
         }
 
         $doc = $this->_dom->createElement('documentation');
-        $doc_cdata = $this->_dom->createTextNode(str_replace(array("\r\n", "\r"), "\n", $documentation));
+        $doc_cdata = $this->_dom->createTextNode(str_replace(["\r\n", "\r"], "\n", $documentation));
         $doc->appendChild($doc_cdata);
 
         if($node->hasChildNodes()) {
@@ -443,10 +451,10 @@ class Zend_Soap_Wsdl
      */
     public function addTypes($types)
     {
-        if ($types instanceof DomDocument) {
+        if ($types instanceof DOMDocument) {
             $dom = $this->_dom->importNode($types->documentElement);
             $this->_wsdl->appendChild($types->documentElement);
-        } elseif ($types instanceof DomNode || $types instanceof DomElement || $types instanceof DomDocumentFragment ) {
+        } elseif ($types instanceof DOMNode || $types instanceof DOMElement || $types instanceof DOMDocumentFragment) {
             $dom = $this->_dom->importNode($types);
             $this->_wsdl->appendChild($dom);
         }
@@ -608,12 +616,13 @@ class Zend_Soap_Wsdl
     private function _parseElement($element)
     {
         if (!is_array($element)) {
+            require_once "Zend/Soap/Wsdl/Exception.php";
             throw new Zend_Soap_Wsdl_Exception("The 'element' parameter needs to be an associative array.");
         }
 
         $elementXml = $this->_dom->createElement('xsd:element');
         foreach ($element as $key => $value) {
-            if (in_array($key, array('sequence', 'all', 'choice'))) {
+            if (in_array($key, ['sequence', 'all', 'choice'])) {
                 if (is_array($value)) {
                     $complexType = $this->_dom->createElement('xsd:complexType');
                     if (count($value) > 0) {

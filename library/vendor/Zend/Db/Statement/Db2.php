@@ -23,6 +23,7 @@
 /**
  * @see Zend_Db_Statement
  */
+require_once 'Zend/Db/Statement.php';
 
 /**
  * Extends for DB2 native adapter.
@@ -64,6 +65,7 @@ class Zend_Db_Statement_Db2 extends Zend_Db_Statement
             /**
              * @see Zend_Db_Statement_Db2_Exception
              */
+            require_once 'Zend/Db/Statement/Db2/Exception.php';
             throw new Zend_Db_Statement_Db2_Exception(
                 db2_stmt_errormsg(),
                 db2_stmt_error()
@@ -98,6 +100,7 @@ class Zend_Db_Statement_Db2 extends Zend_Db_Statement
             /**
              * @see Zend_Db_Statement_Db2_Exception
              */
+            require_once 'Zend/Db/Statement/Db2/Exception.php';
             throw new Zend_Db_Statement_Db2_Exception(
                 db2_stmt_errormsg(),
                 db2_stmt_error()
@@ -174,11 +177,11 @@ class Zend_Db_Statement_Db2 extends Zend_Db_Statement
          * Return three-valued array like PDO.  But DB2 does not distinguish
          * between SQLCODE and native RDBMS error code, so repeat the SQLCODE.
          */
-        return array(
+        return [
             $error,
             $error,
             db2_stmt_errormsg()
-        );
+        ];
     }
 
     /**
@@ -205,12 +208,13 @@ class Zend_Db_Statement_Db2 extends Zend_Db_Statement
             /**
              * @see Zend_Db_Statement_Db2_Exception
              */
+            require_once 'Zend/Db/Statement/Db2/Exception.php';
             throw new Zend_Db_Statement_Db2_Exception(
                 db2_stmt_errormsg(),
                 db2_stmt_error());
         }
 
-        $this->_keys = array();
+        $this->_keys = [];
         if ($field_num = $this->columnCount()) {
             for ($i = 0; $i < $field_num; $i++) {
                 $name = db2_field_name($this->_stmt, $i);
@@ -218,7 +222,7 @@ class Zend_Db_Statement_Db2 extends Zend_Db_Statement
             }
         }
 
-        $this->_values = array();
+        $this->_values = [];
         if ($this->_keys) {
             $this->_values = array_fill(0, count($this->_keys), null);
         }
@@ -232,7 +236,7 @@ class Zend_Db_Statement_Db2 extends Zend_Db_Statement
      * @param int $style  OPTIONAL Fetch mode for this fetch operation.
      * @param int $cursor OPTIONAL Absolute, relative, or other.
      * @param int $offset OPTIONAL Number for absolute or relative cursors.
-     * @return mixed Array, object, or scalar depending on fetch mode.
+     * @return array|bool|object Array, object, or scalar depending on fetch mode.
      * @throws Zend_Db_Statement_Db2_Exception
      */
     public function fetch($style = null, $cursor = null, $offset = null)
@@ -268,6 +272,7 @@ class Zend_Db_Statement_Db2 extends Zend_Db_Statement
                 /**
                  * @see Zend_Db_Statement_Db2_Exception
                  */
+                require_once 'Zend/Db/Statement/Db2/Exception.php';
                 throw new Zend_Db_Statement_Db2_Exception("Invalid fetch mode '$style' specified");
                 break;
         }
@@ -280,12 +285,11 @@ class Zend_Db_Statement_Db2 extends Zend_Db_Statement
      *
      * @param string $class  OPTIONAL Name of the class to create.
      * @param array  $config OPTIONAL Constructor arguments for the class.
-     * @return mixed One object instance of the specified class.
+     * @return array|bool|object One object instance of the specified class.
      */
-    public function fetchObject($class = 'stdClass', array $config = array())
+    public function fetchObject($class = 'stdClass', array $config = [])
     {
-        $obj = $this->fetch(Zend_Db::FETCH_OBJ);
-        return $obj;
+        return $this->fetch(Zend_Db::FETCH_OBJ);
     }
 
     /**
@@ -301,6 +305,7 @@ class Zend_Db_Statement_Db2 extends Zend_Db_Statement
         /**
          * @see Zend_Db_Statement_Db2_Exception
          */
+        require_once 'Zend/Db/Statement/Db2/Exception.php';
         throw new Zend_Db_Statement_Db2_Exception(__FUNCTION__ . '() is not implemented');
     }
 
@@ -340,7 +345,7 @@ class Zend_Db_Statement_Db2 extends Zend_Db_Statement
     public function fetchAll($style = null, $col = null)
     {
         $data = parent::fetchAll($style, $col);
-        $results = array();
+        $results = [];
         $remove = $this->_adapter->foldCase('ZEND_DB_ROWNUM');
 
         foreach ($data as $row) {

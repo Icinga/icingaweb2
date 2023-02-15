@@ -79,7 +79,7 @@ class Zend_Config implements Countable, Iterator
      *
      * @var array
      */
-    protected $_extends = array();
+    protected $_extends = [];
 
     /**
      * Load file error string.
@@ -107,7 +107,7 @@ class Zend_Config implements Countable, Iterator
         $this->_allowModifications = (boolean) $allowModifications;
         $this->_loadedSection = null;
         $this->_index = 0;
-        $this->_data = array();
+        $this->_data = [];
         foreach ($array as $key => $value) {
             if (is_array($value)) {
                 $this->_data[$key] = new self($value, $this->_allowModifications);
@@ -165,6 +165,7 @@ class Zend_Config implements Countable, Iterator
             $this->_count = count($this->_data);
         } else {
             /** @see Zend_Config_Exception */
+            require_once 'Zend/Config/Exception.php';
             throw new Zend_Config_Exception('Zend_Config is read only');
         }
     }
@@ -177,7 +178,7 @@ class Zend_Config implements Countable, Iterator
      */
     public function __clone()
     {
-      $array = array();
+      $array = [];
       foreach ($this->_data as $key => $value) {
           if ($value instanceof Zend_Config) {
               $array[$key] = clone $value;
@@ -195,7 +196,7 @@ class Zend_Config implements Countable, Iterator
      */
     public function toArray()
     {
-        $array = array();
+        $array = [];
         $data = $this->_data;
         foreach ($data as $key => $value) {
             if ($value instanceof Zend_Config) {
@@ -233,6 +234,7 @@ class Zend_Config implements Countable, Iterator
             $this->_skipNextIteration = true;
         } else {
             /** @see Zend_Config_Exception */
+            require_once 'Zend/Config/Exception.php';
             throw new Zend_Config_Exception('Zend_Config is read only');
         }
 
@@ -243,7 +245,7 @@ class Zend_Config implements Countable, Iterator
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return $this->_count;
     }
@@ -253,6 +255,7 @@ class Zend_Config implements Countable, Iterator
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $this->_skipNextIteration = false;
@@ -262,8 +265,9 @@ class Zend_Config implements Countable, Iterator
     /**
      * Defined by Iterator interface
      *
-     * @return mixed
+     * @return int|string|null
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return key($this->_data);
@@ -273,7 +277,7 @@ class Zend_Config implements Countable, Iterator
      * Defined by Iterator interface
      *
      */
-    public function next()
+    public function next(): void
     {
         if ($this->_skipNextIteration) {
             $this->_skipNextIteration = false;
@@ -287,7 +291,7 @@ class Zend_Config implements Countable, Iterator
      * Defined by Iterator interface
      *
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->_skipNextIteration = false;
         reset($this->_data);
@@ -299,7 +303,7 @@ class Zend_Config implements Countable, Iterator
      *
      * @return boolean
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->_index < $this->_count;
     }
@@ -311,7 +315,7 @@ class Zend_Config implements Countable, Iterator
      */
     public function getSectionName()
     {
-        if(is_array($this->_loadedSection) && count($this->_loadedSection) == 1) {
+        if(is_array($this->_loadedSection) && count($this->_loadedSection) === 1) {
             $this->_loadedSection = $this->_loadedSection[0];
         }
         return $this->_loadedSection;
@@ -425,6 +429,7 @@ class Zend_Config implements Countable, Iterator
         while (array_key_exists($extendedSectionCurrent, $this->_extends)) {
             if ($this->_extends[$extendedSectionCurrent] == $extendingSection) {
                 /** @see Zend_Config_Exception */
+                require_once 'Zend/Config/Exception.php';
                 throw new Zend_Config_Exception('Illegal circular inheritance detected');
             }
             $extendedSectionCurrent = $this->_extends[$extendedSectionCurrent];
@@ -465,8 +470,8 @@ class Zend_Config implements Countable, Iterator
                 if (isset($firstArray[$key])) {
                     $firstArray[$key] = $this->_arrayMergeRecursive($firstArray[$key], $value);
                 } else {
-                    if($key === 0) {
-                        $firstArray= array(0=>$this->_arrayMergeRecursive($firstArray, $value));
+                    if ($key === 0) {
+                        $firstArray = [0 => $this->_arrayMergeRecursive($firstArray, $value)];
                     } else {
                         $firstArray[$key] = $value;
                     }

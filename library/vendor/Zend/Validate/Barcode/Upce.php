@@ -22,6 +22,7 @@
 /**
  * @see Zend_Validate_Barcode_AdapterAbstract
  */
+require_once 'Zend/Validate/Barcode/AdapterAbstract.php';
 
 /**
  * @category   Zend
@@ -35,7 +36,7 @@ class Zend_Validate_Barcode_Upce extends Zend_Validate_Barcode_AdapterAbstract
      * Allowed barcode lengths
      * @var integer
      */
-    protected $_length = array(6, 7, 8);
+    protected $_length = [6, 7, 8];
 
     /**
      * Allowed barcode characters
@@ -57,7 +58,7 @@ class Zend_Validate_Barcode_Upce extends Zend_Validate_Barcode_AdapterAbstract
      */
     public function checkLength($value)
     {
-        if (strlen($value) != 8) {
+        if (strlen($value) !== 8) {
             $this->setCheck(false);
         } else {
             $this->setCheck(true);

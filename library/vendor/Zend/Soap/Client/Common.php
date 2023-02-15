@@ -40,7 +40,7 @@ class Zend_Soap_Client_Common extends SoapClient
     /**
      * Common Soap Client constructor
      *
-     * @param callback $doRequestMethod
+     * @param callable $doRequestMethod
      * @param string $wsdl
      * @param array $options
      */
@@ -62,6 +62,7 @@ class Zend_Soap_Client_Common extends SoapClient
      * @param int    $one_way
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     function __doRequest($request, $location, $action, $version, $one_way = null)
     {
         if ($one_way === null) {

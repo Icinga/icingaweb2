@@ -20,10 +20,13 @@
  */
 
 /** Zend_Form_Decorator_Abstract */
+require_once 'Zend/Form/Decorator/Abstract.php';
 
 /** Zend_Form_Decorator_Marker_File_Interface */
+require_once 'Zend/Form/Decorator/Marker/File/Interface.php';
 
 /** Zend_File_Transfer_Adapter_Http */
+require_once 'Zend/File/Transfer/Adapter/Http.php';
 
 /**
  * Zend_Form_Decorator_File
@@ -45,7 +48,7 @@ class Zend_Form_Decorator_File
      * Attributes that should not be passed to helper
      * @var array
      */
-    protected $_attribBlacklist = array('helper', 'placement', 'separator', 'value');
+    protected $_attribBlacklist = ['helper', 'placement', 'separator', 'value'];
 
     /**
      * Default placement: append
@@ -101,7 +104,7 @@ class Zend_Form_Decorator_File
 
         $separator = $this->getSeparator();
         $placement = $this->getPlacement();
-        $markup    = array();
+        $markup    = [];
         $size      = $element->getMaxFileSize();
         if ($size > 0) {
             $element->setMaxFileSize(0);
@@ -109,9 +112,9 @@ class Zend_Form_Decorator_File
         }
 
         if (Zend_File_Transfer_Adapter_Http::isApcAvailable()) {
-            $markup[] = $view->formHidden(ini_get('apc.rfc1867_name'), uniqid(), array('id' => 'progress_key'));
+            $markup[] = $view->formHidden(ini_get('apc.rfc1867_name'), uniqid(), ['id' => 'progress_key']);
         } else if (Zend_File_Transfer_Adapter_Http::isUploadProgressAvailable()) {
-            $markup[] = $view->formHidden('UPLOAD_IDENTIFIER', uniqid(), array('id' => 'progress_key'));
+            $markup[] = $view->formHidden('UPLOAD_IDENTIFIER', uniqid(), ['id' => 'progress_key']);
         }
 
         $helper = $element->helper;

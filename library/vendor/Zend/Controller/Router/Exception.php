@@ -21,6 +21,7 @@
  */
 
 /** Zend_Controller_Exception */
+require_once 'Zend/Controller/Exception.php';
 
 /**
  * @package    Zend_Controller

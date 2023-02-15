@@ -22,6 +22,7 @@
 /**
  * @see Zend_Soap_Wsdl_Strategy_DefaultComplexType
  */
+require_once "Zend/Soap/Wsdl/Strategy/DefaultComplexType.php";
 
 /**
  * Zend_Soap_Wsdl_Strategy_ArrayOfTypeSequence
@@ -106,8 +107,7 @@ class Zend_Soap_Wsdl_Strategy_ArrayOfTypeSequence extends Zend_Soap_Wsdl_Strateg
      */
     protected function _getSingularType($type)
     {
-        $singulartype = $this->getContext()->getType(str_replace("[]", "", $type));
-        return $singulartype;
+        return $this->getContext()->getType(str_replace("[]", "", $type));
     }
 
     /**

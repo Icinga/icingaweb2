@@ -37,7 +37,7 @@ class Zend_Crypt
     /**
      * @var array
      */
-    protected static $_supportedAlgosOpenssl = array(
+    protected static $_supportedAlgosOpenssl = [
         'md2',
         'md4',
         'mdc2',
@@ -48,12 +48,12 @@ class Zend_Crypt
         'sha256',
         'sha384',
         'sha512'
-    );
+    ];
 
     /**
      * @var array
      */
-    protected static $_supportedAlgosMhash = array(
+    protected static $_supportedAlgosMhash = [
         'adler32',
         'crc32',
         'crc32b',
@@ -70,7 +70,7 @@ class Zend_Crypt
         'tiger',
         'tiger128',
         'tiger160'
-    );
+    ];
 
     /**
      * @param string $algorithm
@@ -86,8 +86,8 @@ class Zend_Crypt
         }
         self::_detectHashSupport($algorithm);
         $supportedMethod = '_digest' . ucfirst(self::$_type);
-        $result = self::$supportedMethod($algorithm, $data, $binaryOutput);
-        return $result;
+
+        return self::$supportedMethod($algorithm, $data, $binaryOutput);
     }
 
     /**
@@ -120,6 +120,7 @@ class Zend_Crypt
         /**
          * @see Zend_Crypt_Exception
          */
+        require_once 'Zend/Crypt/Exception.php';
         throw new Zend_Crypt_Exception('\'' . $algorithm . '\' is not supported by any available extension or native function');
     }
 

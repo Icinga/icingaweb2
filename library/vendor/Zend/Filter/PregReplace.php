@@ -22,6 +22,7 @@
 /**
  * @see Zend_Filter_Interface
  */
+require_once 'Zend/Filter/Interface.php';
 
 /**
  * @category   Zend
@@ -67,7 +68,7 @@ class Zend_Filter_PregReplace implements Zend_Filter_Interface
     /**
      * Method to cache the regex needed to determine if unicode support is available
      *
-     * @return bool
+     * @return void
      */
     static protected function _determineUnicodeSupport()
     {
@@ -89,7 +90,7 @@ class Zend_Filter_PregReplace implements Zend_Filter_Interface
             $options = $options->toArray();
         } else if (!is_array($options)) {
             $options = func_get_args();
-            $temp    = array();
+            $temp    = [];
             if (!empty($options)) {
                 $temp['match'] = array_shift($options);
             }
@@ -163,10 +164,34 @@ class Zend_Filter_PregReplace implements Zend_Filter_Interface
     public function filter($value)
     {
         if ($this->_matchPattern == null) {
+            require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception(get_class($this) . ' does not have a valid MatchPattern set.');
         }
+        if (!$this->_isValidMatchPattern()) {
+            throw new Zend_Filter_Exception(get_class($this) . ' uses deprecated modifier "/e".');
+        }
 
-        return preg_replace($this->_matchPattern, $this->_replacement, $value);
+        return preg_replace($this->_matchPattern, $this->_replacement, (string) $value);
     }
 
+    /**
+     * Method for checking correctness of match pattern
+     *
+     * @return bool
+     */
+    public function _isValidMatchPattern()
+    {
+        $result = true;
+        foreach ((array) $this->_matchPattern as $pattern) {
+            $firstDilimeter = substr($pattern, 0, 1);
+            $partsOfRegex = explode($firstDilimeter, $pattern);
+            $modifiers = array_pop($partsOfRegex);
+            if ($modifiers != str_replace('e', '', $modifiers)) {
+                $result = false;
+                break;
+            }
+        }
+
+        return $result;
+    }
 }

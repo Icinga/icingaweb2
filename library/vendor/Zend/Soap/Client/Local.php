@@ -21,8 +21,10 @@
  */
 
 /** Zend_Soap_Server */
+require_once 'Zend/Soap/Server.php';
 
 /** Zend_Soap_Client */
+require_once 'Zend/Soap/Client.php';
 
 if (extension_loaded('soap')) {
 
@@ -82,7 +84,7 @@ class Zend_Soap_Client_Local extends Zend_Soap_Client
         ob_start();
         $this->_server->handle($request);
         $response = ob_get_clean();
- 
+
         if ($response === null || $response === '') {
             $serverResponse = $this->server->getResponse();
             if ($serverResponse !== null) {

@@ -22,8 +22,10 @@
 
 
 /** @see Zend_Cache_Backend_Interface */
+require_once 'Zend/Cache/Backend/Interface.php';
 
 /** @see Zend_Cache_Backend_ZendServer */
+require_once 'Zend/Cache/Backend/ZendServer.php';
 
 
 /**
@@ -40,7 +42,7 @@ class Zend_Cache_Backend_ZendServer_Disk extends Zend_Cache_Backend_ZendServer i
      * @param  array $options associative array of options
      * @throws Zend_Cache_Exception
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         if (!function_exists('zend_disk_cache_store')) {
             Zend_Cache::throwException('Zend_Cache_ZendServer_Disk backend has to be used within Zend Server environment.');

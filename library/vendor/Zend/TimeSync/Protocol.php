@@ -30,6 +30,13 @@
 abstract class Zend_TimeSync_Protocol
 {
     /**
+     * Port number for this timeserver
+     *
+     * @var integer
+     */
+    protected $_port = 0;
+
+    /**
      * Holds the current socket connection
      *
      * @var array
@@ -55,7 +62,7 @@ abstract class Zend_TimeSync_Protocol
      *
      * @var array
      */
-    protected $_info = array();
+    protected $_info = [];
 
     /**
      * Abstract method that prepares the data to send to the timeserver
@@ -142,7 +149,6 @@ abstract class Zend_TimeSync_Protocol
         $this->_write($this->_prepare());
         $timestamp = $this->_extract($this->_read());
 
-        $date = new Zend_Date($this, null, $locale);
-        return $date;
+        return new Zend_Date($this, null, $locale);
     }
 }

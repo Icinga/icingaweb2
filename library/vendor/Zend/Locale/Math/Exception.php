@@ -23,6 +23,7 @@
 /**
  * Zend_Exception
  */
+require_once 'Zend/Locale/Exception.php';
 
 
 /**
@@ -47,6 +48,6 @@ class Zend_Locale_Math_Exception extends Zend_Locale_Exception
 
     public function getResults()
     {
-        return array($this->op1, $this->op2, $this->result);
+        return [$this->op1, $this->op2, $this->result];
     }
 }

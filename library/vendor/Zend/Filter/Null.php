@@ -22,6 +22,7 @@
 /**
  * @see Zend_Filter_Interface
  */
+require_once 'Zend/Filter/Interface.php';
 
 /**
  * @category   Zend
@@ -38,14 +39,14 @@ class Zend_Filter_Null implements Zend_Filter_Interface
     const ZERO         = 16;
     const ALL          = 31;
 
-    protected $_constants = array(
+    protected $_constants = [
         self::BOOLEAN     => 'boolean',
         self::INTEGER     => 'integer',
         self::EMPTY_ARRAY => 'array',
         self::STRING      => 'string',
         self::ZERO        => 'zero',
         self::ALL         => 'all'
-    );
+    ];
 
     /**
      * Internal type to detect
@@ -65,7 +66,7 @@ class Zend_Filter_Null implements Zend_Filter_Interface
             $options = $options->toArray();
         } else if (!is_array($options)) {
             $options = func_get_args();
-            $temp    = array();
+            $temp    = [];
             if (!empty($options)) {
                 $temp = array_shift($options);
             }
@@ -82,7 +83,7 @@ class Zend_Filter_Null implements Zend_Filter_Interface
     /**
      * Returns the set null types
      *
-     * @return array
+     * @return int
      */
     public function getType()
     {
@@ -116,6 +117,7 @@ class Zend_Filter_Null implements Zend_Filter_Interface
         }
 
         if (!is_int($type) || ($type < 0) || ($type > self::ALL)) {
+            require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Unknown type');
         }
 
@@ -155,7 +157,7 @@ class Zend_Filter_Null implements Zend_Filter_Interface
         // EMPTY_ARRAY (array())
         if ($type >= self::EMPTY_ARRAY) {
             $type -= self::EMPTY_ARRAY;
-            if (is_array($value) && ($value == array())) {
+            if (is_array($value) && ($value == [])) {
                 return null;
             }
         }
@@ -163,7 +165,7 @@ class Zend_Filter_Null implements Zend_Filter_Interface
         // INTEGER (0)
         if ($type >= self::INTEGER) {
             $type -= self::INTEGER;
-            if (is_int($value) && ($value == 0)) {
+            if (is_int($value) && ($value === 0)) {
                 return null;
             }
         }

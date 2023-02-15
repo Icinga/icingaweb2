@@ -19,6 +19,7 @@
  */
 
 /** Zend_Form_Element_Xhtml */
+require_once 'Zend/Form/Element/Xhtml.php';
 
 /**
  * Zend_Form_Element
@@ -128,9 +129,10 @@ class Zend_Form_Element_File extends Zend_Form_Element_Xhtml
         }
 
         if (!array_key_exists($type, $this->_loaders)) {
-            $loader = new Zend_Loader_PluginLoader(array(
+            require_once 'Zend/Loader/PluginLoader.php';
+            $loader = new Zend_Loader_PluginLoader([
                 'Zend_File_Transfer_Adapter' => 'Zend/File/Transfer/Adapter/',
-            ));
+            ]);
             $this->setPluginLoader($loader, self::TRANSFER_ADAPTER);
         }
 
@@ -147,7 +149,7 @@ class Zend_Form_Element_File extends Zend_Form_Element_Xhtml
      */
     public function addPrefixPath($prefix, $path, $type = null)
     {
-        $type = strtoupper($type);
+        $type = strtoupper((string) $type);
         if (!empty($type) && ($type != self::TRANSFER_ADAPTER)) {
             return parent::addPrefixPath($prefix, $path, $type);
         }
@@ -182,10 +184,11 @@ class Zend_Form_Element_File extends Zend_Form_Element_Xhtml
             $class  = $loader->load($adapter);
             $this->_adapter = new $class;
         } else {
+            require_once 'Zend/Form/Element/Exception.php';
             throw new Zend_Form_Element_Exception('Invalid adapter specified');
         }
 
-        foreach (array('filter', 'validate') as $type) {
+        foreach (['filter', 'validate'] as $type) {
             $loader = $this->getPluginLoader($type);
             $this->_adapter->setPluginLoader($loader, $type);
         }
@@ -216,7 +219,7 @@ class Zend_Form_Element_File extends Zend_Form_Element_Xhtml
      * @param  mixed $options
      * @return Zend_Form_Element_File
      */
-    public function addValidator($validator, $breakChainOnFailure = false, $options = array())
+    public function addValidator($validator, $breakChainOnFailure = false, $options = [])
     {
         $adapter = $this->getTransferAdapter();
         $adapter->addValidator($validator, $breakChainOnFailure, $options, $this->getName());
@@ -277,7 +280,7 @@ class Zend_Form_Element_File extends Zend_Form_Element_Xhtml
         $adapter = $this->getTransferAdapter();
         $validators = $adapter->getValidators($this->getName());
         if ($validators === null) {
-            $validators = array();
+            $validators = [];
         }
 
         return $validators;
@@ -378,7 +381,7 @@ class Zend_Form_Element_File extends Zend_Form_Element_Xhtml
         $filters = $adapter->getFilters($this->getName());
 
         if ($filters === null) {
-            $filters = array();
+            $filters = [];
         }
         return $filters;
     }
@@ -430,9 +433,9 @@ class Zend_Form_Element_File extends Zend_Form_Element_Xhtml
         }
 
         if (!$this->isRequired()) {
-            $adapter->setOptions(array('ignoreNoFile' => true), $this->getName());
+            $adapter->setOptions(['ignoreNoFile' => true], $this->getName());
         } else {
-            $adapter->setOptions(array('ignoreNoFile' => false), $this->getName());
+            $adapter->setOptions(['ignoreNoFile' => false], $this->getName());
             if ($this->autoInsertNotEmptyValidator() && !$this->getValidator('NotEmpty')) {
                 $this->addValidator('NotEmpty', true);
             }
@@ -555,7 +558,7 @@ class Zend_Form_Element_File extends Zend_Form_Element_Xhtml
      * Set a multifile element
      *
      * @param integer $count Number of file elements
-     * @return Zend_Form_Element_File Provides fluent interface
+     * @return $this
      */
     public function setMultiFile($count)
     {
@@ -609,7 +612,7 @@ class Zend_Form_Element_File extends Zend_Form_Element_Xhtml
      * Sets the maximum file size of the form
      *
      * @param  integer $size
-     * @return integer
+     * @return Zend_Form_Element_File
      */
     public function setMaxFileSize($size)
     {
@@ -743,7 +746,7 @@ class Zend_Form_Element_File extends Zend_Form_Element_Xhtml
     /**
      * Retrieve localization translator object
      *
-     * @return Zend_Translate_Adapter|null
+     * @return Zend_Translate|null
      */
     public function getTranslator()
     {
@@ -753,6 +756,7 @@ class Zend_Form_Element_File extends Zend_Form_Element_Xhtml
 
         $translator = $this->getTransferAdapter()->getTranslator();
         if (null === $translator) {
+            require_once 'Zend/Form.php';
             return Zend_Form::getDefaultTranslator();
         }
 
@@ -870,6 +874,7 @@ class Zend_Form_Element_File extends Zend_Form_Element_Xhtml
         }
 
         if (!$marker) {
+            require_once 'Zend/Form/Element/Exception.php';
             throw new Zend_Form_Element_Exception('No file decorator found... unable to render file element');
         }
 
@@ -892,7 +897,7 @@ class Zend_Form_Element_File extends Zend_Form_Element_Xhtml
             }
 
             if ($this->isArray() || is_array($value)) {
-                $aggregateMessages = array();
+                $aggregateMessages = [];
                 foreach ($value as $val) {
                     $aggregateMessages[] = str_replace('%value%', $val, $message);
                 }

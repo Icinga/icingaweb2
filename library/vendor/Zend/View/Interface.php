@@ -44,7 +44,7 @@ interface Zend_View_Interface
     /**
      * Set the path to find the view script used by render()
      *
-     * @param string|array The directory (-ies) to set as the path. Note that
+     * @param string|array $path The directory (-ies) to set as the path. Note that
      * the concrete view implentation may not necessarily support multiple
      * directories.
      * @return void

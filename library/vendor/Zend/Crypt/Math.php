@@ -23,6 +23,7 @@
 /**
  * @see Zend_Crypt_Math_BigInteger
  */
+require_once 'Zend/Crypt/Math/BigInteger.php';
 
 /**
  * @category   Zend
@@ -92,6 +93,7 @@ class Zend_Crypt_Math extends Zend_Crypt_Math_BigInteger
             }
         }
         if (true === $strong) {
+            require_once 'Zend/Crypt/Exception.php';
             throw new Zend_Crypt_Exception(
                 'This PHP environment doesn\'t support secure random number generation. ' .
                 'Please consider installing the OpenSSL and/or Mcrypt extensions'
@@ -115,18 +117,25 @@ class Zend_Crypt_Math extends Zend_Crypt_Math_BigInteger
     public static function randInteger($min, $max, $strong = false)
     {
         if ($min > $max) {
+            require_once 'Zend/Crypt/Exception.php';
             throw new Zend_Crypt_Exception(
                 'The min parameter must be lower than max parameter'
             );
         }
+
         $range = $max - $min;
-        if ($range == 0) {
+
+        if ($range === 0) {
             return $max;
-        } elseif ($range > PHP_INT_MAX || is_float($range)) {
+        }
+
+        if ($range > PHP_INT_MAX || is_float($range)) {
+            require_once 'Zend/Crypt/Exception.php';
             throw new Zend_Crypt_Exception(
                 'The supplied range is too great to generate'
             );
         }
+
         if (function_exists('random_int')) { // available in PHP 7
             return random_int($min, $max);
         }

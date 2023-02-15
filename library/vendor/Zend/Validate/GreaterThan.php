@@ -22,6 +22,7 @@
 /**
  * @see Zend_Validate_Abstract
  */
+require_once 'Zend/Validate/Abstract.php';
 
 /**
  * @category   Zend
@@ -37,16 +38,16 @@ class Zend_Validate_GreaterThan extends Zend_Validate_Abstract
     /**
      * @var array
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::NOT_GREATER => "'%value%' is not greater than '%min%'",
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $_messageVariables = array(
+    protected $_messageVariables = [
         'min' => '_min'
-    );
+    ];
 
     /**
      * Minimum value
@@ -71,6 +72,7 @@ class Zend_Validate_GreaterThan extends Zend_Validate_Abstract
             if (array_key_exists('min', $min)) {
                 $min = $min['min'];
             } else {
+                require_once 'Zend/Validate/Exception.php';
                 throw new Zend_Validate_Exception("Missing option 'min'");
             }
         }
@@ -92,7 +94,7 @@ class Zend_Validate_GreaterThan extends Zend_Validate_Abstract
      * Sets the min option
      *
      * @param  mixed $min
-     * @return Zend_Validate_GreaterThan Provides a fluent interface
+     * @return $this
      */
     public function setMin($min)
     {

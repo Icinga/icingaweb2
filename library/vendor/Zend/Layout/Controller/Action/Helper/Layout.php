@@ -21,6 +21,7 @@
  */
 
 /** Zend_Controller_Action_Helper_Abstract */
+require_once 'Zend/Controller/Action/Helper/Abstract.php';
 
 /**
  * Helper for interacting with Zend_Layout objects
@@ -63,6 +64,7 @@ class Zend_Layout_Controller_Action_Helper_Layout extends Zend_Controller_Action
             /**
              * @see Zend_Layout
              */
+            require_once 'Zend/Layout.php';
             $layout = Zend_Layout::getMvcInstance();
         }
 
@@ -92,6 +94,7 @@ class Zend_Layout_Controller_Action_Helper_Layout extends Zend_Controller_Action
             /**
              * @see Zend_Controller_Front
              */
+            require_once 'Zend/Controller/Front.php';
             $this->_frontController = Zend_Controller_Front::getInstance();
         }
 
@@ -109,6 +112,7 @@ class Zend_Layout_Controller_Action_Helper_Layout extends Zend_Controller_Action
             /**
              * @see Zend_Layout
              */
+            require_once 'Zend/Layout.php';
             if (null === ($this->_layout = Zend_Layout::getMvcInstance())) {
                 $this->_layout = new Zend_Layout();
             }
@@ -173,9 +177,10 @@ class Zend_Layout_Controller_Action_Helper_Layout extends Zend_Controller_Action
     {
         $layout = $this->getLayoutInstance();
         if (method_exists($layout, $method)) {
-            return call_user_func_array(array($layout, $method), $args);
+            return call_user_func_array([$layout, $method], $args);
         }
 
+        require_once 'Zend/Layout/Exception.php';
         throw new Zend_Layout_Exception(sprintf("Invalid method '%s' called on layout action helper", $method));
     }
 }

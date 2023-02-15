@@ -24,6 +24,7 @@
 /**
  * Abstract class for extension
  */
+require_once 'Zend/View/Helper/FormElement.php';
 
 
 /**
@@ -99,12 +100,12 @@ class Zend_View_Helper_FormSelect extends Zend_View_Helper_FormElement
         }
 
         // handle the options classes
-        $optionClasses = array();
+        $optionClasses = [];
         if (isset($attribs['optionClasses'])) {
             $optionClasses = $attribs['optionClasses'];
             unset($attribs['optionClasses']);
         }
-        
+
         // now start building the XHTML.
         $disabled = '';
         if (true === $disable) {
@@ -121,7 +122,7 @@ class Zend_View_Helper_FormSelect extends Zend_View_Helper_FormElement
                 . ">\n    ";
 
         // build the list of options
-        $list       = array();
+        $list       = [];
         $translator = $this->getTranslator();
         foreach ((array) $options as $opt_value => $opt_label) {
             if (is_array($opt_label)) {
@@ -163,10 +164,10 @@ class Zend_View_Helper_FormSelect extends Zend_View_Helper_FormElement
      * @param array $optionClasses The classes to associate with each option value
      * @return string Option Tag XHTML
      */
-    protected function _build($value, $label, $selected, $disable, $optionClasses = array())
+    protected function _build($value, $label, $selected, $disable, $optionClasses = [])
     {
         if (is_bool($disable)) {
-            $disable = array();
+            $disable = [];
         }
 
         $class = null;

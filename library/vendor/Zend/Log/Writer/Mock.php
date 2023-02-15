@@ -21,6 +21,7 @@
  */
 
 /** Zend_Log_Writer_Abstract */
+require_once 'Zend/Log/Writer/Abstract.php';
 
 /**
  * @category   Zend
@@ -37,7 +38,7 @@ class Zend_Log_Writer_Mock extends Zend_Log_Writer_Abstract
      *
      * @var array
      */
-    public $events = array();
+    public $events = [];
 
     /**
      * shutdown called?

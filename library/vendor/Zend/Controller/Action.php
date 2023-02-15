@@ -22,14 +22,17 @@
 /**
  * @see Zend_Controller_Action_HelperBroker
  */
+require_once 'Zend/Controller/Action/HelperBroker.php';
 
 /**
  * @see Zend_Controller_Action_Interface
  */
+require_once 'Zend/Controller/Action/Interface.php';
 
 /**
  * @see Zend_Controller_Front
  */
+require_once 'Zend/Controller/Front.php';
 
 /**
  * @category   Zend
@@ -55,7 +58,7 @@ abstract class Zend_Controller_Action implements Zend_Controller_Action_Interfac
      * {@link $_request Request object}.
      * @var array
      */
-    protected $_invokeArgs = array();
+    protected $_invokeArgs = [];
 
     /**
      * Front controller instance
@@ -121,7 +124,7 @@ abstract class Zend_Controller_Action implements Zend_Controller_Action_Interfac
      * @param array $invokeArgs Any additional invocation arguments
      * @return void
      */
-    public function __construct(Zend_Controller_Request_Abstract $request, Zend_Controller_Response_Abstract $response, array $invokeArgs = array())
+    public function __construct(Zend_Controller_Request_Abstract $request, Zend_Controller_Response_Abstract $response, array $invokeArgs = [])
     {
         $this->setRequest($request)
              ->setResponse($response)
@@ -163,6 +166,7 @@ abstract class Zend_Controller_Action implements Zend_Controller_Action_Interfac
             return $this->view;
         }
 
+        require_once 'Zend/View/Interface.php';
         if (isset($this->view) && ($this->view instanceof Zend_View_Interface)) {
             return $this->view;
         }
@@ -175,10 +179,12 @@ abstract class Zend_Controller_Action implements Zend_Controller_Action_Interfac
         }
         $baseDir = dirname($dirs[$module]) . DIRECTORY_SEPARATOR . 'views';
         if (!file_exists($baseDir) || !is_dir($baseDir)) {
+            require_once 'Zend/Controller/Exception.php';
             throw new Zend_Controller_Exception('Missing base view directory ("' . $baseDir . '")');
         }
 
-        $this->view = new Zend_View(array('basePath' => $baseDir));
+        require_once 'Zend/View.php';
+        $this->view = new Zend_View(['basePath' => $baseDir]);
 
         return $this->view;
     }
@@ -268,6 +274,7 @@ abstract class Zend_Controller_Action implements Zend_Controller_Action_Interfac
         if (null === $action) {
             $action = $request->getActionName();
         } elseif (!is_string($action)) {
+            require_once 'Zend/Controller/Exception.php';
             throw new Zend_Controller_Exception('Invalid action specifier for view render');
         }
 
@@ -340,7 +347,7 @@ abstract class Zend_Controller_Action implements Zend_Controller_Action_Interfac
      * @param array $args
      * @return Zend_Controller_Action
      */
-    protected function _setInvokeArgs(array $args = array())
+    protected function _setInvokeArgs(array $args = [])
     {
         $this->_invokeArgs = $args;
         return $this;
@@ -424,6 +431,7 @@ abstract class Zend_Controller_Action implements Zend_Controller_Action_Interfac
         }
 
         // Throw exception in all other cases
+        require_once 'Zend/Controller/Exception.php';
         throw new Zend_Controller_Exception('Front controller class has not been loaded');
     }
 
@@ -471,6 +479,7 @@ abstract class Zend_Controller_Action implements Zend_Controller_Action_Interfac
      */
     public function __call($methodName, $args)
     {
+        require_once 'Zend/Controller/Action/Exception.php';
         if ('Action' == substr($methodName, -6)) {
             $action = substr($methodName, 0, strlen($methodName) - 6);
             throw new Zend_Controller_Action_Exception(sprintf('Action "%s" does not exist and was not trapped in __call()', $action), 404);
@@ -506,7 +515,7 @@ abstract class Zend_Controller_Action implements Zend_Controller_Action_Interfac
                     }
                     $this->$action();
                 } else {
-                    $this->__call($action, array());
+                    $this->__call($action, []);
                 }
             }
             $this->postDispatch();
@@ -768,7 +777,7 @@ abstract class Zend_Controller_Action implements Zend_Controller_Action_Interfac
      * @deprecated Deprecated as of Zend Framework 1.7. Use
      *             redirect() instead.
      */
-    protected function _redirect($url, array $options = array())
+    protected function _redirect($url, array $options = [])
     {
         $this->redirect($url, $options);
     }
@@ -782,7 +791,7 @@ abstract class Zend_Controller_Action implements Zend_Controller_Action_Interfac
      * @param array $options Options to be used when redirecting
      * @return void
      */
-    public function redirect($url, array $options = array())
+    public function redirect($url, array $options = [])
     {
         $this->_helper->redirector->gotoUrl($url, $options);
     }

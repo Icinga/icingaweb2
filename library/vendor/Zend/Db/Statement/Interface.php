@@ -110,7 +110,7 @@ interface Zend_Db_Statement_Interface
      * @return bool
      * @throws Zend_Db_Statement_Exception
      */
-    public function execute(array $params = array());
+    public function execute(array $params = []);
 
     /**
      * Fetches a row from the result set.
@@ -137,7 +137,7 @@ interface Zend_Db_Statement_Interface
      * Returns a single column from the next row of a result set.
      *
      * @param int $col OPTIONAL Position of the column to fetch.
-     * @return string
+     * @return string|false|null
      * @throws Zend_Db_Statement_Exception
      */
     public function fetchColumn($col = 0);
@@ -150,7 +150,7 @@ interface Zend_Db_Statement_Interface
      * @return mixed One object instance of the specified class.
      * @throws Zend_Db_Statement_Exception
      */
-    public function fetchObject($class = 'stdClass', array $config = array());
+    public function fetchObject($class = 'stdClass', array $config = []);
 
     /**
      * Retrieve a statement attribute.

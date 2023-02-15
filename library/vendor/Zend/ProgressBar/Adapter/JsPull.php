@@ -20,10 +20,12 @@
 /**
  * @see Zend_Json
  */
+require_once 'Zend/Json.php';
 
 /**
  * @see Zend_ProgressBar_Adapter
  */
+require_once 'Zend/ProgressBar/Adapter.php';
 
 /**
  * Zend_ProgressBar_Adapter_JsPull offers a simple method for updating a
@@ -48,7 +50,7 @@ class Zend_ProgressBar_Adapter_JsPull extends Zend_ProgressBar_Adapter
      * Set wether to exit after json data send or not
      *
      * @param  boolean $exitAfterSend
-     * @return Zend_ProgressBar_Adapter_JsPull
+     * @return void
      */
     public function setExitAfterSend($exitAfterSend)
     {
@@ -68,7 +70,7 @@ class Zend_ProgressBar_Adapter_JsPull extends Zend_ProgressBar_Adapter
      */
     public function notify($current, $max, $percent, $timeTaken, $timeRemaining, $text)
     {
-        $arguments = array(
+        $arguments = [
             'current'       => $current,
             'max'           => $max,
             'percent'       => ($percent * 100),
@@ -76,7 +78,7 @@ class Zend_ProgressBar_Adapter_JsPull extends Zend_ProgressBar_Adapter
             'timeRemaining' => $timeRemaining,
             'text'          => $text,
             'finished'      => false
-        );
+        ];
 
         $data = Zend_Json::encode($arguments);
 
@@ -91,7 +93,7 @@ class Zend_ProgressBar_Adapter_JsPull extends Zend_ProgressBar_Adapter
      */
     public function finish()
     {
-        $data = Zend_Json::encode(array('finished' => true));
+        $data = Zend_Json::encode(['finished' => true]);
 
         $this->_outputData($data);
     }

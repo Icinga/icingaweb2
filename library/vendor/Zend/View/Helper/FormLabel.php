@@ -21,6 +21,7 @@
  */
 
 /** Zend_View_Helper_FormElement **/
+require_once 'Zend/View/Helper/FormElement.php';
 
 /**
  * Form label helper
@@ -61,11 +62,9 @@ class Zend_View_Helper_FormLabel extends Zend_View_Helper_FormElement
         }
 
         // enabled; display label
-        $xhtml = '<label'
+        return '<label'
                 . $for
                 . $this->_htmlAttribs($attribs)
                 . '>' . $value . '</label>';
-
-        return $xhtml;
     }
 }

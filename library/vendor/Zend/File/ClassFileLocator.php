@@ -18,6 +18,7 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
+require_once 'Zend/File/PhpClassFile.php';
 
 /**
  * Locate files containing PHP classes, interfaces, or abstracts
@@ -58,13 +59,9 @@ class Zend_File_ClassFileLocator extends FilterIterator
         parent::__construct($iterator);
         $this->setInfoClass('Zend_File_PhpClassFile');
 
-        // Forward-compat with PHP 5.3
-        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
-            if (!defined('T_NAMESPACE')) {
-                define('T_NAMESPACE', 'namespace');
-            }
-            if (!defined('T_NS_SEPARATOR')) {
-                define('T_NS_SEPARATOR', '\\');
+        if (PHP_VERSION_ID < 80000) {
+            if (!defined('T_NAME_QUALIFIED')) {
+                define('T_NAME_QUALIFIED', 0);
             }
         }
     }
@@ -74,7 +71,7 @@ class Zend_File_ClassFileLocator extends FilterIterator
      *
      * @return bool
      */
-    public function accept()
+    public function accept(): bool
     {
         $file = $this->getInnerIterator()->current();
         // If we somehow have something other than an SplFileInfo object, just
@@ -125,6 +122,7 @@ class Zend_File_ClassFileLocator extends FilterIterator
                         switch ($type) {
                             case T_STRING:
                             case T_NS_SEPARATOR:
+                            case T_NAME_QUALIFIED:
                                 $namespace .= $content;
                                 break;
                         }

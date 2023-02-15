@@ -21,6 +21,7 @@
  */
 
 /** Zend_View_Helper_Abstract.php */
+require_once 'Zend/View/Helper/Abstract.php';
 
 /**
  * Helper for making easy links and getting urls that depend on the routes and router
@@ -42,7 +43,7 @@ class Zend_View_Helper_Url extends Zend_View_Helper_Abstract
      * @param  bool $reset Whether or not to reset the route defaults with those provided
      * @return string Url for the link href attribute.
      */
-    public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
+    public function url(array $urlOptions = [], $name = null, $reset = false, $encode = true)
     {
         $router = Zend_Controller_Front::getInstance()->getRouter();
         return $router->assemble($urlOptions, $name, $reset, $encode);

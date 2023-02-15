@@ -30,8 +30,8 @@
 class Zend_Controller_Action_HelperBroker_PriorityStack implements IteratorAggregate, ArrayAccess, Countable
 {
 
-    protected $_helpersByPriority = array();
-    protected $_helpersByNameRef  = array();
+    protected $_helpersByPriority = [];
+    protected $_helpersByNameRef  = [];
     protected $_nextDefaultPriority = 1;
 
     /**
@@ -53,7 +53,7 @@ class Zend_Controller_Action_HelperBroker_PriorityStack implements IteratorAggre
      * Magic property overloading for returning if helper is set by name
      *
      * @param string $helperName    The helper name
-     * @return Zend_Controller_Action_Helper_Abstract
+     * @return bool
      */
     public function __isset($helperName)
     {
@@ -64,10 +64,11 @@ class Zend_Controller_Action_HelperBroker_PriorityStack implements IteratorAggre
      * Magic property overloading for unsetting if helper is exists by name
      *
      * @param string $helperName    The helper name
+     * @return Zend_Controller_Action_HelperBroker_PriorityStack
      */
     public function __unset($helperName)
     {
-        $this->offsetUnset($helperName);
+        return $this->offsetUnset($helperName);
     }
 
     /**
@@ -85,9 +86,10 @@ class Zend_Controller_Action_HelperBroker_PriorityStack implements IteratorAggre
     /**
      * Return something iterable
      *
-     * @return Traversable
+     * @return ArrayObject
      */
-    public function getIterator(): Traversable
+    #[\ReturnTypeWillChange]
+    public function getIterator(): \Traversable
     {
         return new ArrayObject($this->_helpersByPriority);
     }
@@ -111,11 +113,13 @@ class Zend_Controller_Action_HelperBroker_PriorityStack implements IteratorAggre
      * offsetGet()
      *
      * @param int|string $priorityOrHelperName
-     * @return Zend_Controller_Action_Helper_Abstract
+     * @return Zend_Controller_Action_HelperBroker_PriorityStack
      */
-    public function offsetGet($priorityOrHelperName): Zend_Controller_Action_Helper_Abstract
+    #[\ReturnTypeWillChange]
+    public function offsetGet($priorityOrHelperName)
     {
         if (!$this->offsetExists($priorityOrHelperName)) {
+            require_once 'Zend/Controller/Action/Exception.php';
             throw new Zend_Controller_Action_Exception('A helper with priority ' . $priorityOrHelperName . ' does not exist.');
         }
 
@@ -131,12 +135,15 @@ class Zend_Controller_Action_HelperBroker_PriorityStack implements IteratorAggre
      *
      * @param int $priority
      * @param Zend_Controller_Action_Helper_Abstract $helper
+     * @return Zend_Controller_Action_HelperBroker_PriorityStack
      */
-    public function offsetSet($priority, $helper): void
+    #[\ReturnTypeWillChange]
+    public function offsetSet($priority, $helper)
     {
         $priority = (int) $priority;
 
         if (!$helper instanceof Zend_Controller_Action_Helper_Abstract) {
+            require_once 'Zend/Controller/Action/Exception.php';
             throw new Zend_Controller_Action_Exception('$helper must extend Zend_Controller_Action_Helper_Abstract.');
         }
 
@@ -159,16 +166,20 @@ class Zend_Controller_Action_HelperBroker_PriorityStack implements IteratorAggre
         }
 
         krsort($this->_helpersByPriority);  // always make sure priority and LIFO are both enforced
+        return $this;
     }
 
     /**
      * offsetUnset()
      *
      * @param int|string $priorityOrHelperName Priority integer or the helper name
+     * @return Zend_Controller_Action_HelperBroker_PriorityStack
      */
-    public function offsetUnset($priorityOrHelperName): void
+    #[\ReturnTypeWillChange]
+    public function offsetUnset($priorityOrHelperName)
     {
         if (!$this->offsetExists($priorityOrHelperName)) {
+            require_once 'Zend/Controller/Action/Exception.php';
             throw new Zend_Controller_Action_Exception('A helper with priority or name ' . $priorityOrHelperName . ' does not exist.');
         }
 
@@ -183,6 +194,7 @@ class Zend_Controller_Action_HelperBroker_PriorityStack implements IteratorAggre
 
         unset($this->_helpersByNameRef[$helperName]);
         unset($this->_helpersByPriority[$priority]);
+        return $this;
     }
 
     /**

@@ -23,10 +23,12 @@
 /**
  * @see Zend_Controller_Plugin_Abstract
  */
+require_once 'Zend/Controller/Plugin/Abstract.php';
 
 /**
  * @see Zend_Controller_Request_Http
  */
+require_once 'Zend/Controller/Request/Http.php';
 
 /**
  * Plugin to digest PUT request body and make params available just like POST
@@ -50,7 +52,7 @@ class Zend_Controller_Plugin_PutHandler extends Zend_Controller_Plugin_Abstract
         }
 
         if ($this->_request->isPut()) {
-            $putParams = array();
+            $putParams = [];
             parse_str($this->_request->getRawBody(), $putParams);
             $request->setParams($putParams);
         }

@@ -22,6 +22,7 @@
 /**
  * @see Zend_Filter_Interface
  */
+require_once 'Zend/Filter/Interface.php';
 
 /**
  * @category   Zend
@@ -40,21 +41,21 @@ class Zend_Filter implements Zend_Filter_Interface
      *
      * @var array
      */
-    protected $_filters = array();
+    protected $_filters = [];
 
     /**
      * Default Namespaces
      *
      * @var array
      */
-    protected static $_defaultNamespaces = array();
+    protected static $_defaultNamespaces = [];
 
     /**
      * Adds a filter to the chain
      *
      * @param  Zend_Filter_Interface $filter
      * @param  string $placement
-     * @return Zend_Filter Provides a fluent interface
+     * @return $this
      */
     public function addFilter(Zend_Filter_Interface $filter, $placement = self::CHAIN_APPEND)
     {
@@ -70,7 +71,7 @@ class Zend_Filter implements Zend_Filter_Interface
      * Add a filter to the end of the chain
      *
      * @param  Zend_Filter_Interface $filter
-     * @return Zend_Filter Provides a fluent interface
+     * @return $this
      */
     public function appendFilter(Zend_Filter_Interface $filter)
     {
@@ -81,7 +82,7 @@ class Zend_Filter implements Zend_Filter_Interface
      * Add a filter to the start of the chain
      *
      * @param  Zend_Filter_Interface $filter
-     * @return Zend_Filter Provides a fluent interface
+     * @return $this
      */
     public function prependFilter(Zend_Filter_Interface $filter)
     {
@@ -134,7 +135,7 @@ class Zend_Filter implements Zend_Filter_Interface
     public static function setDefaultNamespaces($namespace)
     {
         if (!is_array($namespace)) {
-            $namespace = array((string) $namespace);
+            $namespace = [(string) $namespace];
         }
 
         self::$_defaultNamespaces = $namespace;
@@ -149,7 +150,7 @@ class Zend_Filter implements Zend_Filter_Interface
     public static function addDefaultNamespaces($namespace)
     {
         if (!is_array($namespace)) {
-            $namespace = array((string) $namespace);
+            $namespace = [(string) $namespace];
         }
 
         self::$_defaultNamespaces = array_unique(array_merge(self::$_defaultNamespaces, $namespace));
@@ -176,7 +177,7 @@ class Zend_Filter implements Zend_Filter_Interface
      * @return mixed
      * @throws Zend_Filter_Exception
      */
-    public static function get($value, $classBaseName, array $args = array(), $namespaces = array())
+    public static function get($value, $classBaseName, array $args = [], $namespaces = [])
     {
         trigger_error(
             'Zend_Filter::get() is deprecated as of 1.9.0; please update your code to utilize Zend_Filter::filterStatic()',
@@ -203,9 +204,10 @@ class Zend_Filter implements Zend_Filter_Interface
      * @return mixed
      * @throws Zend_Filter_Exception
      */
-    public static function filterStatic($value, $classBaseName, array $args = array(), $namespaces = array())
+    public static function filterStatic($value, $classBaseName, array $args = [], $namespaces = [])
     {
-        $namespaces = array_merge((array) $namespaces, self::$_defaultNamespaces, array('Zend_Filter'));
+        require_once 'Zend/Loader.php';
+        $namespaces = array_merge((array) $namespaces, self::$_defaultNamespaces, ['Zend_Filter']);
         foreach ($namespaces as $namespace) {
             $className = $namespace . '_' . ucfirst($classBaseName);
             if (!class_exists($className, false)) {
@@ -224,13 +226,14 @@ class Zend_Filter implements Zend_Filter_Interface
             $class = new ReflectionClass($className);
             if ($class->implementsInterface('Zend_Filter_Interface')) {
                 if ($class->hasMethod('__construct')) {
-                    $object = $class->newInstanceArgs(array_values($args));
+                    $object = $class->newInstanceArgs($args);
                 } else {
                     $object = $class->newInstance();
                 }
                 return $object->filter($value);
             }
         }
+        require_once 'Zend/Filter/Exception.php';
         throw new Zend_Filter_Exception("Filter class not found from basename '$classBaseName'");
     }
 }

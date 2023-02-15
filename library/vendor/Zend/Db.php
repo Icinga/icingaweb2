@@ -196,7 +196,7 @@ class Zend_Db
      * @return Zend_Db_Adapter_Abstract
      * @throws Zend_Db_Exception
      */
-    public static function factory($adapter, $config = array())
+    public static function factory($adapter, $config = [])
     {
         if ($config instanceof Zend_Config) {
             $config = $config->toArray();
@@ -224,6 +224,7 @@ class Zend_Db
             /**
              * @see Zend_Db_Exception
              */
+            require_once 'Zend/Db/Exception.php';
             throw new Zend_Db_Exception('Adapter parameters must be in an array or a Zend_Config object');
         }
 
@@ -234,6 +235,7 @@ class Zend_Db
             /**
              * @see Zend_Db_Exception
              */
+            require_once 'Zend/Db/Exception.php';
             throw new Zend_Db_Exception('Adapter name must be specified in a string');
         }
 
@@ -257,6 +259,7 @@ class Zend_Db
          * if the specified class cannot be loaded.
          */
         if (!class_exists($adapterName)) {
+            require_once 'Zend/Loader.php';
             Zend_Loader::loadClass($adapterName);
         }
 
@@ -273,6 +276,7 @@ class Zend_Db
             /**
              * @see Zend_Db_Exception
              */
+            require_once 'Zend/Db/Exception.php';
             throw new Zend_Db_Exception("Adapter class '$adapterName' does not extend Zend_Db_Adapter_Abstract");
         }
 

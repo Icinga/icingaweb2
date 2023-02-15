@@ -19,6 +19,7 @@
  */
 
 /** Zend_Form_Decorator_Abstract */
+require_once 'Zend/Form/Decorator/Abstract.php';
 
 /**
  * Zend_Form_Decorator_ViewHelper
@@ -46,11 +47,11 @@ class Zend_Form_Decorator_ViewHelper extends Zend_Form_Decorator_Abstract
      * Element types that represent buttons
      * @var array
      */
-    protected $_buttonTypes = array(
+    protected $_buttonTypes = [
         'Zend_Form_Element_Button',
         'Zend_Form_Element_Reset',
         'Zend_Form_Element_Submit',
-    );
+    ];
 
     /**
      * View helper to use when rendering
@@ -62,7 +63,7 @@ class Zend_Form_Decorator_ViewHelper extends Zend_Form_Decorator_Abstract
      * Set view helper to use when rendering
      *
      * @param  string $helper
-     * @return Zend_Form_Decorator_Element_ViewHelper
+     * @return Zend_Form_Decorator_ViewHelper
      */
     public function setHelper($helper)
     {
@@ -222,6 +223,7 @@ class Zend_Form_Decorator_ViewHelper extends Zend_Form_Decorator_Abstract
 
         $view = $element->getView();
         if (null === $view) {
+            require_once 'Zend/Form/Decorator/Exception.php';
             throw new Zend_Form_Decorator_Exception('ViewHelper decorator cannot render without a registered view object');
         }
 
@@ -244,7 +246,7 @@ class Zend_Form_Decorator_ViewHelper extends Zend_Form_Decorator_Abstract
 
         // Check list separator
         if (isset($attribs['listsep'])
-            && in_array($helper, array('formMultiCheckbox', 'formRadio', 'formSelect'))
+            && in_array($helper, ['formMultiCheckbox', 'formRadio', 'formSelect'])
         ) {
             $listsep = $attribs['listsep'];
             unset($attribs['listsep']);

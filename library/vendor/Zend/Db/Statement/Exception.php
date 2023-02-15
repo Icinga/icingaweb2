@@ -23,6 +23,7 @@
 /**
  * @see Zend_Db_Exception
  */
+require_once 'Zend/Db/Exception.php';
 
 /**
  * Zend_Db_Statement_Exception
@@ -46,7 +47,7 @@ class Zend_Db_Statement_Exception extends Zend_Db_Exception
     }
 
     /**
-     * @return Exception|null
+     * @return Throwable|null
      */
     public function getChainedException()
     {

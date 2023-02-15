@@ -20,8 +20,10 @@
  */
 
 /** Zend_Controller_Plugin_Abstract */
+require_once 'Zend/Controller/Plugin/Abstract.php';
 
 /** Zend_Registry */
+require_once 'Zend/Registry.php';
 
 /**
  * Manage a stack of actions
@@ -49,12 +51,12 @@ class Zend_Controller_Plugin_ActionStack extends Zend_Controller_Plugin_Abstract
      * Valid keys for stack items
      * @var array
      */
-    protected $_validKeys = array(
+    protected $_validKeys = [
         'module',
         'controller',
         'action',
         'params'
-    );
+    ];
 
     /**
      * Flag to determine whether request parameters are cleared between actions, or whether new parameters
@@ -84,7 +86,7 @@ class Zend_Controller_Plugin_ActionStack extends Zend_Controller_Plugin_Abstract
             $key = $this->getRegistryKey();
         }
 
-        $registry[$key] = array();
+        $registry[$key] = [];
     }
 
     /**
@@ -161,8 +163,8 @@ class Zend_Controller_Plugin_ActionStack extends Zend_Controller_Plugin_Abstract
     public function getStack()
     {
         $registry = $this->getRegistry();
-        $stack    = $registry[$this->getRegistryKey()];
-        return $stack;
+
+        return $registry[$this->getRegistryKey()];
     }
 
     /**
@@ -207,6 +209,7 @@ class Zend_Controller_Plugin_ActionStack extends Zend_Controller_Plugin_Abstract
         $this->_saveStack($stack);
 
         if (!$next instanceof Zend_Controller_Request_Abstract) {
+            require_once 'Zend/Controller/Exception.php';
             throw new Zend_Controller_Exception('ArrayStack should only contain request objects');
         }
         $action = $next->getActionName();

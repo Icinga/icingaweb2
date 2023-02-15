@@ -20,6 +20,7 @@
  */
 
 /** Zend_Controller_Plugin_Abstract */
+require_once 'Zend/Controller/Plugin/Abstract.php';
 
 /**
  * Handle exceptions that bubble up based on missing controllers, actions, or
@@ -96,7 +97,7 @@ class Zend_Controller_Plugin_ErrorHandler extends Zend_Controller_Plugin_Abstrac
      * @param  Array $options
      * @return void
      */
-    public function __construct(Array $options = array())
+    public function __construct(Array $options = [])
     {
         $this->setErrorHandler($options);
     }
@@ -107,7 +108,7 @@ class Zend_Controller_Plugin_ErrorHandler extends Zend_Controller_Plugin_Abstrac
      * @param  array $options
      * @return Zend_Controller_Plugin_ErrorHandler
      */
-    public function setErrorHandler(Array $options = array())
+    public function setErrorHandler(Array $options = [])
     {
         if (isset($options['module'])) {
             $this->setErrorHandlerModule($options['module']);
@@ -210,7 +211,7 @@ class Zend_Controller_Plugin_ErrorHandler extends Zend_Controller_Plugin_Abstrac
     {
         $this->_handleError($request);
     }
-	
+
     /**
      * Post dispatch hook -- check for exceptions and dispatch error handler if
      * necessary
@@ -254,7 +255,7 @@ class Zend_Controller_Plugin_ErrorHandler extends Zend_Controller_Plugin_Abstrac
             $this->_isInsideErrorHandlerLoop = true;
 
             // Get exception information
-            $error            = new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS);
+            $error            = new ArrayObject([], ArrayObject::ARRAY_AS_PROPS);
             $exceptions       = $response->getException();
             $exception        = $exceptions[0];
             $exceptionType    = get_class($exception);

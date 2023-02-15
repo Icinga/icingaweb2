@@ -20,6 +20,7 @@
  */
 
 /** Zend_Form_Element_Xhtml */
+require_once 'Zend/Form/Element/Xhtml.php';
 
 /**
  * Base class for multi-option form elements
@@ -37,7 +38,7 @@ abstract class Zend_Form_Element_Multi extends Zend_Form_Element_Xhtml
      * Array of options for multi-item
      * @var array
      */
-    public $options = array();
+    public $options = [];
 
     /**
      * Flag: autoregister inArray validator?
@@ -55,12 +56,12 @@ abstract class Zend_Form_Element_Multi extends Zend_Form_Element_Xhtml
      * Which values are translated already?
      * @var array
      */
-    protected $_translated = array();
+    protected $_translated = [];
 
     /**
      * Retrieve separator
      *
-     * @return mixed
+     * @return string
      */
     public function getSeparator()
     {
@@ -87,7 +88,7 @@ abstract class Zend_Form_Element_Multi extends Zend_Form_Element_Xhtml
     protected function _getMultiOptions()
     {
         if (null === $this->options || !is_array($this->options)) {
-            $this->options = array();
+            $this->options = [];
         }
 
         return $this->options;
@@ -204,8 +205,8 @@ abstract class Zend_Form_Element_Multi extends Zend_Form_Element_Xhtml
      */
     public function clearMultiOptions()
     {
-        $this->options = array();
-        $this->_translated = array();
+        $this->options = [];
+        $this->_translated = [];
         return $this;
     }
 
@@ -245,7 +246,7 @@ abstract class Zend_Form_Element_Multi extends Zend_Form_Element_Xhtml
         if ($this->registerInArrayValidator()) {
             if (!$this->getValidator('InArray')) {
                 $multiOptions = $this->getMultiOptions();
-                $options      = array();
+                $options      = [];
 
                 foreach ($multiOptions as $opt_value => $opt_label) {
                     // optgroup instead of option label
@@ -260,7 +261,7 @@ abstract class Zend_Form_Element_Multi extends Zend_Form_Element_Xhtml
                 $this->addValidator(
                     'InArray',
                     true,
-                    array($options)
+                    [$options]
                 );
             }
         }

@@ -51,6 +51,7 @@ final class Zend_Mail_Header_HeaderValue
         // Long Header Fields (section 2.2.3 of RFC 2822)
         for ($i = 0; $i < $tot; $i += 1) {
             $ord = ord($value[$i]);
+
             if (($ord < 32 || $ord > 126)
                 && $ord !== 13
             ) {
@@ -129,6 +130,7 @@ final class Zend_Mail_Header_HeaderValue
     public static function assertValid($value)
     {
         if (! self::isValid($value)) {
+            require_once 'Zend/Mail/Exception.php';
             throw new Zend_Mail_Exception('Invalid header value detected');
         }
     }

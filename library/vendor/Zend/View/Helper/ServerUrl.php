@@ -116,7 +116,7 @@ class Zend_View_Helper_ServerUrl
      * Sets host
      *
      * @param  string $host                new host
-     * @return Zend_View_Helper_ServerUrl  fluent interface, returns self
+     * @return $this
      */
     public function setHost($host)
     {
@@ -138,7 +138,7 @@ class Zend_View_Helper_ServerUrl
      * Sets scheme (typically http or https)
      *
      * @param  string $scheme              new scheme (typically http or https)
-     * @return Zend_View_Helper_ServerUrl  fluent interface, returns self
+     * @return $this
      */
     public function setScheme($scheme)
     {

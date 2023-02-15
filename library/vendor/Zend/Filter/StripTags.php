@@ -23,6 +23,7 @@
 /**
  * @see Zend_Filter_Interface
  */
+require_once 'Zend/Filter/Interface.php';
 
 
 /**
@@ -58,7 +59,7 @@ class Zend_Filter_StripTags implements Zend_Filter_Interface
      *
      * @var array
      */
-    protected $_tagsAllowed = array();
+    protected $_tagsAllowed = [];
 
     /**
      * Array of allowed attributes for all allowed tags
@@ -67,7 +68,7 @@ class Zend_Filter_StripTags implements Zend_Filter_Interface
      *
      * @var array
      */
-    protected $_attributesAllowed = array();
+    protected $_attributesAllowed = [];
 
     /**
      * Sets the filter options
@@ -131,7 +132,7 @@ class Zend_Filter_StripTags implements Zend_Filter_Interface
      *
      * @deprecated
      * @param  boolean $commentsAllowed
-     * @return Zend_Filter_StripTags Provides a fluent interface
+     * @return $this
      */
     public function setCommentsAllowed($commentsAllowed)
     {
@@ -153,12 +154,12 @@ class Zend_Filter_StripTags implements Zend_Filter_Interface
      * Sets the tagsAllowed option
      *
      * @param  array|string $tagsAllowed
-     * @return Zend_Filter_StripTags Provides a fluent interface
+     * @return $this
      */
     public function setTagsAllowed($tagsAllowed)
     {
         if (!is_array($tagsAllowed)) {
-            $tagsAllowed = array($tagsAllowed);
+            $tagsAllowed = [$tagsAllowed];
         }
 
         foreach ($tagsAllowed as $index => $element) {
@@ -167,7 +168,7 @@ class Zend_Filter_StripTags implements Zend_Filter_Interface
                 // Canonicalize the tag name
                 $tagName = strtolower($element);
                 // Store the tag as allowed with no attributes
-                $this->_tagsAllowed[$tagName] = array();
+                $this->_tagsAllowed[$tagName] = [];
             }
             // Otherwise, if a tag was provided with attributes
             else if (is_string($index) && (is_array($element) || is_string($element))) {
@@ -175,10 +176,10 @@ class Zend_Filter_StripTags implements Zend_Filter_Interface
                 $tagName = strtolower($index);
                 // Canonicalize the attributes
                 if (is_string($element)) {
-                    $element = array($element);
+                    $element = [$element];
                 }
                 // Store the tag as allowed with the provided attributes
-                $this->_tagsAllowed[$tagName] = array();
+                $this->_tagsAllowed[$tagName] = [];
                 foreach ($element as $attribute) {
                     if (is_string($attribute)) {
                         // Canonicalize the attribute name
@@ -206,12 +207,12 @@ class Zend_Filter_StripTags implements Zend_Filter_Interface
      * Sets the attributesAllowed option
      *
      * @param  array|string $attributesAllowed
-     * @return Zend_Filter_StripTags Provides a fluent interface
+     * @return $this
      */
     public function setAttributesAllowed($attributesAllowed)
     {
         if (!is_array($attributesAllowed)) {
-            $attributesAllowed = array($attributesAllowed);
+            $attributesAllowed = [$attributesAllowed];
         }
 
         // Store each attribute as allowed

@@ -24,6 +24,7 @@
 /**
  * @see Zend_Db_Statement
  */
+require_once 'Zend/Db/Statement.php';
 
 
 /**
@@ -72,6 +73,7 @@ class Zend_Db_Statement_Mysqli extends Zend_Db_Statement
             /**
              * @see Zend_Db_Statement_Mysqli_Exception
              */
+            require_once 'Zend/Db/Statement/Mysqli/Exception.php';
             throw new Zend_Db_Statement_Mysqli_Exception("Mysqli prepare error: " . $mysqli->error, $mysqli->errno);
         }
     }
@@ -164,11 +166,11 @@ class Zend_Db_Statement_Mysqli extends Zend_Db_Statement
         if (!$this->_stmt) {
             return false;
         }
-        return array(
+        return [
             substr($this->_stmt->sqlstate, 0, 5),
             $this->_stmt->errno,
             $this->_stmt->error,
-        );
+        ];
     }
 
     /**
@@ -192,13 +194,13 @@ class Zend_Db_Statement_Mysqli extends Zend_Db_Statement
         // send $params as input parameters to the statement
         if ($params) {
             array_unshift($params, str_repeat('s', count($params)));
-            $stmtParams = array();
+            $stmtParams = [];
             foreach ($params as $k => &$value) {
                 $stmtParams[$k] = &$value;
             }
             call_user_func_array(
-                array($this->_stmt, 'bind_param'),
-                $stmtParams
+                [$this->_stmt, 'bind_param'],
+                array_values($stmtParams)
                 );
         }
 
@@ -208,6 +210,7 @@ class Zend_Db_Statement_Mysqli extends Zend_Db_Statement
             /**
              * @see Zend_Db_Statement_Mysqli_Exception
              */
+            require_once 'Zend/Db/Statement/Mysqli/Exception.php';
             throw new Zend_Db_Statement_Mysqli_Exception("Mysqli statement execute error : " . $this->_stmt->error, $this->_stmt->errno);
         }
 
@@ -219,6 +222,7 @@ class Zend_Db_Statement_Mysqli extends Zend_Db_Statement
                 /**
                  * @see Zend_Db_Statement_Mysqli_Exception
                  */
+                require_once 'Zend/Db/Statement/Mysqli/Exception.php';
                 throw new Zend_Db_Statement_Mysqli_Exception("Mysqli statement metadata error: " . $this->_stmt->error, $this->_stmt->errno);
             }
         }
@@ -227,7 +231,7 @@ class Zend_Db_Statement_Mysqli extends Zend_Db_Statement
         if ($this->_meta !== false) {
 
             // get the column names that will result
-            $this->_keys = array();
+            $this->_keys = [];
             foreach ($this->_meta->fetch_fields() as $col) {
                 $this->_keys[] = $this->_adapter->foldCase($col->name);
             }
@@ -238,7 +242,7 @@ class Zend_Db_Statement_Mysqli extends Zend_Db_Statement
             // set up references to the result binding space.
             // just passing $this->_values in the call_user_func_array()
             // below won't work, you need references.
-            $refs = array();
+            $refs = [];
             foreach ($this->_values as $i => &$f) {
                 $refs[$i] = &$f;
             }
@@ -246,7 +250,7 @@ class Zend_Db_Statement_Mysqli extends Zend_Db_Statement
             $this->_stmt->store_result();
             // bind to the result variables
             call_user_func_array(
-                array($this->_stmt, 'bind_result'),
+                [$this->_stmt, 'bind_result'],
                 $this->_values
             );
         }
@@ -260,7 +264,7 @@ class Zend_Db_Statement_Mysqli extends Zend_Db_Statement
      * @param int $style  OPTIONAL Fetch mode for this fetch operation.
      * @param int $cursor OPTIONAL Absolute, relative, or other.
      * @param int $offset OPTIONAL Number for absolute or relative cursors.
-     * @return mixed Array, object, or scalar depending on fetch mode.
+     * @return array|bool|object Array, object, or scalar depending on fetch mode.
      * @throws Zend_Db_Statement_Mysqli_Exception
      */
     public function fetch($style = null, $cursor = null, $offset = null)
@@ -286,7 +290,7 @@ class Zend_Db_Statement_Mysqli extends Zend_Db_Statement
 
         // dereference the result values, otherwise things like fetchAll()
         // return the same values for every entry (because of the reference).
-        $values = array();
+        $values = [];
         foreach ($this->_values as $key => $val) {
             $values[] = $val;
         }
@@ -315,6 +319,7 @@ class Zend_Db_Statement_Mysqli extends Zend_Db_Statement
                 /**
                  * @see Zend_Db_Statement_Mysqli_Exception
                  */
+                require_once 'Zend/Db/Statement/Mysqli/Exception.php';
                 throw new Zend_Db_Statement_Mysqli_Exception("Invalid fetch mode '$style' specified");
                 break;
         }
@@ -334,6 +339,7 @@ class Zend_Db_Statement_Mysqli extends Zend_Db_Statement
         /**
          * @see Zend_Db_Statement_Mysqli_Exception
          */
+        require_once 'Zend/Db/Statement/Mysqli/Exception.php';
         throw new Zend_Db_Statement_Mysqli_Exception(__FUNCTION__.'() is not implemented');
     }
 

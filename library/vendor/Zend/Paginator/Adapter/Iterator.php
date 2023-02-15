@@ -22,10 +22,12 @@
 /**
  * @see Zend_Paginator_Adapter_Interface
  */
+require_once 'Zend/Paginator/Adapter/Interface.php';
 
 /**
  * @see Zend_Paginator_SerializableLimitIterator
  */
+require_once 'Zend/Paginator/SerializableLimitIterator.php';
 
 /**
  * @category   Zend
@@ -61,6 +63,7 @@ class Zend_Paginator_Adapter_Iterator implements Zend_Paginator_Adapter_Interfac
             /**
              * @see Zend_Paginator_Exception
              */
+            require_once 'Zend/Paginator/Exception.php';
 
             throw new Zend_Paginator_Exception('Iterator must implement Countable');
         }
@@ -79,7 +82,7 @@ class Zend_Paginator_Adapter_Iterator implements Zend_Paginator_Adapter_Interfac
     public function getItems($offset, $itemCountPerPage)
     {
         if ($this->_count == 0) {
-            return array();
+            return [];
         }
 
         // @link http://bugs.php.net/bug.php?id=49906 | ZF-8084
@@ -92,7 +95,7 @@ class Zend_Paginator_Adapter_Iterator implements Zend_Paginator_Adapter_Interfac
      *
      * @return integer
      */
-    public function count()
+    public function count(): int
     {
         return $this->_count;
     }

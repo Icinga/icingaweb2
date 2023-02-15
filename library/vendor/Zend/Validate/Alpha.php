@@ -22,6 +22,7 @@
 /**
  * @see Zend_Validate_Abstract
  */
+require_once 'Zend/Validate/Abstract.php';
 
 /**
  * @category   Zend
@@ -55,11 +56,11 @@ class Zend_Validate_Alpha extends Zend_Validate_Abstract
      *
      * @var array
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::INVALID      => "Invalid type given. String expected",
         self::NOT_ALPHA    => "'%value%' contains non alphabetic characters",
         self::STRING_EMPTY => "'%value%' is an empty string"
-    );
+    ];
 
     /**
      * Sets default option values for this instance
@@ -97,7 +98,7 @@ class Zend_Validate_Alpha extends Zend_Validate_Abstract
      * Sets the allowWhiteSpace option
      *
      * @param boolean $allowWhiteSpace
-     * @return Zend_Filter_Alpha Provides a fluent interface
+     * @return $this
      */
     public function setAllowWhiteSpace($allowWhiteSpace)
     {
@@ -131,6 +132,7 @@ class Zend_Validate_Alpha extends Zend_Validate_Abstract
             /**
              * @see Zend_Filter_Alpha
              */
+            require_once 'Zend/Filter/Alpha.php';
             self::$_filter = new Zend_Filter_Alpha();
         }
 

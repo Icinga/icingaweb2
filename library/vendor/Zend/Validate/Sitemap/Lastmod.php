@@ -23,6 +23,7 @@
 /**
  * @see Zend_Validate_Abstract
  */
+require_once 'Zend/Validate/Abstract.php';
 
 /**
  * Validates whether a given value is valid as a sitemap <lastmod> value
@@ -55,10 +56,10 @@ class Zend_Validate_Sitemap_Lastmod extends Zend_Validate_Abstract
      *
      * @var array
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::NOT_VALID => "'%value%' is not a valid sitemap lastmod",
         self::INVALID   => "Invalid type given. String expected",
-    );
+    ];
 
     /**
      * Validates if a string is valid as a sitemap lastmod

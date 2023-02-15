@@ -22,6 +22,7 @@
 /**
  * @see Zend_Validate_Barcode_AdapterAbstract
  */
+require_once 'Zend/Validate/Barcode/AdapterAbstract.php';
 
 /**
  * @category   Zend
@@ -35,7 +36,7 @@ class Zend_Validate_Barcode_Postnet extends Zend_Validate_Barcode_AdapterAbstrac
      * Allowed barcode lengths
      * @var integer
      */
-    protected $_length = array(6, 7, 10, 12);
+    protected $_length = [6, 7, 10, 12];
 
     /**
      * Allowed barcode characters

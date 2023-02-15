@@ -62,11 +62,7 @@ class Zend_Db_Profiler_Query
     /**
      * @var array
      */
-    protected $_boundParams = array();
-
-    /**
-     * @var array
-     */
+    protected $_boundParams = [];
 
     /**
      * Class constructor.  A query is about to be started, save the query text ($query) and its
@@ -90,7 +86,7 @@ class Zend_Db_Profiler_Query
      */
     public function __clone()
     {
-        $this->_boundParams = array();
+        $this->_boundParams = [];
         $this->_endedMicrotime = null;
         $this->start();
     }

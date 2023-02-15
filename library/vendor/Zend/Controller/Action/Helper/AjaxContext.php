@@ -23,6 +23,7 @@
 /**
  * @see Zend_Controller_Action_Helper_ContextSwitch
  */
+require_once 'Zend/Controller/Action/Helper/ContextSwitch.php';
 
 /**
  * Simplify AJAX context switching based on requested format
@@ -52,7 +53,7 @@ class Zend_Controller_Action_Helper_AjaxContext extends Zend_Controller_Action_H
     public function __construct()
     {
         parent::__construct();
-        $this->addContext('html', array('suffix' => 'ajax'));
+        $this->addContext('html', ['suffix' => 'ajax']);
     }
 
     /**

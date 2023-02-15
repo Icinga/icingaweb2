@@ -20,10 +20,13 @@
  */
 
 /** @see Zend_Loader */
+require_once 'Zend/Loader.php';
 
 /** @see Zend_Loader_PluginLoader */
+require_once 'Zend/Loader/PluginLoader.php';
 
 /** @see Zend_View_Interface */
+require_once 'Zend/View/Interface.php';
 
 /**
  * Abstract class for Zend_View to help enforce private constructs.
@@ -40,11 +43,11 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
      *
      * @var array
      */
-    private $_path = array(
-        'script' => array(),
-        'helper' => array(),
-        'filter' => array(),
-    );
+    private $_path = [
+        'script' => [],
+        'helper' => [],
+        'filter' => [],
+    ];
 
     /**
      * Script file name to execute
@@ -58,45 +61,45 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
      *
      * @var array
      */
-    private $_helper = array();
+    private $_helper = [];
 
     /**
      * Map of helper => class pairs to help in determining helper class from
      * name
      * @var array
      */
-    private $_helperLoaded = array();
+    private $_helperLoaded = [];
 
     /**
      * Map of helper => classfile pairs to aid in determining helper classfile
      * @var array
      */
-    private $_helperLoadedDir = array();
+    private $_helperLoadedDir = [];
 
     /**
      * Stack of Zend_View_Filter names to apply as filters.
      * @var array
      */
-    private $_filter = array();
+    private $_filter = [];
 
     /**
      * Stack of Zend_View_Filter objects that have been loaded
      * @var array
      */
-    private $_filterClass = array();
+    private $_filterClass = [];
 
     /**
      * Map of filter => class pairs to help in determining filter class from
      * name
      * @var array
      */
-    private $_filterLoaded = array();
+    private $_filterLoaded = [];
 
     /**
      * Map of filter => classfile pairs to aid in determining filter classfile
      * @var array
      */
-    private $_filterLoadedDir = array();
+    private $_filterLoadedDir = [];
 
     /**
      * Callback for escaping.
@@ -121,13 +124,13 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
      * Plugin loaders
      * @var array
      */
-    private $_loaders = array();
+    private $_loaders = [];
 
     /**
      * Plugin types
      * @var array
      */
-    private $_loaderTypes = array('filter', 'helper');
+    private $_loaderTypes = ['filter', 'helper'];
 
     /**
      * Strict variables flag; when on, undefined variables accessed in the view
@@ -137,11 +140,18 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
     private $_strictVars = false;
 
     /**
+     * Data container
+     *
+     * @var array
+     */
+    private $_data = [];
+
+    /**
      * Constructor.
      *
      * @param array $config Configuration key-value pairs.
      */
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         // set inital paths and properties
         $this->setScriptPath(null);
@@ -261,13 +271,20 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
      * @param  string $key
      * @return null
      */
-    public function __get($key)
+    public function &__get($key)
     {
+        $value = null;
+        if ('_' != substr($key, 0, 1) && isset($this->_data[$key])) {
+
+            $value = &$this->_data[$key];
+            return $value;
+        }
+
         if ($this->_strictVars) {
             trigger_error('Key "' . $key . '" does not exist', E_USER_NOTICE);
         }
 
-        return null;
+        return $value;
     }
 
     /**
@@ -280,7 +297,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
     public function __isset($key)
     {
         if ('_' != substr($key, 0, 1)) {
-            return isset($this->$key);
+            return isset($this->_data[$key]);
         }
 
         return false;
@@ -302,10 +319,11 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
     public function __set($key, $val)
     {
         if ('_' != substr($key, 0, 1)) {
-            $this->$key = $val;
+            $this->_data[$key] = $val;
             return;
         }
 
+        require_once 'Zend/View/Exception.php';
         $e = new Zend_View_Exception('Setting private or protected class members is not allowed');
         $e->setView($this);
         throw $e;
@@ -319,8 +337,8 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
      */
     public function __unset($key)
     {
-        if ('_' != substr($key, 0, 1) && isset($this->$key)) {
-            unset($this->$key);
+        if ('_' != substr($key, 0, 1) && isset($this->_data[$key])) {
+            unset($this->_data[$key]);
         }
     }
 
@@ -341,7 +359,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
 
         // call the helper method
         return call_user_func_array(
-            array($helper, $name),
+            [$helper, $name],
             $args
         );
     }
@@ -403,7 +421,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
     /**
      * Adds to the stack of view script paths in LIFO order.
      *
-     * @param string|array The directory (-ies) to add.
+     * @param string|array $path The directory (-ies) to add.
      * @return Zend_View_Abstract
      */
     public function addScriptPath($path)
@@ -417,12 +435,12 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
      *
      * To clear all paths, use Zend_View::setScriptPath(null).
      *
-     * @param string|array The directory (-ies) to set as the path.
+     * @param string|array $path The directory (-ies) to set as the path.
      * @return Zend_View_Abstract
      */
     public function setScriptPath($path)
     {
-        $this->_path['script'] = array();
+        $this->_path['script'] = [];
         $this->_addPath('script', $path);
         return $this;
     }
@@ -437,8 +455,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
     public function getScriptPath($name)
     {
         try {
-            $path = $this->_script($name);
-            return $path;
+            return $this->_script($name);
         } catch (Zend_View_Exception $e) {
             if (strstr($e->getMessage(), 'no view script directory set')) {
                 throw $e;
@@ -469,6 +486,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
     {
         $type = strtolower($type);
         if (!in_array($type, $this->_loaderTypes)) {
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception(sprintf('Invalid plugin loader type "%s"', $type));
             $e->setView($this);
             throw $e;
@@ -488,6 +506,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
     {
         $type = strtolower($type);
         if (!in_array($type, $this->_loaderTypes)) {
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception(sprintf('Invalid plugin loader type "%s"; cannot retrieve', $type));
             $e->setView($this);
             throw $e;
@@ -504,9 +523,9 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
                 default:
                     $prefix     .= $pType;
                     $pathPrefix .= $pType;
-                    $loader = new Zend_Loader_PluginLoader(array(
+                    $loader = new Zend_Loader_PluginLoader([
                         $prefix => $pathPrefix
-                    ));
+                    ]);
                     $this->_loaders[$type] = $loader;
                     break;
             }
@@ -517,7 +536,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
     /**
      * Adds to the stack of helper paths in LIFO order.
      *
-     * @param string|array The directory (-ies) to add.
+     * @param string|array $path The directory (-ies) to add.
      * @param string $classPrefix Class prefix to use with classes in this
      * directory; defaults to Zend_View_Helper
      * @return Zend_View_Abstract
@@ -575,6 +594,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
     public function registerHelper($helper, $name)
     {
         if (!is_object($helper)) {
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception('View helper must be an object');
             $e->setView($this);
             throw $e;
@@ -582,6 +602,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
 
         if (!$helper instanceof Zend_View_Interface) {
             if (!method_exists($helper, $name)) {
+                require_once 'Zend/View/Exception.php';
                 $e =  new Zend_View_Exception(
                     'View helper must implement Zend_View_Interface or have a method matching the name provided'
                 );
@@ -625,7 +646,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
     /**
      * Adds to the stack of filter paths in LIFO order.
      *
-     * @param string|array The directory (-ies) to add.
+     * @param string|array $path The directory (-ies) to add.
      * @param string $classPrefix Class prefix to use with classes in this
      * directory; defaults to Zend_View_Filter
      * @return Zend_View_Abstract
@@ -640,7 +661,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
      *
      * To clear all paths, use Zend_View::setFilterPath(null).
      *
-     * @param string|array The directory (-ies) to set as the path.
+     * @param string|array $path The directory (-ies) to set as the path.
      * @param string $classPrefix The class prefix to apply to all elements in
      * $path; defaults to Zend_View_Filter
      * @return Zend_View_Abstract
@@ -711,7 +732,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
     /**
      * Add one or more filters to the stack in FIFO order.
      *
-     * @param string|array One or more filters to add.
+     * @param string|array $name One or more filters to add.
      * @return Zend_View_Abstract
      */
     public function addFilter($name)
@@ -727,12 +748,12 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
      *
      * To clear all filters, use Zend_View::setFilter(null).
      *
-     * @param string|array One or more filters to set.
+     * @param string|array $name One or more filters to set.
      * @return Zend_View_Abstract
      */
     public function setFilter($name)
     {
-        $this->_filter = array();
+        $this->_filter = [];
         $this->addFilter($name);
         return $this;
     }
@@ -781,10 +802,10 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
      * names (with the corresponding array values).
      *
      * @see    __set()
-     * @param  string|array The assignment strategy to use.
-     * @param  mixed (Optional) If assigning a named variable, use this
+     * @param  string|array $spec The assignment strategy to use.
+     * @param  mixed $value (Optional) If assigning a named variable, use this
      * as the value.
-     * @return Zend_View_Abstract Fluent interface
+     * @return $this
      * @throws Zend_View_Exception if $spec is neither a string nor an array,
      * or if an attempt to set a private or protected member is detected
      */
@@ -794,6 +815,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
         if (is_string($spec)) {
             // assign by name and value
             if ('_' == substr($spec, 0, 1)) {
+                require_once 'Zend/View/Exception.php';
                 $e = new Zend_View_Exception('Setting private or protected class members is not allowed');
                 $e->setView($this);
                 throw $e;
@@ -810,11 +832,13 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
                 $this->$key = $val;
             }
             if ($error) {
+                require_once 'Zend/View/Exception.php';
                 $e = new Zend_View_Exception('Setting private or protected class members is not allowed');
                 $e->setView($this);
                 throw $e;
             }
         } else {
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception('assign() expects a string or array, received ' . gettype($spec));
             $e->setView($this);
             throw $e;
@@ -826,21 +850,11 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
     /**
      * Return list of all assigned variables
      *
-     * Returns all public properties of the object. Reflection is not used
-     * here as testing reflection properties for visibility is buggy.
-     *
      * @return array
      */
     public function getVars()
     {
-        $vars   = get_object_vars($this);
-        foreach ($vars as $key => $value) {
-            if ('_' == substr($key, 0, 1)) {
-                unset($vars[$key]);
-            }
-        }
-
-        return $vars;
+        return $this->_data;
     }
 
     /**
@@ -853,12 +867,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
      */
     public function clearVars()
     {
-        $vars   = get_object_vars($this);
-        foreach ($vars as $key => $value) {
-            if ('_' != substr($key, 0, 1)) {
-                unset($this->$key);
-            }
-        }
+        $this->_data = [];
     }
 
     /**
@@ -890,8 +899,8 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
      */
     public function escape($var)
     {
-        if (in_array($this->_escape, array('htmlspecialchars', 'htmlentities'))) {
-            return call_user_func($this->_escape, $var, ENT_COMPAT, $this->_encoding);
+        if (in_array($this->_escape, ['htmlspecialchars', 'htmlentities'])) {
+            return call_user_func($this->_escape, (string) $var, ENT_COMPAT, $this->_encoding);
         }
 
         if (1 == func_num_args()) {
@@ -946,17 +955,19 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
      * Finds a view script from the available directories.
      *
      * @param string $name The base name of the script.
-     * @return void
+     * @return string
      */
     protected function _script($name)
     {
         if ($this->isLfiProtectionOn() && preg_match('#\.\.[\\\/]#', $name)) {
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception('Requested scripts may not include parent directory traversal ("../", "..\\" notation)');
             $e->setView($this);
             throw $e;
         }
 
         if (0 == count($this->_path['script'])) {
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception('no view script directory set; unable to determine location for view script');
             $e->setView($this);
             throw $e;
@@ -968,6 +979,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
             }
         }
 
+        require_once 'Zend/View/Exception.php';
         $message = "script '$name' not found in path ("
                  . implode(PATH_SEPARATOR, $this->_path['script'])
                  . ")";
@@ -988,7 +1000,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
         foreach ($this->_filter as $name) {
             // load and apply the filter class
             $filter = $this->getFilter($name);
-            $buffer = call_user_func(array($filter, 'filter'), $buffer);
+            $buffer = call_user_func([$filter, 'filter'], $buffer);
         }
 
         // done!
@@ -1031,7 +1043,7 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
                 case 'helper':
                 default:
                     // add as array with prefix and dir keys
-                    array_unshift($this->_path[$type], array('prefix' => $prefix, 'dir' => $dir));
+                    array_unshift($this->_path[$type], ['prefix' => $prefix, 'dir' => $dir]);
                     break;
             }
         }
@@ -1050,16 +1062,16 @@ abstract class Zend_View_Abstract implements Zend_View_Interface
 
         switch ($type) {
             case 'script':
-                $this->_path[$type] = array(dirname(__FILE__) . $dir);
+                $this->_path[$type] = [dirname(__FILE__) . $dir];
                 $this->_addPath($type, $path);
                 break;
             case 'filter':
             case 'helper':
             default:
-                $this->_path[$type] = array(array(
+                $this->_path[$type] = [[
                     'prefix' => 'Zend_View_' . ucfirst($type) . '_',
                     'dir'    => dirname(__FILE__) . $dir
-                ));
+                ]];
                 $this->_addPath($type, $path, $classPrefix);
                 break;
         }

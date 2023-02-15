@@ -22,10 +22,12 @@
 /**
  * @see Zend_Validate_Abstract
  */
+require_once 'Zend/Validate/Abstract.php';
 
 /**
  * @see Zend_Locale_Format
  */
+require_once 'Zend/Locale/Format.php';
 
 /**
  * @category   Zend
@@ -41,10 +43,10 @@ class Zend_Validate_Int extends Zend_Validate_Abstract
     /**
      * @var array
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::INVALID => "Invalid type given. String or integer expected",
         self::NOT_INT => "'%value%' does not appear to be an integer",
-    );
+    ];
 
     protected $_locale;
 
@@ -68,6 +70,7 @@ class Zend_Validate_Int extends Zend_Validate_Abstract
         }
 
         if (empty($locale)) {
+            require_once 'Zend/Registry.php';
             if (Zend_Registry::isRegistered('Zend_Locale')) {
                 $locale = Zend_Registry::get('Zend_Locale');
             }
@@ -94,6 +97,7 @@ class Zend_Validate_Int extends Zend_Validate_Abstract
      */
     public function setLocale($locale = null)
     {
+        require_once 'Zend/Locale.php';
         $this->_locale = Zend_Locale::findLocale($locale);
         return $this;
     }
@@ -120,17 +124,19 @@ class Zend_Validate_Int extends Zend_Validate_Abstract
         $this->_setValue($value);
         if ($this->_locale === null) {
             $locale        = localeconv();
-            $valueFiltered = str_replace($locale['decimal_point'], '.', $value);
-            $valueFiltered = str_replace($locale['thousands_sep'], '', $valueFiltered);
+            $valueFiltered = str_replace(
+                [$locale['decimal_point'], $locale['thousands_sep']],
+                ['.', ''],
+                $value);
 
-            if (strval(intval($valueFiltered)) != $valueFiltered) {
+            if ((string)(int)$valueFiltered != $valueFiltered) {
                 $this->_error(self::NOT_INT);
                 return false;
             }
 
         } else {
             try {
-                if (!Zend_Locale_Format::isInteger($value, array('locale' => $this->_locale))) {
+                if (!Zend_Locale_Format::isInteger((string) $value, ['locale' => $this->_locale])) {
                     $this->_error(self::NOT_INT);
                     return false;
                 }

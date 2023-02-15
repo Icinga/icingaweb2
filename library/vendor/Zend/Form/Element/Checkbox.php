@@ -20,6 +20,7 @@
  */
 
 /** Zend_Form_Element_Xhtml */
+require_once 'Zend/Form/Element/Xhtml.php';
 
 /**
  * Checkbox form element
@@ -49,10 +50,10 @@ class Zend_Form_Element_Checkbox extends Zend_Form_Element_Xhtml
      * Options that will be passed to the view helper
      * @var array
      */
-    public $options = array(
+    public $options = [
         'checkedValue'   => '1',
         'uncheckedValue' => '0',
-    );
+    ];
 
     /**
      * Value when checked
@@ -94,7 +95,7 @@ class Zend_Form_Element_Checkbox extends Zend_Form_Element_Xhtml
         parent::setOptions($options);
 
         $curValue = $this->getValue();
-        $test     = array($this->getCheckedValue(), $this->getUncheckedValue());
+        $test     = [$this->getCheckedValue(), $this->getUncheckedValue()];
         if (!in_array($curValue, $test)) {
             $this->setValue($curValue);
         }

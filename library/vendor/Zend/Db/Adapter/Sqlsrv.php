@@ -23,10 +23,12 @@
 /**
  * @see Zend_Db_Adapter_Abstract
  */
+require_once 'Zend/Db/Adapter/Abstract.php';
 
 /**
  * @see Zend_Db_Statement_Sqlsrv
  */
+require_once 'Zend/Db/Statement/Sqlsrv.php';
 
 /**
  * @category   Zend
@@ -48,11 +50,11 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
      *
      * @var array
      */
-    protected $_config = array(
+    protected $_config = [
         'dbname'       => null,
         'username'     => null,
         'password'     => null,
-    );
+    ];
 
     /**
      * Last insert id from INSERT query
@@ -79,7 +81,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
      *
      * @var array Associative array of datatypes to values 0, 1, or 2.
      */
-    protected $_numericDataTypes = array(
+    protected $_numericDataTypes = [
         Zend_Db::INT_TYPE    => Zend_Db::INT_TYPE,
         Zend_Db::BIGINT_TYPE => Zend_Db::BIGINT_TYPE,
         Zend_Db::FLOAT_TYPE  => Zend_Db::FLOAT_TYPE,
@@ -93,7 +95,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
         'NUMERIC'            => Zend_Db::FLOAT_TYPE,
         'REAL'               => Zend_Db::FLOAT_TYPE,
         'SMALLMONEY'         => Zend_Db::FLOAT_TYPE,
-    );
+    ];
 
     /**
      * Default class name for a DB statement.
@@ -119,6 +121,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
             /**
              * @see Zend_Db_Adapter_Sqlsrv_Exception
              */
+            require_once 'Zend/Db/Adapter/Sqlsrv/Exception.php';
             throw new Zend_Db_Adapter_Sqlsrv_Exception('The Sqlsrv extension is required for this adapter but the extension is not loaded');
         }
 
@@ -128,16 +131,16 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
             $serverName .= ', ' . $port;
         }
 
-        $connectionInfo = array(
+        $connectionInfo = [
             'Database' => $this->_config['dbname'],
-        );
+        ];
 
         if (isset($this->_config['username']) && isset($this->_config['password']))
         {
-            $connectionInfo += array(
+            $connectionInfo += [
                 'UID'      => $this->_config['username'],
                 'PWD'      => $this->_config['password'],
-            );
+            ];
         }
         // else - windows authentication
 
@@ -161,6 +164,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
             /**
              * @see Zend_Db_Adapter_Sqlsrv_Exception
              */
+            require_once 'Zend/Db/Adapter/Sqlsrv/Exception.php';
             throw new Zend_Db_Adapter_Sqlsrv_Exception(sqlsrv_errors());
         }
     }
@@ -177,6 +181,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
         // we need at least a dbname
         if (! array_key_exists('dbname', $config)) {
             /** @see Zend_Db_Adapter_Exception */
+            require_once 'Zend/Db/Adapter/Exception.php';
             throw new Zend_Db_Adapter_Exception("Configuration array must have a key for 'dbname' that names the database instance");
         }
 
@@ -184,6 +189,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
             /**
              * @see Zend_Db_Adapter_Exception
              */
+            require_once 'Zend/Db/Adapter/Exception.php';
             throw new Zend_Db_Adapter_Exception("Configuration array must have a key for 'password' for login credentials.
                                                 If Windows Authentication is desired, both keys 'username' and 'password' should be ommited from config.");
         }
@@ -192,6 +198,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
             /**
              * @see Zend_Db_Adapter_Exception
              */
+            require_once 'Zend/Db/Adapter/Exception.php';
             throw new Zend_Db_Adapter_Exception("Configuration array must have a key for 'username' for login credentials.
                                                 If Windows Authentication is desired, both keys 'username' and 'password' should be ommited from config.");
         }
@@ -232,10 +239,12 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
                 $sql = "SERIALIZABLE";
                 break;
             default:
+                require_once 'Zend/Db/Adapter/Sqlsrv/Exception.php';
                 throw new Zend_Db_Adapter_Sqlsrv_Exception("Invalid transaction isolation level mode '$level' specified");
         }
 
         if (!sqlsrv_query($this->_connection, "SET TRANSACTION ISOLATION LEVEL $sql;")) {
+            require_once 'Zend/Db/Adapter/Sqlsrv/Exception.php';
             throw new Zend_Db_Adapter_Sqlsrv_Exception("Transaction cannot be changed to '$level'");
         }
 
@@ -282,6 +291,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
             /**
              * @see Zend_Loader
              */
+            require_once 'Zend/Loader.php';
             Zend_Loader::loadClass($stmtClass);
         }
 
@@ -348,8 +358,8 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
     public function insert($table, array $bind)
     {
         // extract and quote col names from the array keys
-        $cols = array();
-        $vals = array();
+        $cols = [];
+        $vals = [];
         foreach ($bind as $col => $val) {
             $cols[] = $this->quoteIdentifier($col, true);
             if ($val instanceof Zend_Db_Expr) {
@@ -428,12 +438,12 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
         $sql    = "exec sp_columns @table_name = " . $this->quoteIdentifier($tableName, true);
         $stmt   = $this->query($sql);
         $result = $stmt->fetchAll(Zend_Db::FETCH_NUM);
-        
+
         // ZF-7698
         $stmt->closeCursor();
 
-        if (count($result) == 0) {
-            return array();
+        if (count($result) === 0) {
+            return [];
         }
 
         $owner           = 1;
@@ -456,7 +466,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
         $stmt       = $this->query($sql);
 
         $primaryKeysResult = $stmt->fetchAll(Zend_Db::FETCH_NUM);
-        $primaryKeyColumn  = array();
+        $primaryKeyColumn  = [];
 
         // Per http://msdn.microsoft.com/en-us/library/ms189813.aspx,
         // results from sp_keys stored procedure are:
@@ -468,7 +478,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
             $primaryKeyColumn[$pkeysRow[$pkey_column_name]] = $pkeysRow[$pkey_key_seq];
         }
 
-        $desc = array();
+        $desc = [];
         $p    = 1;
         foreach ($result as $key => $row) {
             $identity = false;
@@ -487,7 +497,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
                 $primaryPosition = null;
             }
 
-            $desc[$this->foldCase($row[$column_name])] = array(
+            $desc[$this->foldCase($row[$column_name])] = [
                 'SCHEMA_NAME'      => null, // @todo
                 'TABLE_NAME'       => $this->foldCase($row[$table_name]),
                 'COLUMN_NAME'      => $this->foldCase($row[$column_name]),
@@ -502,7 +512,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
                 'PRIMARY'          => $isPrimary,
                 'PRIMARY_POSITION' => $primaryPosition,
                 'IDENTITY'         => $identity,
-            );
+            ];
         }
 
         return $desc;
@@ -517,6 +527,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
     protected function _beginTransaction()
     {
         if (!sqlsrv_begin_transaction($this->_connection)) {
+            require_once 'Zend/Db/Adapter/Sqlsrv/Exception.php';
             throw new Zend_Db_Adapter_Sqlsrv_Exception(sqlsrv_errors());
         }
     }
@@ -530,6 +541,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
     protected function _commit()
     {
         if (!sqlsrv_commit($this->_connection)) {
+            require_once 'Zend/Db/Adapter/Sqlsrv/Exception.php';
             throw new Zend_Db_Adapter_Sqlsrv_Exception(sqlsrv_errors());
         }
     }
@@ -543,6 +555,7 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
     protected function _rollBack()
     {
         if (!sqlsrv_rollback($this->_connection)) {
+            require_once 'Zend/Db/Adapter/Sqlsrv/Exception.php';
             throw new Zend_Db_Adapter_Sqlsrv_Exception(sqlsrv_errors());
         }
     }
@@ -566,9 +579,11 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
                 $this->_fetchMode = $mode;
                 break;
             case Zend_Db::FETCH_BOUND: // bound to PHP variable
+                require_once 'Zend/Db/Adapter/Sqlsrv/Exception.php';
                 throw new Zend_Db_Adapter_Sqlsrv_Exception('FETCH_BOUND is not supported yet');
                 break;
             default:
+                require_once 'Zend/Db/Adapter/Sqlsrv/Exception.php';
                 throw new Zend_Db_Adapter_Sqlsrv_Exception("Invalid fetch mode '$mode' specified");
                 break;
         }
@@ -585,18 +600,21 @@ class Zend_Db_Adapter_Sqlsrv extends Zend_Db_Adapter_Abstract
      */
      public function limit($sql, $count, $offset = 0)
      {
-        $count = intval($count);
+        $count = (int)$count;
         if ($count <= 0) {
+            require_once 'Zend/Db/Adapter/Exception.php';
             throw new Zend_Db_Adapter_Exception("LIMIT argument count=$count is not valid");
         }
 
-        $offset = intval($offset);
+        $offset = (int)$offset;
+
         if ($offset < 0) {
             /** @see Zend_Db_Adapter_Exception */
+            require_once 'Zend/Db/Adapter/Exception.php';
             throw new Zend_Db_Adapter_Exception("LIMIT argument offset=$offset is not valid");
         }
 
-        if ($offset == 0) {
+        if ($offset === 0) {
             $sql = preg_replace('/^SELECT\s/i', 'SELECT TOP ' . $count . ' ', $sql);
         } else {
             $orderby = stristr($sql, 'ORDER BY');

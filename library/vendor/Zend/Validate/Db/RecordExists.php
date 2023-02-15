@@ -22,6 +22,7 @@
 /**
  * @see Zend_Validate_Db_Abstract
  */
+require_once 'Zend/Validate/Db/Abstract.php';
 
 /**
  * Confirms a record exists in a table.

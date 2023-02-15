@@ -20,10 +20,12 @@
 /**
  * @see Zend_Json
  */
+require_once 'Zend/Json.php';
 
 /**
  * @see Zend_ProgressBar_Adapter
  */
+require_once 'Zend/ProgressBar/Adapter.php';
 
 /**
  * Zend_ProgressBar_Adapter_JsPush offers a simple method for updating a
@@ -90,14 +92,14 @@ class Zend_ProgressBar_Adapter_JsPush extends Zend_ProgressBar_Adapter
      */
     public function notify($current, $max, $percent, $timeTaken, $timeRemaining, $text)
     {
-        $arguments = array(
+        $arguments = [
             'current'       => $current,
             'max'           => $max,
             'percent'       => ($percent * 100),
             'timeTaken'     => $timeTaken,
             'timeRemaining' => $timeRemaining,
             'text'          => $text
-        );
+        ];
 
         $data = '<script type="text/javascript">'
               . 'parent.' . $this->_updateMethodName . '(' . Zend_Json::encode($arguments) . ');'

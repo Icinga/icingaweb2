@@ -21,6 +21,7 @@
  */
 
 /** Zend_Log_Writer_Abstract */
+require_once 'Zend/Log/Writer/Abstract.php';
 
 /**
  * @category   Zend
@@ -77,11 +78,11 @@ class Zend_Log_Writer_Db extends Zend_Log_Writer_Abstract
     static public function factory($config)
     {
         $config = self::_parseConfig($config);
-        $config = array_merge(array(
+        $config = array_merge([
             'db'        => null,
             'table'     => null,
             'columnMap' => null,
-        ), $config);
+        ], $config);
 
         if (isset($config['columnmap'])) {
             $config['columnMap'] = $config['columnmap'];
@@ -102,6 +103,7 @@ class Zend_Log_Writer_Db extends Zend_Log_Writer_Abstract
      */
     public function setFormatter(Zend_Log_Formatter_Interface $formatter)
     {
+        require_once 'Zend/Log/Exception.php';
         throw new Zend_Log_Exception(get_class($this) . ' does not support formatting');
     }
 
@@ -125,13 +127,14 @@ class Zend_Log_Writer_Db extends Zend_Log_Writer_Abstract
     protected function _write($event)
     {
         if ($this->_db === null) {
+            require_once 'Zend/Log/Exception.php';
             throw new Zend_Log_Exception('Database adapter is null');
         }
 
         if ($this->_columnMap === null) {
             $dataToInsert = $event;
         } else {
-            $dataToInsert = array();
+            $dataToInsert = [];
             foreach ($this->_columnMap as $columnName => $fieldKey) {
                 if (isset($event[$fieldKey])) {
                     $dataToInsert[$columnName] = $event[$fieldKey];

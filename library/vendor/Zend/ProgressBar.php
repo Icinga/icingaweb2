@@ -89,6 +89,7 @@ class Zend_ProgressBar
     {
         // Check min/max values and set them
         if ($min > $max) {
+            require_once 'Zend/ProgressBar/Exception.php';
             throw new Zend_ProgressBar_Exception('$max must be greater than $min');
         }
 
@@ -98,6 +99,7 @@ class Zend_ProgressBar
 
         // See if we have to open a session namespace
         if ($persistenceNamespace !== null) {
+            require_once 'Zend/Session/Namespace.php';
 
             $this->_persistenceNamespace = new Zend_Session_Namespace($persistenceNamespace);
         }
@@ -186,6 +188,7 @@ class Zend_ProgressBar
      * @param  string $text
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next($diff = 1, $text = null)
     {
         $this->update(max($this->_min, min($this->_max, $this->_current + $diff)), $text);

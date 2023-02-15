@@ -22,9 +22,11 @@
 /**
  * @see Zend_Filter_Interface
  */
+require_once 'Zend/Filter/Interface.php';
 /**
  * @see Zend_Locale
  */
+require_once 'Zend/Locale.php';
 
 /**
  * @category   Zend
@@ -89,7 +91,7 @@ class Zend_Filter_Alpha implements Zend_Filter_Interface
         if (null === self::$_meansEnglishAlphabet) {
             $this->_locale = new Zend_Locale('auto');
             self::$_meansEnglishAlphabet = in_array($this->_locale->getLanguage(),
-                                                    array('ja', 'ko', 'zh')
+                                                    ['ja', 'ko', 'zh']
                                                     );
         }
 
@@ -109,7 +111,7 @@ class Zend_Filter_Alpha implements Zend_Filter_Interface
      * Sets the allowWhiteSpace option
      *
      * @param boolean $allowWhiteSpace
-     * @return Zend_Filter_Alpha Provides a fluent interface
+     * @return $this
      */
     public function setAllowWhiteSpace($allowWhiteSpace)
     {

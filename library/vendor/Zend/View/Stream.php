@@ -180,4 +180,9 @@ class Zend_View_Stream
                 return false;
         }
     }
+
+    public function stream_set_option($option, $arg1, $arg2)
+    {
+        return false;
+    }
 }

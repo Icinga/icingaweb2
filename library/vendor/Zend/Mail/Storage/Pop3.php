@@ -24,14 +24,17 @@
 /**
  * @see Zend_Mail_Storage_Abstract
  */
+require_once 'Zend/Mail/Storage/Abstract.php';
 
 /**
  * @see Zend_Mail_Protocol_Pop3
  */
+require_once 'Zend/Mail/Protocol/Pop3.php';
 
 /**
  * @see Zend_Mail_Message
  */
+require_once 'Zend/Mail/Message.php';
 
 
 /**
@@ -88,8 +91,8 @@ class Zend_Mail_Storage_Pop3 extends Zend_Mail_Storage_Abstract
         $bodyLines = 0;
         $message = $this->_protocol->top($id, $bodyLines, true);
 
-        return new $this->_messageClass(array('handler' => $this, 'id' => $id, 'headers' => $message,
-                                              'noToplines' => $bodyLines < 1));
+        return new $this->_messageClass(['handler' => $this, 'id' => $id, 'headers' => $message,
+                                              'noToplines' => $bodyLines < 1]);
     }
 
     /*
@@ -109,6 +112,7 @@ class Zend_Mail_Storage_Pop3 extends Zend_Mail_Storage_Abstract
             /**
              * @see Zend_Mail_Storage_Exception
              */
+            require_once 'Zend/Mail/Storage/Exception.php';
             throw new Zend_Mail_Storage_Exception('not implemented');
         }
 
@@ -131,6 +135,7 @@ class Zend_Mail_Storage_Pop3 extends Zend_Mail_Storage_Abstract
             /**
              * @see Zend_Mail_Storage_Exception
              */
+            require_once 'Zend/Mail/Storage/Exception.php';
             throw new Zend_Mail_Storage_Exception('not implemented');
         }
 
@@ -172,6 +177,7 @@ class Zend_Mail_Storage_Pop3 extends Zend_Mail_Storage_Abstract
             /**
              * @see Zend_Mail_Storage_Exception
              */
+            require_once 'Zend/Mail/Storage/Exception.php';
             throw new Zend_Mail_Storage_Exception('need at least user in params');
         }
 
@@ -238,7 +244,7 @@ class Zend_Mail_Storage_Pop3 extends Zend_Mail_Storage_Abstract
             }
             $count = $this->countMessages();
             if ($count < 1) {
-                return array();
+                return [];
             }
             $range = range(1, $count);
             return array_combine($range, $range);
@@ -273,6 +279,7 @@ class Zend_Mail_Storage_Pop3 extends Zend_Mail_Storage_Abstract
         /**
          * @see Zend_Mail_Storage_Exception
          */
+        require_once 'Zend/Mail/Storage/Exception.php';
         throw new Zend_Mail_Storage_Exception('unique id not found');
     }
 
@@ -280,10 +287,10 @@ class Zend_Mail_Storage_Pop3 extends Zend_Mail_Storage_Abstract
      * Special handling for hasTop and hasUniqueid. The headers of the first message is
      * retrieved if Top wasn't needed/tried yet.
      *
-     * @see Zend_Mail_Storage_Abstract:__get()
      * @param  string $var
-     * @return string
+     * @return bool|null
      * @throws Zend_Mail_Storage_Exception
+     * @see Zend_Mail_Storage_Abstract:__get()
      */
     public function __get($var)
     {

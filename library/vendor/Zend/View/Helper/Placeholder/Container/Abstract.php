@@ -31,6 +31,12 @@
 abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObject
 {
     /**
+     * View object
+     * @var Zend_View_Interface|null
+     */
+    public $view = null;
+
+    /**
      * Whether or not to override all contents of placeholder
      * @const string
      */
@@ -93,11 +99,11 @@ abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObje
     /**
      * Constructor - This is needed so that we can attach a class member as the ArrayObject container
      *
-     * @return \Zend_View_Helper_Placeholder_Container_Abstract
+     * @return void
      */
     public function __construct()
     {
-        parent::__construct(array(), parent::ARRAY_AS_PROPS);
+        parent::__construct([], parent::ARRAY_AS_PROPS);
     }
 
     /**
@@ -108,7 +114,7 @@ abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObje
      */
     public function set($value)
     {
-        $this->exchangeArray(array($value));
+        $this->exchangeArray([$value]);
     }
 
     /**
@@ -147,7 +153,7 @@ abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObje
      * Set prefix for __toString() serialization
      *
      * @param  string $prefix
-     * @return Zend_View_Helper_Placeholder_Container
+     * @return Zend_View_Helper_Placeholder_Container_Abstract
      */
     public function setPrefix($prefix)
     {
@@ -169,7 +175,7 @@ abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObje
      * Set postfix for __toString() serialization
      *
      * @param  string $postfix
-     * @return Zend_View_Helper_Placeholder_Container
+     * @return Zend_View_Helper_Placeholder_Container_Abstract
      */
     public function setPostfix($postfix)
     {
@@ -193,7 +199,7 @@ abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObje
      * Used to implode elements in container
      *
      * @param  string $separator
-     * @return Zend_View_Helper_Placeholder_Container
+     * @return Zend_View_Helper_Placeholder_Container_Abstract
      */
     public function setSeparator($separator)
     {
@@ -260,6 +266,7 @@ abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObje
     public function captureStart($type = Zend_View_Helper_Placeholder_Container_Abstract::APPEND, $key = null)
     {
         if ($this->_captureLock) {
+            require_once 'Zend/View/Helper/Placeholder/Container/Exception.php';
             $e = new Zend_View_Helper_Placeholder_Container_Exception('Cannot nest placeholder captures for the same placeholder');
             $e->setView($this->view);
             throw $e;
@@ -291,12 +298,12 @@ abstract class Zend_View_Helper_Placeholder_Container_Abstract extends ArrayObje
                 if (null !== $key) {
                     $this[$key] = $data;
                 } else {
-                    $this->exchangeArray(array($data));
+                    $this->exchangeArray([$data]);
                 }
                 break;
             case self::PREPEND:
                 if (null !== $key) {
-                    $array  = array($key => $data);
+                    $array  = [$key => $data];
                     $values = $this->getArrayCopy();
                     $final  = $array + $values;
                     $this->exchangeArray($final);

@@ -20,6 +20,7 @@
  */
 
 /** @see Zend_Validate_Abstract */
+require_once 'Zend/Validate/Abstract.php';
 
 /**
  * @category   Zend
@@ -40,17 +41,17 @@ class Zend_Validate_Identical extends Zend_Validate_Abstract
      * Error messages
      * @var array
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::NOT_SAME      => "The two given tokens do not match",
         self::MISSING_TOKEN => 'No token was provided to match against',
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $_messageVariables = array(
+    protected $_messageVariables = [
         'token' => '_tokenString'
-    );
+    ];
 
     /**
      * Original token against which to validate
@@ -118,7 +119,7 @@ class Zend_Validate_Identical extends Zend_Validate_Abstract
     /**
      * Sets the strict parameter
      *
-     * @param Zend_Validate_Identical
+     * @param Zend_Validate_Identical $strict
      * @return $this
      */
     public function setStrict($strict)

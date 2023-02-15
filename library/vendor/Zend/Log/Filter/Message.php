@@ -21,6 +21,7 @@
  */
 
 /** Zend_Log_Filter_Abstract */
+require_once 'Zend/Log/Filter/Abstract.php';
 
 /**
  * @category   Zend
@@ -47,6 +48,7 @@ class Zend_Log_Filter_Message extends Zend_Log_Filter_Abstract
     public function __construct($regexp)
     {
         if (@preg_match($regexp, '') === false) {
+            require_once 'Zend/Log/Exception.php';
             throw new Zend_Log_Exception("Invalid regular expression '$regexp'");
         }
         $this->_regexp = $regexp;
@@ -61,9 +63,9 @@ class Zend_Log_Filter_Message extends Zend_Log_Filter_Abstract
     static public function factory($config)
     {
         $config = self::_parseConfig($config);
-        $config = array_merge(array(
+        $config = array_merge([
             'regexp' => null
-        ), $config);
+        ], $config);
 
         return new self(
             $config['regexp']

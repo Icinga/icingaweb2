@@ -20,8 +20,10 @@
  */
 
 /** @see Zend_Controller_Request_Abstract */
+require_once 'Zend/Controller/Request/Abstract.php';
 
 /** @see Zend_Uri */
+require_once 'Zend/Uri.php';
 
 /**
  * Zend_Controller_Request_Http
@@ -50,7 +52,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
      * Allowed parameter sources
      * @var array
      */
-    protected $_paramSources = array('_GET', '_POST');
+    protected $_paramSources = ['_GET', '_POST'];
 
     /**
      * REQUEST_URI
@@ -80,7 +82,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
      * Instance parameters
      * @var array
      */
-    protected $_params = array();
+    protected $_params = [];
 
     /**
      * Raw request body
@@ -92,7 +94,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
      * Alias keys for request parameters
      * @var array
      */
-    protected $_aliases = array();
+    protected $_aliases = [];
 
     /**
      * Constructor
@@ -119,6 +121,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
 
                 $this->setRequestUri($path);
             } else {
+                require_once 'Zend/Controller/Request/Exception.php';
                 throw new Zend_Controller_Request_Exception('Invalid URI provided to constructor');
             }
         } else {
@@ -183,6 +186,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
      */
     public function __set($key, $value)
     {
+        require_once 'Zend/Controller/Request/Exception.php';
         throw new Zend_Controller_Request_Exception('Setting values in superglobals not allowed; please use setParam()');
     }
 
@@ -245,6 +249,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
     public function setQuery($spec, $value = null)
     {
         if ((null === $value) && !is_array($spec)) {
+            require_once 'Zend/Controller/Exception.php';
             throw new Zend_Controller_Exception('Invalid value passed to setQuery(); must be either array of values or key/value pair');
         }
         if ((null === $value) && is_array($spec)) {
@@ -286,6 +291,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
     public function setPost($spec, $value = null)
     {
         if ((null === $value) && !is_array($spec)) {
+            require_once 'Zend/Controller/Exception.php';
             throw new Zend_Controller_Exception('Invalid value passed to setPost(); must be either array of values or key/value pair');
         }
         if ((null === $value) && is_array($spec)) {
@@ -376,7 +382,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
      * Set the REQUEST_URI on which the instance operates
      *
      * If no request URI is passed, uses the value in $_SERVER['REQUEST_URI'],
-     * $_SERVER['HTTP_X_REWRITE_URL'], or $_SERVER['ORIG_PATH_INFO'] + $_SERVER['QUERY_STRING'].
+     *  or $_SERVER['ORIG_PATH_INFO'] + $_SERVER['QUERY_STRING'].
      *
      * @param string $requestUri
      * @return Zend_Controller_Request_Http
@@ -384,10 +390,10 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
     public function setRequestUri($requestUri = null)
     {
         if ($requestUri === null) {
-            if (isset($_SERVER['HTTP_X_ORIGINAL_URL'])) { 
+            if (isset($_SERVER['HTTP_X_ORIGINAL_URL'])) {
                 // IIS with Microsoft Rewrite Module
                 $requestUri = $_SERVER['HTTP_X_ORIGINAL_URL'];
-            } elseif (isset($_SERVER['HTTP_X_REWRITE_URL'])) { 
+            } elseif (isset($_SERVER['HTTP_X_REWRITE_URL'])) {
                 // IIS with ISAPI_Rewrite
                 $requestUri = $_SERVER['HTTP_X_REWRITE_URL'];
             } elseif (
@@ -396,7 +402,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
                 && $_SERVER['IIS_WasUrlRewritten'] == '1'
                 && isset($_SERVER['UNENCODED_URL'])
                 && $_SERVER['UNENCODED_URL'] != ''
-                ) {
+            ) {
                 $requestUri = $_SERVER['UNENCODED_URL'];
             } elseif (isset($_SERVER['REQUEST_URI'])) {
                 $requestUri = $_SERVER['REQUEST_URI'];
@@ -497,7 +503,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
             }
 
             // Does the baseUrl have anything in common with the request_uri?
-            $requestUri = $this->getRequestUri();
+            $requestUri = (string) $this->getRequestUri();
 
             if (0 === strpos($requestUri, $baseUrl)) {
                 // full $baseUrl matches
@@ -613,16 +619,16 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
             $baseUrl = $this->getBaseUrl(); // this actually calls setBaseUrl() & setRequestUri()
             $baseUrlRaw = $this->getBaseUrl(false);
             $baseUrlEncoded = urlencode($baseUrlRaw);
-        
+
             if (null === ($requestUri = $this->getRequestUri())) {
                 return $this;
             }
-        
+
             // Remove the query string from REQUEST_URI
             if ($pos = strpos($requestUri, '?')) {
                 $requestUri = substr($requestUri, 0, $pos);
             }
-            
+
             if (!empty($baseUrl) || !empty($baseUrlRaw)) {
                 if (strpos($requestUri, $baseUrl) === 0) {
                     $pathInfo = substr($requestUri, strlen($baseUrl));
@@ -636,7 +642,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
             } else {
                 $pathInfo = $requestUri;
             }
-        
+
         }
 
         $this->_pathInfo = (string) $pathInfo;
@@ -667,7 +673,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
      * @param  array $paramSoures
      * @return Zend_Controller_Request_Http
      */
-    public function setParamSources(array $paramSources = array())
+    public function setParamSources(array $paramSources = [])
     {
         $this->_paramSources = $paramSources;
         return $this;
@@ -989,6 +995,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
     public function getHeader($header)
     {
         if (empty($header)) {
+            require_once 'Zend/Controller/Request/Exception.php';
             throw new Zend_Controller_Request_Exception('An HTTP header name is required');
         }
 
@@ -1003,7 +1010,7 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
          * @see https://www.ietf.org/rfc/rfc3875 (4.1.2. and 4.1.3.)
          */
         if (isset($_SERVER[$temp])
-            && in_array($temp, array('CONTENT_TYPE', 'CONTENT_LENGTH'))
+            && in_array($temp, ['CONTENT_TYPE', 'CONTENT_LENGTH'])
         ) {
             return $_SERVER[$temp];
         }
@@ -1059,11 +1066,13 @@ class Zend_Controller_Request_Http extends Zend_Controller_Request_Abstract
         if(null === $name) {
             return '';
         }
-        elseif (($scheme == self::SCHEME_HTTP && $port == 80) || ($scheme == self::SCHEME_HTTPS && $port == 443)) {
+
+        if (($scheme == self::SCHEME_HTTP && $port == 80) || ($scheme == self::SCHEME_HTTPS && $port == 443)) {
             return $name;
-        } else {
-            return $name . ':' . $port;
         }
+
+        return $name . ':' . $port;
+
     }
 
     /**

@@ -24,6 +24,7 @@
 /**
  * @see Zend_Exception
  */
+require_once 'Zend/Mail/Exception.php';
 
 
 /**

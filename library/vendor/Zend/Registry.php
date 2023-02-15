@@ -66,6 +66,7 @@ class Zend_Registry extends ArrayObject
     public static function setInstance(Zend_Registry $registry)
     {
         if (self::$_registry !== null) {
+            require_once 'Zend/Exception.php';
             throw new Zend_Exception('Registry is already initialized');
         }
 
@@ -96,10 +97,12 @@ class Zend_Registry extends ArrayObject
     public static function setClassName($registryClassName = 'Zend_Registry')
     {
         if (self::$_registry !== null) {
+            require_once 'Zend/Exception.php';
             throw new Zend_Exception('Registry is already initialized');
         }
 
         if (!is_string($registryClassName)) {
+            require_once 'Zend/Exception.php';
             throw new Zend_Exception("Argument is not a class name");
         }
 
@@ -107,6 +110,7 @@ class Zend_Registry extends ArrayObject
          * @see Zend_Loader
          */
         if (!class_exists($registryClassName)) {
+            require_once 'Zend/Loader.php';
             Zend_Loader::loadClass($registryClassName);
         }
 
@@ -139,6 +143,7 @@ class Zend_Registry extends ArrayObject
         $instance = self::getInstance();
 
         if (!$instance->offsetExists($index)) {
+            require_once 'Zend/Exception.php';
             throw new Zend_Exception("No entry is registered for key '$index'");
         }
 
@@ -185,8 +190,9 @@ class Zend_Registry extends ArrayObject
      * @param array $array data array
      * @param integer $flags ArrayObject flags
      */
-    public function __construct($array = array(), $flags = parent::ARRAY_AS_PROPS)
+    public function __construct($array = [], $flags = parent::ARRAY_AS_PROPS)
     {
         parent::__construct($array, $flags);
     }
+
 }

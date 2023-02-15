@@ -22,6 +22,7 @@
 /**
  * @see Zend_Validate_Barcode_AdapterAbstract
  */
+require_once 'Zend/Validate/Barcode/AdapterAbstract.php';
 
 /**
  * @category   Zend
@@ -35,7 +36,7 @@ class Zend_Validate_Barcode_IntelligentMail extends Zend_Validate_Barcode_Adapte
      * Allowed barcode lengths
      * @var integer
      */
-    protected $_length = array(20, 25, 29, 31);
+    protected $_length = [20, 25, 29, 31];
 
     /**
      * Allowed barcode characters

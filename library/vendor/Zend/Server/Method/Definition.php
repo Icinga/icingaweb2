@@ -39,7 +39,7 @@ class Zend_Server_Method_Definition
     /**
      * @var array
      */
-    protected $_invokeArguments = array();
+    protected $_invokeArguments = [];
 
     /**
      * @var string
@@ -59,7 +59,7 @@ class Zend_Server_Method_Definition
     /**
      * @var array Array of Zend_Server_Method_Prototype objects
      */
-    protected $_prototypes = array();
+    protected $_prototypes = [];
 
     /**
      * Constructor
@@ -122,8 +122,10 @@ class Zend_Server_Method_Definition
     public function setCallback($callback)
     {
         if (is_array($callback)) {
+            require_once 'Zend/Server/Method/Callback.php';
             $callback = new Zend_Server_Method_Callback($callback);
         } elseif (!$callback instanceof Zend_Server_Method_Callback) {
+            require_once 'Zend/Server/Exception.php';
             throw new Zend_Server_Exception('Invalid method callback provided');
         }
         $this->_callback = $callback;
@@ -149,8 +151,10 @@ class Zend_Server_Method_Definition
     public function addPrototype($prototype)
     {
         if (is_array($prototype)) {
+            require_once 'Zend/Server/Method/Prototype.php';
             $prototype = new Zend_Server_Method_Prototype($prototype);
         } elseif (!$prototype instanceof Zend_Server_Method_Prototype) {
+            require_once 'Zend/Server/Exception.php';
             throw new Zend_Server_Exception('Invalid method prototype provided');
         }
         $this->_prototypes[] = $prototype;
@@ -179,7 +183,7 @@ class Zend_Server_Method_Definition
      */
     public function setPrototypes(array $prototypes)
     {
-        $this->_prototypes = array();
+        $this->_prototypes = [];
         $this->addPrototypes($prototypes);
         return $this;
     }
@@ -225,6 +229,7 @@ class Zend_Server_Method_Definition
     public function setObject($object)
     {
         if (!is_object($object) && (null !== $object)) {
+            require_once 'Zend/Server/Exception.php';
             throw new Zend_Server_Exception('Invalid object passed to ' . __CLASS__ . '::' . __METHOD__);
         }
         $this->_object = $object;
@@ -271,18 +276,18 @@ class Zend_Server_Method_Definition
     public function toArray()
     {
         $prototypes = $this->getPrototypes();
-        $signatures = array();
+        $signatures = [];
         foreach ($prototypes as $prototype) {
             $signatures[] = $prototype->toArray();
         }
 
-        return array(
+        return [
             'name'            => $this->getName(),
             'callback'        => $this->getCallback()->toArray(),
             'prototypes'      => $signatures,
             'methodHelp'      => $this->getMethodHelp(),
             'invokeArguments' => $this->getInvokeArguments(),
             'object'          => $this->getObject(),
-        );
+        ];
     }
 }

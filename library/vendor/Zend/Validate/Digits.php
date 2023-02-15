@@ -22,6 +22,7 @@
 /**
  * @see Zend_Validate_Abstract
  */
+require_once 'Zend/Validate/Abstract.php';
 
 /**
  * @category   Zend
@@ -47,11 +48,11 @@ class Zend_Validate_Digits extends Zend_Validate_Abstract
      *
      * @var array
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::NOT_DIGITS   => "'%value%' must contain only digits",
         self::STRING_EMPTY => "'%value%' is an empty string",
         self::INVALID      => "Invalid type given. String, integer or float expected",
-    );
+    ];
 
     /**
      * Defined by Zend_Validate_Interface
@@ -76,6 +77,7 @@ class Zend_Validate_Digits extends Zend_Validate_Abstract
         }
 
         if (null === self::$_filter) {
+            require_once 'Zend/Filter/Digits.php';
             self::$_filter = new Zend_Filter_Digits();
         }
 

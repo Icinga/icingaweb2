@@ -21,6 +21,7 @@
  */
 
 /** Zend_Log_Formatter_Abstract */
+require_once 'Zend/Log/Formatter/Abstract.php';
 
 /**
  * @category   Zend
@@ -54,16 +55,16 @@ class Zend_Log_Formatter_Xml extends Zend_Log_Formatter_Abstract
      * @param array|Zend_Config $options
      * @return void
      */
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         if ($options instanceof Zend_Config) {
             $options = $options->toArray();
         } elseif (!is_array($options)) {
             $args = func_get_args();
 
-            $options = array(
+            $options = [
             	'rootElement' => array_shift($args)
-            );
+            ];
 
             if (count($args)) {
                 $options['elementMap'] = array_shift($args);
@@ -134,7 +135,7 @@ class Zend_Log_Formatter_Xml extends Zend_Log_Formatter_Abstract
         if ($this->_elementMap === null) {
             $dataToInsert = $event;
         } else {
-            $dataToInsert = array();
+            $dataToInsert = [];
             foreach ($this->_elementMap as $elementName => $fieldKey) {
                 $dataToInsert[$elementName] = $event[$fieldKey];
             }
@@ -145,8 +146,8 @@ class Zend_Log_Formatter_Xml extends Zend_Log_Formatter_Abstract
         $elt = $dom->appendChild(new DOMElement($this->_rootElement));
 
         foreach ($dataToInsert as $key => $value) {
-            if (empty($value) 
-                || is_scalar($value) 
+            if (empty($value)
+                || is_scalar($value)
                 || (is_object($value) && method_exists($value,'__toString'))
             ) {
                 if($key == "message") {

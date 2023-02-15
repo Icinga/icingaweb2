@@ -23,6 +23,7 @@
 /**
  * @see Zend_Config
  */
+require_once 'Zend/Config.php';
 
 
 /**
@@ -53,6 +54,12 @@ class Zend_Config_Ini extends Zend_Config
      * @var boolean
      */
     protected $_skipExtends = false;
+
+    /**
+     * Ini Scanner mode as defined in parse_ini_file
+     * @var int
+     */
+    protected $_scannerMode = INI_SCANNER_NORMAL;
 
     /**
      * Loads the section $section from the config file $filename for
@@ -89,6 +96,7 @@ class Zend_Config_Ini extends Zend_Config
      *     'allowModifications' => false,
      *     'nestSeparator'      => ':',
      *     'skipExtends'        => false,
+     *     'scannerMode'        => INI_SCANNER_NORMAL,
      *      );
      *
      * @param  string        $filename
@@ -103,6 +111,7 @@ class Zend_Config_Ini extends Zend_Config
             /**
              * @see Zend_Config_Exception
              */
+            require_once 'Zend/Config/Exception.php';
             throw new Zend_Config_Exception('Filename is not set');
         }
 
@@ -119,16 +128,19 @@ class Zend_Config_Ini extends Zend_Config
             if (isset($options['skipExtends'])) {
                 $this->_skipExtends = (bool) $options['skipExtends'];
             }
+            if (isset($options['scannerMode'])) {
+                $this->_scannerMode = (int) $options['scannerMode'];
+            }
         }
 
         $iniArray = $this->_loadIniFile($filename);
 
         if (null === $section) {
             // Load entire file
-            $dataArray = array();
+            $dataArray = [];
             foreach ($iniArray as $sectionName => $sectionData) {
                 if(!is_array($sectionData)) {
-                    $dataArray = $this->_arrayMergeRecursive($dataArray, $this->_processKey(array(), $sectionName, $sectionData));
+                    $dataArray = $this->_arrayMergeRecursive($dataArray, $this->_processKey([], $sectionName, $sectionData));
                 } else {
                     $dataArray[$sectionName] = $this->_processSection($iniArray, $sectionName);
                 }
@@ -137,14 +149,15 @@ class Zend_Config_Ini extends Zend_Config
         } else {
             // Load one or more sections
             if (!is_array($section)) {
-                $section = array($section);
+                $section = [$section];
             }
-            $dataArray = array();
+            $dataArray = [];
             foreach ($section as $sectionName) {
                 if (!isset($iniArray[$sectionName])) {
                     /**
                      * @see Zend_Config_Exception
                      */
+                    require_once 'Zend/Config/Exception.php';
                     throw new Zend_Config_Exception("Section '$sectionName' cannot be found in $filename");
                 }
                 $dataArray = $this->_arrayMergeRecursive($this->_processSection($iniArray, $sectionName), $dataArray);
@@ -166,8 +179,8 @@ class Zend_Config_Ini extends Zend_Config
      */
     protected function _parseIniFile($filename)
     {
-        set_error_handler(array($this, '_loadFileErrorHandler'));
-        $iniArray = parse_ini_file($filename, true); // Warnings and errors are suppressed
+        set_error_handler([$this, '_loadFileErrorHandler']);
+        $iniArray = parse_ini_file($filename, true, $this->_scannerMode); // Warnings and errors are suppressed
         restore_error_handler();
 
         // Check if there was a error while loading file
@@ -175,6 +188,7 @@ class Zend_Config_Ini extends Zend_Config
             /**
              * @see Zend_Config_Exception
              */
+            require_once 'Zend/Config/Exception.php';
             throw new Zend_Config_Exception($this->_loadFileErrorStr);
         }
 
@@ -196,7 +210,7 @@ class Zend_Config_Ini extends Zend_Config
     protected function _loadIniFile($filename)
     {
         $loaded = $this->_parseIniFile($filename);
-        $iniArray = array();
+        $iniArray = [];
         foreach ($loaded as $key => $data)
         {
             $pieces = explode($this->_sectionSeparator, $key);
@@ -208,13 +222,14 @@ class Zend_Config_Ini extends Zend_Config
 
                 case 2:
                     $extendedSection = trim($pieces[1]);
-                    $iniArray[$thisSection] = array_merge(array(';extends'=>$extendedSection), $data);
+                    $iniArray[$thisSection] = array_merge([';extends'=>$extendedSection], $data);
                     break;
 
                 default:
                     /**
                      * @see Zend_Config_Exception
                      */
+                    require_once 'Zend/Config/Exception.php';
                     throw new Zend_Config_Exception("Section '$thisSection' may not extend multiple sections in $filename");
             }
         }
@@ -233,7 +248,7 @@ class Zend_Config_Ini extends Zend_Config
      * @throws Zend_Config_Exception
      * @return array
      */
-    protected function _processSection($iniArray, $section, $config = array())
+    protected function _processSection($iniArray, $section, $config = [])
     {
         $thisSection = $iniArray[$section];
 
@@ -249,6 +264,7 @@ class Zend_Config_Ini extends Zend_Config
                     /**
                      * @see Zend_Config_Exception
                      */
+                    require_once 'Zend/Config/Exception.php';
                     throw new Zend_Config_Exception("Parent section '$section' cannot be found");
                 }
             } else {
@@ -276,14 +292,15 @@ class Zend_Config_Ini extends Zend_Config
                 if (!isset($config[$pieces[0]])) {
                     if ($pieces[0] === '0' && !empty($config)) {
                         // convert the current values in $config into an array
-                        $config = array($pieces[0] => $config);
+                        $config = [$pieces[0] => $config];
                     } else {
-                        $config[$pieces[0]] = array();
+                        $config[$pieces[0]] = [];
                     }
                 } elseif (!is_array($config[$pieces[0]])) {
                     /**
                      * @see Zend_Config_Exception
                      */
+                    require_once 'Zend/Config/Exception.php';
                     throw new Zend_Config_Exception("Cannot create sub-key for '{$pieces[0]}' as key already exists");
                 }
                 $config[$pieces[0]] = $this->_processKey($config[$pieces[0]], $pieces[1], $value);
@@ -291,6 +308,7 @@ class Zend_Config_Ini extends Zend_Config
                 /**
                  * @see Zend_Config_Exception
                  */
+                require_once 'Zend/Config/Exception.php';
                 throw new Zend_Config_Exception("Invalid key '$key'");
             }
         } else {

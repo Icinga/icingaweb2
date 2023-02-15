@@ -22,6 +22,7 @@
 /**
  * @see Zend_Validate_Abstract
  */
+require_once 'Zend/Validate/Abstract.php';
 
 /**
  * @category   Zend
@@ -46,10 +47,10 @@ class Zend_Validate_Callback extends Zend_Validate_Abstract
      *
      * @var array
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::INVALID_VALUE    => "'%value%' is not valid",
         self::INVALID_CALLBACK => "An exception has been raised within the callback",
-    );
+    ];
 
     /**
      * Callback in a call_user_func format
@@ -63,7 +64,7 @@ class Zend_Validate_Callback extends Zend_Validate_Abstract
      *
      * @var mixed
      */
-    protected $_options = array();
+    protected $_options = [];
 
     /**
      * Sets validator options
@@ -85,6 +86,7 @@ class Zend_Validate_Callback extends Zend_Validate_Abstract
         }
 
         if (null === ($initializedCallack = $this->getCallback())) {
+            require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception('No callback registered');
         }
     }
@@ -92,7 +94,7 @@ class Zend_Validate_Callback extends Zend_Validate_Abstract
     /**
      * Returns the set callback
      *
-     * @return mixed
+     * @return array|string|null
      */
     public function getCallback()
     {
@@ -104,11 +106,12 @@ class Zend_Validate_Callback extends Zend_Validate_Abstract
      *
      * @param  string|array $callback
      * @throws Zend_Validate_Exception
-     * @return Zend_Validate_Callback Provides a fluent interface
+     * @return $this
      */
     public function setCallback($callback)
     {
         if (!is_callable($callback)) {
+            require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception('Invalid callback given');
         }
         $this->_callback = $callback;
@@ -129,7 +132,7 @@ class Zend_Validate_Callback extends Zend_Validate_Abstract
      * Sets options for the callback
      *
      * @param  mixed $options
-     * @return Zend_Validate_Callback Provides a fluent interface
+     * @return $this
      */
     public function setOptions($options)
     {
