@@ -25,7 +25,12 @@ class IcingaException extends Exception
                 $exc = $arg;
             }
         }
-        parent::__construct(vsprintf($message, $args), 0, $exc);
+
+        if (! empty($args)) {
+            $message = vsprintf($message, $args);
+        }
+
+        parent::__construct($message, 0, $exc);
     }
 
     /**
