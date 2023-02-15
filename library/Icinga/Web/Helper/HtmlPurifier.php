@@ -4,6 +4,7 @@
 namespace Icinga\Web\Helper;
 
 use Closure;
+use HTMLPurifier_Config;
 use Icinga\Web\FileCache;
 use InvalidArgumentException;
 
@@ -23,11 +24,7 @@ class HtmlPurifier
      */
     public function __construct($config = null)
     {
-        require_once 'HTMLPurifier/Bootstrap.php';
-        require_once 'HTMLPurifier.php';
-        require_once 'HTMLPurifier.autoload.php';
-
-        $purifierConfig = \HTMLPurifier_Config::createDefault();
+        $purifierConfig = HTMLPurifier_Config::createDefault();
         $purifierConfig->set('Core.EscapeNonASCIICharacters', true);
         $purifierConfig->set('Attr.AllowedFrameTargets', array('_blank'));
 
@@ -61,7 +58,7 @@ class HtmlPurifier
      *
      * May be overwritten by more concrete purifier implementations.
      *
-     * @param   \HTMLPurifier_Config    $config
+     * @param   HTMLPurifier_Config    $config
      */
     protected function configure($config)
     {
