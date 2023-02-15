@@ -3,8 +3,6 @@
 
 namespace Icinga\Module\Doc\Renderer;
 
-require_once 'Parsedown/Parsedown.php';
-
 use DOMDocument;
 use DOMXPath;
 use Parsedown;
@@ -15,8 +13,6 @@ use Icinga\Module\Doc\DocSectionFilterIterator;
 use Icinga\Module\Doc\Search\DocSearch;
 use Icinga\Module\Doc\Search\DocSearchMatch;
 use Icinga\Web\Dom\DomNodeIterator;
-use Icinga\Web\Url;
-use Icinga\Web\View;
 
 /**
  * Section renderer
