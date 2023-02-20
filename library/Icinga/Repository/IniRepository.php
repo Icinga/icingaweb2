@@ -417,4 +417,15 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
         unset($config[$keyColumn]);
         return $section;
     }
+
+    public function select(array $columns = null)
+    {
+        $ds = $this->getDataSource($this->getBaseTable());
+
+        foreach ($ds->getConfigObject() as $name => $data) {
+            $data['name'] = $name;
+        }
+
+        return $ds->select();
+    }
 }

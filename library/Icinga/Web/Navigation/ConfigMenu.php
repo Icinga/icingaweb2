@@ -69,7 +69,7 @@ class ConfigMenu extends BaseHtmlElement
                     'authentication' => [
                         'label' => t('Access Control'),
                         'permission'  => 'config/access-control/*',
-                        'url' => 'role/list'
+                        'url' => 'role/list?sort=name'
                     ],
                     'navigation' => [
                         'label' => t('Shared Navigation'),

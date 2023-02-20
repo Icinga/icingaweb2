@@ -334,7 +334,7 @@ class UserController extends AuthBackendController
                     'title'         => $this->translate(
                         'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
                     ),
-                    'url'           => 'role/list'
+                    'url'           => 'role/list?sort=name'
                 )
             );
 

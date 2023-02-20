@@ -41,7 +41,7 @@ class RoleController extends AuthBackendController
     public function indexAction()
     {
         if ($this->hasPermission('config/access-control/roles')) {
-            $this->redirectNow('role/list');
+            $this->redirectNow('role/list?sort=name');
         } elseif ($this->hasPermission('config/access-control/users')) {
             $this->redirectNow('user/list');
         } elseif ($this->hasPermission('config/access-control/groups')) {
@@ -351,7 +351,7 @@ class RoleController extends AuthBackendController
                 'title'         => $this->translate(
                     'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
                 ),
-                'url'           => 'role/list'
+                'url'           => 'role/list?sort=name'
             )
         );
 
