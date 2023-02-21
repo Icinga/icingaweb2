@@ -4,10 +4,7 @@ on:
   release:
     types:
       - published
-  schedule:
-    # for master, every day at midnight
-    - cron: "0 0 * * *"
-  workflow_dispatch:
+  push: {}
 
 jobs:
   docker:
@@ -15,6 +12,6 @@ jobs:
 
     steps:
       - name: Docker image
-        uses: Icinga/docker-icingaweb2@master
+        uses: Icinga/docker-icingaweb2@Simplify
         with:
           dockerhub-token: '${{ secrets.DOCKER_HUB_PERSONAL_TOKEN }}'
