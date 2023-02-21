@@ -4,7 +4,7 @@ on:
   release:
     types:
       - published
-  push: {}
+  workflow_dispatch: {}
 
 jobs:
   docker:
