@@ -80,7 +80,9 @@ class StyleSheet
         'css/icinga/modal.less',
         'css/icinga/audit.less',
         'css/icinga/health.less',
-        'css/icinga/php-diff.less'
+        'css/icinga/php-diff.less',
+        'css/icinga/announcements.less',
+        'css/icinga/application-state.less'
     ];
 
     /**
