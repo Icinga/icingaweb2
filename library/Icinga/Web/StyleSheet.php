@@ -52,7 +52,7 @@ class StyleSheet
      * @var string[]
      */
     protected static $lessFiles = [
-        '../application/fonts/fontello-ifont/css/ifont-embedded.css',
+        '../application/fonts/fontello-ifont/css/ifont.css',
         'css/vendor/normalize.css',
         'css/icinga/base.less',
         'css/icinga/badges.less',
