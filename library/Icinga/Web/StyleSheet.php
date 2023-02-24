@@ -83,7 +83,8 @@ class StyleSheet
         'css/icinga/php-diff.less',
         'css/icinga/announcements.less',
         'css/icinga/application-state.less',
-        'css/icinga/filter-editor.less'
+        'css/icinga/filter-editor.less',
+        'css/icinga/font-page.less'
     ];
 
     /**
