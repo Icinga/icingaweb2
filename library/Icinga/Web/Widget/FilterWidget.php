@@ -76,7 +76,7 @@ class FilterWidget extends AbstractWidget
         $view = $this->view();
         $html = ' <form method="post" class="inline" action="'
               . $url
-              . '"><input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
+              . '"><input type="text" name="q" class="filter-search" class="search" value="" placeholder="'
               . t('Add filter...')
               . '" /></form>';
 
