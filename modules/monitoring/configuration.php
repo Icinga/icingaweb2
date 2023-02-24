@@ -429,3 +429,4 @@ $dashboard->add(
  */
 $this->provideCssFile('service-grid.less');
 $this->provideCssFile('tables.less');
+$this->provideCssFile('contact.less');
