@@ -17,9 +17,9 @@ if (! $this->compact): ?>
     <table class="table-row-selectable common-table">
         <thead>
             <th><?= $this->translate('Shared Navigation'); ?></th>
-            <th style="width: 10em"><?= $this->translate('Type'); ?></th>
-            <th style="width: 10em"><?= $this->translate('Owner'); ?></th>
-            <th style="width: 5em"><?= $this->translate('Unshare'); ?></th>
+            <th class="nav-wide"><?= $this->translate('Type'); ?></th>
+            <th class="nav-wide"><?= $this->translate('Owner'); ?></th>
+            <th class="nav-narrow"><?= $this->translate('Unshare'); ?></th>
         </thead>
         <tbody>
         <?php foreach ($items as $item): ?>
