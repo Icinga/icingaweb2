@@ -471,7 +471,7 @@ class FilterEditor extends AbstractWidget
         }
 
         if ($this->addTo && $this->addTo == $filter->getId()) {
-            $parts[] = '<li style="background: #ffb">' . $this->renderNewFilter() .$this->cancelLink(). '</li>';
+            $parts[] = '<li class="filter-cancel">' . $this->renderNewFilter() .$this->cancelLink(). '</li>';
         }
 
         $class = $level === 0 ? ' class="datafilter"' : '';
@@ -575,7 +575,7 @@ class FilterEditor extends AbstractWidget
             $this->elementId('operator', $filter),
             $ops,
             $filter === null ? null : $filter->getOperatorName(),
-            array('style' => 'width: 5em')
+            array('class' => 'filter-operator')
         );
     }
 
@@ -594,7 +594,7 @@ class FilterEditor extends AbstractWidget
             $this->elementId('sign', $filter),
             $signs,
             $filter === null ? null : $filter->getSign(),
-            array('style' => 'width: 4em')
+            array('class' => 'filter-sign')
         );
     }
 
@@ -738,7 +738,7 @@ class FilterEditor extends AbstractWidget
 
         $html = ' <form method="post" class="search inline" action="'
               . $preservedUrl
-              . '"><input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
+              . '"><input type="text" name="q" class="search filter-search" value="" placeholder="'
               . t('Search...')
               . '" /></form>';
 
@@ -779,7 +779,7 @@ class FilterEditor extends AbstractWidget
             . '<form action="'
             . Url::fromRequest()
             . '" class="editor" method="POST">'
-            . '<input type="submit" name="submit" value="Apply" style="display:none;"/>'
+            . '<input type="submit" name="submit" value="Apply" class="filter-hidden-submit"/>'
             . '<ul class="tree"><li>'
             . $this->renderFilter($this->filter)
             . '</li></ul>'

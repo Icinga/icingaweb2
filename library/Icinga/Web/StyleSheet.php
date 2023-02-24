@@ -82,7 +82,8 @@ class StyleSheet
         'css/icinga/health.less',
         'css/icinga/php-diff.less',
         'css/icinga/announcements.less',
-        'css/icinga/application-state.less'
+        'css/icinga/application-state.less',
+        'css/icinga/filter-editor.less'
     ];
 
     /**
