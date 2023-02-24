@@ -114,6 +114,10 @@ class MonitoringBadgeNavigationItemRenderer extends BadgeNavigationItemRenderer
     {
         $restrictions = Filter::matchAny();
         foreach (Auth::getInstance()->getRestrictions($restriction) as $filter) {
+            if ($filter === '*') {
+                $filterable->addFilter(Filter::matchAll());
+                return $filterable;
+            }
             $restrictions->addFilter(Filter::fromQueryString($filter));
         }
         $filterable->applyFilter($restrictions);
