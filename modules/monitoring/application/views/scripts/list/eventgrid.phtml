@@ -112,9 +112,9 @@ for ($i = 0; $i < $diff->days; $i += $step) {
     $f->add(new DateInterval('P' . $step . 'D'));
 }
 ?>
-<div style="width: 33.5em;">
+<div class="grids">
 <?php foreach (array_reverse($grids) as $key => $grid): ?>
-    <div style=" <?= $this->orientation === 'horizontal' ? '' : 'display: inline-block; vertical-align: top; top; margin: 0.5em;' ?>">
+    <div <?= $this->orientation === 'horizontal' ? '' : 'class="not-horizontal"' ?>>
         <?= $grid; ?>
         <?= $this->orientation === 'horizontal' ? '<br />' : '' ?>
     </div>
