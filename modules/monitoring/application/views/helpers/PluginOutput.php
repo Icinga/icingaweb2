@@ -63,7 +63,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
     protected static $htmlReplacements = array(
         "\t",
         "\n",
-        '<table style="font-size: 0.75em"'
+        '<table class="table-font-size"'
     );
 
     /** @var \Icinga\Module\Monitoring\Web\Helper\PluginOutputHookRenderer */
