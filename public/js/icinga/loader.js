@@ -1213,13 +1213,22 @@
                 if (autorefresh || autoSubmit) {
                     if ($container.css('display') === 'flex' && $container.is('.container')) {
                         var $scrollableContent = $container.children('.content');
-                        scrollPos = $scrollableContent.scrollTop();
+                        scrollPos = {
+                            x: $scrollableContent.scrollTop(),
+                            y: $scrollableContent.scrollLeft()
+                        };
                         scrollTarget = _this.icinga.utils.getCSSPath($scrollableContent);
                     } else {
-                        scrollPos = $container.scrollTop();
+                        scrollPos = {
+                            x: $container.scrollTop(),
+                            y: $container.scrollLeft()
+                        };
                     }
                 } else {
-                    scrollPos = 0;
+                    scrollPos = {
+                        x: 0,
+                        y: 0
+                    }
                 }
             }
 
@@ -1293,14 +1302,16 @@
 
             if (scrollPos !== false) {
                 var $scrollTarget = $(scrollTarget);
-                $scrollTarget.scrollTop(scrollPos);
 
                 // Fallback for browsers without support for focus({preventScroll: true})
-                setTimeout(function () {
-                    if ($scrollTarget.scrollTop() !== scrollPos) {
-                        $scrollTarget.scrollTop(scrollPos);
+                requestAnimationFrame(() => {
+                    if ($scrollTarget.scrollTop() !== scrollPos.x) {
+                        $scrollTarget.scrollTop(scrollPos.x);
                     }
-                }, 0);
+                    if ($scrollTarget.scrollLeft() !== scrollPos.y) {
+                        $scrollTarget.scrollLeft(scrollPos.y);
+                    }
+                });
             }
 
             // Re-enable all click events (disabled as of performance reasons)
