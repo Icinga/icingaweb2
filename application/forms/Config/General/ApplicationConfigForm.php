@@ -88,6 +88,19 @@ class ApplicationConfigForm extends Form
             )
         );
 
+        $this->addElement(
+            'checkbox',
+            'security_use_csp',
+            [
+                'label'         => $this->translate('Enable strict content security policy'),
+                'description'   => $this->translate(
+                    'Set whether to to use strict content security policy (CSP).'
+                    . ' This setting helps to protect from cross-site scripting (XSS).'
+                )
+            ]
+        );
+
+
         return $this;
     }
 }
