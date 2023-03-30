@@ -1,145 +1,129 @@
 <?php
 
+use Icinga\Chart\BubblePosition;
+use Icinga\Chart\ProgressBar;
 use Icinga\Web\Notification;
 
 $pages = $wizard->getPages();
 $finished = isset($success);
 $configPages = array_slice($pages, 3, count($pages) - 4, true);
 $currentPos = array_search($wizard->getCurrentPage(), $pages, true);
-list($configPagesLeft, $configPagesRight) = array_chunk($configPages, (int)(count($configPages) / 2), true);
+$progressBarOptions = [
+    'class'  => 'line stick-left',
+    'width'  => '95%',
+    'height' => '50px'
+];
+list($configPagesLeft, $configPagesRight) = array_chunk($configPages, (int) (count($configPages) / 2), true);
 
 $visitedPages = array_keys($wizard->getPageData());
 $maxProgress = max(array_merge([0], array_keys(array_filter(
     $pages,
-    function ($page) use ($visitedPages) { return in_array($page->getName(), $visitedPages); }
+    function ($page) use ($visitedPages) {
+        return in_array($page->getName(), $visitedPages);
+    }
 ))));
 
 ?>
 <div id="setup-content-wrapper" data-base-target="layout">
-  <div class="setup-header">
-    <?= $this->img('img/icinga-logo-big.png'); ?>
-    <div class="progress-bar">
-      <div class="step step-sm">
-        <h1><?= $this->translate('Welcome', 'setup.progress'); ?></h1>
-        <?php $stateClass = $finished || $currentPos > 0 ? 'complete' : (
-          $maxProgress > 0 ? 'visited' : 'active'
-        ); ?>
-        <table><tbody><tr>
-          <td class="left"></td>
-          <td class="middle"><div class="bubble <?= $stateClass; ?>"></div></td>
-          <td class="right"><div class="line right <?= $stateClass; ?>"></div></td>
-        </tr></tbody></table>
-      </div>
-      <div class="step step-sm">
-        <h1><?= $this->translate('Modules', 'setup.progress'); ?></h1>
-        <?php $stateClass = $finished || $currentPos > 1 ? ' complete' : (
-          $maxProgress > 1 ? ' visited' : (
-            $currentPos === 1 ? ' active' : ''
-          )
-        ); ?>
-        <table><tbody><tr>
-          <td class="left"><div class="line left<?= $stateClass; ?>"></div></td>
-          <td class="middle"><div class="bubble <?= $stateClass; ?>"></div></td>
-          <td class="right"><div class="line right <?= $stateClass; ?>"></div></td>
-        </tr></tbody></table>
-        <?php if (($maxProgress < $currentPos && $currentPos === 1) || ($maxProgress >= $currentPos && $maxProgress === 1)): ?>
-          <?= $this->restartForm ?>
-        <?php endif ?>
-      </div>
-      <div class="step step-sm">
-        <h1><?= $this->translate('Requirements', 'setup.progress'); ?></h1>
-        <?php $stateClass = $finished || $currentPos > 2 ? ' complete' : (
-          $maxProgress > 2 ? ' visited' : (
-            $currentPos === 2 ? ' active' : ''
-          )
-        ); ?>
-        <table><tbody><tr>
-          <td class="left"><div class="line left<?= $stateClass; ?>"></div></td>
-          <td class="middle"><div class="bubble<?= $stateClass; ?>"></div></td>
-          <td class="right"><div class="line right<?= $stateClass; ?>"></div></td>
-        </tr></tbody></table>
-        <?php if (($maxProgress < $currentPos && $currentPos === 2) || ($maxProgress >= $currentPos && $maxProgress === 2)): ?>
-          <?= $this->restartForm ?>
-        <?php endif ?>
-      </div>
-      <div class="step step-lg">
-        <h1><?= $this->translate('Configuration', 'setup.progress'); ?></h1>
-        <table><tbody><tr>
-          <td class="left">
-          <?php
-            $firstPage = current($configPagesLeft);
-            $lastPage = end($configPagesLeft);
-            $lineWidth = sprintf('%.2F', round(100 / count($configPagesLeft), 2, PHP_ROUND_HALF_DOWN));
-          ?>
-          <?php foreach ($configPagesLeft as $pos => $page): ?>
-            <?php $stateClass = $finished || $pos < $currentPos ? ' complete' : (
-              $pos < $maxProgress ? ' visited' : ($currentPos > 2 ? ' active' : '')
-            ); ?>
-            <?php if ($page === $firstPage): ?>
-            <div class="line left<?= $stateClass; ?>" style="float: left; width: <?= sprintf(
-                '%.2F',
-                100 - (count($configPagesLeft) - 1) * $lineWidth
-            ); ?>%; margin-right: 0"></div>
-            <?php elseif ($page === $lastPage): ?>
-            <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-right: -0.1em;"></div>
-            <?php else: ?>
-            <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%;"></div>
-            <?php endif ?>
-          <?php endforeach ?>
-          </td>
-          <td class="middle">
-            <div class="bubble<?= array_key_exists($currentPos, $configPagesLeft) ? (
-              key($configPagesRight) <= $maxProgress ? ' visited' : ' active') : (
-              $finished || $currentPos > 2 ? ' complete' : (
-                key($configPagesRight) < $maxProgress ? ' visited' : ''
-              )
-            ); ?>"></div>
-          </td>
-          <td class="right">
-          <?php
-            $firstPage = current($configPagesRight);
-            $lastPage = end($configPagesRight);
-            $lineWidth = sprintf('%.2F', round(100 / count($configPagesRight), 2, PHP_ROUND_HALF_DOWN));
-          ?>
-          <?php foreach ($configPagesRight as $pos => $page): ?>
-            <?php $stateClass = $finished || $pos < $currentPos ? ' complete' : (
-              $pos < $maxProgress ? ' visited' : ($currentPos > 2 ? ' active' : '')
-            ); ?>
-            <?php if ($page === $firstPage): ?>
-            <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-left: -0.1em;"></div>
-            <?php elseif ($page === $lastPage): ?>
-            <div class="line right<?= $stateClass; ?>" style="float: left; width: <?= sprintf(
-                '%.2F',
-                100 - (count($configPagesRight) - 1) * $lineWidth
-            ); ?>%; margin-left: 0;"></div>
-            <?php else: ?>
-            <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%;"></div>
-            <?php endif ?>
-          <?php endforeach ?>
-          </td>
-        </tr></tbody></table>
-        <?php if ($maxProgress > 2 || $currentPos > 2): ?>
-          <?= $this->restartForm ?>
-        <?php endif ?>
-      </div>
-      <div class="step step-sm">
-        <h1><?= $this->translate('Finish', 'setup.progress'); ?></h1>
-        <?php $stateClass = $finished ? ' complete' : ($pages[$currentPos] === end($pages) ? ' active' : ''); ?>
-        <table><tbody><tr>
-          <td class="left"><div class="line left<?= $stateClass; ?>"></div></td>
-          <td class="middle"><div class="bubble<?= $stateClass; ?>"></div></td>
-          <td class="right"></td>
-        </tr></tbody></table>
-      </div>
+    <div class="setup-header">
+        <?= $this->img('img/icinga-logo-big.png'); ?>
+        <div class="progress-bar">
+            <div class="step step-sm">
+                <h1><?= $this->translate('Welcome', 'setup.progress'); ?></h1>
+                <?php
+                $progressBar = ProgressBar::withOptions($progressBarOptions)
+                    ->useBubble(true)
+                    ->markComplete($finished || $currentPos > 0 ? 1 : 0)
+                    ->markVisited($maxProgress > 0 ? 1 : 0);
+
+                echo $progressBar->render();
+                ?>
+            </div>
+            <div class="step step-sm">
+                <h1><?= $this->translate('Modules', 'setup.progress'); ?></h1>
+                <?php
+                $progressBar = ProgressBar::withOptions($progressBarOptions)
+                    ->useBubble(true)
+                    ->markComplete($finished || $currentPos > 0 ? 1 : 0)
+                    ->markVisited($maxProgress > 0 ? 1 : 0);
+
+                echo $progressBar->render();
+                ?>
+
+                <?php if (($maxProgress < $currentPos && $currentPos === 1) || ($maxProgress >= $currentPos && $maxProgress === 1)): ?>
+                    <?= $this->restartForm ?>
+                <?php endif ?>
+            </div>
+            <div class="step step-sm">
+                <h1><?= $this->translate('Requirements', 'setup.progress'); ?></h1>
+                <?php
+                $progressBar = ProgressBar::withOptions($progressBarOptions)
+                    ->useBubble(true)
+                    ->markComplete($finished || $currentPos > 0 ? 1 : 0)
+                    ->markVisited($maxProgress > 0 ? 1 : 0);
+
+                echo $progressBar->render()
+                ?>
+
+                <?php if (($maxProgress < $currentPos && $currentPos === 2) || ($maxProgress >= $currentPos && $maxProgress === 2)): ?>
+                    <?= $this->restartForm ?>
+                <?php endif ?>
+            </div>
+            <div class="step step-lg">
+                <?php
+                $completePage = 0;
+                $visitedPage = 0;
+
+                $progressBar = ProgressBar::withOptions($progressBarOptions)
+                    ->useBubble(true);
+                ?>
+
+                <h1><?= $this->translate('Configuration', 'setup.progress'); ?></h1>
+
+                <?php
+                foreach ($configPagesLeft as $pos => $page) {
+                    $progressBar->addSection();
+                    $completePage += $finished || $pos < $currentPos ? 1 : 0;
+                    $visitedPage += $pos < $maxProgress ? 1 : 0;
+                }
+
+                foreach ($configPagesRight as $pos => $page) {
+                    $progressBar->addSection();
+                    $completePage += $finished || $pos < $currentPos ? 1 : 0;
+                    $visitedPage += $pos < $maxProgress ? 1 : 0;
+                }
+
+                $progressBar->markComplete($completePage);
+
+                echo $progressBar->render();
+
+                if ($maxProgress > 2 || $currentPos > 2) {
+                    echo $this->restartForm;
+                }
+                ?>
+            </div>
+            <div class="step step-sm">
+                <h1><?= $this->translate('Finish', 'setup.progress'); ?></h1>
+                <?php
+                $progressBar = ProgressBar::withOptions([
+                    'class'  => 'line stick-left',
+                    'width'  => '55%',
+                    'height' => '50px'
+                ])->useBubble(true, BubblePosition::END)
+                    ->markComplete($finished ? 1 : 0);
+
+                echo $progressBar->render();
+                ?>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="setup-content">
-<?php if ($finished): ?>
-    <?= $this->render('index/parts/finish.phtml'); ?>
-<?php else: ?>
-    <?= $this->render('index/parts/wizard.phtml'); ?>
-<?php endif ?>
-  </div>
+    <div class="setup-content">
+        <?php if ($finished): ?>
+            <?= $this->render('index/parts/finish.phtml'); ?>
+        <?php else: ?>
+            <?= $this->render('index/parts/wizard.phtml'); ?>
+        <?php endif ?>
+    </div>
 </div>
 <div id="footer">
     <ul role="alert" id="notifications"><?php
@@ -149,5 +133,5 @@ $maxProgress = max(array_merge([0], array_keys(array_filter(
                 echo '<li class="' . $m->type . '">' . $this->escape($m->message) . '</li>';
             }
         }
-    ?></ul>
+        ?></ul>
 </div>

@@ -64,13 +64,43 @@
       }
 
       table {
-        margin-top: 0.3em;
+        margin-top: 0.7em;
 
         td {
           padding: 0;
+          position: relative;
+
+          .right-side {
+            margin-right: -0.1em;
+          }
+
+          .left-side {
+            margin-right: 0;
+          }
+
+          .stick-left {
+            float: left;
+          }
 
           &.left, &.right {
             width: 50%;
+          }
+
+          svg line {
+            stroke-linecap: round;
+            stroke: white;
+          }
+
+          .active line {
+            stroke: white;
+          }
+
+          .complete line {
+            stroke: @color-ok;
+          }
+
+          .visited line {
+            stroke: #eee;
           }
         }
       }
@@ -80,6 +110,7 @@
 
         &.line {
           height: 0.4em;
+
 
           &.left {
             margin-left: 0.1em;
@@ -100,23 +131,15 @@
           width: 1.2em;
           height: 1.2em;
           border-radius: 1.2em;
+          position: absolute;
+          top: -5px;
+          left: -0.8em;
 
           // Make sure that such a bubble overlays lines
-          position: relative;
           z-index: 1337;
         }
 
-        &.active {
-          background-color: white;
-        }
 
-        &.complete {
-          background-color: @color-ok;
-        }
-
-        &.visited {
-          background-color: #eee;
-        }
       }
     }
   }
