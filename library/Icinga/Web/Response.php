@@ -3,9 +3,12 @@
 
 namespace Icinga\Web;
 
+use Icinga\Application\Config;
+use Icinga\Util\Csp;
 use Zend_Controller_Response_Http;
 use Icinga\Application\Icinga;
 use Icinga\Web\Response\JsonResponse;
+use Zend_Layout;
 
 /**
  * A HTTP response
@@ -354,6 +357,17 @@ class Response extends Zend_Controller_Response_Http
         } else {
             if ($redirectUrl !== null) {
                 $this->setRedirect($redirectUrl->getAbsoluteUrl());
+            }
+        }
+
+        if (! $this->getRequest()->isXmlHttpRequest()) {
+            $layout = Zend_Layout::getMvcInstance();
+
+            if ($layout !== null && $layout->isEnabled()) {
+                if (Config::app()->get('security', 'use_csp', false)) {
+                    Csp::createNonces();
+                    Csp::addHeader($this);
+                }
             }
         }
 
