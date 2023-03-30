@@ -81,47 +81,18 @@ if (! $beingExtended && !$this->compact): ?>
 <?php
 $circleWidth = $timeline->calculateCircleWidth($timeInfo[1][$groupName], 2);
 $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$groupName], 2);
+$useExtrapolated = $firstRow && $extrapolatedCircleWidth !== $circleWidth;
+$usedCircleWidth = $useExtrapolated ? $extrapolatedCircleWidth : $circleWidth;
 ?>
-<?php if ($firstRow && $extrapolatedCircleWidth !== $circleWidth): ?>
-            <div class="circle-box" style="width: <?= $extrapolatedCircleWidth; ?>;">
-                <div class="outer-circle extrapolated <?= $timeInfo[1][$groupName]->getClass() ?>" style="<?= sprintf(
-                    'width: %2$s; height: %2$s; margin-top: -%1$Fem;',
-                    (float) substr($extrapolatedCircleWidth, 0, -2) / 2,
-                    $extrapolatedCircleWidth
-                ); ?>">
-<?php else: ?>
-            <div class="circle-box" style="width: <?= $circleWidth; ?>;">
-                <div class="outer-circle" style="<?= sprintf(
-                    'width: %2$s; height: %2$s; margin-top: -%1$Fem;',
-                    (float) substr($circleWidth, 0, -2) / 2,
-                    $circleWidth
-                ); ?>">
-<?php endif ?>
-                    <?= $this->qlink(
-                        '',
-                        $timeInfo[1][$groupName]->getDetailUrl(),
-                        array(
-                            'type'          => $groupName,
-                            'timestamp<'    => $timeInfo[0]->start->getTimestamp(),
-                            'timestamp>'    => $timeInfo[0]->end->getTimestamp()
-                        ),
-                        array(
-                            'title' => sprintf(
-                                $this->translate('List %u %s registered %s', 'timeline.link.title'),
-                                $timeInfo[1][$groupName]->getValue(),
-                                strtolower($labelAndColor['label']),
-                                $titleTime
-                            ),
-                            'class' => 'inner-circle ' . $timeInfo[1][$groupName]->getClass(),
-                            'style' => sprintf(
-                                'width: %2$s; height: %2$s; margin-top: -%1$Fem; margin-left: -%1$Fem;',
-                                (float) substr($circleWidth, 0, -2) / 2,
-                                (string) $circleWidth
-                            )
-                        )
-                    ); ?>
-                </div>
-            </div>
+            <!-- TODO: SVG is larger than it's content -->
+            <svg class="<?= $useExtrapolated ? 'extrapolated-svg' : '' ?> <?= $timeInfo[1][$groupName]->getClass() . '-svg' ?>">
+                <a href="<?= $timeInfo[1][$groupName]->getDetailUrl() ?>">
+                    <circle cx="50" cy="50" <?= sprintf(
+                        'r="%1$Fem"',
+                        (float) substr($usedCircleWidth, 0, -2) / 2
+                    ); ?>" />
+                </a>
+            </svg>
 <?php endif ?>
 <?php endforeach ?>
         </div>

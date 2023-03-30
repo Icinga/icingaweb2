@@ -557,11 +557,27 @@ div.timeline {
   }
 }
 
+.timeline-notification-svg {
+  fill: @timeline-notification-color;
+
+  &.extrapolated-svg {
+    fill: lighten(@timeline-notification-color, 20%);
+  }
+}
+
 .timeline-hard-state {
   background-color: @timeline-hard-state-color;
 
   &.extrapolated {
     background-color: lighten(@timeline-hard-state-color, 20%);
+  }
+}
+
+.timeline-hard-state-svg {
+  fill: @timeline-hard-state-color;
+
+  &.extrapolated-svg {
+    fill: lighten(@timeline-hard-state-color, 20%);
   }
 }
 
@@ -573,11 +589,27 @@ div.timeline {
   }
 }
 
+.timeline-comment-svg {
+  fill: @timeline-comment-color;
+
+  &.extrapolated-svg {
+    fill: lighten(@timeline-comment-color, 20%);
+  }
+}
+
 .timeline-ack {
   background-color: @timeline-ack-color;
 
   &.extrapolated {
     background-color: lighten(@timeline-ack-color, 20%);
+  }
+}
+
+.timeline-ack-svg {
+  fill: @timeline-ack-color;
+
+  &.extrapolated-svg {
+    fill: lighten(@timeline-ack-color, 20%);
   }
 }
 
@@ -589,11 +621,27 @@ div.timeline {
   }
 }
 
+.timeline-downtime-start-svg {
+  fill: @timeline-downtime-start-color;
+
+  &.extrapolated-svg {
+    fill: lighten(@timeline-downtime-start-color, 20%);
+  }
+}
+
 .timeline-downtime-end {
   background-color: @timeline-downtime-end-color;
 
   &.extrapolated {
     background-color: lighten(@timeline-downtime-end-color, 20%);
+  }
+}
+
+.timeline-downtime-end-svg {
+  fill: @timeline-downtime-end-color;
+
+  &.extrapolated-svg {
+    fill: lighten(@timeline-downtime-end-color, 20%);
   }
 }
 
