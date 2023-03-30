@@ -4,9 +4,11 @@
   <?= $this->tabs; ?>
  <?php endif ?>
   <h1><?= $this->translate('Contact details') ?></h1>
-  <div class="circular" style="background-image: url('<?=
-      $this->href('static/gravatar', array('email' => $contact->contact_email))
-  ?>';width:120px;height:120px;)"></div>
+  <img
+          height="120px"
+          width="120px"
+          src="<?= $this->href('static/gravatar', array('email' => $contact->contact_email)) ?>"
+          alt="">
 
 <?php if (! $contact): ?>
   <?= $this->translate('No such contact') ?>: <?= $contactName ?>
