@@ -29,7 +29,9 @@ class ServicedowntimeendhistoryQuery extends ServicedowntimestarthistoryQuery
     protected function joinBaseTables()
     {
         parent::joinBaseTables(true);
-        $this->select->where("sdh.actual_end_time > '1970-01-02 00:00:00'");
+        $this->select->where(
+            "sdh.actual_end_time > '1970-01-02 00:00:00' AND sdh.was_started = 1 AND sdh.was_cancelled = 0"
+        );
         $this->columnMap['downtimehistory']['type'] = "('dt_end')";
         $this->columnMap['downtimehistory']['timestamp'] = str_replace(
             'actual_start_time',
