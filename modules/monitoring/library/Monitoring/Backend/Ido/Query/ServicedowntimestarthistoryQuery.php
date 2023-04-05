@@ -103,6 +103,9 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
                 "sdh.actual_start_time > '1970-01-02 00:00:00'"
             );
         }
+        $this->select->where(
+            "sdh.was_started = 1 AND sdh.was_cancelled = 0"
+        );
 
         $this->joinedVirtualTables['downtimehistory'] = true;
     }
