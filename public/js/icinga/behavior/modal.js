@@ -91,7 +91,7 @@
      * @param $autoSubmittedBy {jQuery} The element triggering the auto submit, if any
      * @returns {boolean}
      */
-    Modal.prototype.onFormSubmit = function(event, $autoSubmittedBy) {
+    Modal.prototype.onFormSubmit = function(event) {
         var _this = event.data.self;
         var $form = $(event.currentTarget).closest('form');
         var $modal = $form.closest('#modal');
@@ -105,6 +105,14 @@
             $form.removeData('submitButton');
         }
 
+        let $autoSubmittedBy;
+        if (! $autoSubmittedBy && event.detail && event.detail.submittedBy) {
+            $autoSubmittedBy = $(event.detail.submittedBy);
+        }
+
+        // Prevent our other JS from running
+        $modal[0].dataset.noIcingaAjax = '';
+
         var req = _this.icinga.loader.submitForm($form, $autoSubmittedBy, $button);
         req.addToHistory = false;
         req.$redirectTarget = $modal.data('redirectTarget');
@@ -117,6 +125,8 @@
             if (req.getResponseHeader('X-Icinga-Redirect')) {
                 _this.hide($modal);
             }
+        }).always(function () {
+            delete $modal[0].dataset.noIcingaAjax;
         });
 
         if (typeof $autoSubmittedBy === 'undefined') {
@@ -136,7 +146,17 @@
      * @returns {boolean}
      */
     Modal.prototype.onFormAutoSubmit = function(event) {
-        return event.data.self.onFormSubmit(event, $(event.currentTarget));
+        let form = event.currentTarget.form;
+        let modal = form.closest('#modal');
+
+        // Prevent our other JS from running
+        modal.dataset.noIcingaAjax = '';
+
+        form.dispatchEvent(new CustomEvent('submit', {
+            cancelable: true,
+            bubbles: true,
+            detail: { submittedBy: event.currentTarget }
+        }));
     };
 
     /**
