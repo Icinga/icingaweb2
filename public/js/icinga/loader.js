@@ -184,9 +184,24 @@
                 }
             }
 
-            var extraHeaders = {};
-            if ($autoSubmittedBy && ($autoSubmittedBy.attr('name') || $autoSubmittedBy.attr('id'))) {
-                extraHeaders['X-Icinga-AutoSubmittedBy'] = $autoSubmittedBy.attr('name') || $autoSubmittedBy.attr('id');
+            let extraHeaders = {};
+            if ($autoSubmittedBy) {
+                let id;
+                if (($autoSubmittedBy.attr('name') || $autoSubmittedBy.attr('id'))) {
+                    id = $autoSubmittedBy.attr('name') || $autoSubmittedBy.attr('id');
+                } else {
+                    let formSelector = icinga.utils.getCSSPath($form);
+                    let nearestKnownParent = $autoSubmittedBy.closest(
+                        formSelector + ' [name],' + formSelector + ' [id]'
+                    );
+                    if (nearestKnownParent) {
+                        id = nearestKnownParent.attr('name') || nearestKnownParent.attr('id');
+                    }
+                }
+
+                if (id) {
+                    extraHeaders['X-Icinga-AutoSubmittedBy'] = id;
+                }
             }
 
             var req = this.loadUrl(url, $target, data, method, undefined, undefined, undefined, extraHeaders);
