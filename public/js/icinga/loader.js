@@ -550,6 +550,12 @@
                     return false;
                 }
 
+                if (req.$redirectTarget.is('.container') && req.$redirectTarget.parent().closest('.container').length > 0) {
+                    // If it is a container that is not a top level container, we just empty it
+                    req.$redirectTarget.empty();
+                    return true;
+                }
+
                 // Close right column as requested
                 icinga.ui.layout1col();
 
