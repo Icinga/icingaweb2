@@ -183,7 +183,17 @@
         },
 
         autoSubmitForm: function (event) {
-            return event.data.self.submitForm(event, $(event.currentTarget));
+            let form = event.currentTarget.form;
+
+            if (form.closest('[data-no-icinga-ajax]')) {
+                return;
+            }
+
+            form.dispatchEvent(new CustomEvent('submit', {
+                cancelable: true,
+                bubbles: true,
+                detail: { submittedBy: event.currentTarget }
+            }));
         },
 
         /**
