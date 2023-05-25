@@ -42,7 +42,8 @@ class JavaScript
         'js/icinga/behavior/selectable.js',
         'js/icinga/behavior/modal.js',
         'js/icinga/behavior/input-enrichment.js',
-        'js/icinga/behavior/datetime-picker.js'
+        'js/icinga/behavior/datetime-picker.js',
+        'js/icinga/behavior/copy-to-clipboard.js'
     ];
 
     protected static $vendorFiles = [];
