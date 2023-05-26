@@ -55,6 +55,11 @@ class RoleForm extends RepositoryForm
         return Filter::where('name', $this->getIdentifier());
     }
 
+    public function filterName($value, $allowBrackets = false)
+    {
+        return parent::filterName($value, $allowBrackets) . '_element';
+    }
+
     public function createInsertElements(array $formData = array())
     {
         $this->addElement(
@@ -156,7 +161,7 @@ class RoleForm extends RepositoryForm
                 if (! isset($spec['isFullPerm'])
                     && substr($name, 0, strlen(self::DENY_PREFIX)) !== self::DENY_PREFIX
                 ) {
-                    $denyCheckbox = $this->createElement('checkbox', self::DENY_PREFIX . $name, [
+                    $denyCheckbox = $this->createElement('checkbox', $this->filterName(self::DENY_PREFIX . $name), [
                         'decorators'    => ['ViewHelper']
                     ]);
                     $this->addElement($denyCheckbox);
