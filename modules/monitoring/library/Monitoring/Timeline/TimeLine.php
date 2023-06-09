@@ -382,7 +382,7 @@ class TimeLine implements IteratorAggregate
         return array_filter(
             $this->resultset,
             function ($e) use ($range) {
-                return $range->validateTime($e->time);
+                return $range->validateTime((int) $e->time);
             }
         );
     }
