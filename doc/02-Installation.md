@@ -245,7 +245,7 @@ install a web server and PHP and make Icinga Web 2 work out-of-the-box.
 #### CentOS
 <!-- {% endif %} -->
 ```
-dnf install icingaweb2 icingacli
+yum install icingaweb2 icingacli
 ```
 <!-- {% endif %} -->
 
