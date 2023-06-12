@@ -319,18 +319,22 @@
             $target.siblings().not($target).removeClass('hover');
             $target.addClass('hover');
 
+            var targetHeight = $target.offset().top + $target.outerHeight();
             $flyout.css({
                 bottom: 'auto',
-                top: $target.offset().top + $target.outerHeight()
+                top: targetHeight
             });
 
             var rect = $flyout[0].getBoundingClientRect();
 
-            if (rect.y + rect.height > window.innerHeight) {
+            if (rect.bottom > window.innerHeight) {
+                $flyout.addClass('bottom-up');
                 $flyout.css({
-                    bottom: 0,
+                    bottom: window.innerHeight - targetHeight,
                     top: 'auto'
                 });
+            } else {
+                $flyout.removeClass('bottom-up');
             }
         }, delay);
     };
