@@ -1,0 +1,129 @@
+parameters:
+    level: 2
+
+    checkFunctionNameCase: true
+    checkMissingIterableValueType: true
+    checkInternalClassCaseSensitivity: true
+    checkDynamicProperties: true
+    treatPhpDocTypesAsCertain: true
+    checkExplicitMixedMissingReturn: false
+    reportWrongPhpDocTypeInVarTag: false
+    reportMaybesInPropertyPhpDocTypes: false
+    checkTooWideReturnTypesInProtectedAndPublicMethods: false
+
+    paths:
+        - application
+        - library/Icinga
+        - modules/doc/application
+        - modules/migrate/application
+        - modules/monitoring/application
+        - modules/setup/application
+        - modules/test/application
+        - modules/translation/application
+        - modules/doc/library
+        - modules/migrate/library
+        - modules/monitoring/library
+        - modules/setup/library
+        - modules/translation/library
+
+    ignoreErrors:
+        - '#Unsafe usage of new static\(\)#'
+        - '#Call to an undefined method#'
+        - '#. but return statement is missing#'
+        - '#PHPDoc tag @param references unknown parameter: \$[a-zA-Z0-9]+#'
+        - '#PHPDoc tag @var .#'
+        - '#Function ldap_control_paged_result not found#'
+        - '#Function ldap_control_paged_result_response not found#'
+
+        -
+            message: '#Variable \$this might not be defined#'
+            paths:
+                - library/Icinga/Web/View/helpers/format.php
+                - library/Icinga/Web/View/helpers/generic.php
+                - library/Icinga/Web/View/helpers/string.php
+                - library/Icinga/Web/View/helpers/url.php
+
+        -
+            message: '#Undefined variable: \$this#'
+            path: library/Icinga/Web/View/helpers/string.php
+
+        -
+            message: '#Variable \$status in isset\(\) always exists and is always null#'
+            path: modules/monitoring/library/Monitoring/Object/ObjectList.php
+
+        -
+            message: '#Variable \$restrictedBy in empty\(\) always exists and is not falsy#'
+            path: library/Icinga/Web/View/PrivilegeAudit.php
+
+        -
+            message: '#Cannot call method getInterval\(\) on null#'
+            path: modules/monitoring/application/controllers/TimelineController.php
+
+        -
+            message: '#Cannot call method getFilter\(\) on null#'
+            path: modules/monitoring/application/controllers/TacticalController.php
+
+        -
+            message: '#Access to an undefined property object::\$service.#'
+            path: modules/monitoring/application/clicommands/ListCommand.php
+
+        -
+            message: '#Method Icinga\\Data\\FilterColumns\:\:getSearchColumns\(\) invoked with 1 parameter, 0 required#'
+            path: library/Icinga/Web/Widget/FilterEditor.php
+
+        -
+            message: '#Cannot call method setEscape\(\) on Zend_Form_Decorator_Abstract\|false#'
+            path: library/Icinga/Web/Form.php
+
+        -
+            message: '#Cannot call method remove\(\) on null#'
+            path: modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php
+
+        -
+            message: '#Static call to instance method stdClass\:\:getConfigurationFormClass\(\)#'
+            paths:
+                - library/Icinga/Authentication/User/UserBackend.php
+                - library/Icinga/Authentication/UserGroup/UserGroupBackend.php
+
+        -
+            message: '#Access to an undefined property Less_Tree\:\:\$value#'
+            path: library/Icinga/Less/ColorPropOrVariable.php
+
+        -
+            message: '#Cannot cast Icinga\\Data\\QueryInterface to string#'
+            path: library/Icinga/Repository/RepositoryQuery.php
+
+        -
+            message: "#. should always throw an exception or terminate script execution but doesn't do that#"
+            path: library/Icinga/Common/PdfExport.php
+
+        -
+            message: '#Access to an undefined property object\:\:\$host_name#'
+            path: modules/monitoring/library/Monitoring/ProvidedHook/X509/Sni.php
+        -
+            message: '#PHPDoc tag \@param has invalid value .#'
+            paths:
+                - library/Icinga/Protocol/Ldap/LdapUtils.php
+                - library/Icinga/Application/Benchmark.php
+
+        -
+            message: '#Comparison operation "<" between int<0, max> and array\|int results in an error#'
+            path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+    scanDirectories:
+        - vendor
+
+    excludePaths:
+        - library/Icinga/Test
+
+    universalObjectCratesClasses:  # to ignore magic property errors (db columns)
+        - Icinga\Data\ConfigObject
+        - Icinga\Web\View
+        - Icinga\Module\Monitoring\Object\MonitoredObject
+        - Icinga\Module\Monitoring\DataView\DataView
+        - Icinga\Web\Session\SessionNamespace
+        - Zend_View_Interface
+        - Zend_Controller_Action_HelperBroker
+        - Icinga\User\Preferences
+        - Zend_Form_Element
+        - Zend_Controller_Action_Helper_Abstract
