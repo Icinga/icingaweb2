@@ -66,7 +66,7 @@ jobs:
           MYSQL_USER: icinga_unittest
           MYSQL_PASSWORD: icinga_unittest
         options: >-
-          --health-cmd "mysql -s -uroot -proot -e'SHOW DATABASES;' 2> /dev/null | grep icinga_unittest > test"
+          --health-cmd "mariadb -s -uroot -proot -e'SHOW DATABASES;' 2> /dev/null | grep icinga_unittest > test"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
