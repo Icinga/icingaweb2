@@ -490,8 +490,8 @@
                         ++minute;
                         second = 0;
                     }
-                    el.innerHTML = el.innerHTML.substr(0, partialTime.index) + minute.toString() + 'm '
-                        + second.toString() + 's' + el.innerHTML.substr(partialTime.index + partialTime[0].length);
+                    el.innerHTML = el.innerHTML.substring(0, partialTime.index) + minute.toString() + 'm '
+                        + second.toString() + 's' + el.innerHTML.substring(partialTime.index + partialTime[0].length);
                 }
             });
 
@@ -524,9 +524,17 @@
                         } else {
                             --second;
                         }
+
+                        if (minute === 0 && second === 0 && el.dataset.agoLabel) {
+                            el.innerText = el.dataset.agoLabel;
+                            el.classList.remove('time-until');
+                            el.classList.add('time-ago');
+
+                            return;
+                        }
                     }
-                    el.innerHTML = el.innerHTML.substr(0, partialTime.index) + invert + minute.toString() + 'm '
-                        + second.toString() + 's' + el.innerHTML.substr(partialTime.index + partialTime[0].length);
+                    el.innerHTML = el.innerHTML.substring(0, partialTime.index) + invert + minute.toString() + 'm '
+                        + second.toString() + 's' + el.innerHTML.substring(partialTime.index + partialTime[0].length);
                 }
             });
         },
