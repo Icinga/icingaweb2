@@ -206,7 +206,7 @@ class Service extends MonitoredObject
                 $text = $translate ? mt('monitoring', 'PENDING') : 'pending';
                 break;
             default:
-                throw new InvalidArgumentException('Invalid service state \'%s\'', $state);
+                throw new InvalidArgumentException(sprintf('Invalid service state \'%s\'', $state));
         }
         return $text;
     }

@@ -191,7 +191,7 @@ class Host extends MonitoredObject
                 $text = $translate ? mt('monitoring', 'PENDING') : 'pending';
                 break;
             default:
-                throw new InvalidArgumentException('Invalid host state \'%s\'', $state);
+                throw new InvalidArgumentException(sprintf('Invalid host state \'%s\'', $state));
         }
         return $text;
     }
