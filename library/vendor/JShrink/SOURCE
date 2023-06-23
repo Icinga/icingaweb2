@@ -1,7 +1,0 @@
-#!/bin/bash
-set -eux
-VERSION=1.4.0
-curl -LsS https://github.com/tedious/JShrink/archive/v"$VERSION".tar.gz -o /tmp/JShrink.tar.gz
-tar xzf /tmp/JShrink.tar.gz --strip-components 1 JShrink-"$VERSION"/LICENSE
-tar xzf /tmp/JShrink.tar.gz --strip-components 3 JShrink-"$VERSION"/src/JShrink/Minifier.php
-rm /tmp/JShrink.tar.gz
