@@ -11,21 +11,6 @@ use Icinga\Util\Environment;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 
-call_user_func(function () {
-    /**
-     * @package dompdf
-     * @link    http://dompdf.github.com/
-     * @author  Benj Carson <benjcarson@digitaljunkies.ca>
-     * @author  Fabien Ménager <fabien.menager@gmail.com>
-     * @author  Alexander A. Klimov <alexander.klimov@icinga.com>
-     * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
-     */
-
-    $baseDir = Icinga::app()->getBaseDir('library/vendor/dompdf');
-
-    require_once "$baseDir/vendor/autoload.php";
-});
-
 class Pdf
 {
     protected function assertNoHeadersSent()

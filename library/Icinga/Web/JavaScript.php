@@ -190,7 +190,6 @@ class JavaScript
         }
 
         if ($minified) {
-            require_once 'JShrink/Minifier.php';
             $out .= Minifier::minify($js, ['flaggedComments' => false]);
             $baseOut = Minifier::minify($baseJs, ['flaggedComments' => false]);
             $out = ';' . ltrim($baseOut, ';') . "\n" . $out;

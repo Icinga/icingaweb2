@@ -3,8 +3,6 @@
 
 namespace Icinga\Application;
 
-use Zend_Loader_Autoloader;
-
 /**
  * PSR-4 class loader
  */
@@ -264,18 +262,6 @@ class ClassLoader
     }
 
     /**
-     * Require ZF autoloader
-     *
-     * @return Zend_Loader_Autoloader
-     */
-    protected function requireZendAutoloader()
-    {
-        require_once 'Zend/Loader/Autoloader.php';
-        $this->gotZend = true;
-        return Zend_Loader_Autoloader::getInstance();
-    }
-
-    /**
      * Load the given class or interface
      *
      * @param   string  $class  Name of the class or interface
@@ -284,20 +270,6 @@ class ClassLoader
      */
     public function loadClass($class)
     {
-        // We are aware of the Zend_ prefix and lazyload it's autoloader.
-        // Return as fast as possible if we already did so.
-        if (substr($class, 0, 5) === 'Zend_') {
-            if (! $this->gotZend) {
-                $zendLoader = $this->requireZendAutoloader();
-                if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
-                    // PHP7 seems to remember the autoload function stack before auto-loading. Thus
-                    // autoload functions registered during autoload never get called
-                    return $zendLoader::autoload($class);
-                }
-            }
-            return false;
-        }
-
         if ($file = $this->getSourceFile($class)) {
             if (file_exists($file)) {
                 require $file;

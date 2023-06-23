@@ -6,8 +6,6 @@ namespace Icinga\Util;
 use Icinga\Less\Visitor;
 use lessc;
 
-require_once 'lessphp/lessc.inc.php';
-
 class LessParser extends lessc
 {
     public function __construct()

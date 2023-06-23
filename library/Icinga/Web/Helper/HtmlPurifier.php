@@ -23,10 +23,6 @@ class HtmlPurifier
      */
     public function __construct($config = null)
     {
-        require_once 'HTMLPurifier/Bootstrap.php';
-        require_once 'HTMLPurifier.php';
-        require_once 'HTMLPurifier.autoload.php';
-
         $purifierConfig = \HTMLPurifier_Config::createDefault();
         $purifierConfig->set('Core.EscapeNonASCIICharacters', true);
         $purifierConfig->set('Attr.AllowedFrameTargets', array('_blank'));

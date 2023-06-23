@@ -43,7 +43,7 @@ abstract class ApplicationBootstrap
     /**
      * Base directory
      *
-     * Parent folder for at least application, bin, modules, library/vendor and public
+     * Parent folder for at least application, bin, modules and public
      *
      * @var string
      */
@@ -55,13 +55,6 @@ abstract class ApplicationBootstrap
      * @var string
      */
     protected $appDir;
-
-    /**
-     * Vendor library directory
-     *
-     * @var string
-     */
-    protected $vendorDir;
 
     /**
      * Icinga library directory
@@ -161,7 +154,6 @@ abstract class ApplicationBootstrap
         }
         $this->baseDir = $baseDir;
         $this->appDir = $baseDir . '/application';
-        $this->vendorDir = $baseDir . '/library/vendor';
         if (substr(__DIR__, 0, 8) === 'phar:///') {
             $this->libDir = dirname(dirname(__DIR__));
         } else {
@@ -205,15 +197,6 @@ abstract class ApplicationBootstrap
                     : [];
             }
         }
-
-        set_include_path(
-            implode(
-                PATH_SEPARATOR,
-                array($this->vendorDir, get_include_path())
-            )
-        );
-
-        Benchmark::measure('Bootstrap, autoloader registered');
 
         Icinga::setApp($this);
 
@@ -326,18 +309,6 @@ abstract class ApplicationBootstrap
     public function getApplicationDir($subDir = null)
     {
         return $this->getDirWithSubDir($this->appDir, $subDir);
-    }
-
-    /**
-     * Get the vendor library directory
-     *
-     * @param   string $subDir Optional sub directory to get
-     *
-     * @return  string
-     */
-    public function getVendorDir($subDir = null)
-    {
-        return $this->getDirWithSubDir($this->vendorDir, $subDir);
     }
 
     /**

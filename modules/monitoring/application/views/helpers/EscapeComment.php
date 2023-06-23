@@ -23,10 +23,6 @@ class Zend_View_Helper_EscapeComment extends Zend_View_Helper_Abstract
     public function escapeComment($comment)
     {
         if (self::$purifier === null) {
-            require_once 'HTMLPurifier/Bootstrap.php';
-            require_once 'HTMLPurifier.php';
-            require_once 'HTMLPurifier.autoload.php';
-
             $config = HTMLPurifier_Config::createDefault();
             $config->set('Core.EscapeNonASCIICharacters', true);
             $config->set('HTML.Allowed', 'a[href]');

@@ -10,8 +10,6 @@ class Markdown
 {
     public static function line($content, $config = null)
     {
-        require_once 'Parsedown/Parsedown.php';
-
         if ($config === null) {
             $config = function (\HTMLPurifier_Config $config) {
                 $config->set('HTML.Parent', 'span'); // Only allow inline elements
@@ -25,8 +23,6 @@ class Markdown
 
     public static function text($content, $config = null)
     {
-        require_once 'Parsedown/Parsedown.php';
-
         if ($config === null) {
             $config = function (\HTMLPurifier_Config $config) {
                 LinkTransformer::attachTo($config);
