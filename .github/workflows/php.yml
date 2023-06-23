@@ -99,10 +99,13 @@ jobs:
           extensions: mysql, pgsql, ldap
 
       - name: Setup dependencies
-        run: composer require -n --no-progress mockery/mockery ipl/i18n:@dev
+        run: |
+          composer require -n --no-progress mockery/mockery ipl/i18n:@dev
+          git clone --depth 1 --branch snapshot/nightly https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
 
       - name: PHPUnit
         env:
           ICINGAWEB_TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
           ICINGAWEB_TEST_PGSQL_PORT: ${{ job.services.pgsql.ports['5432'] }}
+          ICINGAWEB_LIBDIR:  vendor/
         run: phpunit -c modules/test/phpunit.xml --verbose
