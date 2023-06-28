@@ -210,6 +210,7 @@
             var kill = this.cutContainer($('#col1'));
             this.pasteContainer($('#col1'), col2);
             this.icinga.behaviors.navigation.trySetActiveAndSelectedByUrl($('#col1').data('icingaUrl'));
+            $('#col1').trigger('column-moved', 'col2');
         },
 
         moveToRight: function () {
@@ -220,6 +221,7 @@
             this.cutContainer($(col2)); // Clear col2 states
             this.pasteContainer($(col2), col1Backup);
             this.layout2col();
+            $(col2).trigger('column-moved', 'col1');
         },
 
         cutContainer: function ($col) {
