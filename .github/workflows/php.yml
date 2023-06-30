@@ -32,7 +32,7 @@ jobs:
           tools: phpcs
 
       - name: Setup dependencies
-        run: composer require -n --no-progress overtrue/phplint
+        run: composer require -n --no-progress overtrue/phplint phan/phan:^5.4
 
       - name: PHP Lint
         if: success() || matrix.allow_failure
@@ -45,6 +45,9 @@ jobs:
       - name: PHPStan
         uses: php-actions/phpstan@v3
         if: success() || matrix.allow_failure
+
+      - name: Phan
+        run: ./vendor/bin/phan --color
 
   test:
     name: Unit tests with php ${{ matrix.php }} on ${{ matrix.os }}

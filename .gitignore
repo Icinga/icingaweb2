@@ -1,10 +1,11 @@
 # Exclude all hidden files
 .*
 
-# Except those related to git
+# Except those related to git and phan workflow
 !.git*
 !.travis.yml
 !.mailmap
+!.phan
 
 # Testing - created by test/setup_vendor.sh
 /vendor/
