@@ -32,7 +32,7 @@ jobs:
           tools: phpcs
 
       - name: Setup dependencies
-        run: composer require -n --no-progress overtrue/phplint phan/phan:^5.4 vimeo/psalm:4.30 ipl/i18n:@dev
+        run: composer require -n --no-progress overtrue/phplint phan/phan:^5.4 ipl/i18n:@dev vimeo/psalm:4.30
 
       - name: PHP Lint
         if: success() || matrix.allow_failure
