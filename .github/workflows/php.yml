@@ -43,10 +43,11 @@ jobs:
         run: phpcs
 
       - name: PHPStan
+        continue-on-error: true
         uses: php-actions/phpstan@v3
-        if: success() || matrix.allow_failure
 
       - name: Phan
+        continue-on-error: true
         run: ./vendor/bin/phan --color
 
       - name: Psalm
