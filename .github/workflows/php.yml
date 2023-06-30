@@ -32,7 +32,7 @@ jobs:
           tools: phpcs
 
       - name: Setup dependencies
-        run: composer require -n --no-progress overtrue/phplint phan/phan:^5.4
+        run: composer require -n --no-progress overtrue/phplint phan/phan:^5.4 vimeo/psalm:4.30 ipl/i18n:@dev
 
       - name: PHP Lint
         if: success() || matrix.allow_failure
@@ -48,6 +48,9 @@ jobs:
 
       - name: Phan
         run: ./vendor/bin/phan --color
+
+      - name: Psalm
+        run: ./vendor/bin/psalm --output-format=github
 
   test:
     name: Unit tests with php ${{ matrix.php }} on ${{ matrix.os }}
