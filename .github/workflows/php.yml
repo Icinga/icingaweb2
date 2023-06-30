@@ -17,8 +17,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.2', '7.3', '7.4', '8.0', '8.1']
+        php: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
         os: ['ubuntu-latest']
+        allow_failure: [true]
 
     steps:
       - name: Checkout code base
@@ -40,6 +41,10 @@ jobs:
       - name: PHP CodeSniffer
         if: success() || matrix.allow_failure
         run: phpcs
+
+      - name: PHPStan
+        uses: php-actions/phpstan@v3
+        if: success() || matrix.allow_failure
 
   test:
     name: Unit tests with php ${{ matrix.php }} on ${{ matrix.os }}
