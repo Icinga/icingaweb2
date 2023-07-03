@@ -3,4 +3,3 @@ parameters:
 
     paths:
         - application
-        - library/Icinga

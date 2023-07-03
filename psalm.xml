@@ -7,7 +7,6 @@
 >
     <projectFiles>
         <directory name="application" />
-        <directory name="library/Icinga" />
         <ignoreFiles>
             <directory name="library/vendor" />
         </ignoreFiles>
