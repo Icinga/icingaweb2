@@ -4,11 +4,19 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    hideAllErrorsExceptPassedFiles="true"
+    hideExternalErrors="true"
 >
     <projectFiles>
-        <directory name="application" />
         <ignoreFiles>
-            <directory name="library/vendor" />
+<!--            <directory name="library/vendor/" />-->
+<!--            <directory name="application/views/helpers" />-->
         </ignoreFiles>
+        <directory name="application" />
     </projectFiles>
+    <extraFiles>
+        <directory name="library/vendor/" />
+        <directory name="application/views/helpers" />
+        <directory name="library/Icinga" />
+    </extraFiles>
 </psalm>
