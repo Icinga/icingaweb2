@@ -22,6 +22,7 @@ namespace Icinga\Test {
          * Path to application/
          *
          * @var string
+         * @deprecated Use Icinga::app()->getApplicationDir() instead
          */
         public static $appDir;
 
@@ -29,13 +30,15 @@ namespace Icinga\Test {
          * Path to library/Icinga
          *
          * @var string
+         * @deprecated Use Icinga::app()->getLibraryDir('Icinga') instead
          */
         public static $libDir;
 
         /**
          * Path to etc/
          *
-         * @var
+         * @var string
+         * @deprecated Use Icinga::app()->getBaseDir('etc') instead
          */
         public static $etcDir;
 
@@ -43,6 +46,7 @@ namespace Icinga\Test {
          * Path to test/php/
          *
          * @var string
+         * @deprecated Use Icinga::app()->getBaseDir('test/php') instead
          */
         public static $testDir;
 
@@ -50,6 +54,7 @@ namespace Icinga\Test {
          * Path to share/icinga2-web
          *
          * @var string
+         * @deprecated Unused
          */
         public static $shareDir;
 
@@ -57,6 +62,7 @@ namespace Icinga\Test {
          * Path to modules/
          *
          * @var string
+         * @deprecated Use Icinga::app()->getModuleManager()->getModuleDirs() instead
          */
         public static $moduleDir;
 
@@ -92,38 +98,6 @@ namespace Icinga\Test {
         public static function setupTimezone()
         {
             date_default_timezone_set('UTC');
-        }
-
-        /**
-         * Setup test path environment
-         *
-         * @throws RuntimeException
-         */
-        public static function setupDirectories()
-        {
-            $baseDir = getenv('ICINGAWEB_BASEDIR') ?: realpath(__DIR__ . '/../../../');
-            if ($baseDir === false) {
-                throw new RuntimeException('Application base dir not found');
-            }
-
-            $libDir = getenv('ICINGAWEB_ICINGA_LIB') ?: realpath($baseDir . '/library/Icinga');
-            if ($libDir === false) {
-                throw new RuntimeException('Icinga library dir not found');
-            }
-
-            self::$appDir = $baseDir . '/application';
-            self::$libDir = $libDir;
-            self::$etcDir = $baseDir . '/etc';
-            self::$testDir = $baseDir . '/test/php';
-            self::$shareDir = $baseDir . '/share/icinga2-web';
-
-            $modulesDir = getenv('ICINGAWEB_MODULES_DIR');
-            if ($modulesDir && strpos($modulesDir, ':') !== false) {
-                // Only use the env variable if it contains a single path
-                $modulesDir = false;
-            }
-
-            self::$moduleDir = $modulesDir ?: $baseDir . '/modules';
         }
 
         /**
@@ -347,5 +321,4 @@ namespace Icinga\Test {
     }
 
     BaseTestCase::setupTimezone();
-    BaseTestCase::setupDirectories();
 }
