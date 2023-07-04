@@ -189,16 +189,6 @@ CSS;
             ->setVariable($v);
     }
 
-    public function visitColor($c)
-    {
-        if ($this->definingVariable !== false) {
-            // Make sure that all less tree colors do have a proper name
-            $c->name = $this->variableOrigin->name;
-        }
-
-        return $c;
-    }
-
     public function run($node)
     {
         $this->lightMode = new LightMode();
