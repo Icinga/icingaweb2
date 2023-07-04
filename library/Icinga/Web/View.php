@@ -99,12 +99,12 @@ class View extends Zend_View_Abstract
     /**
      * Escape the given value top be safely used in view scripts
      *
-     * @param  string $value  The output to be escaped
+     * @param  string $var  The output to be escaped
      * @return string
      */
-    public function escape($value)
+    public function escape($var)
     {
-        return htmlspecialchars($value ?? '', ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5, self::CHARSET, true);
+        return htmlspecialchars($var ?? '', ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5, self::CHARSET, true);
     }
 
     /**
