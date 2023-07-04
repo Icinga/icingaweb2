@@ -197,10 +197,10 @@ class PhpCommand extends Command
         $vars[] = sprintf('ICINGAWEB_MODULE_DIRS=%s', implode(':', $modulePaths));
 
         // Disabled as the bootstrap.php for PHPUnit and class BaseTestCase can't handle multiple paths yet
-        /*$vars[] = sprintf(
+        $vars[] = sprintf(
             'ICINGAWEB_MODULES_DIR=%s',
             implode(PATH_SEPARATOR, $this->app->getModuleManager()->getModuleDirs())
-        );*/
+        );
 
         return join(' ', $vars) . ' ';
     }
