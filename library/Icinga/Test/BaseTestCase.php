@@ -4,6 +4,8 @@
 namespace Icinga\Test {
 
     use Exception;
+    use Icinga\Web\Request;
+    use Icinga\Web\Response;
     use ipl\I18n\NoopTranslator;
     use ipl\I18n\StaticTranslator;
     use RuntimeException;
@@ -92,26 +94,28 @@ namespace Icinga\Test {
             ),
         );
 
+        /** @var Request */
+        private $requestMock;
+
+        /** @var Response */
+        private $responseMock;
+
         /**
          * Setup MVC bootstrapping and ensure that the Icinga-Mock gets reinitialized
          */
         public function setUp(): void
         {
             parent::setUp();
+            $this->setupRequestMock();
+            $this->setupResponseMock();
 
             StaticTranslator::$instance = new NoopTranslator();
-            $this->setupIcingaMock();
         }
 
-        /**
-         * Setup mock object for the application's bootstrap
-         *
-         * @return  Mockery\Mock
-         */
-        protected function setupIcingaMock()
+        private function setupRequestMock()
         {
-            $requestMock = Mockery::mock('Icinga\Web\Request')->shouldDeferMissing();
-            $requestMock->shouldReceive('getPathInfo')->andReturn('')->byDefault()
+            $this->requestMock = Mockery::mock('Icinga\Web\Request')->shouldDeferMissing();
+            $this->requestMock->shouldReceive('getPathInfo')->andReturn('')->byDefault()
                 ->shouldReceive('getBaseUrl')->andReturn('/')->byDefault()
                 ->shouldReceive('getQuery')->andReturn(array())->byDefault()
                 ->shouldReceive('getParam')->with(Mockery::type('string'), Mockery::type('string'))
@@ -119,43 +123,33 @@ namespace Icinga\Test {
                     return $default;
                 })->byDefault();
 
-            $responseMock = Mockery::mock('Icinga\Web\Response')->shouldDeferMissing();
-            // Can't express this as demeter chains. See: https://github.com/padraic/mockery/issues/59
-            $bootstrapMock = Mockery::mock('Icinga\Application\ApplicationBootstrap')->shouldDeferMissing();
-            $libDir = dirname(self::$libDir);
-            $bootstrapMock->shouldReceive('getFrontController')->andReturn($bootstrapMock)
-                ->shouldReceive('getApplicationDir')->andReturn(self::$appDir)
-                ->shouldReceive('getLibraryDir')->andReturnUsing(function ($subdir = null) use ($libDir) {
-                    if ($subdir !== null) {
-                        $libDir .= '/' . ltrim($subdir, '/');
-                    }
-                    return $libDir;
-                })
-                ->shouldReceive('getRequest')->andReturn($requestMock)
-                ->shouldReceive('getResponse')->andReturn($responseMock);
+            Icinga::app()->setRequest($this->requestMock);
+        }
 
-            Icinga::setApp($bootstrapMock, true);
-            return $bootstrapMock;
+        private function setupResponseMock()
+        {
+            $this->responseMock = Mockery::mock('Icinga\Web\Response')->shouldDeferMissing();
+            Icinga::app()->setResponse($this->responseMock);
         }
 
         /**
          * Return the currently active request mock object
          *
-         * @return  Icinga\Web\Request
+         * @return Request
          */
         public function getRequestMock()
         {
-            return Icinga::app()->getRequest();
+            return $this->requestMock;
         }
 
         /**
          * Return the currently active response mock object
          *
-         * @return  Icinga\Web\Response
+         * @return Response
          */
         public function getResponseMock()
         {
-            return Icinga::app()->getFrontController()->getResponse();
+            return $this->responseMock;
         }
 
         /**
