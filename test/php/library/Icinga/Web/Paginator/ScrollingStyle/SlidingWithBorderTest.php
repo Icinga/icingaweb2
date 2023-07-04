@@ -3,14 +3,23 @@
 
 namespace Tests\Icinga\Web\Paginator\ScrollingStyle;
 
+use Icinga\Application\Icinga;
 use Mockery;
 use Zend_Paginator;
 use Icinga\Test\BaseTestCase;
 
-require_once realpath(BaseTestCase::$libDir . '/Web/Paginator/ScrollingStyle/SlidingWithBorder.php');
-
-class SlidingwithborderTest extends BaseTestCase
+class SlidingWithborderTest extends BaseTestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        require_once realpath(
+            Icinga::app()->getLibraryDir('Icinga')
+            . '/Web/Paginator/ScrollingStyle/SlidingWithBorder.php'
+        );
+    }
+
     public function testGetPages2()
     {
         $scrollingStyle = new \Icinga_Web_Paginator_ScrollingStyle_SlidingWithBorder();

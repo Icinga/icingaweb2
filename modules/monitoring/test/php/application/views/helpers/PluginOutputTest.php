@@ -3,11 +3,10 @@
 
 namespace Tests\Icinga\Module\Monitoring\Application\Views\Helpers;
 
+use Icinga\Application\Icinga;
 use Icinga\Web\View;
 use Zend_View_Helper_PluginOutput;
 use Icinga\Test\BaseTestCase;
-
-require_once realpath(BaseTestCase::$moduleDir . '/monitoring/application/views/helpers/PluginOutput.php');
 
 class PluginOutputTest extends BaseTestCase
 {
@@ -23,6 +22,11 @@ class PluginOutputTest extends BaseTestCase
     public function setUp(): void
     {
         parent::setUp();
+
+        require_once realpath(
+            Icinga::app()->getModuleManager()->getModuleDir('monitoring')
+            . '/application/views/helpers/PluginOutput.php'
+        );
 
         $this->helper = $h = new Zend_View_Helper_PluginOutput;
         $h->setView(new View());

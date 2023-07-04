@@ -7,8 +7,6 @@ use Mockery;
 use Icinga\Test\BaseTestCase;
 use Icinga\Module\Monitoring\Object\Macro;
 
-require_once realpath(BaseTestCase::$moduleDir . '/monitoring/library/Monitoring/Object/Macro.php');
-
 class MacroTest extends BaseTestCase
 {
     public function testHostMacros()
