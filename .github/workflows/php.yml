@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.2', '7.3', '7.4', '8.0', '8.1']
+        php: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
         os: ['ubuntu-latest']
 
     steps:
@@ -51,7 +51,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.2', '7.3', '7.4', '8.0', '8.1']
+        php: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
         os: ['ubuntu-latest']
         include:
           - php: '7.2'
