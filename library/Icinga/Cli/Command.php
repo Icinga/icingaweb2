@@ -50,6 +50,9 @@ abstract class Command
     /** @var bool Whether to automatically load enabled modules */
     protected $loadEnabledModules = true;
 
+    /** @var bool Whether to enable trace for the CLI commands */
+    protected $trace = false;
+
     public function __construct(App $app, $moduleName, $commandName, $actionName, $initialize = true)
     {
         $this->app = $app;
