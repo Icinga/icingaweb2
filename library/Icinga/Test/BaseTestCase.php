@@ -1,23 +1,6 @@
 <?php
 /* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
 
-namespace {
-
-    if (!function_exists('t')) {
-        function t()
-        {
-            return func_get_arg(0);
-        }
-    }
-
-    if (!function_exists('mt')) {
-        function mt()
-        {
-            return func_get_arg(0);
-        }
-    }
-}
-
 namespace Icinga\Test {
 
     use Exception;
