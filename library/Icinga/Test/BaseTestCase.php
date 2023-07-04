@@ -93,14 +93,6 @@ namespace Icinga\Test {
         );
 
         /**
-         * Setup the default timezone
-         */
-        public static function setupTimezone()
-        {
-            date_default_timezone_set('UTC');
-        }
-
-        /**
          * Setup MVC bootstrapping and ensure that the Icinga-Mock gets reinitialized
          */
         public function setUp(): void
@@ -319,6 +311,4 @@ namespace Icinga\Test {
             }
         }
     }
-
-    BaseTestCase::setupTimezone();
 }
