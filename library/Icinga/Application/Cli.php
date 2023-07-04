@@ -200,7 +200,7 @@ class Cli extends ApplicationBootstrap
      * @throws ProgrammingError
      * @return void
      */
-    private function assertRunningOnCli()
+    protected function assertRunningOnCli()
     {
         if (Platform::isCli()) {
             return;
