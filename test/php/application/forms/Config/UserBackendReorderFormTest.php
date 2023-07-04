@@ -42,7 +42,6 @@ class AuthenticationBackendReorderFormTest extends BaseTestCase
             )
         );
 
-        Icinga::app()->shouldReceive('getModuleManager->getLoadedModules')->andReturn([]);
         $this->getRequestMock()->shouldReceive('getMethod')->andReturn('POST')
             ->shouldReceive('isPost')->andReturn(true)
             ->shouldReceive('getPost')->andReturn(array('backend_newpos' => 'test3|1'));
