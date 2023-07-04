@@ -28,6 +28,7 @@ class PhpCommand extends Command
      *   --verbose  Be more verbose.
      *   --build    Enable reporting.
      *   --include  Pattern to use for including files/test cases.
+     *   --phpunit  Path to the phpunit executable
      *
      * EXAMPLES
      *
@@ -42,11 +43,15 @@ class PhpCommand extends Command
      */
     public function unitAction()
     {
-        $build = $this->params->shift('build');
+        $build = (bool) $this->params->shift('build', false);
         $include = $this->params->shift('include');
+        $phpUnit = $this->params->shift('phpunit');
 
-        $phpUnit = exec('which phpunit');
-        if (!file_exists($phpUnit)) {
+        if (! $phpUnit) {
+            $phpUnit = exec('which phpunit');
+        }
+
+        if (! file_exists($phpUnit)) {
             $this->fail('PHPUnit not found. Please install PHPUnit to be able to run the unit-test suites.');
         }
 
@@ -75,7 +80,7 @@ class PhpCommand extends Command
         $temp->create('phpunit.xml', $phpunitXml->saveXML());
 
         chdir($baseDir);
-        $command = $this->getEnvironmentVariables()
+        $command = $this->getEnvironmentVariables($build)
             . $phpUnit
             . " -c {$temp->resolvePath('phpunit.xml')}"
             . ' ' . join(' ', array_merge($options, $this->params->getAllStandalone()));
@@ -182,7 +187,7 @@ class PhpCommand extends Command
     /**
      * Setup some required environment variables
      */
-    protected function getEnvironmentVariables()
+    protected function getEnvironmentVariables(bool $build)
     {
         $modulePaths = [];
         foreach (Icinga::app()->getModuleManager()->getModuleInfo() as $module) {
@@ -201,6 +206,10 @@ class PhpCommand extends Command
             'ICINGAWEB_MODULES_DIR=%s',
             implode(PATH_SEPARATOR, $this->app->getModuleManager()->getModuleDirs())
         );
+
+        if ($build) {
+            $vars[] = 'XDEBUG_MODE=coverage';
+        }
 
         return join(' ', $vars) . ' ';
     }
