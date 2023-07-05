@@ -3,8 +3,8 @@
 
 namespace Tests\Icinga\Web;
 
+use Icinga\Application\Icinga;
 use Icinga\Authentication\Role;
-use Mockery;
 use Icinga\Test\BaseTestCase;
 use Icinga\User;
 use Icinga\Web\Widget\SearchDashboard;
@@ -13,23 +13,12 @@ class SearchDashboardTest extends BaseTestCase
 {
     public function setUp(): void
     {
-        $moduleMock = Mockery::mock('Icinga\Application\Modules\Module');
-        $searchUrl = (object) array(
-            'title' => 'Hosts',
-            'url'   => 'monitoring/list/hosts?sort=host_severity&limit=10'
-        );
-        $moduleMock->shouldReceive('getSearchUrls')->andReturn(array(
-            $searchUrl
-        ));
-        $moduleMock->shouldReceive('getName')->andReturn('test');
+        parent::setUp();
 
-        $moduleManagerMock = Mockery::mock('Icinga\Application\Modules\Manager');
-        $moduleManagerMock->shouldReceive('getLoadedModules')->andReturn(array(
-            'test-module' => $moduleMock
-        ));
-
-        $bootstrapMock = $this->setupIcingaMock();
-        $bootstrapMock->shouldReceive('getModuleManager')->andReturn($moduleManagerMock);
+        Icinga::app()->getModuleManager()
+            ->loadModule('test-module', '/tmp')
+            ->getModule('test-module')
+            ->provideSearchUrl('Hosts', 'monitoring/list/hosts?sort=host_severity&limit=10');
     }
 
     public function testWhetherRenderThrowsAnExceptionWhenHasNoDashlets()

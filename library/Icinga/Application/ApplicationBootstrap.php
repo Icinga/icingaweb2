@@ -452,10 +452,15 @@ abstract class ApplicationBootstrap
 
     protected function getAvailableModulePaths()
     {
-        $paths = array();
-        $configured = $this->config->get('global', 'module_path', $this->baseDir . '/modules');
+        $paths = [];
+
+        $configured = getenv('ICINGAWEB_MODULES_DIR');
+        if (! $configured) {
+            $configured = $this->config->get('global', 'module_path', $this->baseDir . '/modules');
+        }
+
         $nextIsPhar = false;
-        foreach (explode(':', $configured) as $path) {
+        foreach (explode(PATH_SEPARATOR, $configured) as $path) {
             if ($path === 'phar') {
                 $nextIsPhar = true;
                 continue;

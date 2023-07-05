@@ -1,26 +1,11 @@
 <?php
 /* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
 
-namespace {
-
-    if (!function_exists('t')) {
-        function t()
-        {
-            return func_get_arg(0);
-        }
-    }
-
-    if (!function_exists('mt')) {
-        function mt()
-        {
-            return func_get_arg(0);
-        }
-    }
-}
-
 namespace Icinga\Test {
 
     use Exception;
+    use Icinga\Web\Request;
+    use Icinga\Web\Response;
     use ipl\I18n\NoopTranslator;
     use ipl\I18n\StaticTranslator;
     use RuntimeException;
@@ -39,6 +24,7 @@ namespace Icinga\Test {
          * Path to application/
          *
          * @var string
+         * @deprecated Use Icinga::app()->getApplicationDir() instead
          */
         public static $appDir;
 
@@ -46,13 +32,15 @@ namespace Icinga\Test {
          * Path to library/Icinga
          *
          * @var string
+         * @deprecated Use Icinga::app()->getLibraryDir('Icinga') instead
          */
         public static $libDir;
 
         /**
          * Path to etc/
          *
-         * @var
+         * @var string
+         * @deprecated Use Icinga::app()->getBaseDir('etc') instead
          */
         public static $etcDir;
 
@@ -60,6 +48,7 @@ namespace Icinga\Test {
          * Path to test/php/
          *
          * @var string
+         * @deprecated Use Icinga::app()->getBaseDir('test/php') instead
          */
         public static $testDir;
 
@@ -67,6 +56,7 @@ namespace Icinga\Test {
          * Path to share/icinga2-web
          *
          * @var string
+         * @deprecated Unused
          */
         public static $shareDir;
 
@@ -74,6 +64,7 @@ namespace Icinga\Test {
          * Path to modules/
          *
          * @var string
+         * @deprecated Use Icinga::app()->getModuleManager()->getModuleDirs() instead
          */
         public static $moduleDir;
 
@@ -103,45 +94,11 @@ namespace Icinga\Test {
             ),
         );
 
-        /**
-         * Setup the default timezone
-         */
-        public static function setupTimezone()
-        {
-            date_default_timezone_set('UTC');
-        }
+        /** @var Request */
+        private $requestMock;
 
-        /**
-         * Setup test path environment
-         *
-         * @throws RuntimeException
-         */
-        public static function setupDirectories()
-        {
-            $baseDir = getenv('ICINGAWEB_BASEDIR') ?: realpath(__DIR__ . '/../../../');
-            if ($baseDir === false) {
-                throw new RuntimeException('Application base dir not found');
-            }
-
-            $libDir = getenv('ICINGAWEB_ICINGA_LIB') ?: realpath($baseDir . '/library/Icinga');
-            if ($libDir === false) {
-                throw new RuntimeException('Icinga library dir not found');
-            }
-
-            self::$appDir = $baseDir . '/application';
-            self::$libDir = $libDir;
-            self::$etcDir = $baseDir . '/etc';
-            self::$testDir = $baseDir . '/test/php';
-            self::$shareDir = $baseDir . '/share/icinga2-web';
-
-            $modulesDir = getenv('ICINGAWEB_MODULES_DIR');
-            if ($modulesDir && strpos($modulesDir, ':') !== false) {
-                // Only use the env variable if it contains a single path
-                $modulesDir = false;
-            }
-
-            self::$moduleDir = $modulesDir ?: $baseDir . '/modules';
-        }
+        /** @var Response */
+        private $responseMock;
 
         /**
          * Setup MVC bootstrapping and ensure that the Icinga-Mock gets reinitialized
@@ -149,20 +106,16 @@ namespace Icinga\Test {
         public function setUp(): void
         {
             parent::setUp();
+            $this->setupRequestMock();
+            $this->setupResponseMock();
 
             StaticTranslator::$instance = new NoopTranslator();
-            $this->setupIcingaMock();
         }
 
-        /**
-         * Setup mock object for the application's bootstrap
-         *
-         * @return  Mockery\Mock
-         */
-        protected function setupIcingaMock()
+        private function setupRequestMock()
         {
-            $requestMock = Mockery::mock('Icinga\Web\Request')->shouldDeferMissing();
-            $requestMock->shouldReceive('getPathInfo')->andReturn('')->byDefault()
+            $this->requestMock = Mockery::mock('Icinga\Web\Request')->shouldDeferMissing();
+            $this->requestMock->shouldReceive('getPathInfo')->andReturn('')->byDefault()
                 ->shouldReceive('getBaseUrl')->andReturn('/')->byDefault()
                 ->shouldReceive('getQuery')->andReturn(array())->byDefault()
                 ->shouldReceive('getParam')->with(Mockery::type('string'), Mockery::type('string'))
@@ -170,43 +123,33 @@ namespace Icinga\Test {
                     return $default;
                 })->byDefault();
 
-            $responseMock = Mockery::mock('Icinga\Web\Response')->shouldDeferMissing();
-            // Can't express this as demeter chains. See: https://github.com/padraic/mockery/issues/59
-            $bootstrapMock = Mockery::mock('Icinga\Application\ApplicationBootstrap')->shouldDeferMissing();
-            $libDir = dirname(self::$libDir);
-            $bootstrapMock->shouldReceive('getFrontController')->andReturn($bootstrapMock)
-                ->shouldReceive('getApplicationDir')->andReturn(self::$appDir)
-                ->shouldReceive('getLibraryDir')->andReturnUsing(function ($subdir = null) use ($libDir) {
-                    if ($subdir !== null) {
-                        $libDir .= '/' . ltrim($subdir, '/');
-                    }
-                    return $libDir;
-                })
-                ->shouldReceive('getRequest')->andReturn($requestMock)
-                ->shouldReceive('getResponse')->andReturn($responseMock);
+            Icinga::app()->setRequest($this->requestMock);
+        }
 
-            Icinga::setApp($bootstrapMock, true);
-            return $bootstrapMock;
+        private function setupResponseMock()
+        {
+            $this->responseMock = Mockery::mock('Icinga\Web\Response')->shouldDeferMissing();
+            Icinga::app()->setResponse($this->responseMock);
         }
 
         /**
          * Return the currently active request mock object
          *
-         * @return  Icinga\Web\Request
+         * @return Request
          */
         public function getRequestMock()
         {
-            return Icinga::app()->getRequest();
+            return $this->requestMock;
         }
 
         /**
          * Return the currently active response mock object
          *
-         * @return  Icinga\Web\Response
+         * @return Response
          */
         public function getResponseMock()
         {
-            return Icinga::app()->getFrontController()->getResponse();
+            return $this->responseMock;
         }
 
         /**
@@ -362,7 +305,4 @@ namespace Icinga\Test {
             }
         }
     }
-
-    BaseTestCase::setupTimezone();
-    BaseTestCase::setupDirectories();
 }

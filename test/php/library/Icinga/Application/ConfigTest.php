@@ -245,7 +245,7 @@ class ConfigTest extends BaseTestCase
      */
     public function testWhetherItIsPossibleToRetrieveApplicationConfiguration()
     {
-        $config = Config::app();
+        $config = Config::app('config', true);
 
         $this->assertEquals(
             array(

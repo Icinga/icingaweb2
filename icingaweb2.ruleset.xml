@@ -16,6 +16,7 @@
     </rule>
     <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
         <exclude-pattern>library/Icinga/Application/Cli.php</exclude-pattern>
+        <exclude-pattern>library/Icinga/Application/Test.php</exclude-pattern>
         <exclude-pattern>library/Icinga/Application/StaticWeb.php</exclude-pattern>
         <exclude-pattern>library/Icinga/Application/EmbeddedWeb.php</exclude-pattern>
         <exclude-pattern>library/Icinga/Application/functions.php</exclude-pattern>

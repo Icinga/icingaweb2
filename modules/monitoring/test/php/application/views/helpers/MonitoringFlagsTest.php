@@ -3,13 +3,22 @@
 
 namespace Tests\Icinga\Module\Monitoring\Application\Views\Helpers;
 
+use Icinga\Application\Icinga;
 use Zend_View_Helper_MonitoringFlags;
 use Icinga\Test\BaseTestCase;
 
-require_once realpath(BaseTestCase::$moduleDir . '/monitoring/application/views/helpers/MonitoringFlags.php');
-
 class MonitoringFlagsTest extends BaseTestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        require_once realpath(
+            Icinga::app()->getModuleManager()->getModuleDir('monitoring')
+            . '/application/views/helpers/MonitoringFlags.php'
+        );
+    }
+
     public function testHosts1()
     {
         $testArray = array(
