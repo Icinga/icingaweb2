@@ -342,6 +342,7 @@
         },
 
         closeContainer: function($c) {
+            this.icinga.loader.stopPendingRequestsFor($c);
             $c.removeData('icingaUrl');
             $c.removeData('icingaTitle');
             $c.removeData('icingaRefresh');
@@ -349,8 +350,8 @@
             $c.removeData('icingaModule');
             delete $c[0].dataset.icingaContainerId;
             $c.removeAttr('class').attr('class', 'container');
-            this.icinga.loader.stopPendingRequestsFor($c);
             $c.trigger('close-column');
+            this.icinga.history.pushCurrentState();
             $c.html('');
         },
 
