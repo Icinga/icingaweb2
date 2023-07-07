@@ -15,6 +15,10 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
   developers should not encounter breaking changes in their Less files. The `wikimedia/less.php`
   [changelog](https://github.com/wikimedia/less.php/blob/master/CHANGES.md) covers all changes introduced between
   these versions.
+* Our JavaScript framework does not trigger the events `beforerender` and `rendered` on containers anymore,
+  in case the response has been discarded by a behavior with a `renderHook` implementation. Other postprocessing
+  such as updates according to the request header `X-Icinga-Extra-Updates` or fulfilling redirects is also skipped
+  in this case.
 
 ## Upgrading to Icinga Web 2.13
 
