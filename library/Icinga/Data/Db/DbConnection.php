@@ -172,6 +172,9 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 break;
             case 'mysql':
                 $adapter = 'Pdo_Mysql';
+                if ($this->config->host == 'localhost' && $this->config->unix_socket) {
+                  $adapterParamaters['unix_socket'] = $this->config->unix_socket;
+                }
                 if ($this->config->use_ssl) {
                     # The presence of these keys as empty strings or null cause non-ssl connections to fail
                     if ($this->config->ssl_key) {
