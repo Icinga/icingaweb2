@@ -3,4 +3,4 @@ parameters:
     paths:
         - application
     bootstrapFiles:
-        - test/bootstrap.php
+        - icingaweb2/test/bootstrap.php
