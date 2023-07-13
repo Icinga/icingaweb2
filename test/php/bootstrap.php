@@ -9,6 +9,9 @@ namespace Icinga\Test {
     $libraryPath = getenv('ICINGAWEB_ICINGA_LIB') ?: ($basePath . '/library/Icinga');
     $configPath = $basePath . '/test/config';
 
+    require_once '../../library/vendor/Zend/Loader/Autoloader.php';
+    \Zend_Loader_Autoloader::getInstance();
+
     require $libraryPath . '/Application/Test.php';
     Test::start($basePath, $configPath);
 }

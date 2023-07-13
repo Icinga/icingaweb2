@@ -30,6 +30,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           tools: phpcs
+          extensions: intl, mysql, pgsql, gettext, gmp, soap, pcntl, sockets
 
       - name: Setup dependencies
         run: composer require -n --no-progress overtrue/phplint phan/phan:^5.4 ipl/i18n:@dev vimeo/psalm:4.30
