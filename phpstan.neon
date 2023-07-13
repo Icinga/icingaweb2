@@ -1,5 +1,6 @@
 parameters:
     level: 1
-
     paths:
         - application
+    bootstrapFiles:
+        - test/bootstrap.php

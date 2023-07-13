@@ -35,8 +35,6 @@ jobs:
         run: composer require -n --no-progress overtrue/phplint phan/phan:^5.4 ipl/i18n:@dev vimeo/psalm:4.30
          && git clone --single-branch --branch snapshot/nightly https://github.com/Icinga/icinga-php-library.git vendor/icinga-php-library
          && git clone --single-branch --branch snapshot/nightly https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
-         && git clone --single-branch --branch main https://github.com/Icinga/icingaweb2-module-x509.git vendor/modules/x509-web
-         && git clone --single-branch --branch master https://github.com/Icinga/icingadb-web.git vendor/modules/icingadb-web
 
       - name: PHPStan
         continue-on-error: true
