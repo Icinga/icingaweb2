@@ -14,12 +14,20 @@ jobs:
     name: Static analysis for php ${{ matrix.php }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
+    env:
+      psalm-version: '5.13.1'
+
     strategy:
       fail-fast: false
       matrix:
         php: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
         os: ['ubuntu-latest']
         allow_failure: [true]
+        include:
+          - php: '7.2'
+            psalm-version: '4.30'
+          - php: '7.3'
+            psalm-version: '4.30'
 
     steps:
       - name: Checkout code base
@@ -33,7 +41,7 @@ jobs:
           extensions: intl, mysql, pgsql, gettext, gmp, soap, pcntl, sockets
 
       - name: Setup dependencies
-        run: composer require -n --no-progress overtrue/phplint phan/phan:^5.4 ipl/i18n:@dev vimeo/psalm:4.30
+        run: composer require -n --no-progress overtrue/phplint phan/phan:^5.4 vimeo/psalm:${{ matrix.psalm-version || env.psalm-version }}
          && git clone --single-branch --branch snapshot/nightly https://github.com/Icinga/icinga-php-library.git vendor/icinga-php-library
          && git clone --single-branch --branch snapshot/nightly https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
 
