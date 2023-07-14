@@ -4,8 +4,12 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Logger;
-use Icinga\Authentication\Auth;
+use Icinga\Model\Home;
+use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Util\DBUtils;
 use Icinga\Web\Navigation\Navigation;
+use Icinga\Web\Dashboard\Dashboard;
+use ipl\Stdlib\Filter;
 
 /**
  * Main menu for Icinga Web 2
@@ -28,9 +32,10 @@ class Menu extends Navigation
     {
         $this->addItem('dashboard', [
             'label'     => t('Dashboard'),
-            'url'       => 'dashboard',
+            'url'       => Dashboard::BASE_ROUTE,
             'icon'      => 'dashboard',
-            'priority'  => 10
+            'priority'  => 10,
+            'children'  => $this->fetchDashboardHomes()
         ]);
         $this->addItem('system', [
             'cssClass'  => 'system-nav-item',
@@ -116,7 +121,7 @@ class Menu extends Navigation
         ]);
         $this->addItem('user', [
             'cssClass'  => 'user-nav-item',
-            'label'     => Auth::getInstance()->getUser()->getUsername(),
+            'label'     => Dashboard::getUser()->getUsername(),
             'icon'      => 'user',
             'priority'  => 900,
             'children'  => [
@@ -148,5 +153,35 @@ class Menu extends Navigation
                 'priority'    => 900
             ]));
         }
+    }
+
+    protected function fetchDashboardHomes()
+    {
+        $dashboardHomes = [];
+
+        try {
+            $homes = Home::on(DBUtils::getConn());
+            $homes->filter(Filter::equal('user_id', Dashboard::getUser()->getAdditional('id')));
+
+            foreach ($homes as $home) {
+                if ($home->name === DashboardHome::DEFAULT_HOME) {
+                    continue;
+                }
+
+                $dashboardHomes[$home->name] = [
+                    'label'    => $home->label,
+                    'priority' => $home->priority,
+                    'url'      => Url::fromPath(Dashboard::BASE_ROUTE . '/home', [
+                        'home' => $home->name
+                    ])
+                ];
+            }
+        } catch (\Exception $_) {
+            // Nothing to do
+            // Any database issue will be noticed soon enough, so prevent the Menu
+            // from being ruined in any case.
+        }
+
+        return $dashboardHomes;
     }
 }

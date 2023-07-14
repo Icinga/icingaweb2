@@ -3,8 +3,11 @@
 
 namespace Icinga\Web\Widget;
 
-use Zend_Controller_Action_Exception;
+use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Application\Icinga;
+use Icinga\Web\Dashboard\Dashboard;
+use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Url;
 
 /**
@@ -13,6 +16,13 @@ use Icinga\Web\Url;
 class SearchDashboard extends Dashboard
 {
     /**
+     * Name for the search home
+     *
+     * @var string
+     */
+    const SEARCH_HOME = 'Search Home';
+
+    /**
      * Name for the search pane
      *
      * @var string
@@ -20,12 +30,22 @@ class SearchDashboard extends Dashboard
     const SEARCH_PANE = 'search';
 
     /**
-     * {@inheritdoc}
+     * Dashboard home of this search dashboard
+     *
+     * @var DashboardHome
      */
+    protected $searchHome;
+
+    public function __construct()
+    {
+        $this->searchHome = new DashboardHome(self::SEARCH_HOME);
+    }
+
     public function getTabs()
     {
         if ($this->tabs === null) {
-            $this->tabs = new Tabs();
+            $this->tabs = new \ipl\Web\Widget\Tabs();
+
             $this->tabs->add(
                 'search',
                 array(
@@ -35,7 +55,13 @@ class SearchDashboard extends Dashboard
                 )
             );
         }
+
         return $this->tabs;
+    }
+
+    public function getActiveEntry()
+    {
+        return $this->searchHome;
     }
 
     /**
@@ -45,20 +71,21 @@ class SearchDashboard extends Dashboard
      *
      * @return  $this
      */
-    public function search($searchString = '')
+    public function search(string $searchString = ''): self
     {
-        $pane = $this->createPane(self::SEARCH_PANE)->getPane(self::SEARCH_PANE)->setTitle(t('Search'));
+        $pane = $this->searchHome->createEntry(self::SEARCH_PANE)->getEntry(self::SEARCH_PANE);
+        $pane->setTitle(t('Search'));
         $this->activate(self::SEARCH_PANE);
 
         $manager = Icinga::app()->getModuleManager();
         $searchUrls = array();
 
         foreach ($manager->getLoadedModules() as $module) {
-            if ($this->getUser()->can($manager::MODULE_PERMISSION_NS . $module->getName())) {
+            if (self::getUser()->can($manager::MODULE_PERMISSION_NS . $module->getName())) {
                 $moduleSearchUrls = $module->getSearchUrls();
                 if (! empty($moduleSearchUrls)) {
                     if ($searchString === '') {
-                        $pane->add(t('Ready to search'), 'search/hint');
+                        $pane->createEntry(t('Ready to search'), 'search/hint');
                         return $this;
                     }
                     $searchUrls = array_merge($searchUrls, $moduleSearchUrls);
@@ -69,28 +96,24 @@ class SearchDashboard extends Dashboard
         usort($searchUrls, array($this, 'compareSearchUrls'));
 
         foreach (array_reverse($searchUrls) as $searchUrl) {
-            $pane->createDashlet(
-                $searchUrl->title . ': ' . $searchString,
-                Url::fromPath($searchUrl->url, array('q' => $searchString))
-            )->setProgressLabel(t('Searching'));
+            $title = $searchUrl->title . ': ' . $searchString;
+            $pane->createEntry($title, Url::fromPath($searchUrl->url, array('q' => $searchString)));
+            $pane->getEntry($title)->setProgressLabel(t('Searching'));
         }
 
         return $this;
     }
 
-    /**
-     * Renders the output
-     *
-     * @return  string
-     *
-     * @throws  Zend_Controller_Action_Exception
-     */
-    public function render()
+    protected function assemble()
     {
-        if (! $this->getPane(self::SEARCH_PANE)->hasDashlets()) {
-            throw new Zend_Controller_Action_Exception(t('Page not found'), 404);
+        if (! $this->searchHome->getEntry(self::SEARCH_PANE)->hasEntries()) {
+            throw new HttpNotFoundException(t('Page not found'));
         }
-        return parent::render();
+
+        /** @var Dashlet $dashlet */
+        foreach ($this->searchHome->getEntry(self::SEARCH_PANE)->getEntries() as $dashlet) {
+            $this->addHtml($dashlet->getHtml());
+        }
     }
 
     /**

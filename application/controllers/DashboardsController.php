@@ -1,0 +1,565 @@
+<?php
+
+/* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
+
+namespace Icinga\Controllers;
+
+use Icinga\Forms\Dashboard\HomeForm;
+use Icinga\Forms\Dashboard\DashletForm;
+use Icinga\Forms\Dashboard\PaneForm;
+use Icinga\Forms\Dashboard\RemoveHomeForm;
+use Icinga\Forms\Dashboard\RemoveDashletForm;
+use Icinga\Forms\Dashboard\RemovePaneForm;
+use Icinga\Forms\Dashboard\SetupNewDashboardForm;
+use Icinga\Forms\Dashboard\WelcomeForm;
+use Icinga\Util\Json;
+use Icinga\Web\Dashboard\Dashboard;
+use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Web\Dashboard\Pane;
+use Icinga\Web\Dashboard\Settings;
+use Icinga\Web\Notification;
+use Icinga\Web\Widget\Tabextension\DashboardSettings;
+use ipl\Web\Compat\CompatController;
+use ipl\Web\Url;
+use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
+
+/**
+ * Handles all kind of dashboard request actions
+ *
+ * See {@see Dashboard} for more information about dashboards
+ */
+class DashboardsController extends CompatController
+{
+    /** @var Dashboard */
+    protected $dashboard;
+
+    /** @var string Whether the currently loaded home/pane is also loaded on the previous page */
+    protected $highlighted = null;
+
+    public function init()
+    {
+        parent::init();
+
+        // The "highlighted" param indicates whether this home/pane is currently being loaded in the
+        // DM view meanwhile rendering a modal view (update and remove actions). If it's indeed the case,
+        // we have to construct a proper http redirect after successfully removing this home/pane.
+        $this->highlighted = $this->params->shift('highlighted');
+
+        $this->dashboard = new Dashboard();
+        $this->dashboard->setUser($this->Auth()->getUser());
+        $this->dashboard->setTabs($this->getTabs());
+    }
+
+    public function indexAction()
+    {
+        $pane = $this->params->get('pane');
+
+        // If we don't load all dashboard homes here, the cog icon won't be rendered in the dashboard tabs
+        $this->dashboard->load(DashboardHome::DEFAULT_HOME, $pane, true);
+
+        $activeHome = $this->dashboard->getActiveEntry();
+        if (! $activeHome || ! $activeHome->hasEntries()) {
+            $this->addTitleTab(t('Welcome'));
+
+            // Setup dashboard introduction form
+            $welcomeForm = new WelcomeForm($this->dashboard);
+            $welcomeForm->on(WelcomeForm::ON_SUCCESS, function () use ($welcomeForm) {
+                $this->redirectNow($welcomeForm->getRedirectUrl());
+            })->handleRequest($this->getServerRequest());
+
+            $this->content->getAttributes()->add('class', 'welcome-view');
+            $this->dashboard->addHtml($welcomeForm);
+        }
+
+        $this->createTabs();
+
+        $this->addContent($this->dashboard);
+    }
+
+    /**
+     * Display all the dashboards assigned to a Home set in the `home` request param
+     *
+     * If no pane param is submitted, the default pane is displayed (usually the first one)
+     */
+    public function homeAction()
+    {
+        $home = $this->params->getRequired('home');
+        $pane = $this->params->get('pane');
+
+        $this->dashboard->load($home, $pane);
+
+        $activeHome = $this->dashboard->getActiveEntry();
+        if (! $activeHome->getEntries()) {
+            $this->addTitleTab($activeHome->getTitle());
+        }
+
+        // Not to render the cog icon before the above tab
+        $this->createTabs();
+
+        $this->addContent($this->dashboard);
+    }
+
+    public function newHomeAction()
+    {
+        $this->dashboard->load();
+
+        $homeForm = (new HomeForm($this->dashboard))
+            ->on(HomeForm::ON_SUCCESS, function () {
+                $this->getResponse()
+                    ->setHeader('X-Icinga-Extra-Updates', '#menu')
+                    ->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                $this->redirectNow('__CLOSE__');
+            })->handleRequest($this->getServerRequest());
+
+        $this->addTitleTab(t('Add new Dashboard Home'));
+        $this->addContent($homeForm);
+    }
+
+    public function editHomeAction()
+    {
+        $home = $this->params->getRequired('home');
+
+        $this->dashboard->load($home);
+
+        $homeForm = (new HomeForm($this->dashboard))
+            ->on(HomeForm::ON_SUCCESS, function () {
+                $this->getResponse()
+                    ->setHeader('X-Icinga-Extra-Updates', '#menu')
+                    ->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                $this->redirectNow('__CLOSE__');
+            })
+            ->handleRequest($this->getServerRequest());
+
+        $homeForm->load($this->dashboard->getActiveEntry());
+
+        $this->addTitleTab(t('Update Home'));
+        $this->addContent($homeForm);
+    }
+
+    public function removeHomeAction()
+    {
+        $home = $this->params->getRequired('home');
+
+        $this->dashboard->load($home);
+
+        $homeForm = new RemoveHomeForm($this->dashboard);
+        $homeForm->on(RemoveHomeForm::ON_SUCCESS, function () use ($homeForm) {
+            $response = $this->getResponse();
+            $response->setHeader('X-Icinga-Extra-Updates', '#menu');
+
+            if ($this->highlighted && $homeForm->requestSucceeded()) {
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings'));
+            } else {
+                $response->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                $this->redirectNow('__CLOSE__');
+            }
+        })
+            ->handleRequest($this->getServerRequest());
+
+        $this->addTitleTab(t('Remove Home'));
+        $this->addContent($homeForm);
+    }
+
+    public function newPaneAction()
+    {
+        $home = $this->params->getRequired('home');
+
+        $this->dashboard->load($home, null, true);
+
+        $paneForm = (new PaneForm($this->dashboard))
+            ->on(PaneForm::ON_SUCCESS, function () {
+                $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                $this->redirectNow('__CLOSE__');
+            })
+            ->handleRequest($this->getServerRequest());
+
+        $this->addTitleTab(t('Add new Pane'));
+        $this->addContent($paneForm);
+    }
+
+    public function editPaneAction()
+    {
+        $home = $this->params->getRequired('home');
+        $pane = $this->params->getRequired('pane');
+
+        $this->dashboard->load($home, $pane, true);
+
+        $paneForm = new PaneForm($this->dashboard);
+        $paneForm->on(PaneForm::ON_SUCCESS, function () use ($paneForm, $home) {
+            if ($paneForm->requestSucceeded() && $this->highlighted && $home !== $paneForm->getValue('home')) {
+                $params = $this->params->without('pane');
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+            } else {
+                $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                $this->redirectNow('__CLOSE__');
+            }
+        })->handleRequest($this->getServerRequest());
+
+        $paneForm->load($this->dashboard->getActiveEntry()->getEntry($pane));
+
+        $this->addTitleTab(t('Update Pane'));
+        $this->addContent($paneForm);
+    }
+
+    public function removePaneAction()
+    {
+        $home = $this->params->getRequired('home');
+        $paneParam = $this->params->getRequired('pane');
+
+        $this->dashboard->load($home, $paneParam);
+
+        $paneForm = new RemovePaneForm($this->dashboard);
+        $paneForm->populate(['org_name' => $paneParam]);
+        $paneForm->on(RemovePaneForm::ON_SUCCESS, function () use ($paneForm) {
+            if ($this->highlighted && $paneForm->requestSucceeded()) {
+                $params = $this->params->without('pane');
+                $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+            } else {
+                $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                $this->redirectNow('__CLOSE__');
+            }
+        })->handleRequest($this->getServerRequest());
+
+        $this->addTitleTab(t('Remove Pane'));
+        $this->addContent($paneForm);
+    }
+
+    public function newDashletAction()
+    {
+        $home = $this->params->getRequired('home');
+        $pane = $this->params->get('pane');
+
+        $this->dashboard->load($home, $pane, true);
+
+        $dashletForm = new DashletForm($this->dashboard);
+        $dashletForm->populate($this->getRequest()->getPost());
+        $dashletForm->on(DashletForm::ON_SUCCESS, function () {
+            $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+
+            $this->redirectNow('__CLOSE__');
+        })->handleRequest($this->getServerRequest());
+
+        if (isset($this->getRequest()->getPost()['btn_next'])) {
+            $this->addTitleTab(t('Add Dashlet To Dashboard'));
+        } else {
+            $this->addTitleTab(t('Select Dashlets'));
+        }
+
+        $this->addContent($dashletForm);
+    }
+
+    public function addToDashletAction()
+    {
+        $this->dashboard->load(DashboardHome::DEFAULT_HOME, $this->params->get('pane'), true);
+
+        $dashletForm = new DashletForm($this->dashboard);
+        $dashletForm->populate([
+            'url'      => rawurldecode($this->params->shift('url')),
+            'btn_next' => 'y'
+        ]);
+
+        $dashletForm->on(DashletForm::ON_SUCCESS, function () {
+            $params = $this->params->without('dashlet');
+            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+        })->handleRequest($this->getServerRequest());
+
+        $this->addTitleTab(t('Add Dashlet To Dashboard'));
+        $this->addContent($dashletForm);
+    }
+
+    public function editDashletAction()
+    {
+        $home = $this->params->getRequired('home');
+        $pane = $this->params->getRequired('pane');
+        $dashlet = $this->params->getRequired('dashlet');
+
+        $this->dashboard->load($home, $pane, true);
+
+        $pane = $this->dashboard->getActiveEntry()->getActiveEntry();
+        if (! $pane->hasEntry($dashlet)) {
+            $this->httpNotFound(t('Dashlet "%s" not found'), $dashlet);
+        }
+
+        $dashlet = $pane->getEntry($dashlet);
+
+        $dashletForm = (new DashletForm($this->dashboard))
+            ->on(DashletForm::ON_SUCCESS, function () {
+                $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                $this->redirectNow('__CLOSE__');
+            })
+            ->handleRequest($this->getServerRequest());
+
+        $dashletForm->load($dashlet);
+
+        $this->addTitleTab(t('Edit Dashlet'));
+        $this->addContent($dashletForm);
+    }
+
+    public function removeDashletAction()
+    {
+        $home = $this->params->getRequired('home');
+        $pane = $this->params->getRequired('pane');
+        $dashlet = $this->params->getRequired('dashlet');
+
+        $this->dashboard->load($home, $pane);
+
+        $pane = $this->dashboard->getActiveEntry()->getActiveEntry();
+        if (! $pane->hasEntry($dashlet)) {
+            $this->httpNotFound(t('Dashlet "%s" not found'), $dashlet);
+        }
+
+        $removeForm = (new RemoveDashletForm($this->dashboard))
+            ->on(RemoveDashletForm::ON_SUCCESS, function () {
+                $this->getResponse()->setHeader('X-Icinga-Container', 'modal-content', true);
+
+                $this->redirectNow('__CLOSE__');
+            })
+            ->handleRequest($this->getServerRequest());
+
+        $this->addTitleTab(t('Remove Dashlet'));
+        $this->addContent($removeForm);
+    }
+
+    /**
+     * Handles all widgets drag and drop requests
+     */
+    public function reorderWidgetsAction()
+    {
+        $this->assertHttpMethod('post');
+        $dashboards = $this->getRequest()->getPost();
+        if (! isset($dashboards['dashboardData'])) {
+            $this->httpBadRequest(t('Invalid request data'));
+        }
+
+        $dashboards = Json::decode($dashboards['dashboardData'], true);
+        $originals = $dashboards['originals'];
+        $dashboardType = $dashboards['dashboardType'];
+        unset($dashboards['originals']);
+        unset($dashboards['dashboardType']);
+
+        $highlightHome = $this->params->get('home');
+        $highlightPane = $this->params->get('pane');
+        if (! $highlightHome) {
+            $highlightHome = DashboardHome::DEFAULT_HOME;
+        }
+
+        $this->dashboard->load($highlightHome, $highlightPane, true);
+
+        $redirect = false;
+        $orgHome = null;
+        $orgPane = null;
+        if ($originals && isset($originals['originalHome'])) {
+            /** @var DashboardHome $orgHome */
+            $orgHome = $this->dashboard->getEntry($originals['originalHome']);
+            $orgHome->loadDashboardEntries($originals['originalPane'] ?? null);
+
+            // We need to know the original pane only if it's a Dashlet Widget. In this case
+            // we don't care about the other entries of the original home
+            if (isset($originals['originalPane']) && $dashboardType === /** Keep this with JS in sync */ 'Dashlets') {
+                $orgPane = $orgHome->getEntry($originals['originalPane']);
+                $orgHome->setEntries([$orgPane->getName() => $orgPane]);
+            }
+        }
+
+        $duplicatedError = false;
+        foreach ($dashboards as $home => $value) {
+            if (! $this->dashboard->hasEntry($home)) {
+                Notification::error(sprintf(t('Dashboard home "%s" not found'), $home));
+                break;
+            }
+
+            $home = $this->dashboard->getEntry($home);
+            /** @var DashboardHome $home */
+            if (! is_array($value)) {
+                $this->dashboard->reorderWidget($home, (int) $value);
+
+                Notification::success(sprintf(t('Updated dashboard home "%s" successfully'), $home->getTitle()));
+                break;
+            }
+
+            $home->loadDashboardEntries();
+            foreach ($value as $pane => $indexOrValues) {
+                if (! $home->hasEntry($pane) && (! $orgHome || ! $orgHome->hasEntry($pane))) {
+                    Notification::error(sprintf(t('Dashboard pane "%s" not found'), $pane));
+                    break;
+                }
+
+                $pane = $home->hasEntry($pane) ? $home->getEntry($pane) : $orgHome->getEntry($pane);
+                /** @var Pane $pane */
+                $pane->loadDashboardEntries();
+
+                if (! is_array($indexOrValues)) {
+                    if ($orgHome && $orgHome->hasEntry($pane->getName()) && $home->hasEntry($pane->getName())) {
+                        Notification::error(sprintf(
+                            t('Dashboard "%s" already exists within "%s" home'),
+                            $pane->getTitle(),
+                            $home->getTitle()
+                        ));
+
+                        $duplicatedError = true;
+                        break;
+                    }
+
+                    // Perform DB updates
+                    $home->reorderWidget($pane, (int) $indexOrValues, $orgHome);
+                    if ($orgHome) {
+                        // In order to properly update the dashlets id (user + home + pane + dashlet)
+                        $pane->manageEntry($pane->getEntries());
+                    }
+
+                    $redirect = $orgHome && $pane->getName() === $highlightPane;
+
+                    Notification::success(
+                        sprintf(t('%s pane "%s" successfully'), $orgHome ? 'Moved' : 'Updated', $pane->getTitle())
+                    );
+                    break;
+                }
+
+                foreach ($indexOrValues as $dashlet => $index) {
+                    if (! $pane->hasEntry($dashlet) && (! $orgPane || ! $orgPane->hasEntry($dashlet))) {
+                        Notification::error(sprintf(t('Dashlet "%s" not found'), $dashlet));
+                        break;
+                    }
+
+                    if ($orgPane && $orgPane->hasEntry($dashlet) && $pane->hasEntry($dashlet)) {
+                        Notification::error(sprintf(
+                            t('Pane "%s" has already a Dashlet called "%s"'),
+                            $pane->getTitle(),
+                            $dashlet
+                        ));
+
+                        $duplicatedError = true;
+                        break;
+                    }
+
+                    $dashlet = $pane->hasEntry($dashlet) ? $pane->getEntry($dashlet) : $orgPane->getEntry($dashlet);
+                    $pane->reorderWidget($dashlet, (int) $index, $orgPane);
+
+                    Notification::success(sprintf(
+                        t('%s dashlet "%s" successfully'),
+                        $orgPane ? 'Moved' : 'Updated',
+                        $dashlet->getTitle()
+                    ));
+                }
+            }
+        }
+
+        $params = clone $this->params;
+        if ($duplicatedError || $redirect) {
+            /**
+             * Even though the drop action couldn't be performed successfully from our server, Sortable JS has
+             * already dropped the draggable element though, so we need to redirect here to undo it.
+             *
+             * When the requested pane is being moved to another home we have to also redirect here in order to
+             * update state history correctly, because we can't load this pane from the requested home anymore
+             */
+            $this->redirectNow(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params->without('pane')));
+        }
+
+        $this->createTabs();
+        $this->getTabs()->setRefreshUrl(Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->setParams($params));
+        $this->dashboard->activate('dashboard_settings');
+        $this->sendMultipartUpdate();
+    }
+
+    /**
+     * Provides a mini wizard which guides a new user through the dashboard creation
+     * process and helps them get a first impression of Icinga Web 2.
+     */
+    public function setupDashboardAction()
+    {
+        $this->dashboard->load(DashboardHome::DEFAULT_HOME);
+
+        $setupForm = new SetupNewDashboardForm($this->dashboard);
+        $setupForm->on(SetupNewDashboardForm::ON_SUCCESS, function () use ($setupForm) {
+            $this->redirectNow($setupForm->getRedirectUrl());
+        })->handleRequest($this->getServerRequest());
+
+        if (isset($this->getRequest()->getPost()['btn_next'])) {
+            // Set compact view to prevent the controls from being
+            // rendered in the modal view when redirecting
+            $this->view->compact = true;
+
+            $this->addTitleTab(t('Configure Dashlets'));
+        } else {
+            $this->addTitleTab(t('Add Dashlet'));
+        }
+
+        $this->addContent($setupForm);
+    }
+
+    public function settingsAction()
+    {
+        $highlightHome = $this->params->get('home');
+        $highlightPane = $this->params->get('pane');
+        if (! $highlightHome && $highlightPane) {
+            // A Dashboard Pane is always requested with home param unless it's part of the "Default Home",
+            // so we just assume here that the user is originating from the base route!!
+            $highlightHome = DashboardHome::DEFAULT_HOME;
+        }
+
+        $this->dashboard->load($highlightHome, $highlightPane, true);
+
+        $this->createTabs();
+
+        $activeHome = $this->dashboard->getActiveEntry();
+        // We can't grant access the user to the dashboard manager if there aren't any dashboards to manage
+        if (! $activeHome || (! $activeHome->hasEntries() && $this->dashboard->countEntries() === 1)) {
+            $this->redirectNow(Dashboard::BASE_ROUTE);
+        }
+
+        $this->dashboard->activate('dashboard_settings');
+
+        $this->addControl(new Link(
+            [new Icon('plus'), t('Add new Home')],
+            Url::fromPath(Dashboard::BASE_ROUTE . '/new-home'),
+            [
+                'class'               => ['button-link', 'add-home'],
+                'data-icinga-modal'   => true,
+                'data-no-icinga-ajax' => true
+            ]
+        ));
+
+        $this->content->getAttributes()->add('class', 'dashboard-manager');
+        $this->controls->getAttributes()->add('class', ['separated', 'dashboard-manager-controls']);
+
+        $this->addContent(new Settings($this->dashboard));
+    }
+
+    /**
+     * Create tab aggregation
+     */
+    private function createTabs()
+    {
+        $tabs = $this->dashboard->getTabs();
+        $activeHome = $this->dashboard->getActiveEntry();
+        if ($activeHome
+            && (
+                ! $activeHome->isDefaultHome()
+                || $activeHome->hasEntries()
+                || $this->dashboard->countEntries() > 1
+            )
+        ) {
+            $params = [];
+            if (! $activeHome->isDefaultHome()) {
+                $params['home'] = $activeHome->getName();
+            }
+
+            if (($activePane = $activeHome->getActiveEntry())) {
+                $params['pane'] = $activePane->getName();
+            }
+
+            $tabs->extend(new DashboardSettings($params));
+        }
+
+        return $tabs;
+    }
+}

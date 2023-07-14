@@ -4,13 +4,29 @@
 namespace Icinga\Web\Widget\Tabextension;
 
 use Icinga\Web\Url;
+use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Widget\Tabs;
+use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
 
 /**
  * Dashboard settings
  */
 class DashboardSettings implements Tabextension
 {
+    /** @var array|null url params to be attached to the cog icon being rendered on the dashboard tab */
+    private $urlParams;
+
+    /**
+     * DashboardSettings constructor.
+     *
+     * @param array $urlParams
+     */
+    public function __construct(array $urlParams = [])
+    {
+        $this->urlParams = $urlParams;
+    }
+
     /**
      * Apply this tabextension to the provided tabs
      *
@@ -18,22 +34,10 @@ class DashboardSettings implements Tabextension
      */
     public function apply(Tabs $tabs)
     {
-        $tabs->addAsDropdown(
-            'dashboard_add',
-            array(
-                'icon'      => 'dashboard',
-                'label'     => t('Add Dashlet'),
-                'url'       => Url::fromPath('dashboard/new-dashlet')
-            )
-        );
-
-        $tabs->addAsDropdown(
-            'dashboard_settings',
-            array(
-                'icon'      => 'dashboard',
-                'label'     => t('Settings'),
-                'url'       => Url::fromPath('dashboard/settings')
-            )
-        );
+        $url = Url::fromPath(Dashboard::BASE_ROUTE . '/settings')->addParams($this->urlParams);
+        $tabs->add('dashboard_settings', [
+            'icon' => 'service',
+            'url'  => $url,
+        ]);
     }
 }

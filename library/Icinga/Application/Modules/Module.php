@@ -18,6 +18,9 @@ use Icinga\Web\Widget;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\StaticTranslator;
 use ipl\I18n\Translation;
+use ipl\Web\Url;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Zend_Controller_Router_Route;
 use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route_Regex;
@@ -214,9 +217,16 @@ class Module
     /**
      * A set of Pane elements
      *
-     * @var array
+     * @var DashboardContainer[]
      */
-    protected $paneItems = array();
+    protected $paneItems = [];
+
+    /**
+     * A set of Dashlet elements
+     *
+     * @var DashletContainer[]
+     */
+    protected $dashletItems = [];
 
     /**
      * A set of objects representing a searchUrl configuration
@@ -307,49 +317,12 @@ class Module
     /**
      * Return this module's dashboard
      *
-     * @return  Navigation
+     * @return DashboardContainer[]
      */
     public function getDashboard()
     {
         $this->launchConfigScript();
-        return $this->createDashboard($this->paneItems);
-    }
-
-    /**
-     * Create and return a new navigation for the given dashboard panes
-     *
-     * @param   DashboardContainer[]    $panes
-     *
-     * @return  Navigation
-     */
-    public function createDashboard(array $panes)
-    {
-        $navigation = new Navigation();
-        foreach ($panes as $pane) {
-            /** @var DashboardContainer $pane */
-            $dashlets = [];
-            foreach ($pane->getDashlets() as $dashletName => $dashletConfig) {
-                $dashlets[$dashletName] = [
-                    'label'     => $this->translate($dashletName),
-                    'url'       => $dashletConfig['url'],
-                    'priority'  => $dashletConfig['priority']
-                ];
-            }
-
-            $navigation->addItem(
-                $pane->getName(),
-                array_merge(
-                    $pane->getProperties(),
-                    array(
-                        'label'     => $this->translate($pane->getName()),
-                        'type'      => 'dashboard-pane',
-                        'children'  => $dashlets
-                    )
-                )
-            );
-        }
-
-        return $navigation;
+        return $this->paneItems;
     }
 
     /**
@@ -369,6 +342,37 @@ class Module
         }
 
         return $this->paneItems[$name];
+    }
+
+    /**
+     * Get this module's provided dashlets
+     *
+     * @return DashletContainer[]
+     */
+    public function getDashlets()
+    {
+        $this->launchConfigScript();
+        return $this->dashletItems;
+    }
+
+    /**
+     * Add or get a dashlet
+     *
+     * @param string $name
+     * @param Url|string $url
+     * @param array $properties
+     *
+     * @return DashletContainer
+     */
+    protected function provideDashlet(string $name, $url, array $properties = [])
+    {
+        if (array_key_exists($name, $this->dashletItems)) {
+            $this->dashletItems[$name]->setProperties($properties);
+        } else {
+            $this->dashletItems[$name] = new DashletContainer($name, $url, $properties);
+        }
+
+        return $this->dashletItems[$name];
     }
 
     /**

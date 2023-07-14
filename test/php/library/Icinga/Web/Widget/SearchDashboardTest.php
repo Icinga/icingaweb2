@@ -4,12 +4,11 @@
 namespace Tests\Icinga\Web;
 
 use Icinga\Application\Icinga;
-use Icinga\Authentication\Role;
-use Icinga\Test\BaseTestCase;
-use Icinga\User;
+use Icinga\Exception\Http\HttpNotFoundException;
+use Icinga\Test\BaseDashboardTestCase;
 use Icinga\Web\Widget\SearchDashboard;
 
-class SearchDashboardTest extends BaseTestCase
+class SearchDashboardTest extends BaseDashboardTestCase
 {
     public function setUp(): void
     {
@@ -23,48 +22,38 @@ class SearchDashboardTest extends BaseTestCase
 
     public function testWhetherRenderThrowsAnExceptionWhenHasNoDashlets()
     {
-        $this->expectException(\Zend_Controller_Action_Exception::class);
+        $this->expectException(HttpNotFoundException::class);
 
-        $user = new User('test');
-        $user->setPermissions(array('*' => '*'));
         $dashboard = new SearchDashboard();
-        $dashboard->setUser($user);
-        $dashboard = $dashboard->search('pending');
-        $dashboard->getPane('search')->removeDashlets();
+        $dashboard->setUser($this->getUser());
+        $dashboard->search('pending');
+
+        $searchHome = $dashboard->getActiveEntry();
+        $searchHome->getEntry(SearchDashboard::SEARCH_PANE)->setEntries([]);
         $dashboard->render();
     }
 
     public function testWhetherSearchLoadsSearchDashletsFromModules()
     {
-        $role = new Role();
-        $role->setPermissions(['*']);
-
-        $user = new User('test');
-        $user->setRoles([$role]);
-
         $dashboard = new SearchDashboard();
-        $dashboard->setUser($user);
-        $dashboard = $dashboard->search('pending');
+        $dashboard->setUser($this->getUser());
+        $dashboard->search('pending');
 
-        $result = $dashboard->getPane('search')->hasDashlet('Hosts: pending');
+        $searchHome = $dashboard->getActiveEntry();
+        $result = $searchHome->getEntry(SearchDashboard::SEARCH_PANE)->hasEntry('Hosts: pending');
 
-        $this->assertTrue($result, 'Dashboard::search() could not load search dashlets from modules');
+        $this->assertTrue($result, 'SearchDashboard::search() could not load search dashlets from modules');
     }
 
     public function testWhetherSearchProvidesHintWhenSearchStringIsEmpty()
     {
-        $role = new Role();
-        $role->setPermissions(['*']);
-
-        $user = new User('test');
-        $user->setRoles([$role]);
-
         $dashboard = new SearchDashboard();
-        $dashboard->setUser($user);
-        $dashboard = $dashboard->search();
+        $dashboard->setUser($this->getUser());
+        $dashboard->search();
 
-        $result = $dashboard->getPane('search')->hasDashlet('Ready to search');
+        $searchHome = $dashboard->getActiveEntry();
+        $result = $searchHome->getEntry(SearchDashboard::SEARCH_PANE)->hasEntry('Ready to search');
 
-        $this->assertTrue($result, 'Dashboard::search() could not get hint for search');
+        $this->assertTrue($result, 'SearchDashboard::search() could not get hint for search');
     }
 }

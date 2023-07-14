@@ -1,0 +1,167 @@
+<?php
+
+/* Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
+
+namespace Icinga\Web\Dashboard\Common;
+
+use Icinga\Web\Dashboard\DashboardHome;
+use Icinga\Web\Dashboard\Dashlet;
+use Icinga\Web\Dashboard\Pane;
+use ipl\Web\Url;
+
+/**
+ * Represents a dashboard widget types
+ */
+interface DashboardEntry
+{
+    /**
+     * Check whether this widget contains any dashboard entries
+     *
+     * @return bool
+     */
+    public function hasEntries(): bool;
+
+    /**
+     * Get size of the dashboard entries assigned to this widget
+     *
+     * @return int
+     */
+    public function countEntries(): int;
+
+    /**
+     * Get a dashboard entry by the given name if exists
+     *
+     * @param string $name
+     *
+     * @return DashboardHome|Pane|Dashlet
+     */
+    public function getEntry(string $name);
+
+    /**
+     * Get whether the given dashboard entry exists
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasEntry(string $name): bool;
+
+    /**
+     * Get all dashboard entries of this widget
+     *
+     * @return BaseDashboard[]
+     */
+    public function getEntries(): array;
+
+    /**
+     * Set dashboard entries of this widget
+     *
+     * @param BaseDashboard[] $entries
+     *
+     * @return $this
+     */
+    public function setEntries(array $entries);
+
+    /**
+     * Add a new dashboard entry to this widget
+     *
+     * @param BaseDashboard $dashboard
+     *
+     * @return $this
+     */
+    public function addEntry(BaseDashboard $dashboard);
+
+    /**
+     * Create and add a new entry to this widget
+     *
+     * @param string $name
+     * @param ?string|Url $url
+     *
+     * @return $this
+     */
+    public function createEntry(string $name, $url = null);
+
+    /**
+     * Get an array with entry name=>title format
+     *
+     * @return string[]
+     */
+    public function getEntryKeyTitleArr(): array;
+
+    /**
+     * Remove the given entry from this widget
+     *
+     * @param BaseDashboard|string $entry
+     *
+     * @return $this
+     */
+    public function removeEntry($entry);
+
+    /**
+     * Removes the given list of entries from this widget
+     *
+     * If there is no entries passed, all the available entries of this widget will be removed
+     *
+     * @param BaseDashboard[] $entries
+     *
+     * @return $this
+     */
+    public function removeEntries(array $entries = []);
+
+    /**
+     * Manage the given widget(s)
+     *
+     * Performs all kinds of database actions for the given widget(s) except the DELETE action. If you want to
+     * move pane(s)|dashlet(s) from another to this widget you have to also provide the origin from which the
+     * given entry(ies) originated
+     *
+     * @param BaseDashboard|BaseDashboard[] $entryOrEntries The actual dashboard entry to be managed
+     * @param ?BaseDashboard $origin The original widget from which the given entry originates
+     * @param bool $manageRecursive Whether the given entry should be managed recursively e.g if the given entry
+     *                              is a {@see Pane} type, all its dashlets can be managed recursively
+     *
+     * @return $this
+     */
+    public function manageEntry($entryOrEntries, BaseDashboard $origin = null, bool $manageRecursive = false);
+
+    /**
+     * Load all the assigned entries to this widget
+     *
+     * @param ?string $name Name of the dashboard widget you want to load the dashboard entries for
+     *
+     * @return $this
+     */
+    public function loadDashboardEntries(string $name = null);
+
+    /**
+     * Reset the current position of the internal dashboard entries pointer
+     *
+     * @return false|BaseDashboard
+     */
+    public function rewindEntries();
+
+    /**
+     * Unset the given dashboard entry from this widget dashboard entries
+     *
+     * @param BaseDashboard $dashboard
+     *
+     * @return $this
+     */
+    public function unsetEntry(BaseDashboard $dashboard);
+
+    /**
+     * Activates the given dashboard entry and deactivates all other active ones
+     *
+     * @param BaseDashboard $dashboard
+     *
+     * @return $this
+     */
+    public function activateEntry(BaseDashboard $dashboard);
+
+    /**
+     * Get the active dashboard entry currently being loaded
+     *
+     * @return ?DashboardEntry
+     */
+    public function getActiveEntry();
+}

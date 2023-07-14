@@ -98,15 +98,21 @@ form.inline {
   }
 }
 
-#layout.minimal-layout .icinga-form {
-  .form-controls {
-    input[type="submit"] {
+#layout.minimal-layout {
+  .icinga-form .form-controls,
+  form.icinga-controls {
+    input[type="submit"],
+    button {
       width: 100%;
 
       &:not(:last-child) {
         margin-bottom: 1em;
       }
     }
+  }
+
+  .btn-remove {
+    margin-right: 1em;
   }
 }
 
@@ -304,6 +310,10 @@ form.icinga-form .form-controls {
   .btn-primary {
     order: 99;
   }
+
+  .btn-remove {
+    margin-right: auto;
+  }
 }
 
 // Button styles
@@ -316,11 +326,13 @@ form.icinga-form .form-controls {
     .button();
   }
 
-  input[type="submit"].btn-remove {
+  input[type="submit"].btn-remove,
+  button[type="submit"].btn-remove {
     .button(@body-bg-color, @color-critical, @color-critical-accentuated);
   }
 
-  input[type="submit"].btn-cancel {
+  input[type="submit"].btn-cancel,
+  button[type="button"].btn-cancel {
     .button(@body-bg-color, @gray, @black);
   }
 

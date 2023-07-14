@@ -3,26 +3,38 @@
 
 namespace Icinga\Controllers;
 
-use Icinga\Web\Controller\ActionController;
-use Icinga\Web\Widget;
 use Icinga\Web\Widget\SearchDashboard;
+use ipl\Html\HtmlElement;
+use ipl\Html\Text;
+use ipl\Web\Compat\CompatController;
 
 /**
  * Search controller
  */
-class SearchController extends ActionController
+class SearchController extends CompatController
 {
     public function indexAction()
     {
         $searchDashboard = new SearchDashboard();
         $searchDashboard->setUser($this->Auth()->getUser());
-        $this->view->dashboard = $searchDashboard->search($this->params->get('q'));
 
-        // NOTE: This renders the dashboard twice. Remove this once we can catch exceptions thrown in view scripts.
-        $this->view->dashboard->render();
+        $this->controls->setTabs($searchDashboard->getTabs());
+        $this->addContent($searchDashboard->search($this->getParam('q')));
     }
 
     public function hintAction()
     {
+        $this->getTabs()->disableLegacyExtensions();
+
+        $this->addContent(new HtmlElement('h1', null, Text::create(t('I\'m ready to search, waiting for your input'))));
+
+        $p = new HtmlElement('p');
+        $p->addHtml(new HtmlElement('strong', null, Text::create(t('Hint') . ': ')));
+        $p->addHtml(Text::create(t(
+            'Please use the asterisk (*) as a placeholder for wildcard searches. For convenience I\'ll always add' .
+            ' a wildcard in front and after your search string.'
+        )));
+
+        $this->addContent($p);
     }
 }

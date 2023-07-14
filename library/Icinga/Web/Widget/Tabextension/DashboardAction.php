@@ -3,6 +3,7 @@
 
 namespace Icinga\Web\Widget\Tabextension;
 
+use Icinga\Web\Dashboard\Dashboard;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabs;
 
@@ -25,9 +26,13 @@ class DashboardAction implements Tabextension
             array(
                 'icon'      => 'dashboard',
                 'label'     => t('Add To Dashboard'),
-                'url'       => Url::fromPath('dashboard/new-dashlet'),
+                'url'       => Url::fromPath(Dashboard::BASE_ROUTE . '/add-to-dashlet'),
                 'urlParams' => array(
-                    'url' => rawurlencode(Url::fromRequest()->getRelativeUrl())
+                    'url' => rawurlencode(Url::fromRequest()->getRelativeUrl()),
+                ),
+                'tagParams' => array(
+                    'data-icinga-modal' => true,
+                    'data-no-icinga-ajax' => true
                 )
             )
         );

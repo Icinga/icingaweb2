@@ -1,0 +1,265 @@
+/*! Icinga Web 2 | (c) 2022 Icinga GmbH | GPLv2+ */
+
+// Welcome view and introduction
+
+.welcome-view {
+  position: relative;
+}
+
+.dashboard-introduction {
+  top: 40%;
+  right: 50%;
+  position: absolute;
+  transform: translate(50%, -50%);
+
+  h2, p {
+    text-align: center;
+  }
+
+  p {
+    font-size: 1.1em;
+  }
+
+  // Welcome page form controls
+  form {
+    display: flex;
+    padding: 0 20em;
+    column-gap: .5em;
+    justify-content: space-around;
+  }
+
+  input[name="btn_use_defaults"]:not([disabled]) {
+    background-color: @icinga-blue;
+    color: @text-color-on-icinga-blue;
+
+    &:hover, &:focus {
+      background-color: @icinga-blue-dark;
+      border-color: @icinga-blue-dark;
+    }
+  }
+
+  input[name="btn_use_defaults"]:disabled {
+    cursor: default;
+    border: 1px solid @control-disabled-color;
+
+    &, &:hover {
+      background: @body-bg-color;
+      color: @control-disabled-color;
+    }
+  }
+}
+
+// Minimal welcome page and modal form controls layout
+
+#layout.minimal-layout {
+  .dashboard-introduction {
+    top: 50%;
+    width: 100%;
+
+    form {
+      display: block;
+      padding-right: 1em;
+      padding-left: 1em;
+    }
+  }
+
+  // All dashboard modal forms provide 3 buttons rendered in reverse order
+  .icinga-form .form-controls {
+    input[type="submit"],
+    button {
+      &:not(:last-child) {
+        margin-bottom: 0;
+      }
+
+      &:not(:first-child) {
+        margin-bottom: 1em;
+      }
+    }
+  }
+}
+
+// Sortable dashboard styles
+
+.dashboard-settings {
+  .collapsible-header, .dashlet-header {
+    .spacer {
+      flex: 1 1 auto;
+    }
+
+    .widget-drag-initiator {
+      display: none; // Appears on hover
+      align-self: center;
+      margin-left: 0.5em;
+
+      cursor: grab;
+      color: @gray-light;
+    }
+
+    &:hover .widget-drag-initiator {
+      display: inline-block;
+    }
+  }
+
+  .dashlet-header .widget-drag-initiator {
+    font-size: 1.4em;
+    margin-right: -0.4em; // Counteracts the parent padding
+  }
+
+  .collapsible-header {
+    .widget-drag-initiator {
+      font-size: 1.3em;
+    }
+
+    border-bottom: 1px solid transparent;
+    &:hover {
+      border-bottom-color: @gray-light;
+    }
+  }
+
+  .home-list-control, .dashboard-list-control, .dashlet-list-item {
+    &.draggable-widget-chosen {
+      outline: 2px dashed @gray-light;
+      outline-offset: 2px;
+    }
+  }
+}
+
+// General dashboard styles
+
+.dashboard-manager-controls .add-home {
+  float: right;
+  background-color: @icinga-blue;
+  color: @text-color-on-icinga-blue;
+
+  &:hover, &:focus {
+    background-color: @icinga-blue-dark;
+  }
+}
+
+.dashboard-settings, .dashboard-form {
+  .collapsible-header, .dashlet-header {
+    .action-link {
+      display: flex;
+      align-items: center;
+      margin-left: .5em;
+    }
+  }
+
+  .collapsible-header {
+    display: flex;
+    align-items: baseline;
+
+    font-size: 1.333em;
+    font-weight: bold;
+    margin: 0.25em 0 0.25em;
+
+    .action-link {
+      font-weight: normal;
+    }
+
+    &::-webkit-details-marker {
+      display: none; // Disable the default details marker, as we've our own one.
+    }
+  }
+
+  .home-list-control, .dashboard-list-control {
+    &:not(:first-of-type) {
+      margin-top: .75em;
+    }
+  }
+
+  .dashlet-header {
+    display: flex;
+    font-size: 1.25em;
+
+    .dashlet-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .dashboard-item-list, .dashlet-item-list {
+    margin: 0 0 .5em 0;
+  }
+
+  .home-list-control > .dashboard-item-list, .dashlet-item-list {
+    margin-left: 2em;
+  }
+
+  .home-list-control > .dashboard-item-list + .add-dashboard, .dashlet-item-list + .add-dashlet {
+    margin-left: 1.6em; // 2em (target width) / 1.25em (font-size)
+  }
+
+  .dashlet-item-list {
+    display: flex;
+    flex-flow: row wrap;
+    list-style: none;
+    padding: 0;
+
+    &:not(:empty) {
+      margin: -.25em -.25em .25em 1.75em;
+    }
+
+    .dashlet-list-item {
+      flex: 1 1 auto;
+      width: 50%;
+      max-width: ~"calc(50% - .5em - 2px)"; // 50% - horizontal margins - horizontal-border
+      margin: .25em;
+    }
+  }
+
+  .dashlet-list-item {
+    padding: .1em 0;
+
+    .rounded-corners();
+    border: 1px solid @gray-light;
+
+    .dashlet-header {
+      padding: 0 .5em;
+      border-bottom: 1px solid @gray-light;
+    }
+
+    .caption {
+      padding: 0 .5em 0 .5em;
+      height: 3em;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+
+      color: @text-color-light;
+    }
+  }
+
+  .add-dashboard, .add-dashlet {
+    display: block; // To let it span the entire width
+    font-size: 1.25em;
+  }
+}
+
+// Dashboard form styles
+
+.dashboard-form {
+  .dashlet-header {
+    font-size: 1em;
+  }
+
+  .control-group > .dashlet-item-list {
+    // The empty list
+    width: 100%;
+  }
+
+  .dashlet-form-items {
+    background-color: @gray-lightest;
+  }
+  .dashlet-form-items:hover, input[type="checkbox"]:focus + .dashlet-form-items {
+    background-color: @tr-hover-color;
+  }
+
+  .dashlet-item-list input[type="checkbox"]:checked + .dashlet-form-items {
+    outline: 2px solid @icinga-blue;
+    background-color: @tr-active-color;
+    .rounded-corners();
+  }
+}

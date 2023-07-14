@@ -5,8 +5,12 @@ namespace Icinga\Common;
 
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Data\ResourceFactory;
+use Icinga\Util\DBUtils;
+use ipl\Sql\Adapter\Pgsql;
 use ipl\Sql\Config as SqlConfig;
 use ipl\Sql\Connection;
+use ipl\Sql\Insert;
+use ipl\Sql\QueryBuilder;
 use LogicException;
 use PDO;
 
@@ -41,7 +45,28 @@ trait Database
                 . ",NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'";
         }
 
-        return new Connection($config);
+        $conn = new Connection($config);
+        if ($conn->getAdapter() instanceof Pgsql) {
+            $valuesTransformer = function (&$sql, &$values) {
+                DBUtils::transformValues($values);
+            };
+
+            $conn->getQueryBuilder()
+                ->on(QueryBuilder::ON_DELETE_ASSEMBLED, $valuesTransformer)
+                ->on(QueryBuilder::ON_UPDATE_ASSEMBLED, $valuesTransformer)
+                ->on(QueryBuilder::ON_ASSEMBLE_INSERT, function (Insert $insert) {
+                    $values = $insert->getValues();
+                    foreach ($insert->getValues() as $key => $value) {
+                        if (is_string($value) && DBUtils::isBinary($value)) {
+                            $values[$key] = DBUtils::getBinaryExpr($value);
+                        }
+                    }
+
+                    $insert->values(array_combine($insert->getColumns(), $values));
+                });
+        }
+
+        return $conn;
     }
 
     /**
