@@ -156,6 +156,10 @@
     .action-link {
       font-weight: normal;
     }
+
+    &::-webkit-details-marker {
+      display: none; // Disable the default details marker, as we've our own one.
+    }
   }
 
   .home-list-control, .dashboard-list-control {
