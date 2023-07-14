@@ -21,4 +21,11 @@
         <directory name="vendor" />
         <file name="library/Icinga/Application/functions.php" />
     </extraFiles>
+    <issueHandlers>
+        <UndefinedFunction>
+            <errorLevel type="suppress">
+                <referencedFunction name="t" />
+            </errorLevel>
+        </UndefinedFunction>
+    </issueHandlers>
 </psalm>
