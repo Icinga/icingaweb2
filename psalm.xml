@@ -11,12 +11,14 @@
         <ignoreFiles>
 <!--            <directory name="library/vendor/" />-->
 <!--            <directory name="application/views/helpers" />-->
+            <file name="library/Icinga/Application/functions.php" />
         </ignoreFiles>
         <directory name="application" />
     </projectFiles>
     <extraFiles>
-        <directory name="library/vendor/" />
+        <directory name="library" />
         <directory name="application/views/helpers" />
-        <directory name="library/Icinga" />
+        <directory name="vendor" />
+        <file name="library/Icinga/Application/functions.php" />
     </extraFiles>
 </psalm>
