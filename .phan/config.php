@@ -289,7 +289,10 @@ return [
     //       party code, directories containing that code
     //       should be added to the `directory_list` as well as
     //       to `exclude_analysis_directory_list`.
-    'exclude_analysis_directory_list' => [],
+    'exclude_analysis_directory_list' => [
+        'vendor',
+        'library'
+    ],
 
     // Enable this to enable checks of require/include statements referring to valid paths.
     // The settings `include_paths` and `warn_about_relative_include_statement` affect the checks.
@@ -334,6 +337,8 @@ return [
     // your application should be included in this list.
     'directory_list' => [
         'application',
+        'vendor',
+        'library'
     ],
 
     // A list of individual files to include in analysis

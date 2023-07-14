@@ -33,6 +33,18 @@ class Form extends Zend_Form
     }
 
     /**
+     * Retrieve view object
+     *
+     * If none registered, attempts to pull from ViewRenderer.
+     *
+     * @return View
+     */
+    public function getView()
+    {
+        return parent::getView();
+    }
+
+    /**
      * The suffix to append to a field's hidden default field name
      */
     const DEFAULT_SUFFIX = '_default';
