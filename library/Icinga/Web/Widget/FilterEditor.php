@@ -63,7 +63,7 @@ class FilterEditor extends AbstractWidget
     protected $visible = true;
 
     /**
-     * Create a new FilterWidget
+     * Create a new FilterEditor
      *
      * @param Filter $filter Your filter
      */
