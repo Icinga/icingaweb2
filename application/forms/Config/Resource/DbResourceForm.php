@@ -58,7 +58,7 @@ class DbResourceForm extends Form
             $offerMysql = true;
         }
 
-        if ($dbChoice === 'oracle') {
+        if ($dbChoice === 'oracle' || $dbChoice === 'oci') {
             $hostIsRequired = false;
         } else {
             $hostIsRequired = true;
