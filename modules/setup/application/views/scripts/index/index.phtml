@@ -1,12 +1,17 @@
 <?php
 
+use Icinga\Util\Csp;
 use Icinga\Web\Notification;
+use ipl\Web\Style;
 
 $pages = $wizard->getPages();
 $finished = isset($success);
 $configPages = array_slice($pages, 3, count($pages) - 4, true);
 $currentPos = array_search($wizard->getCurrentPage(), $pages, true);
 list($configPagesLeft, $configPagesRight) = array_chunk($configPages, (int)(count($configPages) / 2), true);
+$setupStyle = (new Style())
+    ->setSelector('.setup-header > .progress-bar')
+    ->setNonce(Csp::getStyleNonce());
 
 $visitedPages = array_keys($wizard->getPageData());
 $maxProgress = max(array_merge([0], array_keys(array_filter(
@@ -14,6 +19,13 @@ $maxProgress = max(array_merge([0], array_keys(array_filter(
     function ($page) use ($visitedPages) { return in_array($page->getName(), $visitedPages); }
 ))));
 
+$setupStyle->add(
+    '.width-percent-10',
+    ['width' => '10%']
+)->add(
+    '.width-percent-60',
+    ['width' => '60%']
+);
 ?>
 <div id="setup-content-wrapper" data-base-target="layout">
   <div class="setup-header">
@@ -76,14 +88,43 @@ $maxProgress = max(array_merge([0], array_keys(array_filter(
               $pos < $maxProgress ? ' visited' : ($currentPos > 2 ? ' active' : '')
             ); ?>
             <?php if ($page === $firstPage): ?>
-            <div class="line left<?= $stateClass; ?>" style="float: left; width: <?= sprintf(
-                '%.2F',
-                100 - (count($configPagesLeft) - 1) * $lineWidth
-            ); ?>%; margin-right: 0"></div>
+            <?php
+                $setupStyle->add(
+                    '.step .left-line-' . $pos,
+                    [
+                        'float'         => 'left',
+                        'width'         => sprintf(
+                            '%.2F%%',
+                            100 - (count($configPagesLeft) - 1) * $lineWidth
+                        ),
+                        'margin-right'  => 0
+                    ]
+                );
+            ?>
+            <div class="line left<?= $stateClass; ?> left-line-<?= $pos; ?>"></div>
             <?php elseif ($page === $lastPage): ?>
-            <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-right: -0.1em;"></div>
+                <?php
+                  $setupStyle->add(
+                      '.step .left-line-' . $pos,
+                      [
+                          'float'         => 'left',
+                          'width'         => $lineWidth . '%',
+                          'margin-right'  => '-0.1em'
+                      ]
+                  );
+                ?>
+                <div class="line<?= $stateClass; ?> left-line-<?= $pos; ?>"></div>
             <?php else: ?>
-            <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%;"></div>
+                <?php
+                    $setupStyle->add(
+                        '.step .left-line-' . $pos,
+                        [
+                            'float' => 'left',
+                            'width' => $lineWidth . '%'
+                        ]
+                    );
+                ?>
+                <div class="line<?= $stateClass; ?> left-line-<?= $pos; ?>"></div>
             <?php endif ?>
           <?php endforeach ?>
           </td>
@@ -106,14 +147,43 @@ $maxProgress = max(array_merge([0], array_keys(array_filter(
               $pos < $maxProgress ? ' visited' : ($currentPos > 2 ? ' active' : '')
             ); ?>
             <?php if ($page === $firstPage): ?>
-            <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-left: -0.1em;"></div>
+              <?php
+                  $setupStyle->add(
+                      '.step .right-line-' . $pos,
+                      [
+                          'float'         => 'left',
+                          'width'         => $lineWidth . '%',
+                          'margin-right'  => '-0.1em'
+                      ]
+                  );
+              ?>
+              <div class="line<?= $stateClass; ?> right-line-<?= $pos; ?>"></div>
             <?php elseif ($page === $lastPage): ?>
-            <div class="line right<?= $stateClass; ?>" style="float: left; width: <?= sprintf(
-                '%.2F',
-                100 - (count($configPagesRight) - 1) * $lineWidth
-            ); ?>%; margin-left: 0;"></div>
+              <?php
+                  $setupStyle->add(
+                      '.step .right-line-' . $pos,
+                      [
+                          'float'         => 'left',
+                          'width'         => sprintf(
+                              '%.2F%%',
+                              100 - (count($configPagesRight) - 1) * $lineWidth
+                          ),
+                          'margin-right'  => 0
+                      ]
+                  );
+              ?>
+            <div class="line right<?= $stateClass; ?> right-line-<?= $pos; ?>"></div>
             <?php else: ?>
-            <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%;"></div>
+              <?php
+                  $setupStyle->add(
+                      '.step .right-line-' . $pos,
+                      [
+                          'float' => 'left',
+                          'width' => $lineWidth . '%'
+                      ]
+                  );
+              ?>
+            <div class="line<?= $stateClass; ?> right-line-<?= $pos; ?>"></div>
             <?php endif ?>
           <?php endforeach ?>
           </td>
@@ -151,3 +221,4 @@ $maxProgress = max(array_merge([0], array_keys(array_filter(
         }
     ?></ul>
 </div>
+<?= $setupStyle; ?>

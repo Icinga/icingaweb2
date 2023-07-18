@@ -1,9 +1,15 @@
 <?php
+
+use Icinga\Util\Csp;
 use Icinga\Web\Url;
 use Icinga\Util\Color;
+use ipl\Web\Style;
 
 $groupInfo = $timeline->getGroupInfo();
 $firstRow = ! $beingExtended;
+$timelineStyle = (new Style())
+    ->setNonce(Csp::getStyleNonce())
+    ->setModule('monitoring');
 
 if (! $beingExtended && !$this->compact): ?>
 <div class="controls">
@@ -79,24 +85,72 @@ if (! $beingExtended && !$this->compact): ?>
 <?php foreach ($groupInfo as $groupName => $labelAndColor): ?>
 <?php if (array_key_exists($groupName, $timeInfo[1])): ?>
 <?php
+$styleId = uniqid();
 $circleWidth = $timeline->calculateCircleWidth($timeInfo[1][$groupName], 2);
 $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$groupName], 2);
 ?>
 <?php if ($firstRow && $extrapolatedCircleWidth !== $circleWidth): ?>
-            <div class="circle-box" style="width: <?= $extrapolatedCircleWidth; ?>;">
-                <div class="outer-circle extrapolated <?= $timeInfo[1][$groupName]->getClass() ?>" style="<?= sprintf(
-                    'width: %2$s; height: %2$s; margin-top: -%1$Fem;',
-                    (float) substr($extrapolatedCircleWidth, 0, -2) / 2,
-                    $extrapolatedCircleWidth
-                ); ?>">
+            <?php
+            $timelineStyle->add(
+                "#circle-box-$styleId",
+                ['width' => $extrapolatedCircleWidth]
+            );
+
+            $timelineStyle->add(
+                "#outer-circle-$styleId",
+                [
+                    'width'      => $extrapolatedCircleWidth,
+                    'height'     => $extrapolatedCircleWidth,
+                    'margin-top' => sprintf(
+                        '-%Fem',
+                        (float)substr($extrapolatedCircleWidth, 0, -2) / 2
+                    )
+                ]
+            );
+
+            ?>
+            <div id="circle-box-<?= $styleId ?>" class="circle-box">
+                <div id="outer-circle-<?= $styleId ?>" class="outer-circle extrapolated <?= $timeInfo[1][$groupName]->getClass() ?>">
 <?php else: ?>
-            <div class="circle-box" style="width: <?= $circleWidth; ?>;">
-                <div class="outer-circle" style="<?= sprintf(
-                    'width: %2$s; height: %2$s; margin-top: -%1$Fem;',
-                    (float) substr($circleWidth, 0, -2) / 2,
-                    $circleWidth
-                ); ?>">
+            <?php
+            $timelineStyle->add(
+                "#circle-box-$styleId",
+                ['width' => $circleWidth]
+            );
+
+            $timelineStyle->add(
+                "#outer-circle-$styleId",
+                [
+                    'width'      => $circleWidth,
+                    'height'     => $circleWidth,
+                    'margin-top' => sprintf(
+                        '-%Fem',
+                        (float)substr($circleWidth, 0, -2) / 2
+                    )
+                ]
+            );
+
+            ?>
+            <div id="circle-box-<?= $styleId ?>" class="circle-box">
+                <div id="outer-circle-<?= $styleId ?>" class="outer-circle">
 <?php endif ?>
+<?php
+$timelineStyle->add(
+    "#inner-circle-$styleId",
+    [
+        'width'       => $circleWidth,
+        'height'      => $circleWidth,
+        'margin-top'  => sprintf(
+            '-%Fem',
+            (float)substr($circleWidth, 0, -2) / 2
+        ),
+        'margin-left' => sprintf(
+            '-%Fem',
+            (float)substr($circleWidth, 0, -2) / 2
+        ),
+    ]
+);
+?>
                     <?= $this->qlink(
                         '',
                         $timeInfo[1][$groupName]->getDetailUrl(),
@@ -112,12 +166,8 @@ $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$g
                                 strtolower($labelAndColor['label']),
                                 $titleTime
                             ),
-                            'class' => 'inner-circle ' . $timeInfo[1][$groupName]->getClass(),
-                            'style' => sprintf(
-                                'width: %2$s; height: %2$s; margin-top: -%1$Fem; margin-left: -%1$Fem;',
-                                (float) substr($circleWidth, 0, -2) / 2,
-                                (string) $circleWidth
-                            )
+                            'id'    => "inner-circle-$styleId",
+                            'class' => "inner-circle " . $timeInfo[1][$groupName]->getClass()
                         )
                     ); ?>
                 </div>
@@ -143,3 +193,4 @@ $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$g
     </div>
 </div>
 <?php endif ?>
+<?= $timelineStyle; ?>
