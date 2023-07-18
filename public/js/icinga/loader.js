@@ -565,24 +565,35 @@
 
                 return true;
             } else if (redirect.match(/__CLOSE__/)) {
-                if (req.$redirectTarget.is('#col1')) {
+                if (req.$target.is('#col1') && req.$redirectTarget.is('#col1')) {
                     icinga.logger.warn('Cannot close #col1');
                     return false;
                 }
 
-                if (req.$redirectTarget.is('.container') && req.$redirectTarget.parent().closest('.container').length > 0) {
+                if (req.$redirectTarget.is('.container') && ! req.$redirectTarget.is('#main > :scope')) {
                     // If it is a container that is not a top level container, we just empty it
                     req.$redirectTarget.empty();
                     return true;
                 }
 
+                if (! req.$redirectTarget.is('#col2')) {
+                    icinga.logger.debug('Cannot close container', req.$redirectTarget);
+                    return false;
+                }
+
                 // Close right column as requested
                 icinga.ui.layout1col();
 
+                if (!! req.getResponseHeader('X-Icinga-Extra-Updates')) {
+                    icinga.logger.debug('Not refreshing #col1 due to outstanding extra updates');
+                    return true;
+                }
+
                 // Refresh left column and produce a new history state for it
-                var $col1 = $('#col1');
-                var col1Url = icinga.history.getCol1State();
-                var refresh = this.loadUrl(col1Url, $col1);
+                let $refreshTarget = $('#col1');
+                let refreshUrl = icinga.history.getCol1State();
+                let refresh = this.loadUrl(refreshUrl, $refreshTarget);
+                refresh.addToHistory = true;
                 refresh.scripted = true;
 
                 var _this = this;
@@ -590,7 +601,7 @@
                     // TODO: Find a better solution than a hardcoded one
                     // This is still the *cheat* to get live results
                     // (in case there's a delay and a change is not instantly effective)
-                    var secondRefresh = _this.loadUrl(col1Url, $col1);
+                    var secondRefresh = _this.loadUrl(refreshUrl, $refreshTarget);
                     if (secondRefresh !== refresh) {
                         // Only change these properties if it's not still the first refresh
                         secondRefresh.addToHistory = false;
@@ -699,6 +710,7 @@
             var target = req.getResponseHeader('X-Icinga-Container');
             var newBody = false;
             var oldNotifications = false;
+            var isRedirect = !! req.getResponseHeader('X-Icinga-Redirect');
             if (target) {
                 if (target === 'ignore') {
                     return;
@@ -706,12 +718,15 @@
 
                 var $newTarget = this.identifyLinkTarget(target, req.$target);
                 if ($newTarget.length) {
-                    // If we change the target, oncomplete will fail to clean up
-                    // This fixes the problem, not using req.$target would be better
-                    delete this.requests[req.$target.attr('id')];
+                    if (isRedirect) {
+                        req.$redirectTarget = $newTarget;
+                    } else {
+                        // If we change the target, oncomplete will fail to clean up.
+                        // This fixes the problem, not using req.$target would be better
+                        delete this.requests[req.$target.attr('id')];
 
-                    req.$target = $newTarget;
-                    req.$redirectTarget = $newTarget;
+                        req.$target = $newTarget;
+                    }
 
                     if (target === 'layout') {
                         oldNotifications = $('#notifications li').detach();
@@ -735,7 +750,7 @@
                 this.icinga.ui.reloadCss();
             }
 
-            if (req.getResponseHeader('X-Icinga-Redirect')) {
+            if (isRedirect) {
                 return;
             }
 
