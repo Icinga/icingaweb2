@@ -28,7 +28,7 @@
             var _this = e.data.self;
 
             $('#layout').append(
-                '<div id="application-state" class="container" style="display: none" data-icinga-url="'
+                '<div id="application-state" class="container" hidden data-icinga-url="'
                 + _this.icinga.loader.baseUrl
                 + '/application-state" data-icinga-refresh="60"></div>'
             );

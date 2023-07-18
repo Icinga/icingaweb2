@@ -13,8 +13,8 @@
     <tbody>
     <?php foreach ($this->logData as $value): ?>
         <?php $datetime = new Datetime($value->datetime) ?>
-        <tr class="state">
-            <td style="width: 6em; text-align: center">
+        <tr>
+            <td>
                 <?= $this->escape($datetime->format('d.m. H:i')) ?><br />
                 <?= $this->escape($value->loglevel) ?>
             </td>

@@ -7,20 +7,20 @@
     <table class="avp action" data-base-target="_next">
         <thead>
             <tr>
-                <th style="width: 18em;">
+                <th>
                     <strong><?= t('Dashlet Name') ?></strong>
                 </th>
                 <th>
                     <strong><?= t('Url') ?></strong>
                 </th>
-                <th style="width: 1.4em;">&nbsp;</th>
+                <th class="icon-col">&nbsp;</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($this->dashboard->getPanes() as $pane): ?>
                 <?php if ($pane->getDisabled()) continue; ?>
                 <tr>
-                    <th colspan="2" style="text-align: left; padding: 0.5em;">
+                    <th colspan="2">
                     <?php if ($pane->isUserWidget()): ?>
                         <?= $this->qlink(
                             $pane->getName(),
@@ -63,7 +63,7 @@
                                     array('title' => sprintf($this->translate('Edit dashlet %s'), $dashlet->getTitle()))
                                 ); ?>
                             </td>
-                            <td style="table-layout: fixed; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            <td>
                                 <?= $this->qlink(
                                     $dashlet->getUrl()->getRelativeUrl(),
                                     $dashlet->getUrl()->getRelativeUrl(),

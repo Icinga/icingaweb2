@@ -19,7 +19,7 @@ $maxProgress = max(array_merge([0], array_keys(array_filter(
   <div class="setup-header">
     <?= $this->img('img/icinga-logo-big.png'); ?>
     <div class="progress-bar">
-      <div class="step" style="width: 10%;">
+      <div class="step width-percent-10">
         <h1><?= $this->translate('Welcome', 'setup.progress'); ?></h1>
         <?php $stateClass = $finished || $currentPos > 0 ? 'complete' : (
           $maxProgress > 0 ? 'visited' : 'active'
@@ -30,7 +30,7 @@ $maxProgress = max(array_merge([0], array_keys(array_filter(
           <td class="right"><div class="line right <?= $stateClass; ?>"></div></td>
         </tr></tbody></table>
       </div>
-      <div class="step" style="width: 10%;">
+      <div class="step width-percent-10">
         <h1><?= $this->translate('Modules', 'setup.progress'); ?></h1>
         <?php $stateClass = $finished || $currentPos > 1 ? ' complete' : (
           $maxProgress > 1 ? ' visited' : (
@@ -46,7 +46,7 @@ $maxProgress = max(array_merge([0], array_keys(array_filter(
           <?= $this->restartForm ?>
         <?php endif ?>
       </div>
-      <div class="step" style="width: 10%;">
+      <div class="step width-percent-10">
         <h1><?= $this->translate('Requirements', 'setup.progress'); ?></h1>
         <?php $stateClass = $finished || $currentPos > 2 ? ' complete' : (
           $maxProgress > 2 ? ' visited' : (
@@ -62,7 +62,7 @@ $maxProgress = max(array_merge([0], array_keys(array_filter(
           <?= $this->restartForm ?>
         <?php endif ?>
       </div>
-      <div class="step" style="width: 60%;">
+      <div class="step width-percent-60">
         <h1><?= $this->translate('Configuration', 'setup.progress'); ?></h1>
         <table><tbody><tr>
           <td class="left">
@@ -122,7 +122,7 @@ $maxProgress = max(array_merge([0], array_keys(array_filter(
           <?= $this->restartForm ?>
         <?php endif ?>
       </div>
-      <div class="step" style="width: 10%;">
+      <div class="step width-percent-10">
         <h1><?= $this->translate('Finish', 'setup.progress'); ?></h1>
         <?php $stateClass = $finished ? ' complete' : ($pages[$currentPos] === end($pages) ? ' active' : ''); ?>
         <table><tbody><tr>

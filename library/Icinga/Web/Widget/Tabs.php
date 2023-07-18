@@ -52,7 +52,7 @@ EOT;
      * @var string
      */
     private $closeTpl = <<< 'EOT'
-<li style="float: right;">
+<li class="close-container-btn">
   <a href="#" title="{TITLE}" aria-label="{TITLE}" class="close-container-control">
     <i aria-hidden="true" class="icon-cancel"></i>
   </a>
