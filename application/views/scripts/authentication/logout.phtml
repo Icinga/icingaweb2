@@ -1,3 +1,8 @@
+<?php
+
+use Icinga\Util\Csp;
+
+?>
 <!--
     This view provides a workaround to logout from an external authentication provider, in case external
     authentication was configured (the default is to handle authentications internally in Icingaweb2).
@@ -9,43 +14,23 @@
 -->
 <div class="content">
     <div id="icinga-logo" aria-hidden="true"></div>
-    <div class="alert alert-warning" id="logout-status">
+    <div class="alert alert-warning" id="logout-in-progress">
         <b><?= $this->translate('Logging out...'); ?></b>
-        <br>
-        <?= $this->translate(
-            'If this message does not disappear, it might be necessary to quit the'
-            . ' current session manually by clearing the cache, or by closing the current'
-            . ' browser session.'
-        ); ?>
+        <p>
+            <?= $this->translate(
+                'If this message does not disappear, it might be necessary to quit the'
+                . ' current session manually by clearing the cache, or by closing the current'
+                . ' browser session.'
+            ); ?>
+        </p>
     </div>
+    <div id="logout-successful" class="alert alert-success" hidden><?= $this->translate('Logout successful'); ?></div>
 
     <div class="container">
         <a href="<?= $this->href('dashboard'); ?>"><?= $this->translate('Login'); ?></a>
     </div>
 </div>
-<script type="text/javascript">
-    /*
-     * When JavaScript is available, trigger an XmlHTTPRequest with the non-existing user 'logout' and abort it
-     * before it is able to finish. This will cause the browser to show a new authentication prompt in the next
-     * request.
-     */
-    document.addEventListener('DOMContentLoaded', function () {
-        var msg = document.getElementById('logout-status');
-        try {
-            if (navigator.userAgent.toLowerCase().indexOf('msie') !== -1) {
-                document.execCommand('ClearAuthenticationCache');
-            } else {
-                var xhttp = new XMLHttpRequest();
-                xhttp.open('GET', 'arbitrary url', true, 'logout', 'logout');
-                xhttp.send('');
-                xhttp.abort();
-            }
-        } catch (e) {
-        }
-        msg.innerHTML = '<?= $this->translate('Logout successful!'); ?>';
-        msg.className = 'alert alert-success';
-    });
-</script>
+<script type="text/javascript" src="<?= $this->href('js/logout.js'); ?>"></script>
 <style type="text/css">
     body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -66,7 +51,7 @@
         width: 100%;
     }
 
-    #logout-status {
+    #logout-in-progress {
         margin: 2em 0 1em;
         font-size: 2em;
         font-weight: bold;

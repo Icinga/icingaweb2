@@ -24,7 +24,15 @@ $iframeClass = $isIframe ? ' iframe' : '';
 $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 
 ?><!DOCTYPE html>
-<html class="no-js<?= $iframeClass ?>" lang="<?= $lang ?>">
+<html
+    class="no-js<?= $iframeClass ?>" lang="<?= $lang ?>"
+    data-icinga-window-name="<?= $this->protectId('Icinga') ?>"
+    data-icinga-timezone="<?= $timezone ?>"
+    data-icinga-base-url="<?= $this->baseUrl(); ?>"
+    <?php if ($isIframe): ?>
+        data-icinga-is-iframe
+    <?php endif ?>
+>
 <head>
   <meta charset="utf-8">
   <meta name="google" value="notranslate">
@@ -39,12 +47,6 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
   <base target="_parent">
 <?php else: ?>
   <base href="<?= $this->baseUrl(); ?>/">
-  <script type="text/javascript">
-  (function() {
-    var html = document.getElementsByTagName('html')[0];
-    html.className = html.className.replace(/no-js/, 'js');
-  }());
-  </script>
 <?php endif ?>
   <link rel="stylesheet" href="<?= $this->href($cssfile) ?>" media="all" type="text/css" />
   <link type="image/png" rel="shortcut icon" href="<?= $this->baseUrl('img/favicon.png') ?>" />
@@ -55,25 +57,6 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 <div id="layout" class="default-layout<?php if ($showFullscreen): ?> fullscreen-layout<?php endif ?>">
 <?= $this->render($innerLayoutScript); ?>
 </div>
-<script type="text/javascript">
-  (function() {
-    if (document.defaultView && document.defaultView.getComputedStyle) {
-      var matched;
-      var html = document.getElementsByTagName('html')[0];
-      var element = document.getElementById('layout');
-      var name = document.defaultView
-        .getComputedStyle(html)['font-family']
-        .replace(/['",]/g, '');
-
-      if (null !== (matched = name.match(/^([a-z]+)-layout$/))) {
-        element.className = element.className.replace('default-layout', name);
-        if ('object' === typeof window.console) {
-          window.console.log('Icinga Web 2: setting initial layout to ' + name);
-        }
-      }
-    }
-  }());
-</script>
 <div id="collapsible-control-ghost" class="collapsible-control">
     <button type="button">
         <!-- TODO: Accessibility attributes are missing since usage of the Icon class -->
@@ -95,13 +78,6 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
     </div>
 </div>
 <script type="text/javascript" src="<?= $this->href($jsfile) ?>"></script>
-<script type="text/javascript">
-window.name = '<?= $this->protectId('Icinga') ?>';
-var icinga = new Icinga({
-  baseUrl: '<?= $this->baseUrl(); ?>',
-  locale: '<?= $lang; ?>',
-  timezone: '<?= $timezone ?>'
-});
-</script>
+<script type="text/javascript" src="<?= $this->href('js/bootstrap.js') ?>"></script>
 </body>
 </html>
