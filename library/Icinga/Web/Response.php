@@ -315,14 +315,29 @@ class Response extends Zend_Controller_Response_Http
      */
     protected function prepare()
     {
+        $request = $this->getRequest();
         $redirectUrl = $this->getRedirectUrl();
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        if ($request->isXmlHttpRequest()) {
             if ($redirectUrl !== null) {
-                if ($this->getRequest()->isGet() && Icinga::app()->getViewRenderer()->view->compact) {
+                if ($request->isGet() && Icinga::app()->getViewRenderer()->view->compact) {
                     $redirectUrl->getParams()->set('showCompact', true);
                 }
 
-                $this->setHeader('X-Icinga-Redirect', rawurlencode($redirectUrl->getAbsoluteUrl()), true);
+                $encodedRedirectUrl = rawurlencode($redirectUrl->getAbsoluteUrl());
+
+                // TODO: Compatibility only. Remove once v2.14 is out.
+                $targetId = $request->getHeader('X-Icinga-Container');
+                if ($request->isPost() && $targetId === 'col2' && $request->getHeader('X-Icinga-Col2-State')) {
+                    $col1State = Url::fromPath($request->getHeader('X-Icinga-Col1-State'));
+                    $col2State = Url::fromPath($request->getHeader('X-Icinga-Col2-State'));
+                    if ($col2State->getPath() !== $redirectUrl->getPath()
+                        && $col1State->getPath() === $redirectUrl->getPath()
+                    ) {
+                        $encodedRedirectUrl = '__CLOSE__';
+                    }
+                }
+
+                $this->setHeader('X-Icinga-Redirect', $encodedRedirectUrl, true);
                 if ($this->getRerenderLayout()) {
                     $this->setHeader('X-Icinga-Rerender-Layout', 'yes', true);
                 }
