@@ -1008,7 +1008,18 @@
                         return;
                     }
 
-                    _this.loadUrl(url, $target).addToHistory = false;
+                    if (url === '__CLOSE__') {
+                        if ($target.is('#col2')) {
+                            _this.icinga.ui.layout1col();
+                        } else if ($target.is('#main > :scope')) {
+                            _this.icinga.logger.warn('Invalid target ID. Cannot close ', $target);
+                        } else if ($target.is('.container')) {
+                            // If it is a container that is not a top level container, we just empty it
+                            $target.empty();
+                        }
+                    } else {
+                        _this.loadUrl(url, $target).addToHistory = false;
+                    }
                 });
             }
 
