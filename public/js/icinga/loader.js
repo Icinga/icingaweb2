@@ -294,6 +294,11 @@
                 headers['X-Icinga-Autorefresh'] = '1';
             }
 
+            if ($target.is('#col2')) {
+                headers['X-Icinga-Col1-State'] = this.icinga.history.getCol1State();
+                headers['X-Icinga-Col2-State'] = this.icinga.history.getCol2State().replace(/^#!/, '');
+            }
+
             // Ask for a new window id in case we don't already have one
             if (this.icinga.ui.hasWindowId()) {
                 var windowId = this.icinga.ui.getWindowId();
@@ -666,16 +671,6 @@
                     this.loadUrl(parts.shift(), $('#col1'));
                     this.loadUrl(parts.shift(), $('#col2'));
                 } else {
-                    if ($target.attr('id') === 'col2') { // TODO: multicol
-                        if (($target.data('icingaUrl') || '').split('?')[0] === url.split('?')[0]) {
-                            // Don't do anything in this case
-                        } else if ($('#col1').data('icingaUrl').split('?')[0] === url.split('?')[0]) {
-                            icinga.ui.layout1col();
-                            $target = $('#col1');
-                            delete(this.requests['col2']);
-                        }
-                    }
-
                     var req = this.loadUrl(url, $target);
                     req.forceFocus = url === origin ? forceFocus : null;
                     req.autoRefreshInterval = autoRefreshInterval;
