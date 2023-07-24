@@ -31,7 +31,7 @@ use Icinga\Util\Csp;
     </div>
 </div>
 <script type="text/javascript" src="<?= $this->href('js/logout.js'); ?>"></script>
-<style type="text/css">
+<style type="text/css" nonce="<?= Csp::getStyleNonce(); ?>">
     body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
         background-color: #0095bf;
