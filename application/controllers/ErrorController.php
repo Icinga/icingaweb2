@@ -3,6 +3,8 @@
 
 namespace Icinga\Controllers;
 
+use Icinga\Application\Hook\MigrationHook;
+use Icinga\Application\MigrationManager;
 use Icinga\Exception\IcingaException;
 use Zend_Controller_Plugin_ErrorHandler;
 use Icinga\Application\Icinga;
@@ -91,6 +93,22 @@ class ErrorController extends ActionController
                         $this->getResponse()->setHttpResponseCode(403);
                         break;
                     default:
+                        $mm = MigrationManager::instance();
+                        $action = $this->getRequest()->getActionName();
+                        $controller = $this->getRequest()->getControllerName();
+                        if ($action !== 'hint' && $controller !== 'migrations' && $mm->hasMigrations($moduleName)) {
+                            // The view renderer from IPL web doesn't render the HTML content set in the respective
+                            // controller if the error_handler request param is set, as it doesn't support error
+                            // rendering. Since this error handler isn't caused by the migrations controller, we can
+                            // safely unset this.
+                            $this->setParam('error_handler', null);
+                            $this->forward('hint', 'migrations', 'default', [
+                                MigrationHook::MIGRATION_PARAM => $moduleName
+                            ]);
+
+                            return;
+                        }
+
                         $this->getResponse()->setHttpResponseCode(500);
                         $module = $modules->hasLoaded($moduleName) ? $modules->getModule($moduleName) : null;
                         Logger::error("%s\n%s", $exception, IcingaException::getConfidentialTraceAsString($exception));
