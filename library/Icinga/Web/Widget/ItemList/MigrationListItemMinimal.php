@@ -1,0 +1,128 @@
+<?php
+
+/* Icinga Web 2 | (c) 2023 Icinga GmbH | GPLv2+ */
+
+namespace Icinga\Web\Widget\ItemList;
+
+use Icinga\Application\Hook\Common\DbMigration;
+use Icinga\Application\Hook\MigrationHook;
+use ipl\Html\Attributes;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\Contract\FormElement;
+use ipl\Html\FormattedString;
+use ipl\Html\Html;
+use ipl\Html\HtmlElement;
+use ipl\Html\HtmlString;
+use ipl\Html\Text;
+use ipl\I18n\Translation;
+use ipl\Web\Common\BaseListItem;
+use ipl\Web\Url;
+use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
+use LogicException;
+
+class MigrationListItemMinimal extends BaseListItem
+{
+    use Translation;
+
+    /** @var ?FormElement */
+    protected $migrateButton;
+
+    /** @var MigrationHook Just for type hint */
+    protected $item;
+
+    /**
+     * Set a migration form of this list item
+     *
+     * @param FormElement $migrateButton
+     *
+     * @return $this
+     */
+    public function setMigrateButton(FormElement $migrateButton): self
+    {
+        $this->migrateButton = $migrateButton;
+
+        return $this;
+    }
+
+    protected function assembleTitle(BaseHtmlElement $title): void
+    {
+        $title->addHtml(
+            FormattedString::create(
+                t('%s ', '<name>'),
+                HtmlElement::create('span', ['class' => 'subject'], $this->item->getName())
+            )
+        );
+    }
+
+    protected function assembleHeader(BaseHtmlElement $header): void
+    {
+        if ($this->migrateButton === null) {
+            throw new LogicException('Please set the migrate submit button beforehand');
+        }
+
+        $header->addHtml($this->createTitle());
+        $header->addHtml($this->migrateButton);
+    }
+
+    protected function assembleCaption(BaseHtmlElement $caption): void
+    {
+        $migrations = $this->item->getMigrations();
+        /** @var DbMigration $migration */
+        $migration = array_shift($migrations);
+        if ($migration->getLastState()) {
+            $caption->addHtml(Text::create($migration->getDescription()));
+
+            $wrapper = new HtmlElement(
+                'div',
+                Attributes::create([
+                    'class'               => ['errors-section', 'collapsible'],
+                    'data-visible-height'   => 150,
+                ])
+            );
+
+            $wrapper->addHtml(
+                new Icon('circle-xmark'),
+                $caption,
+                new HtmlElement('pre', null, new HtmlString(Html::escape($migration->getLastState())))
+            );
+
+            $caption->prependWrapper($wrapper);
+        }
+    }
+
+    protected function assembleFooter(BaseHtmlElement $footer): void
+    {
+        $footer->addHtml((new MigrationList($this->item->getLatestMigrations(3)))->setMinimal(false));
+        if ($this->item->count() > 3) {
+            $footer->addHtml(
+                new Link(
+                    sprintf($this->translate('Show all %d migrations'), $this->item->count()),
+                    Url::fromPath(
+                        'migrations/migration',
+                        [MigrationHook::MIGRATION_PARAM => $this->item->getModuleName()]
+                    ),
+                    [
+                        'data-base-target' => '_next'
+                    ]
+                )
+            );
+        }
+    }
+
+    protected function assembleMain(BaseHtmlElement $main): void
+    {
+        $this->getAttributes()->add('class', 'minimal');
+
+        $main->addHtml($this->createHeader());
+        $caption = $this->createCaption();
+        if (! $caption->isEmpty()) {
+            $main->addHtml($caption);
+        }
+
+        $footer = $this->createFooter();
+        if ($footer) {
+            $main->addHtml($footer);
+        }
+    }
+}

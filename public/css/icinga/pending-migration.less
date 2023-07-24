@@ -1,0 +1,100 @@
+// Style
+
+.migrations {
+  .migration-details {
+    > span {
+      color: @text-color-light;
+    }
+
+    summary {
+      color: @icinga-blue;
+      cursor: pointer;
+
+      &::-webkit-details-marker {
+        display: none; // Disable safari default details marker
+      }
+    }
+  }
+
+  .migration-form {
+    input[type="submit"] {
+      color: @icinga-blue;
+      background: @low-sat-blue;
+      border: none;
+
+      &:not(:disabled):hover {
+        background: @icinga-blue;
+        color: @text-color-on-icinga-blue;
+      }
+
+      &:disabled {
+        background: @disabled-gray;
+        color: @default-text-color-inverted;
+      }
+    }
+  }
+
+  .modules-header {
+    input[type="submit"] {
+      &:not(:disabled) {
+        background: transparent;
+      }
+    }
+  }
+}
+
+// Layout
+
+.pending-migrations-hint {
+  top: 15%;
+  right: 50%;
+  position: fixed;
+  transform: translate(50%, -50%);
+  text-align: center;
+
+  > p {
+    font-size: 1.1em;
+  }
+
+  > h2 {
+    font-size: 2em;
+  }
+}
+
+.migrations {
+  .list-item {
+    align-items: baseline;
+  }
+
+  .migration-list-control {
+    padding-bottom: 1em;
+  }
+
+  .modules-header {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items: baseline;
+
+    .migration-form {
+      margin-left: .5em;
+    }
+  }
+
+  .migration-details {
+    font-size: 1.1em;
+
+    &[open] summary {
+      margin-bottom: .5em;
+    }
+  }
+
+  .migration-form {
+    input[type="submit"] {
+      padding: 0.25em 0.5em;
+      line-height: 1.75;
+      font-size: 1.1em;
+
+      .rounded-corners(3px);
+    }
+  }
+}

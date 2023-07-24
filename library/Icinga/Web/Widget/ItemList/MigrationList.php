@@ -1,0 +1,130 @@
+<?php
+
+/* Icinga Web 2 | (c) 2023 Icinga GmbH | GPLv2+ */
+
+namespace Icinga\Web\Widget\ItemList;
+
+use Generator;
+use Icinga\Application\Hook\Common\DbMigration;
+use Icinga\Application\Hook\MigrationHook;
+use Icinga\Application\MigrationManager;
+use Icinga\Forms\MigrationForm;
+use ipl\I18n\Translation;
+use ipl\Web\Common\BaseItemList;
+use ipl\Web\Widget\EmptyState;
+
+class MigrationList extends BaseItemList
+{
+    use Translation;
+
+    protected $baseAttributes = ['class' => 'item-list'];
+
+    /** @var Generator<MigrationHook> */
+    protected $data;
+
+    /** @var ?MigrationForm */
+    protected $migrationForm;
+
+    /** @var bool Whether to render minimal migration list items */
+    protected $minimal = true;
+
+    /**
+     * Create a new migration list
+     *
+     * @param Generator<MigrationHook>|array<DbMigration|MigrationHook> $data
+     *
+     * @param ?MigrationForm $form
+     */
+    public function __construct($data, MigrationForm $form = null)
+    {
+        parent::__construct($data);
+
+        $this->migrationForm = $form;
+    }
+
+    /**
+     * Set whether to render minimal migration list items
+     *
+     * @param bool $minimal
+     *
+     * @return $this
+     */
+    public function setMinimal(bool $minimal): self
+    {
+        $this->minimal = $minimal;
+
+        return $this;
+    }
+
+    /**
+     * Get whether to render minimal migration list items
+     *
+     * @return bool
+     */
+    public function isMinimal(): bool
+    {
+        return $this->minimal;
+    }
+
+    protected function getItemClass(): string
+    {
+        if ($this->isMinimal()) {
+            return MigrationListItemMinimal::class;
+        }
+
+        return MigrationListItem::class;
+    }
+
+    protected function assemble(): void
+    {
+        $itemClass = $this->getItemClass();
+
+        /** @var MigrationHook $data */
+        foreach ($this->data as $data) {
+            /** @var MigrationListItem|MigrationListItemMinimal $item */
+            $item = new $itemClass($data, $this);
+            if ($item instanceof MigrationListItemMinimal && $this->migrationForm) {
+                $migrateButton = $this->migrationForm->createElement(
+                    'submit',
+                    sprintf('migrate-%s', $data->getModuleName()),
+                    [
+                        'required' => false,
+                        'label'    => $this->translate('Migrate'),
+                        'title'    => sprintf(
+                            $this->translatePlural(
+                                'Migrate %d pending migration',
+                                'Migrate all %d pending migrations',
+                                $data->count()
+                            ),
+                            $data->count()
+                        )
+                    ]
+                );
+
+                $mm = MigrationManager::instance();
+                if ($data->isModule() && $mm->hasMigrations(MigrationHook::DEFAULT_MODULE)) {
+                    $migrateButton->getAttributes()
+                        ->set('disabled', true)
+                        ->set(
+                            'title',
+                            $this->translate(
+                                'Please apply all the pending migrations of Icinga Web first or use the apply all'
+                                . ' button instead.'
+                            )
+                        );
+                }
+
+                $this->migrationForm->registerElement($migrateButton);
+
+                $item->setMigrateButton($migrateButton);
+            }
+
+            $this->addHtml($item);
+        }
+
+        if ($this->isEmpty()) {
+            $this->setTag('div');
+            $this->addHtml(new EmptyState(t('No items found.')));
+        }
+    }
+}
