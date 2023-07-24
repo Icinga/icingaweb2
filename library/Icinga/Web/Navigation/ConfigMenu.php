@@ -6,7 +6,9 @@ namespace Icinga\Web\Navigation;
 use Icinga\Application\Hook\HealthHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Application\MigrationManager;
 use Icinga\Authentication\Auth;
+use Icinga\Web\Navigation\Renderer\BadgeNavigationItemRenderer;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -46,6 +48,10 @@ class ConfigMenu extends BaseHtmlElement
                     'health' => [
                         'label' => t('Health'),
                         'url' => 'health',
+                    ],
+                    'migrations' => [
+                        'label' => t('Migrations'),
+                        'url' => 'migrations',
                     ],
                     'announcements' => [
                         'label' => t('Announcements'),
@@ -136,7 +142,7 @@ class ConfigMenu extends BaseHtmlElement
                 null,
                 [
                     new Icon('cog'),
-                    $this->createHealthBadge(),
+                    $this->createHealthBadge() ?? $this->createMigrationBadge(),
                 ]
             ),
             $this->createLevel2Menu()
@@ -211,11 +217,25 @@ class ConfigMenu extends BaseHtmlElement
         return false;
     }
 
-    protected function createHealthBadge()
+    protected function createHealthBadge(): ?StateBadge
     {
         $stateBadge = null;
         if ($this->getHealthCount() > 0) {
             $stateBadge = new StateBadge($this->getHealthCount(), $this->state);
+            $stateBadge->addAttributes(['class' => 'disabled']);
+        }
+
+        return $stateBadge;
+    }
+
+    protected function createMigrationBadge(): ?StateBadge
+    {
+        $mm = MigrationManager::instance();
+        $count = $mm->count();
+
+        $stateBadge = null;
+        if ($count > 0) {
+            $stateBadge = new StateBadge($count, BadgeNavigationItemRenderer::STATE_PENDING);
             $stateBadge->addAttributes(['class' => 'disabled']);
         }
 
@@ -240,23 +260,26 @@ class ConfigMenu extends BaseHtmlElement
             return null;
         }
 
-        $healthBadge = null;
+        $stateBadge = null;
         $class = null;
         if ($key === 'health') {
             $class = 'badge-nav-item';
-            $healthBadge = $this->createHealthBadge();
+            $stateBadge = $this->createHealthBadge();
+        } elseif ($key === 'migrations') {
+            $class = 'badge-nav-item';
+            $stateBadge = $this->createMigrationBadge();
         }
 
         $li = HtmlElement::create(
             'li',
-            isset($item['atts']) ? $item['atts'] : [],
+            $item['atts'] ?? [],
             [
                 HtmlElement::create(
                     'a',
                     Attributes::create(['href' => Url::fromPath($item['url'])]),
                     [
                         $item['label'],
-                        isset($healthBadge) ? $healthBadge : ''
+                        $stateBadge ?? ''
                     ]
                 ),
             ]
