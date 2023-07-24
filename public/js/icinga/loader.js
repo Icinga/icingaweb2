@@ -989,7 +989,7 @@
                     var $target;
                     var url;
                     if (parts.length === 2) {
-                        $target = $('#' + parts[0]);
+                        $target = $(parts[0].startsWith('#') ? parts[0] : '#' + parts[0]);
                         if (! $target.length) {
                             _this.icinga.logger.warn('Invalid target ID. Cannot load extra URL', el);
                             return;
