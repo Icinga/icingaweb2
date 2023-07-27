@@ -9,6 +9,7 @@
     summary {
       color: @icinga-blue;
       cursor: pointer;
+      border-radius: .25em;
 
       &::-webkit-details-marker {
         display: none; // Disable safari default details marker
@@ -17,27 +18,21 @@
   }
 
   .migration-form {
-    input[type="submit"] {
-      color: @icinga-blue;
-      background: @low-sat-blue;
-      border: none;
-
-      &:not(:disabled):hover {
-        background: @icinga-blue;
-        color: @text-color-on-icinga-blue;
-      }
-
-      &:disabled {
-        background: @disabled-gray;
-        color: @default-text-color-inverted;
-      }
-    }
   }
 
   .modules-header {
     input[type="submit"] {
-      &:not(:disabled) {
-        background: transparent;
+      border: none;
+      padding-left: 0;
+      padding-right: 0;
+
+      &:disabled {
+        color: @disabled-gray;
+        background: none;
+
+        &:hover {
+          cursor: not-allowed;
+        }
       }
     }
   }
@@ -46,15 +41,7 @@
 // Layout
 
 .pending-migrations-hint {
-  top: 15%;
-  right: 50%;
-  position: fixed;
-  transform: translate(50%, -50%);
   text-align: center;
-
-  > p {
-    font-size: 1.1em;
-  }
 
   > h2 {
     font-size: 2em;
@@ -64,6 +51,32 @@
 .migrations {
   .list-item {
     align-items: baseline;
+  }
+
+  .list-item header {
+    align-items: baseline;
+    height: 1.5em;
+
+    input[type="submit"] {
+      margin-top: -.5em;
+    }
+  }
+
+  .list-item .caption {
+    height: 1.5em;
+    margin-top: .25em;
+
+    p {
+      margin-bottom: 0;
+    }
+
+    .description {
+      line-height: 1.5;
+    }
+  }
+
+  footer {
+    margin-top: .25em;
   }
 
   .migration-list-control {
@@ -81,20 +94,24 @@
   }
 
   .migration-details {
-    font-size: 1.1em;
+    font-size: 1em;
+    line-height: 1.5em;
 
-    &[open] summary {
-      margin-bottom: .5em;
+    summary {
+      display: inline-block;
     }
   }
 
   .migration-form {
     input[type="submit"] {
-      padding: 0.25em 0.5em;
-      line-height: 1.75;
-      font-size: 1.1em;
+      line-height: 1.5;
 
-      .rounded-corners(3px);
+      &:disabled {
+        color: @disabled-gray;
+        cursor: not-allowed;
+        background: none;
+        border-color: fade(@disabled-gray, 75)
+      }
     }
   }
 }
