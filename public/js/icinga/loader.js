@@ -732,6 +732,12 @@
                         oldNotifications = $('#notifications li').detach();
                         this.icinga.ui.layout1col();
                         newBody = true;
+                    } else if ($newTarget.attr('id') === 'col2') {
+                        if (_this.icinga.ui.isOneColLayout()) {
+                            _this.icinga.ui.layout2col();
+                        } else if (target === '_next') {
+                            _this.icinga.ui.moveToLeft();
+                        }
                     }
                 }
             }
