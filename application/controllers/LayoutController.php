@@ -3,13 +3,15 @@
 
 namespace Icinga\Controllers;
 
-use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Menu;
+use Icinga\Web\Navigation\Mobile\MobileConfigMenu;
+use Icinga\Web\Navigation\Mobile\MobileMenu;
+use ipl\Web\Compat\CompatController;
 
 /**
  * Create complex layout parts
  */
-class LayoutController extends ActionController
+class LayoutController extends CompatController
 {
     /**
      * Render the menu
@@ -19,6 +21,22 @@ class LayoutController extends ActionController
         $this->setAutorefreshInterval(15);
         $this->_helper->layout()->disableLayout();
         $this->view->menuRenderer = (new Menu())->getRenderer();
+    }
+
+    public function mobileConfigMenuAction()
+    {
+        $this->setAutorefreshInterval(15);
+        $this->_helper->layout()->disableLayout();
+        $this->view->compact = true;
+        $this->getDocument()->addHtml(new MobileConfigMenu());
+    }
+
+    public function mobileMenuAction()
+    {
+        $this->setAutorefreshInterval(15);
+        $this->_helper->layout()->disableLayout();
+        $this->view->compact = true;
+        $this->getDocument()->addHtml(new MobileMenu());
     }
 
     public function announcementsAction()

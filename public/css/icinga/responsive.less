@@ -37,6 +37,14 @@
   html {
     font-family: 'minimal-layout';
   }
+
+  body {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
 }
 
 #layout.compact-layout {
@@ -70,7 +78,6 @@
 #layout.minimal-layout {
   #sidebar {
     width: 100%;
-    overflow: auto;
   }
 
   #header-logo-container {
@@ -151,11 +158,11 @@
 // Safe areas for iPhone X
 
 #header, #sidebar, #footer {
-  padding-left: constant(safe-area-inset-left);
+  padding-left: env(safe-area-inset-left);
 }
 
 #main, #footer {
-  padding-right: constant(safe-area-inset-right);
+  padding-right: env(safe-area-inset-right);
 }
 
 #layout.twocols #col2 {

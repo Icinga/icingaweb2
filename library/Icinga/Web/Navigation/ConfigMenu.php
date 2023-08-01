@@ -3,25 +3,19 @@
 
 namespace Icinga\Web\Navigation;
 
-use Icinga\Application\Hook\HealthHook;
 use Icinga\Application\Icinga;
-use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
+use Icinga\Common\HealthBadgeTrait;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
-use ipl\Web\Widget\StateBadge;
 
 class ConfigMenu extends BaseHtmlElement
 {
-    const STATE_OK = 'ok';
-    const STATE_CRITICAL = 'critical';
-    const STATE_WARNING = 'warning';
-    const STATE_PENDING = 'pending';
-    const STATE_UNKNOWN = 'unknown';
+    use HealthBadgeTrait;
 
     protected $tag = 'ul';
 
@@ -32,6 +26,10 @@ class ConfigMenu extends BaseHtmlElement
     protected $selected;
 
     protected $state;
+
+    protected $healthBadge;
+
+    protected $flyoutID = 'config-menu-flyout';
 
     public function __construct()
     {
@@ -87,6 +85,7 @@ class ConfigMenu extends BaseHtmlElement
                 'items' => [
                     'logout' => [
                         'label' => t('Logout'),
+                        'icon' => 'power-off',
                         'atts'  => [
                             'target' => '_self',
                             'class' => 'nav-item-logout'
@@ -97,13 +96,7 @@ class ConfigMenu extends BaseHtmlElement
             ]
         ];
 
-        if (Logger::writesToFile()) {
-            $this->children['system']['items']['application_log'] = [
-                'label'       => t('Application Log'),
-                'url'         => 'list/applicationlog',
-                'permission'  => 'application/log'
-            ];
-        }
+        $this->healthBadge = $this->createHealthBadge();
     }
 
     protected function assembleUserMenuItem(BaseHtmlElement $userMenuItem)
@@ -159,7 +152,7 @@ class ConfigMenu extends BaseHtmlElement
                 ));
             }
 
-            $ul = HtmlElement::create('ul', ['class' => 'nav']);
+            $ul = HtmlElement::create('ul', ['class' => 'nav flyout-menu']);
             foreach ($c['items'] as $key => $item) {
                 $ul->add($this->createLevel2MenuItem($item, $key));
             }
@@ -168,41 +161,6 @@ class ConfigMenu extends BaseHtmlElement
         }
 
         $level2Nav->add($navContent);
-    }
-
-    protected function getHealthCount()
-    {
-        $count = 0;
-        $title = null;
-        $worstState = null;
-        foreach (HealthHook::collectHealthData()->select() as $result) {
-            if ($worstState === null || $result->state > $worstState) {
-                $worstState = $result->state;
-                $title = $result->message;
-                $count = 1;
-            } elseif ($worstState === $result->state) {
-                $count++;
-            }
-        }
-
-        switch ($worstState) {
-            case HealthHook::STATE_OK:
-                $count = 0;
-                break;
-            case HealthHook::STATE_WARNING:
-                $this->state = self::STATE_WARNING;
-                break;
-            case HealthHook::STATE_CRITICAL:
-                $this->state = self::STATE_CRITICAL;
-                break;
-            case HealthHook::STATE_UNKNOWN:
-                $this->state = self::STATE_UNKNOWN;
-                break;
-        }
-
-        $this->title = $title;
-
-        return $count;
     }
 
     protected function isSelectedItem($item)
@@ -215,22 +173,11 @@ class ConfigMenu extends BaseHtmlElement
         return false;
     }
 
-    protected function createHealthBadge()
-    {
-        $stateBadge = null;
-        if ($this->getHealthCount() > 0) {
-            $stateBadge = new StateBadge($this->getHealthCount(), $this->state);
-            $stateBadge->addAttributes(['class' => 'disabled']);
-        }
-
-        return $stateBadge;
-    }
-
     protected function createLevel2Menu()
     {
         $level2Nav = HtmlElement::create(
             'div',
-            Attributes::create(['class' => 'nav-level-1 flyout'])
+            Attributes::create(['class' => 'nav-level-1 flyout', 'id' => $this->flyoutID ])
         );
 
         $this->assembleLevel2Nav($level2Nav);
@@ -245,10 +192,16 @@ class ConfigMenu extends BaseHtmlElement
         }
 
         $healthBadge = null;
-        $class = null;
+        $class = '';
         if ($key === 'health') {
             $class = 'badge-nav-item';
-            $healthBadge = $this->createHealthBadge();
+            $healthBadge = $this->healthBadge;
+        }
+
+        $icon = null;
+        if (isset($item['icon'])) {
+            $icon = new Icon($item['icon']);
+            $class .= ' has-icon';
         }
 
         $li = HtmlElement::create(
@@ -259,6 +212,7 @@ class ConfigMenu extends BaseHtmlElement
                     'a',
                     Attributes::create(['href' => Url::fromPath($item['url'])]),
                     [
+                        $icon,
                         $item['label'],
                         isset($healthBadge) ? $healthBadge : ''
                     ]
@@ -285,7 +239,10 @@ class ConfigMenu extends BaseHtmlElement
 
     protected function createCogMenuItem()
     {
-        $cogMenuItem = HtmlElement::create('li', ['class' => 'config-nav-item']);
+        $cogMenuItem = HtmlElement::create('li', [
+            'class' => 'config-nav-item',
+            'data-flyout-target' => $this->flyoutID
+        ]);
 
         $this->assembleCogMenuItem($cogMenuItem);
 

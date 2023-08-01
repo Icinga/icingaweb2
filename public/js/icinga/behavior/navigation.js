@@ -8,18 +8,15 @@
 
     var Navigation = function (icinga) {
         Icinga.EventListener.call(this, icinga);
-        this.on('click', '#menu a', this.linkClicked, this);
-        this.on('click', '#menu tr[href]', this.linkClicked, this);
-        this.on('rendered', '#menu', this.onRendered, this);
-        this.on('mouseenter', '#menu .primary-nav .nav-level-1 > .nav-item', this.showFlyoutMenu, this);
-        this.on('mouseleave', '#menu .primary-nav', this.hideFlyoutMenu, this);
+        this.on('click', '#menu a, #mobile-menu a, #mobile-config-menu a', this.linkClicked, this);
+        this.on('click', '#menu tr[href], #mobile-menu tr[href]', this.linkClicked, this);
+
+        this.on('rendered', '#menu, #mobile-menu', this.onRendered, this);
+
+        this.on('mouseenter', '#menu .primary-nav .nav-level-1 > .nav-item, #mobile-menu .primary-nav .nav-level-1 > .nav-item', this.showFlyoutMenu, this);
+        this.on('mouseleave', '#menu .primary-nav, #mobile-menu .primary-nav', this.hideFlyoutMenu, this);
+
         this.on('click', '#toggle-sidebar', this.toggleSidebar, this);
-
-        this.on('click', '#menu .config-nav-item button', this.toggleConfigFlyout, this);
-        this.on('mouseenter', '#menu .config-menu .config-nav-item', this.showConfigFlyout, this);
-        this.on('mouseleave', '#menu .config-menu .config-nav-item', this.hideConfigFlyout, this);
-
-        this.on('keydown', '#menu .config-menu .config-nav-item', this.onKeyDown, this);
 
         /**
          * The DOM-Path of the active item
@@ -62,7 +59,7 @@
     Navigation.prototype.onRendered = function(e) {
         var _this = e.data.self;
 
-        _this.$menu = $(e.target);
+        _this.$menu = $('#menu, #mobile-menu, #mobile-config-menu');
 
         if (! _this.active) {
             // There is no stored menu item, therefore it is assumed that this is the first rendering
@@ -129,7 +126,7 @@
         }
 
         // update target url of the menu container to the clicked link
-        var $menu = $('#menu');
+        var $menu = $('#menu, #mobile-menu, #mobile-config-menu');
         var menuDataUrl = icinga.utils.parseUrl($menu.data('icinga-url'));
         menuDataUrl = icinga.utils.addUrlParams(menuDataUrl.path, { url: href });
         $menu.data('icinga-url', menuDataUrl);
@@ -143,7 +140,7 @@
      * @param url   {String}    The url to match
      */
     Navigation.prototype.setActiveAndSelectedByUrl = function(url) {
-        var $menu = $('#menu');
+        var $menu = $('#menu, #mobile-menu, #mobile-config-menu');
 
         if (! $menu.length) {
             return;
@@ -374,55 +371,6 @@
         _this.storage.set('sidebar-collapsed', $layout.is('.sidebar-collapsed'));
         $(window).trigger('resize');
     };
-
-    /**
-     * Toggle config flyout visibility
-     *
-     * @param {Object} e Event
-     */
-    Navigation.prototype.toggleConfigFlyout = function(e) {
-        var _this = e.data.self;
-        if ($('#layout').is('.config-flyout-open')) {
-            _this.hideConfigFlyout(e);
-        } else {
-            _this.showConfigFlyout(e);
-        }
-    }
-
-    /**
-     * Hide config flyout
-     *
-     * @param {Object} e Event
-     */
-    Navigation.prototype.hideConfigFlyout = function(e) {
-        $('#layout').removeClass('config-flyout-open');
-        if (e.target) {
-            delete $(e.target).closest('.container')[0].dataset.suspendAutorefresh;
-        }
-    }
-
-    /**
-     * Show config flyout
-     *
-     * @param {Object} e Event
-     */
-    Navigation.prototype.showConfigFlyout = function(e) {
-        $('#layout').addClass('config-flyout-open');
-        $(e.target).closest('.container')[0].dataset.suspendAutorefresh = '';
-    }
-
-    /**
-     * Hide, config flyout when "Enter" key is pressed to follow `.flyout` nav item link
-     *
-     * @param {Object} e Event
-     */
-    Navigation.prototype.onKeyDown = function(e) {
-        var _this = e.data.self;
-
-        if (e.key == 'Enter' && $(document.activeElement).is('.flyout a')) {
-            _this.hideConfigFlyout(e);
-        }
-    }
 
     /**
      * Called when the history changes

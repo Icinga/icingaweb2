@@ -36,6 +36,7 @@ class JavaScript
         'js/icinga/behavior/dropdown.js',
         'js/icinga/behavior/navigation.js',
         'js/icinga/behavior/form.js',
+        'js/icinga/behavior/flyout-menu.js',
         'js/icinga/behavior/actiontable.js',
         'js/icinga/behavior/flyover.js',
         'js/icinga/behavior/filtereditor.js',
