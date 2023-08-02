@@ -75,7 +75,8 @@ class EmbeddedWeb extends ApplicationBootstrap
             ->setupTimezone()
             ->prepareFakeInternationalization()
             ->setupModuleManager()
-            ->loadEnabledModules();
+            ->loadEnabledModules()
+            ->registerApplicationHooks();
     }
 
     /**
