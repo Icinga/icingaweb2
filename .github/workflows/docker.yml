@@ -10,7 +10,19 @@ on:
   workflow_dispatch:
 
 jobs:
+  docker-release:
+    if: github.event_name == 'release'
+    concurrency: docker-release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Docker image
+        uses: Icinga/docker-icingaweb2@master
+        with:
+          dockerhub-token: '${{ secrets.DOCKER_HUB_PERSONAL_TOKEN }}'
+
   docker:
+    if: github.event_name != 'release'
     runs-on: ubuntu-latest
 
     steps:
