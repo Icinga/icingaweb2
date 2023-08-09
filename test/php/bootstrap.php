@@ -7,7 +7,7 @@ namespace Icinga\Test {
 
     $basePath = getenv('ICINGAWEB_BASEDIR') ?: realpath(dirname(__FILE__) . '/../..');
     $libraryPath = getenv('ICINGAWEB_ICINGA_LIB') ?: ($basePath . '/library/Icinga');
-    $configPath = $basePath . '/test/config';
+    $configPath = getenv('ICINGAWEB_CONFIGDIR') ?: $basePath . '/test/config';
 
     require $libraryPath . '/Application/Test.php';
     Test::start($basePath, $configPath);
