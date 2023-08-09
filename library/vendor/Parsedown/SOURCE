@@ -1,7 +1,0 @@
-RELEASE=1.7.3
-PARSEDOWN=parsedown-$RELEASE
-curl https://codeload.github.com/erusev/parsedown/tar.gz/${RELEASE} -o ${PARSEDOWN}.tar.gz
-tar xfz ${PARSEDOWN}.tar.gz --strip-components 1 ${PARSEDOWN}/Parsedown.php ${PARSEDOWN}/LICENSE.txt
-chmod 0644 Parsedown.php
-mv LICENSE.txt LICENSE
-rm ${PARSEDOWN}.tar.gz

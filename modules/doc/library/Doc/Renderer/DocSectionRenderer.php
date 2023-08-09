@@ -3,8 +3,6 @@
 
 namespace Icinga\Module\Doc\Renderer;
 
-require_once 'Parsedown/Parsedown.php';
-
 use DOMDocument;
 use DOMXPath;
 use Parsedown;
