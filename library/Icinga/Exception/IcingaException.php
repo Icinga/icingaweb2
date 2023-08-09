@@ -5,6 +5,7 @@ namespace Icinga\Exception;
 
 use Exception;
 use ReflectionClass;
+use Throwable;
 
 class IcingaException extends Exception
 {
@@ -51,11 +52,11 @@ class IcingaException extends Exception
      *
      * The format used is: %class% in %path%:%line% with message: %message%
      *
-     * @param   Exception   $exception
+     * @param   Throwable   $exception
      *
      * @return  string
      */
-    public static function describe(Exception $exception)
+    public static function describe(Throwable $exception)
     {
         return sprintf(
             '%s in %s:%d with message: %s',
@@ -70,11 +71,11 @@ class IcingaException extends Exception
      * Return the same as {@link Exception::getTraceAsString()} for the given exception,
      * but show only the types of scalar arguments
      *
-     * @param   Exception   $exception
+     * @param   Throwable   $exception
      *
      * @return  string
      */
-    public static function getConfidentialTraceAsString(Exception $exception)
+    public static function getConfidentialTraceAsString(Throwable $exception)
     {
         $trace = array();
 
