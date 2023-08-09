@@ -2,6 +2,7 @@
 
 namespace Icinga\Application;
 
+use DirectoryIterator;
 use Icinga\Web\Request;
 use Icinga\Web\Response;
 
@@ -93,29 +94,31 @@ class Test extends Cli
         }
 
         if (! $modulePaths) {
-            $modulePaths = [];
-            foreach ($this->getAvailableModulePaths() as $path) {
-                $candidates = array_flip(scandir($path));
-                unset($candidates['.'], $candidates['..']);
-                foreach ($candidates as $candidate => $_) {
-                    $modulePaths[] = "$path/$candidate";
-                }
-            }
+            $modulePaths = $this->getAvailableModulePaths();
         }
 
         foreach ($modulePaths as $path) {
-            $module = basename($path);
+            foreach (new DirectoryIterator($path) as $item) {
+                if ($item->isDot() || $item->isFile() || ! $item->isReadable()) {
+                    continue;
+                }
 
-            $moduleNamespace = 'Icinga\\Module\\' . ucfirst($module);
-            $moduleLibraryPath = "$path/library/" . ucfirst($module);
+                $modulePath = $item->getPathname();
+                $module = $item->getFilename();
 
-            if (is_dir($moduleLibraryPath)) {
-                $this->getLoader()->registerNamespace($moduleNamespace, $moduleLibraryPath, "$path/application");
-            }
+                $moduleNamespace = 'Icinga\\Module\\' . ucfirst($module);
+                $moduleLibraryPath = "$modulePath/library/" . ucfirst($module);
 
-            $moduleTestPath = "$path/test/php/Lib";
-            if (is_dir($moduleTestPath)) {
-                $this->getLoader()->registerNamespace('Tests\\' . $moduleNamespace . '\\Lib', $moduleTestPath);
+                if (is_dir($moduleLibraryPath)) {
+                    $this
+                        ->getLoader()
+                        ->registerNamespace($moduleNamespace, $moduleLibraryPath, "$modulePath/application");
+                }
+
+                $moduleTestPath = "$modulePath/test/php/Lib";
+                if (is_dir($moduleTestPath)) {
+                    $this->getLoader()->registerNamespace('Tests\\' . $moduleNamespace . '\\Lib', $moduleTestPath);
+                }
             }
         }
 
