@@ -3,13 +3,13 @@
 
 namespace Icinga\Application;
 
-use Exception;
 use Icinga\Data\ConfigObject;
 use Icinga\Application\Logger\Writer\FileWriter;
 use Icinga\Application\Logger\Writer\SyslogWriter;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\IcingaException;
 use Icinga\Util\Json;
+use Throwable;
 
 /**
  * Logger
@@ -234,7 +234,7 @@ class Logger
         if (count($arguments) === 1) {
             $message = $arguments[0];
 
-            if ($message instanceof Exception) {
+            if ($message instanceof Throwable) {
                 $messages = array();
                 $error = $message;
                 do {
@@ -250,7 +250,7 @@ class Logger
             array_shift($arguments),
             array_map(
                 function ($a) {
-                    return is_string($a) ? $a : ($a instanceof Exception
+                    return is_string($a) ? $a : ($a instanceof Throwable
                         ? IcingaException::describe($a)
                         : Json::encode($a));
                 },

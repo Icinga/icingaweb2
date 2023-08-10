@@ -22,7 +22,7 @@ class IcingaException extends Exception
         $args = array_slice(func_get_args(), 1);
         $exc = null;
         foreach ($args as &$arg) {
-            if ($arg instanceof Exception) {
+            if ($arg instanceof Throwable) {
                 $exc = $arg;
             }
         }
