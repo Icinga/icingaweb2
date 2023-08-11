@@ -40,7 +40,7 @@
         var $a = $(event.currentTarget);
         var url = $a.attr('href');
         var $modal = _this.$ghost.clone();
-        var $urlTarget = _this.icinga.loader.getLinkTargetFor($a, false);
+        var $redirectTarget = $a.closest('.container');
 
         _this.modalOpener = event.currentTarget;
 
@@ -50,8 +50,8 @@
         // Add showCompact, we don't want controls in a modal
         url = _this.icinga.utils.addUrlFlag(url, 'showCompact');
 
-        // Set the toggle's base target on the modal to use it as redirect target
-        $modal.data('redirectTarget', $urlTarget);
+        // Set the toggle's container to use it as redirect target
+        $modal.data('redirectTarget', $redirectTarget);
 
         // Final preparations, the id is required so that it's not `display:none` anymore
         $modal.attr('id', 'modal');
@@ -68,7 +68,7 @@
             if (req.status >= 500) {
                 // Yes, that's done twice (by us and by the base fail handler),
                 // but `renderContentToContainer` does too many useful things..
-                _this.icinga.loader.renderContentToContainer(req.responseText, $urlTarget, req.action);
+                _this.icinga.loader.renderContentToContainer(req.responseText, $redirectTarget, req.action);
             } else if (req.status > 0) {
                 var msg = $(req.responseText).find('.error-message').text();
                 if (msg && msg !== errorThrown) {
@@ -115,7 +115,6 @@
 
         var req = _this.icinga.loader.submitForm($form, $autoSubmittedBy, $button);
         req.addToHistory = false;
-        req.$redirectTarget = $modal.data('redirectTarget');
         req.done(function (data, textStatus, req) {
             var title = req.getResponseHeader('X-Icinga-Title');
             if (!! title) {
@@ -128,6 +127,10 @@
         }).always(function () {
             delete $modal[0].dataset.noIcingaAjax;
         });
+
+        if (! ('baseTarget' in $form[0].dataset)) {
+            req.$redirectTarget = $modal.data('redirectTarget');
+        }
 
         if (typeof $autoSubmittedBy === 'undefined') {
             // otherwise the form is submitted several times by clicking the "Submit" button several times
