@@ -8,6 +8,7 @@ use Countable;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterChain;
 use Icinga\Data\Filterable;
+use Icinga\Module\Monitoring\DataView\Downtime;
 use IteratorAggregate;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Traversable;
@@ -155,7 +156,7 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
     /**
      * Get the scheduled downtimes
      *
-     * @return type
+     * @return Downtime
      */
     public function getScheduledDowntimes()
     {
