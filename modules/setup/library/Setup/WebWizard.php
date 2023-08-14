@@ -283,7 +283,7 @@ class WebWizard extends Wizard implements SetupWizard
         if ($newPage->getName() === 'setup_auth_db_resource') {
             $authData = $this->getPageData('setup_authentication_type');
             $skip = $authData['type'] !== 'db';
-        } elseif ($newPage->getname() === 'setup_ldap_discovery') {
+        } elseif ($newPage->getName() === 'setup_ldap_discovery') {
             $authData = $this->getPageData('setup_authentication_type');
             $skip = $authData['type'] !== 'ldap';
         /*} elseif ($newPage->getName() === 'setup_ldap_discovery_confirm') {
