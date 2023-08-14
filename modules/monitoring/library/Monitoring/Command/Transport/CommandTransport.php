@@ -55,7 +55,7 @@ class CommandTransport implements CommandTransportInterface
      *
      * @param   ConfigObject  $config
      *
-     * @return  LocalCommandFile|RemoteCommandFile
+     * @return  LocalCommandFile|RemoteCommandFile|ApiCommandTransport
      *
      * @throws  ConfigurationError
      */
