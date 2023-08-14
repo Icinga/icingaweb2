@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Doc\Search;
 
+use Icinga\Module\Doc\DocSection;
 use RecursiveFilterIterator;
 use RecursiveIteratorIterator;
 use Icinga\Data\Tree\TreeNodeIterator;
@@ -46,8 +47,8 @@ class DocSearchIterator extends RecursiveFilterIterator
      */
     public function accept(): bool
     {
+        /** @var $section DocSection */
         $section = $this->current();
-        /** @var $section \Icinga\Module\Doc\DocSection */
         $matches = array();
         if (($match = $this->search->search($section->getTitle())) !== null) {
             $matches[] = $match->setMatchType(DocSearchMatch::MATCH_HEADER);
