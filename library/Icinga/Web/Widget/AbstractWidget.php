@@ -6,6 +6,7 @@ namespace Icinga\Web\Widget;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Icinga;
 use Exception;
+use Zend_View_Abstract;
 
 /**
  * Web widgets MUST extend this class
