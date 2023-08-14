@@ -6,6 +6,7 @@ namespace Icinga\Module\Monitoring\Object;
 use ArrayIterator;
 use Countable;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterChain;
 use Icinga\Data\Filterable;
 use IteratorAggregate;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
@@ -79,7 +80,7 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
     }
 
     /**
-     * @return Filter
+     * @return Filter|FilterChain
      */
     public function getFilter()
     {
