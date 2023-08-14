@@ -117,6 +117,7 @@ class WebWizard extends Wizard implements SetupWizard
         $this->addPage(new SummaryPage(array('name' => 'setup_summary')));
 
         if (($modulePageData = $this->getPageData('setup_modules')) !== null) {
+            /** @var ModulePage $modulePage */
             $modulePage = $this->getPage('setup_modules')->populate($modulePageData);
             foreach ($modulePage->getModuleWizards() as $moduleWizard) {
                 $this->addPage($moduleWizard);
@@ -133,6 +134,7 @@ class WebWizard extends Wizard implements SetupWizard
     public function setupPage(Form $page, Request $request)
     {
         if ($page->getName() === 'setup_requirements') {
+            /** @var RequirementsPage $page */
             $page->setWizard($this);
         } elseif ($page->getName() === 'setup_authentication_backend') {
             /** @var AuthBackendPage $page */
@@ -177,9 +179,11 @@ class WebWizard extends Wizard implements SetupWizard
                 . ' it is going to be created once the wizard is about to be finished.'
             ));
         } elseif ($page->getName() === 'setup_usergroup_backend') {
+            /** @var UserGroupBackendPage $page */
             $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
             $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
         } elseif ($page->getName() === 'setup_admin_account') {
+            /** @var AdminAccountPage $page */
             $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
             $page->setGroupConfig($this->getPageData('setup_usergroup_backend'));
             $authData = $this->getPageData('setup_authentication_type');
@@ -189,6 +193,7 @@ class WebWizard extends Wizard implements SetupWizard
                 $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
             }
         } elseif ($page->getName() === 'setup_auth_db_creation' || $page->getName() === 'setup_config_db_creation') {
+            /** @var DatabaseCreationPage $page */
             $page->setDatabaseSetupPrivileges(
                 array_unique(array_merge($this->databaseCreationPrivileges, $this->databaseSetupPrivileges))
             );
@@ -197,6 +202,7 @@ class WebWizard extends Wizard implements SetupWizard
                 $this->getPageData('setup_auth_db_resource') ?: $this->getPageData('setup_config_db_resource')
             );
         } elseif ($page->getName() === 'setup_summary') {
+            /** @var SummaryPage $page */
             $page->setSubjectTitle('Icinga Web 2');
             $page->setSummary($this->getSetup()->getSummary());
         } elseif ($page->getName() === 'setup_config_db_resource') {
@@ -553,7 +559,9 @@ class WebWizard extends Wizard implements SetupWizard
             }
         }
 
-        $setup->addStep(new EnableModuleStep(array_keys($this->getPage('setup_modules')->getCheckedModules())));
+        /** @var ModulePage $setupPage */
+        $setupPage = $this->getPage('setup_modules');
+        $setup->addStep(new EnableModuleStep(array_keys($setupPage->getCheckedModules())));
 
         return $setup;
     }
