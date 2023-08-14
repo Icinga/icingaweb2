@@ -20,6 +20,7 @@ class RequirementsRenderer extends RecursiveIteratorIterator
     public function beginChildren(): void
     {
         $this->tags[] = '<li>';
+        /** @var RequirementSet $currentSet */
         $currentSet = $this->getSubIterator();
         $state = $currentSet->getState() ? 'fulfilled' : ($currentSet->isOptional() ? 'not-available' : 'missing');
         $this->tags[] = '<ul class="set-state ' . $state . '">';
