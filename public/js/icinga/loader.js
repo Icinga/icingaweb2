@@ -894,7 +894,7 @@
                     }
                 })
             } else {
-                this.renderContentToContainer(
+                let rendered = this.renderContentToContainer(
                     req.responseText,
                     req.$target,
                     req.action,
@@ -903,6 +903,10 @@
                     req.autosubmit || autoSubmit,
                     req.scripted
                 );
+
+                if (! rendered) {
+                    req.discarded = true;
+                }
             }
 
             if (oldNotifications) {
@@ -924,6 +928,14 @@
                 req = dataOrReq;
             } else {
                 req = reqOrError;
+            }
+
+            req.$target.data('lastUpdate', (new Date()).getTime());
+            delete this.requests[req.$target.attr('id')];
+            this.icinga.ui.fadeNotificationsAway();
+
+            if (req.discarded) {
+                return;
             }
 
             // Remove 'impact' class if there was such
@@ -977,10 +989,6 @@
                     this.icinga.history.pushUrl(url);
                 }
             }
-
-            req.$target.data('lastUpdate', (new Date()).getTime());
-            delete this.requests[req.$target.attr('id')];
-            this.icinga.ui.fadeNotificationsAway();
 
             var extraUpdates = req.getResponseHeader('X-Icinga-Extra-Updates');
             if (!! extraUpdates && req.getResponseHeader('X-Icinga-Redirect-Http') !== 'yes') {
@@ -1285,8 +1293,6 @@
                 }
             }
 
-            $container.trigger('beforerender', [content, action, autorefresh, scripted, autoSubmit]);
-
             var discard = false;
             $.each(_this.icinga.behaviors, function(name, behavior) {
                 if (behavior.renderHook) {
@@ -1304,6 +1310,8 @@
             });
 
             if (! discard) {
+                $container.trigger('beforerender', [content, action, autorefresh, scripted, autoSubmit]);
+
                 if ($container.closest('.dashboard').length) {
                     var title = $('h1', $container).first().detach();
                     $container.html(title).append(content);
@@ -1369,6 +1377,8 @@
 
             // Re-enable all click events (disabled as of performance reasons)
             // $('*').off('click');
+
+            return ! discard;
         },
 
         /**
