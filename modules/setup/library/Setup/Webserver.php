@@ -51,7 +51,7 @@ abstract class Webserver
      *
      * @param   string $type
      *
-     * @return  WebServer
+     * @return  Webserver
      *
      * @throws  ProgrammingError
      */
