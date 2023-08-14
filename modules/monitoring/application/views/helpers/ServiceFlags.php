@@ -1,8 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
+use Icinga\Web\View;
+
 class Zend_View_Helper_ServiceFlags extends Zend_View_Helper_Abstract
 {
+    /** @var View */
+    public $view;
+
     public function serviceFlags($service)
     {
         $icons = array();

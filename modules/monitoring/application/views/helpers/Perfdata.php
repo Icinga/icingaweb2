@@ -4,9 +4,13 @@
 use Icinga\Module\Monitoring\Plugin\Perfdata;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 use Icinga\Util\StringHelper;
+use Icinga\Web\View;
 
 class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {
+    /** @var View */
+    public $view;
+
     /**
      * Display the given perfdata string to the user
      *

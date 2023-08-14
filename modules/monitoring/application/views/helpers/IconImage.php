@@ -2,12 +2,17 @@
 /* Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
 use Icinga\Module\Monitoring\Object\Macro;
+use Icinga\Module\Monitoring\Object\MonitoredObject;
+use Icinga\Web\View;
 
 /**
  * Generate icons to describe a given hosts state
  */
 class Zend_View_Helper_IconImage extends Zend_View_Helper_Abstract
 {
+    /** @var View */
+    public $view;
+
     /**
      * Create dispatch instance
      *
