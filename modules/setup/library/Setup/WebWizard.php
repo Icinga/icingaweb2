@@ -6,6 +6,7 @@ namespace Icinga\Module\Setup;
 use Icinga\Application\Platform;
 use Icinga\Module\Setup\Requirement\SetRequirement;
 use Icinga\Module\Setup\Requirement\WebLibraryRequirement;
+use InvalidArgumentException;
 use PDOException;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
