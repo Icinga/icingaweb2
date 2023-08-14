@@ -350,10 +350,10 @@ class Perfdata
     /**
      * Return the given value converted to its smallest supported representation
      *
-     * @param   string      $value      The value to convert
-     * @param   string      $fromUnit   The unit the value currently represents
+     * @param   string      $value        The value to convert
+     * @param   string      $fromUnit     The unit the value currently represents
      *
-     * @return  null|float              Null in case the value is not a number
+     * @return  ThresholdRange|null|float Null in case the value is not a number
      */
     protected static function convert($value, $fromUnit = null)
     {
