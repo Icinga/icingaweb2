@@ -5,6 +5,7 @@ namespace Icinga\Module\Monitoring\Object;
 
 use Exception;
 use Icinga\Application\Logger;
+use stdClass;
 
 /**
  * Expand macros in string in the context of MonitoredObjects
