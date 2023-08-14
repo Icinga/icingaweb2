@@ -6,6 +6,7 @@ namespace Icinga\Module\Setup\Utils;
 use PDO;
 use PDOException;
 use LogicException;
+use Zend_Db_Adapter_Pdo_Abstract;
 use Zend_Db_Adapter_Pdo_Mysql;
 use Zend_Db_Adapter_Pdo_Pgsql;
 use Icinga\Util\File;
