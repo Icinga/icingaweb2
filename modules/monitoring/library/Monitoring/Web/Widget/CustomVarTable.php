@@ -203,6 +203,7 @@ class CustomVarTable extends BaseHtmlElement
     {
         $table = new self($entries);
 
+        /** @var HtmlDocument $wrapper */
         $wrapper = $this->getWrapper();
         if ($wrapper === null) {
             $wrapper = new HtmlDocument();
