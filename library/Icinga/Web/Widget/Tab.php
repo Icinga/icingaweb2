@@ -14,7 +14,7 @@ use Icinga\Web\Url;
  * @property string $title     Tab title
  * @property string $icon      Icon URL, preferrably relative to the Icinga
  *                             base URL
- * @property string $url       Action URL, preferrably relative to the Icinga
+ * @property string|URL $url   Action URL, preferrably relative to the Icinga
  *                             base URL
  * @property string $urlParams Action URL Parameters
  *
@@ -52,7 +52,7 @@ class Tab extends AbstractWidget
     /**
      * The Url this tab points to
      *
-     * @var string|null
+     * @var Url|null
      */
     private $url = null;
 
@@ -172,7 +172,7 @@ class Tab extends AbstractWidget
     /**
      * Set the Url this tab points to
      *
-     * @param string $url       The Url to use for this tab
+     * @param string|Url $url       The Url to use for this tab
      */
     public function setUrl($url)
     {
