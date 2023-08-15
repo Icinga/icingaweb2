@@ -30,8 +30,8 @@ class UrlParams
      * Returns the last URL param if defined multiple times, $default if not
      * given at all
      *
-     * @param string $param   The parameter you're interested in
-     * @param string $default An optional default value
+     * @param string                $param   The parameter you're interested in
+     * @param string|int|bool|null  $default An optional default value
      *
      * @return mixed
      */
