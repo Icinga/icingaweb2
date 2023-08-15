@@ -73,6 +73,7 @@ class Documentation
             return "The '$module' module does not provide any CLI commands\n";
         }
         $d = '';
+        $obj = null;
         if ($command) {
             $obj = $this->loader->getModuleCommandInstance($module, $command);
         }
