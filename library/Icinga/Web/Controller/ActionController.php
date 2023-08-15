@@ -588,6 +588,6 @@ class ActionController extends Zend_Controller_Action
             return call_user_func_array(array($this, $deprecatedMethod), $params);
         }
 
-        return parent::__call($name, $params);
+        parent::__call($name, $params);
     }
 }
