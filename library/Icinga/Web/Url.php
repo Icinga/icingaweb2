@@ -642,8 +642,8 @@ class Url
     /**
      * Set a single parameter, overwriting any existing one with the same name
      *
-     * @param   string          $param      The query parameter name
-     * @param   array|string    $value      An array or string to set as the parameter value
+     * @param   string               $param      The query parameter name
+     * @param   array|string|bool    $value      An array or string to set as the parameter value
      *
      * @return  $this
      */
