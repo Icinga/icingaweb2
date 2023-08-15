@@ -988,7 +988,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      *
      * @param   string              $name       The alias or column name to join into $target
      * @param   string              $target     The table to join $name into
-     * @param   RepositoryQUery     $query      The query to apply the JOIN-clause on
+     * @param   RepositoryQuery     $query      The query to apply the JOIN-clause on
      *
      * @return  string|null                     The resolved alias or $name, null if no join logic is found
      */
