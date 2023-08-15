@@ -98,7 +98,7 @@ class ResourceConfigForm extends ConfigForm
      * @param   string      $name           The name of the resource to edit
      * @param   array       $values         The values to edit the configuration with
      *
-     * @return  array                       The edited configuration
+     * @return  ConfigObject                The edited configuration
      *
      * @throws  InvalidArgumentException    In case the resource does not exist
      */
@@ -134,7 +134,7 @@ class ResourceConfigForm extends ConfigForm
      *
      * @param   string      $name           The name of the resource to remove
      *
-     * @return  array                       The removed resource configuration
+     * @return  ConfigObject                The removed resource configuration
      *
      * @throws  InvalidArgumentException    In case the resource does not exist
      */
