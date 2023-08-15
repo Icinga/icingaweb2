@@ -66,6 +66,9 @@ class Web extends EmbeddedWeb
      */
     private $user;
 
+    /** @var array */
+    protected $accessibleMenuItems;
+
     /**
      * Identify web bootstrap
      *
