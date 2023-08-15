@@ -941,7 +941,7 @@ abstract class Repository implements Selectable
         }
 
         try {
-            return ASN1::parseGeneralizedTime($value)->getTimeStamp();
+            return ASN1::parseGeneralizedTime($value)->getTimestamp();
         } catch (InvalidArgumentException $e) {
             Logger::debug(sprintf('Repository "%s": %s', $this->getName(), $e->getMessage()));
         }
