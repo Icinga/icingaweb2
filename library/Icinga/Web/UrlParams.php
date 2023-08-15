@@ -180,8 +180,8 @@ class UrlParams
      * This will add the given parameter, regardless of whether it already
      * exists.
      *
-     * @param string $param The parameter you're interested in
-     * @param string $value The value to be stored
+     * @param string       $param The parameter you're interested in
+     * @param string|bool  $value The value to be stored
      *
      * @return $this
      */
