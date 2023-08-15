@@ -18,6 +18,7 @@ use Icinga\Forms\Config\Resource\LdapResourceForm;
 use Icinga\Forms\Config\Resource\SshResourceForm;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
+use Zend_Form_Element;
 
 class ResourceConfigForm extends ConfigForm
 {
