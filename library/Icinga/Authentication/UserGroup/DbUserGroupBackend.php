@@ -271,7 +271,7 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
      */
     protected function persistGroupId($groupName)
     {
-        if (! $groupName || empty($groupName) || is_numeric($groupName)) {
+        if (empty($groupName) || is_numeric($groupName)) {
             return $groupName;
         }
 
