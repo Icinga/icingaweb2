@@ -791,7 +791,7 @@ abstract class Repository implements Selectable
     {
         $conversionRules = $this->getConversionRules();
         if (! isset($conversionRules[$table])) {
-            return;
+            return null;
         }
 
         $tableRules = $conversionRules[$table];
