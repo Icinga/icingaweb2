@@ -98,7 +98,7 @@ class Url
      * and overwrite any existing parameters
      *
      * @param   UrlParams|array $params     Parameters that should additionally be considered for the url
-     * @param   Zend_Request    $request    A request to use instead of the default one
+     * @param   Request         $request    A request to use instead of the default one
      *
      * @return  static
      */
@@ -132,7 +132,7 @@ class Url
     /**
      * Return a request object that should be used for determining the URL
      *
-     * @return  Zend_Abstract_Request
+     * @return  Request
      */
     protected static function getRequest()
     {
@@ -154,7 +154,7 @@ class Url
      *
      * @param   string          $url        The string representation of the url to parse
      * @param   array           $params     An array of parameters that should additionally be considered for the url
-     * @param   Zend_Request    $request    A request to use instead of the default one
+     * @param   Request         $request    A request to use instead of the default one
      *
      * @return  static
      */
