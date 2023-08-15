@@ -246,7 +246,7 @@ class Web extends EmbeddedWeb
         if ($type === 'dashboard-pane') {
             $panes = array();
             foreach ($config as $dashletName => $dashletConfig) {
-                if ($this->hasAccessToSharedNavigationItem($dashletConfig)) {
+                if ($this->hasAccessToSharedNavigationItem($dashletConfig, $config)) {
                     // TODO: Throw ConfigurationError if pane or url is missing
                     $panes[$dashletConfig->pane][$dashletName] = $dashletConfig->url;
                 }
