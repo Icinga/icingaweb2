@@ -99,7 +99,7 @@ class View extends Zend_View_Abstract
     /**
      * Escape the given value top be safely used in view scripts
      *
-     * @param  string $var  The output to be escaped
+     * @param  ?string $var  The output to be escaped
      * @return string
      */
     public function escape($var)
