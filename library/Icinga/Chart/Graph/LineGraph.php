@@ -45,6 +45,12 @@ class LineGraph extends Styleable implements Drawable
      */
     private $tooltips;
 
+    /** @var array */
+    private $graphs;
+
+    /** @var int */
+    private $order;
+
     /**
      * The default stroke width
      * @var int
