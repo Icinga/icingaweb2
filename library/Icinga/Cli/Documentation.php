@@ -12,6 +12,10 @@ class Documentation
 {
     protected $icinga;
 
+    protected $app;
+
+    protected $loader;
+
     public function __construct(App $app)
     {
         $this->app = $app;
