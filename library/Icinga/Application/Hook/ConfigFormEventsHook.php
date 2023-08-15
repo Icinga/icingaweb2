@@ -63,7 +63,7 @@ abstract class ConfigFormEventsHook
      */
     final public static function getLastErrors()
     {
-        return static::$lastErrors;
+        return self::$lastErrors;
     }
 
     /**
@@ -92,7 +92,7 @@ abstract class ConfigFormEventsHook
 
     private static function runEventMethod($eventMethod, Form $form)
     {
-        static::$lastErrors = [];
+        self::$lastErrors = [];
 
         if (! Hook::has('ConfigFormEvents')) {
             return true;
@@ -109,7 +109,7 @@ abstract class ConfigFormEventsHook
             try {
                 $hook->$eventMethod($form);
             } catch (\Exception $e) {
-                static::$lastErrors[] = $e->getMessage();
+                self::$lastErrors[] = $e->getMessage();
 
                 Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
 
