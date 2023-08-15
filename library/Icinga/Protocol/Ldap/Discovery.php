@@ -130,7 +130,7 @@ class Discovery
      * @param $host         The host on which to execute the discovery
      * @param $port         The port on which to execute the discovery
      *
-     * @return Discover     The resulting Discovery
+     * @return Discovery     The resulting Discovery
      */
     public static function discover($host, $port)
     {
