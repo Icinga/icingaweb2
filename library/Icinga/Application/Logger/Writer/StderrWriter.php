@@ -41,6 +41,7 @@ class StderrWriter extends LogWriter
      */
     public function log($severity, $message)
     {
+        $color = null;
         switch ($severity) {
             case Logger::ERROR:
                 $color = 'red';
