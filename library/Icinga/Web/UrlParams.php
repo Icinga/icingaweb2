@@ -74,7 +74,7 @@ class UrlParams
      * $default if none.
      *
      * @param string $param   The parameter you're interested in
-     * @param string $default An optional default value
+     * @param array  $default An optional default value
      *
      * @return mixed
      */
