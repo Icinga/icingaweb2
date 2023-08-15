@@ -1315,7 +1315,7 @@ class Module
         $router = $this->app->getFrontController()->getRouter();
 
         // TODO: We should not be required to do this. Please check dispatch()
-        $this->app->getfrontController()->addControllerDirectory(
+        $this->app->getFrontController()->addControllerDirectory(
             $this->getControllerDir(),
             $this->getName()
         );
