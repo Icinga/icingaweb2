@@ -12,6 +12,7 @@ use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Web\Widget\Icon;
+use Closure;
 
 class CustomVarTable extends BaseHtmlElement
 {
