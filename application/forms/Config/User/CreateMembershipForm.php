@@ -113,6 +113,7 @@ class CreateMembershipForm extends Form
         }
 
         $single = null;
+        $groupName = null;
         foreach ($this->getValue('groups') as $backendAndGroup) {
             list($backendName, $groupName) = explode(';', $backendAndGroup, 2);
             try {
