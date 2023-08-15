@@ -3,6 +3,7 @@
 
 namespace Icinga\Application;
 
+use Icinga\Exception\NotWritableError;
 use Iterator;
 use Countable;
 use LogicException;
