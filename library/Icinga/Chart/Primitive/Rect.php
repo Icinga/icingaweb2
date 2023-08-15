@@ -3,7 +3,7 @@
 
 namespace Icinga\Chart\Primitive;
 
-use DomElement;
+use DOMElement;
 use Icinga\Chart\Render\RenderContext;
 use Icinga\Chart\Format;
 
