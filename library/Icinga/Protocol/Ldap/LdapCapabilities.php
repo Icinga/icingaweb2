@@ -4,6 +4,7 @@
 namespace Icinga\Protocol\Ldap;
 
 use Icinga\Application\Logger;
+use stdClass;
 
 /**
  * The properties and capabilities of an LDAP server
@@ -83,7 +84,7 @@ class LdapCapabilities
     /**
      * Attributes of the LDAP Server returned by the discovery query
      *
-     * @var StdClass
+     * @var stdClass
      */
     private $attributes;
 
@@ -97,7 +98,7 @@ class LdapCapabilities
     /**
      * Construct a new capability
      *
-     * @param $attributes   StdClass    The attributes returned, may be null for guessing default capabilities
+     * @param $attributes   stdClass    The attributes returned, may be null for guessing default capabilities
      */
     public function __construct($attributes = null)
     {
@@ -107,7 +108,7 @@ class LdapCapabilities
     /**
      * Set the attributes and (re)build the OIDs
      *
-     * @param $attributes   StdClass    The attributes returned, may be null for guessing default capabilities
+     * @param $attributes   stdClass    The attributes returned, may be null for guessing default capabilities
      */
     protected function setAttributes($attributes)
     {
