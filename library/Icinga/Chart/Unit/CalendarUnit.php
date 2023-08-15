@@ -124,7 +124,7 @@ class CalendarUnit extends LinearUnit
      *
      * @return int The position of the next tick (between 0 and 100)
      */
-    public function current()
+    public function current(): int
     {
         return 100 * (key($this->labels) / count($this->labels));
     }
@@ -132,7 +132,7 @@ class CalendarUnit extends LinearUnit
     /**
      * Move to next tick
      */
-    public function next()
+    public function next(): void
     {
         next($this->labels);
     }
@@ -142,7 +142,7 @@ class CalendarUnit extends LinearUnit
      *
      * @return string
      */
-    public function key()
+    public function key(): string
     {
         return current($this->labels);
     }
@@ -152,7 +152,7 @@ class CalendarUnit extends LinearUnit
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return current($this->labels) !== false;
     }
@@ -160,7 +160,7 @@ class CalendarUnit extends LinearUnit
     /**
      * Rewind the internal array
      */
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->labels);
     }

@@ -111,7 +111,7 @@ class LogarithmicUnit implements AxisUnit
      *
      * @return int
      */
-    public function current()
+    public function current(): int
     {
         return $this->currentTick * (100 / $this->getTicks());
     }
@@ -119,7 +119,7 @@ class LogarithmicUnit implements AxisUnit
     /**
      * Calculate the next tick and tick value
      */
-    public function next()
+    public function next(): void
     {
         ++ $this->currentTick;
     }
@@ -129,7 +129,7 @@ class LogarithmicUnit implements AxisUnit
      *
      * @return string The label for the current tick
      */
-    public function key()
+    public function key(): string
     {
         $currentBase = $this->currentTick + $this->minExp;
         if (abs($currentBase) > 4) {
@@ -143,7 +143,7 @@ class LogarithmicUnit implements AxisUnit
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->currentTick >= 0 && $this->currentTick < $this->getTicks();
     }
@@ -151,7 +151,7 @@ class LogarithmicUnit implements AxisUnit
     /**
      * Reset the current tick and label value
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->currentTick = 0;
     }
