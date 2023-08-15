@@ -3,6 +3,7 @@
 
 namespace Icinga\Repository;
 
+use Icinga\Exception\QueryException;
 use Zend_Db_Expr;
 use Icinga\Data\Db\DbConnection;
 use Icinga\Data\Extensible;
