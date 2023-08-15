@@ -74,6 +74,7 @@ class LineGraph extends Styleable implements Drawable
         $this->graphs = $graphs;
 
         $this->tooltips = $tooltips;
+        $ts = [];
         foreach ($this->tooltips as $value) {
             $ts[] = $value;
         }

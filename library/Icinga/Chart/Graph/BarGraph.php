@@ -67,6 +67,7 @@ class BarGraph extends Styleable implements Drawable
         $this->dataSet = $dataSet;
 
         $this->tooltips = $tooltips;
+        $ts = [];
         foreach ($this->tooltips as $value) {
             $ts[] = $value;
         }
