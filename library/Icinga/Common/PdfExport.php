@@ -41,7 +41,7 @@ trait PdfExport
             ? $this->pdfHeaderImage
             : Icinga::app()->getBootstrapDirectory() . '/' . $this->pdfHeaderImage;
         $encodedIcon = is_readable($iconPath) ? base64_encode(file_get_contents($iconPath)) : null;
-        $html = $this instanceof CompatController && ! empty($this->content)
+        $html = $this instanceof CompatController && ! $this->content->isEmpty()
             ? $this->content
             : $this->renderControllerAction();
 
