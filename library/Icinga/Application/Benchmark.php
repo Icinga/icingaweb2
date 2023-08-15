@@ -77,7 +77,7 @@ class Benchmark
      * otherwise. Use Benchmark::TIME and Benchmark::MEMORY to choose whether
      * you prefer to show either time or memory or both in your output
      *
-     * @param  int   Whether to get time and/or memory summary
+     * @param  ?int $what  Whether to get time and/or memory summary
      * @return string
      */
     public static function dump($what = null)
@@ -95,7 +95,7 @@ class Benchmark
      * Use Benchmark::TIME and Icinga::MEMORY to choose whether you prefer to
      * show either time or memory or both in your output
      *
-     * @param  int   Whether to get time and/or memory summary
+     * @param  ?int $what   Whether to get time and/or memory summary
      * @return string
      */
     public static function renderToText($what = null)
@@ -131,7 +131,8 @@ class Benchmark
      * Use Benchmark::TIME and Benchmark::MEMORY to choose whether you prefer
      * to show either time or memory or both in your output
      *
-     * @param  int   Whether to get time and/or memory summary
+     * @param  ?int $what  Whether to get time and/or memory summary
+     *
      * @return string
      */
     public static function renderToHtml($what = null)
@@ -176,8 +177,9 @@ class Benchmark
      * Use Benchmark::TIME and Benchmark::MEMORY to choose whether you prefer
      * to have either time or memory or both in your output
      *
-     * @param  int   Whether to get time and/or memory summary
-     * @return array
+     * @param  ?int $what  Whether to get time and/or memory summary
+     *
+     * @return object
      */
     protected static function prepareDataForRendering($what = null)
     {
