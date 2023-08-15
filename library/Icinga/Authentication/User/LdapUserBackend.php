@@ -4,6 +4,7 @@
 namespace Icinga\Authentication\User;
 
 use DateTime;
+use Exception;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
