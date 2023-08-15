@@ -147,6 +147,7 @@ class AddMemberForm extends Form
         }
 
         $single = null;
+        $userName = null;
         foreach ($userNames as $userName) {
             try {
                 $this->backend->insert(
