@@ -141,6 +141,11 @@ abstract class Command
         return $this->trace;
     }
 
+    /**
+     * @param $msg
+     *
+     * @throws IcingaException
+     */
     public function fail($msg)
     {
         throw new IcingaException('%s', $msg);
