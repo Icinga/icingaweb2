@@ -298,7 +298,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
         } elseif (is_string($table)) {
             $table = (strpos($table, $prefix) === false ? $prefix : '') . $table;
         } else {
-            throw new IcingaException('Table prefix handling for type "%s" is not supported', type($table));
+            throw new IcingaException('Table prefix handling for type "%s" is not supported', gettype($table));
         }
 
         return $table;
@@ -331,7 +331,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
                 $table = str_replace($prefix, '', $table);
             }
         } else {
-            throw new IcingaException('Table prefix handling for type "%s" is not supported', type($table));
+            throw new IcingaException('Table prefix handling for type "%s" is not supported', gettype($table));
         }
 
         return $table;
