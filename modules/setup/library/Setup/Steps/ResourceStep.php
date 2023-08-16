@@ -57,6 +57,7 @@ class ResourceStep extends Step
             $pageTitle = '<h2>' . mt('setup', 'Resource', 'setup.page.title') . '</h2>';
         }
 
+        $dbHtml = null;
         if (isset($this->data['dbResourceConfig'])) {
             $dbTitle = '<h3>' . mt('setup', 'Database', 'setup.page.title') . '</h3>';
             $dbHtml = ''
@@ -142,6 +143,7 @@ class ResourceStep extends Step
                 . '</table>';
         }
 
+        $ldapHtml = null;
         if (isset($this->data['ldapResourceConfig'])) {
             $ldapTitle = '<h3>LDAP</h3>';
             $ldapHtml = ''
