@@ -105,7 +105,7 @@ class HostsController extends Controller
         }
 
         $acknowledgedObjects = $this->hostList->getAcknowledgedObjects();
-        if (! empty($acknowledgedObjects)) {
+        if ($acknowledgedObjects->count()) {
             $removeAckForm = new RemoveAcknowledgementCommandForm();
             $removeAckForm
                 ->setObjects($acknowledgedObjects)
