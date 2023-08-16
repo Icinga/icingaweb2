@@ -3,7 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Timeline;
 
-use StdClass;
+use stdClass;
 use Iterator;
 use DateTime;
 use DateInterval;
@@ -101,7 +101,7 @@ class TimeRange implements Iterator
      *
      * @param   DateTime        $dateTime       The date and time for which to search the timeframe
      * @param   bool            $asTimestamp    Whether the start of the timeframe should be returned as timestamp
-     * @return  StdClass|int                    An object with a ´start´ and ´end´ property or a timestamp
+     * @return  stdClass|int                    An object with a ´start´ and ´end´ property or a timestamp
      */
     public function findTimeframe(DateTime $dateTime, $asTimestamp = false)
     {
@@ -140,7 +140,7 @@ class TimeRange implements Iterator
      * Return the appropriate timeframe for the given timeframe start
      *
      * @param   int|DateTime    $time   The timestamp or date and time for which to return the timeframe
-     * @return  StdClass                An object with a ´start´ and ´end´ property
+     * @return  stdClass                An object with a ´start´ and ´end´ property
      */
     public function getTimeframe($time)
     {
@@ -196,11 +196,11 @@ class TimeRange implements Iterator
      *
      * @param   DateTime    $start  The start of the timeframe
      * @param   DateTime    $end    The end of the timeframe
-     * @return  StdClass
+     * @return  stdClass
      */
     protected function buildTimeframe(DateTime $start, DateTime $end)
     {
-        $timeframe = new StdClass();
+        $timeframe = new stdClass();
         $timeframe->start = $start;
         $timeframe->end = $end;
         return $timeframe;
@@ -231,7 +231,7 @@ class TimeRange implements Iterator
     /**
      * Return the current value in the iteration
      *
-     * @return  StdClass
+     * @return  stdClass
      */
     public function current(): object
     {
