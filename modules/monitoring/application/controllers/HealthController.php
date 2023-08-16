@@ -88,7 +88,8 @@ class HealthController extends Controller
         $this->handleFormatRequest($programStatus);
         $programStatus = $programStatus->fetchRow();
         if ($programStatus === false) {
-            return $this->render('not-running', true, null);
+            $this->render('not-running', true, null);
+            return;
         }
         $this->view->programStatus = $programStatus;
         $toggleFeaturesForm = new ToggleInstanceFeaturesCommandForm();
