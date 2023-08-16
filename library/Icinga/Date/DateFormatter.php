@@ -159,6 +159,8 @@ class DateFormatter
         if ($timeOnly) {
             return $ago;
         }
+
+        $formatted = null;
         switch ($type) {
             case static::DATE:
                 // Move to next case
@@ -196,6 +198,8 @@ class DateFormatter
         if ($timeOnly) {
             return $since;
         }
+
+        $formatted = null;
         switch ($type) {
             case static::RELATIVE:
                 $formatted = sprintf(
@@ -235,6 +239,8 @@ class DateFormatter
         if ($timeOnly) {
             return $until;
         }
+
+        $formatted = null;
         switch ($type) {
             case static::DATE:
                 // Move to next case
