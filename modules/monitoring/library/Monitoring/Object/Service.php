@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Object;
 
 use Icinga\Data\Filter\FilterEqual;
+use Icinga\Module\Monitoring\DataView\Servicestatus;
 use InvalidArgumentException;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
@@ -102,7 +103,7 @@ class Service extends MonitoredObject
     /**
      * Get the data view
      *
-     * @return \Icinga\Module\Monitoring\DataView\ServiceStatus
+     * @return Servicestatus
      */
     protected function getDataView()
     {

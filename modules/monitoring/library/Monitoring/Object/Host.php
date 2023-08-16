@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Object;
 
 use Icinga\Data\Filter\FilterEqual;
+use Icinga\Module\Monitoring\DataView\Hoststatus;
 use InvalidArgumentException;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
@@ -85,7 +86,7 @@ class Host extends MonitoredObject
     /**
      * Get the data view to fetch the host information from
      *
-     * @return \Icinga\Module\Monitoring\DataView\HostStatus
+     * @return Hoststatus
      */
     protected function getDataView()
     {
