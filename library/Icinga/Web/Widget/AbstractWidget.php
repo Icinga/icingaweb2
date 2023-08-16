@@ -112,7 +112,7 @@ abstract class AbstractWidget
     public function __toString()
     {
         try {
-            $html = $this->render($this->view());
+            $html = $this->render();
         } catch (Exception $e) {
             return htmlspecialchars($e->getMessage());
         }
