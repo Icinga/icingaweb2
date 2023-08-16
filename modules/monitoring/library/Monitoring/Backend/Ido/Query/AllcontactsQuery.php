@@ -40,6 +40,7 @@ class AllcontactsQuery extends IdoQuery
 
     protected $contacts;
     protected $contactgroups;
+    protected $baseQuery;
     protected $useSubqueryCount = true;
 
     public function requireColumn($alias)
