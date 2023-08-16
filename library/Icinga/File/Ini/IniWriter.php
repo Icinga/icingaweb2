@@ -118,7 +118,7 @@ class IniWriter
     {
         $doc = new Document();
         $dangling = $oldDoc->getCommentsDangling();
-        if (isset($dangling)) {
+        if (! empty($dangling)) {
             $doc->setCommentsDangling($dangling);
         }
         foreach ($newconfig->toArray() as $section => $directives) {
