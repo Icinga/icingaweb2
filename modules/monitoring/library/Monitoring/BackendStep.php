@@ -80,6 +80,8 @@ class BackendStep extends Step
             $this->data['backendConfig']['name']
         ) . '</p>';
 
+        $resourceTitle = null;
+        $resourceHtml = null;
         if ($this->data['resourceConfig']['type'] === 'db') {
             $resourceTitle = '<h3>' . mt('monitoring', 'Database Resource') . '</h3>';
             $resourceHtml = ''
