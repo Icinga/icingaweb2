@@ -803,6 +803,6 @@ class ListController extends Controller
      */
     private function createTabs()
     {
-        $this->getTabs()->extend(new OutputFormat())->extend(new DashboardAction())->extend(new MenuAction());
+        return $this->getTabs()->extend(new OutputFormat())->extend(new DashboardAction())->extend(new MenuAction());
     }
 }
