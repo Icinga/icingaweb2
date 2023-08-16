@@ -482,7 +482,7 @@ class Perfdata
     {
         return array(
             'label' => $this->getLabel(),
-            'value' => $this->format($this->getvalue()),
+            'value' => $this->format($this->getValue()),
             'min' => isset($this->minValue) && !$this->isPercentage()
                 ? $this->format($this->minValue)
                 : '',
