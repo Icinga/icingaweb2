@@ -152,7 +152,7 @@ class ModuleController extends DocController
         $lastModified = gmdate('D, d M Y H:i:s T', $imageInfo->getMTime());
         $match = false;
 
-        if (isset($_SERER['HTTP_IF_NONE_MATCH'])) {
+        if (isset($_SERVER['HTTP_IF_NONE_MATCH'])) {
             $ifNoneMatch = explode(', ', stripslashes($_SERVER['HTTP_IF_NONE_MATCH']));
             foreach ($ifNoneMatch as $tag) {
                 if ($tag === $etag) {
