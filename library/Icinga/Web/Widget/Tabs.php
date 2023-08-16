@@ -108,6 +108,13 @@ EOT;
     private $closeTab = true;
 
     /**
+     * CSS class name(s) for the &lt;ul&gt; element
+     *
+     * @var string
+     */
+    private $tab_class;
+
+    /**
      * Set whether the current tab is closable
      */
     public function hideCloseButton()
