@@ -196,8 +196,8 @@ class UrlParams
      * This may be used with either a list of values for a single parameter or
      * with a list of parameter / value pairs.
      *
-     * @param string $param Parameter name or param/value list
-     * @param string $value The value to be stored
+     * @param string|array $param Parameter name or param/value list
+     * @param ?array       $value The value to be stored
      *
      * @return $this
      */
