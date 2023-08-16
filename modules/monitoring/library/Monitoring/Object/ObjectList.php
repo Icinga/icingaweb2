@@ -280,11 +280,11 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
                 if (! isset($status)) {
                     $status = $enabled;
                 } elseif ($status !== $enabled) {
-                    $status = 2;
-                    unset($features[$status]);
+                    unset($features[$feature]);
                     if (empty($features)) {
                         break 2;
                     }
+
                     break;
                 }
             }
