@@ -188,6 +188,7 @@ class Loader
             $params = $this->app->getParams();
         }
 
+        $first = null;
         if ($this->moduleName === null) {
             $first = $params->shift();
             if (! $first) {
