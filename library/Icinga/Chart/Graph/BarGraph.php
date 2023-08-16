@@ -98,7 +98,7 @@ class BarGraph extends Styleable implements Drawable
      * @param array     $point          The
      * @param string    $fill           The fill color to use
      * @param           $strokeWidth
-     * @param null      $index
+     * @param ?int      $index
      *
      * @return Rect
      */

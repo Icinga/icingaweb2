@@ -151,7 +151,7 @@ class DateFormatter
      * @param   bool        $timeOnly
      * @param   bool        $requireTime
      *
-     * @return  string
+     * @return  ?string
      */
     public static function timeAgo($time, $timeOnly = false, $requireTime = false)
     {
@@ -190,7 +190,7 @@ class DateFormatter
      * @param   bool        $timeOnly
      * @param   bool        $requireTime
      *
-     * @return  string
+     * @return  ?string
      */
     public static function timeSince($time, $timeOnly = false, $requireTime = false)
     {
@@ -228,7 +228,7 @@ class DateFormatter
      * @param   bool        $timeOnly
      * @param   bool        $requireTime
      *
-     * @return  string
+     * @return  ?string
      */
     public static function timeUntil($time, $timeOnly = false, $requireTime = false)
     {

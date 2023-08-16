@@ -55,7 +55,7 @@ abstract class LdapRepository extends Repository
     /**
      * Return the given attribute name normed to known LDAP enviroments, if possible
      *
-     * @param   string  $name
+     * @param   ?string  $name
      *
      * @return  string
      */

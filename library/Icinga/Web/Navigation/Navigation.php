@@ -346,7 +346,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      *
      * @param   string  $name
      *
-     * @return  NavigationItem
+     * @return  ?NavigationItem
      */
     public function findItem($name)
     {

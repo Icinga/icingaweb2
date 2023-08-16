@@ -25,7 +25,7 @@ abstract class Step
     /**
      * Return a textual summary of all configuration changes made
      *
-     * @return  array
+     * @return  ?array
      */
     abstract public function getReport();
 }

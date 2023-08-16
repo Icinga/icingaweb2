@@ -17,7 +17,7 @@ class FormDescriptions extends Zend_Form_Decorator_Abstract
      *
      * @param   string      $content    The html rendered so far
      *
-     * @return  string                  The updated html
+     * @return  ?string                  The updated html
      */
     public function render($content = '')
     {

@@ -101,7 +101,7 @@ class TimeRange implements Iterator
      *
      * @param   DateTime        $dateTime       The date and time for which to search the timeframe
      * @param   bool            $asTimestamp    Whether the start of the timeframe should be returned as timestamp
-     * @return  stdClass|int                    An object with a ´start´ and ´end´ property or a timestamp
+     * @return  stdClass|int|null                    An object with a ´start´ and ´end´ property or a timestamp
      */
     public function findTimeframe(DateTime $dateTime, $asTimestamp = false)
     {

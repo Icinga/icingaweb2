@@ -558,7 +558,7 @@ class DbTool
      * @param   string  $username       The login name for which to check the privileges,
      *                                  if NULL the current login is used
      *
-     * @return  bool
+     * @return  ?bool
      */
     public function checkPrivileges(array $privileges, array $context = null, $username = null)
     {
@@ -574,7 +574,7 @@ class DbTool
      *
      * @param   array   $privileges     The privileges that should be grantable
      *
-     * @return  bool
+     * @return  ?bool
      */
     public function isGrantable($privileges)
     {
@@ -680,7 +680,7 @@ class DbTool
      *
      * @param   string  $username   The username to search
      *
-     * @return  bool
+     * @return  ?bool
      */
     public function hasLogin($username)
     {

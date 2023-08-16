@@ -295,7 +295,7 @@ class ResourceConfigForm extends ConfigForm
      *
      * @param   Form    $form
      *
-     * @return  Inspection
+     * @return  ?Inspection
      */
     public static function inspectResource(Form $form)
     {

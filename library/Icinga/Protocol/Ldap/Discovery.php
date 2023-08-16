@@ -94,7 +94,7 @@ class Discovery
     /**
      * Discover LDAP servers on the given domain
      *
-     * @param  string   $domain The object containing the form elements
+     * @param  ?string   $domain The object containing the form elements
      *
      * @return Discovery        True when the discovery was successful, false when the configuration was guessed
      */

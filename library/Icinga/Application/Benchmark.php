@@ -78,7 +78,6 @@ class Benchmark
      * you prefer to show either time or memory or both in your output
      *
      * @param  ?int $what  Whether to get time and/or memory summary
-     * @return string
      */
     public static function dump($what = null)
     {

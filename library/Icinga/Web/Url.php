@@ -243,7 +243,7 @@ class Url
      *
      * @param string    $url        The url to apply the new filter to
      * @param Filter    $filter     The base filter
-     * @param Filter    $optional   The optional filter
+     * @param ?Filter    $optional   The optional filter
      *
      * @return static               The altered URL containing the new filter
      * @throws ProgrammingError
