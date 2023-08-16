@@ -449,7 +449,7 @@ abstract class IdoQuery extends DbQuery
     {
         $this->requireColumn($alias);
 
-        if ($this->isCustomvar($alias)) {
+        if ($this->isCustomVar($alias)) {
             $column = $this->getCustomvarColumnName($alias);
         } elseif ($this->hasAliasName($alias)) {
             $column = $this->aliasToColumnName($alias);
@@ -680,7 +680,7 @@ abstract class IdoQuery extends DbQuery
 
             $this->requireColumn($alias);
 
-            if ($this->isCustomvar($alias)) {
+            if ($this->isCustomVar($alias)) {
                 $column = $this->getCustomvarColumnName($alias);
             } else {
                 $column = $this->aliasToColumnName($alias);
@@ -945,7 +945,7 @@ abstract class IdoQuery extends DbQuery
             foreach ($extensions as $vTable => $cols) {
                 if (! array_key_exists($vTable, $this->columnMap)) {
                     $this->hookedVirtualTables[$vTable] = $hook;
-                    $this->columMap[$vTable] = array();
+                    $this->columnMap[$vTable] = array();
                 }
 
                 foreach ($cols as $k => $v) {
@@ -1015,7 +1015,7 @@ abstract class IdoQuery extends DbQuery
                 continue;
             }
             $this->requireColumn($col);
-            if ($this->isCustomvar($col)) {
+            if ($this->isCustomVar($col)) {
                 $name = $this->getCustomvarColumnName($col);
             } else {
                 $name = $this->aliasToColumnName($col);
