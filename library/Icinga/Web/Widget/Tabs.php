@@ -3,6 +3,7 @@
 
 namespace Icinga\Web\Widget;
 
+use Exception;
 use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Url;
@@ -389,7 +390,7 @@ EOT;
     public function __toString()
     {
         try {
-            $html = $this->render(Icinga::app()->getViewRenderer()->view);
+            $html = $this->render();
         } catch (Exception $e) {
             return htmlspecialchars($e->getMessage());
         }
