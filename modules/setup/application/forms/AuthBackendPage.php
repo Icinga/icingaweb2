@@ -68,6 +68,7 @@ class AuthBackendPage extends Form
             $this->addSkipValidationCheckbox();
         }
 
+        $backendForm = null;
         if (! isset($this->config) || $this->config['type'] === 'external') {
             $backendForm = new ExternalBackendForm();
             $backendForm->create($formData);
