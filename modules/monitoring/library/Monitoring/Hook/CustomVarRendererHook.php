@@ -69,7 +69,7 @@ abstract class CustomVarRendererHook
             }
         }
 
-        return function ($key, $value) use ($hooks, $object) {
+        return function ($key, $value) use ($hooks) {
             $newKey = $key;
             $newValue = $value;
             $group = null;
