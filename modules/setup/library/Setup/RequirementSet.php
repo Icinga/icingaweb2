@@ -130,7 +130,7 @@ class RequirementSet implements RecursiveIterator
     public function setMode($mode)
     {
         if ($mode !== static::MODE_AND && $mode !== static::MODE_OR) {
-            throw new LogicException(sprintf('Invalid mode %u given.'), $mode);
+            throw new LogicException(sprintf('Invalid mode %u given.', $mode));
         }
 
         $this->mode = $mode;
