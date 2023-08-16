@@ -47,9 +47,9 @@ class VersionCommand extends Command
             }
         }
 
-        printf("%-${maxLength}s  %-9s \n", 'MODULE', 'VERSION');
+        printf("%-{$maxLength}s  %-9s \n", 'MODULE', 'VERSION');
         foreach ($modules as $module) {
-            printf("%-${maxLength}s  %-9s \n", $module->getName(), $module->getVersion());
+            printf("%-{$maxLength}s  %-9s \n", $module->getName(), $module->getVersion());
         }
     }
 }
