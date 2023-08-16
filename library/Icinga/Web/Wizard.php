@@ -155,7 +155,7 @@ class Wizard
     public function addPage($page)
     {
         if (! $page instanceof Form && ! $page instanceof self) {
-            throw InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'The $page argument must be an instance of Icinga\Web\Form '
                 . 'or Icinga\Web\Wizard but is of type: ' . get_class($page)
             );
