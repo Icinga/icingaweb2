@@ -76,6 +76,8 @@ class LocalFileStorage implements StorageInterface
         } catch (ErrorException $e) {
             throw new NotWritableError('Couldn\'t create the file "%s": %s', $path, $e);
         }
+
+        return $this;
     }
 
     public function read($path)
@@ -98,6 +100,8 @@ class LocalFileStorage implements StorageInterface
         } catch (ErrorException $e) {
             throw new NotWritableError('Couldn\'t update the file "%s": %s', $path, $e);
         }
+
+        return $this;
     }
 
     public function delete($path)
@@ -109,6 +113,8 @@ class LocalFileStorage implements StorageInterface
         } catch (ErrorException $e) {
             throw new NotWritableError('Couldn\'t delete the file "%s": %s', $path, $e);
         }
+
+        return $this;
     }
 
     public function resolvePath($path, $assertExistence = false)
