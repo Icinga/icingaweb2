@@ -63,6 +63,7 @@ class AuthBackendController extends CompatController
      */
     protected function getUserBackend($name = null, $interface = 'Icinga\Data\Selectable')
     {
+        $backend = null;
         if ($name !== null) {
             $config = Config::app('authentication');
             if (! $config->hasSection($name)) {
@@ -121,6 +122,7 @@ class AuthBackendController extends CompatController
      */
     protected function getUserGroupBackend($name = null, $interface = 'Icinga\Data\Selectable')
     {
+        $backend = null;
         if ($name !== null) {
             $config = Config::app('groups');
             if (! $config->hasSection($name)) {
