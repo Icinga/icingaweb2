@@ -7,6 +7,8 @@ use RecursiveIteratorIterator;
 
 class RequirementsRenderer extends RecursiveIteratorIterator
 {
+    protected $tags;
+
     public function beginIteration(): void
     {
         $this->tags[] = '<ul class="requirements">';
