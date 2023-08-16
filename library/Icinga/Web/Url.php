@@ -748,7 +748,7 @@ class Url
      * remove from the query list
      *
      * @param string|array $param  A single string or an array containing parameter names
-     * @param array        $values an optional values array
+     * @param mixed        $values an optional values array
      *
      * @return static
      */
