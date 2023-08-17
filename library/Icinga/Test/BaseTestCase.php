@@ -4,8 +4,10 @@
 namespace Icinga\Test {
 
     use Exception;
+    use Icinga\Util\Csp;
     use Icinga\Web\Request;
     use Icinga\Web\Response;
+    use Icinga\Web\Session;
     use ipl\I18n\NoopTranslator;
     use ipl\I18n\StaticTranslator;
     use RuntimeException;
@@ -14,6 +16,7 @@ namespace Icinga\Test {
     use Icinga\Data\ConfigObject;
     use Icinga\Data\ResourceFactory;
     use Icinga\Data\Db\DbConnection;
+    use Tests\Icinga\Lib\FakeSession;
 
     /**
      * Class BaseTestCase
@@ -108,6 +111,8 @@ namespace Icinga\Test {
             parent::setUp();
             $this->setupRequestMock();
             $this->setupResponseMock();
+            Session::create(new FakeSession());
+            Csp::createNonce();
 
             StaticTranslator::$instance = new NoopTranslator();
         }
