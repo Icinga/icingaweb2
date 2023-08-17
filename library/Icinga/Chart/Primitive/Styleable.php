@@ -15,7 +15,7 @@ class Styleable
     /**
      * The stroke width to use
      *
-     * @var int
+     * @var int|float
      */
     public $strokeWidth = 0;
 
@@ -57,7 +57,7 @@ class Styleable
     /**
      * Set the stroke width for this drawable
      *
-     * @param   string $width   The stroke with with unit
+     * @param   int|float $width   The stroke with unit
      *
      * @return  $this            Fluid interface
      */
