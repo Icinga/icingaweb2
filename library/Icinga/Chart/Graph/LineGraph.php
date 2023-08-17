@@ -165,8 +165,8 @@ class LineGraph extends Styleable implements Drawable
             $path->setFill($this->fill);
         }
 
-        $path->setAdditionalStyle('clip-path: url(#clip);');
-        $path->setId($this->id);
+        $path->setAdditionalStyle(['clip-path' => 'url(#clip)']);
+        $path->setId($this->id ?? uniqid('line-graph-'));
         $group = $path->toSvg($ctx);
 
         foreach ($this->dataset as $x => $point) {
@@ -180,7 +180,7 @@ class LineGraph extends Styleable implements Drawable
             if (isset($this->tooltips[$x])) {
                 $invisible = new Circle($point[0], $point[1], 20);
                 $invisible->setFill($this->strokeColor);
-                $invisible->setAdditionalStyle('opacity: 0.0;');
+                $invisible->setAdditionalStyle(['opacity' => '0.0']);
                 $data = array(
                     'label' => isset($this->graphs[$this->order]['label']) ?
                             strtolower($this->graphs[$this->order]['label']) : '',

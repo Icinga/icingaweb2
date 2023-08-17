@@ -5,6 +5,8 @@
 namespace Icinga\Chart\Primitive;
 
 use DOMElement;
+use Icinga\Util\Csp;
+use ipl\Web\Style;
 
 /**
  * Base class for stylable drawables
@@ -36,14 +38,14 @@ class Styleable
     /**
      * Additional styles to be appended to the style attribute
      *
-     * @var string
+     * @var array<string, string>
      */
-    public $additionalStyle = '';
+    public $additionalStyle = [];
 
     /**
      * The id of this element
      *
-     * @var string
+     * @var ?string
      */
     public $id = null;
 
@@ -83,7 +85,7 @@ class Styleable
     /**
      * Set additional styles for this drawable
      *
-     * @param   string $styles  The styles to set additionally
+     * @param   array<string, string> $styles  The styles to set additionally
      *
      * @return  $this            Fluid interface
      */
@@ -121,15 +123,20 @@ class Styleable
     }
 
     /**
-     * Return the content of the style attribute as a string
+     * Return the ruleset used for styling the DOMNode
      *
-     * @return string A string containing styles
+     * @return Style A ruleset containing styles
      */
     public function getStyle()
     {
-        $base = sprintf("fill: %s; stroke: %s;stroke-width: %s;", $this->fill, $this->strokeColor, $this->strokeWidth);
-        $base .= ';' . $this->additionalStyle . ';';
-        return $base;
+        $styles = $this->additionalStyle;
+        $styles['fill'] = $this->fill;
+        $styles['stroke'] = $this->strokeColor;
+        $styles['stroke-width'] = (string) $this->strokeWidth;
+
+        return (new Style())
+            ->setNonce(Csp::getStyleNonce())
+            ->add("#$this->id", $styles);
     }
 
     /**

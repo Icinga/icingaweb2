@@ -112,7 +112,7 @@ class BarGraph extends Styleable implements Drawable
             $rect->setAttribute('data-icinga-graph-index', $index);
         }
         $rect->setAttribute('data-icinga-graph-type', 'bar');
-        $rect->setAdditionalStyle('clip-path: url(#clip);');
+        $rect->setAdditionalStyle(['clip-path' => 'url(#clip)']);
         return $rect;
     }
 
