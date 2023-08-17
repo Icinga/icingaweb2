@@ -4,10 +4,12 @@
 
 namespace Icinga\Chart\Primitive;
 
+use DOMDocument;
 use DOMElement;
 use DOMText;
 use Icinga\Chart\Render\RenderContext;
 use Icinga\Chart\Format;
+use ipl\Html\HtmlDocument;
 
 /**
  *  Wrapper for the SVG text element
@@ -97,6 +99,15 @@ class Text extends Styleable implements Drawable
         $this->y = $y;
         $this->text = $text;
         $this->fontSize = $fontSize;
+
+        $this->setAdditionalStyle([
+            'font-size'    => $this->fontSize,
+            'font-family'  => 'Ubuntu, Calibri, Trebuchet MS, Helvetica, Verdana, sans-serif',
+            'font-weight'  => $this->fontWeight,
+            'font-stretch' => $this->fontStretch,
+            'font-style'   => 'normal',
+            'text-anchor'  => $this->alignment
+        ]);
     }
 
     /**
@@ -150,19 +161,24 @@ class Text extends Styleable implements Drawable
         list($x, $y) = $ctx->toAbsolute($this->x, $this->y);
         $text = $ctx->getDocument()->createElement('text');
         $text->setAttribute('x', Format::formatSVGNumber($x - 15));
-        $text->setAttribute(
-            'style',
-            $this->getStyle()
-            . ';font-size:' . $this->fontSize
-            . '; font-family: Ubuntu, Calibri, Trebuchet MS, Helvetica, Verdana, sans-serif'
-            . ';font-weight: ' . $this->fontWeight
-            . ';font-stretch: ' . $this->fontStretch
-            . '; font-style: normal;'
-            .  'text-anchor: ' . $this->alignment
-        );
+
+        $id = $this->id ?? uniqid('text-');
+        $text->setAttribute('id', $id);
+        $this->setId($id);
 
         $text->setAttribute('y', Format::formatSVGNumber($y));
         $text->appendChild(new DOMText($this->text));
+
+        $style = new DOMDocument();
+        $style->loadHTML($this->getStyle());
+
+        $text->appendChild(
+            $text->ownerDocument->importNode(
+                $style->getElementsByTagName('style')->item(0),
+                true
+            )
+        );
+
         return $text;
     }
 }

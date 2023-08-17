@@ -4,6 +4,7 @@
 namespace Icinga\Chart\Primitive;
 
 use DOMElement;
+use DOMDocument;
 use Icinga\Chart\Render\RenderContext;
 use Icinga\Chart\Format;
 
@@ -95,10 +96,23 @@ class Rect extends Animatable implements Drawable
         $rect->setAttribute('y', Format::formatSVGNumber($y));
         $rect->setAttribute('width', Format::formatSVGNumber($width));
         $rect->setAttribute('height', Format::formatSVGNumber($height));
-        $rect->setAttribute('style', $this->getStyle());
+
+        $id = $this->id ?? uniqid('rect-');
+        $rect->setAttribute('id', $id);
+        $this->setId($id);
 
         $this->applyAttributes($rect);
         $this->appendAnimation($rect, $ctx);
+
+        $style = new DOMDocument();
+        $style->loadHTML($this->getStyle());
+
+        $rect->appendChild(
+            $rect->ownerDocument->importNode(
+                $style->getElementsByTagName('style')->item(0),
+                true
+            )
+        );
 
         return $rect;
     }

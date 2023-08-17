@@ -3,6 +3,7 @@
 
 namespace Icinga\Chart\Primitive;
 
+use DOMDocument;
 use DOMElement;
 use Icinga\Chart\Render\RenderContext;
 use Icinga\Chart\Format;
@@ -80,8 +81,23 @@ class Line extends Styleable implements Drawable
         $line->setAttribute('x2', Format::formatSVGNumber($x2));
         $line->setAttribute('y1', Format::formatSVGNumber($y1));
         $line->setAttribute('y2', Format::formatSVGNumber($y2));
-        $line->setAttribute('style', $this->getStyle());
+
+        $id = $this->id ?? uniqid('line-');
+        $line->setAttribute('id', $id);
+        $this->setId($id);
+
         $this->applyAttributes($line);
+
+        $style = new DOMDocument();
+        $style->loadHTML($this->getStyle());
+
+        $line->appendChild(
+            $line->ownerDocument->importNode(
+                $style->getElementsByTagName('style')->item(0),
+                true
+            )
+        );
+
         return $line;
     }
 }

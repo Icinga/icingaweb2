@@ -3,6 +3,7 @@
 
 namespace Icinga\Chart\Primitive;
 
+use DOMDocument;
 use DOMElement;
 use Icinga\Chart\Render\RenderContext;
 use Icinga\Chart\Format;
@@ -279,8 +280,21 @@ class PieSlice extends Animatable implements Drawable
         $slicePath = $doc->createElement('path');
 
         $slicePath->setAttribute('d', $this->getPieSlicePath($x, $y, $r));
-        $slicePath->setAttribute('style', $this->getStyle());
         $slicePath->setAttribute('data-icinga-graph-type', 'pieslice');
+
+        $id = $this->id ?? uniqid('slice-');
+        $slicePath->setAttribute('id', $id);
+        $this->setId($id);
+
+        $style = new DOMDocument();
+        $style->loadHTML($this->getStyle());
+
+        $slicePath->appendChild(
+            $slicePath->ownerDocument->importNode(
+                $style->getElementsByTagName('style')->item(0),
+                true
+            )
+        );
 
         $this->applyAttributes($slicePath);
         $group->appendChild($slicePath);
