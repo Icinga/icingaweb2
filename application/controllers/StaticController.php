@@ -91,7 +91,7 @@ class StaticController extends Controller
         }
 
         $s = stat($filePath);
-        $eTag = sprintf('%x-%x-%x', $s['ino'], $s['size'], (float) str_pad($s['mtime'], 16, '0'));
+        $eTag = sprintf('%x-%x-%x', $s['ino'], $s['size'], (float) str_pad((string) $s['mtime'], 16, '0'));
 
         $this->getResponse()->setHeader(
             'Cache-Control',
