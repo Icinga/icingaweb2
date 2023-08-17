@@ -262,7 +262,7 @@ class RoleForm extends RepositoryForm
                                     PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY
                                 )))),
                             'description'   => $spec['description'],
-                            'style'         => $isUnrestricted ? 'text-decoration:line-through;' : '',
+                            'class'         => $isUnrestricted ? 'unrestricted-role' : '',
                             'readonly'      => $isUnrestricted ?: null
                         ]
                     )
