@@ -358,8 +358,10 @@ Have a look [here](20-Advanced-Topics.md#web-setup-manual-from-source-config) fo
 Be aware that when you create a kiosk user every person who has access to the kiosk is able to perform tasks on it.
 Therefore you would need to create a user in the `roles.ini` in `/etc/icingaweb2/roles.ini`.
 
-   [kioskusers]
-   users = "kiosk"
+```
+[kioskusers]
+users = "kiosk"
+```
 
 If you need special permissions you should add those permissions to the user via the admin account in icingaweb2 to the role of the kiosk user.
 
