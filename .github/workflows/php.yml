@@ -32,12 +32,13 @@ jobs:
           extensions: ldap
 
       - name: Setup dependencies
-        run: composer require -n --no-progress overtrue/phplint
-          && git clone --single-branch --branch snapshot/nightly https://github.com/Icinga/icinga-php-library.git vendor/icinga-php-library
-          && git clone --single-branch --branch snapshot/nightly https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
-          && git clone --single-branch --branch main https://github.com/Icinga/icingaweb2-module-x509.git vendor/modules/x509-web 
-          && git clone --single-branch --branch master https://github.com/Icinga/icingadb-web.git vendor/modules/icingadb-web
-          && git clone --single-branch --branch master https://github.com/Icinga/icingaweb2-module-pdfexport.git vendor/modules/pdfexport-web
+        run: |
+          composer require -n --no-progress overtrue/phplint
+          git clone --depth 1 -b snapshot/nightly https://github.com/Icinga/icinga-php-library.git vendor/icinga-php-library
+          git clone --depth 1 -b snapshot/nightly https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
+          git clone --depth 1 https://github.com/Icinga/icingaweb2-module-x509.git vendor/modules/x509-web 
+          git clone --depth 1 https://github.com/Icinga/icingadb-web.git vendor/modules/icingadb-web
+          git clone --depth 1 https://github.com/Icinga/icingaweb2-module-pdfexport.git vendor/modules/pdfexport-web
 
       - name: PHP Lint
         if: success() || matrix.allow_failure
