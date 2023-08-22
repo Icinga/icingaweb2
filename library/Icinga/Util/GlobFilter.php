@@ -36,7 +36,7 @@ class GlobFilter
     /**
      * Create a new filter from a comma-separated list of GLOB-like filters or an array of such lists.
      *
-     * @param   string|\Traversable $filters
+     * @param   string|\Traversable|iterable $filters
      */
     public function __construct($filters)
     {
