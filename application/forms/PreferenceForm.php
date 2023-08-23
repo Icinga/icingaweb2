@@ -100,7 +100,7 @@ class PreferenceForm extends Form
         $defaultTheme = Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME);
 
         $this->preferences = new Preferences($this->store ? $this->store->load() : array());
-        $webPreferences = $this->preferences->get('icingaweb', array());
+        $webPreferences = $this->preferences->get('icingaweb');
         foreach ($this->getValues() as $key => $value) {
             if ($value === ''
                 || $value === null
@@ -215,6 +215,7 @@ class PreferenceForm extends Form
             $themeFile = StyleSheet::getThemeFile($formData['theme']);
         }
 
+        $disabled = [];
         if ($themeFile !== null) {
             $file = @file_get_contents($themeFile);
             if ($file && strpos($file, StyleSheet::LIGHT_MODE_IDENTIFIER) === false) {
@@ -242,8 +243,7 @@ class PreferenceForm extends Form
                         ['src' => $this->getView()->href('img/theme-mode-thumbnail-system.svg')]
                     ) . HtmlElement::create('span', [], $this->translate('System'))
                 ],
-                'value' => isset($value) ? $value : '',
-                'disable' => isset($disabled) ? $disabled : [],
+                'disable' => $disabled,
                 'escape' => false,
                 'decorators' => array_merge(
                     array_slice(self::$defaultElementDecorators, 0, -1),

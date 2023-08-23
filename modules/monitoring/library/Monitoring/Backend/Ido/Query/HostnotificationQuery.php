@@ -104,6 +104,7 @@ class HostnotificationQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
+        $concattedContacts = null;
         switch ($this->ds->getDbType()) {
             case 'mysql':
                 $concattedContacts = "GROUP_CONCAT("

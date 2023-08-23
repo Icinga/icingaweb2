@@ -90,7 +90,7 @@ abstract class Requirement
             } elseif (method_exists($this, $addMethod)) {
                 $this->$addMethod($value);
             } else {
-                throw LogicException('No setter found for option key: ' . $key);
+                throw new LogicException('No setter found for option key: ' . $key);
             }
         }
     }

@@ -3,6 +3,7 @@
 
 namespace Icinga\Web\Widget;
 
+use Exception;
 use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Url;
@@ -105,6 +106,13 @@ EOT;
      * @var bool
      */
     private $closeTab = true;
+
+    /**
+     * CSS class name(s) for the &lt;ul&gt; element
+     *
+     * @var string
+     */
+    private $tab_class;
 
     /**
      * Set whether the current tab is closable
@@ -389,7 +397,7 @@ EOT;
     public function __toString()
     {
         try {
-            $html = $this->render(Icinga::app()->getViewRenderer()->view);
+            $html = $this->render();
         } catch (Exception $e) {
             return htmlspecialchars($e->getMessage());
         }

@@ -79,7 +79,7 @@ class SearchController extends DocController
     /**
      * Get the path to Icinga Web 2's documentation
      *
-     * @return string
+     * @return ?string
      */
     protected function getWebPath()
     {

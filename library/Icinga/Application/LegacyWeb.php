@@ -4,6 +4,8 @@
 namespace Icinga\Application;
 
 require_once dirname(__FILE__) . '/Web.php';
+
+use Exception;
 use Icinga\Exception\ProgrammingError;
 
 class LegacyWeb extends Web

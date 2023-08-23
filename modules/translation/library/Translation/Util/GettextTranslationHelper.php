@@ -389,7 +389,6 @@ class GettextTranslationHelper
      *
      * @param   string      $directory      The directory where to search for sources
      * @param   File        $file           The file where to write the results
-     * @param   array       $blacklist      A list of directories to omit
      *
      * @throws  Exception                   In case the given directory is not readable
      */

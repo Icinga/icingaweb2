@@ -6,6 +6,7 @@ namespace Icinga\Web\Controller;
 use Icinga\Application\Modules\Module;
 use Icinga\Common\PdfExport;
 use Icinga\File\Pdf;
+use Icinga\Web\View;
 use ipl\I18n\Translation;
 use Zend_Controller_Action;
 use Zend_Controller_Action_HelperBroker;
@@ -113,6 +114,11 @@ class ActionController extends Zend_Controller_Action
      * @var UrlParams
      */
     protected $params;
+
+    /**
+     * @var View
+     */
+    public $view;
 
     /**
      * The constructor starts benchmarking, loads the configuration and sets
@@ -582,6 +588,6 @@ class ActionController extends Zend_Controller_Action
             return call_user_func_array(array($this, $deprecatedMethod), $params);
         }
 
-        return parent::__call($name, $params);
+        parent::__call($name, $params);
     }
 }

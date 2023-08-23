@@ -12,6 +12,10 @@ class Documentation
 {
     protected $icinga;
 
+    protected $app;
+
+    protected $loader;
+
     public function __construct(App $app)
     {
         $this->app = $app;
@@ -73,6 +77,7 @@ class Documentation
             return "The '$module' module does not provide any CLI commands\n";
         }
         $d = '';
+        $obj = null;
         if ($command) {
             $obj = $this->loader->getModuleCommandInstance($module, $command);
         }

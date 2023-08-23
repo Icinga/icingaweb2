@@ -3,6 +3,7 @@
 
 namespace Icinga\Repository;
 
+use Icinga\Exception\QueryException;
 use Zend_Db_Expr;
 use Icinga\Data\Db\DbConnection;
 use Icinga\Data\Extensible;
@@ -297,7 +298,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
         } elseif (is_string($table)) {
             $table = (strpos($table, $prefix) === false ? $prefix : '') . $table;
         } else {
-            throw new IcingaException('Table prefix handling for type "%s" is not supported', type($table));
+            throw new IcingaException('Table prefix handling for type "%s" is not supported', gettype($table));
         }
 
         return $table;
@@ -330,7 +331,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
                 $table = str_replace($prefix, '', $table);
             }
         } else {
-            throw new IcingaException('Table prefix handling for type "%s" is not supported', type($table));
+            throw new IcingaException('Table prefix handling for type "%s" is not supported', gettype($table));
         }
 
         return $table;
@@ -988,7 +989,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      *
      * @param   string              $name       The alias or column name to join into $target
      * @param   string              $target     The table to join $name into
-     * @param   RepositoryQUery     $query      The query to apply the JOIN-clause on
+     * @param   RepositoryQuery     $query      The query to apply the JOIN-clause on
      *
      * @return  string|null                     The resolved alias or $name, null if no join logic is found
      */

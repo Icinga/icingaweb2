@@ -156,7 +156,7 @@ class Controller extends ModuleActionController
     /**
      * Get the page size configured via user preferences or return the default value
      *
-     * @param   int $default
+     * @param   ?int $default
      *
      * @return  int
      */

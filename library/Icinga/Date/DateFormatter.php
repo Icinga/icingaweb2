@@ -151,7 +151,7 @@ class DateFormatter
      * @param   bool        $timeOnly
      * @param   bool        $requireTime
      *
-     * @return  string
+     * @return  ?string
      */
     public static function timeAgo($time, $timeOnly = false, $requireTime = false)
     {
@@ -159,6 +159,8 @@ class DateFormatter
         if ($timeOnly) {
             return $ago;
         }
+
+        $formatted = null;
         switch ($type) {
             case static::DATE:
                 // Move to next case
@@ -188,7 +190,7 @@ class DateFormatter
      * @param   bool        $timeOnly
      * @param   bool        $requireTime
      *
-     * @return  string
+     * @return  ?string
      */
     public static function timeSince($time, $timeOnly = false, $requireTime = false)
     {
@@ -196,6 +198,8 @@ class DateFormatter
         if ($timeOnly) {
             return $since;
         }
+
+        $formatted = null;
         switch ($type) {
             case static::RELATIVE:
                 $formatted = sprintf(
@@ -224,7 +228,7 @@ class DateFormatter
      * @param   bool        $timeOnly
      * @param   bool        $requireTime
      *
-     * @return  string
+     * @return  ?string
      */
     public static function timeUntil($time, $timeOnly = false, $requireTime = false)
     {
@@ -235,6 +239,8 @@ class DateFormatter
         if ($timeOnly) {
             return $until;
         }
+
+        $formatted = null;
         switch ($type) {
             case static::DATE:
                 // Move to next case

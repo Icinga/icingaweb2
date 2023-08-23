@@ -34,7 +34,7 @@ class Section
     /**
      * Comment added at the end of the same line
      *
-     * @var string
+     * @var Comment
      */
     protected $commentPost;
 

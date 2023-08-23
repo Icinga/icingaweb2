@@ -1,8 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
+use Icinga\Web\View;
+
 class Zend_View_Helper_Customvar extends Zend_View_Helper_Abstract
 {
+    /** @var View */
+    public $view;
+
     /**
      * Create dispatch instance
      *

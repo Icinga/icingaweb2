@@ -31,7 +31,7 @@ class StatehistoryForm extends Form
             Filter::expression('type', '=', 'hard_state')
         );
 
-        if ($this->getValue('objecttype', 'hosts') === 'hosts') {
+        if ($this->getValue('objecttype') === 'hosts') {
             $objectTypeFilter = Filter::expression('object_type', '=', 'host');
         } else {
             $objectTypeFilter = Filter::expression('object_type', '=', 'service');
@@ -46,7 +46,7 @@ class StatehistoryForm extends Form
             'cnt_unknown_hard'      => Filter::expression('state', '=', '3'),
             'cnt_ok'                => Filter::expression('state', '=', '0')
         );
-        $state = $this->getValue('state', 'cnt_critical_hard');
+        $state = $this->getValue('state');
         $stateFilter =  $states[$state];
         if (in_array($state, array('cnt_ok', 'cnt_up'))) {
             return Filter::matchAll($objectTypeFilter, $stateFilter);

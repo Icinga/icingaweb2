@@ -45,6 +45,12 @@ class LineGraph extends Styleable implements Drawable
      */
     private $tooltips;
 
+    /** @var array */
+    private $graphs;
+
+    /** @var int */
+    private $order;
+
     /**
      * The default stroke width
      * @var int
@@ -74,6 +80,7 @@ class LineGraph extends Styleable implements Drawable
         $this->graphs = $graphs;
 
         $this->tooltips = $tooltips;
+        $ts = [];
         foreach ($this->tooltips as $value) {
             $ts[] = $value;
         }

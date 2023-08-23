@@ -72,6 +72,7 @@ class Root
         $dn = $this->stripMyDN($dn);
         $parts = array_reverse(LdapUtils::explodeDN($dn));
         $parent = $this;
+        $child = null;
         while ($rdn = array_shift($parts)) {
             if ($parent->hasChildRDN($rdn)) {
                 $child = $parent->getChildByRDN($rdn);

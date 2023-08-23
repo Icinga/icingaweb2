@@ -80,7 +80,7 @@ class Animation implements Drawable
         $animate->setAttribute('to', $this->to);
         $animate->setAttribute('begin', $this->begin . 's');
         $animate->setAttribute('dur', $this->duration . 's');
-        $animate->setAttributE('fill', "freeze");
+        $animate->setAttribute('fill', "freeze");
 
         return $animate;
     }

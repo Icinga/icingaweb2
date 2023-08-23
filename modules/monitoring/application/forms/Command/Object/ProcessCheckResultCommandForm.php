@@ -40,6 +40,7 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
      */
     public function createElements(array $formData)
     {
+        $object = null;
         foreach ($this->getObjects() as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             // Nasty, but as getObjects() returns everything but an object with a real

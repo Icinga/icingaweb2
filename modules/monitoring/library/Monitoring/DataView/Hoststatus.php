@@ -3,7 +3,7 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
-class HostStatus extends DataView
+class Hoststatus extends DataView
 {
     /**
      * {@inheritdoc}

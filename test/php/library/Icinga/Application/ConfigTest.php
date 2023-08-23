@@ -9,6 +9,13 @@ use Icinga\Application\Config;
 class ConfigTest extends BaseTestCase
 {
     /**
+     * Old config dir
+     *
+     * @var string
+     */
+    protected $oldConfigDir;
+
+    /**
      * Set up config dir
      */
     public function setUp(): void

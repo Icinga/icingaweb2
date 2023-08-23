@@ -112,7 +112,7 @@ class ServicesController extends Controller
         }
 
         $acknowledgedObjects = $this->serviceList->getAcknowledgedObjects();
-        if (! empty($acknowledgedObjects)) {
+        if ($acknowledgedObjects->count()) {
             $removeAckForm = new RemoveAcknowledgementCommandForm();
             $removeAckForm
                 ->setObjects($acknowledgedObjects)

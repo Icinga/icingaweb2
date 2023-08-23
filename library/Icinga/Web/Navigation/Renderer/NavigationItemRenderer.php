@@ -80,6 +80,8 @@ class NavigationItemRenderer
                 $this->$setter($value);
             }
         }
+
+        return $this;
     }
 
     /**

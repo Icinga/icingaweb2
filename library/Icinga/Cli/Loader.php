@@ -188,6 +188,7 @@ class Loader
             $params = $this->app->getParams();
         }
 
+        $first = null;
         if ($this->moduleName === null) {
             $first = $params->shift();
             if (! $first) {
@@ -250,6 +251,7 @@ class Loader
             return false;
         }
 
+        $obj = null;
         try {
             if ($this->moduleName) {
                 $this->app->getModuleManager()->loadModule($this->moduleName);
@@ -266,7 +268,7 @@ class Loader
             $obj->init();
             return $obj->{$this->actionName . 'Action'}();
         } catch (Exception $e) {
-            if ($obj && $obj instanceof Command && $obj->showTrace()) {
+            if ($obj instanceof Command && $obj->showTrace()) {
                 fwrite(STDERR, $this->formatTrace($e->getTrace()));
             }
 

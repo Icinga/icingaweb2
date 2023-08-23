@@ -5,6 +5,7 @@ namespace Icinga\Module\Doc\Renderer;
 
 use DOMDocument;
 use DOMXPath;
+use Icinga\Module\Doc\DocSection;
 use Parsedown;
 use RecursiveIteratorIterator;
 use Icinga\Data\Tree\SimpleTree;
@@ -201,7 +202,7 @@ class DocSectionRenderer extends DocRenderer
             false
         );
         $url = $this->getView()->url($path);
-        /** @var \Icinga\Web\Url $url */
+        /** @var Url $url */
         $img->setAttribute('src', $url->getAbsoluteUrl());
         return substr_replace($doc->saveXML($img), '', -2, 1);  // Replace '/>' with '>'
     }
@@ -218,7 +219,7 @@ class DocSectionRenderer extends DocRenderer
         if (($chapter = $this->tree->getNode($this->decodeAnchor($match['chapter']))) === null) {
             return $match[0];
         }
-        /** @var \Icinga\Module\Doc\DocSection $section */
+        /** @var DocSection $section */
         $path = $this->getView()->getHelper('Url')->url(
             array_merge(
                 $this->urlParams,
@@ -231,7 +232,7 @@ class DocSectionRenderer extends DocRenderer
             false
         );
         $url = $this->getView()->url($path);
-        /** @var \Icinga\Web\Url $url */
+        /** @var Url $url */
         return sprintf(
             '<a %s%shref="%s"',
             strlen($match['attribs']) ? trim($match['attribs']) . ' ' : '',
@@ -252,7 +253,7 @@ class DocSectionRenderer extends DocRenderer
         if (($section = $this->tree->getNode($this->decodeAnchor($match['section']))) === null) {
             return $match[0];
         }
-        /** @var \Icinga\Module\Doc\DocSection $section */
+        /** @var DocSection $section */
         $path = $this->getView()->getHelper('Url')->url(
             array_merge(
                 $this->urlParams,
@@ -265,7 +266,7 @@ class DocSectionRenderer extends DocRenderer
             false
         );
         $url = $this->getView()->url($path);
-        /** @var \Icinga\Web\Url $url */
+        /** @var Url $url */
         $url->setAnchor($this->encodeAnchor($section->getId()));
         return sprintf(
             '<a %s%shref="%s"',

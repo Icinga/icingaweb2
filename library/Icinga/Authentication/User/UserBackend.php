@@ -187,6 +187,7 @@ class UserBackend implements ConfigAwareFactory
                 $name
             );
         }
+
         if ($backendType === 'external') {
             $backend = new ExternalBackend($backendConfig);
             $backend->setName($name);
@@ -229,6 +230,7 @@ class UserBackend implements ConfigAwareFactory
         }
 
         $resource = ResourceFactory::createResource($resourceConfig);
+        $backend = null;
         switch ($backendType) {
             case 'db':
                 $backend = new DbUserBackend($resource);

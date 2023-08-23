@@ -5,6 +5,7 @@ namespace Icinga\Module\Monitoring\Backend;
 
 use Icinga\Application\Config;
 use Icinga\Data\ConfigObject;
+use Icinga\Data\QueryInterface;
 use Icinga\Data\ResourceFactory;
 use Icinga\Data\ConnectionInterface;
 use Icinga\Data\Queryable;
@@ -268,7 +269,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
      * @param  string $name     Query name
      * @param  array  $columns Optional column list
      *
-     * @return Icinga\Data\QueryInterface
+     * @return QueryInterface
      *
      * @throws  ProgrammingError When the query does not exist for this backend
      */

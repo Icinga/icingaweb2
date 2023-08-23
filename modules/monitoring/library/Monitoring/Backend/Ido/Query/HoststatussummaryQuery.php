@@ -31,7 +31,7 @@ class HoststatussummaryQuery extends IdoQuery
     /**
      * The host status sub select
      *
-     * @var HostStatusQuery
+     * @var HoststatusQuery
      */
     protected $subSelect;
 

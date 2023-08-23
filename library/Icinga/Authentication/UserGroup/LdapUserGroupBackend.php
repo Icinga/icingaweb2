@@ -13,6 +13,7 @@ use Icinga\Data\Inspection;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\QueryException;
 use Icinga\Protocol\Ldap\LdapException;
 use Icinga\Protocol\Ldap\LdapUtils;
 use Icinga\Repository\LdapRepository;
@@ -645,7 +646,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
      *
      * @param   string  $username
      *
-     * @param   string
+     * @return  string
      */
     protected function retrieveUserName($dn)
     {

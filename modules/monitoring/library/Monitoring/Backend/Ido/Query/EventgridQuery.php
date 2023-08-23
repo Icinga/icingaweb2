@@ -17,7 +17,6 @@ abstract class EventgridQuery extends StatehistoryQuery
         'cnt_down'              => "SUM(CASE WHEN sth.state = 1 THEN 1 ELSE 0 END)",
         'cnt_unreachable_hard'  => "SUM(CASE WHEN sth.state = 2 AND sth.type = 'hard_state' THEN 1 ELSE 0 END)",
         'cnt_unreachable'       => "SUM(CASE WHEN sth.state = 2 THEN 1 ELSE 0 END)",
-        'cnt_unknown_hard'      => "SUM(CASE WHEN sth.state = 3 AND sth.type = 'hard_state' THEN 1 ELSE 0 END)",
         'cnt_unknown'           => "SUM(CASE WHEN sth.state = 3 THEN 1 ELSE 0 END)",
         'cnt_unknown_hard'      => "SUM(CASE WHEN sth.state = 3 AND sth.type = 'hard_state' THEN 1 ELSE 0 END)",
         'cnt_critical'          => "SUM(CASE WHEN sth.state = 2 THEN 1 ELSE 0 END)",

@@ -51,10 +51,7 @@ class ArrayToTextTableHelper
     /**
      * Prepare array into textual format
      *
-     * @param array $rows      The input array
-     * @param bool  $head      Show heading
-     * @param int   $maxWidth  Max Column Height (returns)
-     * @param int   $maxHeight Max Row Width (chars)
+     * @param $rows
      */
     public function __construct($rows)
     {

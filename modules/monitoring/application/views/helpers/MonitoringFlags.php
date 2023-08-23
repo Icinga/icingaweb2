@@ -1,7 +1,7 @@
 <?php
 /* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
 
-/* use Icinga\Module\Monitoring\Object\MonitoredObject; */
+use Icinga\Module\Monitoring\Object\MonitoredObject;
 
 /**
  * Rendering helper for object's properties which may be either enabled or disabled

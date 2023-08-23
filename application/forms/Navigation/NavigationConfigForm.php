@@ -815,6 +815,7 @@ class NavigationConfigForm extends ConfigForm
         $className = StringHelper::cname($type, '-') . 'Form';
 
         $form = null;
+        $classPath = null;
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
             $classPath = 'Icinga\\Module\\'
                 . ucfirst($module->getName())

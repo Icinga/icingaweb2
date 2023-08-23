@@ -51,7 +51,7 @@ class AuthenticationController extends Controller
                 if ($authenticated) {
                     $rememberMe = $rememberMeOld->renew();
                     $this->getResponse()->setCookie($rememberMe->getCookie());
-                    $rememberMe->persist($rememberMeOld->getAesCrypt()->getIv());
+                    $rememberMe->persist($rememberMeOld->getAesCrypt()->getIV());
                 }
             } catch (RuntimeException $e) {
                 Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());

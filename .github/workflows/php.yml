@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.2', '7.3', '7.4', '8.0', '8.1']
+        php: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
         os: ['ubuntu-latest']
 
     steps:
@@ -29,9 +29,16 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           tools: phpcs
+          extensions: ldap
 
       - name: Setup dependencies
-        run: composer require -n --no-progress overtrue/phplint
+        run: |
+          composer require -n --no-progress overtrue/phplint
+          git clone --depth 1 -b snapshot/nightly https://github.com/Icinga/icinga-php-library.git vendor/icinga-php-library
+          git clone --depth 1 -b snapshot/nightly https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
+          git clone --depth 1 https://github.com/Icinga/icingaweb2-module-x509.git vendor/modules/x509-web 
+          git clone --depth 1 https://github.com/Icinga/icingadb-web.git vendor/modules/icingadb-web
+          git clone --depth 1 https://github.com/Icinga/icingaweb2-module-pdfexport.git vendor/modules/pdfexport-web
 
       - name: PHP Lint
         if: success() || matrix.allow_failure
@@ -40,6 +47,10 @@ jobs:
       - name: PHP CodeSniffer
         if: success() || matrix.allow_failure
         run: phpcs
+
+      - name: PHPStan
+        uses: php-actions/phpstan@v3
+        if: success() || matrix.allow_failure
 
   test:
     name: Unit tests with php ${{ matrix.php }} on ${{ matrix.os }}
@@ -51,7 +62,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.2', '7.3', '7.4', '8.0', '8.1']
+        php: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
         os: ['ubuntu-latest']
         include:
           - php: '7.2'

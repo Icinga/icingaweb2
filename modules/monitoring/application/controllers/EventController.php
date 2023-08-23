@@ -223,7 +223,7 @@ class EventController extends Controller
      *
      * @param   string  $eventType
      *
-     * @return  string[]
+     * @return  ?string[]
      */
     protected function getIconAndLabel($eventType)
     {
@@ -263,7 +263,7 @@ class EventController extends Controller
      * @param   string  $type
      * @param   int     $id
      *
-     * @return  Queryable
+     * @return  ?Queryable
      */
     protected function query($type, $id)
     {
@@ -358,7 +358,7 @@ class EventController extends Controller
      * @param   string      $type
      * @param   \stdClass   $event
      *
-     * @return  string[][]
+     * @return  ?string[][]
      */
     protected function getDetails($type, $event)
     {

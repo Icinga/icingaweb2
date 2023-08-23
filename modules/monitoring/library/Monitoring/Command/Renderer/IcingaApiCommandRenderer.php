@@ -64,8 +64,6 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
      *
      * @param   array           $data
      * @param   MonitoredObject $object
-     *
-     * @return  array
      */
     protected function applyFilter(array &$data, MonitoredObject $object)
     {

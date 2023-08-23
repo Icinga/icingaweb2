@@ -6,7 +6,9 @@ namespace Icinga\Module\Monitoring\Object;
 use ArrayIterator;
 use Countable;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterChain;
 use Icinga\Data\Filterable;
+use Icinga\Module\Monitoring\DataView\Downtime;
 use IteratorAggregate;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Traversable;
@@ -79,7 +81,7 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
     }
 
     /**
-     * @return Filter
+     * @return Filter|FilterChain
      */
     public function getFilter()
     {
@@ -154,7 +156,7 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
     /**
      * Get the scheduled downtimes
      *
-     * @return type
+     * @return Downtime
      */
     public function getScheduledDowntimes()
     {
@@ -278,11 +280,11 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
                 if (! isset($status)) {
                     $status = $enabled;
                 } elseif ($status !== $enabled) {
-                    $status = 2;
-                    unset($features[$status]);
+                    unset($features[$feature]);
                     if (empty($features)) {
                         break 2;
                     }
+
                     break;
                 }
             }

@@ -71,7 +71,7 @@ class Inspection
      *
      * @throws  ProgrammingError            When called multiple times
      *
-     * @return  this                        fluent interface
+     * @return  $this                        fluent interface
      */
     public function error($entry)
     {

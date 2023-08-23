@@ -3,6 +3,7 @@
 
 namespace Icinga\Application;
 
+use Icinga\Exception\NotWritableError;
 use Iterator;
 use Countable;
 use LogicException;
@@ -405,7 +406,7 @@ class Config implements Countable, Iterator, Selectable
      *
      * @param   string  $modulename     The name of the module where to look for the requested configuration
      * @param   string  $configname     The configuration name (without ini suffix) to read and return
-     * @param   string  $fromDisk       When set true, the configuration will be read from disk, even
+     * @param   bool    $fromDisk       When set true, the configuration will be read from disk, even
      *                                  if it already has been read
      *
      * @return  Config                  The requested configuration

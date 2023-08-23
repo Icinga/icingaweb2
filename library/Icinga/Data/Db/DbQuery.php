@@ -8,6 +8,7 @@ use DateTime;
 use DateTimeZone;
 use Exception;
 use Icinga\Data\Filter\Filter;
+use Zend_Db_Adapter_Abstract;
 use Zend_Db_Expr;
 use Zend_Db_Select;
 use Icinga\Application\Logger;

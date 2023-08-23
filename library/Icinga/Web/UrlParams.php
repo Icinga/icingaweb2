@@ -30,8 +30,8 @@ class UrlParams
      * Returns the last URL param if defined multiple times, $default if not
      * given at all
      *
-     * @param string $param   The parameter you're interested in
-     * @param string $default An optional default value
+     * @param string                $param   The parameter you're interested in
+     * @param string|int|bool|null  $default An optional default value
      *
      * @return mixed
      */
@@ -74,7 +74,7 @@ class UrlParams
      * $default if none.
      *
      * @param string $param   The parameter you're interested in
-     * @param string $default An optional default value
+     * @param array  $default An optional default value
      *
      * @return mixed
      */
@@ -180,8 +180,8 @@ class UrlParams
      * This will add the given parameter, regardless of whether it already
      * exists.
      *
-     * @param string $param The parameter you're interested in
-     * @param string $value The value to be stored
+     * @param string       $param The parameter you're interested in
+     * @param string|bool  $value The value to be stored
      *
      * @return $this
      */
@@ -196,8 +196,8 @@ class UrlParams
      * This may be used with either a list of values for a single parameter or
      * with a list of parameter / value pairs.
      *
-     * @param string $param Parameter name or param/value list
-     * @param string $value The value to be stored
+     * @param string|array $param Parameter name or param/value list
+     * @param ?array       $value The value to be stored
      *
      * @return $this
      */

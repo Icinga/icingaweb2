@@ -260,7 +260,7 @@ class Platform
     /**
      * Return the username PHP is running as
      *
-     * @return  string
+     * @return  ?string
      */
     public static function getPhpUser()
     {

@@ -4,6 +4,7 @@
 namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Widget\AbstractWidget;
 
 /**
  * Web widgets make things easier for you!
@@ -29,7 +30,7 @@ class Widget
      * @param string $name    Widget name
      * @param array  $options Widget constructor options
      *
-     * @return Icinga\Web\Widget\AbstractWidget
+     * @return AbstractWidget
      */
     public static function create($name, $options = array(), $module_name = null)
     {

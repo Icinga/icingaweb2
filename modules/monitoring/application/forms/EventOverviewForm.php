@@ -97,19 +97,19 @@ class EventOverviewForm extends Form
     public function getFilter()
     {
         $filters = array();
-        if ($this->getValue('statechange', 1)) {
+        if ($this->getValue('statechange')) {
             $filters[] = $this->stateChangeFilter();
         }
-        if ($this->getValue('comment', 1)) {
+        if ($this->getValue('comment')) {
             $filters[] = $this->commentFilter();
         }
-        if ($this->getValue('notification', 1)) {
+        if ($this->getValue('notification')) {
             $filters[] = $this->notificationFilter();
         }
-        if ($this->getValue('downtime', 1)) {
+        if ($this->getValue('downtime')) {
             $filters[] = $this->downtimeFilter();
         }
-        if ($this->getValue('flapping', 1)) {
+        if ($this->getValue('flapping')) {
             $filters[] = $this->flappingFilter();
         }
         return Filter::matchAny($filters);

@@ -113,7 +113,7 @@ class Hook
     {
         $name = self::normalizeHookName($name);
 
-        if (!self::has($name, $key)) {
+        if (!self::has($name)) {
             return null;
         }
 

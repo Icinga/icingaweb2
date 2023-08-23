@@ -173,12 +173,10 @@ class ConfigMenu extends BaseHtmlElement
     protected function getHealthCount()
     {
         $count = 0;
-        $title = null;
         $worstState = null;
         foreach (HealthHook::collectHealthData()->select() as $result) {
             if ($worstState === null || $result->state > $worstState) {
                 $worstState = $result->state;
-                $title = $result->message;
                 $count = 1;
             } elseif ($worstState === $result->state) {
                 $count++;
@@ -199,8 +197,6 @@ class ConfigMenu extends BaseHtmlElement
                 $this->state = self::STATE_UNKNOWN;
                 break;
         }
-
-        $this->title = $title;
 
         return $count;
     }

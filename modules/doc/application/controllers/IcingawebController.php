@@ -11,7 +11,7 @@ class IcingawebController extends DocController
     /**
      * Get the path to Icinga Web 2's documentation
      *
-     * @return  string
+     * @return  ?string
      *
      * @throws  \Icinga\Exception\Http\HttpNotFoundException If Icinga Web 2's documentation is not available
      */

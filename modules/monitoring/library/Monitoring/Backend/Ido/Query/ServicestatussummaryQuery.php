@@ -44,7 +44,7 @@ class ServicestatussummaryQuery extends IdoQuery
     /**
      * The service status sub select
      *
-     * @var ServiceStatusQuery
+     * @var ServicestatusQuery
      */
     protected $subSelect;
 

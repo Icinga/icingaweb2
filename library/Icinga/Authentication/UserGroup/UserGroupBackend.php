@@ -170,6 +170,7 @@ class UserGroupBackend
             $resourceConfig->charset = 'utf8mb4';
         }
 
+        $backend = null;
         $resource = ResourceFactory::createResource($resourceConfig);
         switch ($backendType) {
             case 'db':

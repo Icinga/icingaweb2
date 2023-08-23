@@ -4,6 +4,7 @@
 namespace Icinga\Web;
 
 use Icinga\Forms\ConfigForm;
+use Icinga\Module\Setup\Forms\ModulePage;
 use LogicException;
 use InvalidArgumentException;
 use Icinga\Web\Session\SessionNamespace;
@@ -131,9 +132,9 @@ class Wizard
      *
      * Note that it's also possible to retrieve a nested wizard's page by using this method.
      *
-     * @param   string      $name   The name of the page to return
+     * @param   string                 $name    The name of the page to return
      *
-     * @return  null|Form           The page or null in case there is no page with the given name
+     * @return  ModulePage|Form|null            The page or null in case there is no page with the given name
      */
     public function getPage($name)
     {
@@ -154,7 +155,7 @@ class Wizard
     public function addPage($page)
     {
         if (! $page instanceof Form && ! $page instanceof self) {
-            throw InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'The $page argument must be an instance of Icinga\Web\Form '
                 . 'or Icinga\Web\Wizard but is of type: ' . get_class($page)
             );

@@ -783,7 +783,7 @@ abstract class Repository implements Selectable
      * @param   RepositoryQuery     $query      An optional query to pass as context
      *                                          (unused by the base implementation)
      *
-     * @return  string
+     * @return  ?string
      *
      * @throws  ProgrammingError    In case a conversion rule is found but not any conversion method
      */
@@ -791,7 +791,7 @@ abstract class Repository implements Selectable
     {
         $conversionRules = $this->getConversionRules();
         if (! isset($conversionRules[$table])) {
-            return;
+            return null;
         }
 
         $tableRules = $conversionRules[$table];
@@ -930,7 +930,7 @@ abstract class Repository implements Selectable
      *
      * @param   string|null     $value
      *
-     * @return  int
+     * @return  ?int
      *
      * @see https://tools.ietf.org/html/rfc4517#section-3.3.13
      */
@@ -941,7 +941,7 @@ abstract class Repository implements Selectable
         }
 
         try {
-            return ASN1::parseGeneralizedTime($value)->getTimeStamp();
+            return ASN1::parseGeneralizedTime($value)->getTimestamp();
         } catch (InvalidArgumentException $e) {
             Logger::debug(sprintf('Repository "%s": %s', $this->getName(), $e->getMessage()));
         }

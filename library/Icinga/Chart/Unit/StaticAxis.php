@@ -65,9 +65,9 @@ class StaticAxis implements AxisUnit
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Return the current element
      * @link http://php.net/manual/en/iterator.current.php
-     * @return mixed Can return any type.
+     * @return int.
      */
-    public function current()
+    public function current(): int
     {
         return  1 + (99 / count($this->items) * key($this->items));
     }
@@ -78,9 +78,9 @@ class StaticAxis implements AxisUnit
      * @link http://php.net/manual/en/iterator.next.php
      * @return void Any returned value is ignored.
      */
-    public function next()
+    public function next(): void
     {
-        return next($this->items);
+        next($this->items);
     }
 
     /**
@@ -89,6 +89,7 @@ class StaticAxis implements AxisUnit
      * @link http://php.net/manual/en/iterator.key.php
      * @return mixed scalar on success, or null on failure.
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return current($this->items);
@@ -101,7 +102,7 @@ class StaticAxis implements AxisUnit
      * @return boolean The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
-    public function valid()
+    public function valid(): bool
     {
         return current($this->items) !== false;
     }
@@ -112,9 +113,9 @@ class StaticAxis implements AxisUnit
      * @link http://php.net/manual/en/iterator.rewind.php
      * @return void Any returned value is ignored.
      */
-    public function rewind()
+    public function rewind(): void
     {
-        return reset($this->items);
+        reset($this->items);
     }
 
     /**

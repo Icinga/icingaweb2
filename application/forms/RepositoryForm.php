@@ -321,7 +321,7 @@ abstract class RepositoryForm extends Form
     /**
      * Apply the requested mode on the repository
      *
-     * @return  bool
+     * @return  ?bool
      */
     public function onSuccess()
     {

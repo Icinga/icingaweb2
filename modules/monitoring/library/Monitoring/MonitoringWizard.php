@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring;
 
+use Icinga\Module\Setup\Forms\RequirementsPage;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
@@ -36,8 +37,8 @@ class MonitoringWizard extends Wizard implements SetupWizard
     /**
      * Setup the given page that is either going to be displayed or validated
      *
-     * @param   Form        $page       The page to setup
-     * @param   Request     $request    The current request
+     * @param   Form|RequirementsPage|SummaryPage       $page       The page to setup
+     * @param   Request                                 $request    The current request
      */
     public function setupPage(Form $page, Request $request)
     {

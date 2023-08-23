@@ -129,7 +129,7 @@ class FileReader implements Selectable, Countable
         }
         $lines = array();
         if ($query->sortDesc()) {
-            $count = $this->count($query);
+            $count = $this->count();
             if ($count <= $skip) {
                 return $lines;
             } elseif ($count < ($skip + $read)) {

@@ -62,8 +62,6 @@ class LessCompiler
     public function __construct()
     {
         $this->lessc = new LessParser();
-        // Discourage usage of import because we're caching based on an explicit list of LESS files to compile
-        $this->lessc->importDisabled = true;
     }
 
     /**

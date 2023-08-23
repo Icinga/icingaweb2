@@ -104,7 +104,7 @@ class AnnouncementCookie extends Cookie
     /**
      * Get the timestamp of the next active announcement
      *
-     * @return  int
+     * @return ?int
      */
     public function getNextActive()
     {
@@ -114,11 +114,11 @@ class AnnouncementCookie extends Cookie
     /**
      * Set the timestamp of the next active announcement
      *
-     * @param   int $nextActive
+     * @param ?int $nextActive
      *
      * @return  $this
      */
-    public function setNextActive($nextActive)
+    public function setNextActive(?int $nextActive)
     {
         $this->nextActive = $nextActive;
         return $this;

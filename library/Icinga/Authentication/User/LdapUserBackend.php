@@ -4,11 +4,13 @@
 namespace Icinga\Authentication\User;
 
 use DateTime;
+use Exception;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\QueryException;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\Protocol\Ldap\LdapException;

@@ -6,6 +6,7 @@ namespace Icinga\Web\Widget;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Icinga;
 use Exception;
+use Zend_View_Abstract;
 
 /**
  * Web widgets MUST extend this class
@@ -111,7 +112,7 @@ abstract class AbstractWidget
     public function __toString()
     {
         try {
-            $html = $this->render($this->view());
+            $html = $this->render();
         } catch (Exception $e) {
             return htmlspecialchars($e->getMessage());
         }

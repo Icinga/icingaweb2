@@ -140,6 +140,7 @@ class DirectoryIterator implements RecursiveIterator
 
     public function next(): void
     {
+        $path = null;
         do {
             $this->files->next();
             $skip = false;

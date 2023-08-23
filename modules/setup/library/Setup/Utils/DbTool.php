@@ -6,6 +6,7 @@ namespace Icinga\Module\Setup\Utils;
 use PDO;
 use PDOException;
 use LogicException;
+use Zend_Db_Adapter_Pdo_Abstract;
 use Zend_Db_Adapter_Pdo_Mysql;
 use Zend_Db_Adapter_Pdo_Pgsql;
 use Icinga\Util\File;
@@ -557,7 +558,7 @@ class DbTool
      * @param   string  $username       The login name for which to check the privileges,
      *                                  if NULL the current login is used
      *
-     * @return  bool
+     * @return  ?bool
      */
     public function checkPrivileges(array $privileges, array $context = null, $username = null)
     {
@@ -573,7 +574,7 @@ class DbTool
      *
      * @param   array   $privileges     The privileges that should be grantable
      *
-     * @return  bool
+     * @return  ?bool
      */
     public function isGrantable($privileges)
     {
@@ -679,7 +680,7 @@ class DbTool
      *
      * @param   string  $username   The username to search
      *
-     * @return  bool
+     * @return  ?bool
      */
     public function hasLogin($username)
     {

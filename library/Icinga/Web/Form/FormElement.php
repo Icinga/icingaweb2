@@ -37,7 +37,7 @@ class FormElement extends Zend_Form_Element
      * Icinga Web 2 loads its own default element decorators. For loading Zend's default element decorators set
      * FormElement::$_disableLoadDefaultDecorators to false.
      *
-     * @return  this
+     * @return  $this
      * @see     Form::$defaultElementDecorators For Icinga Web 2's default element decorators.
      */
     public function loadDefaultDecorators()

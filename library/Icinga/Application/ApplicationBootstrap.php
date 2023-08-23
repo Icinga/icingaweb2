@@ -648,7 +648,7 @@ abstract class ApplicationBootstrap
      */
     final protected function setupTimezone()
     {
-        $timezone = $this->detectTimeZone();
+        $timezone = $this->detectTimezone();
         if ($timezone === null || @date_default_timezone_set($timezone) === false) {
             date_default_timezone_set(@date_default_timezone_get());
         }

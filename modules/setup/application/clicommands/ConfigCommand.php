@@ -5,6 +5,7 @@ namespace Icinga\Module\Setup\Clicommands;
 
 use Icinga\Application\Logger;
 use Icinga\Cli\Command;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Setup\Webserver;
 
@@ -128,6 +129,8 @@ class ConfigCommand extends Command
         if (($type = $this->params->getStandalone()) === null) {
             $this->fail($this->translate('Argument type is mandatory.'));
         }
+
+        $webserver = null;
         try {
             $webserver = Webserver::createInstance($type);
         } catch (ProgrammingError $e) {

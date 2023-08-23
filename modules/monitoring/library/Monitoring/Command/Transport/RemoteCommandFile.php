@@ -215,7 +215,7 @@ class RemoteCommandFile implements CommandTransportInterface
     /**
      * Use a given resource to set the user and the key
      *
-     * @param string
+     * @param ?string $resource
      *
      * @throws ConfigurationError
      */

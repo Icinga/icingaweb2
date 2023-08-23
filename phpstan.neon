@@ -1,0 +1,63 @@
+includes:
+	- phpstan-baseline.neon
+
+parameters:
+    level: max
+
+    checkFunctionNameCase: true
+    checkInternalClassCaseSensitivity: true
+    treatPhpDocTypesAsCertain: false
+
+    paths:
+        - application
+        - library/Icinga
+        - modules/doc/application
+        - modules/migrate/application
+        - modules/monitoring/application
+        - modules/setup/application
+        - modules/test/application
+        - modules/translation/application
+        - modules/doc/library
+        - modules/migrate/library
+        - modules/monitoring/library
+        - modules/setup/library
+        - modules/translation/library
+
+    ignoreErrors:
+        - '#Unsafe usage of new static\(\)#'
+        - '#. but return statement is missing#'
+
+        # ldap_connect() returns `LDAP\Connection` in php >= 81
+        -
+            message: '#Parameter .* of function .* expects .*, .* given#'
+            count: 7
+            path: library/Icinga/Protocol/Ldap/LdapCapabilities.php
+
+        -
+            message: '#Parameter .* of (function|callable) .* expects .*, .* given#'
+            count: 75
+            path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+        -
+            message: '#Method Icinga\\Protocol\\Ldap\\LdapConnection::(prepareNewConnection|ldapSearch)\(\) should return (resource|bool\|resource) but returns (LDAP\\Connection\|false|array\|LDAP\\Result\|false)#'
+            count: 3
+            path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+        -
+            message: "#Cannot access offset ('count'|'dn') on array.*#"
+            count: 2
+            path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+    scanDirectories:
+        - vendor
+
+    excludePaths:
+        - library/Icinga/Test
+
+    universalObjectCratesClasses:
+        - Icinga\Data\ConfigObject
+        - Icinga\Web\View
+        - Icinga\Module\Monitoring\Object\MonitoredObject
+        - Icinga\Module\Monitoring\DataView\DataView
+        - Icinga\Web\Session\SessionNamespace
+        - Icinga\User\Preferences

@@ -12,6 +12,7 @@ use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Web\Widget\Icon;
+use Closure;
 
 class CustomVarTable extends BaseHtmlElement
 {
@@ -203,6 +204,7 @@ class CustomVarTable extends BaseHtmlElement
     {
         $table = new self($entries);
 
+        /** @var HtmlDocument $wrapper */
         $wrapper = $this->getWrapper();
         if ($wrapper === null) {
             $wrapper = new HtmlDocument();

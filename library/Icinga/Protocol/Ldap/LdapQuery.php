@@ -273,7 +273,7 @@ class LdapQuery extends SimpleQuery
             );
             $sorted[$new_key] = $key;
         }
-        unset($groups);
+
         ksort($sorted);
 
         $tree = Root::forConnection($this->ds);

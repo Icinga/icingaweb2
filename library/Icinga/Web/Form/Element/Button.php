@@ -6,6 +6,7 @@ namespace Icinga\Web\Form\Element;
 use Icinga\Web\Request;
 use Icinga\Application\Icinga;
 use Icinga\Web\Form\FormElement;
+use Zend_Config;
 
 /**
  * A button

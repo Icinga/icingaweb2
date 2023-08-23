@@ -122,6 +122,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
         }
 
         $item = null;
+        $classPath = null;
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
             $classPath = 'Icinga\\Module\\'
                 . ucfirst($module->getName())
@@ -345,7 +346,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      *
      * @param   string  $name
      *
-     * @return  NavigationItem
+     * @return  ?NavigationItem
      */
     public function findItem($name)
     {
@@ -380,7 +381,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
                     $name = $item->getName();
                     do {
                         if (preg_match('~_(\d+)$~', $name, $matches)) {
-                            $name = preg_replace('~_\d+$~', $matches[1] + 1, $name);
+                            $name = preg_replace('~_\d+$~', (int) $matches[1] + 1, $name);
                         } else {
                             $name .= '_2';
                         }

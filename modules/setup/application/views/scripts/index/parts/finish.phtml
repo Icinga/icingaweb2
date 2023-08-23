@@ -30,5 +30,5 @@
   </div>
   <pre class="log-output"><?= join("\n\n", array_map(function($a) {
     return join("\n", $a);
-  }, $report)); ?></pre>
+  }, $report ?? [])); ?></pre>
 </div>

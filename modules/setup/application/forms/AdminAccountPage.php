@@ -15,6 +15,7 @@ use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Data\Selectable;
 use Icinga\Exception\NotImplementedError;
+use Icinga\Protocol\Ldap\LdapQuery;
 use Icinga\Web\Form;
 
 /**
@@ -100,6 +101,7 @@ class AdminAccountPage extends Form
     public function createElements(array $formData)
     {
         $choices = array();
+        $groups = [];
         if ($this->backendConfig['backend'] !== 'db') {
             $choices['by_name'] = $this->translate('By Name', 'setup.admin');
             $choice = isset($formData['user_type']) ? $formData['user_type'] : 'by_name';
@@ -115,6 +117,7 @@ class AdminAccountPage extends Form
             $choice = isset($formData['user_type']) ? $formData['user_type'] : 'new_user';
         }
 
+        $users = [];
         if (in_array($this->backendConfig['backend'], array('db', 'ldap', 'msldap'))) {
             $users = $this->fetchUsers();
             if (! empty($users)) {
@@ -297,7 +300,8 @@ class AdminAccountPage extends Form
                 ->select(array('user_name'))
                 ->order('user_name', 'asc', true);
             if (in_array($this->backendConfig['backend'], array('ldap', 'msldap'))) {
-                $query->getQuery()->setUsePagedResults();
+                /** @var LdapQuery $query */
+                $query->setUsePagedResults();
             }
 
             return $query->fetchColumn();
@@ -355,7 +359,8 @@ class AdminAccountPage extends Form
                 ->createUserGroupBackend()
                 ->select(array('group_name'));
             if (in_array($this->backendConfig['backend'], array('ldap', 'msldap'))) {
-                $query->getQuery()->setUsePagedResults();
+                /** @var LdapQuery $query */
+                $query->setUsePagedResults();
             }
 
             return $query->fetchColumn();

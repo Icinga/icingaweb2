@@ -64,6 +64,8 @@ class GeneralConfigStep extends Step
         } else {
             $level = $this->data['generalConfig']['logging_level'];
 
+            $typeDescription = null;
+            $typeSpecificHtml = null;
             switch ($type) {
                 case 'php':
                     $typeDescription = t('Webserver Log', 'app.config.logging.type');

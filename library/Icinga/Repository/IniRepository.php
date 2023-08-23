@@ -200,8 +200,6 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      *
      * @param   string          $table
      * @param   ConfigObject    $old
-     *
-     * @return  ConfigObject
      */
     public function onDelete($table, ConfigObject $old)
     {
@@ -217,7 +215,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      * @param   string  $table  The table name for which to return a trigger method
      * @param   string  $event  The name of the event type
      *
-     * @return  string
+     * @return  ?string
      */
     protected function getTrigger($table, $event)
     {

@@ -98,7 +98,7 @@ class Url
      * and overwrite any existing parameters
      *
      * @param   UrlParams|array $params     Parameters that should additionally be considered for the url
-     * @param   Zend_Request    $request    A request to use instead of the default one
+     * @param   Request         $request    A request to use instead of the default one
      *
      * @return  static
      */
@@ -132,7 +132,7 @@ class Url
     /**
      * Return a request object that should be used for determining the URL
      *
-     * @return  Zend_Abstract_Request
+     * @return  Request
      */
     protected static function getRequest()
     {
@@ -154,7 +154,7 @@ class Url
      *
      * @param   string          $url        The string representation of the url to parse
      * @param   array           $params     An array of parameters that should additionally be considered for the url
-     * @param   Zend_Request    $request    A request to use instead of the default one
+     * @param   Request         $request    A request to use instead of the default one
      *
      * @return  static
      */
@@ -243,7 +243,7 @@ class Url
      *
      * @param string    $url        The url to apply the new filter to
      * @param Filter    $filter     The base filter
-     * @param Filter    $optional   The optional filter
+     * @param ?Filter    $optional   The optional filter
      *
      * @return static               The altered URL containing the new filter
      * @throws ProgrammingError
@@ -642,8 +642,8 @@ class Url
     /**
      * Set a single parameter, overwriting any existing one with the same name
      *
-     * @param   string          $param      The query parameter name
-     * @param   array|string    $value      An array or string to set as the parameter value
+     * @param   string               $param      The query parameter name
+     * @param   array|string|bool    $value      An array or string to set as the parameter value
      *
      * @return  $this
      */
@@ -748,7 +748,7 @@ class Url
      * remove from the query list
      *
      * @param string|array $param  A single string or an array containing parameter names
-     * @param array        $values an optional values array
+     * @param mixed        $values an optional values array
      *
      * @return static
      */

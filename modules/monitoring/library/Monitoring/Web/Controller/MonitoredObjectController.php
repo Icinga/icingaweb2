@@ -13,6 +13,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandFo
 use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
 use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
 use Icinga\Module\Monitoring\Hook\ObjectDetailsTabHook;
+use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -116,7 +117,7 @@ abstract class MonitoredObjectController extends Controller
     public function historyAction()
     {
         $this->getTabs()->activate('history');
-        $this->view->history = $this->object->fetchEventHistory()->eventhistory;
+        $this->view->history = $this->object->fetchEventhistory()->eventhistory;
         $this->applyRestriction('monitoring/filter/objects', $this->view->history);
 
         $this->setupLimitControl(50);
@@ -229,6 +230,7 @@ abstract class MonitoredObjectController extends Controller
             }
         } else {
             $isService = true;
+            /** @var Service $object */
             $params = array(
                 'host'      => $object->getHost()->getName(),
                 'service'   => $object->getName()

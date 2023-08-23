@@ -94,7 +94,7 @@ class Discovery
     /**
      * Discover LDAP servers on the given domain
      *
-     * @param  string   $domain The object containing the form elements
+     * @param  ?string   $domain The object containing the form elements
      *
      * @return Discovery        True when the discovery was successful, false when the configuration was guessed
      */
@@ -130,7 +130,7 @@ class Discovery
      * @param $host         The host on which to execute the discovery
      * @param $port         The port on which to execute the discovery
      *
-     * @return Discover     The resulting Discovery
+     * @return Discovery     The resulting Discovery
      */
     public static function discover($host, $port)
     {

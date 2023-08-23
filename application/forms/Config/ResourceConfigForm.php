@@ -18,6 +18,7 @@ use Icinga\Forms\Config\Resource\LdapResourceForm;
 use Icinga\Forms\Config\Resource\SshResourceForm;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
+use Zend_Form_Element;
 
 class ResourceConfigForm extends ConfigForm
 {
@@ -98,7 +99,7 @@ class ResourceConfigForm extends ConfigForm
      * @param   string      $name           The name of the resource to edit
      * @param   array       $values         The values to edit the configuration with
      *
-     * @return  array                       The edited configuration
+     * @return  ConfigObject                The edited configuration
      *
      * @throws  InvalidArgumentException    In case the resource does not exist
      */
@@ -134,7 +135,7 @@ class ResourceConfigForm extends ConfigForm
      *
      * @param   string      $name           The name of the resource to remove
      *
-     * @return  array                       The removed resource configuration
+     * @return  ConfigObject                The removed resource configuration
      *
      * @throws  InvalidArgumentException    In case the resource does not exist
      */
@@ -294,7 +295,7 @@ class ResourceConfigForm extends ConfigForm
      *
      * @param   Form    $form
      *
-     * @return  Inspection
+     * @return  ?Inspection
      */
     public static function inspectResource(Form $form)
     {
