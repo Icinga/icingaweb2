@@ -1031,11 +1031,6 @@ parameters:
 			path: application/controllers/StaticController.php
 
 		-
-			message: "#^Method Icinga\\\\Controllers\\\\StaticController\\:\\:gravatarAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: application/controllers/StaticController.php
-
-		-
 			message: "#^Method Icinga\\\\Controllers\\\\StaticController\\:\\:imgAction\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: application/controllers/StaticController.php
@@ -1052,16 +1047,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$name of method Icinga\\\\Application\\\\Modules\\\\Manager\\:\\:getModule\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: application/controllers/StaticController.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function trim expects string, mixed given\\.$#"
-			count: 1
-			path: application/controllers/StaticController.php
-
-		-
-			message: "#^Parameter \\#2 \\$content of method Icinga\\\\Web\\\\FileCache\\:\\:store\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: application/controllers/StaticController.php
 
