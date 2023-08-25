@@ -40,6 +40,19 @@ config_resource = "icingaweb_db"
 module_path = "/usr/share/icingaweb2/modules"
 ```
 
+### Security Configuration <a id="configuration-general-security"></a>
+
+| Option           | Description                                                                                                                                    |
+|------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| use\_strict\_csp | **Optional.** Set this to `1` to enable strict [Content Security Policy](20-Advanced-Topics.md#advanced-topics-security-csp). Defaults to `0`. |
+
+Example:
+
+```
+[security]
+use_strict_csp = "1"
+```
+
 ### Logging Configuration <a id="configuration-general-logging"></a>
 
 Option                   | Description

@@ -4,6 +4,7 @@ This chapter provides details for advanced Icinga Web 2 topics.
 
 * [Global URL parameters](20-Advanced-Topics.md#global-url-parameters)
 * [VirtualHost configuration](20-Advanced-Topics.md#virtualhost-configuration)
+* [Content Security Policy (CSP)](20-Advanced-Topics.md#advanced-topics-csp)
 * [Advanced Authentication Tips](20-Advanced-Topics.md#advanced-topics-authentication-tips)
 * [Source installation](20-Advanced-Topics.md#installing-from-source)
 * [Automated setup](20-Advanced-Topics.md#web-setup-automation)
@@ -114,6 +115,37 @@ Reload Apache and open the FQDN in your web browser.
 ```
 systemctl reload httpd
 ```
+
+### Content Security Policy (CSP) <a id="advanced-topics-csp"></a>
+
+Elevate your security standards to an even higher level by enabling the [Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) for Icinga Web.
+Enabling strict CSP can prevent your Icinga Web environment from becoming a potential target of [Cross-Site Scripting (XSS)](https://developer.mozilla.org/en-US/docs/Glossary/Cross-site_scripting)
+and data injection attacks. After enabling this feature Icinga Web defines all the required CSP headers. Subsequently,
+only content coming from Icinga Web's own origin is accepted, inline JS is prohibited, and inline CSS is accepted only
+if it contains the nonce set in the response header. 
+
+We decided against enabling this by default as we cannot guarantee that all the modules out there will function correctly.
+Therefore, you have to manually enable this policy explicitly and accept the risks that this might break some of
+the Icinga Web modules. Icinga Web and all it's components listed below, on the other hand, fully support strict CSP. If
+that's not the case, please submit an issue on GitHub in the respective repositories.
+
+Here is a list of all Icinga Web components that are capable of strict CSP.
+
+| Name                              | CSP supported since                                                                       |
+|-----------------------------------|-------------------------------------------------------------------------------------------|
+| Icinga DB Web                     | [v1.1.0](https://github.com/Icinga/icingadb-web/releases/tag/v1.1.0)                      |
+| Icinga Reporting                  | [v1.0.0](https://github.com/Icinga/icingaweb2-module-reporting/releases/tag/v1.0.0)       |
+| Icinga IDO Reports                | [v0.10.1](https://github.com/Icinga/icingaweb2-module-idoreports/releases/tag/v0.10.1)    |
+| Icinga Cube                       | [v1.3.2](https://github.com/Icinga/icingaweb2-module-cube/releases/tag/v1.3.2)            |
+| Icinga Business Process Modeling  | [v2.5.0](https://github.com/Icinga/icingaweb2-module-businessprocess/releases/tag/v2.5.0) |
+| Icinga Certificate Monitoring     | [v1.3.0](https://github.com/Icinga/icingaweb2-module-x509/releases/tag/v1.3.0)            |
+| Icinga PDF Export                 | [v0.10.2](https://github.com/Icinga/icingaweb2-module-pdfexport/releases/tag/v0.10.2)     |
+| Icinga Web Jira Integration       | [v1.3.2](https://github.com/Icinga/icingaweb2-module-jira/releases/tag/v1.3.2)            |
+| Icinga Web Graphite Integration   | [v1.3.0](https://github.com/Icinga/icingaweb2-module-graphite/releases/tag/v1.3.0)        |
+| Icinga Web GenericTTS Integration | [v2.1.0](https://github.com/Icinga/icingaweb2-module-generictts/releases/tag/v2.1.0)      |
+| Icinga Web Nagvis Integration     | [v1.2.0](https://github.com/Icinga/icingaweb2-module-nagvis/releases/tag/v1.2.0)          |
+| Icinga Web AWS Integration        | [v1.1.0](https://github.com/Icinga/icingaweb2-module-aws/releases/tag/v1.1.0)             |
+
 
 ## Advanced Authentication Tips <a id="advanced-topics-authentication-tips"></a>
 
