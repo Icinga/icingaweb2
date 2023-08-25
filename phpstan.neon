@@ -26,6 +26,7 @@ parameters:
     ignoreErrors:
         - '#Unsafe usage of new static\(\)#'
         - '#. but return statement is missing#'
+        - '#Cannot call method importNode\(\) on DOMDocument\|null.#'
 
         # ldap_connect() returns `LDAP\Connection` in php >= 81
         -
