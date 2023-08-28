@@ -6,6 +6,7 @@ namespace Icinga\Web\Controller;
 use Icinga\Application\Modules\Module;
 use Icinga\Common\PdfExport;
 use Icinga\File\Pdf;
+use Icinga\Util\Csp;
 use Icinga\Web\View;
 use ipl\I18n\Translation;
 use Zend_Controller_Action;
@@ -169,6 +170,10 @@ class ActionController extends Zend_Controller_Action
                 Auth::getInstance()->challengeHttp();
             }
             $this->redirectToLogin(Url::fromRequest());
+        }
+
+        if (! $this->isXhr() && $this->Config()->get('security', 'use_strict_csp', false)) {
+            Csp::createNonce();
         }
 
         $this->view->tabs = new Tabs();

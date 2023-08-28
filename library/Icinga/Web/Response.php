@@ -3,6 +3,8 @@
 
 namespace Icinga\Web;
 
+use Icinga\Application\Config;
+use Icinga\Util\Csp;
 use Zend_Controller_Response_Http;
 use Icinga\Application\Icinga;
 use Icinga\Web\Response\JsonResponse;
@@ -369,6 +371,10 @@ class Response extends Zend_Controller_Response_Http
         } else {
             if ($redirectUrl !== null) {
                 $this->setRedirect($redirectUrl->getAbsoluteUrl());
+            }
+
+            if (Csp::getStyleNonce() && Config::app()->get('security', 'use_strict_csp', false)) {
+                Csp::addHeader($this);
             }
         }
 

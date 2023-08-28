@@ -96,7 +96,18 @@ class ConfigController extends Controller
         $this->assertPermission('config/general');
         $form = new GeneralConfigForm();
         $form->setIniConfig(Config::app());
-        $form->handleRequest();
+        $form->setOnSuccess(function (GeneralConfigForm $form) {
+            $config = Config::app();
+            $useStrictCsp = (bool) $config->get('security', 'use_strict_csp', false);
+            if ($form->onSuccess() === false) {
+                return false;
+            }
+
+            $appConfigForm = $form->getSubForm('form_config_general_application');
+            if ($appConfigForm && (bool) $appConfigForm->getValue('security_use_strict_csp') !== $useStrictCsp) {
+                $this->getResponse()->setReloadWindow(true);
+            }
+        })->handleRequest();
 
         $this->view->form = $form;
         $this->view->title = $this->translate('General');
