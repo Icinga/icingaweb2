@@ -427,5 +427,6 @@ $dashboard->add(
 /*
  * CSS
  */
+$this->provideCssFile('event-grid.less');
 $this->provideCssFile('service-grid.less');
 $this->provideCssFile('tables.less');

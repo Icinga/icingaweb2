@@ -208,6 +208,10 @@ table.multiselect tr[href] td {
 }
 
 #main div.filter {
+  .search.search-input {
+    width: 8em;
+  }
+
   form.editor {
     input[type=text], select {
       width: 12em;
@@ -238,6 +242,20 @@ table.multiselect tr[href] td {
     .buttons input:not(:last-child) {
       margin-right:.5em;
     }
+
+    ul.tree {
+      .filter-operator {
+        width: 5em;
+      }
+
+      .new-filter {
+        background: #ffb;
+      }
+
+      .filter-rule {
+        width: 4em;
+      }
+    }
   }
 }
 
@@ -249,6 +267,10 @@ form.role-form {
   .control-label-group em {
     color: @text-color-light;
     font-style: normal;
+  }
+
+  .unrestricted-role {
+    text-decoration: line-through;
   }
 
   .control-label > * {
@@ -641,3 +663,4 @@ ul.tree li a.error:hover {
 html.no-js .progress-label {
   display: none;
 }
+

@@ -3,6 +3,7 @@
 
 namespace Icinga\Chart\Primitive;
 
+use DOMDocument;
 use DOMElement;
 use Icinga\Chart\Render\RenderContext;
 use Icinga\Chart\Format;
@@ -162,12 +163,24 @@ class Path extends Styleable implements Drawable
         }
 
         $path = $doc->createElement('path');
-        if ($this->id) {
-            $path->setAttribute('id', $this->id);
-        }
+
+        $id = $this->id ?? uniqid('path-');
+        $path->setAttribute('id', $id);
+        $this->setId($id);
+
         $path->setAttribute('d', $pathDescription);
-        $path->setAttribute('style', $this->getStyle());
+
         $this->applyAttributes($path);
+        $style = new DOMDocument();
+        $style->loadHTML($this->getStyle());
+
+        $path->appendChild(
+            $path->ownerDocument->importNode(
+                $style->getElementsByTagName('style')->item(0),
+                true
+            )
+        );
+
         $group->appendChild($path);
         return $group;
     }

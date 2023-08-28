@@ -50,6 +50,6 @@ class Announcements extends AbstractWidget
             return $html;
         }
         // Force container update on XHR
-        return '<div style="display: none;"></div>';
+        return '<div hidden></div>';
     }
 }

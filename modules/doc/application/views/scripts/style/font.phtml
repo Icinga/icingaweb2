@@ -5,11 +5,10 @@
 
 <div class="content">
 <?php foreach ($this->font->glyphs as $icon): ?>
-<!-- TODO: move CSS away //-->
-<div style="width: 33%; font-size: 1.5em; height: 2em; float: left;" class="<?=
+<div class="icon <?=
     $this->font->css_prefix_text . $icon->css
 ?>">
-<?= $this->escape($icon->css) ?> <span style="font-size: 0.6em">(0x<?= dechex($icon->code) ?>)</span>
+<?= $this->escape($icon->css) ?> <span class="icon-code">(0x<?= dechex($icon->code) ?>)</span>
 </div>
 <?php endforeach ?>
 </div>

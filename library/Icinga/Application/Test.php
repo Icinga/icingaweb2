@@ -75,6 +75,7 @@ class Test extends Cli
 
         // Conflicts with `Tests\Icinga\Module\...\Lib`. But it seems it's not needed anyway...
         //$this->getLoader()->registerNamespace('Tests', $this->getBaseDir('test/php/library'));
+        $this->getLoader()->registerNamespace('Tests\\Icinga\\Lib', $this->getBaseDir('test/php/Lib'));
 
         return $this;
     }

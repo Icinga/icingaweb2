@@ -6,7 +6,9 @@ namespace Icinga\Web\Widget\Chart;
 use DateInterval;
 use DateTime;
 use Icinga\Util\Color;
+use Icinga\Util\Csp;
 use Icinga\Web\Widget\AbstractWidget;
+use ipl\Web\Style;
 
 /**
  * Display a colored grid that visualizes a set of values for each day
@@ -31,6 +33,9 @@ class HistoryColorGrid extends AbstractWidget
     private $data = array();
     private $color;
     public $opacity = 1.0;
+
+    /** @var array<string, array<string, string>> History grid css rulesets */
+    protected $rulesets = [];
 
     public function __construct($color = '#51e551', $start = null, $end = null)
     {
@@ -123,18 +128,30 @@ class HistoryColorGrid extends AbstractWidget
     {
         if (array_key_exists($day, $this->data) && $this->data[$day]['value'] > 0) {
             $entry = $this->data[$day];
-            return '<a ' .
-                'style="background-color: ' . $this->calculateColor($entry['value']) . ';'
-                    . ' opacity: ' . $this->opacity . ';" ' .
-                'aria-label="' . $entry['caption'] . '" ' .
-                'title="' . $entry['caption'] . '" ' .
-                'href="'  . $entry['url'] . '" ' .
-            '></a>';
+            $this->rulesets['.grid-day-with-entry-' . $entry['value']] = [
+                'background-color'  => $this->calculateColor($entry['value']),
+                'opacity'           => $this->opacity
+            ];
+
+            return '<a class="grid-day-with-entry-'
+                . $entry['value']
+                . '" '
+                . 'aria-label="' . $entry['caption']
+                . '" '
+                . 'title="' . $entry['caption']
+                . '" '
+                . 'href="'  . $entry['url']
+                . '" '
+                . '"></a>';
         } else {
-            return '<span ' .
-                'style="background-color: ' . $this->calculateColor(0) . '; opacity: ' . $this->opacity . ';" ' .
-                'title="No entries for ' . $day . '" ' .
-            '></span>';
+            if (! isset($this->rulesets['.grid-day-no-entry'])) {
+                $this->rulesets['.grid-day-no-entry'] = [
+                    'background-color'  => $this->calculateColor(0),
+                    'opacity'           => $this->opacity
+                ];
+            }
+
+            return '<span class="grid-day-no-entry"' . ' title="No entries for ' . $day . '"></span>';
         }
     }
 
@@ -366,8 +383,18 @@ class HistoryColorGrid extends AbstractWidget
         }
         $grid = $this->createGrid();
         if ($this->orientation === self::ORIENTATION_HORIZONTAL) {
-            return $this->renderHorizontal($grid);
+            $html = $this->renderHorizontal($grid);
+        } else {
+            $html = $this->renderVertical($grid);
         }
-        return $this->renderVertical($grid);
+
+        $historyGridStyle = new Style();
+        $historyGridStyle->setNonce(Csp::getStyleNonce());
+
+        foreach ($this->rulesets as $selector => $properties) {
+            $historyGridStyle->add($selector, $properties);
+        }
+
+        return $html . $historyGridStyle;
     }
 }

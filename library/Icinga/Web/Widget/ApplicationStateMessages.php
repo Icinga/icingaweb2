@@ -39,14 +39,14 @@ class ApplicationStateMessages extends AbstractWidget
         }
 
         if (! (bool) $enabled) {
-            return '<div style="display: none;"></div>';
+            return '<div hidden></div>';
         }
 
         $active = $this->getMessages();
 
         if (empty($active)) {
             // Force container update on XHR
-            return '<div style="display: none;"></div>';
+            return '<div hidden></div>';
         }
 
         $html = '<div>';

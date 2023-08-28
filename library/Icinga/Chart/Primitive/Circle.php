@@ -4,6 +4,7 @@
 
 namespace Icinga\Chart\Primitive;
 
+use DOMDocument;
 use DOMElement;
 use Icinga\Chart\Render\RenderContext;
 use Icinga\Chart\Format;
@@ -61,8 +62,23 @@ class Circle extends Styleable implements Drawable
         $circle->setAttribute('cx', Format::formatSVGNumber($coords[0]));
         $circle->setAttribute('cy', Format::formatSVGNumber($coords[1]));
         $circle->setAttribute('r', $this->radius);
-        $circle->setAttribute('style', $this->getStyle());
+
+        $id = $this->id ?? uniqid('circle-');
+        $circle->setAttribute('id', $id);
+        $this->setId($id);
+
         $this->applyAttributes($circle);
+
+        $style = new DOMDocument();
+        $style->loadHTML($this->getStyle());
+
+        $circle->appendChild(
+            $circle->ownerDocument->importNode(
+                $style->getElementsByTagName('style')->item(0),
+                true
+            )
+        );
+
         return $circle;
     }
 }

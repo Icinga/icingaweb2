@@ -120,8 +120,6 @@ class FormTest extends BaseTestCase
      */
     public function testWhetherACsrfCounterMeasureIsBeingAdded()
     {
-        Mockery::mock('alias:Icinga\Web\Session')->shouldReceive('getSession->getId')->andReturn('1234567890');
-
         $form = new Form();
         $form->create();
 

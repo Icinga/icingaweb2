@@ -17,9 +17,9 @@ if (! $this->compact): ?>
     <table class="table-row-selectable common-table">
         <thead>
             <th><?= $this->translate('Shared Navigation'); ?></th>
-            <th style="width: 10em"><?= $this->translate('Type'); ?></th>
-            <th style="width: 10em"><?= $this->translate('Owner'); ?></th>
-            <th style="width: 5em"><?= $this->translate('Unshare'); ?></th>
+            <th><?= $this->translate('Type'); ?></th>
+            <th><?= $this->translate('Owner'); ?></th>
+            <th><?= $this->translate('Unshare'); ?></th>
         </thead>
         <tbody>
         <?php foreach ($items as $item): ?>
@@ -53,7 +53,7 @@ if (! $this->compact): ?>
                     )
                 ); ?></td>
             <?php else: ?>
-                <td data-base-target="_self"><?= $removeForm
+                <td data-base-target="_self" class="remove-nav-item"><?= $removeForm
                     ->setDefault('name', $item->name)
                     ->setAction(Url::fromPath(
                         'navigation/unshare',
