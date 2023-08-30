@@ -41,16 +41,16 @@ jobs:
           git clone --depth 1 https://github.com/Icinga/icingaweb2-module-pdfexport.git vendor/modules/pdfexport-web
 
       - name: PHP Lint
-        if: success() || matrix.allow_failure
+        if: ${{ ! cancelled() }}
         run: ./vendor/bin/phplint -n --exclude={^vendor/.*} --exclude=library/Icinga/Util/String.php ${{ matrix.phplint_options }}  -- .
 
       - name: PHP CodeSniffer
-        if: success() || matrix.allow_failure
+        if: ${{ ! cancelled() }}
         run: phpcs
 
       - name: PHPStan
+        if: ${{ ! cancelled() }}
         uses: php-actions/phpstan@v3
-        if: success() || matrix.allow_failure
 
   test:
     name: Unit tests with php ${{ matrix.php }} on ${{ matrix.os }}
