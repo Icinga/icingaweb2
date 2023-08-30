@@ -320,14 +320,21 @@
 
             let rowSelector = this.getRowSelector(collapsible);
             if (!! rowSelector) {
-                let visibleRows = Number(collapsible.dataset.visibleRows);
-                if (isNaN(visibleRows)) {
-                    visibleRows = this.defaultVisibleRows;
-                } else if (visibleRows === 0) {
+                let collapseAfter = Number(collapsible.dataset.collapseAfter)
+                if (isNaN(collapseAfter)) {
+                    collapseAfter = Number(collapsible.dataset.visibleRows);
+                    if (isNaN(collapseAfter)) {
+                        collapseAfter = this.defaultVisibleRows;
+                    }
+
+                    collapseAfter *= 2;
+                }
+
+                if (collapseAfter === 0) {
                     return true;
                 }
 
-                return collapsible.querySelectorAll(rowSelector).length > visibleRows * 2;
+                return collapsible.querySelectorAll(rowSelector).length > collapseAfter;
             } else {
                 let maxHeight = Number(collapsible.dataset.visibleHeight);
                 if (isNaN(maxHeight)) {
