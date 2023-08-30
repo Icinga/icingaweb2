@@ -172,7 +172,7 @@ class ActionController extends Zend_Controller_Action
             $this->redirectToLogin(Url::fromRequest());
         }
 
-        if (! $this->isXhr() && $this->Config()->get('security', 'use_strict_csp', false)) {
+        if (! $this->isXhr() && Config::app()->get('security', 'use_strict_csp', false)) {
             Csp::createNonce();
         }
 
