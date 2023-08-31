@@ -334,6 +334,13 @@ a:hover > .icon-cancel {
   }
 }
 
+details.collapsible > summary {
+  &::marker,
+  &::-webkit-details-marker {
+    display: none;
+  }
+}
+
 .collapsible[data-can-collapse]:not(.collapsed) + .collapsible-control button,
 .collapsible[data-can-collapse]:not(.collapsed) > .collapsible-control,
 details.collapsible[open] + .collapsible-control button,
