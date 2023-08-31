@@ -118,6 +118,11 @@ class Test extends Cli
             if (is_dir($moduleTestPath)) {
                 $this->getLoader()->registerNamespace('Tests\\' . $moduleNamespace . '\\Lib', $moduleTestPath);
             }
+
+            $composerAutoloader = "$path/vendor/autoload.php";
+            if (file_exists($composerAutoloader)) {
+                require_once $composerAutoloader;
+            }
         }
 
         return $this;
