@@ -153,7 +153,8 @@ class DbResourceForm extends Form
                     'required'          => true,
                     'renderPassword'    => true,
                     'label'             => $this->translate('Password'),
-                    'description'       => $this->translate('The password to use for authentication')
+                    'description'       => $this->translate('The password to use for authentication'),
+                    'autocomplete'      => 'new-password'
                 )
             );
             $this->addElement(
