@@ -13256,11 +13256,6 @@ parameters:
 			path: library/Icinga/Web/Navigation/ConfigMenu.php
 
 		-
-			message: "#^Property Icinga\\\\Web\\\\Navigation\\\\ConfigMenu\\:\\:\\$defaultAttributes type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icinga/Web/Navigation/ConfigMenu.php
-
-		-
 			message: "#^Property Icinga\\\\Web\\\\Navigation\\\\ConfigMenu\\:\\:\\$selected has no type specified\\.$#"
 			count: 1
 			path: library/Icinga/Web/Navigation/ConfigMenu.php
@@ -13741,11 +13736,6 @@ parameters:
 			path: library/Icinga/Web/RememberMeUserDevicesList.php
 
 		-
-			message: "#^Property Icinga\\\\Web\\\\RememberMeUserDevicesList\\:\\:\\$defaultAttributes type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icinga/Web/RememberMeUserDevicesList.php
-
-		-
 			message: "#^Property Icinga\\\\Web\\\\RememberMeUserDevicesList\\:\\:\\$devicesList type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Web/RememberMeUserDevicesList.php
@@ -13762,11 +13752,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Web\\\\RememberMeUserList\\:\\:setUsers\\(\\) has parameter \\$users with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icinga/Web/RememberMeUserList.php
-
-		-
-			message: "#^Property Icinga\\\\Web\\\\RememberMeUserList\\:\\:\\$defaultAttributes type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Web/RememberMeUserList.php
 
@@ -14566,11 +14551,6 @@ parameters:
 			path: library/Icinga/Web/View/AppHealth.php
 
 		-
-			message: "#^Property Icinga\\\\Web\\\\View\\\\AppHealth\\:\\:\\$defaultAttributes type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icinga/Web/View/AppHealth.php
-
-		-
 			message: "#^Cannot call method protectId\\(\\) on Zend_View_Interface\\|null\\.$#"
 			count: 1
 			path: library/Icinga/Web/View/Helper/IcingaCheckbox.php
@@ -14658,11 +14638,6 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$array of function array_map expects array, array\\<int, string\\>\\|false given\\.$#"
 			count: 2
-			path: library/Icinga/Web/View/PrivilegeAudit.php
-
-		-
-			message: "#^Property Icinga\\\\Web\\\\View\\\\PrivilegeAudit\\:\\:\\$defaultAttributes type has no value type specified in iterable type array\\.$#"
-			count: 1
 			path: library/Icinga/Web/View/PrivilegeAudit.php
 
 		-
@@ -15777,11 +15752,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$name of class ipl\\\\Html\\\\FormElement\\\\InputElement constructor expects string, null given\\.$#"
-			count: 1
-			path: library/Icinga/Web/Widget/SingleValueSearchControl.php
-
-		-
-			message: "#^Property Icinga\\\\Web\\\\Widget\\\\SingleValueSearchControl\\:\\:\\$defaultAttributes type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Web/Widget/SingleValueSearchControl.php
 
@@ -24437,11 +24407,6 @@ parameters:
 
 		-
 			message: "#^Property Icinga\\\\Module\\\\Monitoring\\\\Web\\\\Widget\\\\CustomVarTable\\:\\:\\$data type has no value type specified in iterable type iterable\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Web/Widget/CustomVarTable.php
-
-		-
-			message: "#^Property Icinga\\\\Module\\\\Monitoring\\\\Web\\\\Widget\\\\CustomVarTable\\:\\:\\$defaultAttributes type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Web/Widget/CustomVarTable.php
 
