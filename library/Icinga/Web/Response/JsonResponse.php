@@ -228,7 +228,9 @@ class JsonResponse extends Response
     }
 
     /**
-     * {@inheritdoc}
+     * Send the response, including all headers, excluding a rendered view.
+     *
+     * @return never
      */
     public function sendResponse()
     {
