@@ -299,6 +299,10 @@
                 headers['X-Icinga-Col2-State'] = this.icinga.history.getCol2State().replace(/^#!/, '');
             }
 
+            if ($target.is('#modal-content')) {
+                headers['X-Icinga-Modal-Opener'] = $target[0].dataset.modalOpener;
+            }
+
             // Ask for a new window id in case we don't already have one
             if (this.icinga.ui.hasWindowId()) {
                 var windowId = this.icinga.ui.getWindowId();

@@ -57,7 +57,10 @@
         $modal.attr('id', 'modal');
         _this.$layout.append($modal);
 
-        var req = _this.icinga.loader.loadUrl(url, $modal.find('#modal-content'));
+        let $modalContent = $modal.find('#modal-content');
+        $modalContent[0].dataset.modalOpener = $redirectTarget[0].getAttribute('id');
+
+        var req = _this.icinga.loader.loadUrl(url, $modalContent);
         req.addToHistory = false;
         req.done(function () {
             _this.setTitle($modal, req.$target.data('icingaTitle').replace(/\s::\s.*/, ''));
