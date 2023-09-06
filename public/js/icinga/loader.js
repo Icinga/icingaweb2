@@ -597,6 +597,15 @@
 
                 $redirectTarget = $('#col1');
                 redirect = icinga.history.getCol1State();
+            } else if (redirect.match(/__REFRESH__/)) {
+                if (req.$redirectTarget.is('#col1')) {
+                    redirect = icinga.history.getCol1State();
+                } else if (req.$redirectTarget.is('#col2')) {
+                    redirect = icinga.history.getCol2State().replace(/^#!/, '');
+                } else {
+                    icinga.logger.error('Unable to refresh. Not a primary column: ', req.$redirectTarget);
+                    return false;
+                }
             }
 
             var useHttp = req.getResponseHeader('X-Icinga-Redirect-Http');
