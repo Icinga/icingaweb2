@@ -948,6 +948,11 @@
                         }
 
                         url = $target.data('icingaUrl');
+                        if (! url) {
+                            _this.icinga.logger.debug(
+                                'Superfluous extra update. The target\'s container has no url', el);
+                            return;
+                        }
                     } else {
                         _this.icinga.logger.error('Invalid extra update', el);
                         return;
