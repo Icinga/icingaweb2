@@ -393,6 +393,8 @@ class Response extends Zend_Controller_Response_Http
      * Redirect to the given URL and exit immediately
      *
      * @param string|Url $url
+     *
+     * @return never
      */
     public function redirectAndExit($url)
     {

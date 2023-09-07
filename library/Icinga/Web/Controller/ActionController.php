@@ -413,6 +413,13 @@ class ActionController extends Zend_Controller_Action
         return $this->getRequest()->isXmlHttpRequest();
     }
 
+    /**
+     * Issue a redirect that's performed with XHR by the client
+     *
+     * @param Url|string $url
+     *
+     * @return never
+     */
     protected function redirectXhr($url)
     {
         $response = $this->getResponse();
@@ -428,6 +435,15 @@ class ActionController extends Zend_Controller_Action
         $response->redirectAndExit($url);
     }
 
+    /**
+     * Issue a redirect that's performed as a native HTTP request by the client
+     *
+     * This will effectively reload the window
+     *
+     * @param Url|string $url
+     *
+     * @return never
+     */
     protected function redirectHttp($url)
     {
         if ($this->isXhr()) {
@@ -441,6 +457,8 @@ class ActionController extends Zend_Controller_Action
     *  Redirect to a specific url, updating the browsers URL field
     *
     *  @param Url|string $url The target to redirect to
+     *
+     * @return never
     **/
     public function redirectNow($url)
     {
