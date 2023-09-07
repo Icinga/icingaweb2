@@ -406,7 +406,7 @@ class Platform
      */
     public static function hasOracleSupport()
     {
-        return static::extensionLoaded('pdo_oci') && static::classExists('Zend_Db_Adapter_Pdo_Mysql');
+        return static::extensionLoaded('pdo_oci') && static::classExists('Zend_Db_Adapter_Pdo_Oci');
     }
 
     /**
