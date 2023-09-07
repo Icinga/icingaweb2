@@ -492,6 +492,7 @@
          */
         processRedirectHeader: function(req) {
             var icinga      = this.icinga,
+                $redirectTarget  = req.$redirectTarget,
                 redirect    = req.getResponseHeader('X-Icinga-Redirect');
 
             if (! redirect) {
@@ -594,27 +595,8 @@
                     return true;
                 }
 
-                // Refresh left column and produce a new history state for it
-                let $refreshTarget = $('#col1');
-                let refreshUrl = icinga.history.getCol1State();
-                let refresh = this.loadUrl(refreshUrl, $refreshTarget);
-                refresh.addToHistory = true;
-                refresh.scripted = true;
-
-                var _this = this;
-                setTimeout(function () {
-                    // TODO: Find a better solution than a hardcoded one
-                    // This is still the *cheat* to get live results
-                    // (in case there's a delay and a change is not instantly effective)
-                    var secondRefresh = _this.loadUrl(refreshUrl, $refreshTarget);
-                    if (secondRefresh !== refresh) {
-                        // Only change these properties if it's not still the first refresh
-                        secondRefresh.addToHistory = false;
-                        secondRefresh.scripted = true;
-                    }
-                }, 1000);
-
-                return true;
+                $redirectTarget = $('#col1');
+                redirect = icinga.history.getCol1State();
             }
 
             var useHttp = req.getResponseHeader('X-Icinga-Redirect-Http');
@@ -623,7 +605,7 @@
                 return true;
             }
 
-            this.redirectToUrl(redirect, req.$redirectTarget, req);
+            this.redirectToUrl(redirect, $redirectTarget, req);
             return true;
         },
 
