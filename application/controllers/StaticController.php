@@ -28,42 +28,6 @@ class StaticController extends Controller
         $this->_helper->layout()->disableLayout();
     }
 
-    public function gravatarAction()
-    {
-        $response = $this->getResponse();
-        $response->setHeader('Cache-Control', 'public, max-age=1814400, stale-while-revalidate=604800', true);
-        $response->setHeader('Content-Type', 'image/png', true);
-
-        $noCache = $this->getRequest()->getHeader('Cache-Control') === 'no-cache'
-            || $this->getRequest()->getHeader('Pragma') === 'no-cache';
-
-        $cache = FileCache::instance();
-        $filename = md5(strtolower(trim($this->getParam('email'))));
-        $cacheFile = 'gravatar-' . $filename;
-
-        if (! $noCache && $cache->has($cacheFile, time() - 1814400)) {
-            if ($cache->etagMatchesCachedFile($cacheFile)) {
-                $response->setHttpResponseCode(304);
-                return;
-            }
-
-            $response->setHeader('Content-Type', 'image/jpg', true);
-            $response->setHeader('ETag', sprintf('"%s"', $cache->etagForCachedFile($cacheFile)));
-            $cache->send($cacheFile);
-            return;
-        }
-
-        $img = @file_get_contents('http://www.gravatar.com/avatar/' . $filename . '?s=120&d=mm');
-        if ($img === false) {
-            $this->httpNotFound('Unable to connect to gravatar.com');
-        }
-
-        $cache->store($cacheFile, $img);
-        $response->setHeader('ETag', sprintf('"%s"', $cache->etagForCachedFile($cacheFile)));
-
-        echo $img;
-    }
-
     /**
      * Return an image from a module's public folder
      */
