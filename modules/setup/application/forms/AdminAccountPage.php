@@ -224,7 +224,8 @@ class AdminAccountPage extends Form
                     'label'             => $this->translate('Password'),
                     'description'       => $this->translate(
                         'Enter the password to assign to the newly created account.'
-                    )
+                    ),
+                    'autocomplete'      => 'new-password'
                 )
             );
             $this->addElement(
