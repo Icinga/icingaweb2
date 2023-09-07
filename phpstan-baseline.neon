@@ -12061,32 +12061,7 @@ parameters:
 			path: library/Icinga/Web/Controller/ActionController.php
 
 		-
-			message: "#^Method Icinga\\\\Web\\\\Controller\\\\ActionController\\:\\:redirectHttp\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icinga/Web/Controller/ActionController.php
-
-		-
-			message: "#^Method Icinga\\\\Web\\\\Controller\\\\ActionController\\:\\:redirectHttp\\(\\) has parameter \\$url with no type specified\\.$#"
-			count: 1
-			path: library/Icinga/Web/Controller/ActionController.php
-
-		-
-			message: "#^Method Icinga\\\\Web\\\\Controller\\\\ActionController\\:\\:redirectNow\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icinga/Web/Controller/ActionController.php
-
-		-
 			message: "#^Method Icinga\\\\Web\\\\Controller\\\\ActionController\\:\\:redirectToLogin\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icinga/Web/Controller/ActionController.php
-
-		-
-			message: "#^Method Icinga\\\\Web\\\\Controller\\\\ActionController\\:\\:redirectXhr\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icinga/Web/Controller/ActionController.php
-
-		-
-			message: "#^Method Icinga\\\\Web\\\\Controller\\\\ActionController\\:\\:redirectXhr\\(\\) has parameter \\$url with no type specified\\.$#"
 			count: 1
 			path: library/Icinga/Web/Controller/ActionController.php
 
@@ -13782,11 +13757,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Web\\\\Response\\:\\:prepare\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icinga/Web/Response.php
-
-		-
-			message: "#^Method Icinga\\\\Web\\\\Response\\:\\:redirectAndExit\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icinga/Web/Response.php
 
