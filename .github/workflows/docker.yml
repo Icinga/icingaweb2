@@ -1,6 +1,7 @@
 name: Docker image
 
 on:
+  push: {}
   release:
     types:
       - published
@@ -27,6 +28,6 @@ jobs:
 
     steps:
       - name: Docker image
-        uses: Icinga/docker-icingaweb2@master
+        uses: Icinga/docker-icingaweb2@arm
         with:
           dockerhub-token: '${{ secrets.DOCKER_HUB_PERSONAL_TOKEN }}'
