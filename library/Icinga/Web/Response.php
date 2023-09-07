@@ -329,7 +329,13 @@ class Response extends Zend_Controller_Response_Http
 
                 // TODO: Compatibility only. Remove once v2.14 is out.
                 $targetId = $request->getHeader('X-Icinga-Container');
-                if ($request->isPost() && $targetId === 'col2' && $request->getHeader('X-Icinga-Col2-State')) {
+                $redirectTargetId = $this->getHeader('X-Icinga-Container', true) ?? $targetId;
+                if ($request->isPost()
+                    && ! $this->getRerenderLayout()
+                    && $targetId === 'col2'
+                    && $redirectTargetId === $targetId
+                    && $request->getHeader('X-Icinga-Col2-State')
+                ) {
                     $col1State = Url::fromPath($request->getHeader('X-Icinga-Col1-State'));
                     $col2State = Url::fromPath($request->getHeader('X-Icinga-Col2-State'));
                     if ($col2State->getPath() !== $redirectUrl->getPath()
