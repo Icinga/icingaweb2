@@ -492,6 +492,7 @@
          */
         processRedirectHeader: function(req) {
             var icinga      = this.icinga,
+                $redirectTarget  = req.$redirectTarget,
                 redirect    = req.getResponseHeader('X-Icinga-Redirect');
 
             if (! redirect) {
@@ -594,14 +595,8 @@
                     return true;
                 }
 
-                // Refresh left column and produce a new history state for it
-                let $refreshTarget = $('#col1');
-                let refreshUrl = icinga.history.getCol1State();
-                let refresh = this.loadUrl(refreshUrl, $refreshTarget);
-                refresh.addToHistory = true;
-                refresh.scripted = true;
-
-                return true;
+                $redirectTarget = $('#col1');
+                redirect = icinga.history.getCol1State();
             }
 
             var useHttp = req.getResponseHeader('X-Icinga-Redirect-Http');
@@ -610,7 +605,7 @@
                 return true;
             }
 
-            this.redirectToUrl(redirect, req.$redirectTarget, req);
+            this.redirectToUrl(redirect, $redirectTarget, req);
             return true;
         },
 
