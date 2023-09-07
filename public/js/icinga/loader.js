@@ -1061,7 +1061,6 @@
             if (req.addToHistory && ! req.autorefresh) {
                 req.$target.data('icingaRefresh', 0);
                 req.$target.data('icingaUrl', url);
-                icinga.history.pushCurrentState();
             }
 
             if (typeof req.progressTimer !== 'undefined') {
@@ -1090,8 +1089,9 @@
                         req.$target
                     );
 
-                    // Aborted requests should not be added to browser history
-                    req.addToHistory = false;
+                    if (req.scripted) {
+                        req.addToHistory = false;
+                    }
                 } else {
                     if (this.failureNotice === null) {
                         var now = new Date();
