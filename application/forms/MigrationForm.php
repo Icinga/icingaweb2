@@ -18,6 +18,16 @@ class MigrationForm extends Form
         'name'  => 'migration-form'
     ];
 
+    public function hasBeenSubmitted(): bool
+    {
+        if (! $this->hasBeenSent()) {
+            return false;
+        }
+
+        $pressedButton = $this->getPressedSubmitElement();
+        return $pressedButton && strpos($pressedButton->getName(), 'migrate-') !== false;
+    }
+
     protected function assemble(): void
     {
         $this->addHtml($this->createUidElement());
