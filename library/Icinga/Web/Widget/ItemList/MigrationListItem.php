@@ -39,7 +39,11 @@ class MigrationListItem extends BaseListItem
 
         $title->addHtml(
             new HtmlElement('span', null, Text::create($parentDirs)),
-            new HtmlElement('strong', null, Text::create($this->item->getVersion() . '.sql'))
+            new HtmlElement(
+                'span',
+                Attributes::create(['class' => 'version']),
+                Text::create($this->item->getVersion() . '.sql')
+            )
         );
 
         if ($this->item->getLastState()) {
