@@ -78,6 +78,9 @@ class MigrationList extends BaseItemList
     protected function assemble(): void
     {
         $itemClass = $this->getItemClass();
+        if (! $this->isMinimal()) {
+            $this->getAttributes()->add('class', 'file-list');
+        }
 
         /** @var MigrationHook $data */
         foreach ($this->data as $data) {

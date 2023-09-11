@@ -86,8 +86,29 @@ class MigrationListItemMinimal extends BaseListItem
                 ])
             );
 
+            $scriptPath = $migration->getScriptPath();
+            /** @var string $parentDirs */
+            $parentDirs = substr($scriptPath, (int) strpos($scriptPath, 'schema'));
+            $parentDirs = substr($parentDirs, 0, strrpos($parentDirs, '/') + 1);
+
+            $title = new HtmlElement('div', Attributes::create(['class' => 'title']));
+            $title->addHtml(
+                new HtmlElement('span', null, Text::create($parentDirs)),
+                new HtmlElement(
+                    'span',
+                    Attributes::create(['class' => 'version']),
+                    Text::create($migration->getVersion() . '.sql')
+                ),
+                new HtmlElement(
+                    'span',
+                    Attributes::create(['class' => 'upgrade-failed']),
+                    Text::create($this->translate('Upgrade failed'))
+                )
+            );
+
             $wrapper->addHtml(
                 new Icon('circle-xmark'),
+                new HtmlElement('header', null, $title),
                 $caption,
                 new HtmlElement('pre', null, new HtmlString(Html::escape($migration->getLastState())))
             );
@@ -117,8 +138,6 @@ class MigrationListItemMinimal extends BaseListItem
 
     protected function assembleMain(BaseHtmlElement $main): void
     {
-        $this->getAttributes()->add('class', 'minimal');
-
         $main->addHtml($this->createHeader());
         $caption = $this->createCaption();
         if (! $caption->isEmpty()) {

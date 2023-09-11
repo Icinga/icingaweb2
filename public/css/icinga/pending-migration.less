@@ -72,6 +72,10 @@
     }
   }
 
+  .item-list:not(.file-list) .list-item footer {
+    display: inline-block;
+  }
+
   .list-item {
     align-items: baseline;
 
@@ -100,17 +104,13 @@
 
       i.icon {
         position: absolute;
-        margin-top: .5em;
+        margin-top: .3em;
         margin-left: .5em;
       }
 
-      .caption {
+      .caption, header {
         margin-left: 1.8em;
       }
-    }
-
-    &.minimal footer {
-      display: inline-block;
     }
 
     footer {
