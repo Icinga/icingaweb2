@@ -62,6 +62,9 @@ class MigrationListItem extends BaseListItem
     {
         if ($this->item->getDescription()) {
             $caption->addHtml(Text::create($this->item->getDescription()));
+        } else {
+            $caption->getAttributes()->add('class', 'empty-state');
+            $caption->addHtml(Text::create($this->translate('No description provided.')));
         }
     }
 

@@ -71,7 +71,12 @@ class MigrationListItemMinimal extends BaseListItem
         /** @var DbMigration $migration */
         $migration = array_shift($migrations);
         if ($migration->getLastState()) {
-            $caption->addHtml(Text::create($migration->getDescription()));
+            if ($migration->getDescription()) {
+                $caption->addHtml(Text::create($migration->getDescription()));
+            } else {
+                $caption->getAttributes()->add('class', 'empty-state');
+                $caption->addHtml(Text::create($this->translate('No description provided.')));
+            }
 
             $wrapper = new HtmlElement(
                 'div',
