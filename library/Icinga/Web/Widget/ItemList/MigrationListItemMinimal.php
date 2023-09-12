@@ -78,14 +78,6 @@ class MigrationListItemMinimal extends BaseListItem
                 $caption->addHtml(Text::create($this->translate('No description provided.')));
             }
 
-            $wrapper = new HtmlElement(
-                'div',
-                Attributes::create([
-                    'class'               => ['errors-section', 'collapsible'],
-                    'data-visible-height'   => 150,
-                ])
-            );
-
             $scriptPath = $migration->getScriptPath();
             /** @var string $parentDirs */
             $parentDirs = substr($scriptPath, (int) strpos($scriptPath, 'schema'));
@@ -106,14 +98,21 @@ class MigrationListItemMinimal extends BaseListItem
                 )
             );
 
-            $wrapper->addHtml(
+            $error = new HtmlElement('div', Attributes::create([
+                'class'               => 'collapsible',
+                'data-visible-height' => 150,
+            ]));
+            $error->addHtml(new HtmlElement('pre', null, new HtmlString(Html::escape($migration->getLastState()))));
+
+            $errorSection = new HtmlElement('div', Attributes::create(['class' => 'errors-section',]));
+            $errorSection->addHtml(
                 new Icon('circle-xmark'),
                 new HtmlElement('header', null, $title),
                 $caption,
-                new HtmlElement('pre', null, new HtmlString(Html::escape($migration->getLastState())))
+                $error
             );
 
-            $caption->prependWrapper($wrapper);
+            $caption->prependWrapper($errorSection);
         }
     }
 
