@@ -100,14 +100,13 @@ class MigrationListItemMinimal extends BaseListItem
 
             $error = new HtmlElement('div', Attributes::create([
                 'class'               => 'collapsible',
-                'data-visible-height' => 150,
+                'data-visible-height' => '58',
             ]));
             $error->addHtml(new HtmlElement('pre', null, new HtmlString(Html::escape($migration->getLastState()))));
 
             $errorSection = new HtmlElement('div', Attributes::create(['class' => 'errors-section',]));
             $errorSection->addHtml(
-                new Icon('circle-xmark'),
-                new HtmlElement('header', null, $title),
+                new HtmlElement('header', null, new Icon('circle-xmark', ['class' => 'status-icon']), $title),
                 $caption,
                 $error
             );
@@ -128,7 +127,8 @@ class MigrationListItemMinimal extends BaseListItem
                         [MigrationHook::MIGRATION_PARAM => $this->item->getModuleName()]
                     ),
                     [
-                        'data-base-target' => '_next'
+                        'data-base-target' => '_next',
+                        'class' => 'show-more'
                     ]
                 )
             );
