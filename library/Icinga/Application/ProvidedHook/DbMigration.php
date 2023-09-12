@@ -15,7 +15,7 @@ class DbMigration extends MigrationHook
 
     public function getName(): string
     {
-        return $this->translate('Icinga Web 2');
+        return $this->translate('Icinga Web');
     }
 
     public function providedDescriptions(): array
