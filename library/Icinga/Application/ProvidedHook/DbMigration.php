@@ -8,7 +8,6 @@ use Icinga\Application\Hook\MigrationHook;
 use Icinga\Common\Database;
 use Icinga\Model\Schema;
 use ipl\Orm\Query;
-use ipl\Stdlib\Filter;
 
 class DbMigration extends MigrationHook
 {
@@ -28,7 +27,7 @@ class DbMigration extends MigrationHook
     {
         if ($this->version === null) {
             $conn = $this->getDb();
-            $schemaQuery = Schema::on($conn)
+            $schemaQuery = $this->getSchemaQuery()
                 ->orderBy('id', SORT_DESC)
                 ->limit(2);
 
@@ -65,9 +64,8 @@ class DbMigration extends MigrationHook
         return $this->version;
     }
 
-    protected function getSchemaQueryFor(string $version): Query
+    protected function getSchemaQuery(): Query
     {
-        return Schema::on($this->getDb())
-            ->filter(Filter::equal('version', $version));
+        return Schema::on($this->getDb());
     }
 }

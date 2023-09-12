@@ -191,9 +191,12 @@ abstract class MigrationHook implements Countable
                 );
                 Logger::debug($e->getTraceAsString());
 
+                $schemaQuery = $this->getSchemaQuery()
+                    ->filter(Filter::equal('version', $migration->getVersion()));
+
                 static::insertFailedEntry(
                     $conn,
-                    $this->getSchemaQueryFor($migration->getVersion()),
+                    $schemaQuery,
                     $migration->getVersion(),
                     $e->getMessage() . PHP_EOL . $e->getTraceAsString()
                 );
@@ -247,13 +250,11 @@ abstract class MigrationHook implements Countable
     abstract protected function getDb(): Connection;
 
     /**
-     * Get a schema version query filtered by the given $version
-     *
-     * @param string $version
+     * Get a schema version query
      *
      * @return Query
      */
-    abstract protected function getSchemaQueryFor(string $version): Query;
+    abstract protected function getSchemaQuery(): Query;
 
     protected function load(): void
     {
@@ -361,12 +362,14 @@ abstract class MigrationHook implements Countable
         /** @var array<string, string> $states */
         $states = $session->get($this->getModuleName(), []);
         if (! isset($states[$version])) {
-            $schemaQuery = $this->getSchemaQueryFor($version);
-            $schemaQuery->setFilter(Filter::all(Filter::equal('success', 'n')));
+            $schemaQuery = $this->getSchemaQuery()
+                ->filter(Filter::equal('version', $version))
+                ->filter(Filter::all(Filter::equal('success', 'n')));
+
             if (static::getColumnType($this->getDb(), $schemaQuery->getModel()->getTableName(), 'reason')) {
                 /** @var Schema $schema */
                 $schema = $schemaQuery->first();
-                if ($schema && version_compare($schema->version, $version, '==')) {
+                if ($schema) {
                     return $schema->reason;
                 }
             }
