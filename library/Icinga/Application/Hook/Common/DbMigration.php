@@ -126,8 +126,12 @@ class DbMigration
     {
         if (! $this->query) {
             $statements = @file_get_contents($this->getScriptPath());
-            if (! $statements) {
+            if ($statements === false) {
                 throw new RuntimeException(sprintf('Cannot load upgrade script %s', $this->getScriptPath()));
+            }
+
+            if (empty($statements)) {
+                throw new RuntimeException('Nothing to migrate');
             }
 
             if (preg_match('/\s*delimiter\s*(\S+)\s*$/im', $statements, $matches)) {
@@ -138,10 +142,6 @@ class DbMigration
             }
 
             $this->query = $statements;
-        }
-
-        if (empty($this->query)) {
-            throw new RuntimeException('Nothing to migrate');
         }
 
         $conn->exec($this->query);
