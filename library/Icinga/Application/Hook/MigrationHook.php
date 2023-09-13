@@ -86,7 +86,8 @@ abstract class MigrationHook implements Countable
     {
         $pdoStmt = $conn->prepexec(
             sprintf(
-                "SELECT %s AS column_type, %s AS column_length FROM information_schema.columns WHERE table_name = ? AND column_name = ?",
+                'SELECT %s AS column_type, %s AS column_length FROM information_schema.columns'
+                . ' WHERE table_name = ? AND column_name = ?',
                 $conn->getAdapter() instanceof Pgsql ? 'udt_name' : 'column_type',
                 $conn->getAdapter() instanceof Pgsql ? 'character_maximum_length' : 'NULL'
             ),
@@ -140,7 +141,7 @@ abstract class MigrationHook implements Countable
             $this->load();
         }
 
-        return $this->migrations;
+        return $this->migrations ?? [];
     }
 
     /**
@@ -289,8 +290,12 @@ abstract class MigrationHook implements Countable
             }
         }
 
-        // Sort all the migrations by their version numbers in ascending order.
-        uksort($this->migrations, 'version_compare');
+        if ($this->migrations) {
+            // Sort all the migrations by their version numbers in ascending order.
+            uksort($this->migrations, function ($a, $b) {
+                return version_compare($a, $b);
+            });
+        }
     }
 
     /**

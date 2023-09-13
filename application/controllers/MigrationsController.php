@@ -203,8 +203,8 @@ class MigrationsController extends CompatController
                         } else {
                             Notification::error(
                                 $this->translate(
-                                    'Applied migrations successfully. Though, one or more migration hooks failed to run.'
-                                    . ' See logs for details'
+                                    'Applied migrations successfully. Though, one or more migration hooks'
+                                    . ' failed to run. See logs for details'
                                 )
                             );
                         }
