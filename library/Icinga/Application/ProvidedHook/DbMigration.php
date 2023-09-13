@@ -36,6 +36,8 @@ class DbMigration extends MigrationHook
                 foreach ($schemaQuery as $schema) {
                     if ($schema->success) {
                         $this->version = $schema->version;
+
+                        break;
                     }
                 }
 
