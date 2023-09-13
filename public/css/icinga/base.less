@@ -155,12 +155,12 @@
     --base-gray: var(--gray);
     --base-gray-light: var(--gray-light);
     --base-gray-lighter: var(--gray-lighter);
+    --base-gray-semilight: var(--gray-semilight);
 
     --default-text-color: var(--text-color);
     --default-text-color-light: var(--text-color-light);
     --default-text-color-inverted: var(--text-color-inverted);
-
-    --searchbar-bg: var(--low-sat-blue);
+    --default-input-bg: var(--low-sat-blue);
 
     --search-logical-operator-bg: fade(#819398, 50%); // --gray
   }
@@ -172,23 +172,23 @@
 @base-gray: @gray;
 @base-gray-light: @gray-light;
 @base-gray-lighter: @gray-lighter;
+@base-gray-semilight: @gray-semilight;
 @base-disabled: @disabled-gray;
 
 @base-primary-color: @icinga-blue;
 @base-primary-bg: @icinga-blue;
+@base-primary-dark: @icinga-blue-dark;
+@base-primary-light: @icinga-blue-light;
 
 @default-text-color: @text-color;
 @default-text-color-light: @text-color-light;
+@default-input-bg: @low-sat-blue;
 
 @state-ok: @color-ok;
 @state-warning: @color-warning;
 @state-critical: @color-critical;
 @state-pending: @color-pending;
 @state-unknown: @color-unknown;
-
-@primary-button-hover-bg: @icinga-blue-dark;
-
-@searchbar-bg: @low-sat-blue;
 
 // Make padding not affect the final computed width of an element
 html {
