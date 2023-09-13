@@ -3,6 +3,17 @@
 Specific version upgrades are described below. Please note that upgrades are incremental. An upgrade from
 v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
+## Upgrading to Icinga Web 2.12.0
+
+**Database Schema**
+
+With the latest Icinga Web versions, you no longer need to manually import sql upgrade scripts. Icinga Web `>= 2.12`
+offers you the possibility to perform such migrations in an easy way. You can find and apply all pending migrations
+of your Icinga Web environment in the menu at `System -> Migrations`.
+
+You can still apply the `2.12.0.sql` upgrade script manually, depending on your database vendor.
+For package installations you can find this file in `/usr/share/icingaweb2/schema/*-upgrades/`.
+
 ## Upgrading to Icinga Web 2.11.x
 
 **General**
