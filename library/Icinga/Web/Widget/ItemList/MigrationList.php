@@ -69,10 +69,10 @@ class MigrationList extends BaseItemList
     protected function getItemClass(): string
     {
         if ($this->isMinimal()) {
-            return MigrationListItemMinimal::class;
+            return MigrationListItem::class;
         }
 
-        return MigrationListItem::class;
+        return MigrationFileListItem::class;
     }
 
     protected function assemble(): void
@@ -84,9 +84,9 @@ class MigrationList extends BaseItemList
 
         /** @var MigrationHook $data */
         foreach ($this->data as $data) {
-            /** @var MigrationListItem|MigrationListItemMinimal $item */
+            /** @var MigrationFileListItem|MigrationListItem $item */
             $item = new $itemClass($data, $this);
-            if ($item instanceof MigrationListItemMinimal && $this->migrationForm) {
+            if ($item instanceof MigrationListItem && $this->migrationForm) {
                 $migrateButton = $this->migrationForm->createElement(
                     'submit',
                     sprintf('migrate-%s', $data->getModuleName()),
