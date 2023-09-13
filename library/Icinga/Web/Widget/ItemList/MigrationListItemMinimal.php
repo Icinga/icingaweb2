@@ -17,6 +17,7 @@ use ipl\Html\Text;
 use ipl\I18n\Translation;
 use ipl\Web\Common\BaseListItem;
 use ipl\Web\Url;
+use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 use LogicException;
@@ -74,8 +75,7 @@ class MigrationListItemMinimal extends BaseListItem
             if ($migration->getDescription()) {
                 $caption->addHtml(Text::create($migration->getDescription()));
             } else {
-                $caption->getAttributes()->add('class', 'empty-state');
-                $caption->addHtml(Text::create($this->translate('No description provided.')));
+                $caption->addHtml(new EmptyState(Text::create($this->translate('No description provided.'))));
             }
 
             $scriptPath = $migration->getScriptPath();

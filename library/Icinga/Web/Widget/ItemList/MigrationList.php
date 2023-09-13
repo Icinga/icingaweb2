@@ -11,7 +11,7 @@ use Icinga\Application\MigrationManager;
 use Icinga\Forms\MigrationForm;
 use ipl\I18n\Translation;
 use ipl\Web\Common\BaseItemList;
-use ipl\Web\Widget\EmptyState;
+use ipl\Web\Widget\EmptyStateBar;
 
 class MigrationList extends BaseItemList
 {
@@ -127,7 +127,7 @@ class MigrationList extends BaseItemList
 
         if ($this->isEmpty()) {
             $this->setTag('div');
-            $this->addHtml(new EmptyState(t('No items found.')));
+            $this->addHtml(new EmptyStateBar(t('No items found.')));
         }
     }
 }

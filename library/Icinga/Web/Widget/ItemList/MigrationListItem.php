@@ -13,6 +13,7 @@ use ipl\Html\HtmlString;
 use ipl\Html\Text;
 use ipl\I18n\Translation;
 use ipl\Web\Common\BaseListItem;
+use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 
 class MigrationListItem extends BaseListItem
@@ -67,8 +68,7 @@ class MigrationListItem extends BaseListItem
         if ($this->item->getDescription()) {
             $caption->addHtml(Text::create($this->item->getDescription()));
         } else {
-            $caption->getAttributes()->add('class', 'empty-state');
-            $caption->addHtml(Text::create($this->translate('No description provided.')));
+            $caption->addHtml(new EmptyState(Text::create($this->translate('No description provided.'))));
         }
     }
 
