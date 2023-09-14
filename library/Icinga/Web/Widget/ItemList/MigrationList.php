@@ -5,7 +5,7 @@
 namespace Icinga\Web\Widget\ItemList;
 
 use Generator;
-use Icinga\Application\Hook\Common\DbMigration;
+use Icinga\Application\Hook\Common\DbMigrationStep;
 use Icinga\Application\Hook\MigrationHook;
 use Icinga\Application\MigrationManager;
 use Icinga\Forms\MigrationForm;
@@ -31,7 +31,7 @@ class MigrationList extends BaseItemList
     /**
      * Create a new migration list
      *
-     * @param Generator<MigrationHook>|array<DbMigration|MigrationHook> $data
+     * @param Generator<MigrationHook>|array<DbMigrationStep|MigrationHook> $data
      *
      * @param ?MigrationForm $form
      */

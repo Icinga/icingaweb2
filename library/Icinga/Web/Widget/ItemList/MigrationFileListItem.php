@@ -4,7 +4,7 @@
 
 namespace Icinga\Web\Widget\ItemList;
 
-use Icinga\Application\Hook\Common\DbMigration;
+use Icinga\Application\Hook\Common\DbMigrationStep;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -20,7 +20,7 @@ class MigrationFileListItem extends BaseListItem
 {
     use Translation;
 
-    /** @var DbMigration Just for type hint */
+    /** @var DbMigrationStep Just for type hint */
     protected $item;
 
     protected function assembleVisual(BaseHtmlElement $visual): void

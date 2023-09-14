@@ -7,7 +7,7 @@ namespace Icinga\Application\Hook\Common;
 use ipl\Sql\Connection;
 use RuntimeException;
 
-class DbMigration
+class DbMigrationStep
 {
     /** @var string The sql string to be executed */
     protected $query;
@@ -65,7 +65,7 @@ class DbMigration
      *
      * @param ?string $description
      *
-     * @return DbMigration
+     * @return DbMigrationStep
      */
     public function setDescription(?string $description): self
     {

@@ -9,7 +9,7 @@ use DateTime;
 use DirectoryIterator;
 use Exception;
 use Icinga\Application\ClassLoader;
-use Icinga\Application\Hook\Common\DbMigration;
+use Icinga\Application\Hook\Common\DbMigrationStep;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Application\Modules\Module;
@@ -51,7 +51,7 @@ abstract class MigrationHook implements Countable
 
     public const ALL_MIGRATIONS = 'all-migrations';
 
-    /** @var ?array<string, DbMigration> All pending database migrations of this hook */
+    /** @var ?array<string, DbMigrationStep> All pending database migrations of this hook */
     protected $migrations;
 
     /** @var ?string The current version of this hook */
@@ -141,7 +141,7 @@ abstract class MigrationHook implements Countable
     /**
      * Get all the pending migrations of this hook
      *
-     * @return DbMigration[]
+     * @return DbMigrationStep[]
      */
     public function getMigrations(): array
     {
@@ -159,7 +159,7 @@ abstract class MigrationHook implements Countable
      *
      * @param int $limit
      *
-     * @return DbMigration[]
+     * @return DbMigrationStep[]
      */
     public function getLatestMigrations(int $limit): array
     {
@@ -282,7 +282,7 @@ abstract class MigrationHook implements Countable
         foreach (new DirectoryIterator($path . DIRECTORY_SEPARATOR . $upgradeDir) as $file) {
             if (preg_match('/^(?:r|v)?((?:\d+\.){0,2}\d+)(?:_([\w+]+))?\.sql$/', $file->getFilename(), $m)) {
                 if (version_compare($m[1], $version, '>')) {
-                    $migration = new DbMigration($m[1], $file->getRealPath());
+                    $migration = new DbMigrationStep($m[1], $file->getRealPath());
                     if (isset($descriptions[$migration->getVersion()])) {
                         $migration->setDescription($descriptions[$migration->getVersion()]);
                     } elseif (isset($m[2])) {

@@ -4,7 +4,7 @@
 
 namespace Icinga\Web\Widget\ItemList;
 
-use Icinga\Application\Hook\Common\DbMigration;
+use Icinga\Application\Hook\Common\DbMigrationStep;
 use Icinga\Application\Hook\MigrationHook;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
@@ -69,7 +69,7 @@ class MigrationListItem extends BaseListItem
     protected function assembleCaption(BaseHtmlElement $caption): void
     {
         $migrations = $this->item->getMigrations();
-        /** @var DbMigration $migration */
+        /** @var DbMigrationStep $migration */
         $migration = array_shift($migrations);
         if ($migration->getLastState()) {
             if ($migration->getDescription()) {
