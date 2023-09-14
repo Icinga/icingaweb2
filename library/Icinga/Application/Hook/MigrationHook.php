@@ -14,13 +14,16 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Application\Modules\Module;
 use Icinga\Model\Schema;
+use Icinga\Module\Setup\Utils\DbTool;
 use Icinga\Web\Session;
 use ipl\I18n\Translation;
 use ipl\Orm\Query;
 use ipl\Sql\Adapter\Pgsql;
 use ipl\Sql\Connection;
 use ipl\Stdlib\Filter;
+use ipl\Stdlib\Str;
 use PDO;
+use PDOException;
 use SplFileInfo;
 use stdClass;
 
@@ -129,6 +132,13 @@ abstract class MigrationHook implements Countable
     abstract public function getVersion(): string;
 
     /**
+     * Get a database connection
+     *
+     * @return Connection
+     */
+    abstract public function getDb(): Connection;
+
+    /**
      * Get all the pending migrations of this hook
      *
      * @return DbMigration[]
@@ -166,9 +176,12 @@ abstract class MigrationHook implements Countable
      *
      * @return bool Whether the migration(s) have been successfully applied
      */
-    public function run(): bool
+    final public function run(Connection $conn = null): bool
     {
-        $conn = $this->getDb();
+        if (! $conn) {
+            $conn = $this->getDb();
+        }
+
         foreach ($this->getMigrations() as $migration) {
             try {
                 $migration->apply($conn);
@@ -176,7 +189,7 @@ abstract class MigrationHook implements Countable
                 $this->version = $migration->getVersion();
                 unset($this->migrations[$migration->getVersion()]);
 
-                Logger::error(
+                Logger::info(
                     "Applied %s pending migration version %s successfully",
                     $this->getName(),
                     $migration->getVersion()
@@ -242,13 +255,6 @@ abstract class MigrationHook implements Countable
     {
         return count($this->getMigrations());
     }
-
-    /**
-     * Get a database connection
-     *
-     * @return Connection
-     */
-    abstract protected function getDb(): Connection;
 
     /**
      * Get a schema version query

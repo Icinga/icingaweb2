@@ -4,8 +4,11 @@
 
 namespace Icinga\Controllers;
 
+use Exception;
 use Icinga\Application\Hook\MigrationHook;
+use Icinga\Application\Icinga;
 use Icinga\Application\MigrationManager;
+use Icinga\Common\Database;
 use Icinga\Exception\MissingParameterException;
 use Icinga\Forms\MigrationForm;
 use Icinga\Web\Notification;
@@ -19,6 +22,13 @@ use ipl\Web\Widget\ActionLink;
 
 class MigrationsController extends CompatController
 {
+    use Database;
+
+    public function init()
+    {
+        Icinga::app()->getModuleManager()->loadModule('setup');
+    }
+
     public function indexAction(): void
     {
         $mm = MigrationManager::instance();
@@ -44,6 +54,8 @@ class MigrationsController extends CompatController
         }
 
         $migrateListForm = new MigrationForm();
+        $migrateListForm->setRenderDatabaseUserChange(! $mm->validateDatabasePrivileges());
+
         $migrateGlobalForm = new MigrationForm();
         $migrateGlobalForm->getAttributes()->set('name', sprintf('migrate-%s', MigrationHook::ALL_MIGRATIONS));
 
@@ -193,12 +205,18 @@ class MigrationsController extends CompatController
         $form->on(MigrationForm::ON_SUCCESS, function (MigrationForm $form) {
             $mm = MigrationManager::instance();
 
+            /** @var array<string, string> $elevatedPrivileges */
+            $elevatedPrivileges = $form->getValue('database_setup');
+            if ($elevatedPrivileges !== null && $elevatedPrivileges['grant_privileges'] === 'y') {
+                $mm->fixIcingaWebMysqlGrants($this->getDb(), $elevatedPrivileges);
+            }
+
             $pressedButton = $form->getPressedSubmitElement();
             if ($pressedButton) {
                 $name = substr($pressedButton->getName(), 8);
                 switch ($name) {
                     case MigrationHook::ALL_MIGRATIONS:
-                        if ($mm->applyAll()) {
+                        if ($mm->applyAll($elevatedPrivileges)) {
                             Notification::success($this->translate('Applied all migrations successfully'));
                         } else {
                             Notification::error(
@@ -211,7 +229,7 @@ class MigrationsController extends CompatController
                         break;
                     default:
                         $migration = $mm->getMigration($name);
-                        if ($mm->apply($migration)) {
+                        if ($mm->apply($migration, $elevatedPrivileges)) {
                             Notification::success($this->translate('Applied pending migrations successfully'));
                         } else {
                             Notification::error(

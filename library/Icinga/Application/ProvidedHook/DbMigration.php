@@ -8,10 +8,18 @@ use Icinga\Application\Hook\MigrationHook;
 use Icinga\Common\Database;
 use Icinga\Model\Schema;
 use ipl\Orm\Query;
+use ipl\Sql\Connection;
 
 class DbMigration extends MigrationHook
 {
-    use Database;
+    use Database {
+        getDb as public getPublicDb;
+    }
+
+    public function getDb(): Connection
+    {
+        return $this->getPublicDb();
+    }
 
     public function getName(): string
     {

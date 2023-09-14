@@ -27,8 +27,7 @@ class DbMigration
     public function __construct(string $version, string $scriptPath)
     {
         $this->scriptPath = $scriptPath;
-
-        $this->setVersion($version);
+        $this->version = $version;
     }
 
     /**
@@ -39,20 +38,6 @@ class DbMigration
     public function getVersion(): string
     {
         return $this->version;
-    }
-
-    /**
-     * Set the sql script version the queries are loaded from
-     *
-     * @param string $version
-     *
-     * @return $this
-     */
-    public function setVersion(string $version): self
-    {
-        $this->version = $version;
-
-        return $this;
     }
 
     /**

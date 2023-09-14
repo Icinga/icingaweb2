@@ -8,11 +8,14 @@ use Countable;
 use Generator;
 use Icinga\Application\Hook\MigrationHook;
 use Icinga\Exception\NotFoundError;
+use Icinga\Module\Setup\Utils\DbTool;
+use Icinga\Module\Setup\WebWizard;
 use ipl\I18n\Translation;
+use ipl\Sql;
+use ReflectionClass;
 
 /**
- * Migration manager encapsulates PHP code and DB migrations and manages all pending migrations in a
- * structured way.
+ * Migration manager allows you to manage all pending migrations in a structured way.
  */
 final class MigrationManager implements Countable
 {
@@ -82,7 +85,7 @@ final class MigrationManager implements Countable
      *
      * @return MigrationHook
      *
-     * @throws NotFoundError When there are no pending PHP code migrations matching the given module name
+     * @throws NotFoundError When there are no pending migrations matching the given module name
      */
     public function getMigration(string $module): MigrationHook
     {
@@ -124,10 +127,11 @@ final class MigrationManager implements Countable
      * Apply the given migration hook
      *
      * @param MigrationHook $hook
+     * @param ?array<string, string> $elevateConfig
      *
      * @return bool
      */
-    public function apply(MigrationHook $hook): bool
+    public function apply(MigrationHook $hook, array $elevateConfig = null): bool
     {
         if ($hook->isModule() && $this->hasMigrations(MigrationHook::DEFAULT_MODULE)) {
             Logger::error(
@@ -137,7 +141,12 @@ final class MigrationManager implements Countable
             return false;
         }
 
-        if ($hook->run()) {
+        $conn = $hook->getDb();
+        if ($elevateConfig && ! $this->checkRequiredPrivileges($conn)) {
+            $conn = $this->elevateDatabaseConnection($conn, $elevateConfig);
+        }
+
+        if ($hook->run($conn)) {
             unset($this->pendingMigrations[$hook->getModuleName()]);
 
             Logger::info('Applied pending %s migrations successfully', $hook->getName());
@@ -151,21 +160,23 @@ final class MigrationManager implements Countable
     /**
      * Apply all pending modules/framework migrations
      *
+     * @param ?array<string, string> $elevateConfig
+     *
      * @return bool
      */
-    public function applyAll(): bool
+    public function applyAll(array $elevateConfig = null): bool
     {
         $default = MigrationHook::DEFAULT_MODULE;
         if ($this->hasMigrations($default)) {
             $migration = $this->getMigration($default);
-            if (! $this->apply($migration)) {
+            if (! $this->apply($migration, $elevateConfig)) {
                 return false;
             }
         }
 
         $succeeded = true;
         foreach ($this->getPendingMigrations() as $migration) {
-            if (! $this->apply($migration) && $succeeded) {
+            if (! $this->apply($migration, $elevateConfig) && $succeeded) {
                 $succeeded = false;
             }
         }
@@ -189,6 +200,99 @@ final class MigrationManager implements Countable
         }
     }
 
+    /**
+     * Get the required database privileges for database migrations
+     *
+     * @return string[]
+     */
+    public function getRequiredDatabasePrivileges(): array
+    {
+        return ['CREATE','SELECT','INSERT','UPDATE','DELETE','DROP','ALTER','CREATE VIEW','INDEX','EXECUTE'];
+    }
+
+    /**
+     * Verify whether all database users of all pending migrations do have the required SQL privileges
+     *
+     * @param ?array<string, string> $elevateConfig
+     * @param bool $canIssueGrant
+     *
+     * @return bool
+     */
+    public function validateDatabasePrivileges(array $elevateConfig = null, bool $canIssueGrant = false): bool
+    {
+        if (! $this->hasPendingMigrations()) {
+            return true;
+        }
+
+        foreach ($this->getPendingMigrations() as $migration) {
+            if (! $this->checkRequiredPrivileges($migration->getDb(), $elevateConfig, $canIssueGrant)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if there are missing grants for the Icinga Web database and fix them
+     *
+     * This fixes the following problems on existing installations:
+     * - Setups made by the wizard have no access to `icingaweb_schema`
+     * - Setups made by the wizard have no DDL grants
+     * - Setups done manually using the advanced documentation chapter have no DDL grants
+     *
+     * @param Sql\Connection $db
+     * @param array<string, string> $elevateConfig
+     */
+    public function fixIcingaWebMysqlGrants(Sql\Connection $db, array $elevateConfig): void
+    {
+        $wizardProperties = (new ReflectionClass(WebWizard::class))
+            ->getDefaultProperties();
+        /** @var array<int, string> $privileges */
+        $privileges = $wizardProperties['databaseUsagePrivileges'];
+        /** @var array<int, string> $tables */
+        $tables = $wizardProperties['databaseTables'];
+
+        $actualUsername = $db->getConfig()->username;
+        $db = $this->elevateDatabaseConnection($db, $elevateConfig);
+        $tool = $this->createDbTool($db);
+        $tool->connectToDb();
+
+        if ($tool->checkPrivileges(['SELECT'], [], $actualUsername)) {
+            // Checks only database level grants. If this succeeds, the grants were issued manually.
+            if (! $tool->checkPrivileges($privileges, [], $actualUsername) && $tool->isGrantable($privileges)) {
+                // Any missing grant is now granted on database level as well, not to mix things up
+                $tool->grantPrivileges($privileges, [], $actualUsername);
+            }
+        } elseif (! $tool->checkPrivileges($privileges, $tables, $actualUsername) && $tool->isGrantable($privileges)) {
+            // The above ensures that if this fails, we can safely apply table level grants, as it's
+            // very likely that the existing grants were issued by the setup wizard
+            $tool->grantPrivileges($privileges, $tables, $actualUsername);
+        }
+    }
+
+    /**
+     * Create and return a DbTool instance
+     *
+     * @param Sql\Connection $db
+     *
+     * @return DbTool
+     */
+    private function createDbTool(Sql\Connection $db): DbTool
+    {
+        $config = $db->getConfig();
+
+        return new DbTool(array_merge([
+            'db' => $config->db,
+            'host' => $config->host,
+            'port' => $config->port,
+            'dbname' => $config->dbname,
+            'username' => $config->username,
+            'password' => $config->password,
+            'charset'  => $config->charset
+        ], $db->getAdapter()->getOptions($config)));
+    }
+
     protected function load(): void
     {
         $this->pendingMigrations = [];
@@ -203,6 +307,55 @@ final class MigrationManager implements Countable
         }
 
         ksort($this->pendingMigrations);
+    }
+
+    /**
+     * Check the required SQL privileges of the given connection
+     *
+     * @param Sql\Connection $conn
+     * @param ?array<string, string> $elevateConfig
+     * @param bool $canIssueGrants
+     *
+     * @return bool
+     */
+    protected function checkRequiredPrivileges(
+        Sql\Connection $conn,
+        array $elevateConfig = null,
+        bool $canIssueGrants = false
+    ): bool {
+        if ($elevateConfig) {
+            $conn = $this->elevateDatabaseConnection($conn, $elevateConfig);
+        }
+
+        $dbTool = $this->createDbTool($conn);
+        $dbTool->connectToDb();
+        if (! $dbTool->checkPrivileges($this->getRequiredDatabasePrivileges())) {
+            return false;
+        }
+
+        if ($canIssueGrants && ! $dbTool->isGrantable($this->getRequiredDatabasePrivileges())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Override the database config of the given connection by the specified new config
+     *
+     * Overrides only the username and password of existing database connection.
+     *
+     * @param Sql\Connection $conn
+     * @param array<string, string> $elevateConfig
+     * @return Sql\Connection
+     */
+    protected function elevateDatabaseConnection(Sql\Connection $conn, array $elevateConfig): Sql\Connection
+    {
+        $config = clone $conn->getConfig();
+        $config->username = $elevateConfig['username'];
+        $config->password = $elevateConfig['password'];
+
+        return new Sql\Connection($config);
     }
 
     /**

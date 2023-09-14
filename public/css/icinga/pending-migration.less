@@ -2,13 +2,11 @@
 
 @visual-width: 1.5em;
 
-.migration-state-banner {
+.migration-state-banner, .change-database-user-description {
   .rounded-corners();
 
-  border: 1px solid @gray-lighter;
-  color: @text-color-light;
-  padding: 1em;
-  text-align: center;
+  border: 1px solid @gray-light;
+  color: @text-color;
 }
 
 .migrations {
@@ -45,6 +43,17 @@
 }
 
 // Layout
+
+.migration-state-banner, .change-database-user-description {
+  padding: 1em;
+  text-align: center;
+
+  &.change-database-user-description {
+    max-width: 50em;
+    padding: .5em;
+  }
+}
+
 .pending-migrations-hint {
   text-align: center;
 
@@ -63,6 +72,10 @@
   .icinga-form { // Reset Icinga Form layout styles
     width: unset;
     max-width: unset;
+
+    fieldset {
+      max-width: 50em;
+    }
   }
 
   .migration-list-control {
