@@ -16,6 +16,7 @@ use ipl\Html\Text;
 use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBadge;
+use Throwable;
 
 class ConfigMenu extends BaseHtmlElement
 {
@@ -230,8 +231,13 @@ class ConfigMenu extends BaseHtmlElement
 
     protected function createMigrationBadge(): ?StateBadge
     {
-        $mm = MigrationManager::instance();
-        $count = $mm->count();
+        try {
+            $mm = MigrationManager::instance();
+            $count = $mm->count();
+        } catch (Throwable $e) {
+            Logger::error('Failed to load pending migrations: %s', $e);
+            $count = 0;
+        }
 
         $stateBadge = null;
         if ($count > 0) {
