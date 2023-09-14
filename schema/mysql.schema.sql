@@ -56,8 +56,8 @@ CREATE TABLE `icingaweb_rememberme`(
 CREATE TABLE icingaweb_schema (
   id        int unsigned NOT NULL AUTO_INCREMENT,
   version   varchar(64) NOT NULL,
-  timestamp bigint NOT NULL,
-  success   enum ('n', 'y') DEFAULT NULL,
+  timestamp bigint unsigned NOT NULL,
+  success   enum('n', 'y') DEFAULT NULL,
   reason    text DEFAULT NULL,
 
   PRIMARY KEY (id),
