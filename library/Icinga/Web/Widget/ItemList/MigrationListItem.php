@@ -5,7 +5,7 @@
 namespace Icinga\Web\Widget\ItemList;
 
 use Icinga\Application\Hook\Common\DbMigrationStep;
-use Icinga\Application\Hook\MigrationHook;
+use Icinga\Application\Hook\DbMigrationHook;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Contract\FormElement;
@@ -29,7 +29,7 @@ class MigrationListItem extends BaseListItem
     /** @var ?FormElement */
     protected $migrateButton;
 
-    /** @var MigrationHook Just for type hint */
+    /** @var DbMigrationHook Just for type hint */
     protected $item;
 
     /**
@@ -124,7 +124,7 @@ class MigrationListItem extends BaseListItem
                     sprintf($this->translate('Show all %d migrations'), $this->item->count()),
                     Url::fromPath(
                         'migrations/migration',
-                        [MigrationHook::MIGRATION_PARAM => $this->item->getModuleName()]
+                        [DbMigrationHook::MIGRATION_PARAM => $this->item->getModuleName()]
                     ),
                     [
                         'data-base-target' => '_next',

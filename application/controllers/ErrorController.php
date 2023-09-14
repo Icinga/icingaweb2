@@ -3,7 +3,7 @@
 
 namespace Icinga\Controllers;
 
-use Icinga\Application\Hook\MigrationHook;
+use Icinga\Application\Hook\DbMigrationHook;
 use Icinga\Application\MigrationManager;
 use Icinga\Exception\IcingaException;
 use Zend_Controller_Plugin_ErrorHandler;
@@ -103,7 +103,7 @@ class ErrorController extends ActionController
                             // safely unset this.
                             $this->setParam('error_handler', null);
                             $this->forward('hint', 'migrations', 'default', [
-                                MigrationHook::MIGRATION_PARAM => $moduleName
+                                DbMigrationHook::MIGRATION_PARAM => $moduleName
                             ]);
 
                             return;

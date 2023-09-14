@@ -6,7 +6,7 @@ namespace Icinga\Web\Widget\ItemList;
 
 use Generator;
 use Icinga\Application\Hook\Common\DbMigrationStep;
-use Icinga\Application\Hook\MigrationHook;
+use Icinga\Application\Hook\DbMigrationHook;
 use Icinga\Application\MigrationManager;
 use Icinga\Forms\MigrationForm;
 use ipl\I18n\Translation;
@@ -19,7 +19,7 @@ class MigrationList extends BaseItemList
 
     protected $baseAttributes = ['class' => 'item-list'];
 
-    /** @var Generator<MigrationHook> */
+    /** @var Generator<DbMigrationHook> */
     protected $data;
 
     /** @var ?MigrationForm */
@@ -31,7 +31,7 @@ class MigrationList extends BaseItemList
     /**
      * Create a new migration list
      *
-     * @param Generator<MigrationHook>|array<DbMigrationStep|MigrationHook> $data
+     * @param Generator<DbMigrationHook>|array<DbMigrationStep|DbMigrationHook> $data
      *
      * @param ?MigrationForm $form
      */
@@ -82,7 +82,7 @@ class MigrationList extends BaseItemList
             $this->getAttributes()->add('class', 'file-list');
         }
 
-        /** @var MigrationHook $data */
+        /** @var DbMigrationHook $data */
         foreach ($this->data as $data) {
             /** @var MigrationFileListItem|MigrationListItem $item */
             $item = new $itemClass($data, $this);
@@ -105,7 +105,7 @@ class MigrationList extends BaseItemList
                 );
 
                 $mm = MigrationManager::instance();
-                if ($data->isModule() && $mm->hasMigrations(MigrationHook::DEFAULT_MODULE)) {
+                if ($data->isModule() && $mm->hasMigrations(DbMigrationHook::DEFAULT_MODULE)) {
                     $migrateButton->getAttributes()
                         ->set('disabled', true)
                         ->set(

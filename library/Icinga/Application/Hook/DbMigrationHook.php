@@ -35,7 +35,7 @@ use stdClass;
  *
  *   `{IcingaApp,Module}::baseDir()/schema/{mysql,pgsql}-upgrades`
  */
-abstract class MigrationHook implements Countable
+abstract class DbMigrationHook implements Countable
 {
     use Translation;
 

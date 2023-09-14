@@ -4,13 +4,13 @@
 
 namespace Icinga\Application\ProvidedHook;
 
-use Icinga\Application\Hook\MigrationHook;
+use Icinga\Application\Hook\DbMigrationHook;
 use Icinga\Common\Database;
 use Icinga\Model\Schema;
 use ipl\Orm\Query;
 use ipl\Sql\Connection;
 
-class DbMigration extends MigrationHook
+class DbMigration extends DbMigrationHook
 {
     use Database {
         getDb as public getPublicDb;

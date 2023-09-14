@@ -5,7 +5,7 @@
 namespace Icinga\Controllers;
 
 use Exception;
-use Icinga\Application\Hook\MigrationHook;
+use Icinga\Application\Hook\DbMigrationHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\MigrationManager;
 use Icinga\Common\Database;
@@ -57,10 +57,10 @@ class MigrationsController extends CompatController
         $migrateListForm->setRenderDatabaseUserChange(! $mm->validateDatabasePrivileges());
 
         $migrateGlobalForm = new MigrationForm();
-        $migrateGlobalForm->getAttributes()->set('name', sprintf('migrate-%s', MigrationHook::ALL_MIGRATIONS));
+        $migrateGlobalForm->getAttributes()->set('name', sprintf('migrate-%s', DbMigrationHook::ALL_MIGRATIONS));
 
         if ($canApply && $mm->hasPendingMigrations()) {
-            $migrateGlobalForm->addElement('submit', sprintf('migrate-%s', MigrationHook::ALL_MIGRATIONS), [
+            $migrateGlobalForm->addElement('submit', sprintf('migrate-%s', DbMigrationHook::ALL_MIGRATIONS), [
                 'required' => true,
                 'label'    => $this->translate('Migrate All'),
                 'title'    => $this->translate('Migrate all pending migrations')
@@ -103,9 +103,9 @@ class MigrationsController extends CompatController
         // The forwarded request doesn't modify the original server query string, but adds the migration param to the
         // request param instead. So, there is no way to access the migration param other than via the request instance.
         /** @var ?string $module */
-        $module = $this->getRequest()->getParam(MigrationHook::MIGRATION_PARAM);
+        $module = $this->getRequest()->getParam(DbMigrationHook::MIGRATION_PARAM);
         if ($module === null) {
-            throw new MissingParameterException(t('Required parameter \'%s\' missing'), MigrationHook::MIGRATION_PARAM);
+            throw new MissingParameterException(t('Required parameter \'%s\' missing'), DbMigrationHook::MIGRATION_PARAM);
         }
 
         $mm = MigrationManager::instance();
@@ -134,7 +134,7 @@ class MigrationsController extends CompatController
     public function migrationAction(): void
     {
         /** @var string $name */
-        $name = $this->params->getRequired(MigrationHook::MIGRATION_PARAM);
+        $name = $this->params->getRequired(DbMigrationHook::MIGRATION_PARAM);
 
         $this->addTitleTab($this->translate('Migration'));
         $this->getTabs()->disableLegacyExtensions();
@@ -215,7 +215,7 @@ class MigrationsController extends CompatController
             if ($pressedButton) {
                 $name = substr($pressedButton->getName(), 8);
                 switch ($name) {
-                    case MigrationHook::ALL_MIGRATIONS:
+                    case DbMigrationHook::ALL_MIGRATIONS:
                         if ($mm->applyAll($elevatedPrivileges)) {
                             Notification::success($this->translate('Applied all migrations successfully'));
                         } else {

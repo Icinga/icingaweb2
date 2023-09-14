@@ -6,7 +6,7 @@ namespace Icinga\Application;
 
 use Countable;
 use Generator;
-use Icinga\Application\Hook\MigrationHook;
+use Icinga\Application\Hook\DbMigrationHook;
 use Icinga\Exception\NotFoundError;
 use Icinga\Module\Setup\Utils\DbTool;
 use Icinga\Module\Setup\WebWizard;
@@ -21,7 +21,7 @@ final class MigrationManager implements Countable
 {
     use Translation;
 
-    /** @var array<string, MigrationHook> All pending migration hooks */
+    /** @var array<string, DbMigrationHook> All pending migration hooks */
     protected $pendingMigrations;
 
     /** @var MigrationManager */
@@ -48,7 +48,7 @@ final class MigrationManager implements Countable
     /**
      * Get all pending migrations
      *
-     * @return array<string, MigrationHook>
+     * @return array<string, DbMigrationHook>
      */
     public function getPendingMigrations(): array
     {
@@ -83,11 +83,11 @@ final class MigrationManager implements Countable
      *
      * @param string $module
      *
-     * @return MigrationHook
+     * @return DbMigrationHook
      *
      * @throws NotFoundError When there are no pending migrations matching the given module name
      */
-    public function getMigration(string $module): MigrationHook
+    public function getMigration(string $module): DbMigrationHook
     {
         if (! $this->hasMigrations($module)) {
             throw new NotFoundError('There are no pending migrations matching the given name: %s', $module);
@@ -116,7 +116,7 @@ final class MigrationManager implements Countable
     public function applyByName(string $module): bool
     {
         $migration = $this->getMigration($module);
-        if ($migration->isModule() && $this->hasMigrations(MigrationHook::DEFAULT_MODULE)) {
+        if ($migration->isModule() && $this->hasMigrations(DbMigrationHook::DEFAULT_MODULE)) {
             return false;
         }
 
@@ -126,14 +126,14 @@ final class MigrationManager implements Countable
     /**
      * Apply the given migration hook
      *
-     * @param MigrationHook $hook
+     * @param DbMigrationHook $hook
      * @param ?array<string, string> $elevateConfig
      *
      * @return bool
      */
-    public function apply(MigrationHook $hook, array $elevateConfig = null): bool
+    public function apply(DbMigrationHook $hook, array $elevateConfig = null): bool
     {
-        if ($hook->isModule() && $this->hasMigrations(MigrationHook::DEFAULT_MODULE)) {
+        if ($hook->isModule() && $this->hasMigrations(DbMigrationHook::DEFAULT_MODULE)) {
             Logger::error(
                 'Please apply the Icinga Web pending migration(s) first or apply all the migrations instead'
             );
@@ -166,7 +166,7 @@ final class MigrationManager implements Countable
      */
     public function applyAll(array $elevateConfig = null): bool
     {
-        $default = MigrationHook::DEFAULT_MODULE;
+        $default = DbMigrationHook::DEFAULT_MODULE;
         if ($this->hasMigrations($default)) {
             $migration = $this->getMigration($default);
             if (! $this->apply($migration, $elevateConfig)) {
@@ -189,7 +189,7 @@ final class MigrationManager implements Countable
      *
      * @param bool $modules
      *
-     * @return Generator<MigrationHook>
+     * @return Generator<DbMigrationHook>
      */
     public function yieldMigrations(bool $modules = false): Generator
     {
@@ -297,8 +297,8 @@ final class MigrationManager implements Countable
     {
         $this->pendingMigrations = [];
 
-        /** @var MigrationHook $hook */
-        foreach (Hook::all('migration') as $hook) {
+        /** @var DbMigrationHook $hook */
+        foreach (Hook::all('DbMigration') as $hook) {
             if (empty($hook->getMigrations())) {
                 continue;
             }
@@ -366,7 +366,7 @@ final class MigrationManager implements Countable
     public function toArray(): array
     {
         $framework = [];
-        $serialize = function (MigrationHook $hook): array {
+        $serialize = function (DbMigrationHook $hook): array {
             $serialized = [
                 'name'             => $hook->getName(),
                 'module'           => $hook->getModuleName(),
