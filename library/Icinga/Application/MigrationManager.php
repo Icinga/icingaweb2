@@ -327,9 +327,16 @@ final class MigrationManager implements Countable
             $conn = $this->elevateDatabaseConnection($conn, $elevateConfig);
         }
 
+        $wizardProperties = (new ReflectionClass(WebWizard::class))
+            ->getDefaultProperties();
+        /** @var array<int, string> $tables */
+        $tables = $wizardProperties['databaseTables'];
+
         $dbTool = $this->createDbTool($conn);
         $dbTool->connectToDb();
-        if (! $dbTool->checkPrivileges($this->getRequiredDatabasePrivileges())) {
+        if (! $dbTool->checkPrivileges($this->getRequiredDatabasePrivileges())
+            && ! $dbTool->checkPrivileges($this->getRequiredDatabasePrivileges(), $tables)
+        ) {
             return false;
         }
 
