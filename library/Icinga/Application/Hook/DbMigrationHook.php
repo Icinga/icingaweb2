@@ -64,13 +64,13 @@ abstract class DbMigrationHook implements Countable
      */
     public static function tableExists(Connection $conn, string $table): bool
     {
-        /** @var stdClass $query */
-        $query = $conn->prepexec(
+        /** @var false|int $exists */
+        $exists = $conn->prepexec(
             'SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = ?) AS result',
             $table
-        )->fetch(PDO::FETCH_OBJ);
+        )->fetchColumn();
 
-        return $query->result;
+        return (bool) $exists;
     }
 
     /**
@@ -122,18 +122,13 @@ abstract class DbMigrationHook implements Countable
             return null;
         }
 
-        $pdoStmt = $conn->prepexec(
+        /** @var false|string $collation */
+        $collation = $conn->prepexec(
             'SELECT collation_name FROM information_schema.columns WHERE table_name = ? AND column_name = ?',
             [$table, $column]
-        );
+        )->fetchColumn();
 
-        /** @var false|stdClass $result */
-        $result = $pdoStmt->fetch(PDO::FETCH_OBJ);
-        if ($result === false) {
-            return null;
-        }
-
-        return $result->collation_name;
+        return ! $collation ? null : $collation;
     }
 
     /**
