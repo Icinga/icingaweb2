@@ -14,6 +14,7 @@ use Icinga\Web\Notification;
 use Icinga\Web\Widget\ItemList\MigrationList;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use ipl\Html\Attributes;
+use ipl\Html\FormElement\SubmitButtonElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Web\Compat\CompatController;
@@ -53,22 +54,25 @@ class MigrationsController extends CompatController
         }
 
         $migrateListForm = new MigrationForm();
+        $migrateListForm->setAttribute('id', $this->getRequest()->protectId('migration-form'));
         $migrateListForm->setRenderDatabaseUserChange(! $mm->validateDatabasePrivileges());
 
-        $migrateGlobalForm = new MigrationForm();
-        $migrateGlobalForm->getAttributes()->set('name', sprintf('migrate-%s', DbMigrationHook::ALL_MIGRATIONS));
-
         if ($canApply && $mm->hasPendingMigrations()) {
-            $migrateGlobalForm->addElement('submit', sprintf('migrate-%s', DbMigrationHook::ALL_MIGRATIONS), [
-                'required' => true,
-                'label'    => $this->translate('Migrate All'),
-                'title'    => $this->translate('Migrate all pending migrations')
+            $migrateAllButton = new SubmitButtonElement(sprintf('migrate-%s', DbMigrationHook::ALL_MIGRATIONS), [
+                'form'  => $migrateListForm->getAttribute('id')->getValue(),
+                'label' => $this->translate('Migrate All'),
+                'title' => $this->translate('Migrate all pending migrations')
             ]);
 
-            $this->controls->getAttributes()->add('class', 'default-layout');
-            $this->handleMigrateRequest($migrateGlobalForm);
+            // Is the first button, so will be cloned and that the visible
+            // button is outside the form doesn't matter for Web's JS
+            $migrateListForm->registerElement($migrateAllButton);
 
-            $this->addControl($migrateGlobalForm);
+            // Make sure it looks familiar, even if not inside a form
+            $migrateAllButton->setWrapper(new HtmlElement('div', Attributes::create(['class' => 'icinga-controls'])));
+
+            $this->controls->getAttributes()->add('class', 'default-layout');
+            $this->addControl($migrateAllButton);
         }
 
         $this->handleFormatRequest($mm->toArray());

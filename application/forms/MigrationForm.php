@@ -6,7 +6,6 @@ namespace Icinga\Forms;
 
 use Icinga\Application\MigrationManager;
 use ipl\Html\Attributes;
-use ipl\Html\Form;
 use ipl\Html\FormElement\CheckboxElement;
 use ipl\Html\FormElement\FieldsetElement;
 use ipl\Html\HtmlElement;
@@ -15,10 +14,11 @@ use ipl\I18n\Translation;
 use ipl\Validator\CallbackValidator;
 use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Common\FormUid;
+use ipl\Web\Compat\CompatForm;
 use ipl\Web\FormDecorator\IcingaFormDecorator;
 use PDOException;
 
-class MigrationForm extends Form
+class MigrationForm extends CompatForm
 {
     use CsrfCounterMeasure;
     use FormUid;
@@ -48,6 +48,12 @@ class MigrationForm extends Form
         $this->renderDatabaseUserChange = $value;
 
         return $this;
+    }
+
+    public function hasDefaultElementDecorator()
+    {
+        // The base implementation registers a decorator we don't want here
+        return false;
     }
 
     protected function assemble(): void
