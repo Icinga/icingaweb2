@@ -14,16 +14,13 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Application\Modules\Module;
 use Icinga\Model\Schema;
-use Icinga\Module\Setup\Utils\DbTool;
 use Icinga\Web\Session;
 use ipl\I18n\Translation;
 use ipl\Orm\Query;
 use ipl\Sql\Adapter\Pgsql;
 use ipl\Sql\Connection;
 use ipl\Stdlib\Filter;
-use ipl\Stdlib\Str;
 use PDO;
-use PDOException;
 use SplFileInfo;
 use stdClass;
 
@@ -174,6 +171,9 @@ abstract class DbMigrationHook implements Countable
     /**
      * Apply all pending migrations of this hook
      *
+     * @param ?Connection $conn Use the provided database connection to apply the migrations.
+     *        Is only used to elevate database users with insufficient privileges.
+     *
      * @return bool Whether the migration(s) have been successfully applied
      */
     final public function run(Connection $conn = null): bool
@@ -205,12 +205,8 @@ abstract class DbMigrationHook implements Countable
                 );
                 Logger::debug($e->getTraceAsString());
 
-                $schemaQuery = $this->getSchemaQuery()
-                    ->filter(Filter::equal('version', $migration->getVersion()));
-
                 static::insertFailedEntry(
                     $conn,
-                    $schemaQuery,
                     $migration->getVersion(),
                     $e->getMessage() . PHP_EOL . $e->getTraceAsString()
                 );
@@ -280,18 +276,19 @@ abstract class DbMigrationHook implements Countable
         $version = $this->getVersion();
         /** @var SplFileInfo $file */
         foreach (new DirectoryIterator($path . DIRECTORY_SEPARATOR . $upgradeDir) as $file) {
-            if (preg_match('/^(?:r|v)?((?:\d+\.){0,2}\d+)(?:_([\w+]+))?\.sql$/', $file->getFilename(), $m)) {
-                if (version_compare($m[1], $version, '>')) {
-                    $migration = new DbMigrationStep($m[1], $file->getRealPath());
-                    if (isset($descriptions[$migration->getVersion()])) {
-                        $migration->setDescription($descriptions[$migration->getVersion()]);
-                    } elseif (isset($m[2])) {
-                        $migration->setDescription(str_replace('_', ' ', $m[2]));
+            if (preg_match('/^(v)?([^_]+)(?:_(\w+))?\.sql$/', $file->getFilename(), $m, PREG_UNMATCHED_AS_NULL)) {
+                [$_, $_, $migrateVersion, $description] = $m;
+                if ($migrateVersion && version_compare($migrateVersion, $version, '>')) {
+                    $migration = new DbMigrationStep($migrateVersion, $file->getRealPath());
+                    if (isset($descriptions[$migrateVersion])) {
+                        $migration->setDescription($descriptions[$migrateVersion]);
+                    } elseif ($description) {
+                        $migration->setDescription(str_replace('_', ' ', $description));
                     }
 
-                    $migration->setLastState($this->loadLastState($migration->getVersion()));
+                    $migration->setLastState($this->loadLastState($migrateVersion));
 
-                    $this->migrations[$m[1]] = $migration;
+                    $this->migrations[$migrateVersion] = $migration;
                 }
             }
         }
@@ -308,14 +305,16 @@ abstract class DbMigrationHook implements Countable
      * Insert failed migration entry into the database or to the session
      *
      * @param Connection $conn
-     * @param Query $schemaQuery
      * @param string $version
      * @param string $reason
      *
      * @return $this
      */
-    protected function insertFailedEntry(Connection $conn, Query $schemaQuery, string $version, string $reason): self
+    protected function insertFailedEntry(Connection $conn, string $version, string $reason): self
     {
+        $schemaQuery = $this->getSchemaQuery()
+            ->filter(Filter::equal('version', $version));
+
         if (! static::getColumnType($conn, $schemaQuery->getModel()->getTableName(), 'success')) {
             $this->storeState($version, $reason);
         } else {
