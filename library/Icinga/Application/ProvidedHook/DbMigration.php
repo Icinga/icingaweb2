@@ -13,12 +13,12 @@ use ipl\Sql\Connection;
 class DbMigration extends DbMigrationHook
 {
     use Database {
-        getDb as public getPublicDb;
+        getDb as private getWebDb;
     }
 
     public function getDb(): Connection
     {
-        return $this->getPublicDb();
+        return $this->getWebDb();
     }
 
     public function getName(): string
