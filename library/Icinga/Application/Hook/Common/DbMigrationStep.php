@@ -9,9 +9,6 @@ use RuntimeException;
 
 class DbMigrationStep
 {
-    /** @var string The sql string to be executed */
-    protected $query;
-
     /** @var string The sql script version the queries are loaded from */
     protected $version;
 
@@ -109,27 +106,23 @@ class DbMigrationStep
      */
     public function apply(Connection $conn): self
     {
-        if (! $this->query) {
-            $statements = @file_get_contents($this->getScriptPath());
-            if ($statements === false) {
-                throw new RuntimeException(sprintf('Cannot load upgrade script %s', $this->getScriptPath()));
-            }
-
-            if (empty($statements)) {
-                throw new RuntimeException('Nothing to migrate');
-            }
-
-            if (preg_match('/\s*delimiter\s*(\S+)\s*$/im', $statements, $matches)) {
-                /** @var string $statements */
-                $statements = preg_replace('/\s*delimiter\s*(\S+)\s*$/im', '', $statements);
-                /** @var string $statements */
-                $statements = preg_replace('/' . preg_quote($matches[1], '/') . '$/m', ';', $statements);
-            }
-
-            $this->query = $statements;
+        $statements = @file_get_contents($this->getScriptPath());
+        if ($statements === false) {
+            throw new RuntimeException(sprintf('Cannot load upgrade script %s', $this->getScriptPath()));
         }
 
-        $conn->exec($this->query);
+        if (empty($statements)) {
+            throw new RuntimeException('Nothing to migrate');
+        }
+
+        if (preg_match('/\s*delimiter\s*(\S+)\s*$/im', $statements, $matches)) {
+            /** @var string $statements */
+            $statements = preg_replace('/\s*delimiter\s*(\S+)\s*$/im', '', $statements);
+            /** @var string $statements */
+            $statements = preg_replace('/' . preg_quote($matches[1], '/') . '$/m', ';', $statements);
+        }
+
+        $conn->exec($statements);
 
         return $this;
     }
