@@ -108,6 +108,35 @@ abstract class DbMigrationHook implements Countable
     }
 
     /**
+     * Get the mysql collation name of the given column of the specified table
+     *
+     * @param Connection $conn
+     * @param string $table
+     * @param string $column
+     *
+     * @return ?string
+     */
+    public static function getColumnCollation(Connection $conn, string $table, string $column): ?string
+    {
+        if ($conn->getAdapter() instanceof Pgsql) {
+            return null;
+        }
+
+        $pdoStmt = $conn->prepexec(
+            'SELECT collation_name FROM information_schema.columns WHERE table_name = ? AND column_name = ?',
+            [$table, $column]
+        );
+
+        /** @var false|stdClass $result */
+        $result = $pdoStmt->fetch(PDO::FETCH_OBJ);
+        if ($result === false) {
+            return null;
+        }
+
+        return $result->collation_name;
+    }
+
+    /**
      * Get statically provided descriptions of the individual migrate scripts
      *
      * @return string[]

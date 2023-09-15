@@ -52,7 +52,9 @@ class DbMigration extends DbMigrationHook
                 if (! $this->version) {
                     $this->version = '2.12.0';
                 }
-            } elseif (static::tableExists($conn, $schemaQuery->getModel()->getTableName())) {
+            } elseif (static::tableExists($conn, $schemaQuery->getModel()->getTableName())
+                || static::getColumnCollation($conn, 'icingaweb_user_preference', 'username') === 'utf8mb4_unicode_ci'
+            ) {
                 $this->version = '2.11.0';
             } elseif (static::tableExists($conn, 'icingaweb_rememberme')) {
                 $randomIvType = static::getColumnType($conn, 'icingaweb_rememberme', 'random_iv');
