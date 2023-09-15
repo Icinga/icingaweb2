@@ -1,6 +1,7 @@
 // Style
 
 @visual-width: 1.5em;
+@max-view-width: 50em;
 
 .migration-state-banner, .change-database-user-description {
   .rounded-corners();
@@ -69,20 +70,15 @@
 }
 
 .migrations {
-  .icinga-form { // Reset Icinga Form layout styles
-    width: unset;
-    max-width: unset;
-
-    fieldset {
-      max-width: 50em;
-    }
+  .migration-form fieldset {
+    max-width: @max-view-width;
   }
 
   .migration-list-control {
     padding-bottom: 1em;
 
     > .item-list {
-      max-width: 50em;
+      max-width: @max-view-width;
     }
   }
 
