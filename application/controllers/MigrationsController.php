@@ -4,7 +4,6 @@
 
 namespace Icinga\Controllers;
 
-use Exception;
 use Icinga\Application\Hook\DbMigrationHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\MigrationManager;
@@ -105,7 +104,10 @@ class MigrationsController extends CompatController
         /** @var ?string $module */
         $module = $this->getRequest()->getParam(DbMigrationHook::MIGRATION_PARAM);
         if ($module === null) {
-            throw new MissingParameterException(t('Required parameter \'%s\' missing'), DbMigrationHook::MIGRATION_PARAM);
+            throw new MissingParameterException(
+                $this->translate('Required parameter \'%s\' missing'),
+                DbMigrationHook::MIGRATION_PARAM
+            );
         }
 
         $mm = MigrationManager::instance();
@@ -161,33 +163,11 @@ class MigrationsController extends CompatController
                     )
                 );
             } else {
-                $migrateForm = (new MigrationForm())
-                    ->addElement(
-                        'submit',
-                        sprintf('migrate-%s', $hook->getModuleName()),
-                        [
-                            'required' => true,
-                            'label'    => $this->translate('Migrate'),
-                            'title'    => sprintf(
-                                $this->translatePlural(
-                                    'Migrate %d pending migration',
-                                    'Migrate all %d pending migrations',
-                                    $hook->count()
-                                ),
-                                $hook->count()
-                            )
-                        ]
-                    );
-
-                $migrateForm->getAttributes()->add('class', 'inline');
-                $this->handleMigrateRequest($migrateForm);
-
                 $this->addControl(
                     new HtmlElement(
                         'div',
                         Attributes::create(['class' => 'migration-controls']),
-                        new HtmlElement('span', null, Text::create($hook->getName())),
-                        $migrateForm
+                        new HtmlElement('span', null, Text::create($hook->getName()))
                     )
                 );
             }
@@ -238,6 +218,8 @@ class MigrationsController extends CompatController
                         }
                 }
             }
+
+            $this->sendExtraUpdates(['#col2' => '__CLOSE__']);
 
             $this->redirectNow('migrations');
         })->handleRequest($this->getServerRequest());
