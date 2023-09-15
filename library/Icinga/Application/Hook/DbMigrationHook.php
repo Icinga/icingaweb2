@@ -213,10 +213,14 @@ abstract class DbMigrationHook implements Countable
                 $this->version = $migration->getVersion();
                 unset($this->migrations[$migration->getVersion()]);
 
-                Logger::info(
-                    "Applied %s pending migration version %s successfully",
-                    $this->getName(),
-                    $migration->getVersion()
+                $data = [
+                    'name'  => $this->getName(),
+                    'version' => $migration->getVersion()
+                ];
+                AuditHook::logActivity(
+                    'migrations',
+                    'Migrated database schema of {{name}} to version {{version}}',
+                    $data
                 );
 
                 $this->storeState($migration->getVersion(), null);
@@ -225,7 +229,7 @@ abstract class DbMigrationHook implements Countable
                     "Failed to apply %s pending migration version %s \n%s",
                     $this->getName(),
                     $migration->getVersion(),
-                    $e->getMessage()
+                    $e
                 );
                 Logger::debug($e->getTraceAsString());
 
