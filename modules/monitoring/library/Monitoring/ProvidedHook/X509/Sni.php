@@ -11,6 +11,8 @@ class Sni extends SniHook
 {
     public function getHosts(Filter $filter = null)
     {
+        MonitoringBackend::clearInstances();
+
         $hosts = MonitoringBackend::instance()
             ->select()
             ->from('hoststatus', [
