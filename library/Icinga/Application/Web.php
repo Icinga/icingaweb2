@@ -104,7 +104,8 @@ class Web extends EmbeddedWeb
             ->setupUser()
             ->setupTimezone()
             ->setupInternationalization()
-            ->setupFatalErrorHandling();
+            ->setupFatalErrorHandling()
+            ->registerApplicationHooks();
     }
 
     /**

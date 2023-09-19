@@ -213,7 +213,7 @@ Create the database and add a new user as shown below for MySQL/MariaDB:
 sudo mysql -p
 
 CREATE DATABASE icingaweb2;
-GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE VIEW, INDEX, EXECUTE ON icingaweb2.* TO 'icingaweb2'@'localhost' IDENTIFIED BY 'icingaweb2';
+GRANT CREATE, SELECT, INSERT, UPDATE, DELETE, DROP, ALTER, CREATE VIEW, INDEX, EXECUTE ON icingaweb2.* TO 'icingaweb2'@'localhost' IDENTIFIED BY 'icingaweb2';
 quit
 
 mysql -p icingaweb2 < /usr/share/icingaweb2/schema/mysql.schema.sql

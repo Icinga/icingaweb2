@@ -54,12 +54,15 @@ CREATE TABLE `icingaweb_rememberme`(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE icingaweb_schema (
-  id int unsigned NOT NULL AUTO_INCREMENT,
-  version smallint unsigned NOT NULL,
-  timestamp int unsigned NOT NULL,
+  id        int unsigned NOT NULL AUTO_INCREMENT,
+  version   varchar(64) NOT NULL,
+  timestamp bigint unsigned NOT NULL,
+  success   enum('n', 'y') DEFAULT NULL,
+  reason    text DEFAULT NULL,
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  CONSTRAINT idx_icingaweb_schema_version UNIQUE (version)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
-INSERT INTO icingaweb_schema (version, timestamp)
-  VALUES (6, UNIX_TIMESTAMP());
+INSERT INTO icingaweb_schema (version, timestamp, success)
+  VALUES ('2.12.0', UNIX_TIMESTAMP() * 1000, 'y');

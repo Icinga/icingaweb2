@@ -118,13 +118,18 @@ ALTER TABLE ONLY "icingaweb_rememberme"
     "id"
 );
 
+CREATE TYPE boolenum AS ENUM ('n', 'y');
+
 CREATE TABLE "icingaweb_schema" (
   "id"          serial,
-  "version"     smallint NOT NULL,
-  "timestamp"   int NOT NULL,
+  "version"     varchar(64) NOT NULL,
+  "timestamp"   bigint NOT NULL,
+  "success"     boolenum DEFAULT NULL,
+  "reason"      text DEFAULT NULL,
 
-  CONSTRAINT pk_icingaweb_schema PRIMARY KEY ("id")
+  CONSTRAINT pk_icingaweb_schema PRIMARY KEY ("id"),
+  CONSTRAINT idx_icingaweb_schema_version UNIQUE (version)
 );
 
-INSERT INTO icingaweb_schema (version, timestamp)
-  VALUES (6, extract(epoch from now()));
+INSERT INTO icingaweb_schema (version, timestamp, success)
+  VALUES ('2.12.0', extract(epoch from now()) * 1000, 'y');

@@ -49,6 +49,8 @@ parameters:
             count: 2
             path: library/Icinga/Protocol/Ldap/LdapConnection.php
 
+        - '#Call to an undefined method ipl\\Sql\\Connection::exec\(\)#'
+
     scanDirectories:
         - vendor
 
@@ -56,6 +58,7 @@ parameters:
         - library/Icinga/Test
 
     universalObjectCratesClasses:
+        - ipl\Orm\Model
         - Icinga\Data\ConfigObject
         - Icinga\Web\View
         - Icinga\Module\Monitoring\Object\MonitoredObject

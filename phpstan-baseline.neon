@@ -13166,11 +13166,6 @@ parameters:
 			path: library/Icinga/Web/Navigation/ConfigMenu.php
 
 		-
-			message: "#^Method Icinga\\\\Web\\\\Navigation\\\\ConfigMenu\\:\\:createHealthBadge\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icinga/Web/Navigation/ConfigMenu.php
-
-		-
 			message: "#^Method Icinga\\\\Web\\\\Navigation\\\\ConfigMenu\\:\\:createLevel2Menu\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icinga/Web/Navigation/ConfigMenu.php

@@ -48,7 +48,8 @@ class Cli extends ApplicationBootstrap
             ->setupModuleManager()
             ->setupUserBackendFactory()
             ->loadSetupModuleIfNecessary()
-            ->setupFakeAuthentication();
+            ->setupFakeAuthentication()
+            ->registerApplicationHooks();
     }
 
     /**

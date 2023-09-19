@@ -78,6 +78,11 @@ class WebWizard extends Wizard implements SetupWizard
         'UPDATE',
         'DELETE',
         'EXECUTE',
+        'CREATE',
+        'CREATE VIEW',
+        'ALTER',
+        'DROP',
+        'INDEX',
         'TEMPORARY', // PostgreSql
         'CREATE TEMPORARY TABLES' // MySQL
     );

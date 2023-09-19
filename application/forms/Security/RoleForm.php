@@ -581,6 +581,9 @@ class RoleForm extends RepositoryForm
             ],
             'application/sessions' => [
                 'description' => t('Allow to manage user sessions')
+            ],
+            'application/migrations' => [
+                'description' => t('Allow to apply pending application migrations')
             ]
         ];
 

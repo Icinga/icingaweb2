@@ -1,7 +1,10 @@
 <?php
 
+use Icinga\Application\MigrationManager;
+use Icinga\Web\Navigation\Renderer\BadgeNavigationItemRenderer;
 use ipl\Html\HtmlElement;
 use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\StateBadge;
 
 ?>
 <div class="controls">
@@ -92,6 +95,31 @@ use ipl\Web\Widget\Icon;
             ?>
             </div>
         </div>
+
+        <?php $mm = MigrationManager::instance(); if ($mm->hasPendingMigrations()): ?>
+            <div class="pending-migrations clearfix">
+                <h2><?= $this->translate('Pending Migrations') ?></h2>
+                <table class="name-value-table migrations">
+                <?php foreach ($mm->getPendingMigrations() as $migration): ?>
+                    <tr>
+                        <th><?= $this->escape($migration->getName()) ?></th>
+                        <td><?=
+                            new StateBadge(
+                                count($migration->getMigrations()),
+                                BadgeNavigationItemRenderer::STATE_PENDING
+                            );
+                        ?></td>
+                    </tr>
+                <?php endforeach ?>
+                </table>
+                <?= $this->qlink(
+                    $this->translate('Show all'),
+                    'migrations',
+                    null,
+                    ['title' => $this->translate('Show all pending migrations')]
+                ) ?>
+            </div>
+        <?php endif ?>
 
         <h2><?= $this->translate('Loaded Libraries') ?></h2>
         <table class="name-value-table" data-base-target="_next">

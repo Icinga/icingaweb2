@@ -22,7 +22,7 @@ trait Database
      *
      * @throws \Icinga\Exception\ConfigurationError
      */
-    protected function getDb()
+    protected function getDb(): Connection
     {
         if (! $this->hasDb()) {
             throw new LogicException('Please check if a db instance exists at all');

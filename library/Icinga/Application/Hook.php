@@ -266,23 +266,21 @@ class Hook
      *
      * @return  array
      */
-    public static function all($name)
+    public static function all($name): array
     {
         $name = self::normalizeHookName($name);
         if (! self::has($name)) {
-            return array();
+            return [];
         }
 
         foreach (self::$hooks[$name] as $key => $hook) {
             list($class, $alwaysRun) = $hook;
             if ($alwaysRun || self::hasPermission($class)) {
-                if (self::createInstance($name, $key) === null) {
-                    return array();
-                }
+                self::createInstance($name, $key);
             }
         }
 
-        return isset(self::$instances[$name]) ? self::$instances[$name] : array();
+        return self::$instances[$name] ?? [];
     }
 
     /**

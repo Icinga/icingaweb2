@@ -13,6 +13,20 @@
     > * {
       margin-bottom: 2em;
     }
+
+    .pending-migrations {
+      .name-value-table.migrations {
+        tr:not(:first-child):not(:last-child) {
+          border-top: 1px solid @gray-lighter;
+        }
+      }
+
+      a {
+        float: right;
+        margin-top: 1em;
+        color: @icinga-blue
+      }
+    }
   }
 
   h2 {

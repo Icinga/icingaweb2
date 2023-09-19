@@ -6,6 +6,7 @@ namespace Icinga\Application;
 use DirectoryIterator;
 use ErrorException;
 use Exception;
+use Icinga\Application\ProvidedHook\DbMigration;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\StaticTranslator;
 use LogicException;
@@ -730,5 +731,17 @@ abstract class ApplicationBootstrap
     {
         $localedir = $this->getLocaleDir();
         return $localedir !== false && file_exists($localedir) && is_dir($localedir);
+    }
+
+    /**
+     * Register all hooks provided by the main application
+     *
+     * @return $this
+     */
+    protected function registerApplicationHooks(): self
+    {
+        Hook::register('DbMigration', DbMigration::class, DbMigration::class);
+
+        return $this;
     }
 }
