@@ -305,7 +305,8 @@ abstract class DbMigrationHook implements Countable
         /** @var SplFileInfo $file */
         foreach (new DirectoryIterator($path . DIRECTORY_SEPARATOR . $upgradeDir) as $file) {
             if (preg_match('/^(v)?([^_]+)(?:_(\w+))?\.sql$/', $file->getFilename(), $m, PREG_UNMATCHED_AS_NULL)) {
-                [$_, $_, $migrateVersion, $description] = $m;
+                [$_, $_, $migrateVersion, $description] = array_pad($m, 4, null);
+                /** @var string $migrateVersion */
                 if ($migrateVersion && version_compare($migrateVersion, $version, '>')) {
                     $migration = new DbMigrationStep($migrateVersion, $file->getRealPath());
                     if (isset($descriptions[$migrateVersion])) {
