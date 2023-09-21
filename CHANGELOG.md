@@ -4,6 +4,73 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.12.0
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/79?closed=1).
+
+#### PHP 8.2 Support
+
+This release finally adds support for the latest version of PHP, 8.2. This means that installations on Debian Bookworm,
+Ubuntu 23.10 and Fedora 38+ can now install Icinga Web without worrying about PHP related incompatibilities. Some of our
+other modules still require an update, which they will receive in the coming weeks. Next week Icinga DB Web will follow.
+Icinga Certificate Monitoring, Icinga Business Process Modeling and Icinga Reporting the weeks after.
+
+* Support for PHP 8.2 [#4918](https://github.com/Icinga/icingaweb2/issues/4918)
+
+#### Simplified Database Migrations
+
+Anyone who already performed an upgrade of Icinga Web or some Icinga Web module in the past has done it: A database
+schema upgrade. This usually involved the following steps:
+
+* Knowing that a database might need an upgrade
+* Figuring out if that's true, by checking the upgrade documentation
+* Alternatively relying on the users to find out about it as they're running into database errors
+* Locating the upgrade file
+* Connecting to the machine the database is running on
+* Transferring the upgrade file over
+* Importing the upgrade file into the correct database
+
+With Icinga Web v2.12 and later, upgrade the application and, yes, still check the upgrade documentation. That's still
+mandatory! But if you notice there, that just a database upgrade is necessary you can simply log in and check the
+*Migrations* section in the *System* menu. With a single additional click you can perform the database upgrade directly
+in the UI then. This view also offers to migrate module databases. The earlier mentioned updates of Icinga Certificate
+Monitoring and Icinga Reporting will pop up there once they arrive.
+
+* Provide a way to easily perform database migrations [#5043](https://github.com/Icinga/icingaweb2/issues/5043)
+
+#### Content-Security-Policy Conformance
+
+Err, what? That's an HTTP header to prevent cross site scripting attacks. (XSS) Still confused? It's a technique
+to stop bad individuals. A very effective technique even. You don't need to do anything, other than visiting the
+general configuration of Icinga Web and enabling the respective setting. The only downer here, is that support
+for it isn't as widespread yet as you might hope. Icinga Web itself of course has it, but not all modules. But don't
+worry, you might have guessed it already, those are the same modules which will receive updates in the coming weeks.
+
+* Support for Content-Security-Policy [#4528](https://github.com/Icinga/icingaweb2/issues/4528)
+
+#### Other Notable Changes
+
+There are not only such big changes as previously mentioned part of this release.
+
+Some module developers may be happy to hear that there is now more control for the server over the UI possible.
+And with a new Javascript event it is now possible to react upon a column's content being moved to another column.
+Now built-in into the framework is also an easy way to mark content in the UI as being copiable with a single click
+by the user.
+
+* Allow to initiate a refresh with `__REFRESH__` [#5108](https://github.com/Icinga/icingaweb2/pull/5108)
+* Don't refresh twice upon `__CLOSE__` [#5106](https://github.com/Icinga/icingaweb2/pull/5106)
+* Add event `column-moved` [#5049](https://github.com/Icinga/icingaweb2/pull/5049)
+* Add copy-to-clipboard behavior [#5041](https://github.com/Icinga/icingaweb2/pull/5041)
+
+Then there are some fixes related to other integrations. It is now possible to set up resources for Oracle databases,
+without a `host` setting, which facilitate dynamic host name resolution. A part of the `monitoring` module's integration
+into the Icinga Certificate Monitoring prevents a crash of its collector daemon in case the connection to the IDO was
+interrupted. And exported content, with data that has double quotes, to CSV is now correctly escaped.
+
+* Access Oracle Database via tnsnames.ora / LDAP Naming Services [#5062](https://github.com/Icinga/icingaweb2/issues/5062)
+* Reduce risk of crashing the x509 collector daemon [#5115](https://github.com/Icinga/icingaweb2/pull/5115)
+* CSV export does not escape double quotes [#4910](https://github.com/Icinga/icingaweb2/issues/4910)
+
 ### What's New in Version 2.11.4
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/78?closed=1).
