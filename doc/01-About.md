@@ -84,7 +84,7 @@ English (en_US). However, the actual language specific files (locales) are not s
 Icinga uses a central repository to manage locales: https://github.com/Icinga/L10n
 
 If you want to provide or update a translation for your own language, please head over there where you will find
-[instructions](https://github.com/Icinga/L10n/blob/master/CONTRIBUTING.md) on how to contribute.
+[instructions](https://github.com/Icinga/L10n/blob/main/CONTRIBUTING.md) on how to contribute.
 
 ## Accessibility <a id="about-accessibility"></a>
 

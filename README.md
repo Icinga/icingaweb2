@@ -1,7 +1,7 @@
 # Icinga Web 2
 
 [![PHP Support](https://img.shields.io/badge/php-%3E%3D%207.2-777BB4?logo=PHP)](https://php.net/)
-![Build Status](https://github.com/icinga/icingaweb2/workflows/PHP%20Tests/badge.svg?branch=master)
+![Build Status](https://github.com/icinga/icingaweb2/workflows/PHP%20Tests/badge.svg?branch=main)
 [![Github Tag](https://img.shields.io/github/tag/Icinga/icingaweb2.svg)](https://github.com/Icinga/icingaweb2)
 
 ![Icinga Logo](https://icinga.com/wp-content/uploads/2014/06/icinga_logo.png)

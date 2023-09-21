@@ -25,9 +25,9 @@ Check issues at https://github.com/Icinga/icingaweb2
 
 ### Backport Commits
 
-For minor versions not branched off git master you need
-to manually backport any and all commits from the
-master branch which should be part of this release.
+For minor versions not branched off the default branch you need
+to manually backport any and all commits from it which should
+be part of this release.
 
 ### Authors
 
@@ -67,7 +67,7 @@ the [upgrading documentation](doc/80-Upgrading.md).
 git commit -v -a -m "Release version $VERSION"
 ```
 
-Create a signed tag (tags/v<VERSION>) on the `master` branch (for major
+Create a signed tag (tags/v<VERSION>) on the default branch (for major
 releases) or the `support` branch (for minor releases).
 
 ```
@@ -83,7 +83,7 @@ git push v$VERSION
 **For major releases:** Create a new `support` branch:
 
 ```
-git checkout master
+git checkout main
 git checkout -b support/2.7
 git push -u origin support/2.7
 ```
@@ -109,7 +109,7 @@ git clone git@git.icinga.com:packaging/deb-icingaweb2.git && cd deb-icingaweb2
 
 ### Branch Workflow
 
-Checkout `master` and create a new branch.
+Checkout the default and create a new branch.
 
 * For releases use x.x[.x] as branch name (e.g. 2.7 or 2.7.1)
   * `git checkout -b $VERSION`
@@ -198,7 +198,7 @@ git tag -s $VERSION-1 -m "Version $VERSION-1"
 git push origin $VERSION-1
 ```
 
-Now cherry pick the release commit to `master` so that the changes are transferred back to it.
+Now cherry pick the release commit to the default branch so that the changes are transferred back to it.
 
 **Attention**: Only the release commit. *NOT* the one switching the build type!
 
