@@ -50,7 +50,7 @@ Add a new remote `upstream` with this repository as value.
 git remote add upstream https://github.com/icinga/icingaweb2.git
 ```
 
-You can pull updates to your fork's master branch:
+You can pull updates to your fork's default branch:
 
 ```
 git fetch --all
@@ -104,15 +104,15 @@ Don't worry, you can squash those changes into a single commit later on.
 
 ## <a id="contributing-pull-requests"></a> Pull Requests
 
-Once you've committed your changes, please update your local master
+Once you've committed your changes, please update your local default
 branch and rebase your fix/feature branch against it before submitting a PR.
 
 ```
-git checkout master
+git checkout main
 git pull upstream HEAD
 
 git checkout fix/style-detail-view
-git rebase master
+git rebase main
 ```
 
 Once you've resolved any conflicts, push the branch to your remote repository.
@@ -148,22 +148,22 @@ Thanks a lot for your contribution!
 
 ### <a id="contributing-rebase"></a> Rebase a Branch
 
-If you accidentally sent in a PR which was not rebased against the upstream master,
+If you accidentally sent in a PR which was not rebased against the upstream default branch,
 developers might ask you to rebase your PR.
 
-First off, fetch and pull `upstream` master.
+First off, fetch and pull the `upstream` default branch.
 
 ```
-git checkout master
+git checkout main
 git fetch --all
 git pull upstream HEAD
 ```
 
-Then change to your working branch and start rebasing it against master:
+Then change to your working branch and start rebasing it against main:
 
 ```
 git checkout fix/style-detail-view
-git rebase master
+git rebase main
 ```
 
 If you are running into a conflict, rebase will stop and ask you to fix the problems.
@@ -196,7 +196,7 @@ If you fear to break things, do the rebase in a backup branch first and later re
 git checkout fix/style-detail-view
 git checkout -b fix/style-detail-view-rebase
 
-git rebase master
+git rebase main
 
 git branch -D fix/style-detail-view
 git checkout -b fix/style-detail-view

@@ -3,7 +3,7 @@ name: L10n Update
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   trigger-update:
