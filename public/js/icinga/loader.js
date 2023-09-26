@@ -524,11 +524,11 @@
                 var originUrl = req.$target.data('icingaUrl');
 
                 $(window).on('popstate.__back__', { self: this }, function (event) {
-                    var _this = event.data.self;
-                    var $refreshTarget = $('#col2');
-                    var refreshUrl;
+                    const _this = event.data.self;
+                    let $refreshTarget = $('#col2');
+                    let refreshUrl;
 
-                    var hash = icinga.history.getCol2State();
+                    const hash = icinga.history.getCol2State();
                     if (hash && hash.match(/^#!/)) {
                         // TODO: These three lines are copied from history.js, I don't like this
                         var parts = hash.split(/#!/);
@@ -546,22 +546,10 @@
                         $refreshTarget = $('#col1');
                     }
 
-                    // loadUrl won't run this request, as due to the history handling it's already running.
-                    // The important bit though is that it returns this (already running) request. This way
-                    // it's possible to set `scripted = true` on the request. (`addToHistory = true` should
-                    // already be the case, though it's added again just in case it's not already `true`..)
-                    var req = _this.loadUrl(refreshUrl, $refreshTarget);
-                    req.addToHistory = false;
-                    req.scripted = true;
-
-                    setTimeout(function () {
-                        // TODO: Find a better solution than a hardcoded one
-                        // This is still the *cheat* to get live results
-                        // (in case there's a delay and a change is not instantly effective)
-                        var req = _this.loadUrl(refreshUrl, $refreshTarget);
-                        req.addToHistory = false;
-                        req.scripted = true;
-                    }, 1000);
+                    const refreshReq = _this.loadUrl(refreshUrl, $refreshTarget);
+                    refreshReq.autoRefreshInterval = req.getResponseHeader('X-Icinga-Refresh');
+                    refreshReq.autorefresh = true;
+                    refreshReq.scripted = true;
 
                     $(window).off('popstate.__back__');
                 });
