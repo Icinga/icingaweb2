@@ -301,8 +301,9 @@ class AdminAccountPage extends Form
                 ->select(array('user_name'))
                 ->order('user_name', 'asc', true);
             if (in_array($this->backendConfig['backend'], array('ldap', 'msldap'))) {
-                /** @var LdapQuery $query */
-                $query->setUsePagedResults();
+                /** @var LdapQuery $ldapQuery */
+                $ldapQuery = $query->getQuery();
+                $ldapQuery->setUsePagedResults();
             }
 
             return $query->fetchColumn();
@@ -360,8 +361,9 @@ class AdminAccountPage extends Form
                 ->createUserGroupBackend()
                 ->select(array('group_name'));
             if (in_array($this->backendConfig['backend'], array('ldap', 'msldap'))) {
-                /** @var LdapQuery $query */
-                $query->setUsePagedResults();
+                /** @var LdapQuery $ldapQuery */
+                $ldapQuery = $query->getQuery();
+                $ldapQuery->setUsePagedResults();
             }
 
             return $query->fetchColumn();
