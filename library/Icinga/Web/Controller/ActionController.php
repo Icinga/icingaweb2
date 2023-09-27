@@ -399,7 +399,8 @@ class ActionController extends Zend_Controller_Action
             }
         }
 
-        $this->rerenderLayout()->redirectNow($login);
+        $this->getResponse()->setReloadWindow(true);
+        $this->redirectNow($login);
     }
 
     protected function rerenderLayout()
