@@ -207,7 +207,7 @@ final class MigrationManager implements Countable
      */
     public function getRequiredDatabasePrivileges(): array
     {
-        return ['CREATE','SELECT','INSERT','UPDATE','DELETE','DROP','ALTER','CREATE VIEW','INDEX','EXECUTE'];
+        return ['CREATE','SELECT','INSERT','UPDATE','DELETE','DROP','ALTER','CREATE VIEW','INDEX','EXECUTE','USAGE'];
     }
 
     /**
