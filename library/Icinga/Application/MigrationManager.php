@@ -258,7 +258,11 @@ final class MigrationManager implements Countable
         $tool = $this->createDbTool($db);
         $tool->connectToDb();
 
-        if ($tool->checkPrivileges(['SELECT'], [], $actualUsername)) {
+        $isPgsql = $db->getAdapter() instanceof Sql\Adapter\Pgsql;
+        // PgSQL doesn't have SELECT privilege on a database level and granting the CREATE,CONNECT, and TEMPORARY
+        // privileges on a database doesn't permit a user to read data from a table. Hence, we have to grant the
+        // required database,schema and table privileges simultaneously.
+        if (! $isPgsql && $tool->checkPrivileges(['SELECT'], [], $actualUsername)) {
             // Checks only database level grants. If this succeeds, the grants were issued manually.
             if (! $tool->checkPrivileges($privileges, [], $actualUsername) && $tool->isGrantable($privileges)) {
                 // Any missing grant is now granted on database level as well, not to mix things up
@@ -334,13 +338,20 @@ final class MigrationManager implements Countable
 
         $dbTool = $this->createDbTool($conn);
         $dbTool->connectToDb();
-        if (! $dbTool->checkPrivileges($this->getRequiredDatabasePrivileges())
-            && ! $dbTool->checkPrivileges($this->getRequiredDatabasePrivileges(), $tables)
-        ) {
+
+        $isPgsql = $conn->getAdapter() instanceof Sql\Adapter\Pgsql;
+        $privileges = $this->getRequiredDatabasePrivileges();
+        $dbPrivilegesGranted = $dbTool->checkPrivileges($privileges);
+        $tablePrivilegesGranted = $dbTool->checkPrivileges($privileges, $tables);
+        if (! $dbPrivilegesGranted && ($isPgsql || ! $tablePrivilegesGranted)) {
             return false;
         }
 
-        if ($canIssueGrants && ! $dbTool->isGrantable($this->getRequiredDatabasePrivileges())) {
+        if ($isPgsql && ! $tablePrivilegesGranted) {
+            return false;
+        }
+
+        if ($canIssueGrants && ! $dbTool->isGrantable($privileges)) {
             return false;
         }
 
