@@ -25527,7 +25527,7 @@ parameters:
 
 		-
 			message: "#^Cannot call method fetchColumn\\(\\) on mixed\\.$#"
-			count: 8
+			count: 9
 			path: modules/setup/library/Setup/Utils/DbTool.php
 
 		-
@@ -25657,11 +25657,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Setup\\\\Utils\\\\DbTool\\:\\:zendConnect\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/setup/library/Setup/Utils/DbTool.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_intersect expects array, array\\|null given\\.$#"
 			count: 1
 			path: modules/setup/library/Setup/Utils/DbTool.php
 
