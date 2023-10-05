@@ -1,10 +1,7 @@
 name: PHP Tests
 
 on:
-  push:
-    branches:
-      - main
-      - release/*
+  push: {}
   pull_request:
     branches:
       - main
