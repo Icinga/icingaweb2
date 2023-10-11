@@ -244,30 +244,6 @@ Create a new release for the newly created Git tag: https://github.com/Icinga/ic
 
 Use the changelog for the release body.
 
-## Docker
-
-> Only for final versions (not for RCs).
-
-Once the release has been published on GitHub, wait for its
-[GitHub actions](https://github.com/Icinga/icingaweb2/actions) to complete.
-
-```bash
-VERSION=2.9.1
-
-TAGS=(2.9)
-#TAGS=(2.9 2 latest)
-
-docker pull icinga/icingaweb2:$VERSION
-
-for t in "${TAGS[@]}"; do
-  docker tag icinga/icingaweb2:$VERSION icinga/icingaweb2:$t
-done
-
-for t in "${TAGS[@]}"; do
-  docker push icinga/icingaweb2:$t
-done
-```
-
 ## Online Documentation
 
 This is built with a daily cronjob.
