@@ -69,11 +69,16 @@ class NavigationCommand extends Command
             Logger::info('Migrating monitoring navigation items for user "%s" to the Icinga DB Web actions', $username);
 
             if (! $hostActions->isEmpty()) {
-                $this->migrateNavigationItems($hostActions, $directory . '/icingadb-host-actions.ini', $rc);
+                $this->migrateNavigationItems($hostActions, $directory . '/icingadb-host-actions.ini', false, $rc);
             }
 
             if (! $serviceActions->isEmpty()) {
-                $this->migrateNavigationItems($serviceActions, $directory . '/icingadb-service-actions.ini', $rc);
+                $this->migrateNavigationItems(
+                    $serviceActions,
+                    $directory . '/icingadb-service-actions.ini',
+                    false,
+                    $rc
+                );
             }
         }
 
@@ -84,11 +89,16 @@ class NavigationCommand extends Command
         Logger::info('Migrating shared monitoring navigation items to the Icinga DB Web actions');
 
         if (! $hostActions->isEmpty()) {
-            $this->migrateNavigationItems($hostActions, $sharedNavigation . '/icingadb-host-actions.ini', $rc);
+            $this->migrateNavigationItems($hostActions, $sharedNavigation . '/icingadb-host-actions.ini', true, $rc);
         }
 
         if (! $serviceActions->isEmpty()) {
-            $this->migrateNavigationItems($serviceActions, $sharedNavigation . '/icingadb-service-actions.ini', $rc);
+            $this->migrateNavigationItems(
+                $serviceActions,
+                $sharedNavigation . '/icingadb-service-actions.ini',
+                true,
+                $rc
+            );
         }
 
         if ($rc > 0) {
@@ -104,13 +114,13 @@ class NavigationCommand extends Command
      *
      * @param Config $config
      * @param string $path
+     * @param bool   $shared
      * @param int    $rc
      */
-    private function migrateNavigationItems($config, $path, &$rc)
+    private function migrateNavigationItems($config, $path, $shared, &$rc)
     {
         $deleteLegacyFiles = $this->params->get('delete');
         $newConfig = $this->readFromIni($path, $rc);
-        $counter = 1;
 
         /** @var ConfigObject $configObject */
         foreach ($config->getConfigObject() as $configObject) {
@@ -145,11 +155,26 @@ class NavigationCommand extends Command
             }
 
             $section = $config->key();
-            while ($newConfig->hasSection($section)) {
-                $section = $config->key() . $counter++;
-            }
 
-            $newConfig->setSection($section, $configObject);
+            if (! $newConfig->hasSection($section)) {
+                $oldPath = $shared
+                    ? sprintf(
+                        '%s/%s/%ss.ini',
+                        Config::resolvePath('preferences'),
+                        $configObject->owner,
+                        $configObject->type
+                    )
+                    : sprintf(
+                        '%s/%ss.ini',
+                        Config::resolvePath('navigation'),
+                        $configObject->type
+                    );
+
+                $oldConfig = $this->readFromIni($oldPath, $rc);
+                if (! $oldConfig->hasSection($section)) {
+                    $newConfig->setSection($section, $configObject);
+                }
+            }
         }
 
         try {
