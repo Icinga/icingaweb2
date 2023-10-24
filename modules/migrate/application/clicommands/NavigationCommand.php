@@ -31,6 +31,8 @@ class NavigationCommand extends Command
      *  --user=<username>  Migrate monitoring navigation items only for
      *                     the given user. (Default *)
      *
+     *  --override         Override the existing Icinga DB navigation items
+     *
      *  --delete           Remove the legacy files after successfully
      *                     migrated the navigation items.
      */
@@ -120,6 +122,7 @@ class NavigationCommand extends Command
     private function migrateNavigationItems($config, $path, $shared, &$rc)
     {
         $deleteLegacyFiles = $this->params->get('delete');
+        $override = $this->params->get('override');
         $newConfig = $this->readFromIni($path, $rc);
 
         /** @var ConfigObject $configObject */
@@ -156,7 +159,7 @@ class NavigationCommand extends Command
 
             $section = $config->key();
 
-            if (! $newConfig->hasSection($section)) {
+            if (! $newConfig->hasSection($section) || $override) {
                 $oldPath = $shared
                     ? sprintf(
                         '%s/%s/%ss.ini',
@@ -171,6 +174,12 @@ class NavigationCommand extends Command
                     );
 
                 $oldConfig = $this->readFromIni($oldPath, $rc);
+
+                if ($override && $oldConfig->hasSection($section)) {
+                    $oldConfig->removeSection($section);
+                    $oldConfig->saveIni();
+                }
+
                 if (! $oldConfig->hasSection($section)) {
                     $newConfig->setSection($section, $configObject);
                 }
