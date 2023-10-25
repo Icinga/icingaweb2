@@ -16,15 +16,28 @@ use Icinga\Util\DirectoryIterator;
 use Icinga\Web\Request;
 use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
+use ipl\Stdlib\Filter;
 
 class ToicingadbCommand extends Command
 {
     public function init(): void
     {
-        if (! Icinga::app()->getModuleManager()->hasEnabled('icingadb')) {
+        $moduleManager = Icinga::app()->getModuleManager();
+        if (! $moduleManager->hasEnabled('icingadb')) {
             Logger::error('Icinga DB module is not enabled. Please verify that the module is installed and enabled.');
             exit;
         }
+
+        $icingadbVersion = $moduleManager->getModule('icingadb')->getVersion();
+        if (version_compare($icingadbVersion, '1.1.0', '<')) {
+            Logger::error(
+                'Required Icinga DB Web version 1.1.0 or greater to run this migration. '
+                . 'Please upgrade your Icinga DB Web module.'
+            );
+            exit;
+        }
+
+        Logger::getInstance()->setLevel(Logger::INFO);
     }
 
     /**
@@ -70,19 +83,38 @@ class ToicingadbCommand extends Command
 
             $hostActions = $this->readFromIni($directory . '/host-actions.ini', $rc);
             $serviceActions = $this->readFromIni($directory . '/service-actions.ini', $rc);
+            $icingadbHostActions = $this->readFromIni($directory . '/icingadb-host-actions.ini', $rc);
+            $icingadbServiceActions = $this->readFromIni($directory . '/icingadb-service-actions.ini', $rc);
+
+            Logger::info(
+                'Transforming legacy wildcard filters of existing Icinga DB Web actions for user "%s"',
+                $username
+            );
+
+            if (! $icingadbHostActions->isEmpty()) {
+                $this->migrateNavigationItems($icingadbHostActions, false, $rc);
+            }
+
+            if (! $icingadbServiceActions->isEmpty()) {
+                $this->migrateNavigationItems(
+                    $icingadbServiceActions,
+                    false,
+                    $rc
+                );
+            }
 
             Logger::info('Migrating monitoring navigation items for user "%s" to the Icinga DB Web actions', $username);
 
             if (! $hostActions->isEmpty()) {
-                $this->migrateNavigationItems($hostActions, $directory . '/icingadb-host-actions.ini', false, $rc);
+                $this->migrateNavigationItems($hostActions, false, $rc, $directory . '/icingadb-host-actions.ini');
             }
 
             if (! $serviceActions->isEmpty()) {
                 $this->migrateNavigationItems(
                     $serviceActions,
-                    $directory . '/icingadb-service-actions.ini',
                     false,
-                    $rc
+                    $rc,
+                    $directory . '/icingadb-service-actions.ini'
                 );
             }
         }
@@ -90,19 +122,35 @@ class ToicingadbCommand extends Command
         // Start migrating shared navigation items
         $hostActions = $this->readFromIni($sharedNavigation . '/host-actions.ini', $rc);
         $serviceActions = $this->readFromIni($sharedNavigation . '/service-actions.ini', $rc);
+        $icingadbHostActions = $this->readFromIni($sharedNavigation . '/icingadb-host-actions.ini', $rc);
+        $icingadbServiceActions = $this->readFromIni($sharedNavigation . '/icingadb-service-actions.ini', $rc);
+
+        Logger::info('Transforming legacy wildcard filters of existing shared Icinga DB Web actions');
+
+        if (! $icingadbHostActions->isEmpty()) {
+            $this->migrateNavigationItems($icingadbHostActions, true, $rc);
+        }
+
+        if (! $icingadbServiceActions->isEmpty()) {
+            $this->migrateNavigationItems(
+                $icingadbServiceActions,
+                true,
+                $rc
+            );
+        }
 
         Logger::info('Migrating shared monitoring navigation items to the Icinga DB Web actions');
 
         if (! $hostActions->isEmpty()) {
-            $this->migrateNavigationItems($hostActions, $sharedNavigation . '/icingadb-host-actions.ini', true, $rc);
+            $this->migrateNavigationItems($hostActions, true, $rc, $sharedNavigation . '/icingadb-host-actions.ini');
         }
 
         if (! $serviceActions->isEmpty()) {
             $this->migrateNavigationItems(
                 $serviceActions,
-                $sharedNavigation . '/icingadb-service-actions.ini',
                 true,
-                $rc
+                $rc,
+                $sharedNavigation . '/icingadb-service-actions.ini'
             );
         }
 
@@ -118,85 +166,117 @@ class ToicingadbCommand extends Command
      * Migrate the given config to the given new config path
      *
      * @param Config $config
-     * @param string $path
+     * @param ?string $path
      * @param bool   $shared
      * @param int    $rc
      */
-    private function migrateNavigationItems($config, $path, $shared, &$rc): void
+    private function migrateNavigationItems($config, $shared, &$rc, $path = null): void
     {
         /** @var string $owner */
         $owner = $this->params->getRequired('user');
-        $deleteLegacyFiles = $this->params->get('delete');
-        $override = $this->params->get('override');
-        $newConfig = $this->readFromIni($path, $rc);
+        if ($path === null) {
+            $newConfig = $config;
+            /** @var ConfigObject $newConfigObject */
+            foreach ($newConfig->getConfigObject() as $section => $newConfigObject) {
+                /** @var string $configOwner */
+                $configOwner = $newConfigObject->get('owner') ?? '';
+                if ($shared && ! fnmatch($owner, $configOwner)) {
+                    continue;
+                }
 
-        /** @var ConfigObject $configObject */
-        foreach ($config->getConfigObject() as $configObject) {
-            // Change the config type from "host-action" to icingadb's new action
-            if ($shared && ! fnmatch($owner, $configObject->get('owner'))) {
-                continue;
-            }
-
-            if (strpos($path, 'icingadb-host-actions') !== false) {
-                $configObject->type = 'icingadb-host-action';
-            } else {
-                $configObject->type = 'icingadb-service-action';
-            }
-
-            /** @var ?string $urlString */
-            $urlString = $configObject->get('url');
-            if ($urlString !== null) {
-                $url = Url::fromPath($urlString, [], new Request());
-
-                try {
-                    $urlString = UrlMigrator::transformUrl($url)->getAbsoluteUrl();
-                    $configObject->url = rawurldecode($urlString);
-                } catch (\InvalidArgumentException $err) {
-                    // Do nothing
+                /** @var ?string $legacyFilter */
+                $legacyFilter = $newConfigObject->get('filter');
+                if ($legacyFilter !== null) {
+                    $filter = QueryString::parse($legacyFilter);
+                    $filter = $this->transformLegacyWildcardFilter($filter);
+                    if ($filter) {
+                        $filter = rawurldecode(QueryString::render($filter));
+                        if ($legacyFilter !== $filter) {
+                            $newConfigObject->filter = $filter;
+                            $newConfig->setSection($section, $newConfigObject);
+                            Logger::info(
+                                'Icinga DB Web filter of action "%s" is changed from %s to "%s"',
+                                $section,
+                                $legacyFilter,
+                                $filter
+                            );
+                        }
+                    }
                 }
             }
+        } else {
+            $deleteLegacyFiles = $this->params->get('delete');
+            $override = $this->params->get('override');
+            $newConfig = $this->readFromIni($path, $rc);
 
-            /** @var ?string $legacyFilter */
-            $legacyFilter = $configObject->get('filter');
-            if ($legacyFilter !== null) {
-                $filter = QueryString::parse($legacyFilter);
-                $filter = UrlMigrator::transformFilter($filter);
-                if ($filter !== false) {
-                    $configObject->filter = rawurldecode(QueryString::render($filter));
+            /** @var ConfigObject $configObject */
+            foreach ($config->getConfigObject() as $configObject) {
+                // Change the config type from "host-action" to icingadb's new action
+                /** @var string $configOwner */
+                $configOwner = $configObject->get('owner') ?? '';
+                if ($shared && ! fnmatch($owner, $configOwner)) {
+                    continue;
+                }
+
+                if (strpos($path, 'icingadb-host-actions') !== false) {
+                    $configObject->type = 'icingadb-host-action';
                 } else {
-                    unset($configObject->filter);
-                }
-            }
-
-            $section = $config->key();
-
-            if (! $newConfig->hasSection($section) || $override) {
-                /** @var string $owner */
-                $owner = $configObject->get('owner');
-                /** @var string $type */
-                $type = $configObject->get('type');
-                $oldPath = $shared
-                    ? sprintf(
-                        '%s/%s/%ss.ini',
-                        Config::resolvePath('preferences'),
-                        $owner,
-                        $type
-                    )
-                    : sprintf(
-                        '%s/%ss.ini',
-                        Config::resolvePath('navigation'),
-                        $type
-                    );
-
-                $oldConfig = $this->readFromIni($oldPath, $rc);
-
-                if ($override && $oldConfig->hasSection($section)) {
-                    $oldConfig->removeSection($section);
-                    $oldConfig->saveIni();
+                    $configObject->type = 'icingadb-service-action';
                 }
 
-                if (! $oldConfig->hasSection($section)) {
-                    $newConfig->setSection($section, $configObject);
+                /** @var ?string $urlString */
+                $urlString = $configObject->get('url');
+                if ($urlString !== null) {
+                    $url = Url::fromPath($urlString, [], new Request());
+
+                    try {
+                        $urlString = UrlMigrator::transformUrl($url)->getAbsoluteUrl();
+                        $configObject->url = rawurldecode($urlString);
+                    } catch (\InvalidArgumentException $err) {
+                        // Do nothing
+                    }
+                }
+
+                /** @var ?string $legacyFilter */
+                $legacyFilter = $configObject->get('filter');
+                if ($legacyFilter !== null) {
+                    $filter = QueryString::parse($legacyFilter);
+                    $filter = UrlMigrator::transformFilter($filter);
+                    if ($filter !== false) {
+                        $configObject->filter = rawurldecode(QueryString::render($filter));
+                    } else {
+                        unset($configObject->filter);
+                    }
+                }
+
+                $section = $config->key();
+
+                if (! $newConfig->hasSection($section) || $override) {
+                    /** @var string $type */
+                    $type = $configObject->get('type');
+                    $oldPath = $shared
+                        ? sprintf(
+                            '%s/%s/%ss.ini',
+                            Config::resolvePath('preferences'),
+                            $configOwner,
+                            $type
+                        )
+                        : sprintf(
+                            '%s/%ss.ini',
+                            Config::resolvePath('navigation'),
+                            $type
+                        );
+
+                    $oldConfig = $this->readFromIni($oldPath, $rc);
+
+                    if ($override && $oldConfig->hasSection($section)) {
+                        $oldConfig->removeSection($section);
+                        $oldConfig->saveIni();
+                    }
+
+                    if (! $oldConfig->hasSection($section)) {
+                        $newConfig->setSection($section, $configObject);
+                    }
                 }
             }
         }
@@ -206,7 +286,7 @@ class ToicingadbCommand extends Command
                 $newConfig->saveIni();
 
                 // Remove the legacy file only if explicitly requested
-                if ($deleteLegacyFiles) {
+                if ($path !== null && $deleteLegacyFiles) {
                     unlink($config->getConfigFile());
                 }
             }
@@ -240,5 +320,34 @@ class ToicingadbCommand extends Command
         }
 
         return $config;
+    }
+
+    /**
+     * Transform given legacy wirldcard filters
+     *
+     * @param $filter Filter\Rule
+     *
+     * @return Filter\Chain|Filter\Condition|null
+     */
+    private function transformLegacyWildcardFilter(Filter\Rule $filter)
+    {
+        if ($filter instanceof Filter\Chain) {
+            foreach ($filter as $child) {
+                $newChild = $this->transformLegacyWildcardFilter($child);
+                if ($newChild !== null) {
+                    $filter->replace($child, $newChild);
+                }
+            }
+
+            return $filter;
+        } elseif ($filter instanceof Filter\Equal) {
+            if (is_string($filter->getValue()) && strpos($filter->getValue(), '*') !== false) {
+                return Filter::like($filter->getColumn(), $filter->getValue());
+            }
+        } elseif ($filter instanceof Filter\Unequal) {
+            if (is_string($filter->getValue()) && strpos($filter->getValue(), '*') !== false) {
+                return Filter::unlike($filter->getColumn(), $filter->getValue());
+            }
+        }
     }
 }
