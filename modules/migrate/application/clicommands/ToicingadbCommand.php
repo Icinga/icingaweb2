@@ -19,6 +19,14 @@ use ipl\Web\Url;
 
 class ToicingadbCommand extends Command
 {
+    public function init(): void
+    {
+        if (! Icinga::app()->getModuleManager()->hasEnabled('icingadb')) {
+            Logger::error('Icinga DB module is not enabled. Please verify that the module is installed and enabled.');
+            exit;
+        }
+    }
+
     /**
      * Migrate local user monitoring navigation items to the Icinga DB Web actions
      *
@@ -36,14 +44,8 @@ class ToicingadbCommand extends Command
      *  --delete           Remove the legacy files after successfully
      *                     migrated the navigation items.
      */
-    public function navigationAction()
+    public function navigationAction(): void
     {
-        $moduleManager = Icinga::app()->getModuleManager();
-        if (! $moduleManager->hasEnabled('icingadb')) {
-            Logger::error('Icinga DB module is not enabled. Please verify that the module is installed and enabled.');
-            return;
-        }
-
         $preferencesPath = Config::resolvePath('preferences');
         $sharedNavigation = Config::resolvePath('navigation');
         if (! file_exists($preferencesPath) && ! file_exists($sharedNavigation)) {
