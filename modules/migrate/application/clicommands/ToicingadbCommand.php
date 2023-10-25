@@ -50,8 +50,8 @@ class ToicingadbCommand extends Command
      * REQUIRED OPTIONS:
      *
      *  --user=<username>  Migrate monitoring navigation items only for
-     *                     the given user or matching all similar users
-     *                     if a wildcard is used. (* matches all users)
+     *                     the given user or all similar users if a
+     *                     wildcard is used. (* matches all users)
      *
      * OPTIONS:
      *
@@ -160,6 +160,227 @@ class ToicingadbCommand extends Command
         }
 
         Logger::info('Successfully migrated all local user monitoring navigation items');
+    }
+
+
+    /**
+     * Migrate monitoring restrictions and permissions in a role to Icinga DB Web restrictions and permissions
+     *
+     * USAGE
+     *
+     *  icingacli migrate toicingadb role [options]
+     *
+     * OPTIONS:
+     *
+     *  --group=<groupname>  Migrate monitoring restrictions and permissions for all roles,
+     *                       the given group or the groups matching the given
+     *                       group belongs to.
+     *                       (wildcard * migrates monitoring restrictions and permissions
+     *                       for all roles)
+     *
+     *  --role=<rolename>    Migrate monitoring restrictions and permissions for the
+     *                       given role or all the matching roles.
+     *                       (wildcard * migrates monitoring restrictions and permissions
+     *                       for all roles)
+     *
+     *  --override          Override the existing Icinga DB restrictions and permissions
+     */
+    public function roleAction(): void
+    {
+        /** @var ?bool $override */
+        $override = $this->params->get('override');
+
+        /** @var ?string $groupName */
+        $groupName = $this->params->get('group');
+        /** @var ?string $roleName */
+        $roleName = $this->params->get('role');
+
+        if ($roleName === null && $groupName === null) {
+            $this->fail("One of the parameters 'group' or 'role' must be supplied");
+        } elseif ($roleName !== null && $groupName !== null) {
+            $this->fail("Use either 'group' or 'role'. Both cannot be used as role overrules group.");
+        }
+
+        $rc = 0;
+        $restrictions = Config::$configDir . '/roles.ini';
+        $rolesConfig = $this->readFromIni($restrictions, $rc);
+        $monitoringRestriction = 'monitoring/filter/objects';
+        $monitoringPropertyBlackList = 'monitoring/blacklist/properties';
+        $icingadbRestrictions = [
+            'objects'  => 'icingadb/filter/objects',
+            'hosts'    => 'icingadb/filter/hosts',
+            'services' => 'icingadb/filter/services'
+        ];
+
+        $icingadbPropertyDenyList = 'icingadb/denylist/variables';
+        Logger::info('Start monitoring restrictions migration');
+        foreach ($rolesConfig as $name => $role) {
+            /** @var string[] $role */
+            $role = iterator_to_array($role);
+
+            if ($roleName === '*' || $groupName === '*') {
+                $updateRole = $this->shouldUpdateRole($role, $override);
+            } elseif ($roleName !== null && fnmatch($roleName, $name)) {
+                $updateRole = $this->shouldUpdateRole($role, $override);
+            } elseif ($groupName !== null && isset($role['groups'])) {
+                $roleGroups = array_map('trim', explode(',', $role['groups']));
+                $updateRole = false;
+                foreach ($roleGroups as $roleGroup) {
+                    if (fnmatch($groupName, $roleGroup)) {
+                        $updateRole = $this->shouldUpdateRole($role, $override);
+                        break;
+                    }
+                }
+            } else {
+                $updateRole = false;
+            }
+
+            if ($updateRole) {
+                if (isset($role[$monitoringRestriction])) {
+                    Logger::info(
+                        'Migrating monitoring restriction filter for role "%s" to the Icinga DB Web restrictions',
+                        $name
+                    );
+                    $transformedFilter = UrlMigrator::transformFilter(
+                        QueryString::parse($role[$monitoringRestriction])
+                    );
+
+                    if ($transformedFilter) {
+                        $role[$icingadbRestrictions['objects']] = rawurldecode(
+                            QueryString::render($transformedFilter)
+                        );
+                    }
+                }
+
+                if (isset($role[$monitoringPropertyBlackList])) {
+                    Logger::info(
+                        'Migrating monitoring blacklisted properties for role "%s" to the Icinga DB Web deny list',
+                        $name
+                    );
+
+                    $icingadbProperties = [];
+                    foreach (explode(',', $role[$monitoringPropertyBlackList]) as $property) {
+                        $icingadbProperties[] = preg_replace('/^(?:host|service)\.vars\./i', '', $property, 1);
+                    }
+
+                    $role[$icingadbPropertyDenyList] = str_replace(
+                        '**',
+                        '*',
+                        implode(',', array_unique($icingadbProperties))
+                    );
+                }
+
+                if (isset($role['permissions'])) {
+                    $updatedPermissions = [];
+                    Logger::info(
+                        'Migrating monitoring permissions for role "%s" to the Icinga DB Web permissions',
+                        $name
+                    );
+
+                    if (strpos($role['permissions'], 'monitoring')) {
+                        $monitoringProtection = Config::module('monitoring')
+                            ->get('security', 'protected_customvars');
+
+                        if ($monitoringProtection !== null) {
+                            $role['icingadb/protect/variables'] = $monitoringProtection;
+                        }
+                    }
+                    
+                    foreach (explode(',', $role['permissions']) as $permission) {
+                        if (str_contains($permission, 'icingadb')) {
+                            continue;
+                        } elseif (fnmatch('monitoring/command*', $permission)) {
+                            $updatedPermissions[] = $permission;
+                            $updatedPermissions[] = str_replace('monitoring', 'icingadb', $permission);
+                        } elseif ($permission === 'no-monitoring/contacts') {
+                            $updatedPermissions[] = $permission;
+                            $role['icingadb/denylist/routes'] = 'users,usergroups';
+                        } else {
+                            $updatedPermissions[] = $permission;
+                        }
+                    }
+
+                    $role['permissions'] = implode(',', $updatedPermissions);
+                }
+
+                if (isset($role['refusals']) && is_string($role['refusals'])) {
+                    $updatedRefusals = [];
+                    Logger::info(
+                        'Migrating monitoring refusals for role "%s" to the Icinga DB Web refusals',
+                        $name
+                    );
+
+                    foreach (explode(',', $role['refusals']) as $refusal) {
+                        if (str_contains($refusal, 'icingadb')) {
+                            continue;
+                        } elseif (fnmatch('monitoring/command*', $refusal)) {
+                            $updatedRefusals[] = $refusal;
+                            $updatedRefusals[] = str_replace('monitoring', 'icingadb', $refusal);
+                        } else {
+                            $updatedRefusals[] = $refusal;
+                        }
+                    }
+
+                    $role['refusals'] = implode(',', $updatedRefusals);
+                }
+            }
+
+            foreach ($icingadbRestrictions as $object => $icingadbRestriction) {
+                if (isset($role[$icingadbRestriction]) && is_string($role[$icingadbRestriction])) {
+                    $filter = QueryString::parse($role[$icingadbRestriction]);
+                    $filter = $this->transformLegacyWildcardFilter($filter);
+
+                    if ($filter) {
+                        $filter = rawurldecode(QueryString::render($filter));
+                        if ($filter !== $role[$icingadbRestriction]) {
+                            Logger::info(
+                                'Icinga Db Web restriction of role "%s" for %s changed from "%s" to "%s"',
+                                $name,
+                                $object,
+                                $role[$icingadbRestriction],
+                                $filter
+                            );
+
+                            $role[$icingadbRestriction] = $filter;
+                        }
+                    }
+                }
+            }
+
+            $rolesConfig->setSection($name, $role);
+        }
+
+        try {
+            $rolesConfig->saveIni();
+        } catch (NotWritableError $error) {
+            Logger::error('%s: %s', $error->getMessage(), $error->getPrevious()->getMessage());
+            Logger::error('Failed to migrate monitoring restrictions');
+            exit(256);
+        }
+
+        Logger::info('Successfully migrated monitoring restrictions and permissions in roles');
+    }
+
+    /**
+     * Checks if the given role should be updated
+     *
+     * @param string[] $role
+     * @param bool     $override
+     *
+     * @return bool
+     */
+    private function shouldUpdateRole(array $role, ?bool $override): bool
+    {
+        return ! (
+                isset($role['icingadb/filter/objects'])
+                || isset($role['icingadb/filter/hosts'])
+                || isset($role['icingadb/filter/services'])
+                || isset($role['icingadb/denylist/routes'])
+                || isset($role['icingadb/denylist/variables'])
+                || isset($role['icingadb/protect/variables'])
+                || (isset($role['permissions']) && str_contains($role['permissions'], 'icingadb'))
+            )
+            || $override;
     }
 
     /**
