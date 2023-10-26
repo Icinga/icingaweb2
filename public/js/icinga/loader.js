@@ -637,6 +637,7 @@
                 var redirectionUrl = icinga.utils.addUrlFlag(url, 'renderLayout');
                 var r = this.loadUrl(redirectionUrl, $('#layout'));
                 r.historyUrl = url;
+                r.referrer = referrer;
                 if (parts.length) {
                     r.loadNext = parts;
                 } else if (!! document.location.hash) {
@@ -961,7 +962,7 @@
                 });
             }
 
-            if (this.processRedirectHeader(req)) {
+            if ((textStatus === 'abort' && typeof req.referrer !== 'undefined') || this.processRedirectHeader(req)) {
                 return;
             }
 
