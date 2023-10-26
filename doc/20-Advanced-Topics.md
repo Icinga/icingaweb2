@@ -142,7 +142,7 @@ Here is a list of all Icinga Web components that are capable of strict CSP.
 | Icinga Certificate Monitoring     | [v1.3.0](https://github.com/Icinga/icingaweb2-module-x509/releases/tag/v1.3.0)            |
 | Icinga PDF Export                 | [v0.10.2](https://github.com/Icinga/icingaweb2-module-pdfexport/releases/tag/v0.10.2)     |
 | Icinga Web Jira Integration       | [v1.3.2](https://github.com/Icinga/icingaweb2-module-jira/releases/tag/v1.3.2)            |
-| Icinga Web Graphite Integration   | [v1.3.0](https://github.com/Icinga/icingaweb2-module-graphite/releases/tag/v1.3.0)        |
+| Icinga Web Graphite Integration   | [v1.3.0](https://github.com/Icinga/icingaweb2-module-graphite/releases/tag/v1.2.4)        |
 | Icinga Web GenericTTS Integration | [v2.1.0](https://github.com/Icinga/icingaweb2-module-generictts/releases/tag/v2.1.0)      |
 | Icinga Web Nagvis Integration     | [v1.2.0](https://github.com/Icinga/icingaweb2-module-nagvis/releases/tag/v1.2.0)          |
 | Icinga Web AWS Integration        | [v1.1.0](https://github.com/Icinga/icingaweb2-module-aws/releases/tag/v1.1.0)             |
