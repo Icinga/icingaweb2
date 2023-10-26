@@ -7467,7 +7467,7 @@ parameters:
 
 		-
 			message: "#^Cannot access offset string on mixed\\.$#"
-			count: 3
+			count: 2
 			path: library/Icinga/Data/Db/DbQuery.php
 
 		-
@@ -9137,7 +9137,7 @@ parameters:
 
 		-
 			message: "#^Cannot access offset int\\<0, max\\> on array\\<int\\|string, mixed\\>\\|false\\.$#"
-			count: 3
+			count: 2
 			path: library/Icinga/File/Storage/LocalFileStorage.php
 
 		-
@@ -11797,17 +11797,17 @@ parameters:
 
 		-
 			message: "#^Cannot access offset 'acknowledged' on mixed\\.$#"
-			count: 2
+			count: 1
 			path: library/Icinga/Web/Announcement/AnnouncementCookie.php
 
 		-
 			message: "#^Cannot access offset 'etag' on mixed\\.$#"
-			count: 2
+			count: 1
 			path: library/Icinga/Web/Announcement/AnnouncementCookie.php
 
 		-
 			message: "#^Cannot access offset 'next' on mixed\\.$#"
-			count: 2
+			count: 1
 			path: library/Icinga/Web/Announcement/AnnouncementCookie.php
 
 		-
@@ -11872,7 +11872,7 @@ parameters:
 
 		-
 			message: "#^Cannot access offset 'acknowledged…' on mixed\\.$#"
-			count: 2
+			count: 1
 			path: library/Icinga/Web/ApplicationStateCookie.php
 
 		-
@@ -12407,12 +12407,12 @@ parameters:
 
 		-
 			message: "#^Cannot access offset 'decorators' on mixed\\.$#"
-			count: 4
+			count: 2
 			path: library/Icinga/Web/Form.php
 
 		-
 			message: "#^Cannot access offset 'type' on mixed\\.$#"
-			count: 2
+			count: 1
 			path: library/Icinga/Web/Form.php
 
 		-
@@ -20552,7 +20552,7 @@ parameters:
 
 		-
 			message: "#^Cannot access offset 'joinCondition' on mixed\\.$#"
-			count: 5
+			count: 3
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/IdoQuery.php
 
 		-
@@ -22287,12 +22287,12 @@ parameters:
 
 		-
 			message: "#^Cannot access offset 'code' on mixed\\.$#"
-			count: 3
+			count: 1
 			path: modules/monitoring/library/Monitoring/Command/Transport/ApiCommandTransport.php
 
 		-
 			message: "#^Cannot access offset 'error' on mixed\\.$#"
-			count: 4
+			count: 2
 			path: modules/monitoring/library/Monitoring/Command/Transport/ApiCommandTransport.php
 
 		-
@@ -23313,11 +23313,6 @@ parameters:
 		-
 			message: "#^Argument of an invalid type array\\<int, string\\>\\|false supplied for foreach, only iterables are supported\\.$#"
 			count: 1
-			path: modules/monitoring/library/Monitoring/Object/MonitoredObject.php
-
-		-
-			message: "#^Cannot access offset string on array\\|stdClass\\.$#"
-			count: 2
 			path: modules/monitoring/library/Monitoring/Object/MonitoredObject.php
 
 		-
@@ -26042,7 +26037,7 @@ parameters:
 
 		-
 			message: "#^Cannot access offset mixed on int\\.$#"
-			count: 7
+			count: 5
 			path: modules/translation/library/Translation/Cli/ArrayToTextTableHelper.php
 
 		-
