@@ -790,14 +790,9 @@
                 this.icinga.ui.setWindowId(windowId);
             }
 
-            var referrer = req.referrer;
-            if (typeof referrer === 'undefined') {
-                referrer = req;
-            }
-
             var autoSubmit = false;
             var currentUrl = this.icinga.utils.parseUrl(req.$target.data('icingaUrl'));
-            if (referrer.method === 'POST') {
+            if (req.method === 'POST') {
                 var newUrl = this.icinga.utils.parseUrl(req.url);
                 if (newUrl.path === currentUrl.path && this.icinga.utils.arraysEqual(newUrl.params, currentUrl.params)) {
                     autoSubmit = true;
@@ -817,7 +812,7 @@
                     let url = currentUrl.path + (locationQuery ? '?' + locationQuery : '');
                     if (req.autosubmit || autoSubmit) {
                         // Also update a form's action if it doesn't differ from the container's url
-                        var $form = $(referrer.forceFocus).closest('form');
+                        var $form = $(req.forceFocus).closest('form');
                         var formAction = $form.attr('action');
                         if (!! formAction) {
                             formAction = this.icinga.utils.parseUrl(formAction);
