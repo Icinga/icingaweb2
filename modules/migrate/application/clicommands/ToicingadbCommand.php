@@ -34,10 +34,12 @@ class ToicingadbCommand extends Command
      *
      *  icingacli migrate toicingadb navigation [options]
      *
-     * OPTIONS:
+     * REQUIRED OPTIONS:
      *
      *  --user=<username>  Migrate monitoring navigation items only for
      *                     the given user. (Default *)
+     *
+     * OPTIONS:
      *
      *  --override         Override the existing Icinga DB navigation items
      *
@@ -54,7 +56,8 @@ class ToicingadbCommand extends Command
         }
 
         $rc = 0;
-        $user = $this->params->get('user');
+        /** @var string $user */
+        $user = $this->params->getRequired('user');
         $directories = new DirectoryIterator($preferencesPath);
 
         foreach ($directories as $directory) {
@@ -123,6 +126,8 @@ class ToicingadbCommand extends Command
      */
     private function migrateNavigationItems($config, $path, $shared, &$rc): void
     {
+        /** @var string $owner */
+        $owner = $this->params->getRequired('user');
         $deleteLegacyFiles = $this->params->get('delete');
         $override = $this->params->get('override');
         $newConfig = $this->readFromIni($path, $rc);
@@ -130,6 +135,10 @@ class ToicingadbCommand extends Command
         /** @var ConfigObject $configObject */
         foreach ($config->getConfigObject() as $configObject) {
             // Change the config type from "host-action" to icingadb's new action
+            if ($shared && $configObject->get('owner') !== $owner) {
+                continue;
+            }
+
             if (strpos($path, 'icingadb-host-actions') !== false) {
                 $configObject->type = 'icingadb-host-action';
             } else {
