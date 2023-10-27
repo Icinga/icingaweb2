@@ -384,6 +384,131 @@ class ToicingadbCommand extends Command
     }
 
     /**
+     * Migrate the monitoring dashboards to Icinga DB Web dashboards for all the matched users
+     *
+     * USAGE
+     *
+     *  icingacli migrate toicingadb dasboard [options]
+     *
+     * REQUIRED OPTIONS:
+     *
+     *  --user=<username>  Migrate monitoring dashboards for all the
+     *                     users that are matched. (* all users)
+     *
+     * OPTIONS:
+     *
+     *  --no-backup        Migrate without creating a backup. (By Default
+     *                     a backup for monitoring dashboards is created)
+     */
+    public function dashboardAction(): void
+    {
+        $dashboardsPath = Config::resolvePath('dashboards');
+        if (! file_exists($dashboardsPath)) {
+            Logger::info('There are no dashboards to migrate');
+            return;
+        }
+
+        /** @var string $user */
+        $user = $this->params->getRequired('user');
+        $noBackup = $this->params->get('no-backup');
+
+        $rc = 0;
+        $directories = new DirectoryIterator($dashboardsPath);
+
+        Logger::info(
+            'Start monitoring dashboards migration',
+            $user
+        );
+
+        foreach ($directories as $directory) {
+            /** @var string $userName */
+            $userName = $directories->key() === false ? '' : $directories->key();
+            if (fnmatch($user, $userName) === false) {
+                continue;
+            }
+
+            $dashboardsConfig = $this->readFromIni($directory . '/dashboard.ini', $rc);
+            $backupConfig = $this->readFromIni($directory . '/dashboard.ini', $rc);
+
+            Logger::info(
+                'Migrating monitoring dashboards to Icinga DB Web dashboards for user "%s"',
+                $userName
+            );
+
+            $changed = false;
+            /** @var ConfigObject $dashboardConfig */
+            foreach ($dashboardsConfig->getConfigObject() as $name => $dashboardConfig) {
+                /** @var ?string $dashboardUrlString */
+                $dashboardUrlString = $dashboardConfig->get('url');
+                if ($dashboardUrlString !== null) {
+                    $dashBoardUrl = Url::fromPath($dashboardUrlString, [], new Request());
+                    if (fnmatch('monitoring*', $dashboardUrlString)) {
+                        $dashboardConfig->url = rawurldecode(
+                            UrlMigrator::transformUrl($dashBoardUrl)->getRelativeUrl()
+                        );
+
+                        $changed = true;
+                    }
+
+                    if (fnmatch('icingadb*', ltrim($dashboardUrlString, '/'))) {
+                        $filter = QueryString::parse($dashBoardUrl->getParams()->toString());
+                        $filter = $this->transformLegacyWildcardFilter($filter);
+                        if ($filter) {
+                            $oldFilterString = $dashBoardUrl->getParams()->toString();
+                            $newFilterString = rawurldecode(QueryString::render($filter));
+
+                            if ($oldFilterString !== $newFilterString) {
+                                Logger::info(
+                                    'Icinga Db Web filter of dashboard "%s" has changed from "%s" to "%s"',
+                                    $name,
+                                    rawurldecode($dashBoardUrl->getParams()->toString()),
+                                    rawurldecode(QueryString::render($filter))
+                                );
+                                $dashBoardUrl->setParams([]);
+                                $dashBoardUrl->setFilter($filter);
+
+                                $dashboardConfig->url = rawurldecode($dashBoardUrl->getRelativeUrl());
+                                $changed = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if ($changed && $noBackup === null) {
+                $counter = 0;
+                while (true) {
+                    $filepath = $counter > 0
+                        ? $directory . "/dashboard.backup$counter.ini"
+                        : $directory . '/dashboard.backup.ini';
+
+                    if (! file_exists($filepath)) {
+                        $backupConfig->saveIni($filepath);
+                        break;
+                    } else {
+                        $counter++;
+                    }
+                }
+            }
+
+            try {
+                $dashboardsConfig->saveIni();
+            } catch (NotWritableError $error) {
+                Logger::error('%s: %s', $error->getMessage(), $error->getPrevious()->getMessage());
+                $rc = 256;
+            }
+        }
+
+        if ($rc > 0) {
+            Logger::error('Failed to migrate some monitoring dashboards');
+            exit($rc);
+        }
+
+        Logger::info('Successfully migrated dashboards for all the matched users');
+    }
+
+    /**
      * Migrate the given config to the given new config path
      *
      * @param Config $config
