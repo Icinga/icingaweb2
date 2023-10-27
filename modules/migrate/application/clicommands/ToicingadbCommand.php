@@ -37,7 +37,8 @@ class ToicingadbCommand extends Command
      * REQUIRED OPTIONS:
      *
      *  --user=<username>  Migrate monitoring navigation items only for
-     *                     the given user. (Default *)
+     *                     the given user or matching all similar users
+     *                     if a wildcard is used. (* matches all users)
      *
      * OPTIONS:
      *
@@ -61,13 +62,10 @@ class ToicingadbCommand extends Command
         $directories = new DirectoryIterator($preferencesPath);
 
         foreach ($directories as $directory) {
-            $username = $user;
-            if ($username !== null && $directories->key() !== $username) {
+            /** @var string $username */
+            $username = $directories->key() === false ? '' : $directories->key();
+            if (fnmatch($user, $username) === false) {
                 continue;
-            }
-
-            if ($username === null) {
-                $username = $directories->key();
             }
 
             $hostActions = $this->readFromIni($directory . '/host-actions.ini', $rc);
@@ -135,7 +133,7 @@ class ToicingadbCommand extends Command
         /** @var ConfigObject $configObject */
         foreach ($config->getConfigObject() as $configObject) {
             // Change the config type from "host-action" to icingadb's new action
-            if ($shared && $configObject->get('owner') !== $owner) {
+            if ($shared && ! fnmatch($owner, $configObject->get('owner'))) {
                 continue;
             }
 
@@ -173,17 +171,21 @@ class ToicingadbCommand extends Command
             $section = $config->key();
 
             if (! $newConfig->hasSection($section) || $override) {
+                /** @var string $owner */
+                $owner = $configObject->get('owner');
+                /** @var string $type */
+                $type = $configObject->get('type');
                 $oldPath = $shared
                     ? sprintf(
                         '%s/%s/%ss.ini',
                         Config::resolvePath('preferences'),
-                        $configObject->owner,
-                        $configObject->type
+                        $owner,
+                        $type
                     )
                     : sprintf(
                         '%s/%ss.ini',
                         Config::resolvePath('navigation'),
-                        $configObject->type
+                        $type
                     );
 
                 $oldConfig = $this->readFromIni($oldPath, $rc);
