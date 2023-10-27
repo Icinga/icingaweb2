@@ -99,14 +99,7 @@ class DbTool
     protected $pgsqlGrantContexts = array(
         'ALL'               => 63,
         'ALL PRIVILEGES'    => 63,
-        'SELECT'            => 24,
-        'INSERT'            => 24,
-        'UPDATE'            => 24,
-        'DELETE'            => 8,
-        'TRUNCATE'          => 8,
-        'REFERENCES'        => 24,
-        'TRIGGER'           => 8,
-        'CREATE'            => 12,
+        'CREATE'            => 13,
         'CONNECT'           => 4,
         'TEMPORARY'         => 4,
         'TEMP'              => 4,
@@ -633,13 +626,21 @@ class DbTool
             }
         } elseif ($this->config['db'] === 'pgsql') {
             $dbPrivileges = array();
-            $tablePrivileges = array();
+            $schemaPrivileges = [];
             foreach (array_intersect($privileges, array_keys($this->pgsqlGrantContexts)) as $privilege) {
-                if (! empty($context) && $this->pgsqlGrantContexts[$privilege] & static::TABLE_LEVEL) {
-                    $tablePrivileges[] = $privilege;
-                } elseif ($this->pgsqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
+                if ($this->pgsqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
                     $dbPrivileges[] = $privilege;
                 }
+
+                if ($this->pgsqlGrantContexts[$privilege] & static::GLOBAL_LEVEL) {
+                    $schemaPrivileges[] = $privilege;
+                }
+            }
+
+            if (! empty($schemaPrivileges)) {
+                // Allow the user to create,alter and use all attribute types in schema public
+                // such as creating and dropping custom data types (boolenum)
+                $this->exec(sprintf('GRANT %s ON SCHEMA public TO %s', implode(',', $schemaPrivileges), $username));
             }
 
             if (! empty($dbPrivileges)) {
@@ -651,15 +652,10 @@ class DbTool
                 ));
             }
 
-            if (! empty($tablePrivileges)) {
-                foreach ($context as $table) {
-                    $this->exec(sprintf(
-                        'GRANT %s ON TABLE %s TO %s',
-                        join(',', $tablePrivileges),
-                        $table,
-                        $username
-                    ));
-                }
+            foreach ($context as $table) {
+                // PostgreSQL documentation says "You must own the table to use ALTER TABLE.", hence it isn't
+                // sufficient to just issue grants, as the user is still not allowed to alter that table.
+                $this->exec(sprintf('ALTER TABLE %s OWNER TO %s', $table, $username));
             }
         }
     }
@@ -854,57 +850,71 @@ EOD;
         $username = null
     ) {
         $privilegesGranted = true;
-        if ($this->dbFromConfig) {
-            $dbPrivileges = array();
-            $tablePrivileges = array();
-            foreach (array_intersect($privileges, array_keys($this->pgsqlGrantContexts)) as $privilege) {
-                if (! empty($context) && $this->pgsqlGrantContexts[$privilege] & static::TABLE_LEVEL) {
-                    $tablePrivileges[] = $privilege;
-                }
-                if ($this->pgsqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
-                    $dbPrivileges[] = $privilege;
-                }
-            }
+        $owner = $username ?: $this->config['username'];
+        $isSuperUser = $this->query('select rolsuper from pg_roles where rolname = :user', [':user' => $owner])
+            ->fetchColumn();
 
-            if (! empty($dbPrivileges)) {
-                $dbExclusivesGranted = true;
-                foreach ($dbPrivileges as $dbPrivilege) {
-                    $query = $this->query(
-                        'SELECT has_database_privilege(:user, :dbname, :privilege) AS db_privilege_granted',
-                        array(
-                            ':user'         => $username !== null ? $username : $this->config['username'],
-                            ':dbname'       => $this->config['dbname'],
-                            ':privilege'    => $dbPrivilege . ($requireGrants ? ' WITH GRANT OPTION' : '')
-                        )
-                    );
-                    if (! $query->fetchObject()->db_privilege_granted) {
-                        $privilegesGranted = false;
-                        if (! in_array($dbPrivilege, $tablePrivileges)) {
-                            $dbExclusivesGranted = false;
+        if ($this->dbFromConfig) {
+            $schemaPrivileges = [];
+            $dbPrivileges = array();
+            if (! $isSuperUser) {
+                foreach (array_intersect($privileges, array_keys($this->pgsqlGrantContexts)) as $privilege) {
+                    if ($this->pgsqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
+                        $dbPrivileges[] = $privilege;
+                    }
+                    if ($this->pgsqlGrantContexts[$privilege] & static::GLOBAL_LEVEL) {
+                        $schemaPrivileges[] = $privilege;
+                    }
+                }
+
+                if (! empty($schemaPrivileges)) {
+                    foreach ($schemaPrivileges as $schemaPrivilege) {
+                        $query = $this->query(
+                            'SELECT has_schema_privilege(:user, :schema, :privilege) AS db_privilege_granted',
+                            [
+                                ':user'      => $owner,
+                                ':schema'    => 'public',
+                                ':privilege' => $schemaPrivilege . ($requireGrants ? ' WITH GRANT OPTION' : '')
+                            ]
+                        );
+
+                        if (! $query->fetchObject()->db_privilege_granted) {
+                            // The user doesn't fully have the provided privileges.
+                            $privilegesGranted = false;
+                            break;
                         }
                     }
                 }
 
-                if ($privilegesGranted) {
-                    // Do not check privileges twice if they are already granted at database level
-                    $tablePrivileges = array_diff($tablePrivileges, $dbPrivileges);
-                } elseif ($dbExclusivesGranted) {
-                    $privilegesGranted = true;
-                }
-            }
-
-            if ($privilegesGranted && !empty($tablePrivileges)) {
-                foreach (array_intersect($context, $this->listTables()) as $table) {
-                    foreach ($tablePrivileges as $tablePrivilege) {
+                if ($privilegesGranted && ! empty($dbPrivileges)) {
+                    foreach ($dbPrivileges as $dbPrivilege) {
                         $query = $this->query(
-                            'SELECT has_table_privilege(:user, :table, :privilege) AS table_privilege_granted',
+                            'SELECT has_database_privilege(:user, :dbname, :privilege) AS db_privilege_granted',
                             array(
-                                ':user'         => $username !== null ? $username : $this->config['username'],
-                                ':table'        => $table,
-                                ':privilege'    => $tablePrivilege . ($requireGrants ? ' WITH GRANT OPTION' : '')
+                                ':user'         => $owner,
+                                ':dbname'       => $this->config['dbname'],
+                                ':privilege'    => $dbPrivilege . ($requireGrants ? ' WITH GRANT OPTION' : '')
                             )
                         );
-                        $privilegesGranted &= $query->fetchObject()->table_privilege_granted;
+                        if (! $query->fetchObject()->db_privilege_granted) {
+                            // The user doesn't fully have the provided privileges.
+                            $privilegesGranted = false;
+                            break;
+                        }
+                    }
+                }
+
+                if ($privilegesGranted && ! empty($context)) {
+                    foreach (array_intersect($context, $this->listTables()) as $table) {
+                        $query = $this->query(
+                            'SELECT tableowner FROM pg_catalog.pg_tables WHERE tablename = :tablename',
+                            [':tablename' => $table]
+                        );
+
+                        if ($query->fetchColumn() !== $owner) {
+                            $privilegesGranted = false;
+                            break;
+                        }
                     }
                 }
             }
@@ -914,31 +924,27 @@ EOD;
             // as the chances are very high that the database is created later causing the current user being
             // the owner with ALL privileges. (Which in turn can be granted to others.)
 
-            if (array_search('CREATE', $privileges, true) !== false) {
+            if (in_array('CREATE', $privileges, true)) {
                 $query = $this->query(
                     'select rolcreatedb from pg_roles where rolname = :user',
                     array(':user' => $username !== null ? $username : $this->config['username'])
                 );
-                $privilegesGranted &= $query->fetchColumn() !== false;
+                $privilegesGranted = $query->fetchColumn() !== false;
             }
         }
 
-        if (array_search('CREATEROLE', $privileges, true) !== false) {
+        if ($privilegesGranted && in_array('CREATEROLE', $privileges, true)) {
             $query = $this->query(
                 'select rolcreaterole from pg_roles where rolname = :user',
                 array(':user' => $username !== null ? $username : $this->config['username'])
             );
-            $privilegesGranted &= $query->fetchColumn() !== false;
+            $privilegesGranted = $query->fetchColumn() !== false;
         }
 
-        if (array_search('SUPER', $privileges, true) !== false) {
-            $query = $this->query(
-                'select rolsuper from pg_roles where rolname = :user',
-                array(':user' => $username !== null ? $username : $this->config['username'])
-            );
-            $privilegesGranted &= $query->fetchColumn() !== false;
+        if ($privilegesGranted && in_array('SUPER', $privileges, true)) {
+            $privilegesGranted = $isSuperUser === true;
         }
 
-        return (bool) $privilegesGranted;
+        return $privilegesGranted;
     }
 }
