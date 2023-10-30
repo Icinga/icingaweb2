@@ -16867,28 +16867,8 @@ parameters:
 
 		-
 			message: "#^Cannot call method getMessage\\(\\) on Throwable\\|null\\.$#"
-			count: 1
-			path: modules/migrate/application/clicommands/NavigationCommand.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Migrate\\\\Clicommands\\\\NavigationCommand\\:\\:indexAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/migrate/application/clicommands/NavigationCommand.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Migrate\\\\Clicommands\\\\NavigationCommand\\:\\:migrateNavigationItems\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/migrate/application/clicommands/NavigationCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of static method ipl\\\\Web\\\\Filter\\\\QueryString\\:\\:parse\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: modules/migrate/application/clicommands/NavigationCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$url of static method Icinga\\\\Web\\\\Url\\:\\:fromPath\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: modules/migrate/application/clicommands/NavigationCommand.php
+			count: 3
+			path: modules/migrate/application/clicommands/ToicingadbCommand.php
 
 		-
 			message: "#^Cannot call method getMessage\\(\\) on Throwable\\|null\\.$#"
