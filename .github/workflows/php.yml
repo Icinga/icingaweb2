@@ -113,6 +113,7 @@ jobs:
         run: |
           composer require -n --no-progress mockery/mockery ipl/i18n:@dev ipl/web:@dev
           git clone --depth 1 --branch snapshot/nightly https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
+          git clone --depth 1 https://github.com/Icinga/icingadb-web.git modules/icingadb
 
       - name: PHPUnit
         env:
