@@ -11621,11 +11621,6 @@ parameters:
 			path: library/Icinga/Util/Format.php
 
 		-
-			message: "#^Parameter \\#1 \\$timestamp of method DateTime\\:\\:setTimestamp\\(\\) expects int, DateTime\\|int given\\.$#"
-			count: 2
-			path: library/Icinga/Util/Format.php
-
-		-
 			message: "#^Property Icinga\\\\Util\\\\Format\\:\\:\\$bitBase has no type specified\\.$#"
 			count: 1
 			path: library/Icinga/Util/Format.php
@@ -16864,31 +16859,6 @@ parameters:
 			message: "#^Parameter \\#2 \\$delimiter of static method Icinga\\\\Util\\\\StringHelper\\:\\:trimSplit\\(\\) expects string, mixed given\\.$#"
 			count: 1
 			path: modules/migrate/application/clicommands/ConfigCommand.php
-
-		-
-			message: "#^Cannot call method getMessage\\(\\) on Throwable\\|null\\.$#"
-			count: 1
-			path: modules/migrate/application/clicommands/NavigationCommand.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Migrate\\\\Clicommands\\\\NavigationCommand\\:\\:indexAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/migrate/application/clicommands/NavigationCommand.php
-
-		-
-			message: "#^Method Icinga\\\\Module\\\\Migrate\\\\Clicommands\\\\NavigationCommand\\:\\:migrateNavigationItems\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/migrate/application/clicommands/NavigationCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of static method ipl\\\\Web\\\\Filter\\\\QueryString\\:\\:parse\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: modules/migrate/application/clicommands/NavigationCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$url of static method Icinga\\\\Web\\\\Url\\:\\:fromPath\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: modules/migrate/application/clicommands/NavigationCommand.php
 
 		-
 			message: "#^Cannot call method getMessage\\(\\) on Throwable\\|null\\.$#"
