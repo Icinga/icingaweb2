@@ -1198,7 +1198,7 @@ class LdapConnection implements Selectable, Inspectable
 
         $hostname = $this->normalizeHostname($this->hostname);
 
-        $ds = ldap_connect($hostname, $this->port);
+        $ds = ldap_connect($hostname);
 
         // Set a proper timeout for each connection
         ldap_set_option($ds, LDAP_OPT_NETWORK_TIMEOUT, $this->timeout);
