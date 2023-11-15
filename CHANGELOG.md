@@ -4,6 +4,31 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.12.1
+
+You can find all issues related to this release on our Roadmap.
+
+#### PHP 8.3 Support
+
+This time we're a little ahead for once. PHP 8.3 is due in a week, and we are compatible with it now!
+There's not much else to say about it, so let's continue with the fixes.
+
+* Support for PHP 8.3 [#5136](https://github.com/Icinga/icingaweb2/issues/5136)
+
+#### Fixes
+
+You may have noticed a dashboard endlessly loading in the morning after you got to work again.
+The web server may also have stopped that with a complaint about a too long URL. This is now
+fixed and the dashboard should appear as usual. Then there was an issue with our support for
+PostgreSQL. We learned it the hard way to avoid such already in the past again and again.
+Though, this one slipped through our thorough testing and prevented some from successfully
+migrating the database schema. It's fixed now. Another fixed issue, is that the UI looks
+somewhat skewed if you have CSP enabled and logged out and in again.
+
+* Login Redirect Loop [#5133](https://github.com/Icinga/icingaweb2/issues/5133)
+* UI database migration not fully compatible with PostgreSQL [#5129](https://github.com/Icinga/icingaweb2/issues/5129)
+* Missing styles when logging out and in while CSP is enabled [#5126](https://github.com/Icinga/icingaweb2/issues/5126)
+
 ### What's New in Version 2.12.0
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/79?closed=1).
