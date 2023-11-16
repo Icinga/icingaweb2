@@ -33,7 +33,7 @@ jobs:
 
       - name: Setup dependencies
         run: |
-          composer require -n --no-progress overtrue/phplint
+          composer require -n --no-progress overtrue/phplint phpstan/phpstan
           git clone --depth 1 -b snapshot/nightly https://github.com/Icinga/icinga-php-library.git vendor/icinga-php-library
           git clone --depth 1 -b snapshot/nightly https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
           git clone --depth 1 https://github.com/Icinga/icingaweb2-module-x509.git vendor/modules/x509-web 
@@ -50,7 +50,7 @@ jobs:
 
       - name: PHPStan
         if: ${{ ! cancelled() }}
-        uses: php-actions/phpstan@v3
+        run: ./vendor/bin/phpstan analyse
 
   test:
     name: Unit tests with php ${{ matrix.php }} on ${{ matrix.os }}
