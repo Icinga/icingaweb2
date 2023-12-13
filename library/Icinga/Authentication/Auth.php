@@ -326,7 +326,9 @@ class Auth
      */
     public function persistCurrentUser()
     {
-        // @TODO(el): https://dev.icinga.com/issues/10646
+        // Persist the Icinga Web session beforehand, otherwise, session_get_cookie_params() won't get any of the
+        // configured cookie data in the [cookie] INI section e.g path "/" or domain "icinga.com".
+        Session::getSession()->write();
         $params = session_get_cookie_params();
         setcookie(
             'icingaweb2-session',
