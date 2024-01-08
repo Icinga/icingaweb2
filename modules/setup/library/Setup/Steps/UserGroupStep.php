@@ -128,7 +128,7 @@ class UserGroupStep extends Step
     public function getSummary()
     {
         if (! isset($this->data['groupConfig'])) {
-            return; // It's not necessary to show the user something he didn't configure..
+            return; // It's not necessary to show the user something they didn't configure..
         }
 
         $pageTitle = '<h2>' . mt('setup', 'User Groups', 'setup.page.title') . '</h2>';

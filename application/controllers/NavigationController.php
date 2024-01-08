@@ -113,7 +113,7 @@ class NavigationController extends Controller
     }
 
     /**
-     * Show the current user a list of his/her navigation items
+     * Show the current user a list of their navigation items
      */
     public function indexAction()
     {
