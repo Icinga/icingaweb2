@@ -30,7 +30,7 @@ $history->limit($limit * $page);
 ?>
 <div class="content">
 <?php
-$dateFormatter = new IntlDateFormatter(setlocale(LC_TIME, 0), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+$dateFormatter = new IntlDateFormatter(Locale::getDefault(), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
 $lastDate = null;
 $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
 $rowAction = Url::fromPath('monitoring/event/show');
