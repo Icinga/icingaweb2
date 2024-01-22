@@ -52,7 +52,8 @@ parameters:
         - '#Call to an undefined method ipl\\Sql\\Connection::exec\(\)#'
 
     scanDirectories:
-        - vendor
+        - /usr/share/icinga-php
+        - /usr/share/icingaweb2-modules
 
     excludePaths:
         - library/Icinga/Test
