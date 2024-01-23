@@ -501,11 +501,6 @@ parameters:
 			path: application/controllers/DashboardController.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function rawurldecode expects string, mixed given\\.$#"
-			count: 1
-			path: application/controllers/DashboardController.php
-
-		-
 			message: "#^Parameter \\#1 \\$title of class Icinga\\\\Web\\\\Widget\\\\Dashboard\\\\Dashlet constructor expects string, mixed given\\.$#"
 			count: 2
 			path: application/controllers/DashboardController.php
@@ -572,11 +567,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Controllers\\\\ErrorController\\:\\:errorAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: application/controllers/ErrorController.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_shift expects array, array\\<int, string\\>\\|false given\\.$#"
 			count: 1
 			path: application/controllers/ErrorController.php
 
@@ -872,16 +862,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$name of method Icinga\\\\Web\\\\Navigation\\\\Navigation\\:\\:findItem\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: application/controllers/NavigationController.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function rawurldecode expects string, mixed given\\.$#"
-			count: 1
-			path: application/controllers/NavigationController.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function ucwords expects string, mixed given\\.$#"
 			count: 1
 			path: application/controllers/NavigationController.php
 
@@ -1536,11 +1516,6 @@ parameters:
 			path: application/forms/Config/Resource/SshResourceForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function sha1 expects string, mixed given\\.$#"
-			count: 1
-			path: application/forms/Config/Resource/SshResourceForm.php
-
-		-
 			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
 			count: 1
 			path: application/forms/Config/Resource/SshResourceForm.php
@@ -1667,11 +1642,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Forms\\\\Config\\\\User\\\\CreateMembershipForm\\:\\:setBackends\\(\\) has parameter \\$backends with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: application/forms/Config/User/CreateMembershipForm.php
-
-		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
 			count: 1
 			path: application/forms/Config/User/CreateMembershipForm.php
 
@@ -1896,11 +1866,6 @@ parameters:
 			path: application/forms/Config/UserBackendReorderForm.php
 
 		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
-			count: 1
-			path: application/forms/Config/UserBackendReorderForm.php
-
-		-
 			message: "#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\\.$#"
 			count: 1
 			path: application/forms/Config/UserGroup/AddMemberForm.php
@@ -1931,16 +1896,6 @@ parameters:
 			path: application/forms/Config/UserGroup/AddMemberForm.php
 
 		-
-			message: "#^Parameter \\#1 \\.\\.\\.\\$arrays of function array_merge expects array, mixed given\\.$#"
-			count: 1
-			path: application/forms/Config/UserGroup/AddMemberForm.php
-
-		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
-			count: 1
-			path: application/forms/Config/UserGroup/AddMemberForm.php
-
-		-
 			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
 			count: 2
 			path: application/forms/Config/UserGroup/AddMemberForm.php
@@ -1957,11 +1912,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Forms\\\\Config\\\\UserGroup\\\\DbUserGroupBackendForm\\:\\:getDatabaseResourceNames\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: application/forms/Config/UserGroup/DbUserGroupBackendForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
 			count: 1
 			path: application/forms/Config/UserGroup/DbUserGroupBackendForm.php
 
@@ -2023,11 +1973,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$resourceName of static method Icinga\\\\Data\\\\ResourceFactory\\:\\:create\\(\\) expects string, mixed given\\.$#"
 			count: 1
-			path: application/forms/Config/UserGroup/LdapUserGroupBackendForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 2
 			path: application/forms/Config/UserGroup/LdapUserGroupBackendForm.php
 
 		-
@@ -2337,11 +2282,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$array of function implode expects array\\<string\\>, mixed given\\.$#"
-			count: 2
-			path: application/forms/Navigation/NavigationConfigForm.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of function implode expects array\\|null, mixed given\\.$#"
 			count: 2
 			path: application/forms/Navigation/NavigationConfigForm.php
 
@@ -2681,11 +2621,6 @@ parameters:
 			path: application/forms/Security/RoleForm.php
 
 		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, TKey of int\\|string given\\.$#"
-			count: 2
-			path: application/forms/Security/RoleForm.php
-
-		-
 			message: "#^Property Icinga\\\\Forms\\\\Security\\\\RoleForm\\:\\:\\$providedPermissions type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: application/forms/Security/RoleForm.php
@@ -2856,12 +2791,7 @@ parameters:
 			path: library/Icinga/Application/ApplicationBootstrap.php
 
 		-
-			message: "#^Parameter \\#2 \\$callback of function array_filter expects callable\\(non\\-empty\\-string\\|false\\)\\: mixed, 'is_dir' given\\.$#"
-			count: 1
-			path: library/Icinga/Application/ApplicationBootstrap.php
-
-		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
+			message: "#^Parameter \\#2 \\$callback of function array_filter expects \\(callable\\(non\\-empty\\-string\\|false\\)\\: bool\\)\\|null, 'is_dir' given\\.$#"
 			count: 1
 			path: library/Icinga/Application/ApplicationBootstrap.php
 
@@ -2958,21 +2888,6 @@ parameters:
 		-
 			message: "#^Method Icinga\\\\Application\\\\ClassLoader\\:\\:unregister\\(\\) has no return type specified\\.$#"
 			count: 1
-			path: library/Icinga/Application/ClassLoader.php
-
-		-
-			message: "#^Parameter \\#1 \\$callback of function spl_autoload_register expects \\(callable\\(string\\)\\: void\\)\\|null, array\\{\\$this\\(Icinga\\\\Application\\\\ClassLoader\\), 'loadClass'\\} given\\.$#"
-			count: 1
-			path: library/Icinga/Application/ClassLoader.php
-
-		-
-			message: "#^Parameter \\#2 \\$offset of function substr expects int, int\\<0, max\\>\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Application/ClassLoader.php
-
-		-
-			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, int\\<0, max\\>\\|false given\\.$#"
-			count: 2
 			path: library/Icinga/Application/ClassLoader.php
 
 		-
@@ -3301,6 +3216,11 @@ parameters:
 			path: library/Icinga/Application/Hook/AuthenticationHook.php
 
 		-
+			message: "#^Call to an undefined method ipl\\\\Sql\\\\Connection\\:\\:exec\\(\\)\\.$#"
+			count: 1
+			path: library/Icinga/Application/Hook/Common/DbMigrationStep.php
+
+		-
 			message: "#^Method Icinga\\\\Application\\\\Hook\\\\ConfigFormEventsHook\\:\\:getLastErrors\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Application/Hook/ConfigFormEventsHook.php
@@ -3342,11 +3262,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Application\\\\Hook\\\\HealthHook\\:\\:setMetrics\\(\\) has parameter \\$metrics with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icinga/Application/Hook/HealthHook.php
-
-		-
-			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, int\\<0, max\\>\\|false given\\.$#"
 			count: 1
 			path: library/Icinga/Application/Hook/HealthHook.php
 
@@ -3411,11 +3326,6 @@ parameters:
 			path: library/Icinga/Application/Hook/TicketHook.php
 
 		-
-			message: "#^Parameter \\#2 \\$values of function vsprintf expects array\\<bool\\|float\\|int\\|string\\|null\\>, array\\<int, mixed\\> given\\.$#"
-			count: 1
-			path: library/Icinga/Application/Hook/TicketHook.php
-
-		-
 			message: "#^Access to an undefined property Zend_Controller_Action_Helper_Abstract\\:\\:\\$view\\.$#"
 			count: 1
 			path: library/Icinga/Application/Hook/WebBaseHook.php
@@ -3457,11 +3367,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Application\\\\Libraries\\\\Library\\:\\:metaData\\(\\) should return array but returns mixed\\.$#"
-			count: 1
-			path: library/Icinga/Application/Libraries/Library.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function ltrim expects string, string\\|false given\\.$#"
 			count: 1
 			path: library/Icinga/Application/Libraries/Library.php
 
@@ -3523,16 +3428,6 @@ parameters:
 		-
 			message: "#^PHPDoc tag @param references unknown parameter\\: \\$arg$#"
 			count: 5
-			path: library/Icinga/Application/Logger.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 2
-			path: library/Icinga/Application/Logger.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtoupper expects string, mixed given\\.$#"
-			count: 1
 			path: library/Icinga/Application/Logger.php
 
 		-
@@ -3901,26 +3796,6 @@ parameters:
 			path: library/Icinga/Application/Modules/Module.php
 
 		-
-			message: "#^Parameter \\#1 \\$dir_handle of function closedir expects resource\\|null, resource\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Application/Modules/Module.php
-
-		-
-			message: "#^Parameter \\#1 \\$dir_handle of function readdir expects resource\\|null, resource\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Application/Modules/Module.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function rtrim expects string, array\\|string\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Application/Modules/Module.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\<int, string\\>\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Application/Modules/Module.php
-
-		-
 			message: "#^Property Icinga\\\\Application\\\\Modules\\\\Module\\:\\:\\$app \\(Icinga\\\\Application\\\\Web\\) does not accept Icinga\\\\Application\\\\ApplicationBootstrap\\.$#"
 			count: 1
 			path: library/Icinga/Application/Modules/Module.php
@@ -4006,11 +3881,6 @@ parameters:
 			path: library/Icinga/Application/Modules/NavigationItemContainer.php
 
 		-
-			message: "#^Parameter \\#1 \\$callback of function call_user_func expects callable\\(\\)\\: mixed, array\\{\\$this\\(Icinga\\\\Application\\\\Modules\\\\NavigationItemContainer\\), string\\} given\\.$#"
-			count: 1
-			path: library/Icinga/Application/Modules/NavigationItemContainer.php
-
-		-
 			message: "#^Parameter \\#2 \\$pieces of function join expects array, array\\<int, string\\>\\|false given\\.$#"
 			count: 1
 			path: library/Icinga/Application/Modules/NavigationItemContainer.php
@@ -4027,11 +3897,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Application\\\\Platform\\:\\:discoverHostname\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icinga/Application/Platform.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_shift expects array, array\\<int, string\\>\\|false given\\.$#"
 			count: 1
 			path: library/Icinga/Application/Platform.php
 
@@ -4067,11 +3932,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Application\\\\Test\\:\\:getFrontController\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icinga/Application/Test.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_flip expects array\\<int\\|string\\>, array\\<int, string\\>\\|false given\\.$#"
 			count: 1
 			path: library/Icinga/Application/Test.php
 
@@ -4631,11 +4491,6 @@ parameters:
 			path: library/Icinga/Authentication/User/UserBackend.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icinga/Authentication/User/UserBackend.php
-
-		-
 			message: "#^Parameter \\#1 \\$userClass of method Icinga\\\\Authentication\\\\User\\\\LdapUserBackend\\:\\:setUserClass\\(\\) expects string, mixed given\\.$#"
 			count: 2
 			path: library/Icinga/Authentication/User/UserBackend.php
@@ -4946,11 +4801,6 @@ parameters:
 			path: library/Icinga/Authentication/UserGroup/UserGroupBackend.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icinga/Authentication/UserGroup/UserGroupBackend.php
-
-		-
 			message: "#^Property Icinga\\\\Authentication\\\\UserGroup\\\\UserGroupBackend\\:\\:\\$customBackends type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Authentication/UserGroup/UserGroupBackend.php
@@ -5142,11 +4992,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Chart\\\\Donut\\:\\:shortenLabel\\(\\) should return string but returns int\\|string\\.$#"
-			count: 1
-			path: library/Icinga/Chart/Donut.php
-
-		-
-			message: "#^Parameter \\#1 \\$num of function round expects float\\|int, int\\|string given\\.$#"
 			count: 1
 			path: library/Icinga/Chart/Donut.php
 
@@ -5371,11 +5216,6 @@ parameters:
 			path: library/Icinga/Chart/Graph/Tooltip.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function strip_tags expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icinga/Chart/Graph/Tooltip.php
-
-		-
 			message: "#^Property Icinga\\\\Chart\\\\Graph\\\\Tooltip\\:\\:\\$data type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Chart/Graph/Tooltip.php
@@ -5467,11 +5307,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$x of class Icinga\\\\Chart\\\\Primitive\\\\Rect constructor expects int, float given\\.$#"
-			count: 1
-			path: library/Icinga/Chart/GridChart.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of function array_key_exists expects array, Icinga\\\\Chart\\\\Graph\\\\Tooltip given\\.$#"
 			count: 1
 			path: library/Icinga/Chart/GridChart.php
 
@@ -6566,11 +6401,6 @@ parameters:
 			path: library/Icinga/Cli/Documentation/CommentParser.php
 
 		-
-			message: "#^Cannot access an offset on array\\|float\\|int\\|string\\|false\\|null\\.$#"
-			count: 1
-			path: library/Icinga/Cli/Documentation/CommentParser.php
-
-		-
 			message: "#^Method Icinga\\\\Cli\\\\Documentation\\\\CommentParser\\:\\:__construct\\(\\) has parameter \\$raw with no type specified\\.$#"
 			count: 1
 			path: library/Icinga/Cli/Documentation/CommentParser.php
@@ -6591,17 +6421,12 @@ parameters:
 			path: library/Icinga/Cli/Documentation/CommentParser.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function rtrim expects string, string\\|null given\\.$#"
-			count: 1
-			path: library/Icinga/Cli/Documentation/CommentParser.php
-
-		-
 			message: "#^Parameter \\#2 \\$subject of function preg_split expects string, array\\<int, string\\>\\|string\\|null given\\.$#"
 			count: 1
 			path: library/Icinga/Cli/Documentation/CommentParser.php
 
 		-
-			message: "#^Property Icinga\\\\Cli\\\\Documentation\\\\CommentParser\\:\\:\\$paragraphs has no type specified\\.$#"
+			message: "#^Property Icinga\\\\Cli\\\\Documentation\\\\CommentParser\\:\\:\\$paragraphs type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Cli/Documentation/CommentParser.php
 
@@ -6886,22 +6711,12 @@ parameters:
 			path: library/Icinga/Cli/Loader.php
 
 		-
-			message: "#^Parameter \\#1 \\$array of function array_values expects array, array\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Cli/Loader.php
-
-		-
 			message: "#^Parameter \\#1 \\$string of function strlen expects string, string\\|null given\\.$#"
 			count: 1
 			path: library/Icinga/Cli/Loader.php
 
 		-
 			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|null given\\.$#"
-			count: 1
-			path: library/Icinga/Cli/Loader.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|false given\\.$#"
 			count: 1
 			path: library/Icinga/Cli/Loader.php
 
@@ -7166,11 +6981,6 @@ parameters:
 			path: library/Icinga/Cli/Screen.php
 
 		-
-			message: "#^Parameter \\#2 \\$times of function str_repeat expects int, float given\\.$#"
-			count: 1
-			path: library/Icinga/Cli/Screen.php
-
-		-
 			message: "#^Property Icinga\\\\Cli\\\\Screen\\:\\:\\$instances has no type specified\\.$#"
 			count: 1
 			path: library/Icinga/Cli/Screen.php
@@ -7392,16 +7202,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Data\\\\Db\\\\DbConnection\\:\\:update\\(\\) has parameter \\$types with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icinga/Data/Db/DbConnection.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icinga/Data/Db/DbConnection.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function trim expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icinga/Data/Db/DbConnection.php
 
@@ -7841,11 +7641,6 @@ parameters:
 			path: library/Icinga/Data/Filter/Filter.php
 
 		-
-			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, int\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Data/Filter/Filter.php
-
-		-
 			message: "#^Property Icinga\\\\Data\\\\Filter\\\\Filter\\:\\:\\$id has no type specified\\.$#"
 			count: 1
 			path: library/Icinga/Data/Filter/Filter.php
@@ -8167,11 +7962,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Data\\\\Filter\\\\FilterExpression\\:\\:toQueryString\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icinga/Data/Filter/FilterExpression.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, bool\\|float\\|int\\|string given\\.$#"
 			count: 1
 			path: library/Icinga/Data/Filter/FilterExpression.php
 
@@ -8596,11 +8386,6 @@ parameters:
 			path: library/Icinga/Data/ResourceFactory.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icinga/Data/ResourceFactory.php
-
-		-
 			message: "#^Cannot call method count\\(\\) on mixed\\.$#"
 			count: 1
 			path: library/Icinga/Data/SimpleQuery.php
@@ -8861,11 +8646,6 @@ parameters:
 			path: library/Icinga/Exception/Http/HttpException.php
 
 		-
-			message: "#^Parameter \\#1 \\$callback of function call_user_func_array expects callable\\(\\)\\: mixed, 'parent\\:\\:__construct' given\\.$#"
-			count: 1
-			path: library/Icinga/Exception/Http/HttpException.php
-
-		-
 			message: "#^Method Icinga\\\\Exception\\\\Http\\\\HttpExceptionInterface\\:\\:getHeaders\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Exception/Http/HttpExceptionInterface.php
@@ -8887,11 +8667,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$object of function get_class expects object, mixed given\\.$#"
-			count: 1
-			path: library/Icinga/Exception/IcingaException.php
-
-		-
-			message: "#^Parameter \\#2 \\$values of function vsprintf expects array\\<bool\\|float\\|int\\|string\\|null\\>, array\\<int, mixed\\> given\\.$#"
 			count: 1
 			path: library/Icinga/Exception/IcingaException.php
 
@@ -9101,11 +8876,6 @@ parameters:
 			path: library/Icinga/File/Ini/IniWriter.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/File/Ini/IniWriter.php
-
-		-
 			message: "#^Property Icinga\\\\File\\\\Ini\\\\IniWriter\\:\\:\\$options type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/File/Ini/IniWriter.php
@@ -9166,21 +8936,6 @@ parameters:
 			path: library/Icinga/File/Storage/LocalFileStorage.php
 
 		-
-			message: "#^Parameter \\#1 \\$array of function array_splice expects array, array\\<int\\|string, mixed\\>\\|false given\\.$#"
-			count: 2
-			path: library/Icinga/File/Storage/LocalFileStorage.php
-
-		-
-			message: "#^Parameter \\#1 \\$stream of function fclose expects resource, resource\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/File/Storage/LocalFileStorage.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\<int\\|string, mixed\\>\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/File/Storage/LocalFileStorage.php
-
-		-
 			message: "#^Interface Icinga\\\\File\\\\Storage\\\\StorageInterface extends generic interface IteratorAggregate but does not specify its types\\: TKey, TValue$#"
 			count: 1
 			path: library/Icinga/File/Storage/StorageInterface.php
@@ -9204,11 +8959,6 @@ parameters:
 			message: "#^Method Icinga\\\\File\\\\Storage\\\\StorageInterface\\:\\:update\\(\\) return type has no value type specified in iterable type \\$this\\(Icinga\\\\File\\\\Storage\\\\StorageInterface\\)\\.$#"
 			count: 1
 			path: library/Icinga/File/Storage/StorageInterface.php
-
-		-
-			message: "#^Parameter \\#1 \\$directory of function rmdir expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icinga/File/Storage/TemporaryLocalFileStorage.php
 
 		-
 			message: "#^Parameter \\#1 \\$filename of function unlink expects string, mixed given\\.$#"
@@ -9766,16 +9516,6 @@ parameters:
 			path: library/Icinga/Protocol/Ldap/LdapConnection.php
 
 		-
-			message: "#^Function ldap_control_paged_result not found\\.$#"
-			count: 2
-			path: library/Icinga/Protocol/Ldap/LdapConnection.php
-
-		-
-			message: "#^Function ldap_control_paged_result_response not found\\.$#"
-			count: 1
-			path: library/Icinga/Protocol/Ldap/LdapConnection.php
-
-		-
 			message: "#^Left side of && is always false\\.$#"
 			count: 3
 			path: library/Icinga/Protocol/Ldap/LdapConnection.php
@@ -9886,6 +9626,16 @@ parameters:
 			path: library/Icinga/Protocol/Ldap/LdapConnection.php
 
 		-
+			message: "#^Method Icinga\\\\Protocol\\\\Ldap\\\\LdapConnection\\:\\:getConnection\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+		-
+			message: "#^Method Icinga\\\\Protocol\\\\Ldap\\\\LdapConnection\\:\\:ldapSearch\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+		-
 			message: "#^Method Icinga\\\\Protocol\\\\Ldap\\\\LdapConnection\\:\\:ldapSearch\\(\\) has parameter \\$attributes with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Protocol/Ldap/LdapConnection.php
@@ -9906,12 +9656,7 @@ parameters:
 			path: library/Icinga/Protocol/Ldap/LdapConnection.php
 
 		-
-			message: "#^Method Icinga\\\\Protocol\\\\Ldap\\\\LdapConnection\\:\\:normalizeHostname\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: library/Icinga/Protocol/Ldap/LdapConnection.php
-
-		-
-			message: "#^Method Icinga\\\\Protocol\\\\Ldap\\\\LdapConnection\\:\\:normalizeHostname\\(\\) has parameter \\$hostname with no type specified\\.$#"
+			message: "#^Method Icinga\\\\Protocol\\\\Ldap\\\\LdapConnection\\:\\:prepareNewConnection\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icinga/Protocol/Ldap/LdapConnection.php
 
@@ -9966,16 +9711,6 @@ parameters:
 			path: library/Icinga/Protocol/Ldap/LdapConnection.php
 
 		-
-			message: "#^Parameter \\#1 \\$object of function get_object_vars expects object, mixed given\\.$#"
-			count: 1
-			path: library/Icinga/Protocol/Ldap/LdapConnection.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 1
-			path: library/Icinga/Protocol/Ldap/LdapConnection.php
-
-		-
 			message: "#^Parameter \\#2 \\$code of class LogicException constructor expects int, string given\\.$#"
 			count: 1
 			path: library/Icinga/Protocol/Ldap/LdapConnection.php
@@ -9986,17 +9721,17 @@ parameters:
 			path: library/Icinga/Protocol/Ldap/LdapConnection.php
 
 		-
-			message: "#^Parameter \\#4 \\$attributes of callable 'ldap_list'\\|'ldap_read'\\|'ldap_search' expects array, array\\|null given\\.$#"
-			count: 2
-			path: library/Icinga/Protocol/Ldap/LdapConnection.php
-
-		-
 			message: "#^Property Icinga\\\\Protocol\\\\Ldap\\\\LdapConnection\\:\\:\\$bindDn \\(string\\) does not accept mixed\\.$#"
 			count: 1
 			path: library/Icinga/Protocol/Ldap/LdapConnection.php
 
 		-
 			message: "#^Property Icinga\\\\Protocol\\\\Ldap\\\\LdapConnection\\:\\:\\$bindPw \\(string\\) does not accept mixed\\.$#"
+			count: 1
+			path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+		-
+			message: "#^Property Icinga\\\\Protocol\\\\Ldap\\\\LdapConnection\\:\\:\\$ds has no type specified\\.$#"
 			count: 1
 			path: library/Icinga/Protocol/Ldap/LdapConnection.php
 
@@ -10151,11 +9886,6 @@ parameters:
 			path: library/Icinga/Protocol/Ldap/LdapUtils.php
 
 		-
-			message: "#^Parameter \\#1 \\$codepoint of function chr expects int, float\\|int given\\.$#"
-			count: 1
-			path: library/Icinga/Protocol/Ldap/LdapUtils.php
-
-		-
 			message: "#^Method Icinga\\\\Protocol\\\\Ldap\\\\Node\\:\\:createWithRDN\\(\\) has parameter \\$parent with no type specified\\.$#"
 			count: 1
 			path: library/Icinga/Protocol/Ldap/Node.php
@@ -10228,11 +9958,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$string of function strlen expects string, mixed given\\.$#"
 			count: 3
-			path: library/Icinga/Protocol/Ldap/Root.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 2
 			path: library/Icinga/Protocol/Ldap/Root.php
 
 		-
@@ -10936,11 +10661,6 @@ parameters:
 			path: library/Icinga/Repository/Repository.php
 
 		-
-			message: "#^Parameter \\#2 \\$timestamp of function date expects int\\|null, float\\|int\\|string given\\.$#"
-			count: 1
-			path: library/Icinga/Repository/Repository.php
-
-		-
 			message: "#^Parameter \\#4 \\$filter of method Icinga\\\\Repository\\\\Repository\\:\\:requireFilterColumn\\(\\) expects Icinga\\\\Data\\\\Filter\\\\FilterExpression\\|null, Icinga\\\\Data\\\\Filter\\\\Filter given\\.$#"
 			count: 1
 			path: library/Icinga/Repository/Repository.php
@@ -11471,11 +11191,6 @@ parameters:
 			path: library/Icinga/Util/DirectoryIterator.php
 
 		-
-			message: "#^Parameter \\#1 \\$array of function natcasesort expects array, array\\<int, string\\>\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Util/DirectoryIterator.php
-
-		-
 			message: "#^Parameter \\#1 \\$path of static method Icinga\\\\Util\\\\DirectoryIterator\\:\\:isReadable\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: library/Icinga/Util/DirectoryIterator.php
@@ -11711,11 +11426,6 @@ parameters:
 			path: library/Icinga/Util/Json.php
 
 		-
-			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
-			count: 1
-			path: library/Icinga/Util/StringHelper.php
-
-		-
 			message: "#^Method Icinga\\\\Util\\\\StringHelper\\:\\:cartesianProduct\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icinga/Util/StringHelper.php
@@ -11737,21 +11447,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Util\\\\StringHelper\\:\\:trimSplit\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icinga/Util/StringHelper.php
-
-		-
-			message: "#^Parameter \\#1 \\$separator of function explode expects non\\-empty\\-string, string given\\.$#"
-			count: 2
-			path: library/Icinga/Util/StringHelper.php
-
-		-
-			message: "#^Parameter \\#2 \\$offset of function substr expects int, float given\\.$#"
-			count: 1
-			path: library/Icinga/Util/StringHelper.php
-
-		-
-			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, float given\\.$#"
 			count: 1
 			path: library/Icinga/Util/StringHelper.php
 
@@ -12086,27 +11781,7 @@ parameters:
 			path: library/Icinga/Web/Controller/ActionController.php
 
 		-
-			message: "#^Parameter \\#1 \\$callback of function call_user_func_array expects callable\\(\\)\\: mixed, array\\{\\$this\\(Icinga\\\\Web\\\\Controller\\\\ActionController\\), non\\-falsy\\-string\\} given\\.$#"
-			count: 1
-			path: library/Icinga/Web/Controller/ActionController.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function base64_encode expects string, string\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Web/Controller/ActionController.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function rawurlencode expects string, null given\\.$#"
-			count: 1
-			path: library/Icinga/Web/Controller/ActionController.php
-
-		-
 			message: "#^Parameter \\#1 \\$title of method Icinga\\\\Module\\\\Pdfexport\\\\PrintableHtmlDocument\\:\\:setTitle\\(\\) expects string, null given\\.$#"
-			count: 1
-			path: library/Icinga/Web/Controller/ActionController.php
-
-		-
-			message: "#^Parameter \\#2 \\$args of function call_user_func_array expects array\\<int\\|string, mixed\\>, mixed given\\.$#"
 			count: 1
 			path: library/Icinga/Web/Controller/ActionController.php
 
@@ -12266,11 +11941,6 @@ parameters:
 			path: library/Icinga/Web/Controller/StaticController.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function str_pad expects string, int given\\.$#"
-			count: 1
-			path: library/Icinga/Web/Controller/StaticController.php
-
-		-
 			message: "#^Call to an undefined method Icinga\\\\Application\\\\ApplicationBootstrap\\:\\:getRequest\\(\\)\\.$#"
 			count: 2
 			path: library/Icinga/Web/Cookie.php
@@ -12353,11 +12023,6 @@ parameters:
 		-
 			message: "#^Method Icinga\\\\Web\\\\FileCache\\:\\:store\\(\\) should return bool but returns int\\<0, max\\>\\|false\\.$#"
 			count: 1
-			path: library/Icinga/Web/FileCache.php
-
-		-
-			message: "#^Parameter \\#2 \\$permissions of function mkdir expects int, float\\|int given\\.$#"
-			count: 2
 			path: library/Icinga/Web/FileCache.php
 
 		-
@@ -12566,11 +12231,6 @@ parameters:
 			path: library/Icinga/Web/Form.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of function array_key_exists expects array, mixed given\\.$#"
-			count: 1
-			path: library/Icinga/Web/Form.php
-
-		-
 			message: "#^Parameter \\#2 \\$name of method Zend_Form\\:\\:addSubForm\\(\\) expects string, string\\|null given\\.$#"
 			count: 1
 			path: library/Icinga/Web/Form.php
@@ -12766,11 +12426,6 @@ parameters:
 			path: library/Icinga/Web/Form/Element/DateTimePicker.php
 
 		-
-			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, int\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Web/Form/Element/DateTimePicker.php
-
-		-
 			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
 			count: 1
 			path: library/Icinga/Web/Form/Element/Number.php
@@ -12849,11 +12504,6 @@ parameters:
 			message: "#^Property Icinga\\\\Web\\\\Form\\\\Validator\\\\DateFormatValidator\\:\\:\\$validSeparators type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Web/Form/Validator/DateFormatValidator.php
-
-		-
-			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, int\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Web/Form/Validator/DateTimeValidator.php
 
 		-
 			message: "#^Property Icinga\\\\Web\\\\Form\\\\Validator\\\\DateTimeValidator\\:\\:\\$_messageTemplates type has no value type specified in iterable type array\\.$#"
@@ -13036,22 +12686,12 @@ parameters:
 			path: library/Icinga/Web/JavaScript.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function ltrim expects string, bool\\|string given\\.$#"
-			count: 1
-			path: library/Icinga/Web/JavaScript.php
-
-		-
 			message: "#^Parameter \\#1 \\$string of function strlen expects string, string\\|false given\\.$#"
 			count: 1
 			path: library/Icinga/Web/JavaScript.php
 
 		-
 			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Web/JavaScript.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|false given\\.$#"
 			count: 1
 			path: library/Icinga/Web/JavaScript.php
 
@@ -13357,11 +12997,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$name of method Icinga\\\\Web\\\\Navigation\\\\Navigation\\:\\:addItem\\(\\) expects Icinga\\\\Web\\\\Navigation\\\\NavigationItem\\|string, mixed given\\.$#"
-			count: 1
-			path: library/Icinga/Web/Navigation/Navigation.php
-
-		-
-			message: "#^Parameter \\#2 \\$replacement of function preg_replace expects array\\|string, int given\\.$#"
 			count: 1
 			path: library/Icinga/Web/Navigation/Navigation.php
 
@@ -14791,11 +14426,6 @@ parameters:
 			path: library/Icinga/Web/Widget/Chart/HistoryColorGrid.php
 
 		-
-			message: "#^Parameter \\#2 \\$timestamp of function date expects int\\|null, int\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Web/Widget/Chart/HistoryColorGrid.php
-
-		-
 			message: "#^Property Icinga\\\\Web\\\\Widget\\\\Chart\\\\HistoryColorGrid\\:\\:\\$color has no type specified\\.$#"
 			count: 1
 			path: library/Icinga/Web/Widget/Chart/HistoryColorGrid.php
@@ -15747,11 +15377,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$column of method Icinga\\\\Web\\\\Widget\\\\SortBox\\:\\:getSortDefaults\\(\\) expects string\\|null, mixed given\\.$#"
-			count: 1
-			path: library/Icinga/Web/Widget/SortBox.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icinga/Web/Widget/SortBox.php
 
@@ -16711,16 +16336,6 @@ parameters:
 			path: modules/doc/library/Doc/Renderer/DocSectionRenderer.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function substr_replace expects array\\|string, string\\|false given\\.$#"
-			count: 1
-			path: modules/doc/library/Doc/Renderer/DocSectionRenderer.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|null given\\.$#"
-			count: 1
-			path: modules/doc/library/Doc/Renderer/DocSectionRenderer.php
-
-		-
 			message: "#^Parameter \\#3 \\$subject of function preg_replace_callback expects array\\|string, array\\<int, string\\>\\|string\\|null given\\.$#"
 			count: 3
 			path: modules/doc/library/Doc/Renderer/DocSectionRenderer.php
@@ -16846,11 +16461,6 @@ parameters:
 			path: modules/migrate/application/clicommands/ConfigCommand.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|false given\\.$#"
-			count: 1
-			path: modules/migrate/application/clicommands/ConfigCommand.php
-
-		-
 			message: "#^Parameter \\#1 \\$username of class Icinga\\\\User constructor expects string, mixed given\\.$#"
 			count: 1
 			path: modules/migrate/application/clicommands/ConfigCommand.php
@@ -16966,18 +16576,8 @@ parameters:
 			path: modules/migrate/library/Migrate/Config/UserDomainMigration.php
 
 		-
-			message: "#^Parameter \\#1 \\$from of function rename expects string, int\\|string given\\.$#"
-			count: 1
-			path: modules/migrate/library/Migrate/Config/UserDomainMigration.php
-
-		-
 			message: "#^Parameter \\#1 \\$path of function dirname expects string, mixed given\\.$#"
 			count: 1
-			path: modules/migrate/library/Migrate/Config/UserDomainMigration.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 2
 			path: modules/migrate/library/Migrate/Config/UserDomainMigration.php
 
 		-
@@ -17137,11 +16737,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$name of static method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\MonitoringBackend\\:\\:instance\\(\\) expects string\\|null, mixed given\\.$#"
-			count: 1
-			path: modules/monitoring/application/clicommands/ListCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function ucfirst expects string, string\\|null given\\.$#"
 			count: 1
 			path: modules/monitoring/application/clicommands/ListCommand.php
 
@@ -17407,11 +17002,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$id of method Icinga\\\\Module\\\\Monitoring\\\\Controllers\\\\EventController\\:\\:query\\(\\) expects int, mixed given\\.$#"
-			count: 1
-			path: modules/monitoring/application/controllers/EventController.php
-
-		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$arrays of function array_merge expects array, array\\<array\\<string\\>\\>\\|null given\\.$#"
 			count: 1
 			path: modules/monitoring/application/controllers/EventController.php
 
@@ -17686,11 +17276,6 @@ parameters:
 			path: modules/monitoring/application/controllers/ListController.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 2
-			path: modules/monitoring/application/controllers/ListController.php
-
-		-
 			message: "#^Parameter \\#2 \\$default of method Icinga\\\\Web\\\\UrlParams\\:\\:shift\\(\\) expects string\\|null, false given\\.$#"
 			count: 1
 			path: modules/monitoring/application/controllers/ListController.php
@@ -17946,11 +17531,6 @@ parameters:
 			path: modules/monitoring/application/controllers/TimelineController.php
 
 		-
-			message: "#^Parameter \\#1 \\$datetime of function strtotime expects string, mixed given\\.$#"
-			count: 2
-			path: modules/monitoring/application/controllers/TimelineController.php
-
-		-
 			message: "#^Parameter \\#1 \\$name of method Icinga\\\\Application\\\\Config\\:\\:getSection\\(\\) expects string, mixed given\\.$#"
 			count: 1
 			path: modules/monitoring/application/forms/Command/CommandForm.php
@@ -18076,11 +17656,6 @@ parameters:
 			path: modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
-			count: 2
-			path: modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php
-
-		-
 			message: "#^Argument of an invalid type array\\|ArrayAccess\\|Traversable supplied for foreach, only iterables are supported\\.$#"
 			count: 1
 			path: modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php
@@ -18126,22 +17701,12 @@ parameters:
 			path: modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
-			count: 2
-			path: modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php
-
-		-
 			message: "#^Argument of an invalid type array\\|ArrayAccess\\|Traversable supplied for foreach, only iterables are supported\\.$#"
 			count: 1
 			path: modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php
 
 		-
 			message: "#^Cannot call method icon\\(\\) on Zend_View_Interface\\|null\\.$#"
-			count: 1
-			path: modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
 			count: 1
 			path: modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php
 
@@ -18396,11 +17961,6 @@ parameters:
 			path: modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
-			count: 2
-			path: modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php
-
-		-
 			message: "#^Argument of an invalid type array\\|ArrayAccess\\|Traversable supplied for foreach, only iterables are supported\\.$#"
 			count: 1
 			path: modules/monitoring/application/forms/Command/Object/RemoveAcknowledgementCommandForm.php
@@ -18413,11 +17973,6 @@ parameters:
 		-
 			message: "#^Cannot call method icon\\(\\) on Zend_View_Interface\\|null\\.$#"
 			count: 1
-			path: modules/monitoring/application/forms/Command/Object/RemoveAcknowledgementCommandForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
-			count: 3
 			path: modules/monitoring/application/forms/Command/Object/RemoveAcknowledgementCommandForm.php
 
 		-
@@ -18437,11 +17992,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Forms\\\\Command\\\\Object\\\\ScheduleHostCheckCommandForm\\:\\:createElements\\(\\) has parameter \\$formData with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: modules/monitoring/application/forms/Command/Object/ScheduleHostCheckCommandForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
 			count: 1
 			path: modules/monitoring/application/forms/Command/Object/ScheduleHostCheckCommandForm.php
 
@@ -18486,16 +18036,6 @@ parameters:
 			path: modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 1
-			path: modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
-			count: 1
-			path: modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php
-
-		-
 			message: "#^Argument of an invalid type array\\|ArrayAccess\\|Traversable supplied for foreach, only iterables are supported\\.$#"
 			count: 1
 			path: modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php
@@ -18528,11 +18068,6 @@ parameters:
 		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Forms\\\\Command\\\\Object\\\\ScheduleServiceCheckCommandForm\\:\\:scheduleCheck\\(\\) has no return type specified\\.$#"
 			count: 1
-			path: modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
-			count: 2
 			path: modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php
 
 		-
@@ -18591,11 +18126,6 @@ parameters:
 			path: modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php
 
 		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
-			count: 2
-			path: modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php
-
-		-
 			message: "#^Argument of an invalid type array\\|ArrayAccess\\|Traversable supplied for foreach, only iterables are supported\\.$#"
 			count: 1
 			path: modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php
@@ -18633,11 +18163,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$comment of method Icinga\\\\Module\\\\Monitoring\\\\Command\\\\Object\\\\WithCommentCommand\\:\\:setComment\\(\\) expects string, mixed given\\.$#"
 			count: 1
-			path: modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
-			count: 2
 			path: modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php
 
 		-
@@ -18872,11 +18397,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$offset of function array_splice expects int, string given\\.$#"
-			count: 1
-			path: modules/monitoring/application/forms/Config/TransportReorderForm.php
-
-		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
 			count: 1
 			path: modules/monitoring/application/forms/Config/TransportReorderForm.php
 
@@ -19176,16 +18696,6 @@ parameters:
 			path: modules/monitoring/application/views/helpers/PluginOutput.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|null given\\.$#"
-			count: 1
-			path: modules/monitoring/application/views/helpers/PluginOutput.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function urlencode expects string, array\\|string given\\.$#"
-			count: 1
-			path: modules/monitoring/application/views/helpers/PluginOutput.php
-
-		-
 			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, string\\|null given\\.$#"
 			count: 1
 			path: modules/monitoring/application/views/helpers/PluginOutput.php
@@ -19281,11 +18791,6 @@ parameters:
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/CommentQuery.php
 
 		-
-			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/CommentQuery.php
-
-		-
 			message: "#^Parameter \\#2 \\$dir \\(int\\) of method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\Ido\\\\Query\\\\CommentQuery\\:\\:order\\(\\) should be compatible with parameter \\$direction \\(string\\) of method Icinga\\\\Data\\\\Sortable\\:\\:order\\(\\)$#"
 			count: 2
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/CommentQuery.php
@@ -19317,11 +18822,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\Ido\\\\Query\\\\CommentdeletionhistoryQuery\\:\\:joinServices\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/CommentdeletionhistoryQuery.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/CommentdeletionhistoryQuery.php
 
@@ -19367,11 +18867,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\Ido\\\\Query\\\\CommenthistoryQuery\\:\\:joinServices\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/CommenthistoryQuery.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/CommenthistoryQuery.php
 
@@ -19526,11 +19021,6 @@ parameters:
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/DowntimeQuery.php
 
 		-
-			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/DowntimeQuery.php
-
-		-
 			message: "#^Parameter \\#2 \\$dir \\(int\\) of method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\Ido\\\\Query\\\\DowntimeQuery\\:\\:order\\(\\) should be compatible with parameter \\$direction \\(string\\) of method Icinga\\\\Data\\\\Sortable\\:\\:order\\(\\)$#"
 			count: 2
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/DowntimeQuery.php
@@ -19562,11 +19052,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\Ido\\\\Query\\\\DowntimeendhistoryQuery\\:\\:joinServices\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/DowntimeendhistoryQuery.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/DowntimeendhistoryQuery.php
 
@@ -19612,11 +19097,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\Ido\\\\Query\\\\DowntimestarthistoryQuery\\:\\:joinServices\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/DowntimestarthistoryQuery.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/DowntimestarthistoryQuery.php
 
@@ -19726,11 +19206,6 @@ parameters:
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/FlappingendhistoryQuery.php
 
 		-
-			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/FlappingendhistoryQuery.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\Ido\\\\Query\\\\FlappingeventQuery\\:\\:joinBaseTables\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/FlappingeventQuery.php
@@ -19762,11 +19237,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\Ido\\\\Query\\\\FlappingstarthistoryQuery\\:\\:joinServices\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/FlappingstarthistoryQuery.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/FlappingstarthistoryQuery.php
 
@@ -20762,11 +20232,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$field of method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\Ido\\\\Query\\\\IdoQuery\\:\\:getMappedField\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/IdoQuery.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of function array_key_exists expects array, mixed given\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/IdoQuery.php
 
@@ -21786,11 +21251,6 @@ parameters:
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/StatehistoryQuery.php
 
 		-
-			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/StatehistoryQuery.php
-
-		-
 			message: "#^Parameter \\#2 \\$dir \\(int\\) of method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\Ido\\\\Query\\\\StatehistoryQuery\\:\\:order\\(\\) should be compatible with parameter \\$direction \\(string\\) of method Icinga\\\\Data\\\\Sortable\\:\\:order\\(\\)$#"
 			count: 2
 			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/StatehistoryQuery.php
@@ -21908,11 +21368,6 @@ parameters:
 		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\MonitoringBackend\\:\\:query\\(\\) should return Icinga\\\\Data\\\\QueryInterface but returns object\\.$#"
 			count: 1
-			path: modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function array_pop expects array, array\\<int, string\\>\\|false given\\.$#"
-			count: 2
 			path: modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php
 
 		-
@@ -22291,22 +21746,12 @@ parameters:
 			path: modules/monitoring/library/Monitoring/Command/Transport/ApiCommandTransport.php
 
 		-
-			message: "#^Parameter \\#1 \\$array of function array_pop expects array, mixed given\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Command/Transport/ApiCommandTransport.php
-
-		-
 			message: "#^Parameter \\#1 \\$endpoint of method Icinga\\\\Module\\\\Monitoring\\\\Command\\\\Transport\\\\ApiCommandTransport\\:\\:getUriFor\\(\\) expects string, null given\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Command/Transport/ApiCommandTransport.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Command\\\\Transport\\\\CommandTransport\\:\\:send\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Command/Transport/CommandTransport.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Command/Transport/CommandTransport.php
 
@@ -22422,11 +21867,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$name of static method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\MonitoringBackend\\:\\:instance\\(\\) expects string\\|null, mixed given\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Controller.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Controller.php
 
@@ -23421,11 +22861,6 @@ parameters:
 			path: modules/monitoring/library/Monitoring/Object/MonitoredObject.php
 
 		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Object/MonitoredObject.php
-
-		-
 			message: "#^Property Icinga\\\\Module\\\\Monitoring\\\\Object\\\\MonitoredObject\\:\\:\\$comments type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Object/MonitoredObject.php
@@ -24271,11 +23706,6 @@ parameters:
 			path: modules/monitoring/library/Monitoring/Web/Rest/RestRequest.php
 
 		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$arrays of function array_merge expects array, array\\<string, int\\|string\\>\\|false given\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Web/Rest/RestRequest.php
-
-		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Web\\\\Widget\\\\CustomVarTable\\:\\:__construct\\(\\) has parameter \\$data with no value type specified in iterable type iterable\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Web/Widget/CustomVarTable.php
@@ -24297,11 +23727,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Web\\\\Widget\\\\CustomVarTable\\:\\:renderObject\\(\\) has parameter \\$object with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: modules/monitoring/library/Monitoring/Web/Widget/CustomVarTable.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of function key expects array\\|object, mixed given\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Web/Widget/CustomVarTable.php
 
@@ -24456,27 +23881,12 @@ parameters:
 			path: modules/setup/application/clicommands/ConfigCommand.php
 
 		-
-			message: "#^Parameter \\#1 \\$filename of function file_put_contents expects string, mixed given\\.$#"
-			count: 1
-			path: modules/setup/application/clicommands/ConfigCommand.php
-
-		-
 			message: "#^Parameter \\#1 \\$flag of method Icinga\\\\Module\\\\Setup\\\\Webserver\\:\\:setEnableFpm\\(\\) expects bool, mixed given\\.$#"
 			count: 1
 			path: modules/setup/application/clicommands/ConfigCommand.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function trim expects string, mixed given\\.$#"
-			count: 7
-			path: modules/setup/application/clicommands/ConfigCommand.php
-
-		-
 			message: "#^Parameter \\#1 \\$type of static method Icinga\\\\Module\\\\Setup\\\\Webserver\\:\\:createInstance\\(\\) expects string, mixed given\\.$#"
-			count: 1
-			path: modules/setup/application/clicommands/ConfigCommand.php
-
-		-
-			message: "#^Parameter \\#2 \\$permissions of function chmod expects int, float\\|int given\\.$#"
 			count: 1
 			path: modules/setup/application/clicommands/ConfigCommand.php
 
@@ -24492,11 +23902,6 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Setup\\\\Clicommands\\\\TokenCommand\\:\\:showAction\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: modules/setup/application/clicommands/TokenCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function md5 expects string, int\\<0, max\\> given\\.$#"
 			count: 1
 			path: modules/setup/application/clicommands/TokenCommand.php
 
@@ -25054,16 +24459,6 @@ parameters:
 			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
 			count: 3
 			path: modules/setup/library/Setup/Requirement/ConfigDirectoryRequirement.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
-			count: 1
-			path: modules/setup/library/Setup/Requirement/OSRequirement.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function ucfirst expects string, mixed given\\.$#"
-			count: 1
-			path: modules/setup/library/Setup/Requirement/OSRequirement.php
 
 		-
 			message: "#^Cannot use array destructuring on mixed\\.$#"
@@ -25641,11 +25036,6 @@ parameters:
 			path: modules/setup/library/Setup/Utils/DbTool.php
 
 		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|null given\\.$#"
-			count: 1
-			path: modules/setup/library/Setup/Utils/DbTool.php
-
-		-
 			message: "#^Parameter \\#2 \\$array of function array_map expects array, array\\|null given\\.$#"
 			count: 1
 			path: modules/setup/library/Setup/Utils/DbTool.php
@@ -25714,11 +25104,6 @@ parameters:
 			message: "#^Property Icinga\\\\Module\\\\Setup\\\\Utils\\\\EnableModuleStep\\:\\:\\$warnings has no type specified\\.$#"
 			count: 1
 			path: modules/setup/library/Setup/Utils/EnableModuleStep.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|false given\\.$#"
-			count: 1
-			path: modules/setup/library/Setup/Web/Form/Validator/TokenValidator.php
 
 		-
 			message: "#^Cannot call method addElement\\(\\) on Zend_Form_DisplayGroup\\|null\\.$#"
@@ -25867,11 +25252,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$filename of function file_exists expects string, mixed given\\.$#"
-			count: 1
-			path: modules/test/application/clicommands/PhpCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$filename of function file_exists expects string, string\\|false given\\.$#"
 			count: 1
 			path: modules/test/application/clicommands/PhpCommand.php
 
@@ -26086,16 +25466,6 @@ parameters:
 			path: modules/translation/library/Translation/Cli/ArrayToTextTableHelper.php
 
 		-
-			message: "#^Parameter \\#1 \\$callback of function ob_start expects callable\\(\\)\\: mixed, null given\\.$#"
-			count: 1
-			path: modules/translation/library/Translation/Cli/ArrayToTextTableHelper.php
-
-		-
-			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, int given\\.$#"
-			count: 1
-			path: modules/translation/library/Translation/Cli/ArrayToTextTableHelper.php
-
-		-
 			message: "#^Parameter \\#3 \\$flags of function ob_start expects int, true given\\.$#"
 			count: 1
 			path: modules/translation/library/Translation/Cli/ArrayToTextTableHelper.php
@@ -26211,22 +25581,12 @@ parameters:
 			path: modules/translation/library/Translation/Util/GettextTranslationHelper.php
 
 		-
-			message: "#^Parameter \\#2 \\$offset of function substr expects int, int\\<0, max\\>\\|false given\\.$#"
-			count: 1
-			path: modules/translation/library/Translation/Util/GettextTranslationHelper.php
-
-		-
 			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, string\\|false given\\.$#"
 			count: 5
 			path: modules/translation/library/Translation/Util/GettextTranslationHelper.php
 
 		-
 			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
-			count: 1
-			path: modules/translation/library/Translation/Util/GettextTranslationHelper.php
-
-		-
-			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, int\\|false given\\.$#"
 			count: 1
 			path: modules/translation/library/Translation/Util/GettextTranslationHelper.php
 
