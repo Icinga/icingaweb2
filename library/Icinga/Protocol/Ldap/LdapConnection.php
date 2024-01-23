@@ -89,8 +89,6 @@ class LdapConnection implements Selectable, Inspectable
 
     /**
      * The LDAP link identifier being used
-     *
-     * @var resource
      */
     protected $ds;
 
@@ -248,7 +246,7 @@ class LdapConnection implements Selectable, Inspectable
      *
      * Establishes a connection if necessary.
      *
-     * @return  resource
+     * @throws LdapException
      */
     public function getConnection()
     {
@@ -617,9 +615,11 @@ class LdapConnection implements Selectable, Inspectable
     /**
      * Return whether an entry identified by the given distinguished name exists
      *
-     * @param   string  $dn
+     * @param string $dn
      *
      * @return  bool
+     *
+     * @throws LdapException
      */
     public function hasDn($dn)
     {
@@ -627,6 +627,10 @@ class LdapConnection implements Selectable, Inspectable
         $this->bind();
 
         $result = ldap_read($ds, $dn, '(objectClass=*)', array('objectClass'));
+        if ($result === false) {
+            return false;
+        }
+
         return ldap_count_entries($ds, $result) > 0;
     }
 
@@ -654,6 +658,10 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         $children = ldap_get_entries($ds, $result);
+        if ($children === false) {
+            return false;
+        }
+
         for ($i = 0; $i < $children['count']; $i++) {
             $result = $this->deleteRecursively($children[$i]['dn']);
             if (! $result) {
@@ -785,6 +793,10 @@ class LdapConnection implements Selectable, Inspectable
         $count = 0;
         $entries = array();
         $entry = ldap_first_entry($ds, $results);
+        if ($entry === false) {
+            return [];
+        }
+
         do {
             if ($unfoldAttribute) {
                 $rows = $this->cleanupAttributes(ldap_get_attributes($ds, $entry), $fields, $unfoldAttribute);
@@ -952,6 +964,10 @@ class LdapConnection implements Selectable, Inspectable
             }
 
             $entry = ldap_first_entry($ds, $results);
+            if ($entry === false) {
+                return [];
+            }
+
             do {
                 if ($unfoldAttribute) {
                     $rows = $this->cleanupAttributes(ldap_get_attributes($ds, $entry), $fields, $unfoldAttribute);
@@ -1184,9 +1200,7 @@ class LdapConnection implements Selectable, Inspectable
     /**
      * Prepare and establish a connection with the LDAP server
      *
-     * @param   Inspection  $info   Optional inspection to fill with diagnostic info
-     *
-     * @return  resource            A LDAP link identifier
+     * @param   ?Inspection  $info   Optional inspection to fill with diagnostic info
      *
      * @throws  LdapException       In case the connection is not possible
      */
@@ -1199,6 +1213,9 @@ class LdapConnection implements Selectable, Inspectable
         $hostname = $this->normalizeHostname($this->hostname);
 
         $ds = ldap_connect($hostname);
+        if ($ds === false) {
+            throw new LdapException('Failed to connect to LDAP');
+        }
 
         // Set a proper timeout for each connection
         ldap_set_option($ds, LDAP_OPT_NETWORK_TIMEOUT, $this->timeout);
@@ -1228,7 +1245,7 @@ class LdapConnection implements Selectable, Inspectable
     }
 
     /**
-     * Perform a LDAP search and return the result
+     * Perform a LDAP search and return the result or false on error
      *
      * @param   LdapQuery   $query
      * @param   array       $attributes     An array of the required attributes
@@ -1237,8 +1254,6 @@ class LdapConnection implements Selectable, Inspectable
      * @param   int         $timelimit      Sets the number of seconds how long is spend on the search
      * @param   int         $deref
      * @param   array       $controls       LDAP Controls to send with the request (Only supported with PHP v7.3+)
-     *
-     * @return  resource|bool               A search result identifier or false on error
      *
      * @throws  LogicException              If the LDAP query search scope is unsupported
      */
@@ -1553,6 +1568,13 @@ class LdapConnection implements Selectable, Inspectable
         return $insp;
     }
 
+    /**
+     * Normalize all given hostnames to a valid LDAP URL
+     *
+     * @param string $hostname
+     *
+     * @return string
+     */
     protected function normalizeHostname($hostname)
     {
         $scheme = $this->encryption === static::LDAPS ? 'ldaps://' : 'ldap://';
