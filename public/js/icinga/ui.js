@@ -303,6 +303,7 @@
                     this.currentLayout = matched[1];
                     if (this.currentLayout === 'poor' || this.currentLayout === 'minimal') {
                         this.layout1col();
+                        this.icinga.history.replaceCurrentState();
                     } else if (this.icinga.initialized) {
                         // layout1col() also triggers this, that's why an else is required
                         $('#layout').trigger('layout-change');
@@ -351,7 +352,6 @@
             delete $c[0].dataset.icingaContainerId;
             $c.removeAttr('class').attr('class', 'container');
             $c.trigger('close-column');
-            this.icinga.history.pushCurrentState();
             $c.html('');
         },
 
