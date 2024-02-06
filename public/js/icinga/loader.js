@@ -1272,6 +1272,7 @@
                 const changed = hook.renderHook(content, $container, action, autorefresh, autoSubmit);
                 if (changed === null) {
                     discard = true;
+                    break;
                 } else {
                     content = changed;
                 }
