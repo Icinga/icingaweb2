@@ -1267,17 +1267,15 @@
 
             $container.trigger('beforerender', [content, action, autorefresh, scripted, autoSubmit]);
 
-            var discard = false;
-            $.each(_this.icinga.behaviors, function(name, behavior) {
-                if (behavior.renderHook) {
-                    var changed = behavior.renderHook(content, $container, action, autorefresh, autoSubmit);
-                    if (changed === null) {
-                        discard = true;
-                    } else {
-                        content = changed;
-                    }
+            let discard = false;
+            for (const hook of _this.icinga.renderHooks) {
+                const changed = hook.renderHook(content, $container, action, autorefresh, autoSubmit);
+                if (changed === null) {
+                    discard = true;
+                } else {
+                    content = changed;
                 }
-            });
+            }
 
             $('.container', $container).each(function() {
                 _this.stopPendingRequestsFor($(this));

@@ -13,6 +13,8 @@
         Icinga.EventListener.call(this, icinga);
         this.on('rendered', '.container', this.onRendered, this);
 
+        this.priority = 1;
+
         // store the modification state of all input fields
         this.inputs = new WeakMap();
     };
