@@ -12,7 +12,7 @@ use ipl\Web\Widget\Icon;
         <div class="link-icon">
         <?php
             if (substr($item->getUrl()->getPath(), 0, 9) === 'icingadb/') {
-                echo new Icon($item->getIcon(), [ 'aria-hidden' => 1]);
+                echo new Icon($item->getIcon() ?: 'share', [ 'aria-hidden' => 1]);
             } else {
                 echo $this->icon($item->getIcon() ?: 'forward', null, array('aria-hidden' => true));
             }
