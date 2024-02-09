@@ -1,0 +1,31 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Parameter \\#2 \\$value of function ini_set expects string, int given\\.$#"
+			count: 2
+			path: library/Icinga/Application/ApplicationBootstrap.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of function ini_set expects string, int given\\.$#"
+			count: 2
+			path: library/Icinga/Util/Environment.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of function ini_set expects string, false given\\.$#"
+			count: 2
+			path: library/Icinga/Web/Session/PhpSession.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of function ini_set expects string, null given\\.$#"
+			count: 1
+			path: library/Icinga/Web/Session/PhpSession.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of function ini_set expects string, string\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Web/Session/PhpSession.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of function ini_set expects string, true given\\.$#"
+			count: 2
+			path: library/Icinga/Web/Session/PhpSession.php

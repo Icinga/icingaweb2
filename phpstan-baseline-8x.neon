@@ -1,0 +1,646 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Parameter \\#1 \\$string of function rawurldecode expects string, mixed given\\.$#"
+			count: 1
+			path: application/controllers/DashboardController.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_shift expects array, array\\<int, string\\>\\|false given\\.$#"
+			count: 1
+			path: application/controllers/ErrorController.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function rawurldecode expects string, mixed given\\.$#"
+			count: 1
+			path: application/controllers/NavigationController.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function ucwords expects string, mixed given\\.$#"
+			count: 1
+			path: application/controllers/NavigationController.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function sha1 expects string, mixed given\\.$#"
+			count: 1
+			path: application/forms/Config/Resource/SshResourceForm.php
+
+		-
+			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
+			count: 1
+			path: application/forms/Config/User/CreateMembershipForm.php
+
+		-
+			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
+			count: 1
+			path: application/forms/Config/UserBackendReorderForm.php
+
+		-
+			message: "#^Parameter \\#1 \\.\\.\\.\\$arrays of function array_merge expects array, mixed given\\.$#"
+			count: 1
+			path: application/forms/Config/UserGroup/AddMemberForm.php
+
+		-
+			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
+			count: 1
+			path: application/forms/Config/UserGroup/AddMemberForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 1
+			path: application/forms/Config/UserGroup/DbUserGroupBackendForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 2
+			path: application/forms/Config/UserGroup/LdapUserGroupBackendForm.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of function implode expects array\\|null, mixed given\\.$#"
+			count: 2
+			path: application/forms/Navigation/NavigationConfigForm.php
+
+		-
+			message: "#^Parameter \\#2 \\$string of function explode expects string, TKey of int\\|string given\\.$#"
+			count: 2
+			path: application/forms/Security/RoleForm.php
+
+		-
+			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Application/ApplicationBootstrap.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function spl_autoload_register expects \\(callable\\(string\\)\\: void\\)\\|null, array\\{\\$this\\(Icinga\\\\Application\\\\ClassLoader\\), 'loadClass'\\} given\\.$#"
+			count: 1
+			path: library/Icinga/Application/ClassLoader.php
+
+		-
+			message: "#^Parameter \\#2 \\$offset of function substr expects int, int\\<0, max\\>\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Application/ClassLoader.php
+
+		-
+			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, int\\<0, max\\>\\|false given\\.$#"
+			count: 2
+			path: library/Icinga/Application/ClassLoader.php
+
+		-
+			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, int\\<0, max\\>\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Application/Hook/HealthHook.php
+
+		-
+			message: "#^Parameter \\#2 \\$values of function vsprintf expects array\\<bool\\|float\\|int\\|string\\|null\\>, array\\<int, mixed\\> given\\.$#"
+			count: 1
+			path: library/Icinga/Application/Hook/TicketHook.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function ltrim expects string, string\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Application/Libraries/Library.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 2
+			path: library/Icinga/Application/Logger.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtoupper expects string, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Application/Logger.php
+
+		-
+			message: "#^Parameter \\#1 \\$dir_handle of function closedir expects resource\\|null, resource\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Application/Modules/Module.php
+
+		-
+			message: "#^Parameter \\#1 \\$dir_handle of function readdir expects resource\\|null, resource\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Application/Modules/Module.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function rtrim expects string, array\\|string\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Application/Modules/Module.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\<int, string\\>\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Application/Modules/Module.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function call_user_func expects callable\\(\\)\\: mixed, array\\{\\$this\\(Icinga\\\\Application\\\\Modules\\\\NavigationItemContainer\\), string\\} given\\.$#"
+			count: 1
+			path: library/Icinga/Application/Modules/NavigationItemContainer.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_shift expects array, array\\<int, string\\>\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Application/Platform.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_flip expects array\\<int\\|string\\>, array\\<int, string\\>\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Application/Test.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Authentication/User/UserBackend.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Authentication/UserGroup/UserGroupBackend.php
+
+		-
+			message: "#^Parameter \\#1 \\$num of function round expects float\\|int, int\\|string given\\.$#"
+			count: 1
+			path: library/Icinga/Chart/Donut.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strip_tags expects string, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Chart/Graph/Tooltip.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of function array_key_exists expects array, Icinga\\\\Chart\\\\Graph\\\\Tooltip given\\.$#"
+			count: 1
+			path: library/Icinga/Chart/GridChart.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_values expects array, array\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Cli/Loader.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Cli/Loader.php
+
+		-
+			message: "#^Parameter \\#2 \\$times of function str_repeat expects int, float given\\.$#"
+			count: 1
+			path: library/Icinga/Cli/Screen.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Data/Db/DbConnection.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function trim expects string, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Data/Db/DbConnection.php
+
+		-
+			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, int\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Data/Filter/Filter.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, bool\\|float\\|int\\|string given\\.$#"
+			count: 1
+			path: library/Icinga/Data/Filter/FilterExpression.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Data/ResourceFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function call_user_func_array expects callable\\(\\)\\: mixed, 'parent\\:\\:__construct' given\\.$#"
+			count: 1
+			path: library/Icinga/Exception/Http/HttpException.php
+
+		-
+			message: "#^Parameter \\#2 \\$values of function vsprintf expects array\\<bool\\|float\\|int\\|string\\|null\\>, array\\<int, mixed\\> given\\.$#"
+			count: 1
+			path: library/Icinga/Exception/IcingaException.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/File/Ini/IniWriter.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_splice expects array, array\\<int\\|string, mixed\\>\\|false given\\.$#"
+			count: 2
+			path: library/Icinga/File/Storage/LocalFileStorage.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function fclose expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/File/Storage/LocalFileStorage.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\<int\\|string, mixed\\>\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/File/Storage/LocalFileStorage.php
+
+		-
+			message: "#^Parameter \\#1 \\$directory of function rmdir expects string, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/File/Storage/TemporaryLocalFileStorage.php
+
+		-
+			message: "#^Function ldap_control_paged_result not found\\.$#"
+			count: 2
+			path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+		-
+			message: "#^Function ldap_control_paged_result_response not found\\.$#"
+			count: 1
+			path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+		-
+			message: "#^Parameter \\#1 \\$object of function get_object_vars expects object, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+		-
+			message: "#^Parameter \\#4 \\$attributes of callable 'ldap_list'\\|'ldap_read'\\|'ldap_search' expects array, array\\|null given\\.$#"
+			count: 2
+			path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+		-
+			message: "#^Parameter \\#1 \\$codepoint of function chr expects int, float\\|int given\\.$#"
+			count: 1
+			path: library/Icinga/Protocol/Ldap/LdapUtils.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 2
+			path: library/Icinga/Protocol/Ldap/Root.php
+
+		-
+			message: "#^Parameter \\#2 \\$timestamp of function date expects int\\|null, float\\|int\\|string given\\.$#"
+			count: 1
+			path: library/Icinga/Repository/Repository.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function natcasesort expects array, array\\<int, string\\>\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Util/DirectoryIterator.php
+
+		-
+			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
+			count: 1
+			path: library/Icinga/Util/StringHelper.php
+
+		-
+			message: "#^Parameter \\#1 \\$separator of function explode expects non\\-empty\\-string, string given\\.$#"
+			count: 2
+			path: library/Icinga/Util/StringHelper.php
+
+		-
+			message: "#^Parameter \\#2 \\$offset of function substr expects int, float given\\.$#"
+			count: 1
+			path: library/Icinga/Util/StringHelper.php
+
+		-
+			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, float given\\.$#"
+			count: 1
+			path: library/Icinga/Util/StringHelper.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function call_user_func_array expects callable\\(\\)\\: mixed, array\\{\\$this\\(Icinga\\\\Web\\\\Controller\\\\ActionController\\), non\\-falsy\\-string\\} given\\.$#"
+			count: 1
+			path: library/Icinga/Web/Controller/ActionController.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function base64_encode expects string, string\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Web/Controller/ActionController.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function rawurlencode expects string, null given\\.$#"
+			count: 1
+			path: library/Icinga/Web/Controller/ActionController.php
+
+		-
+			message: "#^Parameter \\#2 \\$args of function call_user_func_array expects array\\<int\\|string, mixed\\>, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Web/Controller/ActionController.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function str_pad expects string, int given\\.$#"
+			count: 1
+			path: library/Icinga/Web/Controller/StaticController.php
+
+		-
+			message: "#^Parameter \\#2 \\$permissions of function mkdir expects int, float\\|int given\\.$#"
+			count: 2
+			path: library/Icinga/Web/FileCache.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of function array_key_exists expects array, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Web/Form.php
+
+		-
+			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, int\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Web/Form/Element/DateTimePicker.php
+
+		-
+			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, int\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Web/Form/Validator/DateTimeValidator.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function ltrim expects string, bool\\|string given\\.$#"
+			count: 1
+			path: library/Icinga/Web/JavaScript.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Web/JavaScript.php
+
+		-
+			message: "#^Parameter \\#2 \\$replacement of function preg_replace expects array\\|string, int given\\.$#"
+			count: 1
+			path: library/Icinga/Web/Navigation/Navigation.php
+
+		-
+			message: "#^Parameter \\#2 \\$timestamp of function date expects int\\|null, int\\|false given\\.$#"
+			count: 1
+			path: library/Icinga/Web/Widget/Chart/HistoryColorGrid.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Web/Widget/SortBox.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function substr_replace expects array\\|string, string\\|false given\\.$#"
+			count: 1
+			path: modules/doc/library/Doc/Renderer/DocSectionRenderer.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|null given\\.$#"
+			count: 1
+			path: modules/doc/library/Doc/Renderer/DocSectionRenderer.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|false given\\.$#"
+			count: 1
+			path: modules/migrate/application/clicommands/ConfigCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$from of function rename expects string, int\\|string given\\.$#"
+			count: 1
+			path: modules/migrate/library/Migrate/Config/UserDomainMigration.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 2
+			path: modules/migrate/library/Migrate/Config/UserDomainMigration.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function ucfirst expects string, string\\|null given\\.$#"
+			count: 1
+			path: modules/monitoring/application/clicommands/ListCommand.php
+
+		-
+			message: "#^Parameter \\#2 \\.\\.\\.\\$arrays of function array_merge expects array, array\\<array\\<string\\>\\>\\|null given\\.$#"
+			count: 1
+			path: modules/monitoring/application/controllers/EventController.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 2
+			path: modules/monitoring/application/controllers/ListController.php
+
+		-
+			message: "#^Parameter \\#1 \\$datetime of function strtotime expects string, mixed given\\.$#"
+			count: 2
+			path: modules/monitoring/application/controllers/TimelineController.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
+			count: 2
+			path: modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
+			count: 2
+			path: modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
+			count: 1
+			path: modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
+			count: 2
+			path: modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
+			count: 3
+			path: modules/monitoring/application/forms/Command/Object/RemoveAcknowledgementCommandForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
+			count: 1
+			path: modules/monitoring/application/forms/Command/Object/ScheduleHostCheckCommandForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 1
+			path: modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
+			count: 1
+			path: modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
+			count: 2
+			path: modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
+			count: 2
+			path: modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|ArrayAccess\\|Traversable given\\.$#"
+			count: 2
+			path: modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php
+
+		-
+			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
+			count: 1
+			path: modules/monitoring/application/forms/Config/TransportReorderForm.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|null given\\.$#"
+			count: 1
+			path: modules/monitoring/application/views/helpers/PluginOutput.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function urlencode expects string, array\\|string given\\.$#"
+			count: 1
+			path: modules/monitoring/application/views/helpers/PluginOutput.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/CommentQuery.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/CommentdeletionhistoryQuery.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/CommenthistoryQuery.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/DowntimeQuery.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/DowntimeendhistoryQuery.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/DowntimestarthistoryQuery.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/FlappingendhistoryQuery.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/FlappingstarthistoryQuery.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of function array_key_exists expects array, mixed given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/IdoQuery.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_keys expects array, \\(float\\|int\\) given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Backend/Ido/Query/StatehistoryQuery.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_pop expects array, array\\<int, string\\>\\|false given\\.$#"
+			count: 2
+			path: modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_pop expects array, mixed given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Command/Transport/ApiCommandTransport.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Command/Transport/CommandTransport.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Controller.php
+
+		-
+			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Object/MonitoredObject.php
+
+		-
+			message: "#^Parameter \\#2 \\.\\.\\.\\$arrays of function array_merge expects array, array\\<string, int\\|string\\>\\|false given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Web/Rest/RestRequest.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function key expects array\\|object, mixed given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Web/Widget/CustomVarTable.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of function file_put_contents expects string, mixed given\\.$#"
+			count: 1
+			path: modules/setup/application/clicommands/ConfigCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function trim expects string, mixed given\\.$#"
+			count: 7
+			path: modules/setup/application/clicommands/ConfigCommand.php
+
+		-
+			message: "#^Parameter \\#2 \\$permissions of function chmod expects int, float\\|int given\\.$#"
+			count: 1
+			path: modules/setup/application/clicommands/ConfigCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function md5 expects string, int\\<0, max\\> given\\.$#"
+			count: 1
+			path: modules/setup/application/clicommands/TokenCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strtolower expects string, mixed given\\.$#"
+			count: 1
+			path: modules/setup/library/Setup/Requirement/OSRequirement.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function ucfirst expects string, mixed given\\.$#"
+			count: 1
+			path: modules/setup/library/Setup/Requirement/OSRequirement.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, array\\|null given\\.$#"
+			count: 1
+			path: modules/setup/library/Setup/Utils/DbTool.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function trim expects string, string\\|false given\\.$#"
+			count: 1
+			path: modules/setup/library/Setup/Web/Form/Validator/TokenValidator.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of function file_exists expects string, string\\|false given\\.$#"
+			count: 1
+			path: modules/test/application/clicommands/PhpCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function ob_start expects callable\\(\\)\\: mixed, null given\\.$#"
+			count: 1
+			path: modules/translation/library/Translation/Cli/ArrayToTextTableHelper.php
+
+		-
+			message: "#^Parameter \\#1 \\$value of function count expects array\\|Countable, int given\\.$#"
+			count: 1
+			path: modules/translation/library/Translation/Cli/ArrayToTextTableHelper.php
+
+		-
+			message: "#^Parameter \\#2 \\$offset of function substr expects int, int\\<0, max\\>\\|false given\\.$#"
+			count: 1
+			path: modules/translation/library/Translation/Util/GettextTranslationHelper.php
+
+		-
+			message: "#^Parameter \\#3 \\$length of function substr expects int\\|null, int\\|false given\\.$#"
+			count: 1
+			path: modules/translation/library/Translation/Util/GettextTranslationHelper.php

@@ -10,6 +10,7 @@ class CommentParser
     protected $raw;
     protected $plain;
     protected $title;
+    /** @var array $paragraphs */
     protected $paragraphs = array();
 
     public function __construct($raw)
@@ -37,6 +38,7 @@ class CommentParser
         $p = null;
         foreach (preg_split('~\n~', $plain) as $line) {
             // Strip * at line start
+            /** @var string $line */
             $line = preg_replace('~^\s*\*\s?~', '', $line);
             $line = rtrim($line);
             if ($this->title === null) {
