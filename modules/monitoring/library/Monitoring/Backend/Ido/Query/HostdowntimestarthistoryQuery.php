@@ -103,7 +103,7 @@ class HostdowntimestarthistoryQuery extends IdoQuery
             );
         }
         $this->select->where(
-            "hdh.was_started = 1 AND hdh.was_cancelled = 0"
+            "hdh.was_started = 1"
         );
         $this->joinedVirtualTables['downtimehistory'] = true;
     }
