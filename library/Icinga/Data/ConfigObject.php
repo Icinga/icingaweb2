@@ -10,6 +10,10 @@ use Icinga\Exception\ProgrammingError;
 
 /**
  * Container for configuration values
+ *
+ * @template TValue
+ * @implements Iterator<string, TValue>
+ * @implements ArrayAccess<string, TValue>
  */
 class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
 {
@@ -60,7 +64,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
     /**
      * Return the section's or property's value of the current iteration
      *
-     * @return  mixed
+     * @return  TValue
      */
     #[\ReturnTypeWillChange]
     public function current()
@@ -115,7 +119,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @param   string  $key    The name of the property or section
      *
-     * @return  mixed|NULL      The value or NULL in case $key does not exist
+     * @return  ?TValue         The value or NULL in case $key does not exist
      */
     public function __get($key)
     {
@@ -126,7 +130,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      * Add a new property or section
      *
      * @param   string  $key    The name of the new property or section
-     * @param   mixed   $value  The value to set for the new property or section
+     * @param   TValue  $value  The value to set for the new property or section
      */
     public function __set($key, $value)
     {
@@ -164,7 +168,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @param   string  $key    The name of the property or section
      *
-     * @return  ?mixed      The value or NULL in case $key does not exist
+     * @return  ?TValue     The value or NULL in case $key does not exist
      */
     #[\ReturnTypeWillChange]
     public function offsetGet($key)
@@ -176,7 +180,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      * Add a new property or section
      *
      * @param   string  $key        The name of the new property or section
-     * @param   mixed   $value      The value to set for the new property or section
+     * @param   TValue  $value      The value to set for the new property or section
      *
      * @throws  ProgrammingError    If the key is null
      */
@@ -213,9 +217,9 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      * Return the value for the given property or the config for the given section
      *
      * @param   string  $key        The name of the property or section
-     * @param   mixed   $default    The value to return in case the property or section is missing
+     * @param   ?TValue $default    The value to return in case the property or section is missing
      *
-     * @return  mixed
+     * @return  ?TValue             The value or $default in case $key does not exist
      */
     public function get($key, $default = null)
     {
@@ -229,7 +233,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
     /**
      * Return all section and property names
      *
-     * @return  array
+     * @return  string[]
      */
     public function keys()
     {
@@ -239,7 +243,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
     /**
      * Return this config's data as associative array
      *
-     * @return  array
+     * @return  array<string, TValue>
      */
     public function toArray()
     {
@@ -258,7 +262,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
     /**
      * Merge the given data with this config
      *
-     * @param   array|ConfigObject $data An array or a config
+     * @param   array<string, TValue>|ConfigObject<TValue> $data An array or a config
      *
      * @return  $this
      */
