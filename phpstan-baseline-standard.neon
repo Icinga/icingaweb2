@@ -1491,6 +1491,11 @@ parameters:
 			path: application/forms/Config/Resource/SshResourceForm.php
 
 		-
+			message: "#^Method Icinga\\\\Forms\\\\Config\\\\Resource\\\\SshResourceForm\\:\\:beforeRemove\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: application/forms/Config/Resource/SshResourceForm.php
+
+		-
 			message: "#^Method Icinga\\\\Forms\\\\Config\\\\Resource\\\\SshResourceForm\\:\\:createElements\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: application/forms/Config/Resource/SshResourceForm.php
@@ -1561,6 +1566,11 @@ parameters:
 			path: application/forms/Config/ResourceConfigForm.php
 
 		-
+			message: "#^Method Icinga\\\\Forms\\\\Config\\\\ResourceConfigForm\\:\\:edit\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
+			count: 1
+			path: application/forms/Config/ResourceConfigForm.php
+
+		-
 			message: "#^Method Icinga\\\\Forms\\\\Config\\\\ResourceConfigForm\\:\\:getValues\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: application/forms/Config/ResourceConfigForm.php
@@ -1572,6 +1582,11 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Forms\\\\Config\\\\ResourceConfigForm\\:\\:onRequest\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: application/forms/Config/ResourceConfigForm.php
+
+		-
+			message: "#^Method Icinga\\\\Forms\\\\Config\\\\ResourceConfigForm\\:\\:remove\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: application/forms/Config/ResourceConfigForm.php
 
@@ -1941,12 +1956,22 @@ parameters:
 			path: application/forms/Config/UserGroup/LdapUserGroupBackendForm.php
 
 		-
+			message: "#^Method Icinga\\\\Forms\\\\Config\\\\UserGroup\\\\LdapUserGroupBackendForm\\:\\:createGroupConfigElements\\(\\) has parameter \\$defaults with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: application/forms/Config/UserGroup/LdapUserGroupBackendForm.php
+
+		-
 			message: "#^Method Icinga\\\\Forms\\\\Config\\\\UserGroup\\\\LdapUserGroupBackendForm\\:\\:createHiddenUserConfigElements\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: application/forms/Config/UserGroup/LdapUserGroupBackendForm.php
 
 		-
 			message: "#^Method Icinga\\\\Forms\\\\Config\\\\UserGroup\\\\LdapUserGroupBackendForm\\:\\:createUserConfigElements\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: application/forms/Config/UserGroup/LdapUserGroupBackendForm.php
+
+		-
+			message: "#^Method Icinga\\\\Forms\\\\Config\\\\UserGroup\\\\LdapUserGroupBackendForm\\:\\:createUserConfigElements\\(\\) has parameter \\$defaults with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
 			count: 1
 			path: application/forms/Config/UserGroup/LdapUserGroupBackendForm.php
 
@@ -2217,6 +2242,11 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Forms\\\\Navigation\\\\NavigationConfigForm\\:\\:createElements\\(\\) has parameter \\$formData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: application/forms/Navigation/NavigationConfigForm.php
+
+		-
+			message: "#^Method Icinga\\\\Forms\\\\Navigation\\\\NavigationConfigForm\\:\\:delete\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: application/forms/Navigation/NavigationConfigForm.php
 
@@ -3001,6 +3031,16 @@ parameters:
 			path: library/Icinga/Application/Config.php
 
 		-
+			message: "#^Method Icinga\\\\Application\\\\Config\\:\\:__construct\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Application/Config.php
+
+		-
+			message: "#^Method Icinga\\\\Application\\\\Config\\:\\:current\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Application/Config.php
+
+		-
 			message: "#^Method Icinga\\\\Application\\\\Config\\:\\:current\\(\\) should return Icinga\\\\Data\\\\ConfigObject but returns mixed\\.$#"
 			count: 1
 			path: library/Icinga/Application/Config.php
@@ -3016,6 +3056,16 @@ parameters:
 			path: library/Icinga/Application/Config.php
 
 		-
+			message: "#^Method Icinga\\\\Application\\\\Config\\:\\:getConfigObject\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Application/Config.php
+
+		-
+			message: "#^Method Icinga\\\\Application\\\\Config\\:\\:getSection\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Application/Config.php
+
+		-
 			message: "#^Method Icinga\\\\Application\\\\Config\\:\\:getSection\\(\\) should return Icinga\\\\Data\\\\ConfigObject but returns mixed\\.$#"
 			count: 1
 			path: library/Icinga/Application/Config.php
@@ -3027,6 +3077,11 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Application\\\\Config\\:\\:saveIni\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: library/Icinga/Application/Config.php
+
+		-
+			message: "#^Method Icinga\\\\Application\\\\Config\\:\\:setSection\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Application/Config.php
 
@@ -3052,6 +3107,11 @@ parameters:
 
 		-
 			message: "#^Property Icinga\\\\Application\\\\Config\\:\\:\\$app type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: library/Icinga/Application/Config.php
+
+		-
+			message: "#^Property Icinga\\\\Application\\\\Config\\:\\:\\$config with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Application/Config.php
 
@@ -3391,6 +3451,21 @@ parameters:
 			path: library/Icinga/Application/Libraries/Library.php
 
 		-
+			message: "#^Method Icinga\\\\Application\\\\Logger\\:\\:__construct\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Application/Logger.php
+
+		-
+			message: "#^Method Icinga\\\\Application\\\\Logger\\:\\:create\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Application/Logger.php
+
+		-
+			message: "#^Method Icinga\\\\Application\\\\Logger\\:\\:createWriter\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Application/Logger.php
+
+		-
 			message: "#^Method Icinga\\\\Application\\\\Logger\\:\\:createWriter\\(\\) should return Icinga\\\\Application\\\\Logger\\\\LogWriter but returns object\\.$#"
 			count: 1
 			path: library/Icinga/Application/Logger.php
@@ -3441,6 +3516,11 @@ parameters:
 			path: library/Icinga/Application/Logger.php
 
 		-
+			message: "#^Method Icinga\\\\Application\\\\Logger\\\\LogWriter\\:\\:__construct\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Application/Logger/LogWriter.php
+
+		-
 			message: "#^Method Icinga\\\\Application\\\\Logger\\\\LogWriter\\:\\:log\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icinga/Application/Logger/LogWriter.php
@@ -3454,6 +3534,16 @@ parameters:
 			message: "#^Method Icinga\\\\Application\\\\Logger\\\\LogWriter\\:\\:log\\(\\) has parameter \\$severity with no type specified\\.$#"
 			count: 1
 			path: library/Icinga/Application/Logger/LogWriter.php
+
+		-
+			message: "#^Property Icinga\\\\Application\\\\Logger\\\\LogWriter\\:\\:\\$config with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Application/Logger/LogWriter.php
+
+		-
+			message: "#^Method Icinga\\\\Application\\\\Logger\\\\Writer\\\\FileWriter\\:\\:__construct\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Application/Logger/Writer/FileWriter.php
 
 		-
 			message: "#^Method Icinga\\\\Application\\\\Logger\\\\Writer\\\\FileWriter\\:\\:log\\(\\) has no return type specified\\.$#"
@@ -3481,6 +3571,11 @@ parameters:
 			path: library/Icinga/Application/Logger/Writer/FileWriter.php
 
 		-
+			message: "#^Method Icinga\\\\Application\\\\Logger\\\\Writer\\\\PhpWriter\\:\\:__construct\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Application/Logger/Writer/PhpWriter.php
+
+		-
 			message: "#^Method Icinga\\\\Application\\\\Logger\\\\Writer\\\\PhpWriter\\:\\:log\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icinga/Application/Logger/Writer/PhpWriter.php
@@ -3504,6 +3599,11 @@ parameters:
 			message: "#^Method Icinga\\\\Application\\\\Logger\\\\Writer\\\\StderrWriter\\:\\:log\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icinga/Application/Logger/Writer/StderrWriter.php
+
+		-
+			message: "#^Method Icinga\\\\Application\\\\Logger\\\\Writer\\\\SyslogWriter\\:\\:__construct\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Application/Logger/Writer/SyslogWriter.php
 
 		-
 			message: "#^Method Icinga\\\\Application\\\\Logger\\\\Writer\\\\SyslogWriter\\:\\:log\\(\\) has no return type specified\\.$#"
@@ -4076,6 +4176,16 @@ parameters:
 			path: library/Icinga/Authentication/AdmissionLoader.php
 
 		-
+			message: "#^Method Icinga\\\\Authentication\\\\AdmissionLoader\\:\\:loadRole\\(\\) has parameter \\$section with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Authentication/AdmissionLoader.php
+
+		-
+			message: "#^Method Icinga\\\\Authentication\\\\AdmissionLoader\\:\\:match\\(\\) has parameter \\$section with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Authentication/AdmissionLoader.php
+
+		-
 			message: "#^Method Icinga\\\\Authentication\\\\AdmissionLoader\\:\\:match\\(\\) has parameter \\$userGroups with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Authentication/AdmissionLoader.php
@@ -4097,6 +4207,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$parent of method Icinga\\\\Authentication\\\\Role\\:\\:setParent\\(\\) expects Icinga\\\\Authentication\\\\Role, mixed given\\.$#"
+			count: 1
+			path: library/Icinga/Authentication/AdmissionLoader.php
+
+		-
+			message: "#^Parameter \\#1 \\$restrictions of method Icinga\\\\Authentication\\\\Role\\:\\:setRestrictions\\(\\) expects array\\<string\\>, array\\<string, mixed\\> given\\.$#"
 			count: 1
 			path: library/Icinga/Authentication/AdmissionLoader.php
 
@@ -4137,6 +4252,11 @@ parameters:
 
 		-
 			message: "#^Property Icinga\\\\Authentication\\\\AdmissionLoader\\:\\:\\$roleConfig \\(Icinga\\\\Data\\\\ConfigObject\\) does not accept Icinga\\\\Application\\\\Config\\.$#"
+			count: 1
+			path: library/Icinga/Authentication/AdmissionLoader.php
+
+		-
+			message: "#^Property Icinga\\\\Authentication\\\\AdmissionLoader\\:\\:\\$roleConfig with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Authentication/AdmissionLoader.php
 
@@ -4346,6 +4466,11 @@ parameters:
 			path: library/Icinga/Authentication/User/DbUserBackend.php
 
 		-
+			message: "#^Method Icinga\\\\Authentication\\\\User\\\\ExternalBackend\\:\\:__construct\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Authentication/User/ExternalBackend.php
+
+		-
 			message: "#^Method Icinga\\\\Authentication\\\\User\\\\ExternalBackend\\:\\:getRemoteUserInformation\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Authentication/User/ExternalBackend.php
@@ -4432,6 +4557,11 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Authentication\\\\User\\\\UserBackend\\:\\:assertBackendsExist\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: library/Icinga/Authentication/User/UserBackend.php
+
+		-
+			message: "#^Method Icinga\\\\Authentication\\\\User\\\\UserBackend\\:\\:create\\(\\) has parameter \\$backendConfig with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Authentication/User/UserBackend.php
 
@@ -4661,7 +4791,17 @@ parameters:
 			path: library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php
 
 		-
+			message: "#^Method Icinga\\\\Authentication\\\\UserGroup\\\\LdapUserGroupBackend\\:\\:getActiveDirectoryDefaults\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php
+
+		-
 			message: "#^Method Icinga\\\\Authentication\\\\UserGroup\\\\LdapUserGroupBackend\\:\\:getMemberships\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php
+
+		-
+			message: "#^Method Icinga\\\\Authentication\\\\UserGroup\\\\LdapUserGroupBackend\\:\\:getOpenLdapDefaults\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php
 
@@ -4687,6 +4827,11 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Authentication\\\\UserGroup\\\\LdapUserGroupBackend\\:\\:retrieveUserName\\(\\) has parameter \\$dn with no type specified\\.$#"
+			count: 1
+			path: library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php
+
+		-
+			message: "#^Method Icinga\\\\Authentication\\\\UserGroup\\\\LdapUserGroupBackend\\:\\:setConfig\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php
 
@@ -4767,6 +4912,11 @@ parameters:
 
 		-
 			message: "#^Cannot call method setName\\(\\) on Icinga\\\\Authentication\\\\UserGroup\\\\DbUserGroupBackend\\|Icinga\\\\Authentication\\\\UserGroup\\\\LdapUserGroupBackend\\|null\\.$#"
+			count: 1
+			path: library/Icinga/Authentication/UserGroup/UserGroupBackend.php
+
+		-
+			message: "#^Method Icinga\\\\Authentication\\\\UserGroup\\\\UserGroupBackend\\:\\:create\\(\\) has parameter \\$backendConfig with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Authentication/UserGroup/UserGroupBackend.php
 
@@ -7031,42 +7181,12 @@ parameters:
 			path: library/Icinga/Crypt/AesCrypt.php
 
 		-
-			message: "#^Class Icinga\\\\Data\\\\ConfigObject implements generic interface ArrayAccess but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: library/Icinga/Data/ConfigObject.php
-
-		-
-			message: "#^Class Icinga\\\\Data\\\\ConfigObject implements generic interface Iterator but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: library/Icinga/Data/ConfigObject.php
-
-		-
 			message: "#^Method Icinga\\\\Data\\\\ConfigObject\\:\\:__construct\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Data/ConfigObject.php
 
 		-
 			message: "#^Method Icinga\\\\Data\\\\ConfigObject\\:\\:key\\(\\) should return string but returns int\\|string\\|null\\.$#"
-			count: 1
-			path: library/Icinga/Data/ConfigObject.php
-
-		-
-			message: "#^Method Icinga\\\\Data\\\\ConfigObject\\:\\:keys\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icinga/Data/ConfigObject.php
-
-		-
-			message: "#^Method Icinga\\\\Data\\\\ConfigObject\\:\\:merge\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: library/Icinga/Data/ConfigObject.php
-
-		-
-			message: "#^Method Icinga\\\\Data\\\\ConfigObject\\:\\:merge\\(\\) has parameter \\$data with no value type specified in iterable type array\\|Icinga\\\\Data\\\\ConfigObject\\.$#"
-			count: 1
-			path: library/Icinga/Data/ConfigObject.php
-
-		-
-			message: "#^Method Icinga\\\\Data\\\\ConfigObject\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Data/ConfigObject.php
 
@@ -7136,6 +7256,11 @@ parameters:
 			path: library/Icinga/Data/Db/DbConnection.php
 
 		-
+			message: "#^Method Icinga\\\\Data\\\\Db\\\\DbConnection\\:\\:__construct\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Data/Db/DbConnection.php
+
+		-
 			message: "#^Method Icinga\\\\Data\\\\Db\\\\DbConnection\\:\\:connect\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icinga/Data/Db/DbConnection.php
@@ -7172,6 +7297,11 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Data\\\\Db\\\\DbConnection\\:\\:fromResourceName\\(\\) has parameter \\$name with no type specified\\.$#"
+			count: 1
+			path: library/Icinga/Data/Db/DbConnection.php
+
+		-
+			message: "#^Method Icinga\\\\Data\\\\Db\\\\DbConnection\\:\\:getConfig\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Data/Db/DbConnection.php
 
@@ -7217,6 +7347,11 @@ parameters:
 
 		-
 			message: "#^Property Icinga\\\\Data\\\\Db\\\\DbConnection\\:\\:\\$config \\(Icinga\\\\Data\\\\ConfigObject\\) does not accept Icinga\\\\Data\\\\ConfigObject\\|null\\.$#"
+			count: 1
+			path: library/Icinga/Data/Db/DbConnection.php
+
+		-
+			message: "#^Property Icinga\\\\Data\\\\Db\\\\DbConnection\\:\\:\\$config with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Data/Db/DbConnection.php
 
@@ -8371,7 +8506,17 @@ parameters:
 			path: library/Icinga/Data/ResourceFactory.php
 
 		-
+			message: "#^Method Icinga\\\\Data\\\\ResourceFactory\\:\\:createResource\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Data/ResourceFactory.php
+
+		-
 			message: "#^Method Icinga\\\\Data\\\\ResourceFactory\\:\\:getResourceConfig\\(\\) has parameter \\$resourceName with no type specified\\.$#"
+			count: 1
+			path: library/Icinga/Data/ResourceFactory.php
+
+		-
+			message: "#^Method Icinga\\\\Data\\\\ResourceFactory\\:\\:getResourceConfig\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Data/ResourceFactory.php
 
@@ -9341,6 +9486,11 @@ parameters:
 			path: library/Icinga/Protocol/File/FileQuery.php
 
 		-
+			message: "#^Method Icinga\\\\Protocol\\\\File\\\\FileReader\\:\\:__construct\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Protocol/File/FileReader.php
+
+		-
 			message: "#^Method Icinga\\\\Protocol\\\\File\\\\FileReader\\:\\:fetchAll\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Protocol/File/FileReader.php
@@ -9522,6 +9672,11 @@ parameters:
 
 		-
 			message: "#^Left side of \\|\\| is always false\\.$#"
+			count: 1
+			path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+		-
+			message: "#^Method Icinga\\\\Protocol\\\\Ldap\\\\LdapConnection\\:\\:__construct\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Protocol/Ldap/LdapConnection.php
 
@@ -9727,6 +9882,11 @@ parameters:
 
 		-
 			message: "#^Property Icinga\\\\Protocol\\\\Ldap\\\\LdapConnection\\:\\:\\$bindPw \\(string\\) does not accept mixed\\.$#"
+			count: 1
+			path: library/Icinga/Protocol/Ldap/LdapConnection.php
+
+		-
+			message: "#^Property Icinga\\\\Protocol\\\\Ldap\\\\LdapConnection\\:\\:\\$config with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Protocol/Ldap/LdapConnection.php
 
@@ -10356,6 +10516,11 @@ parameters:
 			path: library/Icinga/Repository/IniRepository.php
 
 		-
+			message: "#^Method Icinga\\\\Repository\\\\IniRepository\\:\\:extractSectionName\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Repository/IniRepository.php
+
+		-
 			message: "#^Method Icinga\\\\Repository\\\\IniRepository\\:\\:extractSectionName\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: library/Icinga/Repository/IniRepository.php
@@ -10411,6 +10576,36 @@ parameters:
 			path: library/Icinga/Repository/IniRepository.php
 
 		-
+			message: "#^Method Icinga\\\\Repository\\\\IniRepository\\:\\:onDelete\\(\\) has parameter \\$old with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Repository/IniRepository.php
+
+		-
+			message: "#^Method Icinga\\\\Repository\\\\IniRepository\\:\\:onInsert\\(\\) has parameter \\$new with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Repository/IniRepository.php
+
+		-
+			message: "#^Method Icinga\\\\Repository\\\\IniRepository\\:\\:onInsert\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Repository/IniRepository.php
+
+		-
+			message: "#^Method Icinga\\\\Repository\\\\IniRepository\\:\\:onUpdate\\(\\) has parameter \\$new with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Repository/IniRepository.php
+
+		-
+			message: "#^Method Icinga\\\\Repository\\\\IniRepository\\:\\:onUpdate\\(\\) has parameter \\$old with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Repository/IniRepository.php
+
+		-
+			message: "#^Method Icinga\\\\Repository\\\\IniRepository\\:\\:onUpdate\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Repository/IniRepository.php
+
+		-
 			message: "#^Method Icinga\\\\Repository\\\\IniRepository\\:\\:update\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: library/Icinga/Repository/IniRepository.php
@@ -10418,6 +10613,11 @@ parameters:
 		-
 			message: "#^Method Icinga\\\\Repository\\\\IniRepository\\:\\:update\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
+			path: library/Icinga/Repository/IniRepository.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$config contains generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 2
 			path: library/Icinga/Repository/IniRepository.php
 
 		-
@@ -11061,7 +11261,22 @@ parameters:
 			path: library/Icinga/User/Preferences/PreferencesStore.php
 
 		-
+			message: "#^Method Icinga\\\\User\\\\Preferences\\\\PreferencesStore\\:\\:__construct\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/User/Preferences/PreferencesStore.php
+
+		-
+			message: "#^Method Icinga\\\\User\\\\Preferences\\\\PreferencesStore\\:\\:create\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/User/Preferences/PreferencesStore.php
+
+		-
 			message: "#^Method Icinga\\\\User\\\\Preferences\\\\PreferencesStore\\:\\:delete\\(\\) has parameter \\$preferenceKeys with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: library/Icinga/User/Preferences/PreferencesStore.php
+
+		-
+			message: "#^Method Icinga\\\\User\\\\Preferences\\\\PreferencesStore\\:\\:getStoreConfig\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/User/Preferences/PreferencesStore.php
 
@@ -11077,6 +11292,11 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\User\\\\Preferences\\\\PreferencesStore\\:\\:update\\(\\) has parameter \\$preferences with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: library/Icinga/User/Preferences/PreferencesStore.php
+
+		-
+			message: "#^Property Icinga\\\\User\\\\Preferences\\\\PreferencesStore\\:\\:\\$config with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/User/Preferences/PreferencesStore.php
 
@@ -11532,6 +11752,31 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Web\\\\Announcement\\\\AnnouncementIniRepository\\:\\:getEtag\\(\\) should return string but returns null\\.$#"
+			count: 1
+			path: library/Icinga/Web/Announcement/AnnouncementIniRepository.php
+
+		-
+			message: "#^Method Icinga\\\\Web\\\\Announcement\\\\AnnouncementIniRepository\\:\\:onInsertAnnouncement\\(\\) has parameter \\$new with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Web/Announcement/AnnouncementIniRepository.php
+
+		-
+			message: "#^Method Icinga\\\\Web\\\\Announcement\\\\AnnouncementIniRepository\\:\\:onInsertAnnouncement\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Web/Announcement/AnnouncementIniRepository.php
+
+		-
+			message: "#^Method Icinga\\\\Web\\\\Announcement\\\\AnnouncementIniRepository\\:\\:onUpdateAnnouncement\\(\\) has parameter \\$new with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Web/Announcement/AnnouncementIniRepository.php
+
+		-
+			message: "#^Method Icinga\\\\Web\\\\Announcement\\\\AnnouncementIniRepository\\:\\:onUpdateAnnouncement\\(\\) has parameter \\$old with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Web/Announcement/AnnouncementIniRepository.php
+
+		-
+			message: "#^Method Icinga\\\\Web\\\\Announcement\\\\AnnouncementIniRepository\\:\\:onUpdateAnnouncement\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Web/Announcement/AnnouncementIniRepository.php
 
@@ -12927,6 +13172,11 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Web\\\\Navigation\\\\Navigation\\:\\:addItem\\(\\) has parameter \\$properties with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: library/Icinga/Web/Navigation/Navigation.php
+
+		-
+			message: "#^Method Icinga\\\\Web\\\\Navigation\\\\Navigation\\:\\:createItem\\(\\) has parameter \\$properties with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Web/Navigation/Navigation.php
 
@@ -14701,6 +14951,11 @@ parameters:
 			path: library/Icinga/Web/Widget/Dashboard/Dashlet.php
 
 		-
+			message: "#^Method Icinga\\\\Web\\\\Widget\\\\Dashboard\\\\Dashlet\\:\\:fromIni\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: library/Icinga/Web/Widget/Dashboard/Dashlet.php
+
+		-
 			message: "#^Method Icinga\\\\Web\\\\Widget\\\\Dashboard\\\\Dashlet\\:\\:fromIni\\(\\) has parameter \\$title with no type specified\\.$#"
 			count: 1
 			path: library/Icinga/Web/Widget/Dashboard/Dashlet.php
@@ -14787,6 +15042,11 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Web\\\\Widget\\\\Dashboard\\\\Pane\\:\\:addDashlets\\(\\) has parameter \\$dashlets with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: library/Icinga/Web/Widget/Dashboard/Pane.php
+
+		-
+			message: "#^Method Icinga\\\\Web\\\\Widget\\\\Dashboard\\\\Pane\\:\\:fromIni\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
 			count: 1
 			path: library/Icinga/Web/Widget/Dashboard/Pane.php
 
@@ -18251,6 +18511,16 @@ parameters:
 			path: modules/monitoring/application/forms/Config/BackendConfigForm.php
 
 		-
+			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Forms\\\\Config\\\\BackendConfigForm\\:\\:isValidIdoInstance\\(\\) has parameter \\$resourceConfig with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: modules/monitoring/application/forms/Config/BackendConfigForm.php
+
+		-
+			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Forms\\\\Config\\\\BackendConfigForm\\:\\:isValidIdoSchema\\(\\) has parameter \\$resourceConfig with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: modules/monitoring/application/forms/Config/BackendConfigForm.php
+
+		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Forms\\\\Config\\\\BackendConfigForm\\:\\:onRequest\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/monitoring/application/forms/Config/BackendConfigForm.php
@@ -21331,6 +21601,11 @@ parameters:
 			path: modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php
 
 		-
+			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\MonitoringBackend\\:\\:__construct\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php
+
+		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\MonitoringBackend\\:\\:clearInstances\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php
@@ -21372,6 +21647,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$key of function array_key_exists expects int\\|string, string\\|null given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php
+
+		-
+			message: "#^Property Icinga\\\\Module\\\\Monitoring\\\\Backend\\\\MonitoringBackend\\:\\:\\$config with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php
 
@@ -21749,6 +22029,11 @@ parameters:
 			message: "#^Parameter \\#1 \\$endpoint of method Icinga\\\\Module\\\\Monitoring\\\\Command\\\\Transport\\\\ApiCommandTransport\\:\\:getUriFor\\(\\) expects string, null given\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Command/Transport/ApiCommandTransport.php
+
+		-
+			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Command\\\\Transport\\\\CommandTransport\\:\\:createTransport\\(\\) has parameter \\$config with generic class Icinga\\\\Data\\\\ConfigObject but does not specify its types\\: TValue$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Command/Transport/CommandTransport.php
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Command\\\\Transport\\\\CommandTransport\\:\\:send\\(\\) has no return type specified\\.$#"
@@ -24192,6 +24477,11 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Setup\\\\Forms\\\\LdapDiscoveryConfirmPage\\:\\:createElements\\(\\) has parameter \\$formData with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: modules/setup/application/forms/LdapDiscoveryConfirmPage.php
+
+		-
+			message: "#^Method Icinga\\\\Module\\\\Setup\\\\Forms\\\\LdapDiscoveryConfirmPage\\:\\:getResourceConfig\\(\\) return type with generic class Icinga\\\\Data\\\\ConfigObject does not specify its types\\: TValue$#"
 			count: 1
 			path: modules/setup/application/forms/LdapDiscoveryConfirmPage.php
 
