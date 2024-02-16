@@ -36,7 +36,7 @@ class UserTest extends BaseTestCase
         $this->assertEquals(
             new DateTimeZone($explicitTz),
             $user->getTimeZone(),
-            'User\'s timezone does not match the timezone set by himself'
+            'User\'s timezone does not match the timezone set by themself'
         );
     }
 
