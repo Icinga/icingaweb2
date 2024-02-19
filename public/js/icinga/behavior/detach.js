@@ -11,6 +11,8 @@
 
     function Detach(icinga) {
         Icinga.EventListener.call(this, icinga);
+
+        this.priority = 2;
     }
 
     Detach.prototype = new Icinga.EventListener();
