@@ -228,7 +228,8 @@ form.icinga-form {
   }
 }
 
-form.icinga-form select:not([multiple]) {
+form.icinga-form select:not([multiple]),
+form.icinga-form input[type="datetime-local"] {
   // Compensate inconsistent select height calculations
   line-height: 1em;
   height: 2.25em;
