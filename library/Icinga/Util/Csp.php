@@ -51,7 +51,11 @@ class Csp
             throw new RuntimeException('No nonce set for CSS');
         }
 
-        $response->setHeader('Content-Security-Policy', "style-src 'self' 'nonce-$csp->styleNonce';", true);
+        $response->setHeader(
+            'Content-Security-Policy',
+            "script-src 'self'; style-src 'self' 'nonce-$csp->styleNonce';",
+            true
+        );
     }
 
     /**
