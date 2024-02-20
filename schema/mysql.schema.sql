@@ -31,6 +31,80 @@ CREATE TABLE `icingaweb_user`(
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
+CREATE TABLE icingaweb_role (
+  id           int unsigned NOT NULL AUTO_INCREMENT,
+  parent_id    int unsigned DEFAULT NULL,
+  name         varchar(254) NOT NULL,
+  all_users    enum('n', 'y') NOT NULL DEFAULT 'n',
+  all_groups   enum('n', 'y') NOT NULL DEFAULT 'n',
+  unrestricted enum('n', 'y') NOT NULL DEFAULT 'n',
+  ctime        bigint unsigned NOT NULL,
+  mtime        bigint unsigned DEFAULT NULL,
+
+  PRIMARY KEY (id),
+  CONSTRAINT fk_icingaweb_role_parent_id FOREIGN KEY (parent_id)
+    REFERENCES icingaweb_role (id) ON DELETE SET NULL,
+  CONSTRAINT idx_icingaweb_role_name UNIQUE (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+CREATE TABLE icingaweb_role_user (
+  role_id   int unsigned NOT NULL,
+  user_name varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL,
+
+  PRIMARY KEY (role_id, user_name),
+  CONSTRAINT fk_icingaweb_role_user_role_id FOREIGN KEY (role_id)
+    REFERENCES icingaweb_role (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+CREATE TABLE icingaweb_role_group (
+  role_id    int unsigned NOT NULL,
+  group_name varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL,
+
+  PRIMARY KEY (role_id, group_name),
+  CONSTRAINT fk_icingaweb_role_group_role_id FOREIGN KEY (role_id)
+    REFERENCES icingaweb_role (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+CREATE TABLE icingaweb_permission (
+  id   int unsigned NOT NULL AUTO_INCREMENT,
+  name varchar(254) NOT NULL,
+
+  PRIMARY KEY (id),
+  CONSTRAINT idx_icingaweb_permission_name UNIQUE (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+CREATE TABLE icingaweb_role_permission (
+  role_id       int unsigned NOT NULL,
+  permission_id int unsigned NOT NULL,
+  allowed       enum('n', 'y') NOT NULL DEFAULT 'n',
+
+  PRIMARY KEY (role_id, permission_id),
+  CONSTRAINT fk_icingaweb_role_permission_role_id FOREIGN KEY (role_id)
+    REFERENCES icingaweb_role (id) ON DELETE CASCADE,
+  CONSTRAINT fk_icingaweb_role_permission_permission_id FOREIGN KEY (permission_id)
+    REFERENCES icingaweb_permission (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+CREATE TABLE icingaweb_restriction (
+  id   int unsigned NOT NULL AUTO_INCREMENT,
+  name varchar(254) NOT NULL,
+
+  PRIMARY KEY (id),
+  CONSTRAINT idx_icingaweb_restriction_name UNIQUE (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
+CREATE TABLE icingaweb_role_restriction (
+  role_id        int unsigned NOT NULL,
+  restriction_id int unsigned NOT NULL,
+  filter         text NOT NULL,
+
+  PRIMARY KEY (role_id, restriction_id),
+  CONSTRAINT fk_icingaweb_role_restriction_role_id FOREIGN KEY (role_id)
+    REFERENCES icingaweb_role (id) ON DELETE CASCADE,
+  CONSTRAINT fk_icingaweb_role_restriction_restriction_id FOREIGN KEY (restriction_id)
+    REFERENCES icingaweb_restriction (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
+
 CREATE TABLE `icingaweb_user_preference`(
   `username` varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL,
   `section`  varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
