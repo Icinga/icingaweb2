@@ -416,6 +416,7 @@
         } else {
             if (_this.icinga.loader.getLinkTargetFor($tr).attr('id') === 'col2') {
                 _this.icinga.ui.layout1col();
+                _this.icinga.history.pushCurrentState();
             }
         }
 
