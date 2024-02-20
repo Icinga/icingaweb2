@@ -311,10 +311,13 @@ In case you do not remember the token you can show it using the `icingacli`:
 icingacli setup token show
 ```
 
+### Create Database
 <!-- {% if debian or ubuntu %} -->
-You need to manually create a database and a database user prior to starting the web wizard.
+You need to manually create a database and a database user in MySQL or PostgreSQL prior to starting the web wizard.
 This is due to local security restrictions whereas the web wizard cannot create a database/user through
 a local unix domain socket.
+
+#### Set up a MySQL database:
 
 ```bash
 MariaDB [mysql]> CREATE DATABASE icingaweb2;
@@ -322,11 +325,38 @@ MariaDB [mysql]> CREATE DATABASE icingaweb2;
 MariaDB [mysql]> GRANT ALL ON icingaweb2.* TO icingaweb2@localhost IDENTIFIED BY 'CHANGEME';
 ```
 
-You may also create a separate administrative account with all privileges instead.
+#### Set up a PostgreSQL database:
 
+```bash
+cd /tmp
+sudo -u postgres psql -c "CREATE ROLE icingaweb2 WITH LOGIN PASSWORD 'CHANGEME'"
+sudo -u postgres createdb -O icingaweb2 -E UTF8 icingaweb2
+```
 !!! note
 
-    This is only required if you are using a local database as authentication type.
+    It is assumed here that your locale is set to utf-8, you may run into problems otherwise.
+
+Locate your `pg_hba.conf` configuration file and add the icingaweb2 user with `md5` as authentication
+method and restart the postgresql server. Common locations for `pg_hba.conf` are either
+`/etc/postgresql/*/main/pg_hba.conf` or `/var/lib/pgsql/data/pg_hba.conf`.
+
+```bash
+# icingaweb2
+local   icingaweb2      icingaweb2                            md5
+host    icingaweb2      icingaweb2      127.0.0.1/32          md5
+host    icingaweb2      icingaweb2      ::1/128               md5
+
+# "local" is for Unix domain socket connections only
+local   all         all                               ident
+# IPv4 local connections:
+host    all         all         127.0.0.1/32          ident
+# IPv6 local connections:
+host    all         all         ::1/128               ident
+```
+!!! note
+
+    You may also create a separate administrative account with all privileges instead.
+
 <!-- {% endif %} -->
 
 ### Start Web Setup <a id="start-web-setup-from-package"></a>
