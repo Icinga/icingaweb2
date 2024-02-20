@@ -221,7 +221,9 @@
             if (typeof $button === 'undefined') {
                 var $el;
 
-                if (typeof event.originalEvent !== 'undefined'
+                if (event.originalEvent && event.originalEvent.submitter) {
+                    $el = $(event.originalEvent.submitter);
+                } else if (typeof event.originalEvent !== 'undefined'
                     && typeof event.originalEvent.explicitOriginalTarget === 'object') { // Firefox
                     $el = $(event.originalEvent.explicitOriginalTarget);
                     _this.icinga.logger.debug('events/submitForm: Button is event.originalEvent.explicitOriginalTarget');
