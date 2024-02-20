@@ -327,10 +327,13 @@
             var rect = $flyout[0].getBoundingClientRect();
 
             if (rect.y + rect.height > window.innerHeight) {
+                $flyout.addClass('bottom-up');
                 $flyout.css({
-                    bottom: 0,
+                    bottom: window.innerHeight - ($target.offset().top + $target.find('> a')[0].offsetHeight),
                     top: 'auto'
                 });
+            } else {
+                $flyout.removeClass('bottom-up');
             }
         }, delay);
     };
