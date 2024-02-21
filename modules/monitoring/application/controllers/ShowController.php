@@ -6,6 +6,7 @@ namespace Icinga\Module\Monitoring\Controllers;
 use Icinga\Data\Filter\FilterEqual;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Monitoring\DataView\DataView;
 use Icinga\Security\SecurityException;
 use Icinga\Web\Url;
 
@@ -91,7 +92,7 @@ class ShowController extends Controller
             $this->applyRestriction('monitoring/filter/objects', $notifications);
             $this->view->notifications = $notifications;
             $this->setupLimitControl();
-            $this->setupPaginationControl($this->view->notifications);
+            $this->setupPaginationControl($notifications);
             $this->view->title = $contact->contact_name;
         }
 
