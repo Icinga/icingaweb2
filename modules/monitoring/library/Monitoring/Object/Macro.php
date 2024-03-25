@@ -69,9 +69,17 @@ class Macro
         try {
             $value = $object->$macro;
         } catch (Exception $e) {
-            $objectName = $object->getName();
-            if ($object instanceof Service) {
-                $objectName = $object->getHost()->getName() . '!' . $objectName;
+            if ($object instanceof MonitoredObject) {
+                $objectName = $object instanceof Service
+                    ? $object->getHost()->getName() . '!' . $object->getName()
+                    : $object->getName();
+            } else {
+                $host = 'host_name';
+                $service = 'service_description';
+
+                $objectName =  isset($object->$service)
+                    ? $object->$service . '!' . $object->$host
+                    : $object->$host;
             }
 
             $value = null;
