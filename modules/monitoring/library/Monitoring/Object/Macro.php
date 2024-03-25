@@ -62,7 +62,7 @@ class Macro
      */
     public static function resolveMacro($macro, $object)
     {
-        if (isset(self::$icingaMacros[$macro]) && isset($object->{self::$icingaMacros[$macro]})) {
+        if (isset(self::$icingaMacros[$macro], $object->{self::$icingaMacros[$macro]})) {
             return $object->{self::$icingaMacros[$macro]};
         }
 
@@ -83,9 +83,14 @@ class Macro
             }
 
             $value = null;
-            Logger::debug('Unable to resolve macro "%s" on object "%s". An error occured: %s', $macro, $objectName, $e);
+            Logger::debug(
+                'Unable to resolve macro "%s" on object "%s". An error occurred: %s',
+                $macro,
+                $objectName,
+                $e
+            );
         }
 
-        return $value !== null ? $value : $macro;
+        return $value ?? $macro;
     }
 }
