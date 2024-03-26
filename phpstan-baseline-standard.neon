@@ -431,6 +431,11 @@ parameters:
 			path: application/controllers/ConfigController.php
 
 		-
+			message: "#^Parameter \\#1 \\$query of method Icinga\\\\Web\\\\Controller\\:\\:setupPaginationControl\\(\\) expects Icinga\\\\Data\\\\QueryInterface, null given\\.$#"
+			count: 1
+			path: application/controllers/ConfigController.php
+
+		-
 			message: "#^Parameter \\#2 \\$name of class Icinga\\\\Application\\\\Modules\\\\Module constructor expects string, mixed given\\.$#"
 			count: 1
 			path: application/controllers/ConfigController.php
@@ -731,6 +736,11 @@ parameters:
 			path: application/controllers/ListController.php
 
 		-
+			message: "#^Parameter \\#1 \\$query of method Icinga\\\\Web\\\\Controller\\:\\:setupPaginationControl\\(\\) expects Icinga\\\\Data\\\\QueryInterface, null given\\.$#"
+			count: 1
+			path: application/controllers/ListController.php
+
+		-
 			message: "#^Method Icinga\\\\Controllers\\\\ManageUserDevicesController\\:\\:deleteAction\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: application/controllers/ManageUserDevicesController.php
@@ -947,6 +957,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$name of method Icinga\\\\Forms\\\\RepositoryForm\\:\\:remove\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: application/controllers/RoleController.php
+
+		-
+			message: "#^Parameter \\#1 \\$query of method Icinga\\\\Web\\\\Controller\\:\\:setupPaginationControl\\(\\) expects Icinga\\\\Data\\\\QueryInterface, null given\\.$#"
 			count: 1
 			path: application/controllers/RoleController.php
 
@@ -2552,6 +2567,11 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property object\\:\\:\\$permissions\\.$#"
+			count: 2
+			path: application/forms/Security/RoleForm.php
+
+		-
+			message: "#^Access to an undefined property object\\:\\:\\$refusals\\.$#"
 			count: 1
 			path: application/forms/Security/RoleForm.php
 
@@ -2562,16 +2582,6 @@ parameters:
 
 		-
 			message: "#^Access to an undefined property object\\:\\:\\$users\\.$#"
-			count: 1
-			path: application/forms/Security/RoleForm.php
-
-		-
-			message: "#^Access to an undefined property object\\|object\\:\\:\\$permissions\\.$#"
-			count: 1
-			path: application/forms/Security/RoleForm.php
-
-		-
-			message: "#^Access to an undefined property object\\|object\\:\\:\\$refusals\\.$#"
 			count: 1
 			path: application/forms/Security/RoleForm.php
 
@@ -9046,7 +9056,7 @@ parameters:
 			path: library/Icinga/File/Pdf.php
 
 		-
-			message: "#^Cannot access offset 0 on array\\<mixed, mixed\\>\\|false\\.$#"
+			message: "#^Cannot access offset 0 on array\\<mixed\\>\\|false\\.$#"
 			count: 1
 			path: library/Icinga/File/Storage/LocalFileStorage.php
 
@@ -11402,11 +11412,6 @@ parameters:
 
 		-
 			message: "#^Do\\-while loop condition is always false\\.$#"
-			count: 1
-			path: library/Icinga/Util/DirectoryIterator.php
-
-		-
-			message: "#^Parameter \\#1 \\$array of class ArrayIterator constructor expects array\\<int, string\\>, array\\<int, string\\>\\|false given\\.$#"
 			count: 1
 			path: library/Icinga/Util/DirectoryIterator.php
 
@@ -16856,11 +16861,6 @@ parameters:
 			path: modules/migrate/library/Migrate/Config/UserDomainMigration.php
 
 		-
-			message: "#^Parameter \\#2 \\$filter of static method Icinga\\\\Data\\\\Filter\\\\Filter\\:\\:where\\(\\) expects string, int\\|string given\\.$#"
-			count: 3
-			path: modules/migrate/library/Migrate/Config/UserDomainMigration.php
-
-		-
 			message: "#^Property Icinga\\\\Module\\\\Migrate\\\\Config\\\\UserDomainMigration\\:\\:\\$fromDomain has no type specified\\.$#"
 			count: 1
 			path: modules/migrate/library/Migrate/Config/UserDomainMigration.php
@@ -17662,6 +17662,11 @@ parameters:
 
 		-
 			message: "#^Method Icinga\\\\Module\\\\Monitoring\\\\Controllers\\\\ShowController\\:\\:contactAction\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: modules/monitoring/application/controllers/ShowController.php
+
+		-
+			message: "#^Parameter \\#1 \\$query of method Icinga\\\\Web\\\\Controller\\:\\:setupPaginationControl\\(\\) expects Icinga\\\\Data\\\\QueryInterface, null given\\.$#"
 			count: 1
 			path: modules/monitoring/application/controllers/ShowController.php
 
@@ -23916,6 +23921,11 @@ parameters:
 			path: modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php
 
 		-
+			message: "#^Parameter \\#1 \\$query of method Icinga\\\\Web\\\\Controller\\:\\:setupPaginationControl\\(\\) expects Icinga\\\\Data\\\\QueryInterface, null given\\.$#"
+			count: 1
+			path: modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php
+
+		-
 			message: "#^Parameter \\#2 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
 			count: 1
 			path: modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php
@@ -25542,6 +25552,11 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$filename of function file_exists expects string, mixed given\\.$#"
+			count: 1
+			path: modules/test/application/clicommands/PhpCommand.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of function file_exists expects string, string\\|false given\\.$#"
 			count: 1
 			path: modules/test/application/clicommands/PhpCommand.php
 
