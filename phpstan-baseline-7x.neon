@@ -401,11 +401,6 @@ parameters:
 			path: library/Icinga/Web/Session/PhpSession.php
 
 		-
-			message: "#^Parameter \\#2 \\$timestamp of function date expects int, int\\|false given\\.$#"
-			count: 1
-			path: library/Icinga/Web/Widget/Chart/HistoryColorGrid.php
-
-		-
 			message: "#^Parameter \\#1 \\$str of function strtolower expects string, mixed given\\.$#"
 			count: 1
 			path: library/Icinga/Web/Widget/SortBox.php
