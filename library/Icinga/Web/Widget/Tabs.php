@@ -75,7 +75,7 @@ EOT;
     /**
      * This is where single tabs added to this container will be stored
      *
-     * @var array
+     * @var array<string, Tab>
      */
     private $tabs = array();
 
@@ -419,7 +419,7 @@ EOT;
     /**
      * Return all tabs contained in this tab panel
      *
-     * @return array
+     * @return array<string, Tab>
      */
     public function getTabs()
     {

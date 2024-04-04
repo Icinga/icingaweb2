@@ -31,7 +31,7 @@ class Tab extends AbstractWidget
     /**
      * Default values for widget properties
      *
-     * @var array
+     * @var ?string
      */
     private $name = null;
 
@@ -122,7 +122,7 @@ class Tab extends AbstractWidget
     }
 
     /**
-     * @param mixed $name
+     * @param string $name
      */
     public function setName($name)
     {
@@ -130,7 +130,7 @@ class Tab extends AbstractWidget
     }
 
     /**
-     * @return mixed
+     * @return ?string
      */
     public function getName()
     {
@@ -162,7 +162,7 @@ class Tab extends AbstractWidget
     }
 
     /**
-     * @param mixed $title
+     * @param string $title
      */
     public function setTitle($title)
     {
