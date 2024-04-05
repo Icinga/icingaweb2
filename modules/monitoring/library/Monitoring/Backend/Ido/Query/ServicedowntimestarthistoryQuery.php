@@ -104,7 +104,7 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
             );
         }
         $this->select->where(
-            "sdh.was_started = 1 AND sdh.was_cancelled = 0"
+            "sdh.was_started = 1"
         );
 
         $this->joinedVirtualTables['downtimehistory'] = true;
