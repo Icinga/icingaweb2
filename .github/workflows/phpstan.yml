@@ -1,0 +1,18 @@
+name: PHPStan
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  phpstan:
+    uses: icinga/github-actions/.github/workflows/phpstan.yml@main
+    with:
+      phpExtensions: ldap
+      dependencies: |
+        {
+          "/usr/share/icingaweb2-modules/x509"      : "https://github.com/Icinga/icingaweb2-module-x509.git",
+          "/usr/share/icingaweb2-modules/icingadb"  : "https://github.com/Icinga/icingadb-web.git",
+          "/usr/share/icingaweb2-modules/pdfexport" : "https://github.com/Icinga/icingaweb2-module-pdfexport.git"
+        }
