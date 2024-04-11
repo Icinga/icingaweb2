@@ -511,11 +511,7 @@ class RoleForm extends RepositoryForm
         }
 
         if ($this->getIdentifier() && ($newName = $this->getValue('name')) !== $this->getIdentifier()) {
-            $this->repository->update(
-                $this->getBaseTable(),
-                ['parent' => $newName],
-                Filter::where('parent', $this->getIdentifier())
-            );
+            $this->onRenameSuccess($this->getIdentifier(), $newName);
         }
 
         if (ConfigFormEventsHook::runOnSuccess($this) === false) {
@@ -524,6 +520,17 @@ class RoleForm extends RepositoryForm
                 . ' See logs for details'
             ));
         }
+    }
+
+    /**
+     * Update child roles of role $oldName, set their parent to $newName
+     *
+     * @param string $oldName
+     * @param string $newName
+     */
+    protected function onRenameSuccess(string $oldName, ?string $newName): void
+    {
+        $this->repository->update($this->getBaseTable(), ['parent' => $newName], Filter::where('parent', $oldName));
     }
 
     /**
