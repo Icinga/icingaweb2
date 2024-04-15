@@ -67,6 +67,8 @@ class Controller extends ModuleActionController
      * @param   string  $message    Exception message or exception format string
      * @param   mixed   ...$arg     Format string argument
      *
+     * @return never
+     *
      * @throws  HttpBadRequestException
      */
     public function httpBadRequest($message)
@@ -79,6 +81,8 @@ class Controller extends ModuleActionController
      *
      * @param   string  $message    Exception message or exception format string
      * @param   mixed   ...$arg     Format string argument
+     *
+     * @return never
      *
      * @throws  HttpNotFoundException
      */
