@@ -13,6 +13,8 @@
         Icinga.EventListener.call(this, icinga);
         this.on('rendered', '.container', this.onRendered, this);
 
+        this.priority = 1;
+
         // store the modification state of all input fields
         this.inputs = new WeakMap();
     };
@@ -76,13 +78,13 @@
             return null;
         }
 
-        var origFocus = document.activeElement;
-        var containerId = $container.attr('id');
-        if ($container.has(origFocus).length
-            && $(origFocus).length
-            && ! $(origFocus).hasClass('autofocus')
-            && $(origFocus).closest('form').length
-            && $(origFocus).not(':input[type=button], :input[type=submit], :input[type=reset]').length
+        const origFocus = document.activeElement;
+        const containerId = $container.attr('id');
+        if ($container[0].contains(origFocus)
+            && origFocus.form
+            && ! origFocus.matches(
+                'input[type=submit], input[type=reset], input[type=button], .autofocus, .autosubmit:not(:hover)'
+            )
         ) {
             this.icinga.logger.debug('Not changing content for ' + containerId + ' form has focus');
             return null;

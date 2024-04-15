@@ -65,6 +65,11 @@
         this.behaviors = {};
 
         /**
+         * Site behaviors which hook into the rendering process
+         */
+        this.renderHooks = [];
+
+        /**
          * Loaded modules
          */
         this.modules = {};
@@ -94,9 +99,20 @@
             this.loader     = new Icinga.Loader(this);
             this.events     = new Icinga.Events(this);
             this.history    = new Icinga.History(this);
-            var _this = this;
-            $.each(Icinga.Behaviors, function(name, Behavior) {
-                _this.behaviors[name.toLowerCase()] = new Behavior(_this);
+
+            // Initialize all available behaviors
+            for (const name in Icinga.Behaviors) {
+                const behavior = new Icinga.Behaviors[name](this);
+                this.behaviors[name.toLowerCase()] = behavior;
+                if (behavior.renderHook) {
+                    this.renderHooks.push(behavior);
+                }
+            }
+
+            // Sort render hooks by priority
+            this.renderHooks.sort(function (a, b) {
+                // Treats all hooks without a priority as "greater", meaning they will be applied last
+                return (a.priority || 999) - (b.priority || 999);
             });
 
             this.timezone.initialize();
