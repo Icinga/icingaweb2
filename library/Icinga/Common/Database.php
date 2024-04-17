@@ -4,6 +4,7 @@
 namespace Icinga\Common;
 
 use Icinga\Application\Config as IcingaConfig;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use ipl\Sql\Config as SqlConfig;
 use ipl\Sql\Connection;
@@ -18,17 +19,19 @@ trait Database
     /**
      * Get a connection to the Icinga Web database
      *
+     * @param ?ConfigObject $params Optional custom database specification
+     *
      * @return Connection
      *
      * @throws \Icinga\Exception\ConfigurationError
      */
-    protected function getDb(): Connection
+    protected function getDb(ConfigObject $params = null): Connection
     {
-        if (! $this->hasDb()) {
+        if ($params === null && ! $this->hasDb()) {
             throw new LogicException('Please check if a db instance exists at all');
         }
 
-        $config = new SqlConfig(ResourceFactory::getResourceConfig(
+        $config = new SqlConfig($params ?? ResourceFactory::getResourceConfig(
             IcingaConfig::app()->get('global', 'config_resource')
         ));
         if ($config->db === 'mysql') {
