@@ -97,6 +97,11 @@ class WebWizard extends Wizard implements SetupWizard
         'icingaweb_group',
         'icingaweb_group_membership',
         'icingaweb_user',
+        'icingaweb_role',
+        'icingaweb_role_user',
+        'icingaweb_role_group',
+        'icingaweb_role_permission',
+        'icingaweb_role_restriction',
         'icingaweb_user_preference',
         'icingaweb_rememberme',
         'icingaweb_schema'
@@ -514,11 +519,13 @@ class WebWizard extends Wizard implements SetupWizard
         $authType = $pageData['setup_authentication_type']['type'];
         $setup->addStep(
             new AuthenticationStep(array(
-                'adminAccountData'  => $adminAccountData,
-                'backendConfig'     => $pageData['setup_authentication_backend'],
-                'resourceName'      => $authType === 'db' ? $pageData['setup_auth_db_resource']['name'] : (
+                'adminAccountData'    => $adminAccountData,
+                'backendConfig'       => $pageData['setup_authentication_backend'],
+                'resourceName'        => $authType === 'db' ? $pageData['setup_auth_db_resource']['name'] : (
                     $authType === 'ldap' ? $pageData['setup_ldap_resource']['name'] : null
-                )
+                ),
+                'rolesResourceConfig' => $pageData['setup_auth_db_resource']
+                    ?? $pageData['setup_config_db_resource'] ?? null
             ))
         );
 
