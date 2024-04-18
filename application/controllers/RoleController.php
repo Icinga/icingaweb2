@@ -5,21 +5,28 @@ namespace Icinga\Controllers;
 
 use Exception;
 use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Application\Config;
 use Icinga\Authentication\AdmissionLoader;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\RolesConfig;
 use Icinga\Authentication\User\DomainAwareInterface;
+use Icinga\Common\Database;
 use Icinga\Data\Selectable;
 use Icinga\Exception\NotFoundError;
+use Icinga\Forms\Security\RoleDbForm;
 use Icinga\Forms\Security\RoleForm;
+use Icinga\Model\Role;
 use Icinga\Repository\Repository;
 use Icinga\Security\SecurityException;
 use Icinga\User;
 use Icinga\Web\Controller\AuthBackendController;
 use Icinga\Web\View\PrivilegeAudit;
+use Icinga\Web\Widget\RolesTable;
 use Icinga\Web\Widget\SingleValueSearchControl;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
+use ipl\Web\Compat\SearchControls;
+use ipl\Web\Filter\QueryString;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
 
@@ -30,6 +37,9 @@ use ipl\Web\Widget\Link;
  */
 class RoleController extends AuthBackendController
 {
+    use Database;
+    use SearchControls;
+
     public function init()
     {
         $this->assertPermission('config/access-control/roles');
@@ -59,20 +69,70 @@ class RoleController extends AuthBackendController
     public function listAction()
     {
         $this->createListTabs()->activate('role/list');
-        $this->view->roles = (new RolesConfig())
-            ->select();
 
-        $sortAndFilterColumns = [
-            'name'        => $this->translate('Name'),
-            'users'       => $this->translate('Users'),
-            'groups'      => $this->translate('Groups'),
-            'permissions' => $this->translate('Permissions')
-        ];
+        if (Config::app()->get('global', 'store_roles_in_db')) {
+            $db = $this->getDb();
+            $query = Role::on($db)->with('parent');
 
-        $this->setupFilterControl($this->view->roles, $sortAndFilterColumns, ['name']);
-        $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->roles);
-        $this->setupSortControl($sortAndFilterColumns, $this->view->roles, ['name']);
+            $limitControl = $this->createLimitControl();
+            $sortControl = $this->createSortControl($query, ['name' => $this->translate('Name')]);
+            $paginationControl = $this->createPaginationControl($query);
+            $searchBar = $this->createSearchBar($query, [$limitControl->getLimitParam(), $sortControl->getSortParam()]);
+
+            if ($searchBar->hasBeenSent() && ! $searchBar->isValid()) {
+                if ($searchBar->hasBeenSubmitted()) {
+                    $filter = QueryString::parse((string) $this->params);
+                } else {
+                    $this->addControl($searchBar);
+                    $this->sendMultipartUpdate();
+
+                    return;
+                }
+            } else {
+                $filter = $searchBar->getFilter();
+            }
+
+            $query->filter($filter);
+
+            $this->addControl($paginationControl);
+            $this->addControl($limitControl);
+            $this->addControl($sortControl);
+            $this->addControl($searchBar);
+
+            $this->addControl(Html::tag(
+                'a',
+                [
+                    'href'             => Url::fromPath('role/add'),
+                    'data-base-target' => '_next',
+                    'class'            => 'button-link icon-plus'
+                ],
+                $this->translate('Create a New Role')
+            ));
+
+            if ($query->count()) {
+                $this->addContent((new RolesTable())->setRoles($query));
+            } else {
+                $this->addContent(Html::tag('p', $this->translate('No roles found.')));
+            }
+
+            if (! $searchBar->hasBeenSubmitted() && $searchBar->hasBeenSent()) {
+                $this->sendMultipartUpdate();
+            }
+        } else {
+            $this->view->roles = (new RolesConfig())->select();
+
+            $sortAndFilterColumns = [
+                'name'        => $this->translate('Name'),
+                'users'       => $this->translate('Users'),
+                'groups'      => $this->translate('Groups'),
+                'permissions' => $this->translate('Permissions')
+            ];
+
+            $this->setupFilterControl($this->view->roles, $sortAndFilterColumns, ['name']);
+            $this->setupLimitControl();
+            $this->setupPaginationControl($this->view->roles);
+            $this->setupSortControl($sortAndFilterColumns, $this->view->roles, ['name']);
+        }
     }
 
     /**
@@ -82,9 +142,8 @@ class RoleController extends AuthBackendController
      */
     public function addAction()
     {
-        $role = new RoleForm();
+        $role = $this->prepareForm();
         $role->setRedirectUrl('__CLOSE__');
-        $role->setRepository(new RolesConfig());
         $role->setSubmitLabel($this->translate('Create Role'));
         $role->add()->handleRequest();
 
@@ -99,9 +158,8 @@ class RoleController extends AuthBackendController
     public function editAction()
     {
         $name = $this->params->getRequired('role');
-        $role = new RoleForm();
+        $role = $this->prepareForm();
         $role->setRedirectUrl('__CLOSE__');
-        $role->setRepository(new RolesConfig());
         $role->setSubmitLabel($this->translate('Update Role'));
         $role->edit($name);
 
@@ -120,9 +178,8 @@ class RoleController extends AuthBackendController
     public function removeAction()
     {
         $name = $this->params->getRequired('role');
-        $role = new RoleForm();
+        $role = $this->prepareForm();
         $role->setRedirectUrl('__CLOSE__');
-        $role->setRepository(new RolesConfig());
         $role->setSubmitLabel($this->translate('Remove Role'));
         $role->remove($name);
 
@@ -388,5 +445,17 @@ class RoleController extends AuthBackendController
         }
 
         return $tabs;
+    }
+
+    /**
+     * Create a form for role addition/modification/deletion and set the storage
+     *
+     * @return RoleForm
+     */
+    private function prepareForm(): RoleForm
+    {
+        return Config::app()->get('global', 'store_roles_in_db')
+            ? (new RoleDbForm())->setDb($this->getDb())
+            : (new RoleForm())->setRepository(new RolesConfig());
     }
 }

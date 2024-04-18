@@ -29,14 +29,16 @@ Option                   | Description
 show\_stacktraces        | **Optional.** Whether to show debug stacktraces. Defaults to `0`.
 module\_path             | **Optional.** Specifies the directories where modules can be installed. Multiple directories must be separated with colons.
 config\_resource         | **Required.** Specify a defined [resource](04-Resources.md#resources-configuration-database) name.
+store\_roles\_in\_db     | **Optional.** Whether to store roles used for access control in the database specified above. Defaults to `0`.
 
 
-Example for storing the user preferences in the database resource `icingaweb_db`:
+Example for storing the user preferences and roles in the database resource `icingaweb_db`:
 
 ```
 [global]
 show_stacktraces = "0"
 config_resource = "icingaweb_db"
+store_roles_in_db = "1"
 module_path = "/usr/share/icingaweb2/modules"
 ```
 
