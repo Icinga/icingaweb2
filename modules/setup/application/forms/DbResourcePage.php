@@ -129,12 +129,18 @@ class DbResourcePage extends Form
             $connectionError = $e;
         }
 
-        if ($connectionError === null && array_search('icinga_instances', $db->listTables(), true) !== false) {
+        if ($connectionError === null
+            && (
+                in_array('icinga_instances', $db->listTables(), true)
+                || in_array('icingadb_instance', $db->listTables(), true)
+            )
+        ) {
             $this->warning($this->translate(
-                'The database you\'ve configured to use for Icinga Web 2 seems to be the one of Icinga. Please be aware'
-                . ' that this database configuration is supposed to be used for Icinga Web 2\'s configuration and that'
-                . ' it is highly recommended to not mix different schemas in the same database. If this is intentional,'
-                . ' you can skip the validation and ignore this warning. If not, please provide a different database.'
+                'The database you\'ve configured to use for Icinga Web 2 seems to be the one of Icinga'
+                . ' OR Icingadb. Please be aware that this database configuration is supposed to be used for'
+                . ' Icinga Web 2\'s configuration and that it is highly recommended to not mix different schemas'
+                . ' in the same database. If this is intentional, you can skip the validation and ignore this'
+                . ' warning. If not, please provide a different database.'
             ));
             $state = false;
         }
