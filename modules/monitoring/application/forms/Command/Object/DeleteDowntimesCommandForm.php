@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
+use Icinga\Module\Monitoring\Exception\CommandTransportException;
 use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 
@@ -75,7 +76,15 @@ class DeleteDowntimesCommandForm extends CommandForm
                 ->setDowntimeName($downtime->name)
                 ->setAuthor($this->Auth()->getUser()->getUsername())
                 ->setIsService(isset($downtime->service_description));
-            $this->getTransport($this->request)->send($delDowntime);
+
+            try {
+                $this->getTransport($this->request)->send($delDowntime);
+            } catch (CommandTransportException $e) {
+                // Negative lookahead because there may be messages from other endpoints with different status codes
+                if (preg_match('/Can\'t send external Icinga command: (?!404)/', $e->getMessage())) {
+                    throw $e;
+                }
+            }
         }
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {
