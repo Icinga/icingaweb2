@@ -1020,7 +1020,9 @@ class LdapConnection implements Selectable, Inspectable
                 }
             } else {
                 ldap_parse_result($ds, $results, $errno, $dn, $errmsg, $refs, $controlsReturned);
-                $cookie = $controlsReturned[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'];
+                if (isset($controlsReturned[LDAP_CONTROL_PAGEDRESULTS])) {
+                    $cookie = $controlsReturned[LDAP_CONTROL_PAGEDRESULTS]['value']['cookie'];
+                }
             }
 
             ldap_free_result($results);
