@@ -130,6 +130,16 @@ Therefore, you have to manually enable this policy explicitly and accept the ris
 the Icinga Web modules. Icinga Web and all it's components listed below, on the other hand, fully support strict CSP. If
 that's not the case, please submit an issue on GitHub in the respective repositories.
 
+To enable the strict content security policy navigate to **Configuration > Application** and toggle "Enable strict content security policy",
+or set the `use_strict_csp` in the `config.ini`.
+
+```
+vim /etc/icingaweb2/config.ini
+
+[security]
+use_strict_csp = "1"
+```
+
 Here is a list of all Icinga Web components that are capable of strict CSP.
 
 | Name                              | CSP supported since                                                                       |
