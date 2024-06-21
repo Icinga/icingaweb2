@@ -5,7 +5,7 @@ use Icinga\Web\Navigation\Navigation;
 /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
 
 $navigation = new Navigation();
-$notes = trim($object->notes);
+$notes = trim($object->notes ?? '');
 
 $links = $object->getNotesUrls();
 if (! empty($links)) {
