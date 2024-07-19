@@ -216,8 +216,9 @@
             req.progressTimer = progressTimer;
 
             if ($autoSubmittedBy) {
-                if ($autoSubmittedBy.closest('.controls').length) {
-                    $('.content', req.$target).addClass('impact');
+                const $closestControls = $autoSubmittedBy.closest('.controls');
+                if ($closestControls.length && $closestControls[0].parentNode === req.$target[0]) {
+                    $(':scope > .content', req.$target).addClass('impact');
                 } else {
                     req.$target.addClass('impact');
                 }
@@ -965,7 +966,7 @@
             if (req.$target.hasClass('impact')) {
                 req.$target.removeClass('impact');
             } else {
-                var $impact = req.$target.find('.impact').first();
+                const $impact = req.$target.find(':scope > .content.impact').first();
                 if ($impact.length) {
                     $impact.removeClass('impact');
                 }
