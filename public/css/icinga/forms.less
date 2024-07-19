@@ -426,7 +426,8 @@ form.inline {
 
 // Disabled inputs
 
-.icinga-controls .toggle-switch.disabled {
+.icinga-controls .toggle-switch.disabled,
+.icinga-controls input[type="checkbox"]:checked + .toggle-switch.disabled {
   cursor: default;
 
   & > .toggle-slider {
