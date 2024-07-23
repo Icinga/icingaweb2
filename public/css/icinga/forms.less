@@ -410,7 +410,7 @@ form.inline {
 .icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider {
   background-color: @icinga-blue;
   border: 1px solid;
-  border-color: @icinga-blue;
+  border-color: transparent;
 }
 
 .icinga-controls input[type="checkbox"]:focus + .toggle-switch .toggle-slider {
@@ -425,19 +425,12 @@ form.inline {
 }
 
 // Disabled inputs
-
-.icinga-controls .toggle-switch.disabled,
-.icinga-controls input[type="checkbox"]:checked + .toggle-switch.disabled {
+.icinga-controls input[type="checkbox"]:disabled + .toggle-switch {
+  opacity: .5;
   cursor: default;
 
-  & > .toggle-slider {
-    background-color: @gray-light;
-    border-color: @gray-light;
-
-    &:before {
-      background-color: @gray-lighter;
-      border-color: @gray-light;
-    }
+  .toggle-slider:before {
+    background: @gray-light;
   }
 }
 
