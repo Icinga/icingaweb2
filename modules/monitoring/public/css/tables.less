@@ -248,13 +248,13 @@
     -moz-transform: none; /* Firefox collapses border spacing due to the above */
   }
 
-  tr[href].active {
-    background-color: @tr-active-color;
-  }
-
   tr[href]:hover {
     background-color: @tr-hover-color;
     cursor: pointer;
+  }
+
+  tr[href].active {
+    background-color: @tr-active-color;
   }
 
   tr[href].state-outdated:not(:hover):not(.active) td:not(.state-col) {
