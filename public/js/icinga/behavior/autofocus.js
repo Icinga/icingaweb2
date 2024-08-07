@@ -14,11 +14,13 @@
     Autofocus.prototype = new Icinga.EventListener();
 
     Autofocus.prototype.onRendered = function(e) {
-        setTimeout(function() {
-            if (document.activeElement === e.target
+        const _this = e.data.self;
+        const target = e.target;
+        setTimeout(() => {
+            if (document.activeElement === target
                 || document.activeElement === document.body
             ) {
-                e.data.self.icinga.ui.focusElement($(e.target).find('.autofocus'));
+                _this.icinga.ui.focusElement($(target).find('.autofocus'));
             }
         }, 0);
     };
