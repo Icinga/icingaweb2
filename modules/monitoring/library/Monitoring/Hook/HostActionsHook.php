@@ -34,7 +34,7 @@ abstract class HostActionsHook extends ObjectActionsHook
      * </code>
      *
      * One might also provide ssh:// or rdp:// urls if equipped with fitting
-     * (safe) URL handlers for his browser(s).
+     * (safe) URL handlers for their browser(s).
      *
      * TODO: I'd love to see some kind of a Link/LinkSet object implemented
      *       for this and similar hooks.
