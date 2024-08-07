@@ -621,11 +621,6 @@ parameters:
 			path: modules/setup/library/Setup/Web/Form/Validator/TokenValidator.php
 
 		-
-			message: "#^Parameter \\#1 \\$filename of function file_exists expects string, string\\|false given\\.$#"
-			count: 1
-			path: modules/test/application/clicommands/PhpCommand.php
-
-		-
 			message: "#^Parameter \\#1 \\$callback of function ob_start expects callable\\(\\)\\: mixed, null given\\.$#"
 			count: 1
 			path: modules/translation/library/Translation/Cli/ArrayToTextTableHelper.php

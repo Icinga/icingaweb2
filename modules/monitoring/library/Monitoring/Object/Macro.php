@@ -62,22 +62,35 @@ class Macro
      */
     public static function resolveMacro($macro, $object)
     {
-        if (isset(self::$icingaMacros[$macro]) && isset($object->{self::$icingaMacros[$macro]})) {
+        if (isset(self::$icingaMacros[$macro], $object->{self::$icingaMacros[$macro]})) {
             return $object->{self::$icingaMacros[$macro]};
         }
 
         try {
             $value = $object->$macro;
         } catch (Exception $e) {
-            $objectName = $object->getName();
-            if ($object instanceof Service) {
-                $objectName = $object->getHost()->getName() . '!' . $objectName;
+            if ($object instanceof MonitoredObject) {
+                $objectName = $object instanceof Service
+                    ? $object->getHost()->getName() . '!' . $object->getName()
+                    : $object->getName();
+            } else {
+                $host = 'host_name';
+                $service = 'service_description';
+
+                $objectName =  isset($object->$service)
+                    ? $object->$service . '!' . $object->$host
+                    : $object->$host;
             }
 
             $value = null;
-            Logger::debug('Unable to resolve macro "%s" on object "%s". An error occured: %s', $macro, $objectName, $e);
+            Logger::debug(
+                'Unable to resolve macro "%s" on object "%s". An error occurred: %s',
+                $macro,
+                $objectName,
+                $e
+            );
         }
 
-        return $value !== null ? $value : $macro;
+        return $value ?? $macro;
     }
 }
