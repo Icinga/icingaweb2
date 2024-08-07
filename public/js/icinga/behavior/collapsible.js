@@ -424,7 +424,9 @@
             if (this.isDetails(collapsible)) {
                 collapsible.open = false;
             } else {
-                collapsible.style.cssText = 'display: block; height: ' + toHeight + 'px; padding-bottom: 0';
+                collapsible.style.display = 'block';
+                collapsible.style.height = toHeight + 'px';
+                collapsible.style.paddingBottom = '0px';
 
                 if ('hasExternalToggle' in collapsible.dataset) {
                     document.getElementById(collapsible.dataset.toggleElement).classList.add('collapsed');
@@ -445,7 +447,9 @@
             if (this.isDetails(collapsible)) {
                 collapsible.open = true;
             } else {
-                collapsible.style.cssText = '';
+                collapsible.style.display = '';
+                collapsible.style.height = '';
+                collapsible.style.paddingBottom = '';
 
                 if ('hasExternalToggle' in collapsible.dataset) {
                     document.getElementById(collapsible.dataset.toggleElement).classList.remove('collapsed');
