@@ -303,11 +303,21 @@ final class MigrationManager implements Countable
 
         /** @var DbMigrationHook $hook */
         foreach (Hook::all('DbMigration') as $hook) {
-            if (empty($hook->getMigrations())) {
-                continue;
+            try {
+                if (empty($hook->getMigrations())) {
+                    continue;
+                }
+
+                $this->pendingMigrations[$hook->getModuleName()] = $hook;
+            } catch (\Throwable $e) {
+                //TODO: Show this message in the UI as well (list of failed modules)?
+                Logger::error(
+                    'Failed to load database migrations for %s: %s',
+                    $hook->getModuleName(),
+                    $e->getMessage()
+                );
             }
 
-            $this->pendingMigrations[$hook->getModuleName()] = $hook;
         }
 
         ksort($this->pendingMigrations);
