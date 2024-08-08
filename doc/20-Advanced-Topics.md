@@ -130,6 +130,16 @@ Therefore, you have to manually enable this policy explicitly and accept the ris
 the Icinga Web modules. Icinga Web and all it's components listed below, on the other hand, fully support strict CSP. If
 that's not the case, please submit an issue on GitHub in the respective repositories.
 
+To enable the strict content security policy navigate to **Configuration > Application** and toggle "Enable strict content security policy",
+or set the `use_strict_csp` in the `config.ini`.
+
+```
+vim /etc/icingaweb2/config.ini
+
+[security]
+use_strict_csp = "1"
+```
+
 Here is a list of all Icinga Web components that are capable of strict CSP.
 
 | Name                              | CSP supported since                                                                       |
@@ -138,6 +148,7 @@ Here is a list of all Icinga Web components that are capable of strict CSP.
 | Icinga Reporting                  | [v1.0.0](https://github.com/Icinga/icingaweb2-module-reporting/releases/tag/v1.0.0)       |
 | Icinga IDO Reports                | [v0.10.1](https://github.com/Icinga/icingaweb2-module-idoreports/releases/tag/v0.10.1)    |
 | Icinga Cube                       | [v1.3.2](https://github.com/Icinga/icingaweb2-module-cube/releases/tag/v1.3.2)            |
+| Icinga Director                   | [v1.11.1](https://github.com/Icinga/icingaweb2-module-director/releases/tag/v1.11.1)      |
 | Icinga Business Process Modeling  | [v2.5.0](https://github.com/Icinga/icingaweb2-module-businessprocess/releases/tag/v2.5.0) |
 | Icinga Certificate Monitoring     | [v1.3.0](https://github.com/Icinga/icingaweb2-module-x509/releases/tag/v1.3.0)            |
 | Icinga PDF Export                 | [v0.10.2](https://github.com/Icinga/icingaweb2-module-pdfexport/releases/tag/v0.10.2)     |
