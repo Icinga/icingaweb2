@@ -147,15 +147,17 @@ class Dashboard extends AbstractWidget
                 if ($dashboardPane !== null) {
                     $key = $dashboardPane->getLabel();
                 }
+                $pane = null;
                 if ($this->hasPane($key)) {
-                    $panes[$key] = $this->getPane($key);
+                    $pane = $this->getPane($key);
                 } else {
-                    $panes[$key] = new Pane($key);
+                    $pane = new Pane($key);
+                    $panes[$key] = $pane;
                     $panes[$key]->setTitle($part->title);
                 }
-                $panes[$key]->setUserWidget();
+                $pane->setUserWidget();
                 if ((bool) $part->get('disabled', false) === true) {
-                    $panes[$key]->setDisabled();
+                    $pane->setDisabled();
                 }
             } else {
                 list($paneName, $dashletName) = explode('.', $key, 2);
