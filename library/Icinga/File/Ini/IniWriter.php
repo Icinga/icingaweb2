@@ -69,7 +69,7 @@ class IniWriter
      */
     public function render()
     {
-        if (file_exists($this->filename)) {
+        if ($this->filename !== null && file_exists($this->filename)) {
             $oldconfig = Config::fromIni($this->filename);
             $content = trim(file_get_contents($this->filename));
         } else {
