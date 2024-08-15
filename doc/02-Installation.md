@@ -404,7 +404,7 @@ You will need to install certain dependencies depending on your setup:
 * LDAP PHP library when using Active Directory or LDAP for authentication
 * MariaDB/MySQL or PostgreSQL PHP libraries
 
-The following example installs Apache2 as web server, * MariaDB as RDBMS and uses the PHP adapter for MariaDB/MySQL.
+The following example installs Apache2 as web server, MariaDB as RDBMS and uses the PHP adapter for MariaDB/MySQL.
 Adopt the package requirements to your needs (e.g. adding ldap for authentication) and distribution.
 
 Example for RHEL/CentOS/Fedora:
