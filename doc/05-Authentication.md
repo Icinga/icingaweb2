@@ -1,6 +1,6 @@
 # Authentication <a id="authentication"></a>
 
-You can authenticate against Active Directory, LDAP, a MySQL or a PostgreSQL database or delegate
+You can authenticate against Active Directory, LDAP, a MariaDB, MySQL or PostgreSQL database or delegate
 authentication to the web server.
 
 Authentication methods can be chained to set up fallback authentication methods
@@ -136,7 +136,7 @@ resource = my_ad
 
 ## Database Authentication <a id="authentication-configuration-db-authentication"></a>
 
-If you want to authenticate against a MySQL or a PostgreSQL database, you have to define a
+If you want to authenticate against a MariaDB, MySQL or PostgreSQL database, you have to define a
 [database resource](04-Resources.md#resources-configuration-database) which will be referenced as data source for the database
 authentication method.
 
@@ -289,5 +289,5 @@ asks that backend to authenticate the user with the sAMAccountName "jdoe".
 ### SQL Database <a id="domain-aware-auth-sqldb"></a>
 
 When the user "jdoe@icinga.com" logs in, Icinga Web 2 walks through all configured authentication backends until it
-finds one which is responsible for that user -- e.g. a MySQL backend (SQL database backends aren't domain-aware). Then
+finds one which is responsible for that user -- e.g. a MariaDB or MySQL backend (SQL database backends aren't domain-aware). Then
 Icinga Web 2 asks that backend to authenticate the user with the username "jdoe@icinga.com".

@@ -3,7 +3,7 @@
 Preferences are settings a user can set for their account only,
 for example the language and time zone.
 
-Preferences can be stored either in a MySQL or in a PostgreSQL database. The database must be configured.
+Preferences can be stored either in a MariaDB, MySQL or in a PostgreSQL database. The database must be configured.
 
 ## Configuration <a id="preferences-configuration"></a>
 

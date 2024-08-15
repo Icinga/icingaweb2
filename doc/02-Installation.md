@@ -36,6 +36,7 @@ thoroughly.
   monitor your infrastructure
 * A web server, e.g. Apache or Nginx
 * PHP version ≥ 7.2
+* MariaDB
 
 ### Optional Requirements
 
@@ -401,9 +402,9 @@ You will need to install certain dependencies depending on your setup:
 * The [pdfexport](https://github.com/Icinga/icingaweb2-module-pdfexport) module (≥0.10) is required for the
   export to PDF
 * LDAP PHP library when using Active Directory or LDAP for authentication
-* MySQL or PostgreSQL PHP libraries
+* MariaDB/MySQL or PostgreSQL PHP libraries
 
-The following example installs Apache2 as web server, MySQL as RDBMS and uses the PHP adapter for MySQL.
+The following example installs Apache2 as web server, MariaDB as RDBMS and uses the PHP adapter for MariaDB/MySQL.
 Adopt the package requirements to your needs (e.g. adding ldap for authentication) and distribution.
 
 Example for RHEL/CentOS/Fedora:
