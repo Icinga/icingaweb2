@@ -91,6 +91,8 @@
                 return false;
             }
 
+            define('Icinga', [], () =>  Icinga);
+
             this.timezone   = new Icinga.Timezone();
             this.utils      = new Icinga.Utils(this);
             this.logger     = new Icinga.Logger(this);

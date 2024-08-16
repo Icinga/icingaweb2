@@ -238,7 +238,7 @@ class JavaScript
         try {
             $dependencies = $match[2] ? Json::decode($match[2]) : [];
             foreach ($dependencies as &$dependencyName) {
-                if ($dependencyName === 'exports') {
+                if ($dependencyName === 'exports' || $dependencyName === 'Icinga') {
                     // exports is a special keyword and doesn't need optimization
                     continue;
                 }
