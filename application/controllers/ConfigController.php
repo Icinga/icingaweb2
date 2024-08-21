@@ -129,13 +129,14 @@ class ConfigController extends Controller
                 'url'   => 'config/modules'
             ))
             ->activate('modules');
-        $this->view->modules = Icinga::app()->getModuleManager()->select()
+        $modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')
             ->order('enabled', 'desc')
             ->order('installed', 'asc')
             ->order('name');
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->modules);
+        $this->setupPaginationControl($modules);
+        $this->view->modules = $modules;
         $this->view->title = $this->translate('Modules');
     }
 
