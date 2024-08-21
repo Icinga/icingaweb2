@@ -173,6 +173,10 @@ class FilterExpression extends Filter
             return false;
         }
 
+        if (trim($this->expression) === '*') {
+            return $rowValue !== null;
+        }
+
         if ($this->caseSensitive) {
             $expression = $this->expression;
         } else {
