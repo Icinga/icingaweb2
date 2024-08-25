@@ -33,6 +33,8 @@ class GeneralConfigPage extends Form
         $appConfigForm->createElements($formData);
         $appConfigForm->removeElement('global_module_path');
         $appConfigForm->removeElement('global_config_resource');
+        $appConfigForm->removeElement('global_store_roles_in_db');
+        $this->addElement('hidden', 'global_store_roles_in_db', ['disabled' => true, 'value' => 1]);
         $this->addElements($appConfigForm->getElements());
 
         $loggingConfigForm = new LoggingConfigForm();
