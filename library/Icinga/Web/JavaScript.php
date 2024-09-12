@@ -219,6 +219,8 @@ class JavaScript
             return $js;
         }
 
+        $basePath = realpath($basePath);
+
         try {
             $assetName = $match[1] ? Json::decode($match[1]) : '';
             if (! $assetName) {
@@ -245,14 +247,35 @@ class JavaScript
                     continue;
                 }
 
-                if (preg_match('~^((?:\.\.?/)+)*(.*)~', $dependencyName, $natch)) {
+                $fileExtension = '.js';
+                $dirname = dirname($filePath);
+                if (preg_match('~^((?:\.\.?/)+)*.*?(\.\w+)?$~', $dependencyName, $natch)) {
+                    if (! empty($natch[1])) {
+                        $dependencyName = substr($dependencyName, strlen($natch[1]));
+                        $dirname = realpath(join(DIRECTORY_SEPARATOR, [$dirname, $natch[1]]));
+                        if (! str_starts_with($dirname, $basePath)) {
+                            Logger::warning(
+                                'Relative directory "%s" for dependency "%s" used in "%s" is outside base path "%s"',
+                                $dirname,
+                                $dependencyName,
+                                $filePath,
+                                $basePath
+                            );
+                        }
+                    }
+
+                    if (! empty($natch[2])) {
+                        $dependencyName = substr($dependencyName, 0, -strlen($natch[2]));
+                        $fileExtension = $natch[2];
+                    }
+                }
+
+                $dependencyPath = join(DIRECTORY_SEPARATOR, [$dirname, $dependencyName . $fileExtension]);
+                if (file_exists($dependencyPath)) {
                     $dependencyName = join(DIRECTORY_SEPARATOR, array_filter([
                         $packageName,
-                        ltrim(substr(
-                            realpath(join(DIRECTORY_SEPARATOR, [dirname($filePath), $natch[1]])),
-                            strlen(realpath($basePath))
-                        ), DIRECTORY_SEPARATOR),
-                        $natch[2]
+                        trim(substr($dirname, strlen($basePath)), DIRECTORY_SEPARATOR . ' '),
+                        $dependencyName
                     ]));
                 }
             }
