@@ -243,14 +243,26 @@ class JavaScript
                     continue;
                 }
 
-                if (preg_match('~^((?:\.\.?/)+)*(.*)~', $dependencyName, $natch)) {
+                $fileExtension = '.js';
+                $dirname = dirname($filePath);
+                if (preg_match('~^((?:\.\.?/)+)*.*?(\.\w+)?$~', $dependencyName, $natch)) {
+                    if (! empty($natch[1])) {
+                        $dependencyName = substr($dependencyName, strlen($natch[1]));
+                        $dirname = realpath(join(DIRECTORY_SEPARATOR, [$dirname, $natch[1]]));
+                    }
+
+                    if (! empty($natch[2])) {
+                        $dependencyName = substr($dependencyName, 0, -strlen($natch[2]));
+                        $fileExtension = $natch[2];
+                    }
+                }
+
+                $dependencyPath = join(DIRECTORY_SEPARATOR, [$dirname, $dependencyName . $fileExtension]);
+                if (file_exists($dependencyPath)) {
                     $dependencyName = join(DIRECTORY_SEPARATOR, array_filter([
                         $packageName,
-                        ltrim(substr(
-                            realpath(join(DIRECTORY_SEPARATOR, [dirname($filePath), $natch[1]])),
-                            strlen(realpath($basePath))
-                        ), DIRECTORY_SEPARATOR),
-                        $natch[2]
+                        trim(substr($dirname, strlen(realpath($basePath))), DIRECTORY_SEPARATOR . ' '),
+                        $dependencyName
                     ]));
                 }
             }
