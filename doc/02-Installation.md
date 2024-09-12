@@ -168,10 +168,10 @@ yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.r
 ```bash
 rpm --import https://packages.icinga.com/icinga.key
 
-zypper ar https://packages.icinga.com/subscription/sles/ICINGA-release.repo
-zypper ref
+wget https://packages.icinga.com/subscription/sles/ICINGA-release.repo -O /etc/zypp/repos.d/ICINGA-release.repo
 ```
 
+Now edit your `/etc/zypp/repos.d/ICINGA-release.repo` file with your credentials.
 You need to additionally enable a couple of SLES repositories to fulfill dependencies:
 
 ```bash
@@ -181,6 +181,8 @@ SUSEConnect -p sle-module-desktop-applications/$VERSION_ID/x86_64
 SUSEConnect -p sle-module-development-tools/$VERSION_ID/x86_64
 SUSEConnect -p sle-module-web-scripting/$VERSION_ID/x86_64
 SUSEConnect -p PackageHub/$VERSION_ID/x86_64
+
+zypper ref
 ```
 <!-- {% endif %} -->
 
