@@ -11,7 +11,7 @@ use ipl\Web\Widget\Icon;
     <a class="dashboard-link" href="<?= $this->url($item->getUrl(), $item->getUrlParameters()) ?>"<?= $this->propertiesToString($item->getAttributes()) ?>>
         <div class="link-icon">
         <?php
-            if (substr($item->getUrl()->getPath(), 0, 9) === 'icingadb/') {
+            if (substr($item->getUrl()->getPath(), 0, 9) === 'icingadb/' || substr($item->getUrl()->getPath(), 0, 13) === 'dependencies/') {
                 echo new Icon($item->getIcon() ?: 'share', [ 'aria-hidden' => 1]);
             } else {
                 echo $this->icon($item->getIcon() ?: 'forward', null, array('aria-hidden' => true));
