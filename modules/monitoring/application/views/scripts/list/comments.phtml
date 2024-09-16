@@ -59,3 +59,8 @@
     </div>
 <?php endif ?>
 </div>
+<?php if (! $this->compact): ?>
+    <div class="monitoring-statusbar dont-print">
+        <?= $this->render('list/components/selectioninfo.phtml') ?>
+    </div>
+<?php endif ?>
