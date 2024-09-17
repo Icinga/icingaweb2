@@ -96,7 +96,15 @@ use ipl\Web\Widget\StateBadge;
             </div>
         </div>
 
-        <?php $mm = MigrationManager::instance(); if ($mm->hasPendingMigrations()): ?>
+        <?php
+            $mm = MigrationManager::instance();
+            $hasPending = false;
+            try {
+                $hasPending = $mm->hasPendingMigrations();
+            } catch (Throwable $e) {
+                // suppress
+            }
+        if ($hasPending): ?>
             <div class="pending-migrations clearfix">
                 <h2><?= $this->translate('Pending Migrations') ?></h2>
                 <table class="name-value-table migrations">
