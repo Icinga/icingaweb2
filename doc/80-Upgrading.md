@@ -2,11 +2,13 @@
 
 Specific version upgrades are described below. Please note that upgrades are incremental. An upgrade from
 v2.6 to v2.8 requires to follow the instructions for v2.7 too.
+
 ## Upgrading to Icinga Web 2.12.2
 
 **Framework changes affecting third-party code**
 
 * `Icinga\Module\Monitoring\Hook\PluginOutputHook` When rendering the Icinga check output, the output and long_output fields are now concatenated with a newline (\n) before any post-processing occurs, such as through a PluginOutputHook
+
 ## Upgrading to Icinga Web 2.12.0
 
 **Database Schema**
