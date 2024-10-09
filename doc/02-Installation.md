@@ -91,7 +91,6 @@ apt-get update
 ### CentOS Repository <a id="centos-repository"></a>
 
 ```bash
-rpm --import https://packages.icinga.com/icinga.key
 wget https://packages.icinga.com/centos/ICINGA-release.repo -O /etc/yum.repos.d/ICINGA-release.repo
 ```
 
@@ -124,7 +123,6 @@ yum install centos-release-scl
     Don't forget to fill in the username and password section with your credentials in the local .repo file.
 
 ```bash
-rpm --import https://packages.icinga.com/icinga.key
 wget https://packages.icinga.com/subscription/rhel/ICINGA-release.repo -O /etc/yum.repos.d/ICINGA-release.repo
 ```
 
@@ -166,8 +164,6 @@ yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.r
     Don't forget to fill in the username and password section with your credentials in the local .repo file.
 
 ```bash
-rpm --import https://packages.icinga.com/icinga.key
-
 zypper ar https://packages.icinga.com/subscription/sles/ICINGA-release.repo
 zypper ref
 ```
@@ -195,7 +191,6 @@ SUSEConnect -p PackageHub/$VERSION_ID/x86_64
     Don't forget to fill in the username and password section with your credentials in the local .repo file.
 
 ```bash
-rpm --import https://packages.icinga.com/icinga.key
 wget https://packages.icinga.com/subscription/amazon/ICINGA-release.repo -O /etc/yum.repos.d/ICINGA-release.repo
 ```
 
