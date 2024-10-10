@@ -1,5 +1,6 @@
 <?php
 
+use ipl\Stdlib\Str;
 use ipl\Web\Widget\Icon;
 
 ?>
@@ -11,7 +12,7 @@ use ipl\Web\Widget\Icon;
     <a class="dashboard-link" href="<?= $this->url($item->getUrl(), $item->getUrlParameters()) ?>"<?= $this->propertiesToString($item->getAttributes()) ?>>
         <div class="link-icon">
         <?php
-            if (substr($item->getUrl()->getPath(), 0, 9) === 'icingadb/') {
+            if (Str::startsWith($item->getIcon(), 'fa-') || substr($item->getUrl()->getPath(), 0, 9) === 'icingadb/') {
                 echo new Icon($item->getIcon() ?: 'share', [ 'aria-hidden' => 1]);
             } else {
                 echo $this->icon($item->getIcon() ?: 'forward', null, array('aria-hidden' => true));

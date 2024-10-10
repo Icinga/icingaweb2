@@ -5,6 +5,7 @@ namespace Icinga\Web\View;
 
 use Icinga\Web\Url;
 use Icinga\Exception\ProgrammingError;
+use ipl\Web\Widget\Icon;
 
 $view = $this;
 
@@ -106,6 +107,12 @@ $this->addHelperFunction('icon', function ($img, $title = null, array $propertie
         }
     } elseif ($ariaHidden === null) {
         $properties['aria-hidden'] = 'true';
+    }
+
+    if (! isset($view::LEGACY_ICONS[$img]) || substr($img, 0, 3) === 'fa-') {
+        // This may not be reached, as some legacy icons have equal names as fontawesome ones.
+        // Though, this is a legacy helper, so in that case one gets legacy icons...
+        return new Icon($img, $properties);
     }
 
     if (isset($properties['class'])) {
