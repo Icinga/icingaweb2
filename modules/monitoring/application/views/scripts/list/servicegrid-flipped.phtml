@@ -7,6 +7,7 @@ if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs ?>
     <?= $this->problemToggle ?>
+    <?= $this->sortByDnsToggle ?>
     <div class="sort-controls-container">
         <?= $this->sortBox ?>
     </div>
@@ -36,6 +37,9 @@ foreach ($pivotData as $serviceDescription => $_) {
                 )
             ) ?></th>
             <?php foreach ($pivotHeader['cols'] as $hostName => $hostAlias): ?>
+                <?php if (strpos($hostName, "GROUP:") === 0): ?>
+                    <th class="groupheader rotate-45"><div><span><?= $hostAlias ?></span></div></th>
+                <?php continue; endif; ?>
             <th class="rotate-45"><div><span><?= $this->qlink(
                 $this->ellipsis($hostAlias, 24),
                 Url::fromPath('monitoring/list/services')->addFilter(
@@ -71,6 +75,9 @@ foreach ($pivotData as $serviceDescription => $_) {
                 );
             ?></th>
         <?php foreach (array_keys($pivotHeader['cols']) as $hostName): ?>
+            <?php if (strpos($hostName, "GROUP:") === 0): ?>
+                <td class="groupheader" style="border-left: 1px solid darkgray;"></td>
+            <?php continue; endif; ?>
             <td><?php
             $service = $pivotData[$serviceDescription][$hostName];
             if ($service === null): ?>
