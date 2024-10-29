@@ -425,7 +425,7 @@ If you want to show a specific Dashboard you can enforce this onto the kiosk use
 
 Replace Remote_Addr with the IP where the kiosk user is accessing the Web to restrict further usage from other IPs.
 
-Using the `REMOTE_USER` variable also requires adding an external backend to `/etc/icingaweb2/authentication.ini`, as shown [here](05-Authentication.md#external-authentication-)
+Using the `REMOTE_USER` variable also requires adding an external backend to `authentication.ini`, as shown [here](05-Authentication.md#external-authentication-)
 
 
 ## Customizing the Landing Page <a id="landing-page"></a>
