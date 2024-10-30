@@ -425,6 +425,9 @@ If you want to show a specific Dashboard you can enforce this onto the kiosk use
 
 Replace Remote_Addr with the IP where the kiosk user is accessing the Web to restrict further usage from other IPs.
 
+Using the `REMOTE_USER` variable also requires adding an external backend to `authentication.ini`, as shown [here](05-Authentication.md#external-authentication-)
+
+
 ## Customizing the Landing Page <a id="landing-page"></a>
 
 The default landing page of `dashboard` can be customized using the environment variable `ICINGAWEB_LANDING_PAGE`.
