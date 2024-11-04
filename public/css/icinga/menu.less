@@ -264,12 +264,12 @@
       border-left: 1px solid @gray-light;
       content: "";
       display: block;
-      height: 1.1em;
-      width: 1.1em;
+      height: calc(~"1em + 2px");
+      width: calc(~"1em + 2px");
       position: absolute;
-      top: 1em;
-      left: -.6em;
-      z-index: -1;
+      top: calc(~"1em + 1px");
+      left: calc(~"-.5em - 2px");
+      z-index: 11;
     }
 
     &.bottom-up:after {
