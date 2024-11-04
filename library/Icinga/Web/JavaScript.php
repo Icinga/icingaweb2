@@ -213,57 +213,67 @@ class JavaScript
      */
     public static function optimizeDefine($js, $filePath, $basePath, $packageName)
     {
-        if (! preg_match(self::DEFINE_RE, $js, $match) || strpos($js, 'define.amd') !== false) {
+        if (! preg_match_all(self::DEFINE_RE, $js, $matches, PREG_SET_ORDER) || strpos($js, 'define.amd') !== false) {
             return $js;
         }
 
-        try {
-            $assetName = $match[1] ? Json::decode($match[1]) : '';
-            if (! $assetName) {
-                $assetName = explode('.', basename($filePath))[0];
-            }
-
-            $assetName = join(DIRECTORY_SEPARATOR, array_filter([
-                $packageName,
-                ltrim(substr(dirname($filePath), strlen($basePath)), DIRECTORY_SEPARATOR),
-                $assetName
-            ]));
-
-            $assetName = Json::encode($assetName, JSON_UNESCAPED_SLASHES);
-        } catch (JsonDecodeException $_) {
-            $assetName = $match[1];
-            Logger::debug('Can\'t optimize name of "%s". Are single quotes used instead of double quotes?', $filePath);
-        }
-
-        try {
-            $dependencies = $match[2] ? Json::decode($match[2]) : [];
-            foreach ($dependencies as &$dependencyName) {
-                if ($dependencyName === 'exports') {
-                    // exports is a special keyword and doesn't need optimization
-                    continue;
+        foreach ($matches as $match) {
+            try {
+                $assetName = $match[1] ? Json::decode($match[1]) : '';
+                if (! $assetName) {
+                    $assetName = explode('.', basename($filePath))[0];
                 }
 
-                if (preg_match('~^((?:\.\.?/)+)*(.*)~', $dependencyName, $natch)) {
-                    $dependencyName = join(DIRECTORY_SEPARATOR, array_filter([
-                        $packageName,
-                        ltrim(substr(
-                            realpath(join(DIRECTORY_SEPARATOR, [dirname($filePath), $natch[1]])),
-                            strlen(realpath($basePath))
-                        ), DIRECTORY_SEPARATOR),
-                        $natch[2]
-                    ]));
-                }
+                $assetName = join(DIRECTORY_SEPARATOR, array_filter([
+                    $packageName,
+                    ltrim(substr(dirname($filePath), strlen($basePath)), DIRECTORY_SEPARATOR),
+                    $assetName
+                ]));
+
+                $assetName = Json::encode($assetName, JSON_UNESCAPED_SLASHES);
+            } catch (JsonDecodeException $_) {
+                $assetName = $match[1];
+                Logger::debug(
+                    'Can\'t optimize name of "%s". Are single quotes used instead of double quotes?',
+                    $filePath
+                );
             }
 
-            $dependencies = Json::encode($dependencies, JSON_UNESCAPED_SLASHES);
-        } catch (JsonDecodeException $_) {
-            $dependencies = $match[2];
-            Logger::debug(
-                'Can\'t optimize dependencies of "%s". Are single quotes used instead of double quotes?',
-                $filePath
-            );
+            try {
+                $dependencies = $match[2] ? Json::decode($match[2]) : [];
+                foreach ($dependencies as &$dependencyName) {
+                    if ($dependencyName === 'exports') {
+                        // exports is a special keyword and doesn't need optimization
+                        continue;
+                    }
+
+                    if (preg_match('~^((?:\.\.?/)+)*(.*)~', $dependencyName, $natch)) {
+                        $dependencyName = join(DIRECTORY_SEPARATOR, array_filter([
+                            $packageName,
+                            ltrim(
+                                substr(
+                                    realpath(join(DIRECTORY_SEPARATOR, [dirname($filePath), $natch[1]])),
+                                    strlen(realpath($basePath))
+                                ),
+                                DIRECTORY_SEPARATOR
+                            ),
+                            $natch[2]
+                        ]));
+                    }
+                }
+
+                $dependencies = Json::encode($dependencies, JSON_UNESCAPED_SLASHES);
+            } catch (JsonDecodeException $_) {
+                $dependencies = $match[2];
+                Logger::debug(
+                    'Can\'t optimize dependencies of "%s". Are single quotes used instead of double quotes?',
+                    $filePath
+                );
+            }
+
+            $js = str_replace($match[0], sprintf("define(%s, %s, %s", $assetName, $dependencies, $match[3]), $js);
         }
 
-        return str_replace($match[0], sprintf("define(%s, %s, %s", $assetName, $dependencies, $match[3]), $js);
+        return $js;
     }
 }
