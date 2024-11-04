@@ -59,7 +59,7 @@ class RoleController extends AuthBackendController
     public function listAction()
     {
         $this->createListTabs()->activate('role/list');
-        $this->view->roles = (new RolesConfig())
+        $roles = (new RolesConfig())
             ->select();
 
         $sortAndFilterColumns = [
@@ -69,10 +69,11 @@ class RoleController extends AuthBackendController
             'permissions' => $this->translate('Permissions')
         ];
 
-        $this->setupFilterControl($this->view->roles, $sortAndFilterColumns, ['name']);
+        $this->setupFilterControl($roles, $sortAndFilterColumns, ['name']);
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->roles);
-        $this->setupSortControl($sortAndFilterColumns, $this->view->roles, ['name']);
+        $this->setupPaginationControl($roles);
+        $this->setupSortControl($sortAndFilterColumns, $roles, ['name']);
+        $this->view->roles = $roles;
     }
 
     /**

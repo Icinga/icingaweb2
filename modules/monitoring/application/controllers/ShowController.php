@@ -91,7 +91,7 @@ class ShowController extends Controller
             $this->applyRestriction('monitoring/filter/objects', $notifications);
             $this->view->notifications = $notifications;
             $this->setupLimitControl();
-            $this->setupPaginationControl($this->view->notifications);
+            $this->setupPaginationControl($notifications);
             $this->view->title = $contact->contact_name;
         }
 
