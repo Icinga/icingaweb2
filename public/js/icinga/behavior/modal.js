@@ -92,31 +92,39 @@
      * @returns {boolean}
      */
     Modal.prototype.onFormSubmit = function(event) {
-        var _this = event.data.self;
-        var $form = $(event.currentTarget).closest('form');
-        var $modal = $form.closest('#modal');
+        const _this = event.data.self;
+        const $form = $(event.currentTarget).closest('form');
+        const $modal = $form.closest('#modal');
 
-        var $button;
-        var $rememberedSubmittButton = $form.data('submitButton');
-        if (typeof $rememberedSubmittButton != 'undefined') {
-            if ($form.has($rememberedSubmittButton)) {
-                $button = $rememberedSubmittButton;
+        let $button;
+        if (typeof event.originalEvent !== 'undefined'
+            && typeof event.originalEvent.submitter !== 'undefined'
+            && event.originalEvent.submitter !== null) {
+            $button = $(event.originalEvent.submitter);
+        }
+
+        // Safari fallback only
+        const $rememberedSubmitButton = $form.data('submitButton');
+        if (typeof $rememberedSubmitButton !== 'undefined') {
+            if (typeof $button === 'undefined' && $form.has($rememberedSubmitButton)) {
+                $button = $rememberedSubmitButton;
             }
+
             $form.removeData('submitButton');
         }
 
         let $autoSubmittedBy;
-        if (! $autoSubmittedBy && event.detail && event.detail.submittedBy) {
+        if (typeof event.detail !== 'undefined' && "submittedBy" in event.detail) {
             $autoSubmittedBy = $(event.detail.submittedBy);
         }
 
         // Prevent our other JS from running
         $modal[0].dataset.noIcingaAjax = '';
 
-        var req = _this.icinga.loader.submitForm($form, $autoSubmittedBy, $button);
+        const req = _this.icinga.loader.submitForm($form, $autoSubmittedBy, $button);
         req.addToHistory = false;
         req.done(function (data, textStatus, req) {
-            var title = req.getResponseHeader('X-Icinga-Title');
+            const title = req.getResponseHeader('X-Icinga-Title');
             if (!! title) {
                 _this.setTitle($modal, decodeURIComponent(title).replace(/\s::\s.*/, ''));
             }
