@@ -123,6 +123,7 @@
     height: 1.25em;
     width: 1.25em;
     top: ~"calc(50% - (1.25em / 2))";
+    z-index: 10;
   }
 }
 
@@ -130,6 +131,7 @@
   // Collapse menu by default
   display: none;
   line-height: 1.833em; // 22px
+  z-index: 12;
 
   > a {
     color: @menu-2ndlvl-color;
@@ -267,10 +269,12 @@
     padding-bottom: @vertical-padding;
     width: 14em;
     position: fixed;
-    z-index: 1;
+    z-index: 11;
     margin-top: -1px; // Align content with the menu item, not its border
 
     &::after {
+      --caretSide: 1.25em;
+
       .transform(rotate(45deg));
 
       background-color: @body-bg-color;
@@ -278,12 +282,11 @@
       border-left: 1px solid @gray-light;
       content: "";
       display: block;
-      height: 1.1em;
-      width: 1.1em;
+      height: var(--caretSide);
+      width: var(--caretSide);
       position: absolute;
-      top: ~"calc((@{nav-item-height} / 2) - (1.1em / 2))";
-      left: -.6em;
-      z-index: -1;
+      top: ~"calc(@{nav-item-height} / 2 - var(--caretSide) / 2)";
+      left: ~"calc(-1 * var(--caretSide) / 2 - 1px)";
     }
 
     &.bottom-up {
@@ -291,7 +294,7 @@
       margin-top: 1px;
 
       &::after {
-        top: ~"calc(var(--caretY) - (@{nav-item-height} / 2) - (1.1em / 2))";
+        top: ~"calc(var(--caretY) - (@{nav-item-height} / 2) - (var(--caretSide) / 2))";
       }
     }
 
