@@ -65,7 +65,8 @@ abstract class CustomVarRendererHook
                     $hooks[] = $hook;
                 }
             } catch (Exception $e) {
-                Logger::error('Failed to load hook %s:', get_class($hook), $e);
+                Logger::error('Failed to load hook %s: %s', get_class($hook), $e);
+                Logger::debug($e);
             }
         }
 
@@ -81,7 +82,8 @@ abstract class CustomVarRendererHook
                     $renderedValue = $hook->renderCustomVarValue($key, $value);
                     $group = $hook->identifyCustomVarGroup($key);
                 } catch (Exception $e) {
-                    Logger::error('Failed to use hook %s:', get_class($hook), $e);
+                    Logger::error('Failed to use hook %s: %s', get_class($hook), $e);
+                    Logger::debug($e);
                     continue;
                 }
 
