@@ -224,7 +224,8 @@ class CustomVarTable extends BaseHtmlElement
         if ($this->headerTitle !== null) {
             $this->getAttributes()
                 ->add('class', 'collapsible')
-                ->add('data-visible-height', 100)
+                ->add('data-visible-height', 0)
+                ->add('data-state-collapses', true)
                 ->add('data-toggle-element', 'thead')
                 ->add(
                     'id',
