@@ -200,26 +200,34 @@
          *
          */
         submitForm: function (event, $autoSubmittedBy) {
-            var _this   = event.data.self;
+            const _this   = event.data.self;
 
             // .closest is not required unless subelements to trigger this
-            var $form = $(event.currentTarget).closest('form');
+            const $form = $(event.currentTarget).closest('form');
 
             if ($form.closest('[data-no-icinga-ajax]').length > 0) {
                 return true;
             }
-            
-            var $button;
-            var $rememberedSubmittButton = $form.data('submitButton');
-            if (typeof $rememberedSubmittButton != 'undefined') {
-                if ($form.has($rememberedSubmittButton)) {
-                    $button = $rememberedSubmittButton;
+
+            let $button;
+            if (typeof event.originalEvent !== 'undefined'
+                && typeof event.originalEvent.submitter !== 'undefined'
+                && event.originalEvent.submitter !== null) {
+                $button = $(event.originalEvent.submitter);
+            }
+
+            // Safari fallback only
+            const $rememberedSubmitButton = $form.data('submitButton');
+            if (typeof $rememberedSubmitButton !== 'undefined') {
+                if (typeof $button === 'undefined' && $form.has($rememberedSubmitButton)) {
+                    $button = $rememberedSubmitButton;
                 }
+
                 $form.removeData('submitButton');
             }
 
             if (typeof $button === 'undefined') {
-                var $el;
+                let $el;
 
                 if (typeof event.originalEvent !== 'undefined'
                     && typeof event.originalEvent.explicitOriginalTarget === 'object') { // Firefox
@@ -239,7 +247,7 @@
                 }
             }
 
-            if (! $autoSubmittedBy && event.detail && event.detail.submittedBy) {
+            if (! $autoSubmittedBy && typeof event.detail !== 'undefined' && "submittedBy" in event.detail) {
                 $autoSubmittedBy = $(event.detail.submittedBy);
             }
 
