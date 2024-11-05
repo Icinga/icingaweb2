@@ -8,6 +8,8 @@ use Icinga\Repository\IniRepository;
 
 class RolesConfig extends IniRepository
 {
+    protected $sortRules = ['name' => ['order' => 'asc']];
+
     protected $configs = [
         'roles' => [
             'name'      => 'roles',

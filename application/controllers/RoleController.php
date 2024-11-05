@@ -73,7 +73,7 @@ class RoleController extends AuthBackendController
         );
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->roles);
-        $this->setupSortControl($sortAndFilterColumns, $this->view->roles, ['name']);
+        $this->setupSortControl($sortAndFilterColumns, $this->view->roles);
     }
 
     /**
