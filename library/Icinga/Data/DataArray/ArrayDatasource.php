@@ -196,7 +196,16 @@ class ArrayDatasource implements Selectable
         $filter = $query->getFilter();
         $offset = $query->hasOffset() ? $query->getOffset() : 0;
         $limit = $query->hasLimit() ? $query->getLimit() : 0;
-        $data = $this->data;
+
+        $data = [];
+        foreach ($this->data as $key => $row) {
+            if ($this->keyColumn !== null && ! isset($row->{$this->keyColumn})) {
+                $row = clone $row; // Make sure that this won't affect the actual data
+                $row->{$this->keyColumn} = $key;
+            }
+
+            $data[$key] = $row;
+        }
 
         if ($query->hasOrder()) {
             uasort($data, [$query, 'compare']);
@@ -206,11 +215,6 @@ class ArrayDatasource implements Selectable
         $result = [];
         $skipped = 0;
         foreach ($data as $key => $row) {
-            if ($this->keyColumn !== null && !isset($row->{$this->keyColumn})) {
-                $row = clone $row; // Make sure that this won't affect the actual data
-                $row->{$this->keyColumn} = $key;
-            }
-
             if (! $filter->matches($row)) {
                 continue;
             } elseif ($skipped < $offset) {
