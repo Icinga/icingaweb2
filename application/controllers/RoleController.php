@@ -25,8 +25,6 @@ use ipl\Web\Widget\Link;
 
 /**
  * Manage user permissions and restrictions based on roles
- *
- * @TODO(el): Rename to RolesController: https://dev.icinga.com/issues/10015
  */
 class RoleController extends AuthBackendController
 {
@@ -53,8 +51,6 @@ class RoleController extends AuthBackendController
 
     /**
      * List roles
-     *
-     * @TODO(el): Rename to indexAction()
      */
     public function listAction()
     {
@@ -63,22 +59,25 @@ class RoleController extends AuthBackendController
             ->select();
 
         $sortAndFilterColumns = [
-            'name'        => $this->translate('Name'),
-            'users'       => $this->translate('Users'),
-            'groups'      => $this->translate('Groups'),
-            'permissions' => $this->translate('Permissions')
+            'name'   => $this->translate('Name'),
+            'users'  => $this->translate('Users'),
+            'groups' => $this->translate('Groups'),
+            'parent' => $this->translate('Inherits From')
         ];
 
-        $this->setupFilterControl($this->view->roles, $sortAndFilterColumns, ['name']);
+        $this->setupFilterControl(
+            $this->view->roles,
+            $sortAndFilterColumns + [
+                'permissions' => $this->translate('Permissions')
+            ]
+        );
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->roles);
-        $this->setupSortControl($sortAndFilterColumns, $this->view->roles, ['name']);
+        $this->setupSortControl($sortAndFilterColumns, $this->view->roles);
     }
 
     /**
      * Create a new role
-     *
-     * @TODO(el): Rename to newAction()
      */
     public function addAction()
     {
@@ -93,8 +92,6 @@ class RoleController extends AuthBackendController
 
     /**
      * Update a role
-     *
-     * @TODO(el): Rename to updateAction()
      */
     public function editAction()
     {

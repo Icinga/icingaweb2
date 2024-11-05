@@ -132,4 +132,31 @@ class ArrayDatasourceTest extends BaseTestCase
             'ArrayDatasource does not sort limited queries correctly'
         );
     }
+
+    public function testOrderByKeyColumnIsCorrect()
+    {
+        $result = (new ArrayDatasource([
+            'a' => (object) [
+                'foo' => 'bar',
+                'baz' => 'qux'
+            ],
+            'b' => (object) [
+                'foo' => 'bar',
+                'baz' => 'qux'
+            ],
+            'c' => (object) [
+                'foo' => 'bar',
+                'baz' => 'qux'
+            ]
+        ]))->setKeyColumn('name')
+            ->select()
+            ->order('name', 'desc')
+            ->fetchAll();
+
+        $this->assertSame(
+            ['c', 'b', 'a'],
+            array_keys($result),
+            'ArrayDatasource does not sort queries correctly by key column'
+        );
+    }
 }
