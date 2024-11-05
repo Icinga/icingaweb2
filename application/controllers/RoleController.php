@@ -59,13 +59,18 @@ class RoleController extends AuthBackendController
             ->select();
 
         $sortAndFilterColumns = [
-            'name'        => $this->translate('Name'),
-            'users'       => $this->translate('Users'),
-            'groups'      => $this->translate('Groups'),
-            'permissions' => $this->translate('Permissions')
+            'name'   => $this->translate('Name'),
+            'users'  => $this->translate('Users'),
+            'groups' => $this->translate('Groups'),
+            'parent' => $this->translate('Inherits From')
         ];
 
-        $this->setupFilterControl($this->view->roles, $sortAndFilterColumns, ['name']);
+        $this->setupFilterControl(
+            $this->view->roles,
+            $sortAndFilterColumns + [
+                'permissions' => $this->translate('Permissions')
+            ]
+        );
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->roles);
         $this->setupSortControl($sortAndFilterColumns, $this->view->roles, ['name']);
