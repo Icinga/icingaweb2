@@ -14,6 +14,7 @@ File/Directory                                          | Description
 enabledModules                                          | Symlinks to enabled modules
 modules                                                 | Directory for module specific configuration
 
+Comments in .ini files follow the (de facto) standard in the form of a semicolon (`;`) at the beginning of a (each) line.
 
 ## General Configuration <a id="configuration-general"></a>
 
