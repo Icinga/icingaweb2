@@ -14,8 +14,7 @@ File/Directory                                          | Description
 enabledModules                                          | Symlinks to enabled modules
 modules                                                 | Directory for module specific configuration
 
-Comments in the .ini files follow the (de facto) standard for .ini files in the form of a `;` at the beginning of the line.  
-For multi-line comments or to comment out a entire section, a `;` is required in each line that is to be commented out.
+Comments in .ini files follow the (de facto) standard in the form of a semicolon (`;`) at the beginning of a (each) line.
 
 ## General Configuration <a id="configuration-general"></a>
 
