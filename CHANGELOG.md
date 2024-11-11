@@ -4,6 +4,62 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.12.2
+
+You can find all issues related to this release on our Roadmap.
+
+#### General Fixes
+
+Icinga Web has become quite mature over the years. Typically, only new features cause issues and require fixing.
+However, there is always an exception to every rule, as shown by the issue where roles were not sorted by name.
+We also improved the settings menu — the one that opens when hovering over the cog icon next to your name. We heard
+your feedback about it closing too easily and made it more user-friendly. With v2.12.0, we introduced a new security
+feature, the Content-Security-Policy header, which is designed to prevent cross-site scripting attacks. Ironically,
+we initially forgot to include the `script-src` policy in it.
+
+* Sort by name of roles does not work properly [#4789](https://github.com/Icinga/icingaweb2/issues/4789)
+* Settings menu flyout closes too fast / easy [#5196](https://github.com/Icinga/icingaweb2/issues/5196)
+* CSP header is missing the script-src policy [#5180](https://github.com/Icinga/icingaweb2/issues/5180)
+
+#### Love For an Old Fellow
+
+The *monitoring* module has been part of Icinga Web from the very beginning. Although it’s being replaced by Icinga DB
+Web, some of you still rely on it, which is why we continue to fix issues — even if they’re not entirely our
+responsibility, as the first example demonstrates. This particular issue only affects users on PHP 8.1 (> .24). The
+second issue, introduced by a contribution in v2.12.0, caused some history entries to disappear but was resolved with
+another contribution — a great example of teamwork. The third issue is also a testament to the module's age: Icinga 2
+has automatically removed child downtimes since v2.13.0, and this is now accounted for in the module as well.
+
+* Broken event overview due to IntlDateFormatter [#5172](https://github.com/Icinga/icingaweb2/issues/5172)
+* Downtimes, which were started and canceled, are missing in the history [#5176](https://github.com/Icinga/icingaweb2/issues/5176)
+* Usage of IcingaWeb2 api command returns 404, but is successful [#5183](https://github.com/Icinga/icingaweb2/issues/5183)
+
+#### Awesome Customizations
+
+Many of you have already tried Icinga DB Web and might have noticed it uses slightly different icons for its
+sidebar entries. These icons are provided by Font Awesome, and now you can use them as well. Just find a suitable
+icon on their [website](https://fontawesome.com/search?o=r&m=free&s=solid) and prefix its name with `fa-`. If you
+hadn’t used an icon at all for a menu item and upgraded to Icinga DB Web, opening it will no longer result in an
+error. Lastly, a particularly tricky issue caused the dashboard to display dashlets twice and prevented their
+deletion. This should be fixed now — fingers crossed!
+
+* Allow fontawesome icons as menu items [#5205](https://github.com/Icinga/icingaweb2/issues/5205)
+* Error while opening a navigation root item [#5177](https://github.com/Icinga/icingaweb2/issues/5177)
+* Dashlets twice in dashboard & not deletable [#5203](https://github.com/Icinga/icingaweb2/issues/5203)
+
+#### Framework Enhancements
+
+Those of you who take customization to the next level will be glad to hear that hooking into the rendering of plugin
+output is now easier, as the first line and long output are now combined when passed to the renderer. Anyone using
+the Icinga Web Graphite Integration may be familiar with this issue and will be relieved to know that graphs no
+longer disappear when using graph controls. And finally, a new release for Icinga Director is coming next week,
+which will hook into the rendering of custom variables. This feature has been available since Icinga Web v2.10.0,
+but it’s now slightly improved.
+
+* PluginOutputRenderer gets called twice [#5271](https://github.com/Icinga/icingaweb2/issues/5271)
+* Graphs disappear after form controls are used [#4996](https://github.com/Icinga/icingaweb2/issues/4996)
+* Make subgroups of custom variables fully collapsible [#5256](https://github.com/Icinga/icingaweb2/issues/5256)
+
 ### What's New in Version 2.12.1
 
 You can find all issues related to this release on our Roadmap.
