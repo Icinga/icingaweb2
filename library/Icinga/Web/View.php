@@ -205,7 +205,8 @@ class View extends Zend_View_Abstract
         'th-thumb-empty' => true,
         'github-circled' => true,
         'history' => true,
-        'binoculars' => true
+        'binoculars' => true,
+        'letter' => true
         //</editor-fold>
     ];
 
