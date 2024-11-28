@@ -83,7 +83,9 @@
         if ($container[0].contains(origFocus)
             && origFocus.form
             && ! origFocus.matches(
-                'input[type=submit], input[type=reset], input[type=button], .autofocus, .autosubmit:not(:hover)'
+                'input[type=submit], input[type=reset], input[type=button]'
+                + ', button[type=submit], button[type=reset], button[type=button]'
+                + ', .autofocus, .autosubmit:not(:hover)'
             )
         ) {
             this.icinga.logger.debug('Not changing content for ' + containerId + ' form has focus');
