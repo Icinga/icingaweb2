@@ -8,7 +8,7 @@ on:
 jobs:
   trigger-update:
     name: L10n Update Trigger
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Repository dispatch
