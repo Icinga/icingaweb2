@@ -1,9 +1,7 @@
 name: L10n Update
 
 on:
-  push:
-    branches:
-      - main
+  push: { }
 
 jobs:
   trigger-update:

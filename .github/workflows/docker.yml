@@ -1,6 +1,7 @@
 name: Docker image
 
 on:
+  push: { }
   release:
     types:
       - published
