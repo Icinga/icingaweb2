@@ -183,39 +183,38 @@ class AdmissionLoader
         $assignedRoles = [];
         $isUnrestricted = false;
         foreach ($this->roleConfig as $roleName => $roleConfig) {
-            $assigned = $this->match($username, $userGroups, $roleConfig);
-            if ($assigned) {
+            if ($this->match($username, $userGroups, $roleConfig)) {
                 $assignedRoles[] = $roleName;
-            }
 
-            if (! isset($roles[$roleName]) && $assigned) {
-                foreach ($this->loadRole($roleName, $roleConfig) as $role) {
-                    /** @var Role $role */
-                    if (isset($roles[$role->getName()])) {
-                        continue;
-                    }
+                if (! isset($roles[$roleName])) {
+                    foreach ($this->loadRole($roleName, $roleConfig) as $role) {
+                        /** @var Role $role */
+                        if (isset($roles[$role->getName()])) {
+                            continue;
+                        }
 
-                    $roles[$role->getName()] = $role;
+                        $roles[$role->getName()] = $role;
 
-                    $permissions = array_merge(
-                        $permissions,
-                        array_diff($role->getPermissions(), $permissions)
-                    );
-
-                    $roleRestrictions = $role->getRestrictions();
-                    foreach ($roleRestrictions as $name => & $restriction) {
-                        $restriction = str_replace(
-                            '$user.local_name$',
-                            $user->getLocalUsername(),
-                            $restriction
+                        $permissions = array_merge(
+                            $permissions,
+                            array_diff($role->getPermissions(), $permissions)
                         );
-                        $restrictions[$name][] = $restriction;
-                    }
 
-                    $role->setRestrictions($roleRestrictions);
+                        $roleRestrictions = $role->getRestrictions();
+                        foreach ($roleRestrictions as $name => & $restriction) {
+                            $restriction = str_replace(
+                                '$user.local_name$',
+                                $user->getLocalUsername(),
+                                $restriction
+                            );
+                            $restrictions[$name][] = $restriction;
+                        }
 
-                    if (! $isUnrestricted) {
-                        $isUnrestricted = $role->isUnrestricted();
+                        $role->setRestrictions($roleRestrictions);
+
+                        if (! $isUnrestricted) {
+                            $isUnrestricted = $role->isUnrestricted();
+                        }
                     }
                 }
             }
