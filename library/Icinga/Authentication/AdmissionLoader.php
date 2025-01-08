@@ -6,9 +6,9 @@ namespace Icinga\Authentication;
 use Generator;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
-use Icinga\Data\ConfigObject;
 use Icinga\User;
 use Icinga\Util\StringHelper;
 
