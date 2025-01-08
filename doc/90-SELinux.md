@@ -58,8 +58,8 @@ Disabled by default.
 If you experience any problems while running SELinux in enforcing mode try to reproduce it in permissive mode. If the
 problem persists, it is not related to SELinux because in permissive mode SELinux will not deny anything.
 
-When filing a bug report please add the following information additionally to the
-[common ones](https://icinga.com/icinga/faq/):
+When filing a bug report please add the following information additionally to the common ones:
+
 * Output of `semodule -l | grep -e icinga2 -e icingaweb2 -e nagios -e apache`
 * Output of `semanage boolean -l | grep icinga`
 * Output of `ps -eZ | grep httpd`
