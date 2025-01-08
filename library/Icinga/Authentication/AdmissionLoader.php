@@ -64,9 +64,9 @@ class AdmissionLoader
     /**
      * Whether the user or groups are a member of the role
      *
-     * @param   string          $username
-     * @param   array           $userGroups
-     * @param   ConfigObject    $section
+     * @param string       $username
+     * @param array        $userGroups
+     * @param ConfigObject $section
      *
      * @return  bool
      */
@@ -101,7 +101,7 @@ class AdmissionLoader
      *
      * This will also resolve any parent-child relationships.
      *
-     * @param string $name
+     * @param string       $name
      * @param ConfigObject $section
      *
      * @return Generator
@@ -166,7 +166,7 @@ class AdmissionLoader
     /**
      * Apply permissions, restrictions and roles to the given user
      *
-     * @param   User    $user
+     * @param User $user
      */
     public function applyRoles(User $user)
     {
