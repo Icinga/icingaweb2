@@ -221,6 +221,12 @@ class AdmissionLoader
             }
         }
 
+        Logger::debug(
+            'Groups assigned for user "%s": %s',
+            $user->getUsername(),
+            join(', ', $assignedRoles)
+        );
+
         $user->setAdditional('assigned_roles', $assignedRoles);
 
         $user->setIsUnrestricted($isUnrestricted);
