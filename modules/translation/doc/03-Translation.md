@@ -130,7 +130,7 @@ below.
 ![Untranslated strings](img/poedit_005.png)
 
 And when you want to test your changes, please read more about under the chapter
-[Testing Translations](Testing Translations).
+[Testing Translations](03-Translation.md#module-translation-tests).
 
 ## Testing Translations <a id="module-translation-tests"></a>
 
