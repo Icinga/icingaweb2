@@ -40,4 +40,9 @@ class RolesConfig extends IniRepository
 
         return $columns;
     }
+
+    protected function initializeSearchColumns(): array
+    {
+        return ['name'];
+    }
 }
