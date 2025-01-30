@@ -24,7 +24,7 @@
         this.on('click', '[data-icinga-modal]', this.onModalToggleClick, this);
         this.on('mousedown', '#layout > #modal', this.onModalLeave, this);
         this.on('click', '.modal-header > button', this.onModalClose, this);
-        this.on('keydown', this.onKeyDown, this);
+        this.on('keydown', '#layout > #modal.active', this.onKeyDown, this);
     };
 
     Modal.prototype = new Icinga.EventListener();
