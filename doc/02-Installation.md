@@ -147,18 +147,6 @@ subscription-manager repos --enable "codeready-builder-for-rhel-8-${ARCH}-rpms"
 
 dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 ```
-
-#### RHEL 7
-Since Icinga Web v2.5 we also require a **newer PHP version** than what is available
-in RedHat itself. You need to enable the SCL repository, so that the dependencies
-can pull in the newer PHP.
-
-```bash
-subscription-manager repos --enable rhel-7-server-optional-rpms
-subscription-manager repos --enable rhel-server-rhscl-7-rpms
-
-yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-```
 <!-- {% endif %} -->
 
 <!-- {% if sles %} -->
@@ -260,11 +248,6 @@ yum install icingaweb2 icingacli
 #### RHEL 8
 ```bash
 dnf install icingaweb2 icingacli
-```
-
-#### RHEL 7
-```bash
-yum install icingaweb2 icingacli
 ```
 <!-- {% endif %} -->
 
