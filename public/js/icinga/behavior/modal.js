@@ -18,6 +18,7 @@
         this.icinga = icinga;
         this.$layout = $('#layout');
         this.$ghost = $('#modal-ghost');
+        this.hasChanges = false;
 
         this.on('submit', '#modal form', this.onFormSubmit, this);
         this.on('change', '#modal form select.autosubmit', this.onFormAutoSubmit, this);
@@ -26,6 +27,7 @@
         this.on('mousedown', '#layout > #modal', this.onModalLeave, this);
         this.on('click', '.modal-header > button', this.onModalClose, this);
         this.on('keydown', '#layout > #modal.active', this.onKeyDown, this);
+        this.on('change', '#modal form', this.OnChange, this);
     };
 
     Modal.prototype = new Icinga.EventListener();
@@ -180,7 +182,7 @@
         var _this = event.data.self;
         var $target = $(event.target);
 
-        if ($target.is('#modal')) {
+        if (! _this.hasChanges && $target.is('#modal')) {
             _this.hide($target);
         }
     };
@@ -202,15 +204,38 @@
      * @param event {Event} The `keydown` event triggered by pushing a key
      */
     Modal.prototype.onKeyDown = function(event) {
+        if (event.key !== 'Escape') {
+            return;
+        }
+
         var _this = event.data.self;
 
-        if (! event.isDefaultPrevented() && event.key === 'Escape') {
+        if (_this.hasChanges || document.activeElement.matches('form :scope')) {
+            if (! _this.hasChanges) {
+                document.activeElement.blur();
+            }
+
+            return;
+        }
+
+        if (! event.isDefaultPrevented()) {
             let $modal = _this.$layout.children('#modal');
             if ($modal.length) {
                 _this.hide($modal);
             }
         }
     };
+
+    /**
+     * Event handler to register whether the modal form has new changes after opening.
+     *
+     * This prevents the modal from being unintentionally closed
+     *
+     * @param event {Event} The `OnChange` event
+     */
+    Modal.prototype.OnChange = function(event) {
+        event.data.self.hasChanges = true;
+    }
 
     /**
      * Make final preparations and add the modal to the DOM
@@ -249,6 +274,7 @@
         // Remove pointerEvent none style to make the button clickable again
         this.modalOpener.style.pointerEvents = '';
         this.modalOpener = null;
+        this.hasChanges = false;
 
         $modal.removeClass('active');
         // Using `setTimeout` here to let the transition finish
