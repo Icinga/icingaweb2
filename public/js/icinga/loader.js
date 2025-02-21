@@ -221,6 +221,10 @@
         loadUrl: function (url, $target, data, method, action, autorefresh, progressTimer, extraHeaders) {
             var id = null;
 
+            if (url.startsWith('//') || ! url.startsWith(this.baseUrl + '/')) {
+                throw new Error('URL ' + url + ' is not relative to ' + this.baseUrl);
+            }
+
             // Default method is GET
             if ('undefined' === typeof method) {
                 method = 'GET';
