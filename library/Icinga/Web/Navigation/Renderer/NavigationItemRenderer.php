@@ -7,6 +7,7 @@ use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Util\StringHelper;
 use Icinga\Web\Navigation\NavigationItem;
+use Icinga\Web\Session;
 use Icinga\Web\Url;
 use Icinga\Web\View;
 
@@ -188,6 +189,10 @@ class NavigationItemRenderer
 
             $target = $item->getTarget();
             if ($url->isExternal() && (!$target || in_array($target, $this->internalLinkTargets, true))) {
+                $item->setAttribute('data-url-hash', hash(
+                    'sha256',
+                    $url->getAbsoluteUrl() . Session::getSession()->getId()
+                ));
                 $url = Url::fromPath('iframe', array('url' => $url));
             }
 

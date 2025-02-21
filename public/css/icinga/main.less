@@ -282,6 +282,39 @@ a:hover > .icon-cancel {
 
 // Responsive iFrames
 
+.iframe-warning {
+  h2, p, a {
+    display: block;
+    width: fit-content;
+    font-size: 200%;
+    margin: 0 auto;
+    padding: 1em;
+  }
+
+  h2 {
+    font-size: 1000%;
+    color: @state-warning;
+  }
+
+  .note {
+    background: @gray-lighter;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  .reason {
+    .icon {
+      color: @text-color;
+    }
+
+    font-size: 100%;
+    background: @gray-lightest;
+    color: @text-color-light;
+  }
+}
+
 .iframe-container {
   position: relative;
   height: 0;
@@ -295,6 +328,7 @@ a:hover > .icon-cancel {
     top: 0;
     height: 100%;
     width: 100%;
+    border: none;
   }
 }
 
