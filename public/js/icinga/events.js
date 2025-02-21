@@ -281,6 +281,7 @@
             var $eventTarget = $(event.target);
             var href = $a.attr('href');
             var linkTarget = $a.attr('target');
+            const urlHash = this.dataset.urlHash;
             var $target;
             var formerUrl;
 
@@ -391,7 +392,20 @@
             }
 
             // Load link URL
-            icinga.loader.loadUrl(href, $target);
+            if (urlHash) {
+                icinga.loader.loadUrl(
+                    href,
+                    $target,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    { "X-Icinga-URLHash": urlHash }
+                );
+            } else {
+                icinga.loader.loadUrl(href, $target);
+            }
 
             if ($a.closest('#menu').length > 0) {
                 // Menu links should remove all but the first layout column
