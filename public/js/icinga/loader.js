@@ -1284,7 +1284,7 @@
             });
 
             if (! discard) {
-                if ($container.closest('.dashboard').length) {
+                if ($container.closest('.dashboard').length || $container.closest('.favorite-dashboard').length) {
                     var title = $('h1', $container).first().detach();
                     $container.html(title).append(content);
                 } else if (action === 'replace') {
