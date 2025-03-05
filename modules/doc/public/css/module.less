@@ -1,17 +1,5 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
-// Mixins
-
-.gradient(@a: @gray-lighter; @b: @gray-lightest) {
-  background: @a;
-  background: -webkit-gradient(linear, left top, left bottom, from(@a), to(@b));
-  background: -webkit-linear-gradient(top, @a, @b);
-  background: -moz-linear-gradient(top, @a, @b);
-  background: -ms-linear-gradient(top, @a, @b);
-  background: -o-linear-gradient(top, @a, @b);
-  background: linear-gradient(to bottom, @a, @b);
-}
-
 // General styles
 
 code {
@@ -84,7 +72,7 @@ table {
 }
 
 tbody > tr:nth-child(odd) {
-  .gradient()
+  background: @gray-light;
 }
 
 tbody > tr:nth-child(even) {
