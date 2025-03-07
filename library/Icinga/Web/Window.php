@@ -112,7 +112,7 @@ class Window
     {
         if (! isset(static::$window)) {
             $id = Icinga::app()->getRequest()->getHeader('X-Icinga-WindowId');
-            if (empty($id) || $id === static::UNDEFINED) {
+            if (empty($id) || $id === static::UNDEFINED || ! preg_match('/^\w+$/', $id)) {
                 Icinga::app()->getResponse()->setOverrideWindowId();
                 $id = static::generateId();
             }
