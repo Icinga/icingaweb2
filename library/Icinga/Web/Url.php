@@ -179,10 +179,9 @@ class Url
         }
 
         $urlParts = parse_url($url);
-        if (isset($urlParts['scheme']) && (
-            $urlParts['scheme'] !== $request->getScheme()
+        if ((isset($urlParts['scheme']) && $urlParts['scheme'] !== $request->getScheme())
             || (isset($urlParts['host']) && $urlParts['host'] !== $request->getServer('SERVER_NAME'))
-            || (isset($urlParts['port']) && $urlParts['port'] != $request->getServer('SERVER_PORT')))
+            || (isset($urlParts['port']) && $urlParts['port'] != $request->getServer('SERVER_PORT'))
         ) {
             $urlObject->setIsExternal();
         }
