@@ -227,7 +227,7 @@ class BackendConfigForm extends ConfigForm
                 'autosubmit'    => true
             )
         );
-        $resourceName = isset($formData['resource']) ? $formData['resource'] : $this->getValue('resource');
+        $resourceName = $this->getView()->escape($formData['resource'] ?? $this->getValue('resource'));
         $this->addElement(
             'note',
             'resource_note',
