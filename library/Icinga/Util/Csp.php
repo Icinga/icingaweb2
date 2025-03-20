@@ -4,8 +4,12 @@
 
 namespace Icinga\Util;
 
+use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Security\SecurityException;
 use Icinga\Web\Response;
 use Icinga\Web\Window;
+use ipl\I18n\StaticTranslator;
 use RuntimeException;
 
 use function ipl\Stdlib\get_php_type;
@@ -51,9 +55,13 @@ class Csp
             throw new RuntimeException('No nonce set for CSS');
         }
 
+        $header = "default-src 'self'; style-src 'self' 'nonce-{$csp->styleNonce}'; ";
+        $imageSourceWhitelist = Icinga::app()->getConfig()->get("security", "image_source_whitelist", "");
+        $header = $header . Csp::getImageSourceDirective($imageSourceWhitelist);
+
         $response->setHeader(
             'Content-Security-Policy',
-            "script-src 'self'; style-src 'self' 'nonce-$csp->styleNonce';",
+            $header,
             true
         );
     }
@@ -79,6 +87,9 @@ class Csp
      */
     public static function getStyleNonce(): ?string
     {
+        if (Icinga::app()->isCli()) {
+            return null;
+        }
         return static::getInstance()->styleNonce;
     }
 
@@ -107,5 +118,47 @@ class Csp
         }
 
         return static::$instance;
+    }
+
+    public static function getImageSourceDirective(string $whitelist): string {
+        $directives = ["img-src", "'self'", "data:"];
+        foreach (explode(",", $whitelist) as $domain) {
+            try {
+                $directives[] = Csp::validateImageSourceWhitelistItem($domain);
+            } catch (SecurityException $e) {
+                Logger::error("Ignoring domain '$domain' as it is not valid. $e");
+            }
+        }
+
+        return implode(' ', $directives) . ";";
+    }
+
+    /**
+     * Validates and trims an item that is used as a domain in the img-src directive.
+     * Will throw an error, if the user tries to whitelist everything (*) or tries
+     * to inject special characters that might allow to escape and edit the whole csp.
+     *
+     * @throws SecurityException
+     */
+    public static function validateImageSourceWhitelistItem(string $item): string {
+        $item = trim($item);
+        // Don't allow general whitelisting of all domains
+        if ($item == '*') {
+            throw new SecurityException(
+                StaticTranslator::$instance->translate("Whitelisting all domains is not allowed.")
+            );
+        }
+
+        // Don't allow special characters that might allow to escape and edit the whole csp.
+        // Otherwise, e.g. "example.com; script-src *" will allow the user to change other directives.
+        $csp_config_regex = "|^\*?[a-zA-Z0-9+._\-:]*$|";
+        if (!preg_match($csp_config_regex, $item)) {
+            throw new SecurityException(
+                StaticTranslator::$instance->translate("The following domain is invalid: ")
+                . $item
+            );
+        }
+
+        return $item;
     }
 }
