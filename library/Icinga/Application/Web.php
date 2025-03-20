@@ -6,6 +6,7 @@ namespace Icinga\Application;
 require_once __DIR__ . '/EmbeddedWeb.php';
 
 use ErrorException;
+use Icinga\Application\ProvidedHook\LessVarsLoader;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\Locale;
 use ipl\I18n\StaticTranslator;
@@ -461,6 +462,18 @@ class Web extends EmbeddedWeb
                 $frontController->dispatch($frontController->getRequest(), $response);
             }
         });
+
+        return $this;
+    }
+
+    /**
+     * Register all hooks provided by the main application
+     *
+     * @return $this
+     */
+    protected function registerApplicationHooks()
+    {
+        Hook::register('Themebuilder\\LessVarsLoader', LessVarsLoader::class, LessVarsLoader::class);
 
         return $this;
     }
