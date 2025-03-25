@@ -5,9 +5,11 @@ namespace Icinga\File;
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Exception;
 use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Util\Environment;
+use Icinga\Web\FileCache;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 
@@ -64,8 +66,17 @@ class Pdf
             return;
         }
 
+        $tmpDir = FileCache::instance()->directory('legacy_pdf');
+        if ($tmpDir === false) {
+            throw new Exception('Could not create temporary directory for PDF rendering');
+        }
+
         $options = new Options();
         $options->set('defaultPaperSize', 'A4');
+        $options->set('fontDir', $tmpDir);
+        $options->set('fontCache', $tmpDir);
+        $options->set('tempDir', $tmpDir);
+        $options->set('chroot', $tmpDir);
         $dompdf = new Dompdf($options);
         $dompdf->loadHtml($html);
         $dompdf->render();
