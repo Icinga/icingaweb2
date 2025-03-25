@@ -100,7 +100,9 @@ jobs:
 
       - name: Setup dependencies
         run: |
-          composer require -n --no-progress mockery/mockery ipl/i18n:@dev ipl/web:@dev
+          composer init -n --require mockery/mockery:* --require ipl/i18n:@dev --require ipl/web:@dev
+          composer config platform.php 7.2.9
+          composer install -n --no-progress
           git clone --depth 1 --branch snapshot/nightly https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
 
       - name: PHPUnit
