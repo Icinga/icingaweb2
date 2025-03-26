@@ -4,6 +4,12 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.12.4
+
+This is a hotfix release which fixes the following issue:
+
+Database login broken after upgrade [#5343](https://github.com/Icinga/icingaweb2/issues/5343)
+
 ### What's New in Version 2.12.3
 
 **Notice:** This is a security release. It is recommended to upgrade _immediately_.
