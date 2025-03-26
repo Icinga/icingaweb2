@@ -65,11 +65,9 @@ CSS;
 
     public function visitCall($c)
     {
-        if ($c->name !== 'var') {
-            // We need to use our own tree call class , so that we can precompile the arguments before making
-            // the actual LESS function calls. Otherwise, it will produce lots of invalid argument exceptions!
-            $c = Call::fromCall($c);
-        }
+        // We need to use our own tree call class , so that we can precompile the arguments before making
+        // the actual LESS function calls. Otherwise, it will produce lots of invalid argument exceptions!
+        $c = Call::fromCall($c);
 
         return $c;
     }
