@@ -170,7 +170,21 @@
                     var $dashlet = $(this);
                     var url = $dashlet.data('icingaUrl');
                     if (typeof url !== 'undefined') {
-                        _this.icinga.loader.loadUrl(url, $dashlet).autorefresh = true;
+                        const urlHash = this.dataset.urlHash;
+                        if (urlHash) {
+                            _this.icinga.loader.loadUrl(
+                                url,
+                                $dashlet,
+                                undefined,
+                                undefined,
+                                undefined,
+                                true,
+                                undefined,
+                                { "X-Icinga-URLHash": urlHash }
+                            );
+                        } else {
+                            _this.icinga.loader.loadUrl(url, $dashlet).autorefresh = true;
+                        }
                     }
                 });
             }
