@@ -3,9 +3,9 @@
 
 namespace Icinga\Web\Widget\Dashboard;
 
+use Icinga\Web\Session;
 use Icinga\Web\Url;
 use Icinga\Data\ConfigObject;
-use Icinga\Exception\IcingaException;
 
 /**
  * A dashboard pane dashlet
@@ -57,18 +57,15 @@ class Dashlet extends UserWidget
      */
     private $template =<<<'EOD'
 
-    <div class="container" data-icinga-url="{URL}">
-        <h1><a href="{FULL_URL}" aria-label="{TOOLTIP}" title="{TOOLTIP}" data-base-target="col1">{TITLE}</a></h1>
+    <div class="container" data-icinga-url="{URL}" data-url-hash="{URL_HASH}">
+        <h1><a
+            href="{FULL_URL}"
+            aria-label="{TOOLTIP}"
+            title="{TOOLTIP}"
+            data-url-hash="{FULL_URL_HASH}"
+            data-base-target="col1"
+        >{TITLE}</a></h1>
         <p class="progress-label">{PROGRESS_LABEL}<span>.</span><span>.</span><span>.</span></p>
-        <noscript>
-            <div class="iframe-container">
-                <iframe
-                    src="{IFRAME_URL}"
-                    frameborder="no"
-                    title="{TITLE_PREFIX}{TITLE}">
-                </iframe>
-            </div>
-        </noscript>
     </div>
 EOD;
 
@@ -250,13 +247,22 @@ EOD;
 
         $url = $this->getUrl();
         $url->setParam('showCompact', true);
-        $iframeUrl = clone $url;
-        $iframeUrl->setParam('isIframe');
+        $fullUrl = $url->getUrlWithout(['showCompact', 'limit', 'view']);
+
+        $urlHash = '';
+        $fullUrlHash = '';
+        if ($url->getPath() === 'iframe') {
+            $urlHash = hash('sha256', Url::fromPath($url->getParam('url'))->getAbsoluteUrl()
+                . Session::getSession()->getId());
+            $fullUrlHash = hash('sha256', Url::fromPath($fullUrl->getParam('url'))->getAbsoluteUrl()
+                . Session::getSession()->getId());
+        }
 
         $searchTokens = array(
             '{URL}',
-            '{IFRAME_URL}',
+            '{URL_HASH}',
             '{FULL_URL}',
+            '{FULL_URL_HASH}',
             '{TOOLTIP}',
             '{TITLE}',
             '{TITLE_PREFIX}',
@@ -265,8 +271,9 @@ EOD;
 
         $replaceTokens = array(
             $url,
-            $iframeUrl,
-            $url->getUrlWithout(['showCompact', 'limit', 'view']),
+            $urlHash,
+            $fullUrl,
+            $fullUrlHash,
             sprintf($view->translate('Show %s', 'dashboard.dashlet.tooltip'), $view->escape($this->getTitle())),
             $view->escape($this->getTitle()),
             $view->translate('Dashlet') . ': ',
