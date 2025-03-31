@@ -1,0 +1,4 @@
+/* No requirements */
+define(function () {
+
+});
