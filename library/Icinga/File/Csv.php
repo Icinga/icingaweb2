@@ -37,7 +37,7 @@ class Csv
             }
             $out = array();
             foreach ($row as & $val) {
-                $out[] = '"' . ($val === '0' ? '0' : ($val ? str_replace('"', '""', $val) : '')) . '"';
+                $out[] = '"' . ($val == '0' ? '0' : ($val ? str_replace('"', '""', $val) : '')) . '"';
             }
             $csv .= implode(',', $out) . "\r\n";
         }
