@@ -5,7 +5,10 @@ namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
+use Icinga\Security\SecurityException;
 use Icinga\Web\Form;
+use Icinga\Util\Csp;
+use Icinga\Web\Notification;
 
 /**
  * Configuration form for general application options
@@ -67,6 +70,23 @@ class ApplicationConfigForm extends Form
             ]
         );
 
+        $securityImageSourceWhitelistHidden =
+            !(boolean) Icinga::app()->getConfig()->get("security", "use_strict_csp", false);
+        $securityImageSourceWhitelistHiddenClass = $securityImageSourceWhitelistHidden ? 'input-hidden' : '';
+        $this->addElement(
+            'text',
+            'security_image_source_whitelist',
+            [
+                'label'         => $this->translate('Domains whitelist for the CSP image source'),
+                'placeholder'   => $this->translate('No external domains whitelisted'),
+                'class'         => $securityImageSourceWhitelistHiddenClass,
+                'description'   => $this->translate(
+                    'This whitelist allows you to specify a comma separated list of trusted hosts, '
+                    . 'from which images for the icingaweb2 UI can be loaded.'
+                )
+            ]
+        );
+
         $this->addElement(
             'text',
             'global_module_path',
@@ -101,5 +121,24 @@ class ApplicationConfigForm extends Form
         );
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isValid($formData)
+    {
+        $imageSourceWhitelist = $formData["security_image_source_whitelist"] ?? "";
+        $valid = true;
+        foreach (explode(",", $imageSourceWhitelist) as $imageSource) {
+            try {
+                Csp::validateImageSourceWhitelistItem($imageSource);
+            }catch (SecurityException $e) {
+                Notification::error($e->getMessage());
+                $valid = false;
+            }
+        }
+
+        return $valid && parent::isValid($formData);
     }
 }
