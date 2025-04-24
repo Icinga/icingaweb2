@@ -10,6 +10,7 @@ use ipl\Html\FormElement\InputElement;
 use ipl\Html\HtmlElement;
 use ipl\Web\Control\SearchBar\Suggestions;
 use ipl\Web\Url;
+use ipl\Web\Widget\Icon;
 
 class SingleValueSearchControl extends Form
 {
@@ -105,6 +106,8 @@ class SingleValueSearchControl extends Form
     protected function assemble()
     {
         $suggestionsId = Icinga::app()->getRequest()->protectId('single-value-suggestions');
+
+        $this->addHtml(new Icon('search', Attributes::create(['class' => 'search-icon'])));
 
         $this->addElement(
             'text',
