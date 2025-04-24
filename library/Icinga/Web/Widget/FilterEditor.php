@@ -3,17 +3,17 @@
 
 namespace Icinga\Web\Widget;
 
+use Exception;
+use Icinga\Application\Icinga;
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterChain;
+use Icinga\Data\Filter\FilterExpression;
+use Icinga\Data\Filter\FilterOr;
 use Icinga\Data\Filterable;
 use Icinga\Data\FilterColumns;
-use Icinga\Data\Filter\Filter;
-use Icinga\Data\Filter\FilterExpression;
-use Icinga\Data\Filter\FilterChain;
-use Icinga\Data\Filter\FilterOr;
-use Icinga\Web\Url;
-use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Notification;
-use Exception;
+use Icinga\Web\Url;
 
 /**
  * Filter
@@ -737,10 +737,11 @@ class FilterEditor extends AbstractWidget
         $preservedUrl = $this->preservedUrl();
 
         $html = ' <form method="post" class="search inline" action="'
-              . $preservedUrl
-              . '"><input type="text" name="q" class="search search-input" value="" placeholder="'
-              . t('Search...')
-              . '" /></form>';
+            . $preservedUrl
+            . '"><i class="icon fa-search fa search-icon"></i>'
+            . '<input type="text" name="q" class="search search-input" value="" placeholder="'
+            . t('Search...')
+            . '" /></form>';
 
         if ($this->filter->isEmpty()) {
             $title = t('Filter this list');
