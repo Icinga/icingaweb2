@@ -16,13 +16,6 @@ class TimezoneDetect
     private static $success;
 
     /**
-     * Timezone offset in minutes
-     *
-     * @var int
-     */
-    private static $offset = 0;
-
-    /**
      * @var string
      */
     private static $timezoneName;
@@ -35,13 +28,6 @@ class TimezoneDetect
     public static $cookieName = 'icingaweb2-tzo';
 
     /**
-     * Timezone name
-     *
-     * @var string
-     */
-    private static $timezone;
-
-    /**
      * Create new object and try to identify the timezone
      */
     public function __construct()
@@ -51,28 +37,9 @@ class TimezoneDetect
         }
 
         if (array_key_exists(self::$cookieName, $_COOKIE)) {
-            $matches = array();
-            if (preg_match('/\A(-?\d+)[\-,](\d+)\z/', $_COOKIE[self::$cookieName], $matches)) {
-                $offset = $matches[1];
-                $timezoneName = timezone_name_from_abbr('', (int) $offset, (int) $matches[2]);
-
-                self::$success = (bool) $timezoneName;
-                if (self::$success) {
-                    self::$offset = $offset;
-                    self::$timezoneName = $timezoneName;
-                }
-            }
+            self::$timezoneName = $_COOKIE[self::$cookieName];
+            self::$success = true;
         }
-    }
-
-    /**
-     * Get offset
-     *
-     * @return int
-     */
-    public function getOffset()
-    {
-        return self::$offset;
     }
 
     /**
@@ -102,6 +69,5 @@ class TimezoneDetect
     {
         self::$success = null;
         self::$timezoneName = null;
-        self::$offset = 0;
     }
 }
