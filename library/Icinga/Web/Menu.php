@@ -6,6 +6,7 @@ namespace Icinga\Web;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Web\Navigation\Navigation;
+use Icinga\Web\Navigation\Renderer\RecursiveMenuNavigationRenderer;
 
 /**
  * Main menu for Icinga Web 2
@@ -148,5 +149,15 @@ class Menu extends Navigation
                 'priority'    => 900
             ]));
         }
+    }
+
+    /**
+     * Create and return the renderer for this navigation
+     *
+     * @return  RecursiveMenuNavigationRenderer
+     */
+    public function getRenderer()
+    {
+        return new RecursiveMenuNavigationRenderer($this);
     }
 }

@@ -246,6 +246,10 @@
   margin-right: .5em
 }
 
+#layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item:not(.active).hover > .nav-level-2 {
+  padding-top: @vertical-padding;
+}
+
 // Hovered menu
 #layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item.hover,
 #layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active).hover {
@@ -255,7 +259,7 @@
     border-color: @gray-light;
     border-radius: .25em;
     box-shadow: 0 0 1em 0 rgba(0,0,0,.3);
-    padding: @vertical-padding 0;
+    padding-bottom: @vertical-padding;
     width: 14em;
     position: fixed;
     z-index: 1;
@@ -520,6 +524,27 @@ html.no-js  #toggle-sidebar {
   margin-right: 0;
 }
 
+#layout.sidebar-collapsed #menu .nav-level-1 > .nav-item.hover .nav-level-2 > .nav-item-header {
+  background-color: @menu-bg-color;
+  border-bottom: 1px solid @gray-light;
+  border-top-left-radius: .25em;
+  border-top-right-radius: .25em;
+
+  span {
+    padding-left: 1.375em;
+    height: @nav-item-height;
+    display: flex;
+    align-items: center;
+
+    font-weight: @font-weight-bold;
+    .text-ellipsis();
+
+    > .badge {
+      display: none;
+    }
+  }
+}
+
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li {
   &.nav-item:not(.badge-nav-item) {
     &:not(.selected):not(.active) a:hover,
@@ -531,6 +556,10 @@ html.no-js  #toggle-sidebar {
 
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li,
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item:not(.active).hover .nav-level-2 > li {
+  &.nav-item-header {
+    display: none;
+  }
+
   &.badge-nav-item {
     display: flex;
   }
