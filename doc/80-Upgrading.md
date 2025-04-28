@@ -3,6 +3,16 @@
 Specific version upgrades are described below. Please note that upgrades are incremental. An upgrade from
 v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
+## Upgrading to Icinga Web 2.13
+
+**Breaking changes**
+
+* The following columns of the `Servicestatus` table, which previously displayed the date time (string) as a fetched value, now display the unix timestamp to support relative time filters:
+    * `service_last_time_ok`
+    * `service_last_time_unknown`
+    * `service_last_time_warning`
+    * `service_last_time_critical`
+
 ## Upgrading to Icinga Web 2.12.2
 
 **Framework changes affecting third-party code**
