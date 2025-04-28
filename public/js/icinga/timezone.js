@@ -5,28 +5,6 @@
     'use strict';
 
     /**
-     * Get the maximum timezone offset
-     *
-     * @returns {Number}
-     */
-    Date.prototype.getStdTimezoneOffset = function() {
-        var year = new Date().getFullYear();
-        var offsetInJanuary = new Date(year, 0, 2).getTimezoneOffset();
-        var offsetInJune = new Date(year, 5, 2).getTimezoneOffset();
-
-        return Math.max(offsetInJanuary, offsetInJune);
-    };
-
-    /**
-     * Test for daylight saving time zone
-     *
-     * @returns {boolean}
-     */
-    Date.prototype.isDst = function() {
-        return this.getStdTimezoneOffset() !== this.getTimezoneOffset();
-    };
-
-    /**
      * Write timezone information into a cookie
      *
      * @constructor
@@ -51,15 +29,11 @@
          * Write timezone information into cookie
          */
         writeTimezone: function() {
-            var date = new Date();
-            var timezoneOffset = (date.getTimezoneOffset()*60) * -1;
-            var dst = date.isDst();
-
             if (this.readCookie(this.cookieName)) {
                 return;
             }
 
-            this.writeCookie(this.cookieName, timezoneOffset + '-' + Number(dst), 1);
+            this.writeCookie(this.cookieName, Intl.DateTimeFormat().resolvedOptions().timeZone);
         },
 
         /**
@@ -67,17 +41,9 @@
          *
          * @param {String} name
          * @param {String} value
-         * @param {Number} days
          */
-        writeCookie: function(name, value, days) {
-            var expires = '';
-
-            if (days) {
-                var date = new Date();
-                date.setTime(date.getTime()+(days*24*60*60*1000));
-                var expires = '; expires=' + date.toGMTString();
-            }
-            document.cookie = name + '=' + value + expires + '; path=/';
+        writeCookie: function(name, value) {
+            document.cookie = name + '=' + value + '; path=/';
         },
 
         /**
