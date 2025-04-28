@@ -3,6 +3,8 @@
 
 namespace Icinga\Util;
 
+use DateTimeZone;
+
 /**
  * Retrieve timezone information from cookie
  */
@@ -36,9 +38,11 @@ class TimezoneDetect
             return;
         }
 
-        if (array_key_exists(self::$cookieName, $_COOKIE)) {
+        if (in_array($_COOKIE[self::$cookieName] ?? null, DateTimeZone::listIdentifiers(), true)) {
             self::$timezoneName = $_COOKIE[self::$cookieName];
             self::$success = true;
+        } else {
+            self::$success = false;
         }
     }
 
