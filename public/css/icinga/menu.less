@@ -2,7 +2,7 @@
 
 #menu [class^="icon-"],
 #menu [class*=" icon-"] {
-  &:before {
+  &::before {
     width: 1.5em;
   }
 }
@@ -87,7 +87,7 @@
     opacity: .8;
   }
 
-  & > a > .icon-letter:before {
+  & > a > .icon-letter::before {
     content: attr(data-letter);
     font-family: @font-family;
     font-weight: 800;
@@ -103,7 +103,7 @@
     background-color: @menu-highlight-hover-bg-color;
   }
 
-  &:after {
+  &::after {
     .transform(rotate(45deg));
 
     position: absolute;
@@ -140,7 +140,7 @@
   }
 
   // Little caret on active level-2 item
-  &.active:after {
+  &.active::after {
     .transform(rotate(45deg));
 
     background-color: @body-bg-color;
@@ -255,7 +255,7 @@
     position: fixed;
     z-index: 1;
 
-    &:after {
+    &::after {
       .transform(rotate(45deg));
 
       background-color: @body-bg-color;
@@ -271,7 +271,7 @@
       z-index: -1;
     }
 
-    &.bottom-up:after {
+    &.bottom-up::after {
       top: unset;
       bottom: 1em;
     }
@@ -303,7 +303,7 @@
       }
 
       // Hide activity caret when displayed as flyout
-      &:after {
+      &::after {
         display: none;
       }
     }
@@ -508,8 +508,8 @@ html.no-js  #toggle-sidebar {
   display: none;
 }
 
-#open-sidebar:before,
-#close-sidebar:before {
+#open-sidebar::before,
+#close-sidebar::before {
   width: 1.4em;
   margin-right: 0;
 }
