@@ -7,6 +7,7 @@
   }
 }
 
+@nav-item-height: 3.166666667em; // 38px
 @icon-width: 1.7em; // 1.5em width + 0.2em right margin
 
 #menu {
@@ -51,7 +52,6 @@
 }
 
 #menu .nav-level-1 > .nav-item {
-  line-height: 2.167em; // 26 px
   color: @menu-color;
 
   &.active {
@@ -69,7 +69,10 @@
   }
 
   > a {
-    padding: 0.5em 0.5em 0.5em .75em;
+    padding-left: .75em;
+    height: @nav-item-height;
+    display: flex;
+    align-items: center;
   }
 
   &.active:not(.selected) > a:focus,
@@ -114,8 +117,8 @@
     content: "";
     display: block;
     height: 1.25em;
-    margin-top: -1.75em;
     width: 1.25em;
+    top: ~"calc(50% - (1.25em / 2))";
   }
 }
 
@@ -150,7 +153,7 @@
     height: 1.25em;
     width: 1.25em;
     position: absolute;
-    top: .5em;
+    top: ~"calc(50% - (1.25em / 2))";
     right: -.75em;
     z-index: 3;
   }
@@ -234,6 +237,8 @@
 // Badge offset correction
 #menu > nav > .nav-level-1 > .badge-nav-item > a > .badge {
   margin-top: 0.2em;
+  margin-left: auto;
+  order: 1; // It's the only positioned element in the flex container, hence 1 moves it to the right most position
 }
 
 #menu .nav-level-2 > .badge-nav-item > a > .badge {
