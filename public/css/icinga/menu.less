@@ -69,10 +69,9 @@
   }
 
   > a {
-    padding-left: .75em;
+    // To center the content, padding top is: height - line-height / 2
+    padding: ~"calc((@{nav-item-height} - 1.5em) / 2) .5em .5em .75em";
     height: @nav-item-height;
-    display: flex;
-    align-items: center;
   }
 
   &.active:not(.selected) > a:focus,
@@ -96,6 +95,10 @@
     font-weight: 800;
     text-transform: uppercase;
   }
+}
+
+#layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item > a {
+  padding: ~"calc((@{nav-item-height} - 2em) / 2) .5em .5em .5em";
 }
 
 #menu ul:not(.nav-level-2) > .selected > a {
@@ -236,9 +239,7 @@
 
 // Badge offset correction
 #menu > nav > .nav-level-1 > .badge-nav-item > a > .badge {
-  margin-top: 0.2em;
   margin-left: auto;
-  order: 1; // It's the only positioned element in the flex container, hence 1 moves it to the right most position
 }
 
 #menu .nav-level-2 > .badge-nav-item > a > .badge {
