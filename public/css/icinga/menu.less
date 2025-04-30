@@ -2,11 +2,12 @@
 
 #menu [class^="icon-"],
 #menu [class*=" icon-"] {
-  &:before {
+  &::before {
     width: 1.5em;
   }
 }
 
+@nav-item-height: 3.166666667em; // 38px
 @icon-width: 1.7em; // 1.5em width + 0.2em right margin
 
 #menu {
@@ -51,7 +52,6 @@
 }
 
 #menu .nav-level-1 > .nav-item {
-  line-height: 2.167em; // 26 px
   color: @menu-color;
 
   &.active {
@@ -69,7 +69,10 @@
   }
 
   > a {
-    padding: 0.5em 0.5em 0.5em .75em;
+    padding-left: .75em;
+    height: @nav-item-height;
+    display: flex;
+    align-items: center;
   }
 
   &.active:not(.selected) > a:focus,
@@ -87,7 +90,7 @@
     opacity: .8;
   }
 
-  & > a > .icon-letter:before {
+  & > a > .icon-letter::before {
     content: attr(data-letter);
     font-family: @font-family;
     font-weight: 800;
@@ -103,7 +106,7 @@
     background-color: @menu-highlight-hover-bg-color;
   }
 
-  &:after {
+  &::after {
     .transform(rotate(45deg));
 
     position: absolute;
@@ -114,8 +117,8 @@
     content: "";
     display: block;
     height: 1.25em;
-    margin-top: -1.75em;
     width: 1.25em;
+    top: ~"calc(50% - (1.25em / 2))";
   }
 }
 
@@ -140,7 +143,7 @@
   }
 
   // Little caret on active level-2 item
-  &.active:after {
+  &.active::after {
     .transform(rotate(45deg));
 
     background-color: @body-bg-color;
@@ -150,7 +153,7 @@
     height: 1.25em;
     width: 1.25em;
     position: absolute;
-    top: .5em;
+    top: ~"calc(50% - (1.25em / 2))";
     right: -.75em;
     z-index: 3;
   }
@@ -234,6 +237,8 @@
 // Badge offset correction
 #menu > nav > .nav-level-1 > .badge-nav-item > a > .badge {
   margin-top: 0.2em;
+  margin-left: auto;
+  order: 1; // It's the only positioned element in the flex container, hence 1 moves it to the right most position
 }
 
 #menu .nav-level-2 > .badge-nav-item > a > .badge {
@@ -254,8 +259,9 @@
     width: 14em;
     position: fixed;
     z-index: 1;
+    margin-top: -1px; // Align content with the menu item, not its border
 
-    &:after {
+    &::after {
       .transform(rotate(45deg));
 
       background-color: @body-bg-color;
@@ -266,14 +272,18 @@
       height: 1.1em;
       width: 1.1em;
       position: absolute;
-      top: 1em;
+      top: ~"calc((@{nav-item-height} / 2) - (1.1em / 2))";
       left: -.6em;
       z-index: -1;
     }
 
-    &.bottom-up:after {
-      top: unset;
-      bottom: 1em;
+    &.bottom-up {
+      --caretY: 100%;
+      margin-top: 1px;
+
+      &::after {
+        top: ~"calc(var(--caretY) - (@{nav-item-height} / 2) - (1.1em / 2))";
+      }
     }
 
     > .nav-item {
@@ -303,7 +313,7 @@
       }
 
       // Hide activity caret when displayed as flyout
-      &:after {
+      &::after {
         display: none;
       }
     }
@@ -320,17 +330,13 @@
 
 #layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active).hover {
   > .nav-level-2 {
-    // Position relative to parent
     margin-left: 16em;
-    margin-top: -3.167em;
   }
 }
 
 #layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item.hover {
   > .nav-level-2 {
-    // Position relative to parent
     margin-left: 4em;
-    margin-top: -3.333em;
 
     > .badge-nav-item {
       display: flex;
@@ -508,8 +514,8 @@ html.no-js  #toggle-sidebar {
   display: none;
 }
 
-#open-sidebar:before,
-#close-sidebar:before {
+#open-sidebar::before,
+#close-sidebar::before {
   width: 1.4em;
   margin-right: 0;
 }

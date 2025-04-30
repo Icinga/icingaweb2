@@ -319,23 +319,25 @@
             $target.siblings().not($target).removeClass('hover');
             $target.addClass('hover');
 
-            var targetHeight = $target.offset().top + $target.outerHeight();
-            $flyout.css({
-                bottom: 'auto',
-                top: targetHeight
-            });
+            const targetRect = $target[0].getBoundingClientRect();
+            const flyoutRect = $flyout[0].getBoundingClientRect();
 
-            var rect = $flyout[0].getBoundingClientRect();
+            const css = { "--caretY": "" };
+            if (targetRect.top + flyoutRect.height > window.innerHeight) {
+                css.top = targetRect.bottom - flyoutRect.height;
+                if (css.top < 10) {
+                    css.top = 10;
+                    // Not sure why -2, but it aligns the caret perfectly with the menu item
+                    css["--caretY"] = `${targetRect.bottom - 10 - 2}px`;
+                }
 
-            if (rect.bottom > window.innerHeight) {
                 $flyout.addClass('bottom-up');
-                $flyout.css({
-                    bottom: window.innerHeight - targetHeight,
-                    top: 'auto'
-                });
             } else {
                 $flyout.removeClass('bottom-up');
+                css.top = targetRect.top;
             }
+
+            $flyout.css(css);
         }, delay);
     };
 
