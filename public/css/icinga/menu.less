@@ -259,6 +259,7 @@
     width: 14em;
     position: fixed;
     z-index: 1;
+    margin-top: -1px; // Align content with the menu item, not its border
 
     &::after {
       .transform(rotate(45deg));
@@ -271,14 +272,18 @@
       height: 1.1em;
       width: 1.1em;
       position: absolute;
-      top: 1em;
+      top: ~"calc((@{nav-item-height} / 2) - (1.1em / 2))";
       left: -.6em;
       z-index: -1;
     }
 
-    &.bottom-up::after {
-      top: unset;
-      bottom: 1em;
+    &.bottom-up {
+      --caretY: 100%;
+      margin-top: 1px;
+
+      &::after {
+        top: ~"calc(var(--caretY) - (@{nav-item-height} / 2) - (1.1em / 2))";
+      }
     }
 
     > .nav-item {
@@ -325,17 +330,13 @@
 
 #layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active).hover {
   > .nav-level-2 {
-    // Position relative to parent
     margin-left: 16em;
-    margin-top: -3.167em;
   }
 }
 
 #layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item.hover {
   > .nav-level-2 {
-    // Position relative to parent
     margin-left: 4em;
-    margin-top: -3.333em;
 
     > .badge-nav-item {
       display: flex;
