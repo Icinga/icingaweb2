@@ -1052,7 +1052,12 @@
                 this.icinga.timer.unregister(req.progressTimer);
             }
 
-            if (req.status > 0 && req.status < 501) {
+            if (req.status == 401) {
+                this.icinga.logger.debug(
+                    'Request to ' + url + ' return 401. Will refresh page to trigger new login.'
+                );
+                window.location.reload();
+            } else if (req.status > 0 && req.status < 501) {
                 this.icinga.logger.error(
                     req.status,
                     errorThrown + ':',
