@@ -10,7 +10,17 @@ class WebModuleRequirement extends Requirement
 {
     protected function evaluate()
     {
-        list($name, $op, $version) = $this->getCondition();
+        if (count($this->getCondition()) === 2) {
+            list($name, $version) = $this->getCondition();
+            $op = '=';
+            if (is_string($version)
+                && preg_match('/^([<>=]{1,2})\s*v?((?:[\d.]+)(?:.+)?)$/', $version, $match)) {
+                $op = $match[1];
+                $version = $match[2];
+            }
+        } else {
+            list($name, $op, $version) = $this->getCondition();
+        }
 
         $mm = Icinga::app()->getModuleManager();
         if (! $mm->hasInstalled($name)) {
@@ -26,6 +36,6 @@ class WebModuleRequirement extends Requirement
         }
 
         $this->setStateText(sprintf(mt('setup', '%s version: %s'), $this->getAlias(), $moduleVersion));
-        return version_compare($moduleVersion, $version, $op);
+        return $version === true || $version === null || version_compare($moduleVersion, $version, $op);
     }
 }
