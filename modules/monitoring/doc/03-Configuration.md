@@ -21,6 +21,7 @@ by this module.
 
 Option                            | Description
 ----------------------------------|-----------------------------------------------
+acknowledge_comment_text          | **Optional.** Set default text for "Comment" in Acknowledgement dialog by default.
 acknowledge_expire                | **Optional.** Check "Use Expire Time" in Acknowledgement dialog by default. Defaults to **0 (false)**.
 acknowledge_expire_time           | **Optional.** Set default value for "Expire Time" in Acknowledgement dialog, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). Defaults to **1 hour (PT1H)**.
 acknowledge_notify                | **Optional.** Check "Send Notification" in Acknowledgement dialog by default. Defaults to **1 (true)**.
