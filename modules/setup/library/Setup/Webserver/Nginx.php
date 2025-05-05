@@ -16,7 +16,6 @@ class Nginx extends Webserver
 
     protected function createFpmUri()
     {
-
         return empty($this->fpmSocketPath) ? $this->fpmUrl : $this->fpmSocketSchema . $this->fpmSocketPath;
     }
 
