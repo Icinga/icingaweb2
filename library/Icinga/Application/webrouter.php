@@ -8,7 +8,7 @@ use Icinga\Web\Controller\StaticController;
 use Icinga\Web\JavaScript;
 use Icinga\Web\StyleSheet;
 
-error_reporting(E_ALL | E_STRICT);
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 
 if (isset($_SERVER['REQUEST_URI'])) {
     $ruri = $_SERVER['REQUEST_URI'];
