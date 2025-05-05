@@ -568,12 +568,7 @@ abstract class ApplicationBootstrap
      */
     protected function setupErrorHandling()
     {
-        error_reporting(
-            getenv('ICINGAWEB_ENVIRONMENT') === 'dev'
-                ? E_ALL | E_STRICT
-                : (E_ALL | E_STRICT) & ~E_DEPRECATED & ~E_USER_DEPRECATED
-        );
-
+        error_reporting(getenv('ICINGAWEB_ENVIRONMENT') === 'dev' ? E_ALL : E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
         ini_set('display_startup_errors', 1);
         ini_set('display_errors', 1);
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
@@ -584,7 +579,6 @@ abstract class ApplicationBootstrap
             switch ($errno) {
                 case E_NOTICE:
                 case E_WARNING:
-                case E_STRICT:
                 case E_RECOVERABLE_ERROR:
                     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
             }
