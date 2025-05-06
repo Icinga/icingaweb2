@@ -174,6 +174,10 @@ class ConfigCommand extends Command
             $this->fail($this->translate(
                 'One of the arguments --fpm-socket-path or --fpm-url must be set to pass requests to FPM'
             ));
+        } elseif (!empty($fpmSocketPath) && !empty($fpmUrl)) {
+            $this->fail($this->translate(
+                'Only one of the arguments --fpm-socket-path or --fpm-url must be set to pass requests to FPM'
+            ));
         }
         $webserver
             ->setDocumentRoot($documentRoot)

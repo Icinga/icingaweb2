@@ -242,13 +242,13 @@ abstract class Webserver
     /**
      * Set the address where to pass requests to FPM
      *
-     * @param string $uri
+     * @param string $url
      *
      * @return  $this
      */
-    public function setFpmUrl($uri)
+    public function setFpmUrl($url)
     {
-        $this->fpmUrl = (string)$uri;
+        $this->fpmUrl = (string) $url;
 
         return $this;
     }
