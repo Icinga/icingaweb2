@@ -16,6 +16,7 @@
   flex: 1;
   overflow: auto;
   overflow-x: hidden;
+  scrollbar-width: thin;
 }
 
 #menu .nav-item {
@@ -98,7 +99,7 @@
 }
 
 #layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item > a {
-  padding: ~"calc((@{nav-item-height} - 2em) / 2) .5em .5em .5em";
+  padding: ~"calc((@{nav-item-height} - 2em) / 2) .5em .5em .75em";
 }
 
 #menu ul:not(.nav-level-2) > .selected > a {
