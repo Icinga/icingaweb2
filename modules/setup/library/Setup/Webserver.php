@@ -33,11 +33,25 @@ abstract class Webserver
     protected $configDir;
 
     /**
-     * Address or path where to pass requests to FPM
+     * Address where to pass requests to FPM
      *
      * @var string
      */
-    protected $fpmUri;
+    protected $fpmUrl;
+
+    /**
+     * Socket path where to pass requests to FPM
+     *
+     * @var string
+     */
+    protected $fpmSocketPath;
+
+    /**
+     * FPM socket connection schema
+     *
+     * @var string
+     */
+    protected $fpmSocketSchema = 'unix:';
 
     /**
      * Enable to pass requests to FPM
@@ -72,6 +86,7 @@ abstract class Webserver
     public function generate()
     {
         $template = $this->getTemplate();
+        $fpmUri = $this->createFpmUri();
 
         $searchTokens = array(
             '{urlPath}',
@@ -85,7 +100,7 @@ abstract class Webserver
             $this->getDocumentRoot(),
             preg_match('~/$~', $this->getUrlPath()) ? $this->getDocumentRoot() . '/' : $this->getDocumentRoot(),
             $this->getConfigDir(),
-            $this->getFpmUri()
+            $fpmUri
         );
         $template = str_replace($searchTokens, $replaceTokens, $template);
         return $template;
@@ -97,6 +112,13 @@ abstract class Webserver
      * @return string
      */
     abstract protected function getTemplate();
+
+    /**
+     * Creates the connection string for the respective web server
+     *
+     * @return string
+     */
+    abstract protected function createFpmUri();
 
     /**
      * Set the URL path of Icinga Web 2
@@ -208,25 +230,47 @@ abstract class Webserver
     }
 
     /**
-     * Get the address or path where to pass requests to FPM
+     * Get the address where to pass requests to FPM
      *
      * @return  string
      */
-    public function getFpmUri()
+    public function getFpmUrl()
     {
-        return $this->fpmUri;
+        return $this->fpmUrl;
     }
 
     /**
-     * Set the address or path where to pass requests to FPM
+     * Set the address where to pass requests to FPM
      *
-     * @param   string  $uri
+     * @param string $url
      *
      * @return  $this
      */
-    public function setFpmUri($uri)
+    public function setFpmUrl($url)
     {
-        $this->fpmUri = (string) $uri;
+        $this->fpmUrl = (string) $url;
+
+        return $this;
+    }
+
+    /**
+     * Get the socket path where to pass requests to FPM
+     *
+     * @return  string
+     */
+    public function getFpmSocketPath()
+    {
+        return $this->fpmSocketPath;
+    }
+
+    /**
+     * Set the socket path where to pass requests to FPM
+     *
+     * @return  $this
+     */
+    public function setFpmSocketPath($socketPath)
+    {
+        $this->fpmSocketPath = (string) $socketPath;
 
         return $this;
     }
