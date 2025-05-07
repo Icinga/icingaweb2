@@ -21,8 +21,6 @@
         this.on('mouseenter', '#menu .primary-nav .nav-level-1 > .nav-item', this.onMouseEnter, this);
         this.on('mouseleave', '#menu .primary-nav', this.hideFlyoutMenu, this);
         this.on('click', '#toggle-sidebar', this.toggleSidebar, this);
-        this.on('resize', '', this.toggleConfigFlyout, this);
-
         this.on('click', '#menu .config-nav-item button', this.toggleConfigFlyout, this);
         this.on('mouseenter', '#menu .config-menu .config-nav-item', this.showConfigFlyout, this);
         this.on('mouseleave', '#menu .config-menu .config-nav-item', this.hideConfigFlyout, this);
@@ -42,11 +40,9 @@
          * The co-ordinates of the triangle formed from the previous cursor position
          * and the left corners of the flyout
          *
-         * @type {null|Array}
+         * @type {Array}
          */
-        this.coordinates = null;
-
-        this.icinga = icinga;
+        this.coordinates = new Array(3);
 
         this.flyoutTimer = null;
 
@@ -329,19 +325,21 @@
             return;
         }
 
-        let $target = $(this);
-        let $flyout = $target.find('.nav-level-2');
-        if (! $flyout.length) {
+        const $target = $(this);
+
+        if (! _this.coordinates.includes(undefined) && d3.polygonContains(_this.coordinates, [e.clientX, e.clientY])) {
+            return;
+        }
+
+        if (! $target[0].matches(':has(.nav-level-2)')) {
             $layout.removeClass('menu-hovered');
             $target.siblings().not($target).removeClass('hover');
             return;
         }
 
-        if (_this.coordinates && d3.polygonContains(_this.coordinates, [e.clientX, e.clientY])) {
-            return;
-        }
-
-        _this.showFlyoutMenu($target, [e.clientX, e.clientY]);
+        $layout.addClass('menu-hovered');
+        _this.coordinates[0] = [e.clientX, e.clientY];
+        _this.showFlyoutMenu($target, _this.coordinates[0]);
     }
 
     /**
@@ -355,16 +353,14 @@
         clearTimeout(_this.flyoutTimer);
 
         const $target = $(this);
-        const $flyout = $target.find('.nav-level-2');
-        if (_this.coordinates) {
-            _this.coordinates[0] = [e.clientX, e.clientY];
-
+        _this.coordinates[0] = [e.clientX, e.clientY];
+        if (! _this.coordinates.includes(undefined)) {
             _this.triangle.attr("points", _this.coordinates.map(p => p.join(",")).join(" "));
         }
 
-        if ($flyout.length) {
+        if ($target[0].matches(':has(.nav-level-2)')) {
             _this.flyoutTimer = setTimeout(function() {
-                _this.showFlyoutMenu($target, [e.clientX, e.clientY]);
+                _this.showFlyoutMenu($target);
             }, 200);
         }
     };
@@ -374,24 +370,18 @@
      * Show the fly-out menu for the given target navigation item
      *
      * @param $target
-     * @param position Current position of the mouse
      */
-    Navigation.prototype.showFlyoutMenu = function($target, position) {
-        const $layout = $('#layout');
+    Navigation.prototype.showFlyoutMenu = function($target) {
         const $flyout = $target.find('.nav-level-2');
+        if (! $target.is(':hover')) {
+            return;
+        }
 
-        try {
-            if (! $target.is(':hover')) {
-                return;
-            }
-        } catch(e) { /* Bypass because if IE8 */ }
-
-        $layout.addClass('menu-hovered');
         $target.siblings().not($target).removeClass('hover');
         $target.addClass('hover');
 
         const targetRect = $target[0].getBoundingClientRect();
-        let flyoutRect = $flyout[0].getBoundingClientRect();
+        const flyoutRect = $flyout[0].getBoundingClientRect();
 
         const css = { "--caretY": "" };
         if (targetRect.top + flyoutRect.height > window.innerHeight) {
@@ -409,9 +399,9 @@
         }
 
         $flyout.css(css);
-        flyoutRect = $flyout[0].getBoundingClientRect()
 
-        this.coordinates = [position, [flyoutRect.left, flyoutRect.top], [flyoutRect.left, flyoutRect.bottom]];
+        this.coordinates[1] = [flyoutRect.left, css.top];
+        this.coordinates[2] = [flyoutRect.left, css.top + flyoutRect.height];
 
         this.triangle.attr("points", this.coordinates.map(p => p.join(",")).join(" "));
     };
@@ -426,7 +416,7 @@
         var $nav = $(e.currentTarget);
         var $hovered = $nav.find('.nav-level-1 > .nav-item.hover');
         const _this = e.data.self;
-        _this.coordinates = null;
+        _this.coordinates.fill(undefined);
 
         if (! $hovered.length) {
             $layout.removeClass('menu-hovered');
