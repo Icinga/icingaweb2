@@ -9,7 +9,6 @@
     try {
         var d3 = require("icinga/icinga-php-thirdparty/mbostock/d3");
     } catch (e) {
-        d3 = null;
         console.warn('D3.js library is unavailable. Navigation to flyout may not work as expected.');
     }
 
@@ -18,7 +17,7 @@
         this.on('click', '#menu a', this.linkClicked, this);
         this.on('click', '#menu tr[href]', this.linkClicked, this);
         this.on('rendered', '#menu', this.onRendered, this);
-        if (d3 !== null) {
+        if (typeof d3 !== "undefined") {
             this.on('mousemove', '#menu .primary-nav .nav-level-1 > .nav-item', this.onMouseMove, this);
         }
 
@@ -321,7 +320,7 @@
         const $target = $(this);
 
         if (
-            d3 !== null
+            typeof d3 !== "undefined"
             && ! _this.extendedFlyoutZone.includes(undefined)
             && d3.polygonContains(_this.extendedFlyoutZone, [e.clientX, e.clientY])
         ) {
@@ -355,15 +354,25 @@
 
         const $target = $(this);
 
-        if (
-            $target[0].matches(':has(.nav-level-2)')
-            && ! $target.hasClass('hover')
-            && ! _this.extendedFlyoutZone.includes(undefined)
-            && d3.polygonContains(_this.extendedFlyoutZone, [e.clientX, e.clientY])
-        ) {
-            _this.flyoutTimer = setTimeout(function() {
+        if (! $target[0].matches(':has(.nav-level-2)')) {
+            return;
+        }
+
+        if (! $target.hasClass('hover')) {
+            if (
+                ! _this.extendedFlyoutZone.includes(undefined)
+                && d3.polygonContains(_this.extendedFlyoutZone, [e.clientX, e.clientY])
+            ) {
+                _this.flyoutTimer = setTimeout(function() {
+                    _this.showFlyoutMenu($target);
+                }, 200);
+            } else {
+                // The extended flyout zone keeps shrinking when the mouse moves towards the target's flyout.
+                // Hence, if the mouse is moved and stopped over a new target, sometimes it could be slightly outside
+                // the extended flyout zone. This in turn will not trigger the flyoutTimer.
+                // Hence, the showFlyoutMenu should be manually called.
                 _this.showFlyoutMenu($target);
-            }, 200);
+            }
         }
 
         _this.extendedFlyoutZone[0] = [e.clientX, e.clientY];
