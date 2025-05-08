@@ -6,15 +6,24 @@
 
     Icinga.Behaviors = Icinga.Behaviors || {};
 
+    try {
+        var d3 = require("icinga/icinga-php-thirdparty/mbostock/d3");
+    } catch (e) {
+        console.warn('D3.js library is unavailable. Navigation to flyout may not work as expected.');
+    }
+
     var Navigation = function (icinga) {
         Icinga.EventListener.call(this, icinga);
         this.on('click', '#menu a', this.linkClicked, this);
         this.on('click', '#menu tr[href]', this.linkClicked, this);
         this.on('rendered', '#menu', this.onRendered, this);
-        this.on('mouseenter', '#menu .primary-nav .nav-level-1 > .nav-item', this.showFlyoutMenu, this);
+        if (typeof d3 !== "undefined") {
+            this.on('mousemove', '#menu .primary-nav .nav-level-1 > .nav-item', this.onMouseMove, this);
+        }
+
+        this.on('mouseenter', '#menu .primary-nav .nav-level-1 > .nav-item', this.onMouseEnter, this);
         this.on('mouseleave', '#menu .primary-nav', this.hideFlyoutMenu, this);
         this.on('click', '#toggle-sidebar', this.toggleSidebar, this);
-
         this.on('click', '#menu .config-nav-item button', this.toggleConfigFlyout, this);
         this.on('mouseenter', '#menu .config-menu .config-nav-item', this.showConfigFlyout, this);
         this.on('mouseleave', '#menu .config-menu .config-nav-item', this.hideConfigFlyout, this);
@@ -29,6 +38,21 @@
          * @type {null|Array}
          */
         this.active = null;
+
+        /**
+         * Represents the extended flyout zone, an area formed by the previous cursor position, and top-left
+         * and bottom-left flyout points.
+         *
+         * @type {Array}
+         */
+        this.extendedFlyoutZone = new Array(3);
+
+        /**
+         * Timer for managing the delay in showing a flyout on mouse movement.
+         *
+         * @type {null|number}
+         */
+        this.flyoutTimer = null;
 
         /**
          * The menu
@@ -282,63 +306,111 @@
     };
 
     /**
-     * Show the fly-out menu
+     * Captures the mouse enter events to the navigation item and show the flyout.
      *
      * @param e
      */
-    Navigation.prototype.showFlyoutMenu = function(e) {
-        var $layout = $('#layout');
-
+    Navigation.prototype.onMouseEnter = function(e) {
+        const $layout = $('#layout');
+        const _this = e.data.self;
         if ($layout.hasClass('minimal-layout')) {
             return;
         }
 
-        var $target = $(this);
-        var $flyout = $target.find('.nav-level-2');
+        const $target = $(this);
 
-        if (! $flyout.length) {
+        if (
+            typeof d3 !== "undefined"
+            && ! _this.extendedFlyoutZone.includes(undefined)
+            && d3.polygonContains(_this.extendedFlyoutZone, [e.clientX, e.clientY])
+        ) {
+            return;
+        }
+
+        if (! $target[0].matches(':has(.nav-level-2)')) {
             $layout.removeClass('menu-hovered');
             $target.siblings().not($target).removeClass('hover');
             return;
         }
 
-        var delay = 300;
-
-        if ($layout.hasClass('menu-hovered')) {
-            delay = 0;
+        if (! $target.is(':hover')) {
+            return;
         }
 
-        setTimeout(function() {
-            try {
-                if (! $target.is(':hover')) {
-                    return;
-                }
-            } catch(e) { /* Bypass because if IE8 */ }
+        $layout.addClass('menu-hovered');
+        _this.extendedFlyoutZone[0] = [e.clientX, e.clientY];
+        _this.showFlyoutMenu($target);
+    }
 
-            $layout.addClass('menu-hovered');
-            $target.siblings().not($target).removeClass('hover');
-            $target.addClass('hover');
+    /**
+     * Captures the mouse move events within the navigation item
+     * and show the flyout if needed.
+     *
+     * @param e
+     */
+    Navigation.prototype.onMouseMove = function(e) {
+        const _this = e.data.self;
+        clearTimeout(_this.flyoutTimer);
 
-            const targetRect = $target[0].getBoundingClientRect();
-            const flyoutRect = $flyout[0].getBoundingClientRect();
+        const $target = $(this);
 
-            const css = { "--caretY": "" };
-            if (targetRect.top + flyoutRect.height > window.innerHeight) {
-                css.top = targetRect.bottom - flyoutRect.height;
-                if (css.top < 10) {
-                    css.top = 10;
-                    // Not sure why -2, but it aligns the caret perfectly with the menu item
-                    css["--caretY"] = `${targetRect.bottom - 10 - 2}px`;
-                }
+        if (! $target[0].matches(':has(.nav-level-2)')) {
+            return;
+        }
 
-                $flyout.addClass('bottom-up');
+        if (! $target.hasClass('hover')) {
+            if (
+                ! _this.extendedFlyoutZone.includes(undefined)
+                && d3.polygonContains(_this.extendedFlyoutZone, [e.clientX, e.clientY])
+            ) {
+                _this.flyoutTimer = setTimeout(function() {
+                    _this.showFlyoutMenu($target);
+                }, 200);
             } else {
-                $flyout.removeClass('bottom-up');
-                css.top = targetRect.top;
+                // The extended flyout zone keeps shrinking when the mouse moves towards the target's flyout.
+                // Hence, if the mouse is moved and stopped over a new target, sometimes it could be slightly outside
+                // the extended flyout zone. This in turn will not trigger the flyoutTimer.
+                // Hence, the showFlyoutMenu should be manually called.
+                _this.showFlyoutMenu($target);
+            }
+        }
+
+        _this.extendedFlyoutZone[0] = [e.clientX, e.clientY];
+    };
+
+
+    /**
+     * Show the fly-out menu for the given target navigation item
+     *
+     * @param $target
+     */
+    Navigation.prototype.showFlyoutMenu = function($target) {
+        const $flyout = $target.find('.nav-level-2');
+        $target.siblings().not($target).removeClass('hover');
+        $target.addClass('hover');
+
+        const targetRect = $target[0].getBoundingClientRect();
+        const flyoutRect = $flyout[0].getBoundingClientRect();
+
+        const css = { "--caretY": "" };
+        if (targetRect.top + flyoutRect.height > window.innerHeight) {
+            css.top = targetRect.bottom - flyoutRect.height;
+            if (css.top < 10) {
+                css.top = 10;
+                // Not sure why -2, but it aligns the caret perfectly with the menu item
+                css["--caretY"] = `${targetRect.bottom - 10 - 2}px`;
             }
 
-            $flyout.css(css);
-        }, delay);
+            $flyout.addClass('bottom-up');
+        } else {
+            $flyout.removeClass('bottom-up');
+            css.top = targetRect.top;
+        }
+
+        $flyout.css(css);
+
+        this.extendedFlyoutZone[1] = [flyoutRect.left, css.top];
+        this.extendedFlyoutZone[2] = [flyoutRect.left, css.top + flyoutRect.height];
     };
 
     /**
@@ -350,6 +422,8 @@
         var $layout = $('#layout');
         var $nav = $(e.currentTarget);
         var $hovered = $nav.find('.nav-level-1 > .nav-item.hover');
+        const _this = e.data.self;
+        _this.extendedFlyoutZone.fill(undefined);
 
         if (! $hovered.length) {
             $layout.removeClass('menu-hovered');
