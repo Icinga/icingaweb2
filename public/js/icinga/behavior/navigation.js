@@ -9,7 +9,8 @@
     try {
         var d3 = require("icinga/icinga-php-thirdparty/mbostock/d3");
     } catch (e) {
-        console.warn('[Navigation] requires d3.js library');
+        d3 = null;
+        console.warn('D3.js library is unavailable. Navigation to flyout may not work as expected.');
     }
 
     var Navigation = function (icinga) {
@@ -17,7 +18,10 @@
         this.on('click', '#menu a', this.linkClicked, this);
         this.on('click', '#menu tr[href]', this.linkClicked, this);
         this.on('rendered', '#menu', this.onRendered, this);
-        this.on('mousemove', '#menu .primary-nav .nav-level-1 > .nav-item', this.onMouseMove, this);
+        if (d3 !== null) {
+            this.on('mousemove', '#menu .primary-nav .nav-level-1 > .nav-item', this.onMouseMove, this);
+        }
+
         this.on('mouseenter', '#menu .primary-nav .nav-level-1 > .nav-item', this.onMouseEnter, this);
         this.on('mouseleave', '#menu .primary-nav', this.hideFlyoutMenu, this);
         this.on('click', '#toggle-sidebar', this.toggleSidebar, this);
@@ -37,30 +41,19 @@
         this.active = null;
 
         /**
-         * The co-ordinates of the triangle formed from the previous cursor position
-         * and the left corners of the flyout
+         * Represents the extended flyout zone, an area formed by the previous cursor position, and top-left
+         * and bottom-left flyout points.
          *
          * @type {Array}
          */
-        this.coordinates = new Array(3);
+        this.extendedFlyoutZone = new Array(3);
 
+        /**
+         * Timer for managing the delay in showing a flyout on mouse movement.
+         *
+         * @type {null|number}
+         */
         this.flyoutTimer = null;
-
-        this.svgNavigation = d3.select("#sidebar")
-            .append("svg")
-            .attr("id", "canvas")
-            .attr("width", window.innerWidth)
-            .attr("height", window.innerHeight)
-            .style("position", "absolute")
-            .style("top", 0)
-            .style("left", 0)
-            .style("z-index", 9999)
-            .style("pointer-events", "none");
-
-        this.triangle = this.svgNavigation.append("polygon")
-            .attr("fill", "rgba(30,144,255,0.3)")
-            .attr("stroke", "dodgerblue")
-            .attr("stroke-width", 2);
 
         /**
          * The menu
@@ -327,7 +320,11 @@
 
         const $target = $(this);
 
-        if (! _this.coordinates.includes(undefined) && d3.polygonContains(_this.coordinates, [e.clientX, e.clientY])) {
+        if (
+            d3 !== null
+            && ! _this.extendedFlyoutZone.includes(undefined)
+            && d3.polygonContains(_this.extendedFlyoutZone, [e.clientX, e.clientY])
+        ) {
             return;
         }
 
@@ -337,9 +334,13 @@
             return;
         }
 
+        if (! $target.is(':hover')) {
+            return;
+        }
+
         $layout.addClass('menu-hovered');
-        _this.coordinates[0] = [e.clientX, e.clientY];
-        _this.showFlyoutMenu($target, _this.coordinates[0]);
+        _this.extendedFlyoutZone[0] = [e.clientX, e.clientY];
+        _this.showFlyoutMenu($target);
     }
 
     /**
@@ -353,16 +354,19 @@
         clearTimeout(_this.flyoutTimer);
 
         const $target = $(this);
-        _this.coordinates[0] = [e.clientX, e.clientY];
-        if (! _this.coordinates.includes(undefined)) {
-            _this.triangle.attr("points", _this.coordinates.map(p => p.join(",")).join(" "));
-        }
 
-        if ($target[0].matches(':has(.nav-level-2)')) {
+        if (
+            $target[0].matches(':has(.nav-level-2)')
+            && ! $target.hasClass('hover')
+            && ! _this.extendedFlyoutZone.includes(undefined)
+            && d3.polygonContains(_this.extendedFlyoutZone, [e.clientX, e.clientY])
+        ) {
             _this.flyoutTimer = setTimeout(function() {
                 _this.showFlyoutMenu($target);
             }, 200);
         }
+
+        _this.extendedFlyoutZone[0] = [e.clientX, e.clientY];
     };
 
 
@@ -373,10 +377,6 @@
      */
     Navigation.prototype.showFlyoutMenu = function($target) {
         const $flyout = $target.find('.nav-level-2');
-        if (! $target.is(':hover')) {
-            return;
-        }
-
         $target.siblings().not($target).removeClass('hover');
         $target.addClass('hover');
 
@@ -400,10 +400,8 @@
 
         $flyout.css(css);
 
-        this.coordinates[1] = [flyoutRect.left, css.top];
-        this.coordinates[2] = [flyoutRect.left, css.top + flyoutRect.height];
-
-        this.triangle.attr("points", this.coordinates.map(p => p.join(",")).join(" "));
+        this.extendedFlyoutZone[1] = [flyoutRect.left, css.top];
+        this.extendedFlyoutZone[2] = [flyoutRect.left, css.top + flyoutRect.height];
     };
 
     /**
@@ -416,7 +414,7 @@
         var $nav = $(e.currentTarget);
         var $hovered = $nav.find('.nav-level-1 > .nav-item.hover');
         const _this = e.data.self;
-        _this.coordinates.fill(undefined);
+        _this.extendedFlyoutZone.fill(undefined);
 
         if (! $hovered.length) {
             $layout.removeClass('menu-hovered');
