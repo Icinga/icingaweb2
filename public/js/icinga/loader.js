@@ -1058,15 +1058,20 @@
                     errorThrown + ':',
                     $(req.responseText).text().replace(/\s+/g, ' ').slice(0, 100)
                 );
-                this.renderContentToContainer(
-                    req.responseText,
-                    req.$target,
-                    req.action,
-                    req.autorefresh,
-                    undefined,
-                    req.autosubmit,
-                    req.scripted
-                );
+
+                if (req.status === 401) {
+                    window.location.reload();
+                } else {
+                    this.renderContentToContainer(
+                        req.responseText,
+                        req.$target,
+                        req.action,
+                        req.autorefresh,
+                        undefined,
+                        req.autosubmit,
+                        req.scripted
+                    );
+                }
             } else {
                 if (errorThrown === 'abort') {
                     this.icinga.logger.debug(
