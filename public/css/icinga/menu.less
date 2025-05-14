@@ -35,11 +35,11 @@
   }
 }
 
-#layout:not(.sidebar-collapsed) #menu .nav-item > a:first-of-type {
+#layout:not(.sidebar-collapsed) #menu .nav-item > a:first-of-type,
+#layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-2 > .nav-item > a:first-of-type,
+#layout.minimal-layout #menu .nav-level-1 > .nav-item > a:first-of-type {
   // Respect overflowing content
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  .text-ellipsis();
 }
 
 #layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item {
