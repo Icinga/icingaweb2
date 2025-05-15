@@ -7,9 +7,9 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Exception\NotFoundError;
 use Icinga\Data\DataArray\ArrayDatasource;
-use Icinga\Data\Filter\FilterMatchCaseInsensitive;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Navigation\NavigationConfigForm;
+use Icinga\Util\NavigationItemHelper;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
 use Icinga\Web\Menu;
@@ -66,62 +66,11 @@ class NavigationController extends Controller
     }
 
     /**
-     * Return all shared navigation item configurations
-     *
-     * @param   string  $owner  A username if only items shared by a specific user are desired
-     *
-     * @return  array
-     */
-    protected function fetchSharedNavigationItemConfigs($owner = null)
-    {
-        $configs = array();
-        foreach ($this->itemTypeConfig as $type => $_) {
-            $config = Config::navigation($type);
-            $config->getConfigObject()->setKeyColumn('name');
-            $query = $config->select();
-            if ($owner !== null) {
-                $query->applyFilter(new FilterMatchCaseInsensitive('owner', '=', $owner));
-            }
-
-            foreach ($query as $itemConfig) {
-                $configs[] = $itemConfig;
-            }
-        }
-
-        return $configs;
-    }
-
-    /**
-     * Return all user navigation item configurations
-     *
-     * @param   string  $username
-     *
-     * @return  array
-     */
-    protected function fetchUserNavigationItemConfigs($username)
-    {
-        $configs = array();
-        foreach ($this->itemTypeConfig as $type => $_) {
-            $config = Config::navigation($type, $username);
-            $config->getConfigObject()->setKeyColumn('name');
-            foreach ($config->select() as $itemConfig) {
-                $configs[] = $itemConfig;
-            }
-        }
-
-        return $configs;
-    }
-
-    /**
      * Show the current user a list of their navigation items
      */
     public function indexAction()
     {
-        $user = $this->Auth()->getUser();
-        $ds = new ArrayDatasource(array_merge(
-            $this->fetchSharedNavigationItemConfigs($user->getUsername()),
-            $this->fetchUserNavigationItemConfigs($user->getUsername())
-        ));
+        $ds = new ArrayDatasource(NavigationItemHelper::fetchUserNavigationItems($this->Auth()->getUser()));
         $query = $ds->select();
 
         $this->view->types = $this->listItemTypes();
