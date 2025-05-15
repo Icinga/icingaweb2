@@ -6,10 +6,6 @@
 // Width for the name column--th--of name-value-table
 @name-value-table-name-width: 38/3em;
 
-.action-link {
-  color: @icinga-blue;
-}
-
 .error-message {
   font-weight: @font-weight-bold;
 }
@@ -124,22 +120,6 @@ a:hover > .icon-cancel {
 
 .icon-stateful {
   .fg-stateful();
-}
-
-// Link styles
-
-.button-link {
-  .action-link();
-  .rounded-corners(3px);
-
-  background: @low-sat-blue;
-  display: inline-block;
-  padding: 0.25em 0.5em;
-
-  &:hover {
-    background: @low-sat-blue-dark;
-    text-decoration: none;
-  }
 }
 
 // List styles
