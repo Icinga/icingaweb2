@@ -85,7 +85,7 @@ class Csp
 
         // Whitelist the hosts in the custom NavigationItems configured for the user,
         // so that the iframes can be rendered properly.
-        /** @var array<ConfigObject> $navigationItems */
+        /** @var ConfigObject[] $navigationItems */
         $navigationItems = NavigationItemHelper::fetchUserNavigationItems($user);
         foreach ($navigationItems as $navigationItem) {
 
@@ -95,12 +95,19 @@ class Csp
             }
 
             $name = $navigationItem->get("name", "");
+            $errorSource = "NavigationItem '$name'";
             $url = $navigationItem->get("url", "");
+
+            // Make sure $url is actually valid;
+            if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+                Logger::debug("$errorSource: Skipping invalid url: $host");
+                continue;
+            }
 
             $scheme = parse_url($url, PHP_URL_SCHEME);
             $host = parse_url($url, PHP_URL_HOST);
 
-            if ($host === null || !static::validateCspPolicy("NavigationItem '$name'", "frame-src", $host)) {
+            if ($host === null || !static::validateCspPolicy($errorSource, "frame-src", $host)) {
                 continue;
             }
 
