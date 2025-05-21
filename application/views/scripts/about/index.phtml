@@ -102,7 +102,7 @@ use ipl\Web\Widget\StateBadge;
             try {
                 $hasPending = $mm->hasPendingMigrations();
             } catch (Throwable $e) {
-                // suppress
+                throw new LogicException('Please check the database connection in Configuration -> Application -> Resources');
             }
         if ($hasPending): ?>
             <div class="pending-migrations clearfix">
