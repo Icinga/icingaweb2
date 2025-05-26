@@ -190,7 +190,7 @@ EOD;
      *
      * @return  string
      */
-    public function getProgressLabe()
+    public function getProgressLabel()
     {
         if ($this->progressLabel === null) {
             return $this->view()->translate('Loading');
@@ -277,7 +277,7 @@ EOD;
             sprintf($view->translate('Show %s', 'dashboard.dashlet.tooltip'), $view->escape($this->getTitle())),
             $view->escape($this->getTitle()),
             $view->translate('Dashlet') . ': ',
-            $this->getProgressLabe()
+            $this->getProgressLabel()
         );
 
         return str_replace($searchTokens, $replaceTokens, $this->template);
