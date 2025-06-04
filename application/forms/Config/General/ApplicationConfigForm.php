@@ -3,9 +3,11 @@
 
 namespace Icinga\Forms\Config\General;
 
+use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
 use Icinga\Web\Form;
+use ipl\Html\Text;
 
 /**
  * Configuration form for general application options
@@ -99,6 +101,16 @@ class ApplicationConfigForm extends Form
                 'label'         => $this->translate('Configuration Database')
             )
         );
+
+        $config = Config::app()->getSection('global');
+        if (!isset($config->config_resource)) {
+            $missingConfigResource =
+                Text::create(
+                    $this->translate("No Configuration Database selected. 
+                    Please set the field to establish a valid database connection.")
+                );
+            $this->warning($missingConfigResource, false);
+        }
 
         return $this;
     }
