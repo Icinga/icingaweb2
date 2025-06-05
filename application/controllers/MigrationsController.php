@@ -19,6 +19,9 @@ use ipl\Html\HtmlElement;
 use ipl\Html\Text;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
+use Throwable;
 
 class MigrationsController extends CompatController
 {
@@ -55,24 +58,48 @@ class MigrationsController extends CompatController
 
         $migrateListForm = new MigrationForm();
         $migrateListForm->setAttribute('id', $this->getRequest()->protectId('migration-form'));
-        $migrateListForm->setRenderDatabaseUserChange(! $mm->validateDatabasePrivileges());
+        try {
+            $migrateListForm->setRenderDatabaseUserChange(! $mm->validateDatabasePrivileges());
 
-        if ($canApply && $mm->hasPendingMigrations()) {
-            $migrateAllButton = new SubmitButtonElement(sprintf('migrate-%s', DbMigrationHook::ALL_MIGRATIONS), [
+            if ($canApply && $mm->hasPendingMigrations()) {
+                $migrateAllButton = new SubmitButtonElement(sprintf('migrate-%s', DbMigrationHook::ALL_MIGRATIONS), [
                 'form'  => $migrateListForm->getAttribute('id')->getValue(),
                 'label' => $this->translate('Migrate All'),
                 'title' => $this->translate('Migrate all pending migrations')
-            ]);
+                ]);
 
-            // Is the first button, so will be cloned and that the visible
-            // button is outside the form doesn't matter for Web's JS
-            $migrateListForm->registerElement($migrateAllButton);
+                // Is the first button, so will be cloned and that the visible
+                // button is outside the form doesn't matter for Web's JS
+                $migrateListForm->registerElement($migrateAllButton);
 
-            // Make sure it looks familiar, even if not inside a form
-            $migrateAllButton->setWrapper(new HtmlElement('div', Attributes::create(['class' => 'icinga-controls'])));
+                // Make sure it looks familiar, even if not inside a form
+                $migrateAllButton->setWrapper(
+                    new HtmlElement('div', Attributes::create(['class' => 'icinga-controls']))
+                );
 
-            $this->controls->getAttributes()->add('class', 'default-layout');
-            $this->addControl($migrateAllButton);
+                $this->controls->getAttributes()->add('class', 'default-layout');
+                $this->addControl($migrateAllButton);
+            }
+        } catch (Throwable $e) {
+            $this->addContent(
+                new HtmlElement(
+                    'div',
+                    new Attributes(['class' => 'db-connection-warning']),
+                    new Icon('warning'),
+                    new HtmlElement('ul', null),
+                    new HtmlElement(
+                        'p',
+                        null,
+                        new Text(
+                            $this->translate('   No Configuration Database selected. 
+                            To establish a valid database connection set the Configuration Database field.   ')
+                        )
+                    ),
+                    new HtmlElement('ul', null),
+                    new Link($this->translate('Configuration Database'), 'config/general/')
+                )
+            );
+            return;
         }
 
         $this->handleFormatRequest($mm->toArray());

@@ -17,6 +17,7 @@ use Icinga\Web\Notification;
 use Icinga\Web\Session;
 use Icinga\Web\StyleSheet;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\Locale;
 use ipl\I18n\StaticTranslator;
@@ -185,7 +186,15 @@ class PreferenceForm extends Form
                 false
             );
         }
-
+        $config = Config::app()->getSection('global');
+        if (!isset($config->config_resource)) {
+            $missingConfigResource =
+                Text::create($this->translate(
+                    'No Configuration Database selected.'
+                    . 'To establish a valid database connection set the Configuration Database field.'
+                ));
+            $this->warning($missingConfigResource, false);
+        }
         $themeFile = StyleSheet::getThemeFile(Config::app()->get('themes', 'default'));
         if (! (bool) Config::app()->get('themes', 'disabled', false)) {
             $themes = Icinga::app()->getThemes();
@@ -439,7 +448,7 @@ class PreferenceForm extends Form
 
     public function isSubmitted()
     {
-        if (parent::isSubmitted()) {
+        if (($this->getElement('btn_submit') !== null ) && parent::isSubmitted()) {
             return true;
         }
 
