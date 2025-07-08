@@ -1068,7 +1068,6 @@ class Module
      */
     public function getUserBackends()
     {
-        $this->launchConfigScript();
         return $this->userBackends;
     }
 
@@ -1079,7 +1078,6 @@ class Module
      */
     public function getUserGroupBackends()
     {
-        $this->launchConfigScript();
         return $this->userGroupBackends;
     }
 
@@ -1180,6 +1178,14 @@ class Module
      */
     protected function provideUserBackend($identifier, $className)
     {
+        if ($this->registered) {
+            Logger::warning(
+                'Module "%s" already registered. Providing user backend "%s" at this stage has no effect.',
+                $this->getName(),
+                $identifier
+            );
+        }
+
         $this->userBackends[strtolower($identifier)] = $className;
         return $this;
     }
@@ -1194,6 +1200,14 @@ class Module
      */
     protected function provideUserGroupBackend($identifier, $className)
     {
+        if ($this->registered) {
+            Logger::warning(
+                'Module "%s" already registered. Providing user group backend "%s" at this stage has no effect.',
+                $this->getName(),
+                $identifier
+            );
+        }
+
         $this->userGroupBackends[strtolower($identifier)] = $className;
         return $this;
     }
