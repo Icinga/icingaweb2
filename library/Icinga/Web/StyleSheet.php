@@ -139,6 +139,7 @@ class StyleSheet
             $this->lessCompiler->addLessFile($this->pubPath . '/' . $lessFile);
         }
 
+        $auth = Auth::getInstance();
         $mm = $this->app->getModuleManager();
 
         foreach ($mm->getLoadedModules() as $moduleName => $module) {
@@ -157,7 +158,6 @@ class StyleSheet
         }
 
         if (! (bool) $themingConfig->get('disabled', false)) {
-            $auth = Auth::getInstance();
             if ($auth->isAuthenticated()) {
                 $userTheme = $auth->getUser()->getPreferences()->getValue('icingaweb', 'theme');
                 if ($userTheme !== null) {
@@ -174,7 +174,7 @@ class StyleSheet
                 Logger::warning(sprintf(
                     'Theme "%s" set by user "%s" has not been found.',
                     $theme,
-                    ($user = Auth::getInstance()->getUser()) !== null ? $user->getUsername() : 'anonymous'
+                    $auth->isAuthenticated() ? $auth->getUser()->getUsername() : 'anonymous'
                 ));
             }
         }
@@ -184,10 +184,10 @@ class StyleSheet
         }
 
         $mode = 'none';
-        if ($user = Auth::getInstance()->getUser()) {
+        if ($auth->isAuthenticated()) {
             $file = $themePath !== null ? @file_get_contents($themePath) : false;
             if (! $file || strpos($file, self::LIGHT_MODE_IDENTIFIER) !== false) {
-                $mode = $user->getPreferences()->getValue('icingaweb', 'theme_mode', self::DEFAULT_MODE);
+                $mode = $auth->getUser()->getPreferences()->getValue('icingaweb', 'theme_mode', self::DEFAULT_MODE);
             }
         }
 
