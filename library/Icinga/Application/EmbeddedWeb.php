@@ -7,6 +7,8 @@ namespace Icinga\Application;
 
 require_once dirname(__FILE__) . '/ApplicationBootstrap.php';
 
+use Icinga\Authentication\Auth;
+use Icinga\User;
 use Icinga\Web\Request;
 use Icinga\Web\Response;
 use ipl\I18n\NoopTranslator;
@@ -38,6 +40,13 @@ class EmbeddedWeb extends ApplicationBootstrap
     protected $response;
 
     /**
+     * User object
+     *
+     * @var ?User
+     */
+    protected ?User $user = null;
+
+    /**
      * Get the request
      *
      * @return  Request
@@ -67,10 +76,10 @@ class EmbeddedWeb extends ApplicationBootstrap
     protected function bootstrap()
     {
         return $this
+            ->setupLogging()
             ->setupErrorHandling()
             ->loadLibraries()
             ->loadConfig()
-            ->setupLogging()
             ->setupLogger()
             ->setupRequest()
             ->setupResponse()
@@ -78,6 +87,8 @@ class EmbeddedWeb extends ApplicationBootstrap
             ->prepareFakeInternationalization()
             ->setupModuleManager()
             ->loadEnabledModules()
+            ->setupUserBackendFactory()
+            ->setupUser()
             ->registerApplicationHooks();
     }
 
@@ -100,6 +111,27 @@ class EmbeddedWeb extends ApplicationBootstrap
     protected function setupResponse()
     {
         $this->response = new Response();
+        return $this;
+    }
+
+    /**
+     * Create user object
+     *
+     * @return $this
+     */
+    protected function setupUser(): static
+    {
+        $auth = Auth::getInstance();
+        if (! $this->request->isXmlHttpRequest() && $this->request->isApiRequest() && ! $auth->isAuthenticated()) {
+            $auth->authHttp();
+        }
+
+        if ($auth->isAuthenticated()) {
+            $user = $auth->getUser();
+            $this->getRequest()->setUser($user);
+            $this->user = $user;
+        }
+
         return $this;
     }
 
