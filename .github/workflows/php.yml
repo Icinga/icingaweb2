@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - support/*
       - release/*
   pull_request:
     branches:
@@ -17,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3']
+        php: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
         os: ['ubuntu-latest']
 
     steps:
@@ -51,7 +52,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3']
+        php: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
         os: ['ubuntu-latest']
         include:
           - php: '7.2'
@@ -100,10 +101,10 @@ jobs:
 
       - name: Setup dependencies
         run: |
-          composer init -n --require mockery/mockery:* --require ipl/i18n:@dev --require ipl/web:@dev
+          composer init -n --require mockery/mockery:* --require ipl/i18n:v0.2.2 --require ipl/web:v0.10.2
           composer config platform.php 7.2.9
           composer install -n --no-progress
-          git clone --depth 1 --branch snapshot/nightly https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
+          git clone --depth 1 --branch stable/0.12.1 https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
 
       - name: PHPUnit
         env:
