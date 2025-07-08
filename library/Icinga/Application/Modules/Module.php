@@ -20,7 +20,6 @@ use Icinga\Web\Widget;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\StaticTranslator;
 use ipl\I18n\Translation;
-use Zend_Controller_Router_Route;
 use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route_Regex;
 
@@ -1341,18 +1340,6 @@ class Module
         foreach ($this->routes as $name => $route) {
             $router->addRoute($name, $route);
         }
-        $router->addRoute(
-            $this->name . '_jsprovider',
-            new Zend_Controller_Router_Route(
-                'js/' . $this->name . '/:file',
-                array(
-                    'action'        => 'javascript',
-                    'controller'    => 'static',
-                    'module'        => 'default',
-                    'module_name'   => $this->name
-                )
-            )
-        );
         $router->addRoute(
             $this->name . '_img',
             new Zend_Controller_Router_Route_Regex(

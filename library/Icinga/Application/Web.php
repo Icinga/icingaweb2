@@ -13,7 +13,6 @@ use ipl\I18n\Locale;
 use ipl\I18n\StaticTranslator;
 use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Front;
-use Zend_Controller_Router_Route;
 use Zend_Layout;
 use Zend_Paginator;
 use Zend_View_Helper_PaginationControl;
@@ -82,7 +81,6 @@ class Web extends EmbeddedWeb
             ->setupModuleManager()
             ->loadSetupModuleIfNecessary()
             ->loadEnabledModules()
-            ->setupRoute()
             ->setupPagination()
             ->setupUserBackendFactory()
             ->setupUser()
@@ -117,27 +115,6 @@ class Web extends EmbeddedWeb
             }
         }
         return array_combine($themes, $themes);
-    }
-
-    /**
-     * Prepare routing
-     *
-     * @return $this
-     */
-    private function setupRoute()
-    {
-        $this->frontController->getRouter()->addRoute(
-            'module_javascript',
-            new Zend_Controller_Router_Route(
-                'js/components/:module_name/:file',
-                array(
-                    'controller' => 'static',
-                    'action'     => 'javascript'
-                )
-            )
-        );
-
-        return $this;
     }
 
     /**
