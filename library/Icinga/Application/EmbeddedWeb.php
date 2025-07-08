@@ -120,14 +120,9 @@ class EmbeddedWeb extends ApplicationBootstrap
     protected function setupUser(): static
     {
         $auth = Auth::getInstance();
-        if (! $this->request->isXmlHttpRequest() && $this->request->isApiRequest() && ! $auth->isAuthenticated()) {
-            $auth->authHttp();
-        }
-
-        if ($auth->isAuthenticated()) {
-            $user = $auth->getUser();
-            $this->getRequest()->setUser($user);
-            $this->user = $user;
+        if ($auth->authenticate()->isAuthenticated()) {
+            $this->user = $auth->getUser();
+            $this->getRequest()->setUser($this->user);
         }
 
         return $this;
