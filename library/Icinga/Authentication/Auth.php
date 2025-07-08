@@ -6,6 +6,7 @@
 namespace Icinga\Authentication;
 
 use Exception;
+use Fiber;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\AuditHook;
 use Icinga\Application\Hook\AuthenticationHook;
@@ -22,7 +23,6 @@ use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Session;
 use Icinga\Web\StyleSheet;
 use LogicException;
-use RuntimeException;
 
 class Auth
 {
@@ -62,6 +62,15 @@ class Auth
     private bool $authPerformed = false;
 
     /**
+     * Fibers that were suspended during authentication
+     *
+     * This is used to resume fibers after authentication has been performed.
+     *
+     * @var Fiber[]
+     */
+    private array $suspendedFibers = [];
+
+    /**
      * @see getInstance()
      */
     private function __construct()
@@ -99,10 +108,22 @@ class Auth
     public function isAuthenticated()
     {
         if (! $this->authPerformed) {
-            throw new RuntimeException(
-                'This should not happen. Please report this as a bug.'
-                . 'Include the full stack trace in your report and a list of *all* installed modules.'
-            );
+            $fiber = Fiber::getCurrent();
+            if ($fiber !== null) {
+                Logger::debug(
+                    'Fiber %d of process %d attempts authentication, suspending it.',
+                    spl_object_id($fiber),
+                    getmypid() ?: 0
+                );
+
+                $this->suspendedFibers[] = $fiber;
+                Fiber::suspend();
+            } else {
+                throw new LogicException(
+                    'Authentication has not been performed yet.'
+                    . ' Call Auth::authenticate() during bootstrap before calling isAuthenticated().'
+                );
+            }
         }
 
         return $this->user !== null;
@@ -254,6 +275,18 @@ class Auth
         }
 
         $this->authPerformed = true;
+
+        foreach ($this->suspendedFibers as $fiber) {
+            Logger::debug(
+                'Authentication performed, resuming fiber %d of process %d.',
+                spl_object_id($fiber),
+                getmypid() ?: 0
+            );
+
+            $fiber->resume();
+        }
+
+        $this->suspendedFibers = [];
 
         return $this;
     }
