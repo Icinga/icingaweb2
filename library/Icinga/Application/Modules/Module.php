@@ -1339,18 +1339,6 @@ class Module
             $router->addRoute($name, $route);
         }
         $router->addRoute(
-            $this->name . '_jsprovider',
-            new Zend_Controller_Router_Route(
-                'js/' . $this->name . '/:file',
-                array(
-                    'action'        => 'javascript',
-                    'controller'    => 'static',
-                    'module'        => 'default',
-                    'module_name'   => $this->name
-                )
-            )
-        );
-        $router->addRoute(
             $this->name . '_img',
             new Zend_Controller_Router_Route_Regex(
                 'img/' . $this->name . '/(.+)',
