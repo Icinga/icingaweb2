@@ -4,6 +4,7 @@
 namespace Icinga\Authentication;
 
 use Exception;
+use Fiber;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\AuditHook;
 use Icinga\Application\Hook\AuthenticationHook;
@@ -61,6 +62,15 @@ class Auth
     private bool $authenticated = false;
 
     /**
+     * Fibers that were suspended during authentication
+     *
+     * This is used to resume fibers after authentication has been performed.
+     *
+     * @var Fiber[]
+     */
+    private array $suspendedFibers = [];
+
+    /**
      * @see getInstance()
      */
     private function __construct()
@@ -98,7 +108,19 @@ class Auth
     public function isAuthenticated()
     {
         if (! $this->authenticated) {
-            trigger_error('Authentication can no longer be triggered implicitly', E_USER_DEPRECATED);
+            $fiber = Fiber::getCurrent();
+            if ($fiber !== null) {
+                Logger::debug(
+                    'Fiber %d of process %d attempts authentication, suspending it.',
+                    spl_object_id($fiber),
+                    getmypid() ?: 0
+                );
+
+                $this->suspendedFibers[] = $fiber;
+                Fiber::suspend();
+            } else {
+                trigger_error('Authentication can no longer be triggered implicitly', E_USER_DEPRECATED);
+            }
         }
 
         return $this->user !== null;
@@ -249,6 +271,18 @@ class Auth
         }
 
         $this->authenticated = true;
+
+        foreach ($this->suspendedFibers as $fiber) {
+            Logger::debug(
+                'Authentication performed, resuming fiber %d of process %d.',
+                spl_object_id($fiber),
+                getmypid() ?: 0
+            );
+
+            $fiber->resume();
+        }
+
+        $this->suspendedFibers = [];
 
         return $this;
     }
