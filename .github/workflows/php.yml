@@ -47,7 +47,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     env:
-      phpunit-version: 9.5
+      phpunit-version: 9.6
       php-thirdparty-version: stable/0.12.1
 
     strategy:
