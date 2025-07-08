@@ -48,6 +48,7 @@ jobs:
 
     env:
       phpunit-version: 9.5
+      php-thirdparty-version: stable/0.12.1
 
     strategy:
       fail-fast: false
@@ -57,6 +58,8 @@ jobs:
         include:
           - php: '7.2'
             phpunit-version: 8.5
+          - php: '8.4'
+            php-thirdparty-version: snapshot/nightly
 
     services:
       mysql:
@@ -104,7 +107,7 @@ jobs:
           composer init -n --require mockery/mockery:* --require ipl/i18n:v0.2.2 --require ipl/web:v0.10.2
           composer config platform.php 7.2.9
           composer install -n --no-progress
-          git clone --depth 1 --branch stable/0.12.1 https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
+          git clone --depth 1 --branch ${{ matrix.php-thirdparty-version || env.php-thirdparty-version }} https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
 
       - name: PHPUnit
         env:
