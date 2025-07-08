@@ -16,14 +16,11 @@ use Zend_Layout;
 use Zend_Paginator;
 use Zend_View_Helper_PaginationControl;
 use Icinga\Authentication\Auth;
-use Icinga\User;
 use Icinga\Util\DirectoryIterator;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Controller\Dispatcher;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Notification;
-use Icinga\Web\Session;
-use Icinga\Web\Session\Session as BaseSession;
 use Icinga\Web\StyleSheet;
 use Icinga\Web\View;
 
@@ -52,20 +49,6 @@ class Web extends EmbeddedWeb
      */
     private $frontController;
 
-    /**
-     * Session object
-     *
-     * @var BaseSession
-     */
-    private $session;
-
-    /**
-     * User object
-     *
-     * @var User
-     */
-    private $user;
-
     /** @var array */
     protected $accessibleMenuItems;
 
@@ -90,7 +73,6 @@ class Web extends EmbeddedWeb
             ->loadConfig()
             ->setupLogger()
             ->setupRequest()
-            ->setupSession()
             ->setupNotifications()
             ->setupResponse()
             ->setupZendMvc()
@@ -313,48 +295,25 @@ class Web extends EmbeddedWeb
         return $this;
     }
 
-    /**
-     * Create user object
-     *
-     * @return $this
-     */
-    private function setupUser()
+    protected function setupUser(): static
     {
-        $auth = Auth::getInstance();
-        if (! $this->request->isXmlHttpRequest() && $this->request->isApiRequest() && ! $auth->isAuthenticated()) {
-            $auth->authHttp();
-        }
-        if ($auth->isAuthenticated()) {
-            $user = $auth->getUser();
-            $this->getRequest()->setUser($user);
-            $this->user = $user;
+        parent::setupUser();
 
-            if ($user->can('user/application/stacktraces')) {
-                $displayExceptions = $this->user->getPreferences()->getValue(
-                    'icingaweb',
-                    'show_stacktraces'
+        if ($this->user !== null && $this->user->can('user/application/stacktraces')) {
+            $displayExceptions = $this->user->getPreferences()->getValue(
+                'icingaweb',
+                'show_stacktraces'
+            );
+
+            if ($displayExceptions !== null) {
+                $this->frontController->setParams(
+                    array(
+                        'displayExceptions' => $displayExceptions
+                    )
                 );
-
-                if ($displayExceptions !== null) {
-                    $this->frontController->setParams(
-                        array(
-                            'displayExceptions' => $displayExceptions
-                        )
-                    );
-                }
             }
         }
-        return $this;
-    }
 
-    /**
-     * Initialize a session provider
-     *
-     * @return $this
-     */
-    private function setupSession()
-    {
-        $this->session = Session::create();
         return $this;
     }
 
