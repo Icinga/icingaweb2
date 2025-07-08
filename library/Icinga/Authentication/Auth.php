@@ -21,6 +21,8 @@ use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Session;
 use Icinga\Web\StyleSheet;
+use LogicException;
+use RuntimeException;
 
 class Auth
 {
@@ -52,6 +54,12 @@ class Auth
      */
     private $user;
 
+    /**
+     * Whether an authentication attempt has been performed
+     *
+     * @var bool
+     */
+    private bool $authPerformed = false;
 
     /**
      * @see getInstance()
@@ -90,14 +98,14 @@ class Auth
      */
     public function isAuthenticated()
     {
-        if ($this->user !== null) {
-            return true;
+        if (! $this->authPerformed) {
+            throw new RuntimeException(
+                'This should not happen. Please report this as a bug.'
+                . 'Include the full stack trace in your report and a list of *all* installed modules.'
+            );
         }
-        $this->authenticateFromSession();
-        if ($this->user === null && ! $this->authExternal()) {
-            return false;
-        }
-        return true;
+
+        return $this->user !== null;
     }
 
     public function setAuthenticated(User $user, $persist = true)
@@ -127,7 +135,7 @@ class Auth
             }
         }
 
-        $this->user = $user;
+        $this->setUser($user);
         if ($persist) {
             $this->persistCurrentUser();
         }
@@ -212,6 +220,40 @@ class Auth
     public function setUser(User $user)
     {
         $this->user = $user;
+        $this->authPerformed = true;
+
+        return $this;
+    }
+
+    /**
+     * Authenticate the user
+     *
+     * This method will try to authenticate the user using the session first, then external backends and finally HTTP
+     * authentication. If authentication has already been performed, an exception will be thrown.
+     *
+     * @throws LogicException If authentication has already been performed
+     *
+     * @return $this
+     */
+    public function authenticate(): static
+    {
+        if ($this->authPerformed) {
+            throw new LogicException('Cannot perform authentication more than once');
+        }
+
+        $this->authenticateFromSession();
+        if ($this->user === null) {
+            $this->authExternal();
+
+            if ($this->user === null
+                && $this->getRequest()->isApiRequest()
+                && ! $this->getRequest()->isXmlHttpRequest()
+            ) {
+                $this->authHttp();
+            }
+        }
+
+        $this->authPerformed = true;
 
         return $this;
     }
