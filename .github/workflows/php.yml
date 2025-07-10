@@ -1,4 +1,4 @@
-name: PHP
+name: PHP test
 
 on:
   pull_request:
