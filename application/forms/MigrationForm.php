@@ -133,6 +133,18 @@ class MigrationForm extends CompatForm
                             . ' that has the appropriate credentials to resolve this issue.'
                         ),
                         implode(', ', $mm->getRequiredDatabasePrivileges())
+                    ))),
+                    new HtmlElement('br'),
+                    new HtmlElement('br'),
+                    new HtmlElement('span', null, Text::create(sprintf(
+                        $this->translate(
+                            'The database name may contain either an underscore or a percent sign.'
+                            . ' In MySQL these characters represent a wildcard. If part of a database name,'
+                            . ' they might not have been escaped when manually granting privileges.'
+                            . ' Privileges might not be detected in this case. Check the documentation and'
+                            . ' update your grants accordingly: %s'
+                        ),
+                        'https://dev.mysql.com/doc/refman/8.0/en/grant.html#grant-quoting'
                     )))
                 )
             );
