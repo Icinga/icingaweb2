@@ -91,6 +91,19 @@ class DatabaseCreationPage extends Form
      */
     public function createElements(array $formData)
     {
+        if ($this->config['db'] === 'mysql' && preg_match('/[_%]/', $this->config['dbname'])) {
+            $this->warning(sprintf(
+                $this->translate(
+                    'The database name may contain either an underscore or a percent sign.'
+                    . ' In MySQL these characters represent a wildcard. If part of a database name,'
+                    . ' they might not have been escaped when manually granting privileges.'
+                    . ' Privileges might not be detected in this case. Check the documentation and'
+                    . ' update your grants accordingly: %s'
+                ),
+                'https://dev.mysql.com/doc/refman/8.0/en/grant.html#grant-quoting'
+            ));
+        }
+
         $skipValidation = isset($formData['skip_validation']) && $formData['skip_validation'];
         $this->addElement(
             'text',
