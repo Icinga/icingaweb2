@@ -4,6 +4,36 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.12.5
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/85?closed=1).
+
+#### PHP 8.4 Support
+
+We're again a little behind schedule, but now we support PHP 8.4! This means that installations on Ubuntu 25.04 and
+Fedora 42+ can now install Icinga Web without worrying about PHP related incompatibilities. Icinga packages will be
+available in the next few days.
+
+#### Good Things Take Time
+
+There's only a single (notable) recent issue that is fixed with this release. All the others are a bit older.
+
+* External URLs set up as dashlets are not *embedded* the same as navigation items [#5346](https://github.com/Icinga/icingaweb2/issues/5346)
+
+But the team sat together a few weeks ago and fixed a bug here and there. And of course, also in Icinga Web!
+
+* Users who are not allowed to change the theme, cannot change the theme mode either [#5385](https://github.com/Icinga/icingaweb2/issues/5385)
+* Filtering for older-than events with relative time does not work [#5263](https://github.com/Icinga/icingaweb2/issues/5263)
+* External logout not working from the navigation dashboard [#5000](https://github.com/Icinga/icingaweb2/issues/5000)
+* Empty values are NULL in CSV exports [#5350](https://github.com/Icinga/icingaweb2/issues/5350)
+
+#### Breaking, Somewhat
+
+This is mainly for developers.
+
+With the support of PHP 8.4, we introduced a new environment variable, `ICINGAWEB_ENVIRONMENT`. Unless set to `dev`,
+Icinga Web will not show nor log deprecation notices anymore.
+
 ### What's New in Version 2.12.4
 
 This is a hotfix release which fixes the following issue:
@@ -14,7 +44,7 @@ Database login broken after upgrade [#5343](https://github.com/Icinga/icingaweb2
 
 **Notice:** This is a security release. It is recommended to upgrade _immediately_.
 
-You can find all issues related to this release on our Roadmap.
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/83?closed=1).
 
 #### Vulnerabilities, Closed
 
@@ -47,7 +77,7 @@ noticed since v2.12.2, sorry that it took so long :)
 
 ### What's New in Version 2.12.2
 
-You can find all issues related to this release on our Roadmap.
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/81?closed=1).
 
 #### General Fixes
 
@@ -103,7 +133,7 @@ but it’s now slightly improved.
 
 ### What's New in Version 2.12.1
 
-You can find all issues related to this release on our Roadmap.
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/80?closed=1).
 
 #### PHP 8.3 Support
 
