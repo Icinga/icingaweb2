@@ -4,10 +4,15 @@
 namespace Icinga\Controllers;
 
 use Icinga\Common\Database;
-use Icinga\Web\Notification;
 use Icinga\Web\RememberMe;
 use Icinga\Web\RememberMeUserDevicesList;
+use ipl\Html\Attributes;
+use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Web\Compat\CompatController;
+use ipl\Web\Widget\Icon;
+use ipl\Web\Widget\Link;
+use Throwable;
 
 /**
  * MyDevicesController
@@ -49,6 +54,46 @@ class MyDevicesController extends CompatController
 
     public function indexAction()
     {
+        try {
+            $this->getDb();
+        } catch (Throwable $e) {
+            $hasConfigPermission =  $this->hasPermission('config/*');
+            if ($hasConfigPermission) {
+                $this->addContent(
+                    new HtmlElement(
+                        'div',
+                        new Attributes(['class' => 'db-connection-warning']),
+                        new Icon('warning'),
+                        new HtmlElement(
+                            'p',
+                            null,
+                            new Text($this->translate(
+                                'No Configuration Database selected.'
+                                . 'To establish a valid database connection set the Configuration Database field.'
+                            ))
+                        ),
+                        new Link($this->translate('Configuration Database'), 'config/general/')
+                    )
+                );
+            } else {
+                $this->addContent(
+                    new HtmlElement(
+                        'div',
+                        new Attributes(['class' => 'db-connection-warning']),
+                        new Icon('warning'),
+                        new HtmlElement(
+                            'p',
+                            null,
+                            new Text($this->translate(
+                                'No Configuration Database selected.'
+                                 . 'You don`t have permission to change this setting. Please contact an administrator.'
+                            ))
+                        )
+                    )
+                );
+            }
+            return;
+        }
         $name = $this->auth->getUser()->getUsername();
 
         $data = (new RememberMeUserDevicesList())
@@ -57,12 +102,6 @@ class MyDevicesController extends CompatController
             ->setUrl('my-devices/delete');
 
         $this->addContent($data);
-
-        if (! $this->hasDb()) {
-            Notification::warning(
-                $this->translate("Users can't stay logged in without a database configuration backend")
-            );
-        }
     }
 
     public function deleteAction()
