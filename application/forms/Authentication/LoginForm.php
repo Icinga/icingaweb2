@@ -161,6 +161,18 @@ class LoginForm extends Form
 
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
+
+            // If user has 2FA enabled and the token hasn't been validated, redirect to login again, so that
+            // the token is challenged.
+            $redirect = $this->getElement('redirect');
+            $old = $redirect->getValue();
+            $new = [];
+            if ($old) {
+                $new['redirect'] = $old;
+            }
+            $redirect->setValue(Url::fromPath('authentication/login', $new)->getRelativeUrl());
+            return true;
+
             $this->getResponse()->setRerenderLayout(true);
             return true;
         }
