@@ -88,6 +88,9 @@ class Auth
      */
     public function isAuthenticated()
     {
+        // return false just for testing. isAuthenticated must return false if the user is authentiacted but has 2FA enabled and the token hasn't been challenged yet.
+        return false;
+
         if ($this->user !== null) {
             return true;
         }
@@ -95,6 +98,9 @@ class Auth
         if ($this->user === null && ! $this->authExternal()) {
             return false;
         }
+
+        // real 2fa check from above must happen here
+
         return true;
     }
 
@@ -130,6 +136,7 @@ class Auth
             $this->persistCurrentUser();
         }
 
+        // don't log if 2fa hasn't been challenged yet
         AuditHook::logActivity('login', 'User logged in');
     }
 
@@ -452,5 +459,7 @@ class Auth
         // Load the user's roles
         $admissionLoader = new AdmissionLoader();
         $admissionLoader->applyRoles($user);
+
+        // Set 2FA status from the user preferences in the user obect
     }
 }

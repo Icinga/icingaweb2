@@ -91,8 +91,13 @@ class AuthenticationController extends Controller
                     ->sendResponse();
                 exit;
             }
+            // FORM DOES NOT REDIRECT, IF USER HAS 2FA ENABLED and token hasn't been challenged
             $form->handleRequest();
         }
+//        if ($user->has2FA() && irgendwas_mit_session()) {
+//            // 2 FA form erstellen und zeigen und handeln
+        // in der session speichern ob der token gepasst hat
+//        }
         $this->view->form = $form;
         $this->view->defaultTitle = $this->translate('Icinga Web 2 Login');
         $this->view->requiresSetup = $requiresSetup;
