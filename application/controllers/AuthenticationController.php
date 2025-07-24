@@ -8,6 +8,7 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
+use Icinga\Forms\Authentication\Cancel2FAForm;
 use Icinga\Forms\Authentication\Challenge2FAForm;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Web\Controller;
@@ -45,12 +46,14 @@ class AuthenticationController extends Controller
         }
 
         $user = $this->Auth()->getUser();
-        $form = ($user !== null
-            && $user->getTwoFactorEnabled()
-            && Session::getSession()->get('must_challenge_2fa_token', false) === true)
-            ? new Challenge2FAForm()
-            : new LoginForm();
-
+        if ($user !== null && $user->getTwoFactorEnabled()
+            && Session::getSession()->get('must_challenge_2fa_token', false) === true) {
+            $form = new Challenge2FAForm();
+            $cancel2faForm = new Cancel2FAForm();
+            $cancel2faForm->handleRequest();
+        } else {
+            $form = new LoginForm();
+        }
 
         if (RememberMe::hasCookie() && $this->hasDb()) {
             $authenticated = false;
@@ -103,6 +106,7 @@ class AuthenticationController extends Controller
             $form->handleRequest();
         }
         $this->view->form = $form;
+        $this->view->cancel2faForm = $cancel2faForm ?? null;
         $this->view->defaultTitle = $this->translate('Icinga Web 2 Login');
         $this->view->requiresSetup = $requiresSetup;
     }
