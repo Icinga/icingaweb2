@@ -87,10 +87,10 @@ class Auth
      */
     public function isAuthenticated()
     {
-        // return false just for testing. isAuthenticated must return false if the user is authentiacted but has 2FA enabled and the token hasn't been challenged yet.
-        return false;
-
         if ($this->user !== null) {
+            if ($this->user->getTwoFactorEnabled() && ! $this->user->getTwoFactorSuccessful()) {
+                return false;
+            }
             return true;
         }
         $this->authenticateFromSession();
@@ -98,7 +98,8 @@ class Auth
             return false;
         }
 
-        // real 2fa check from above must happen here
+        // 2fa check from must happen here, to apply the 2fa challenge for external users as well
+        // but the session authentication would also get the 2fa challenge
 
         return true;
     }
@@ -136,7 +137,9 @@ class Auth
         }
 
         // don't log if 2fa hasn't been challenged yet
-        AuditHook::logActivity('login', 'User logged in');
+        if (!$user->getTwoFactorEnabled() || $user->getTwoFactorSuccessful()) {
+            AuditHook::logActivity('login', 'User logged in');
+        }
     }
 
     /**
@@ -457,6 +460,8 @@ class Auth
         $admissionLoader = new AdmissionLoader();
         $admissionLoader->applyRoles($user);
 
-        // Set 2FA status from the user preferences in the user obect
+        // Set 2FA status from the user preferences & session in the user object
+        $user->setTwoFactorEnabled($preferences->getValue('icingaweb', 'enabled_2fa') == 1);
+        $user->setTwoFactorSuccessful(Session::getSession()->get('challenged_successful_2fa_token', false));
     }
 }
