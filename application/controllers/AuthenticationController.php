@@ -15,10 +15,13 @@ use Icinga\Authentication\LoginButton;
 use Icinga\Authentication\LoginButtonForm;
 use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
+use Icinga\Forms\Authentication\Cancel2FAForm;
+use Icinga\Forms\Authentication\Challenge2FAForm;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Helper\CookieHelper;
 use Icinga\Web\RememberMe;
+use Icinga\Web\Session;
 use Icinga\Web\Url;
 use RuntimeException;
 use Throwable;
@@ -49,7 +52,16 @@ class AuthenticationController extends Controller
         if (($requiresSetup = $icinga->requiresSetup()) && $icinga->setupTokenExists()) {
             $this->redirectNow(Url::fromPath('setup'));
         }
-        $form = new LoginForm();
+
+        $user = $this->Auth()->getUser();
+        if ($user !== null && $user->getTwoFactorEnabled()
+            && Session::getSession()->get('must_challenge_2fa_token', false) === true) {
+            $form = new Challenge2FAForm();
+            $cancel2faForm = new Cancel2FAForm();
+            $cancel2faForm->handleRequest();
+        } else {
+            $form = new LoginForm();
+        }
 
         if (RememberMe::hasCookie() && $this->hasDb()) {
             $authenticated = false;
@@ -99,7 +111,6 @@ class AuthenticationController extends Controller
                     ->sendResponse();
                 exit;
             }
-            // FORM DOES NOT REDIRECT, IF USER HAS 2FA ENABLED and token hasn't been challenged
             $form->handleRequest();
         }
 
@@ -127,11 +138,8 @@ class AuthenticationController extends Controller
             }
         }
 
-//        if ($user->has2FA() && irgendwas_mit_session()) {
-//            // 2 FA form erstellen und zeigen und handeln
-        // in der session speichern ob der token gepasst hat
-//        }
         $this->view->form = $form;
+        $this->view->cancel2faForm = $cancel2faForm ?? null;
         $this->view->loginButtons = $loginButtons;
         $this->view->defaultTitle = $this->translate('Icinga Web 2 Login');
         $this->view->requiresSetup = $requiresSetup;

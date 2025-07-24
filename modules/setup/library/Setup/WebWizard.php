@@ -101,7 +101,8 @@ class WebWizard extends Wizard implements SetupWizard
         'icingaweb_user',
         'icingaweb_user_preference',
         'icingaweb_rememberme',
-        'icingaweb_schema'
+        'icingaweb_schema',
+        'icingaweb_totp'
     );
 
     /**
