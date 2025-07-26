@@ -6,6 +6,10 @@
     <h1><?= $this->translate('Account') ?></h1>
     <?= $changePasswordForm ?>
 <?php endif ?>
+<?php if (isset($totpForm)): ?>
+    <h1><?= $this->translate('2FA - TOTP') ?></h1>
+    <?= $totpForm ?>
+<?php endif ?>
     <h1><?= $this->translate('Preferences') ?></h1>
     <?= $form ?>
 </div>
