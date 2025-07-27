@@ -14,6 +14,7 @@ use Icinga\Forms\PreferenceForm;
 use Icinga\Authentication\Totp;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Controller;
+use Icinga\Web\Session;
 
 /**
  * My Account
@@ -73,7 +74,8 @@ class AccountController extends Controller
         // create a form to add and enable 2FA via TOTP
 
         if ( $user->can('user/two-factor-authentication') ) {
-            $totp = new Totp($user->getUsername());
+
+            $totp = Session::getSession()->get('icingaweb_totp', null) ?? new Totp($user->getUsername());
             $totpForm = (new TotpForm())
                 ->setPreferences($user->getPreferences())
                 ->setTotp($totp);
