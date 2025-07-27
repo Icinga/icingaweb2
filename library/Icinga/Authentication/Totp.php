@@ -5,19 +5,46 @@ namespace Icinga\Authentication;
 use Icinga\Clock\PsrClock;
 use Icinga\Common\Database;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Web\Session;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
 use Icinga\Model\Totp as TotpModel;
+use ipl\Sql\Delete;
 use ipl\Sql\Insert;
+use ipl\Sql\Select;
 use ipl\Sql\Update;
 use ipl\Stdlib\Filter;
 use OTPHP\TOTP as extTOTP;
+use Zend_Db_Expr;
 
 class Totp
 {
     use Database {
         getDb as private getWebDb;
     }
+
+    /**
+     * Table name for TOTP records
+     */
+    const TABLE_NAME = 'icingaweb_totp';
+    /**
+     * Column name for secret
+     */
+    const COLUMN_USERNAME = 'username';
+    /**
+     * Column name for secret
+     */
+    const COLUMN_SECRET = 'secret';
+
+    /**
+     * Column name for created time
+     */
+    const COLUMN_CREATED_TIME = 'ctime';
+
+    /**
+     * Column name for modified time
+     */
+    const COLUMN_MODIFIED_TIME = 'mtime';
 
     protected string $username;
     protected PsrClock $clock;
@@ -64,40 +91,133 @@ class Totp
 
     public function generateSecret(): self
     {
-        $this->temporarySecret = $this->totpObject->getSecret();
+        $newSecret = $this->totpObject->getSecret();
+        if ($newSecret !== $this->secret && $newSecret !== $this->temporarySecret) {
+            $this->temporarySecret = $this->totpObject->getSecret();
+        }
 
         return $this;
     }
 
-    public function setSecretForUser(): self
+    public function renewSecret(): self
     {
-        if ($this->temporarySecret === null) {
-            throw new ConfigurationError('No temporary secret set to apply to user');
+        if (!($this->secret === null && $this->temporarySecret === null)) {
+            if (
+                ($currentSecret = $this->totpObject->getSecret())
+                && $currentSecret !== $this->temporarySecret
+                && $currentSecret !== $this->secret
+            ) {
+                $this->temporarySecret = $this->totpObject->getSecret();
+            } else {
+                $this->setTotpObject(true)->generateSecret();
+            }
         }
 
-        if ($this->secret === null) {
-            $this->getWebDb()->prepexec(
-                (new Insert())->into('icingaweb_totp')->values(
-                    [
-                        'username' => $this->username,
-                        'secret' => $this->temporarySecret,
-                        'created_at' => $this->clock->now(),
-                    ]
-                )
-            );
-        } else {
-            $this->getWebDb()->prepexec(
-                (new Update())->table('icingaweb_totp')
-                    ->set([
-                        'secret' => $this->temporarySecret,
-                        'updated_at' => $this->clock->now(),
-                    ])
-                    ->where(['username' => $this->username])
-                );
-        }
-        $this->secret = $this->temporarySecret;
         return $this;
     }
+
+    public function deleteSecret(): self
+    {
+        $this->secret = null;
+        $this->temporarySecret = null;
+
+        return $this;
+    }
+
+    public function saveTemporaryInSession(): self
+    {
+        Session::getSession()->set(
+            'icingaweb_totp',
+            $this
+        );
+
+        return $this;
+    }
+    public function makeStatePersistent(): self
+    {
+        $db = $this->getWebDb();
+        $db->beginTransaction();
+
+        $dbEntry = $db->prepexec(
+            (new Select())
+                ->columns(['*'])
+                ->from('icingaweb_totp')
+                ->where(['username = ?' => $this->username])
+        )->getIterator()->current();
+
+        try {
+            if ($this->temporarySecret !== null) {
+                if (!$dbEntry) {
+                    $db->prepexec(
+                        (new Insert())
+                            ->into(self::TABLE_NAME)
+                            ->values(
+                                [
+                                    self::COLUMN_USERNAME => $this->username,
+                                    self::COLUMN_SECRET => $this->temporarySecret,
+                                    self::COLUMN_CREATED_TIME => date('Y-m-d H:i:s'),
+                                    self::COLUMN_MODIFIED_TIME => date('Y-m-d H:i:s'),
+                                ]
+                            )
+                    );
+                } else {
+                    $db->prepexec(
+                        (new Update())
+                            ->table(self::TABLE_NAME)
+                            ->set([
+                                self::COLUMN_SECRET => $this->temporarySecret,
+                                self::COLUMN_MODIFIED_TIME => date('Y-m-d H:i:s'),
+                            ])
+                            ->where([self::COLUMN_USERNAME . ' = ?' => $this->username])
+                    );
+                }
+                $this->secret = $this->temporarySecret;
+                $this->temporarySecret = null;
+            } elseif ($this->secret === null && $dbEntry->secret !== null) {
+                $db->prepexec(
+                    (new Delete())
+                        ->from(self::TABLE_NAME)
+                        ->where([self::COLUMN_USERNAME . ' = ?' => $this->username])
+                );
+                $this->setTotpObject(true);
+            }
+
+            $db->commitTransaction();
+        } catch (\Exception $e) {
+            $db->rollBackTransaction();
+            throw new ConfigurationError(sprintf(
+                'Failed to persist TOTP state for user %s: %s',
+                $this->username,
+                $e->getMessage()
+            ), 0, $e);
+        }
+
+
+        return $this;
+    }
+
+    /**
+     * Retrieves the TOTP secret for the current user.
+     *
+     * @return string|null The TOTP secret or null if not found
+     */
+
+
+    public function getCurrentCode(): string
+    {
+        return $this->totpObject->now();
+    }
+    public function getSecret(): ?string
+    {
+
+        return $this->temporarySecret ?? $this->secret;
+    }
+
+    public function getTemporarySecret(): ?string
+    {
+        return $this->temporarySecret;
+    }
+
 
     /**
      * Returns a query for the TOTP model.
@@ -164,44 +284,36 @@ class Totp
     }
 
     /**
-     * Retrieves the TOTP secret for the current user.
-     *
-     * @return string|null The TOTP secret or null if not found
-     */
-    public function getSecret(): ?string
-    {
-
-        return $this->secret;
-    }
-
-    public function getTemporarySecret(): ?string
-    {
-        return $this->temporarySecret;
-    }
-
-
-    /**
      * Sets the TOTP object based on the user's secret.
      * If the secret is not set, a new TOTP object is generated.
+     *
+     * @param bool $new If true, a new TOTP object is created regardless of the existing secret
+     * @return self Returns the current instance for method chaining
      */
-    private function setTotpObject(bool $new = false): void
+    private function setTotpObject(bool $new = false): self
     {
-        if (isset($this->totpObject)) {
-            return;
-        }
-
-        if (!$new && ($totpModel = $this->getTotpModel()) !== null) {
+        $totpModel = null;
+        if ($this->secret === null && ($totpModel = $this->getTotpModel()) !== null) {
             $this->secret = $totpModel->secret;
-            $this->totpObject = extTOTP::createFromSecret($this->secret, $this->clock);
-        } elseif (!$new && $this->temporarySecret !== null) {
-            $this->totpObject = extTOTP::createFromSecret($this->temporarySecret, $this->clock);
-        } else {
-            $this->totpObject = extTOTP::generate($this->clock);
         }
-    }
 
-    public function getCurrentCode(): string
-    {
-        return $this->totpObject->now();
+        if (!$new) {
+            if (isset($this->totpObject)) {
+
+                return $this;
+            } elseif ($this->temporarySecret !== null) {
+                $this->totpObject = extTOTP::createFromSecret($this->temporarySecret, $this->clock);
+
+                return $this;
+            } elseif ($totpModel !== null) {
+                $this->totpObject = extTOTP::createFromSecret($this->secret, $this->clock);
+
+                return $this;
+            }
+        }
+
+        $this->totpObject = extTOTP::generate($this->clock);
+
+        return $this;
     }
 }
