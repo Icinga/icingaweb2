@@ -20,6 +20,9 @@ use Icinga\Web\Session;
  */
 class TotpForm extends PreferenceForm
 {
+    const PREFERENCE_KEYS = [
+        'enabled_2fa',
+    ];
     protected Totp $totp;
     /**
      * {@inheritdoc}
@@ -112,7 +115,7 @@ class TotpForm extends PreferenceForm
             'btn_submit',
             array(
                 'ignore' => true,
-                'label' => $this->translate('Save to the Preferences'),
+                'label' => $this->translate('Save Change'),
                 'decorators' => array('ViewHelper'),
                 'class' => 'btn-primary'
             )
@@ -135,23 +138,18 @@ class TotpForm extends PreferenceForm
      */
     public function onSuccess()
     {
-
-
         try {
             if ($this->getElement('btn_submit') && $this->getElement('btn_submit')->isChecked()) {
                 $this->preferences = new Preferences($this->store ? $this->store->load() : array());
                 $webPreferences = $this->preferences->get('icingaweb');
                 foreach ($this->getValues() as $key => $value) {
-                    if ($value === ''
-                        || $value === null
-                        || $value === 'autodetect'
-                    ) {
-                        if (isset($webPreferences[$key])) {
-                            unset($webPreferences[$key]);
-                        }
-                    } else {
+                    if (in_array($key, self::PREFERENCE_KEYS, true)) {
                         $webPreferences[$key] = $value;
                     }
+                }
+                $this->totp->makeStatePersistent();
+                if ($webPreferences['enabled_2fa'] == 1) {
+                    $webPreferences['enabled_2fa'] = $this->totp->userHasSecret() ? '1' : '0';
                 }
                 $this->preferences->icingaweb = $webPreferences;
                 Session::getSession()->user->setPreferences($this->preferences);
@@ -160,17 +158,20 @@ class TotpForm extends PreferenceForm
 
                 return true;
             } elseif ($this->getElement('btn_generate_totp') && $this->getElement('btn_generate_totp')->isChecked()) {
+                $this->totp->generateSecret()->saveTemporaryInSession();
                 Notification::success($this->translate('Submitted btn_generate_totp'));
 
                 return true;
             } elseif ($this->getElement('btn_renew_totp') && $this->getElement('btn_renew_totp')->isChecked()) {
+                $this->totp->renewSecret()->saveTemporaryInSession();
                 Notification::success($this->translate('Submitted btn_renew_totp'));
 
                 return true;
             } elseif ($this->getElement('btn_delete_totp') && $this->getElement('btn_delete_totp')->isChecked()) {
-                Notification::info($this->translate('Submitted btn_delete_totp'));
+                $this->totp->deleteSecret()->saveTemporaryInSession();
+                Notification::success($this->translate('Submitted btn_delete_totp'));
 
-                return false;
+                return true;
             }
         } catch (Exception $e) {
             Logger::error($e);
