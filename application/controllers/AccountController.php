@@ -74,11 +74,14 @@ class AccountController extends Controller
         // create a form to add and enable 2FA via TOTP
 
         if ( $user->can('user/two-factor-authentication') ) {
-
+            if (isset($_POST['enabled_2fa'])) {
+                Session::getSession()->set('enabled_2fa', $_POST['enabled_2fa'] == 1);
+            }
             $totp = Session::getSession()->get('icingaweb_totp', null) ?? new Totp($user->getUsername());
             $totpForm = (new TotpForm())
                 ->setPreferences($user->getPreferences())
-                ->setTotp($totp);
+                ->setTotp($totp)
+                ->setEnabled2FA(Session::getSession()->get('enabled_2fa', false));
             if (isset($config->config_resource)) {
                 $totpForm->setStore(PreferencesStore::create(new ConfigObject(array(
                     'resource'  => $config->config_resource
