@@ -173,16 +173,19 @@ class Totp
                 }
                 $this->secret = $this->temporarySecret;
                 $this->temporarySecret = null;
-            } elseif ($this->secret === null && $dbEntry->secret !== null) {
+                $db->commitTransaction();
+
+            } elseif ($this->secret === null && $dbEntry && $dbEntry->secret !== null) {
                 $db->prepexec(
                     (new Delete())
                         ->from(self::TABLE_NAME)
                         ->where([self::COLUMN_USERNAME . ' = ?' => $this->username])
                 );
+                $db->commitTransaction();
                 $this->setTotpObject(true);
             }
 
-            $db->commitTransaction();
+            $this->saveTemporaryInSession();
         } catch (\Exception $e) {
             $db->rollBackTransaction();
             throw new ConfigurationError(sprintf(
