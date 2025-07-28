@@ -24,6 +24,8 @@ class TotpForm extends PreferenceForm
         'enabled_2fa',
     ];
     protected Totp $totp;
+    protected bool $enabled2FA;
+
     /**
      * {@inheritdoc}
      */
@@ -37,6 +39,13 @@ class TotpForm extends PreferenceForm
     public function setTotp(Totp $totp): self
     {
         $this->totp = $totp;
+
+        return $this;
+    }
+
+    public function setEnabled2FA(bool $enabled2FA): self
+    {
+        $this->enabled2FA = $enabled2FA;
 
         return $this;
     }
@@ -56,11 +65,12 @@ class TotpForm extends PreferenceForm
                 'description' => $this->translate(
                     'This option allows you to enable or to disable the second factor authentication via TOTP'
                 ),
-                'value' => '',
+                'value' => $this->enabled2FA,
             ]
         );
 
-        if (isset($formData['enabled_2fa']) && $formData['enabled_2fa']) {
+        if (isset($formData['enabled_2fa']) && $formData['enabled_2fa']
+            || $this->enabled2FA) {
 
             $this->addElement(
                 'text',
@@ -148,6 +158,7 @@ class TotpForm extends PreferenceForm
                     }
                 }
                 $this->totp->makeStatePersistent();
+                Session::getSession()->delete('enabled_2fa');
                 if ($webPreferences['enabled_2fa'] == 1) {
                     $webPreferences['enabled_2fa'] = $this->totp->userHasSecret() ? '1' : '0';
                 }
@@ -191,8 +202,12 @@ class TotpForm extends PreferenceForm
         $auth = Auth::getInstance();
         $values = $auth->getUser()->getPreferences()->get('icingaweb');
 
-        if (!isset($values['enabled_2fa'])) {
+        if (!isset($values['enabled_2fa']) && ! Session::getSession()->get('enabled_2fa', false)) {
             $values['enabled_2fa'] = '0';
+        }
+
+        if (($enabled = Session::getSession()->get('enabled_2fa', null)) !== null) {
+            $values['enabled_2fa'] = $enabled == 1 ? '1' : '0';
         }
 
         $this->populate($values);
