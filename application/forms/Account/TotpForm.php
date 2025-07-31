@@ -20,10 +20,26 @@ use Icinga\Web\Session;
  */
 class TotpForm extends PreferenceForm
 {
+    /**
+     * Preference keys that are used in this form
+     *
+     * @var array
+     */
     const PREFERENCE_KEYS = [
         'enabled_2fa',
     ];
+
+    /**
+     * The TOTP instance used for managing TOTP secrets
+     *
+     * @var Totp
+     */
     protected Totp $totp;
+    /**
+     * Whether 2FA is enabled or not
+     *
+     * @var bool
+     */
     protected bool $enabled2FA;
 
     /**
@@ -36,6 +52,12 @@ class TotpForm extends PreferenceForm
         $this->setProgressLabel($this->translate('Saving'));
     }
 
+    /**
+     * Set the TOTP instance
+     *
+     * @param Totp $totp
+     * @return self
+     */
     public function setTotp(Totp $totp): self
     {
         $this->totp = $totp;
@@ -43,6 +65,12 @@ class TotpForm extends PreferenceForm
         return $this;
     }
 
+    /**
+     * Set whether 2FA is enabled or not
+     *
+     * @param bool $enabled2FA
+     * @return self
+     */
     public function setEnabled2FA(bool $enabled2FA): self
     {
         $this->enabled2FA = $enabled2FA;
@@ -78,11 +106,9 @@ class TotpForm extends PreferenceForm
                     'label' => $this->translate('TOTP Secret:'),
                     'value' => $this->totp->getSecret() ?? $this->translate('No Secret set'),
                     'description' => $this->translate(
-                        'If you generate a new TOTP secret, you will need to reconfigure your TOTP application with the new secret. ' .
-                        'If you reset the TOTP secret, you will lose access to your TOTP application and will need to set it up again.'
+                        'If you generate a new TOTP secret, you will need to configure your TOTP application with this secret. '
                     ),
                     'disabled' => true,
-//                    'decorators' => ['ViewHelper']
                 ]
             );
 
@@ -93,11 +119,9 @@ class TotpForm extends PreferenceForm
                     'label' => $this->translate('New TOTP Secret:'),
                     'value' => $this->totp->getTemporarySecret() ?? $this->translate('No Secret set'),
                     'description' => $this->translate(
-                        'If you generate a new TOTP secret, you will need to reconfigure your TOTP application with the new secret. ' .
-                        'If you reset the TOTP secret, you will lose access to your TOTP application and will need to set it up again.'
+                        'If you reset the TOTP secret, you will need to set it up again in your TOTP application.'
                     ),
                     'disabled' => true,
-//                    'decorators' => ['ViewHelper']
                 ]
             );
 
@@ -106,7 +130,7 @@ class TotpForm extends PreferenceForm
                     'text',
                     'totp_verification_code',
                     [
-                        'label' => $this->translate('Verification Code:'),
+                        'label' => $this->translate('Enter Code to verify:'),
                         'description' => $this->translate(
                             'Please enter the verification code from your TOTP application to verify the new secret.'
                         ),
@@ -118,90 +142,145 @@ class TotpForm extends PreferenceForm
                 $this->addElement(
                     'submit',
                     'btn_verify_totp',
-                    array(
+                    [
                         'ignore' => true,
                         'label' => $this->translate('Verify TOTP Secret'),
-                        'decorators' => array('ViewHelper'),
-                    )
+                        'decorators' => ['ViewHelper'],
+                    ]
                 );
+                if ($this->totp->isTemporarySecretApproved()) {
+                    $this->addElement(
+                        'note',
+                        'totp_secret_verified',
+                        [
+                            'value' => $this->translate('Secret is Verified'),
+                            'decorators' => ['ViewHelper'],
+                            'class' => 'alert alert-warning'
+                        ]
+                    );
+                }
                 $this->addDisplayGroup(
-                    array('totp_verification_code', 'btn_verify_totp'),
+                    ['totp_verification_code', 'btn_verify_totp'],
                     'verify_buttons',
-                    array(
-                        'decorators' => array(
+                    [
+                        'decorators' => [
                             'FormElements',
-                            array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
-                        )
-                    )
+                            [
+                                'HtmlTag',
+                                ['tag' => 'div', 'class' => 'control-group form-controls']
+                            ]
+                        ]
+                    ]
                 );
 
                 $this->addElement(
                     'submit',
                     'btn_renew_totp',
-                    array(
+                    [
                         'ignore' => true,
                         'label' => $this->translate('Renew TOTP Secret'),
-                        'decorators' => array('ViewHelper'),
-                    )
-                );
-
-                $this->addElement(
-                    'submit',
-                    'btn_delete_totp',
-                    array(
-                        'ignore' => true,
-                        'label' => $this->translate('Delete TOTP Secret'),
-                        'decorators' => array('ViewHelper')
-                    )
+                        'decorators' => ['ViewHelper'],
+                    ]
                 );
             } else {
                 $this->addElement(
                     'submit',
                     'btn_generate_totp',
-                    array(
+                    [
                         'ignore' => true,
                         'label' => $this->translate('Generate TOTP Secret'),
-                        'decorators' => array('ViewHelper')
-                    )
+                        'decorators' => ['ViewHelper']
+                    ]
                 );
             }
+
+            if ($this->totp->getSecret() !== null) {
+                $this->addElement(
+                    'submit',
+                    'btn_delete_totp',
+                    [
+                        'ignore' => true,
+                        'label' => $this->translate('Delete TOTP Secret'),
+                        'decorators' => ['ViewHelper']
+                    ]
+                );
+            }
+            $this->addDisplayGroup(
+                ['btn_delete_totp', 'btn_renew_totp', 'btn_generate_totp'],
+                'change_buttons',
+                [
+                    'decorators' => [
+                        'FormElements',
+                        [
+                            'HtmlTag',
+                            ['tag' => 'div', 'class' => 'control-group form-controls']
+                        ]
+                    ]
+                ]
+            );
+        }
+
+        if ($this->totp->hasPendingChanges()
+        || ($this->preferences->get('icingaweb')['enabled_2fa'] ?? '0') !== $formData['enabled_2fa'] ?? '0'
+        ) {
+            $this->addElement(
+                'note',
+                'totp_pending_changes',
+                [
+                    'value' => $this->translate('Pending Changes'),
+                    'description' => $this->translate(
+                        'You have pending changes to your TOTP settings. Please verify the new secret before saving.'
+                    ),
+                    'decorators' => ['ViewHelper'],
+                    'class' => 'alert alert-warning'
+                ]
+            );
+
+            $this->addElement(
+                'submit',
+                'btn_cancel_totp',
+                [
+                    'ignore' => true,
+                    'label' => $this->translate('Cancel Changes'),
+                    'decorators' => ['ViewHelper'],
+                    'class' => 'btn-secondary'
+                ]
+            );
+
+            $this->addDisplayGroup(
+                ['totp_pending_changes'],
+                'labels',
+                [
+                    'decorators' => [
+                        'FormElements',
+                        ['HtmlTag', ['tag' => 'div', 'class' => 'form-controls']]
+                    ]
+                ]
+            );
         }
 
         $this->addElement(
             'submit',
             'btn_submit',
-            array(
+            [
                 'ignore' => true,
                 'label' => $this->translate('Save Change'),
-                'decorators' => array('ViewHelper'),
+                'decorators' => ['ViewHelper'],
                 'class' => 'btn-primary'
-            )
+            ]
         );
-
-
-        if (isset($formData['enabled_2fa']) && $formData['enabled_2fa']) {
-            $this->addDisplayGroup(
-                array('btn_delete_totp', 'btn_renew_totp', 'btn_generate_totp'),
-                'change_buttons',
-                array(
-                    'decorators' => array(
-                        'FormElements',
-                        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
-                    )
-                )
-            );
-        }
 
         $this->addDisplayGroup(
-            array('btn_submit'),
+            ['btn_submit', 'btn_cancel_totp'],
             'submit_buttons',
-            array(
-                'decorators' => array(
+            [
+                'decorators' => [
                     'FormElements',
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
-                )
-            )
+                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
+                ]
+            ]
         );
+
     }
 
     /**
@@ -214,8 +293,8 @@ class TotpForm extends PreferenceForm
                 $this->preferences = new Preferences($this->store ? $this->store->load() : array());
                 $webPreferences = $this->preferences->get('icingaweb');
                 if ($this->totp->hasPendingChanges()
-                || $this->getValue('enabled_2fa') !== $webPreferences['enabled_2fa']) {
-                    if (! $this->totp->requiresSecretCheck()) {
+                    || $this->getValue('enabled_2fa') !== $webPreferences['enabled_2fa']) {
+                    if (!$this->totp->requiresSecretCheck()) {
                         foreach ($this->getValues() as $key => $value) {
                             if (in_array($key, self::PREFERENCE_KEYS, true)) {
                                 $webPreferences[$key] = $value;
@@ -233,27 +312,31 @@ class TotpForm extends PreferenceForm
 
                         return true;
                     } else {
-                        Notification::warning($this->translate('The new secret needs to be verified before saving.'));
+                        Notification::warning(
+                            $this->translate('The new secret needs to be verified before saving.')
+                        );
                     }
                 } else {
                     Notification::info($this->translate('No changes to save.'));
                 }
-            } elseif ($this->getElement('btn_generate_totp') && $this->getElement('btn_generate_totp')->isChecked()) {
+            } elseif ($this->getElement('btn_generate_totp')
+                && $this->getElement('btn_generate_totp')->isChecked()) {
                 $this->totp->generateSecret()->saveTemporaryInSession();
-                Notification::info($this->translate('A TOTP Secret has been generated.'));
 
                 return true;
-            } elseif ($this->getElement('btn_renew_totp') && $this->getElement('btn_renew_totp')->isChecked()) {
+            } elseif ($this->getElement('btn_renew_totp')
+                && $this->getElement('btn_renew_totp')->isChecked()) {
                 $this->totp->generateSecret()->saveTemporaryInSession();
-                Notification::info($this->translate('The TOTP Secret has been renewed.'));
 
                 return true;
-            } elseif ($this->getElement('btn_delete_totp') && $this->getElement('btn_delete_totp')->isChecked()) {
+            } elseif ($this->getElement('btn_delete_totp')
+                && $this->getElement('btn_delete_totp')->isChecked()) {
                 $this->totp->deleteSecrets()->saveTemporaryInSession();
                 Notification::info($this->translate('Deleted TOTP Secret'));
 
                 return true;
-            } elseif ($this->getElement('btn_verify_totp') && $this->getElement('btn_verify_totp')->isChecked()) {
+            } elseif ($this->getElement('btn_verify_totp')
+                && $this->getElement('btn_verify_totp')->isChecked()) {
                 $verificationCode = $this->getValue('totp_verification_code');
                 if ($this->totp->approveTemporarySecret($verificationCode)) {
                     Notification::success($this->translate('TOTP Secret verified successfully.'));
@@ -264,6 +347,13 @@ class TotpForm extends PreferenceForm
                         $this->translate('Verification code is invalid.')
                     );
                 }
+            } elseif ($this->getElement('btn_cancel_totp')
+                && $this->getElement('btn_cancel_totp')->isChecked()) {
+                $this->totp->resetChanges();
+                $this->enabled2FA = $this->preferences->get('icingaweb')['enabled_2fa'] === '1';
+                Session::getSession()->delete('enabled_2fa');
+
+                return true;
             }
         } catch (Exception $e) {
             Logger::error($e);
@@ -283,16 +373,13 @@ class TotpForm extends PreferenceForm
         $auth = Auth::getInstance();
         $values = $auth->getUser()->getPreferences()->get('icingaweb');
 
-        if (!isset($values['enabled_2fa']) && !Session::getSession()->get('enabled_2fa', false)) {
-            $values['enabled_2fa'] = '0';
-        }
-
         if (($enabled = Session::getSession()->get('enabled_2fa', null)) !== null) {
             $values['enabled_2fa'] = $enabled == 1 ? '1' : '0';
         }
 
         $this->populate($values);
     }
+
 
     public function isSubmitted()
     {
@@ -301,6 +388,7 @@ class TotpForm extends PreferenceForm
             || ($this->getElement('btn_renew_totp') && $this->getElement('btn_renew_totp')->isChecked())
             || ($this->getElement('btn_delete_totp') && $this->getElement('btn_delete_totp')->isChecked())
             || ($this->getElement('btn_verify_totp') && $this->getElement('btn_verify_totp')->isChecked())
+            || ($this->getElement('btn_cancel_totp') && $this->getElement('btn_cancel_totp')->isChecked())
             || ($this->getElement('btn_submit') && $this->getElement('btn_submit')->isChecked())
         ) {
             return true;
@@ -308,25 +396,4 @@ class TotpForm extends PreferenceForm
 
         return false;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-//    public function isValid($formData)
-//    {
-////        $valid = parent::isValid($formData);
-////        if (! $valid) {
-////            return false;
-////        }
-////
-////        $oldPasswordEl = $this->getElement('old_password');
-////
-////        if (! $this->backend->authenticate($this->Auth()->getUser(), $oldPasswordEl->getValue())) {
-////            $oldPasswordEl->addError($this->translate('Old password is invalid'));
-////            $this->markAsError();
-////            return false;
-////        }
-////
-////        return true;
-//    }
 }
