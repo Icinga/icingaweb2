@@ -34,7 +34,7 @@ class Challenge2FAForm extends LoginForm
                 'class' => 'autofocus content-centered',
                 'placeholder' => $this->translate('Please enter your 2FA code'),
                 'required' => true,
-                'autocomplete'  => 'off',
+                'autocomplete' => 'off',
 
             ]
         );

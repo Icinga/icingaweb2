@@ -12,7 +12,7 @@ class Totp extends Model
      */
     public function getTableName()
     {
-         return 'icingaweb_totp';
+        return 'icingaweb_totp';
     }
 
     /**

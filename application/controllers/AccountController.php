@@ -71,7 +71,7 @@ class AccountController extends Controller
             }
         }
 
-        // create a form to add and enable 2FA via TOTP
+        // form to add, remove, enable & disable 2FA via TOTP
 
         if ( $user->can('user/two-factor-authentication') ) {
             if (isset($_POST['enabled_2fa'])) {
@@ -88,8 +88,6 @@ class AccountController extends Controller
                 )), $user));
             }
 
-//            $db = Icinga::app()->;
-//            Totp::on()
             $totpForm->handleRequest();
 
             $this->view->totpForm = $totpForm;
