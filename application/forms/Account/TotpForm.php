@@ -6,7 +6,6 @@ use Exception;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\Totp;
-use Icinga\Data\Filter\Filter;
 use Icinga\Forms\PreferenceForm;
 use Icinga\User\Preferences;
 use Icinga\Web\Form;
@@ -135,10 +134,12 @@ class TotpForm extends PreferenceForm
                             'Please enter the verification code from your TOTP application to verify the new secret.'
                         ),
                         'class' => 'autofocus content-centered',
-                        'style' => 'width: 200px;',
+                        'style' => 'width: 120px;',
                         'autocomplete' => 'off',
                     ]
                 );
+
+
                 $this->addElement(
                     'submit',
                     'btn_verify_totp',
@@ -159,6 +160,26 @@ class TotpForm extends PreferenceForm
                         ]
                     );
                 }
+
+
+                $this->addElement(
+                    'hidden',
+                    'qr_code_image',
+                    [
+                        'required' => false,
+                        'ignore' => false,
+                        'autoInsertNotEmptyValidator' => false,
+                        'decorators' => [
+                            [
+                                'HtmlTag', [
+                                'tag'  => 'img',
+                                'src' => $this->totp->createQRCode(),
+                            ]
+                            ]
+                        ]
+                    ]
+                );
+
                 $this->addDisplayGroup(
                     ['totp_verification_code', 'btn_verify_totp'],
                     'verify_buttons',
@@ -167,7 +188,10 @@ class TotpForm extends PreferenceForm
                             'FormElements',
                             [
                                 'HtmlTag',
-                                ['tag' => 'div', 'class' => 'control-group form-controls']
+                                [
+                                    'tag' => 'div',
+                                    'class' => 'control-group form-controls'
+                                ]
                             ]
                         ]
                     ]
