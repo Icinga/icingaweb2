@@ -2,7 +2,6 @@
 
 namespace Icinga\Authentication;
 
-use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Data\QRMatrix;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
@@ -20,7 +19,6 @@ use ipl\Sql\Select;
 use ipl\Sql\Update;
 use ipl\Stdlib\Filter;
 use OTPHP\TOTP as extTOTP;
-use Zend_Db_Expr;
 
 class Totp
 {
@@ -180,7 +178,6 @@ class Totp
     public function verify(string $code): bool
     {
         if ($this->totpObject === null) {
-
             return false;
         }
 
@@ -217,7 +214,7 @@ class Totp
         $this->setTotpObjects(true)
             ->setState(self::STATE_SECRET_CHECK_REQUIRED)
             ->setState(self::STATE_HAS_PENDING_CHANGES)
-        ->removeState(self::STATE_APPROVED_TEMPORARY_SECRET);
+            ->removeState(self::STATE_APPROVED_TEMPORARY_SECRET);
 
         return $this;
     }
@@ -375,7 +372,6 @@ class Totp
     public function createQRCode(): ?string
     {
         if ($this->temporaryTotpObject === null) {
-
             return null;
         }
 
@@ -387,19 +383,26 @@ class Totp
             urlencode($this->temporarySecret),
         );
         $options = new QROptions();
+        $options->drawLightModules = true;
+        $options->svgUseFillAttributes = true;
+        $options->drawCircularModules = true;
+        $options->circleRadius = 0.4;
+        $options->connectPaths = true;
+        $options->keepAsSquare = [
+            QRMatrix::M_FINDER_DARK,
+            QRMatrix::M_FINDER_DOT,
+            QRMatrix::M_ALIGNMENT_DARK,
+        ];
 
-        $options->scale = 5;
-
-//        $options->svgLogo             = __DIR__.'/github.svg'; // logo from: https://github.com/simple-icons/simple-icons
-//        $options->svgLogoScale        = 0.25;
-//        $options->svgLogoCssClass     = 'dark';
-//
-//        $options->addLogoSpace    = true;
-//        $options->logoSpaceWidth  = 19;
-//        $options->logoSpaceHeight = 19;
-//        $options->logoSpaceStartX = 25;
-//        $options->logoSpaceStartY = 25;
-//        $options->eccLevel            = EccLevel::H;
+        $options->svgDefs = '
+	<linearGradient id="rainbow" x1="1" y2="1">
+		<stop stop-color="#06062C" offset="0"/>
+		<stop stop-color="#E0009D" offset="1"/>
+	</linearGradient>
+	<style><![CDATA[
+		.dark{fill: url(#rainbow);}
+		.light{fill: #eee;}
+	]]></style>';
 
         return (new QRCode($options))->render($urlOTPAUTH);
     }
@@ -538,8 +541,8 @@ class Totp
     private function createTotpObject(string $secret = null): extTOTP
     {
         $totpObject = ($secret === null)
-        ? extTOTP::generate($this->clock)
-        : extTOTP::createFromSecret($secret, $this->clock);
+            ? extTOTP::generate($this->clock)
+            : extTOTP::createFromSecret($secret, $this->clock);
 
         $totpObject->setLabel(self::TOTP_LABEL);
         $totpObject->setIssuer($this->username);
@@ -574,7 +577,7 @@ class Totp
      */
     private function setState(string $key): self
     {
-        if (! in_array($key, $this->currentStates, true)) {
+        if (!in_array($key, $this->currentStates, true)) {
             $this->currentStates[] = $key;
         }
 
