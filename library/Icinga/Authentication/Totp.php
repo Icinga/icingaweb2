@@ -2,6 +2,10 @@
 
 namespace Icinga\Authentication;
 
+use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Data\QRMatrix;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use Icinga\Clock\PsrClock;
 use Icinga\Common\Database;
 use Icinga\Exception\ConfigurationError;
@@ -47,7 +51,6 @@ class Totp
      */
     const COLUMN_MODIFIED_TIME = 'mtime';
 
-
     /**
      * State indicating that a secret check is required
      */
@@ -60,6 +63,14 @@ class Totp
      * State indicating that the temporary TOTP secret has been approved
      */
     const STATE_APPROVED_TEMPORARY_SECRET = 'approve_temporary_secret';
+
+    /**
+     * The label for the TOTP application
+     *
+     * This label is used when generating the TOTP secret and QR code.
+     * It helps identify the application in the user's TOTP app.
+     */
+    const TOTP_LABEL = 'IcingaWeb2';
 
     /**
      * The username for which the TOTP is configured
@@ -356,6 +367,44 @@ class Totp
     }
 
     /**
+     * Creates a QR code for the TOTP secret.
+     * This method generates a QR code that can be scanned by TOTP apps to set up the user's secret.
+     *
+     * @return string The rendered QR code as a string
+     */
+    public function createQRCode(): ?string
+    {
+        if ($this->temporaryTotpObject === null) {
+
+            return null;
+        }
+
+
+        $urlOTPAUTH = sprintf(
+            'otpauth://totp/%1$s:%2$s?secret=%3$s&issuer=%1$s',
+            urlencode(self::TOTP_LABEL),
+            urlencode($this->username),
+            urlencode($this->temporarySecret),
+        );
+        $options = new QROptions();
+
+        $options->scale = 5;
+
+//        $options->svgLogo             = __DIR__.'/github.svg'; // logo from: https://github.com/simple-icons/simple-icons
+//        $options->svgLogoScale        = 0.25;
+//        $options->svgLogoCssClass     = 'dark';
+//
+//        $options->addLogoSpace    = true;
+//        $options->logoSpaceWidth  = 19;
+//        $options->logoSpaceHeight = 19;
+//        $options->logoSpaceStartX = 25;
+//        $options->logoSpaceStartY = 25;
+//        $options->eccLevel            = EccLevel::H;
+
+        return (new QRCode($options))->render($urlOTPAUTH);
+    }
+
+    /**
      * Returns the TOTP secret for the current user.
      * This method retrieves the secret used for generating TOTP codes.
      *
@@ -464,18 +513,38 @@ class Totp
                 return $this;
             }
             $this->temporaryTotpObject = $this->temporarySecret !== null
-                ? extTOTP::createFromSecret($this->temporarySecret, $this->clock)
+                ? $this->createTotpObject($this->temporarySecret)
                 : null;
 
             $this->totpObject = $this->secret !== null
-                ? extTOTP::createFromSecret($this->secret, $this->clock)
+                ? $this->createTotpObject($this->secret)
                 : null;
         } else {
-            $this->temporaryTotpObject = extTOTP::generate($this->clock);
+            $this->temporaryTotpObject = $this->createTotpObject();
             $this->temporarySecret = $this->temporaryTotpObject->getSecret();
         }
 
         return $this;
+    }
+
+    /**
+     * Creates a TOTP object with the given secret.
+     * If no secret is provided, a new TOTP object is generated.
+     * This method sets the label and issuer for the TOTP object.
+     *
+     * @param string|null $secret The TOTP secret to use, or null to generate a new one
+     * @return extTOTP The created TOTP object
+     */
+    private function createTotpObject(string $secret = null): extTOTP
+    {
+        $totpObject = ($secret === null)
+        ? extTOTP::generate($this->clock)
+        : extTOTP::createFromSecret($secret, $this->clock);
+
+        $totpObject->setLabel(self::TOTP_LABEL);
+        $totpObject->setIssuer($this->username);
+
+        return $totpObject;
     }
 
     /**
