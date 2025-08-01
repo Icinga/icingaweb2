@@ -174,6 +174,7 @@ class TotpForm extends PreferenceForm
                                 'HtmlTag', [
                                 'tag'  => 'img',
                                 'src' => $this->totp->createQRCode(),
+                                'class' => 'qr-code-image'
                             ]
                             ]
                         ]
@@ -190,7 +191,7 @@ class TotpForm extends PreferenceForm
                                 'HtmlTag',
                                 [
                                     'tag' => 'div',
-                                    'class' => 'control-group form-controls'
+                                    'class' => 'control-group form-controls aligned-group'
                                 ]
                             ]
                         ]
