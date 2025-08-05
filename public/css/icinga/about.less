@@ -9,6 +9,7 @@
 
   section {
     width: auto;
+    max-width: 100%;
 
     > * {
       margin-bottom: 2em;
@@ -59,9 +60,12 @@
     display: flex;
     padding: .5em 0;
     overflow: hidden;
+    margin-left: -.5em;
+    margin-right: -.5em;
 
     .col {
       flex: 1 1 auto;
+      width: 0;
       text-align: center;
       font-size: 12/14em;
     }
@@ -72,8 +76,12 @@
 
     a {
       display: block;
-      padding: .75em 1em;
+      padding: .75em .5em;
       margin: -7/12em 0;
+      height: calc(~"100% +" 14/12em);
+
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
 
     a:hover {
@@ -108,6 +116,21 @@
       &:hover {
         opacity: .6;
       }
+    }
+  }
+}
+
+#layout.minimal-layout #about {
+  section {
+    width: 100%;
+  }
+
+  .name-value-table {
+    td.col-commit-id {
+      white-space: normal;
+      min-width: 13em;
+      width: 100%;
+      word-break: break-all;
     }
   }
 }
