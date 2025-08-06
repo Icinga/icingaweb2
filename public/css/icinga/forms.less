@@ -228,11 +228,16 @@ form.icinga-form {
   }
 }
 
-form.icinga-form select:not([multiple]),
-form.icinga-form input[type="datetime-local"] {
-  // Compensate inconsistent select height calculations
-  line-height: 1em;
-  height: 2.25em;
+form.icinga-form {
+  select:not([multiple]),
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="datetime-local"],
+  input[type="time"] {
+    line-height: 1;
+    height: 2.25em;
+  }
 }
 
 // Remove native dropdown arrow in IE10+
