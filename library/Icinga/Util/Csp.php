@@ -13,7 +13,10 @@ use Icinga\Data\ConfigObject;
 use Icinga\User;
 use Icinga\Web\Response;
 use Icinga\Web\Window;
+use Icinga\Application\Config;
 use RuntimeException;
+use Icinga\Web\Navigation\Navigation;
+use Icinga\Web\Widget\Dashboard;
 
 use function ipl\Stdlib\get_php_type;
 
@@ -53,7 +56,7 @@ class Csp
     public static function addHeader(Response $response): void
     {
         $user = Auth::getInstance()->getUser();
-        $header = static::getContentSecurityPolicy($user);
+        $header = static::getContentSecurityPolicy();
         Logger::debug("Setting Content-Security-Policy header for user {$user->getUsername()} to $header");
         $response->setHeader('Content-Security-Policy', $header, true);
     }
@@ -67,7 +70,8 @@ class Csp
      *
      * @return string Returns the generated header value.
      */
-    public static function getContentSecurityPolicy(User $user): string {
+    public static function getContentSecurityPolicy(): string
+    {
         $csp = static::getInstance();
 
         if (empty($csp->styleNonce)) {
@@ -86,26 +90,19 @@ class Csp
         // Whitelist the hosts in the custom NavigationItems configured for the user,
         // so that the iframes can be rendered properly.
         /** @var ConfigObject[] $navigationItems */
-        $navigationItems = NavigationItemHelper::fetchUserNavigationItems($user);
+        $navigationItems = self::fetchDashletNavigationItemConfigs();
         foreach ($navigationItems as $navigationItem) {
+            $errorSource = sprintf("Navigation item %s", $navigationItem['name']);
 
-            // Skip the host if the link gets opened in a new window.
-            if ($navigationItem->get("target", "") === "_blank") {
-                continue;
-            }
-
-            $name = $navigationItem->get("name", "");
-            $errorSource = "NavigationItem '$name'";
-            $url = $navigationItem->get("url", "");
-
+            $host = parse_url($navigationItem["url"], PHP_URL_HOST);
             // Make sure $url is actually valid;
-            if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            if (filter_var($navigationItem["url"], FILTER_VALIDATE_URL) === false) {
                 Logger::debug("$errorSource: Skipping invalid url: $host");
                 continue;
             }
 
-            $scheme = parse_url($url, PHP_URL_SCHEME);
-            $host = parse_url($url, PHP_URL_HOST);
+            $scheme = parse_url($navigationItem["url"], PHP_URL_SCHEME);
+
 
             if ($host === null || !static::validateCspPolicy($errorSource, "frame-src", $host)) {
                 continue;
@@ -118,12 +115,10 @@ class Csp
 
             $cspDirectives['frame-src'][] = $policy;
         }
-
         // Allow modules to add their own csp directives in a limited fashion.
         /** @var CspDirectiveHook $hook */
         foreach (Hook::all('CspDirective') as $hook) {
             foreach ($hook->getCspDirectives() as $directive => $policies) {
-
                 // policy names contain only lowercase letters and '-'. Reject anything else.
                 if (!preg_match('|^[a-z\-]+$|', $directive)) {
                     $errorSource = get_class($hook);
@@ -156,11 +151,12 @@ class Csp
                 $header .= ' ' . implode(' ', array_merge([$directive, "'self'"], array_unique($policies))) . ';';
             }
         }
-
+        
         return $header;
     }
 
-    public static function validateCspPolicy(string $source, string $directive, string $policy): bool {
+    public static function validateCspPolicy(string $source, string $directive, string $policy): bool
+    {
         // We accept the following policies:
         //     1. Hosts: Modules can whitelist certain domains as sources for the CSP header directives.
         //         - A host can have a specific scheme (http or https).
@@ -240,4 +236,86 @@ class Csp
 
         return static::$instance;
     }
+    
+
+    /**
+     * Fetches and merges configurations for navigation menu items and dashlets.
+     *
+     * @return array An array containing both navigation items and dashlet configurations.
+     * // returns [['name' => 'Item Name', 'url' => 'https://example.com'], ...]
+     */
+    protected static function fetchDashletNavigationItemConfigs()
+    {
+        return array_merge(
+            self::fetchNavigationItems(),
+            self::fetchDashletsItems()
+        );
+    }
+
+    /**
+     * Fetches navigation items for the current user.
+     *
+     * Iterates through all registered navigation types, loads both user-specific
+     * and shared configurations, and returns a list of menu items.
+     *
+     * @return array Each item is an associative array with 'name' and 'url' keys.
+     * Example: [ ['name' => 'Home', 'url' => '/'], ['name' => 'Profile', 'url' => '/profile'] ]
+     */
+    protected static function fetchNavigationItems()
+    {
+        $username = Auth::getInstance()->getUser()->getUsername();
+        $navigationType = Navigation::getItemTypeConfiguration();
+        foreach ($navigationType as $type => $_) {
+            $config = Config::navigation($type, $username);
+            $config->getConfigObject()->setKeyColumn('name');
+            $configShared = Config::navigation($type);
+            $configShared->getConfigObject()->setKeyColumn('name');
+            foreach ($config->select() as $itemConfig) {
+                $menuItems[] = ["name" => $itemConfig->get('name'), "url" => $itemConfig->get('url')];
+            }
+            foreach ($configShared->select() as $itemConfig) {
+                $menuItems[] = ["name" => $itemConfig->get('name'), "url" => $itemConfig->get('url')];
+            }
+        }
+        return $menuItems;
+    }
+
+    /**
+     * Fetches all dashlets for the current user that have an external URL.
+     *
+     * @return array A list of dashlets with their names and absolute URLs.
+     * // returns [['name' => 'Dashlet Name', 'url' => 'https://external.dashlet.com'], ...]
+     */
+    protected static function fetchDashletsItems()
+    {
+        $dashboard = new Dashboard();
+        $dashboard->setUser(Auth::getInstance()->getUser());
+        $dashboard->load();
+        $dashlets = [];
+        foreach ($dashboard->getPanes() as $pane) {
+            foreach ($pane->getDashlets() as $dashlet) {
+                $url = $dashlet->getUrl();
+                // Prefer explicit external URL parameter if present
+                $externalUrl = $url->getParam("url");
+                if ($externalUrl !== null) {
+                    $dashlets[] = [
+                        "name" => $dashlet->getName(),
+                        "url" => $externalUrl
+                    ];
+                    continue;
+                }
+
+                // Otherwise, check if the dashlet URL itself is external
+                if ($url->isExternal()) {
+                    $dashlets[] = [
+                        "name" => $dashlet->getName(),
+                        "url" => $url->getAbsoluteUrl()
+                    ];
+                }
+            }
+        }
+
+        return $dashlets;
+    }
+
 }
