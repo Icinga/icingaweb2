@@ -228,11 +228,20 @@ form.icinga-form {
   }
 }
 
-form.icinga-form select:not([multiple]),
-form.icinga-form input[type="datetime-local"] {
-  // Compensate inconsistent select height calculations
-  line-height: 1em;
-  height: 2.25em;
+form.icinga-form {
+  select:not([multiple]),
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="time"] {
+    // Use the same height for select and all supported input elements. input[type="file"] is not styled here
+    // because it requires more height due to the built-in ‘Choose file’ button.
+    // Elements such as checkbox, radio and submit buttons have their own custom style.
+    line-height: 1;
+    height: 2.25em;
+  }
 }
 
 // Remove native dropdown arrow in IE10+
