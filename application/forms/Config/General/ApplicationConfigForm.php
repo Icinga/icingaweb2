@@ -103,13 +103,14 @@ class ApplicationConfigForm extends Form
         );
 
         $config = Config::app()->getSection('global');
-        if (!isset($config->config_resource)) {
-            $missingConfigResource =
-                Text::create(
-                    $this->translate("No Configuration Database selected. 
-                    Please set the field to establish a valid database connection.")
-                );
-            $this->warning($missingConfigResource, false);
+        if (! isset($config->config_resource)) {
+            $this->warning(
+                $this->translate(
+                    'No Configuration Database selected.'
+                    . 'Please set the field to establish a valid database connection.'
+                ),
+                false
+            );
         }
 
         return $this;

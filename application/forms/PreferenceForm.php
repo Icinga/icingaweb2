@@ -187,13 +187,14 @@ class PreferenceForm extends Form
             );
         }
         $config = Config::app()->getSection('global');
-        if (!isset($config->config_resource)) {
-            $missingConfigResource =
-                Text::create($this->translate(
+        if (! isset($config->config_resource)) {
+            $this->warning(
+                $this->translate(
                     'No Configuration Database selected.'
                     . 'To establish a valid database connection set the Configuration Database field.'
-                ));
-            $this->warning($missingConfigResource, false);
+                ),
+                false
+            );
         }
         $themeFile = StyleSheet::getThemeFile(Config::app()->get('themes', 'default'));
         if (! (bool) Config::app()->get('themes', 'disabled', false)) {

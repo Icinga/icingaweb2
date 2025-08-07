@@ -117,13 +117,14 @@ use ipl\Web\Widget\StateBadge;
                     <th>
                   <?php  if (!isset($config->config_resource)) : ?>
                       <?=  new EmptyState(
-                              $this->translate('No Configuration Database selected. To establish a valid database connection set: '))
+                              $this->translate('No Configuration Database selected. To establish a valid database connection set: ')
+                    )
                   ?><td>
                   <?= $this->qlink(
                       $this->translate('Configuration Database'),
                       'config/general/',
-                      array('name' => ('Configuration Database')),
-                      array('title' => sprintf($this->translate('Go to Application/General')), 'Configuration Database')
+                      [],
+                      ['title' => sprintf($this->translate('Go to Application/General')), 'Configuration Database']
                   ) ?>
                     </td>
                   <?php endif ?>

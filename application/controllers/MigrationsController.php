@@ -90,13 +90,13 @@ class MigrationsController extends CompatController
                     new HtmlElement(
                         'p',
                         null,
-                        new Text(
-                            $this->translate('   No Configuration Database selected. 
-                            To establish a valid database connection set the Configuration Database field.   ')
-                        )
-                    ),
-                    new HtmlElement('ul', null),
-                    new Link($this->translate('Configuration Database'), 'config/general/')
+                        new Text($this->translate(
+                            'No Configuration Database selected. '
+                            . 'To establish a valid database connection set the Configuration Database field.'
+                        )),
+                        new HtmlElement('ul', null),
+                        new Link($this->translate('Configuration Database'), 'config/general')
+                    )
                 )
             );
             return;

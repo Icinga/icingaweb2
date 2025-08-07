@@ -58,42 +58,38 @@ class MyDevicesController extends CompatController
             $this->getDb();
         } catch (Throwable $e) {
             $hasConfigPermission =  $this->hasPermission('config/*');
+            $configLink = new HtmlDocument();
             if ($hasConfigPermission) {
-                $this->addContent(
-                    new HtmlElement(
-                        'div',
-                        new Attributes(['class' => 'db-connection-warning']),
-                        new Icon('warning'),
-                        new HtmlElement(
-                            'p',
-                            null,
-                            new Text($this->translate(
-                                'No Configuration Database selected.'
-                                . 'To establish a valid database connection set the Configuration Database field.'
-                            ))
-                        ),
-                        new Link($this->translate('Configuration Database'), 'config/general/')
-                    )
+                $warningMessage = $this->translate(
+                    'No Configuration Database selected.'
+                    . 'To establish a valid database connection set the Configuration Database field.'
                 );
+
+                $configLink = new Link($this->translate('Configuration Database'), 'config/general');
             } else {
-                $this->addContent(
-                    new HtmlElement(
-                        'div',
-                        new Attributes(['class' => 'db-connection-warning']),
-                        new Icon('warning'),
-                        new HtmlElement(
-                            'p',
-                            null,
-                            new Text($this->translate(
-                                'No Configuration Database selected.'
-                                 . 'You don`t have permission to change this setting. Please contact an administrator.'
-                            ))
-                        )
-                    )
+                $warningMessage = $this->translate(
+                    'No Configuration Database selected.'
+                    . 'You don`t have permission to change this setting. Please contact an administrator.'
                 );
             }
+
+            $this->addContent(
+                new HtmlElement(
+                    'div',
+                    new Attributes(['class' => 'db-connection-warning']),
+                    new Icon('warning'),
+                    new HtmlElement(
+                        'p',
+                        null,
+                        Text::create($warningMessage),
+                    ),
+                    $configLink
+                )
+            );
+
             return;
         }
+
         $name = $this->auth->getUser()->getUsername();
 
         $data = (new RememberMeUserDevicesList())
