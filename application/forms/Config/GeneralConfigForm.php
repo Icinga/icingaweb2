@@ -36,5 +36,16 @@ class GeneralConfigForm extends ConfigForm
         $this->addSubForm($loggingConfigForm->create($formData));
         $this->addSubForm($themingConfigForm->create($formData));
         $this->addSubForm($domainConfigForm->create($formData));
+
+        $this->addElement(
+        'checkbox',
+        'password_policy',
+        array(
+            'label' => $this->translate('Password Policy'),
+//                'required'      => true,
+            'value' => 1,
+            'description' => $this->translate('Enforce strong password requirements for new passwords'),
+        )
+    );
     }
 }

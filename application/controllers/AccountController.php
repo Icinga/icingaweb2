@@ -4,6 +4,7 @@
 namespace Icinga\Controllers;
 
 use Icinga\Application\Config;
+use Icinga\Authentication\DefaultPasswordPolicy;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
@@ -61,6 +62,7 @@ class AccountController extends Controller
                     $changePasswordForm = new ChangePasswordForm();
                     $changePasswordForm
                         ->setBackend($userBackend)
+                        ->setPasswordPolicy(new DefaultPasswordPolicy)
                         ->handleRequest();
                     $this->view->changePasswordForm = $changePasswordForm;
                 }
