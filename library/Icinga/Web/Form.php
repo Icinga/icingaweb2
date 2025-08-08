@@ -353,6 +353,7 @@ class Form extends Zend_Form
      * @return  $this
      *
      * @throws  ProgrammingError    In case $url is neither a string nor a instance of Icinga\Web\Url
+     * @throws  SecurityException   In case $url is external (open redirect prevention)
      */
     public function setRedirectUrl($url)
     {
@@ -360,6 +361,10 @@ class Form extends Zend_Form
             $url = Url::fromPath($url, array(), $this->getRequest());
         } elseif (! $url instanceof Url) {
             throw new ProgrammingError('$url must be a string or instance of Icinga\Web\Url');
+        }
+
+        if ($url->isExternal()) {
+            throw new SecurityException('Refusing to redirect to an external URL for security reasons');
         }
 
         $this->redirectUrl = $url;
