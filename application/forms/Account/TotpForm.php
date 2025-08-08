@@ -246,7 +246,7 @@ class TotpForm extends PreferenceForm
         }
 
         if ($this->totp->hasPendingChanges()
-        || ($this->preferences->get('icingaweb')['enabled_2fa'] ?? '0') !== $formData['enabled_2fa'] ?? '0'
+        || ($this->preferences->get('icingaweb')['enabled_2fa'] ?? '0') !== ($formData['enabled_2fa'] ?? '0')
         ) {
             $this->addElement(
                 'note',
@@ -318,7 +318,7 @@ class TotpForm extends PreferenceForm
                 $this->preferences = new Preferences($this->store ? $this->store->load() : array());
                 $webPreferences = $this->preferences->get('icingaweb');
                 if ($this->totp->hasPendingChanges()
-                    || $this->getValue('enabled_2fa') !== $webPreferences['enabled_2fa']) {
+                    || $this->getValue('enabled_2fa') !== ($webPreferences['enabled_2fa'] ?? null)) {
                     if (!$this->totp->requiresSecretCheck()) {
                         foreach ($this->getValues() as $key => $value) {
                             if (in_array($key, self::PREFERENCE_KEYS, true)) {
@@ -375,7 +375,7 @@ class TotpForm extends PreferenceForm
             } elseif ($this->getElement('btn_cancel_totp')
                 && $this->getElement('btn_cancel_totp')->isChecked()) {
                 $this->totp->resetChanges();
-                $this->enabled2FA = $this->preferences->get('icingaweb')['enabled_2fa'] === '1';
+                $this->enabled2FA = ($this->preferences->get('icingaweb')['enabled_2fa'] ?? null) === '1';
                 Session::getSession()->delete('enabled_2fa');
 
                 return true;
@@ -401,8 +401,9 @@ class TotpForm extends PreferenceForm
         if (($enabled = Session::getSession()->get('enabled_2fa', null)) !== null) {
             $values['enabled_2fa'] = $enabled == 1 ? '1' : '0';
         }
-
-        $this->populate($values);
+        if (isset($values)) {
+            $this->populate($values);
+        }
     }
 
 
