@@ -105,7 +105,8 @@ class TotpForm extends PreferenceForm
                     'label' => $this->translate('TOTP Secret:'),
                     'value' => $this->totp->getSecret() ?? $this->translate('No Secret set'),
                     'description' => $this->translate(
-                        'If you generate a new TOTP secret, you will need to configure your TOTP application with this secret. '
+                        'If you generate a new TOTP secret, 
+                        you will need to configure your TOTP application with this secret. '
                     ),
                     'disabled' => true,
                 ]
@@ -172,10 +173,10 @@ class TotpForm extends PreferenceForm
                         'decorators' => [
                             [
                                 'HtmlTag', [
-                                'tag'  => 'img',
-                                'src' => $this->totp->createQRCode(),
-                                'class' => 'qr-code-image'
-                            ]
+                                    'tag'  => 'img',
+                                    'src' => $this->totp->createQRCode(),
+                                    'class' => 'qr-code-image'
+                                ]
                             ]
                         ]
                     ]
@@ -305,7 +306,6 @@ class TotpForm extends PreferenceForm
                 ]
             ]
         );
-
     }
 
     /**
@@ -409,8 +409,7 @@ class TotpForm extends PreferenceForm
 
     public function isSubmitted()
     {
-        if (
-            ($this->getElement('btn_generate_totp') && $this->getElement('btn_generate_totp')->isChecked())
+        if (($this->getElement('btn_generate_totp') && $this->getElement('btn_generate_totp')->isChecked())
             || ($this->getElement('btn_renew_totp') && $this->getElement('btn_renew_totp')->isChecked())
             || ($this->getElement('btn_delete_totp') && $this->getElement('btn_delete_totp')->isChecked())
             || ($this->getElement('btn_verify_totp') && $this->getElement('btn_verify_totp')->isChecked())
