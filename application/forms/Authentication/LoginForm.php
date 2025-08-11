@@ -168,8 +168,7 @@ class LoginForm extends Form
             if ($user->getTwoFactorEnabled() && ! $user->getTwoFactorSuccessful()) {
                 $redirect = $this->getElement('redirect');
                 $redirect->setValue(
-                    Url::fromPath('authentication/login',
-                        ['redirect' => $redirect->getValue()])->getRelativeUrl()
+                    Url::fromPath('authentication/login', ['redirect' => $redirect->getValue()])->getRelativeUrl()
                 );
                 Session::getSession()->set('must_challenge_2fa_token', true);
 
