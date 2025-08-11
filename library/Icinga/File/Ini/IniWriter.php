@@ -95,8 +95,7 @@ class IniWriter
     {
         $filePath = isset($filename) ? $filename : $this->filename;
         $setMode = false === file_exists($filePath);
-
-        if (file_put_contents($filePath, $this->render(), $exclusiveLock ? LOCK_EX : 0) === false) {
+        if (@file_put_contents($filePath, $this->render(), $exclusiveLock ? LOCK_EX : 0) === false) {
             throw new Zend_Config_Exception('Could not write to file "' . $filePath . '"');
         }
 
