@@ -73,7 +73,7 @@ class AccountController extends Controller
 
         // form to add, remove, enable & disable 2FA via TOTP
 
-        if ( $user->can('user/two-factor-authentication') ) {
+        if ($user->can('user/two-factor-authentication')) {
             if (isset($_POST['enabled_2fa'])) {
                 Session::getSession()->set('enabled_2fa', $_POST['enabled_2fa'] == 1);
             }
