@@ -41,9 +41,6 @@ class TotpForm extends PreferenceForm
      */
     protected bool $enabled2FA;
 
-    /**
-     * {@inheritdoc}
-     */
     public function init()
     {
         $this->setName('form_totp');
@@ -77,9 +74,6 @@ class TotpForm extends PreferenceForm
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createElements(array $formData)
     {
         $this->addElement(
@@ -308,9 +302,6 @@ class TotpForm extends PreferenceForm
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onSuccess()
     {
         try {
