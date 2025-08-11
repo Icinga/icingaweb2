@@ -8,9 +8,6 @@ use Icinga\Web\Url;
 
 class Cancel2FAForm extends Form
 {
-    /**
-     * {@inheritdoc}
-     */
     public function init()
     {
         $this->setRequiredCue(null);
@@ -20,9 +17,6 @@ class Cancel2FAForm extends Form
         $this->setAttrib('class', 'content-centered');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createElements(array $formData)
     {
         $this->addElement(
