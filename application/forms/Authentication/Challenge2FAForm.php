@@ -10,9 +10,6 @@ use Icinga\Web\Url;
 
 class Challenge2FAForm extends LoginForm
 {
-    /**
-     * {@inheritdoc}
-     */
     public function init()
     {
         $this->setRequiredCue(null);
@@ -21,9 +18,6 @@ class Challenge2FAForm extends LoginForm
         $this->setProgressLabel($this->translate('Verifying'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createElements(array $formData)
     {
         $this->addElement(
