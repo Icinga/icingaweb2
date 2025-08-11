@@ -325,7 +325,9 @@ class Totp
                     'Failed to persist TOTP state for user %s: %s',
                     $this->username,
                     $e->getMessage()
-                ), 0, $e
+                ),
+                0,
+                $e
             );
         }
 
@@ -615,5 +617,4 @@ class Totp
 
         return $this;
     }
-
 }
