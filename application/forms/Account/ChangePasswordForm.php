@@ -59,6 +59,7 @@ class ChangePasswordForm extends Form
             $this->info($this->translate($message));
         }
 
+
         $this->addElement(
             'password',
             'old_password',
@@ -98,7 +99,6 @@ class ChangePasswordForm extends Form
          * wenn nicht eingehalten wird dann fehlermeldung ausgeben
         */
 
-
         $newPassword = $this->getElement('new_password')->getValue();
         $validatePassword = $this->passwordPolicy->validatePassword($newPassword);
 
@@ -136,7 +136,9 @@ class ChangePasswordForm extends Form
             return false;
         }
 
-        if ($this->passwordPolicy && ! $this->checkPasswordPolicy()) {
+
+        if ($this->passwordPolicy && (! $this->checkPasswordPolicy())) {
+            var_dump('test');
             return false;
         }
 
