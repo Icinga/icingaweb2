@@ -7,6 +7,7 @@ namespace Icinga\Authentication;
 use DateTime;
 use ipl\Html\Text;
 use ipl\I18n\Translation;
+use Icinga\Authentication\PasswordPolicyInterface;
 
 
 class DefaultPasswordPolicy implements PasswordPolicyInterface

@@ -62,7 +62,6 @@ class AccountController extends Controller
                     $changePasswordForm = new ChangePasswordForm();
                     $changePasswordForm
                         ->setBackend($userBackend)
-                        ->setPasswordPolicy(new DefaultPasswordPolicy)
                         ->handleRequest();
                     $this->view->changePasswordForm = $changePasswordForm;
                 }

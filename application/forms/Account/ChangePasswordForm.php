@@ -3,6 +3,8 @@
 
 namespace Icinga\Forms\Account;
 
+use Icinga\Application\Config;
+use Icinga\Authentication\DefaultPasswordPolicy;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Data\Filter\Filter;
 use Icinga\User;
@@ -49,22 +51,14 @@ class ChangePasswordForm extends Form
     public function createElements(array $formData)
     {
 
-        $this->addElement(
-            'checkbox',
-            'password_policy',
-            array(
-                'label' => $this->translate('Password Policy'),
-//                'required'      => true,
-                'value' => 1,
-                'description' => $this->translate('Enforce strong password requirements for new passwords'),
-            )
-        );
-        $checkPasswordPolicy = $this->getElement('password_policy')->getValue();
+        $passwordPolicy = Config::app()->get('global', 'password_policy');
 
-        if ($checkPasswordPolicy == 1) {
+        if ($passwordPolicy == 1) {
+            $this->setPasswordPolicy(new DefaultPasswordPolicy());
             $message = $this->passwordPolicy->displayPasswordPolicy();
-            $this->info($this->translate($message), false);
+            $this->info($this->translate($message));
         }
+
         $this->addElement(
             'password',
             'old_password',
@@ -107,6 +101,7 @@ class ChangePasswordForm extends Form
 
         $newPassword = $this->getElement('new_password')->getValue();
         $validatePassword = $this->passwordPolicy->validatePassword($newPassword);
+
         if (!$validatePassword) {
            $message = $this->passwordPolicy->getPolicyViolation($newPassword);
            $this->getElement('new_password')->addError($this->translate($message));
@@ -141,7 +136,7 @@ class ChangePasswordForm extends Form
             return false;
         }
 
-        if (!$this->checkPasswordPolicy()) {
+        if ($this->passwordPolicy && ! $this->checkPasswordPolicy()) {
             return false;
         }
 
