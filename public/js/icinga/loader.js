@@ -498,7 +498,8 @@
         processRedirectHeader: function(req) {
             var icinga      = this.icinga,
                 $redirectTarget  = req.$redirectTarget,
-                redirect    = req.getResponseHeader('X-Icinga-Redirect');
+                redirect    = req.getResponseHeader('X-Icinga-Redirect'),
+                autorefresh = false;
 
             if (! redirect) {
                 return false;
@@ -599,6 +600,8 @@
                     icinga.logger.error('Unable to refresh. Not a primary column: ', req.$redirectTarget);
                     return false;
                 }
+
+                autorefresh = true;
             }
 
             var useHttp = req.getResponseHeader('X-Icinga-Redirect-Http');
@@ -607,7 +610,7 @@
                 return true;
             }
 
-            this.redirectToUrl(redirect, $redirectTarget, req);
+            this.redirectToUrl(redirect, $redirectTarget, req, autorefresh);
             return true;
         },
 
