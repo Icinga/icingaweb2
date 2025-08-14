@@ -617,8 +617,13 @@
          * @param {string}  url
          * @param {object}  $target
          * @param {XMLHttpRequest} referrer
+         * @param {boolean} autorefresh
          */
-        redirectToUrl: function (url, $target, referrer) {
+        redirectToUrl: function (url, $target, referrer, autorefresh) {
+            if (typeof autorefresh === 'undefined') {
+                autorefresh = false;
+            }
+
             var icinga = this.icinga,
                 rerenderLayout,
                 autoRefreshInterval,
@@ -640,7 +645,7 @@
                 var parts = url.split(/#!/);
                 url = parts.shift();
                 var redirectionUrl = icinga.utils.addUrlFlag(url, 'renderLayout');
-                var r = this.loadUrl(redirectionUrl, $('#layout'));
+                var r = this.loadUrl(redirectionUrl, $('#layout'), undefined, undefined, undefined, autorefresh);
                 r.historyUrl = url;
                 r.referrer = referrer;
                 if (parts.length) {
@@ -664,10 +669,10 @@
                 if (url.match(/#!/)) {
                     var parts = url.split(/#!/);
                     icinga.ui.layout2col();
-                    this.loadUrl(parts.shift(), $('#col1'));
-                    this.loadUrl(parts.shift(), $('#col2'));
+                    this.loadUrl(parts.shift(), $('#col1'), undefined, undefined, undefined, autorefresh);
+                    this.loadUrl(parts.shift(), $('#col2'), undefined, undefined, undefined, autorefresh);
                 } else {
-                    var req = this.loadUrl(url, $target);
+                    var req = this.loadUrl(url, $target, undefined, undefined, undefined, autorefresh);
                     req.forceFocus = url === origin ? forceFocus : null;
                     req.autoRefreshInterval = autoRefreshInterval;
                     req.referrer = referrer;
