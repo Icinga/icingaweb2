@@ -684,6 +684,20 @@ class ListController extends Controller
             'decorators'    => ['ViewHelper', ['Label', ['placement' => 'APPEND']]]
         ]);
 
+
+        $sortByDns = (bool) $this->params->get('sortbydnshierarchy', false) ? true : null;
+        $this->view->sortByDnsToggle = $sortByDnsToggle = new Form(['method' => 'GET']);
+        $sortByDnsToggle->setUidDisabled();
+        $sortByDnsToggle->setTokenDisabled();
+        $sortByDnsToggle->setAttrib('class', 'filter-toggle inline icinga-controls');
+        $sortByDnsToggle->addElement('checkbox', 'sortbydnshierarchy', [
+            'disableHidden' => true,
+            'autosubmit'    => true,
+            'value'         => $sortByDns !== null,
+            'label'         => $this->translate('Sort by DNS hierarchy'),
+            'decorators'    => ['ViewHelper', ['Label', ['placement' => 'APPEND']]]
+        ]);
+
         if ($this->params->get('flipped', false)) {
             $pivot = $query
                 ->pivot(
@@ -712,12 +726,92 @@ class ListController extends Controller
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
         $this->view->verticalPaginator = $pivot->paginateYAxis();
         list($pivotData, $pivotHeader) = $pivot->toArray();
+
+        $sortByDns = (bool) $this->params->get('sortbydnshierarchy', false) ? !true : null;
+        if ($sortByDns !== null) {
+            $keySort = ($this->params->get('flipped', false) ? 'cols' : 'rows');
+
+            uksort($pivotData, [ $this, "compareByDnsHierarchy" ]);
+            uksort($pivotHeader[$keySort], [ $this, "compareByDnsHierarchy" ]);
+
+            $pivotHeader[$keySort] = $this->addGroupHeader($pivotHeader[$keySort]);
+
+        }
+
         $this->view->pivotData = $pivotData;
         $this->view->pivotHeader = $pivotHeader;
         if ($this->params->get('flipped', false)) {
             $this->render('servicegrid-flipped');
         }
     }
+
+    /**
+     * Add group headers to the header array
+     * The group name will be the FQDN without the the part before the first dot.
+     */
+
+    private function addGroupHeader($header) {
+        $newHeader = [];
+        $previousGroup = null;
+        foreach ($header as $key => $val) {
+            $hostnameElements = explode('.', $key);
+            if (count($hostnameElements) > 2) {
+                if (filter_var($key, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                    array_pop($hostnameElements);
+                }
+                else {
+                    array_shift($hostnameElements);
+                }
+                $group = join('.', $hostnameElements);
+                if (is_null($previousGroup) || $previousGroup != $group) {
+                    $newHeader['GROUP:' . $group] = $group;
+                    $previousGroup = $group;
+                }
+            }
+            $newHeader[$key] = $val;
+        }
+        return $newHeader;
+    }
+
+    /**
+     * Split a FQDN by dots and compare each part beginning from top level
+     */
+
+    private function compareByDnsHierarchy($a, $b) {
+        $keysA = explode('.', $a);
+        if (!filter_var($a, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $keysA = array_reverse($keysA);
+        }
+
+        $keysB = explode('.', $b);
+        if (!filter_var($b, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $keysB = array_reverse($keysB);
+        }
+
+        $cnt = min([$cntA = count($keysA), $cntB = count($keysB)]);
+
+        $firstDiff = -1;
+        $cmp = [ -1 => 0 ];
+
+        for ($i = 0; $i <= $cnt; $i++) {
+            $ka = isset($keysA[$i]) ? $keysA[$i] : "";
+            $kb = isset($keysB[$i]) ? $keysB[$i] : "";
+
+            if ($cmp[$i] = $ka <=> $kb) {
+                if ($firstDiff === -1) {
+                    $firstDiff = $i;
+                }
+            }
+        }
+
+        if (count($keysA) != count($keysB)) {
+            return count($keysA) <=> count($keysB);
+        }
+        else {
+            return ($cmp[$firstDiff]);
+        }
+    }
+
 
     /**
      * Apply filters on a DataView
@@ -733,7 +827,8 @@ class ListController extends Controller
             'stateType', // hostsAction() and servicesAction()
             'addColumns', // addColumns()
             'problems', // servicegridAction()
-            'flipped' // servicegridAction()
+            'flipped', // servicegridAction()
+            'sortbydnshierarchy' // servicegridAction()
         ));
 
         if ($this->params->get('format') !== 'sql' || $this->hasPermission('config/authentication/roles/show')) {
