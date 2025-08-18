@@ -103,10 +103,12 @@ class ConfigCommand extends Command
      *  --enable-fpm                        Enable FPM handler for Apache (Nginx is always enabled)
      *
      *  --fpm-url=<url>                     Address where to pass requests to FPM [127.0.0.1:9000]
+     *                                      Only one of --fpm-socket-path or --fpm-url can be set at a time
      *
      *  --fpm-uri=<uri>                     Alias for --fpm-url
      *
-     *  --fpm-socket-path=<socketpath>      Socket path where to pass requests to FPM, overrides --fpm-url
+     *  --fpm-socket-path=<socketpath>      Socket path where to pass requests to FPM
+     *                                      Only one of --fpm-socket-path or --fpm-url can be set at a time
      *
      *  --config=<directory>                Path to Icinga Web 2's configuration files [/etc/icingaweb2]
      *
@@ -166,14 +168,12 @@ class ConfigCommand extends Command
         $enableFpm = $this->params->shift('enable-fpm', $webserver->getEnableFpm());
 
         $fpmSocketPath = trim($this->params->get('fpm-socket-path', $webserver->getFpmSocketPath()));
-        $fpmUrl = trim($this->params->get('fpm-url', $webserver->getFpmUrl()));
+        $fpmUrl = trim($this->params->get('fpm-url'));
         if (empty($fpmUrl)) {
-            $fpmUrl = trim($this->params->get('fpm-uri', $webserver->getFpmUrl()));
+            $fpmUrl = trim($this->params->get('fpm-uri'));
         }
         if (empty($fpmSocketPath) && empty($fpmUrl)) {
-            $this->fail($this->translate(
-                'One of the arguments --fpm-socket-path or --fpm-url must be set to pass requests to FPM'
-            ));
+            $fpmUrl = $webserver->getFpmUrl();
         } elseif (!empty($fpmSocketPath) && !empty($fpmUrl)) {
             $this->fail($this->translate(
                 'Only one of the arguments --fpm-socket-path or --fpm-url must be set to pass requests to FPM'
