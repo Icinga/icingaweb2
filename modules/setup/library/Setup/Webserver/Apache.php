@@ -16,14 +16,9 @@ class Apache extends Webserver
 
     protected function createFpmUri()
     {
-        $apacheFpmUri = "";
-        if (empty($this->fpmSocketPath)) {
-            $apacheFpmUri = $this->fpmUrlSchema . $this->fpmUrl;
-        } else {
-            $apacheFpmUri = $this->fpmSocketSchema . $this->fpmSocketPath . '|' . $this->fpmUrlSchema . 'localhost';
-        }
-
-        return $apacheFpmUri;
+        return empty($this->fpmSocketPath)
+            ? $this->fpmUrlSchema . $this->fpmUrl
+            : $this->fpmSocketSchema . $this->fpmSocketPath . '|' . $this->fpmUrlSchema . 'localhost';
     }
 
     protected function getTemplate()
