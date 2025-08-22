@@ -102,7 +102,13 @@ class ConfigCommand extends Command
      *
      *  --enable-fpm                        Enable FPM handler for Apache (Nginx is always enabled)
      *
-     *  --fpm-uri=<uri>                     Address or path where to pass requests to FPM [127.0.0.1:9000]
+     *  --fpm-url=<url>                     Address where to pass requests to FPM [127.0.0.1:9000]
+     *                                      Only one of --fpm-socket-path or --fpm-url can be set at a time
+     *
+     *  --fpm-uri=<uri>                     Alias for --fpm-url
+     *
+     *  --fpm-socket-path=<socketpath>      Socket path where to pass requests to FPM
+     *                                      Only one of --fpm-socket-path or --fpm-url can be set at a time
      *
      *  --config=<directory>                Path to Icinga Web 2's configuration files [/etc/icingaweb2]
      *
@@ -120,9 +126,13 @@ class ConfigCommand extends Command
      *  icingacli setup config webserver apache \
      *    --file=/etc/apache2/conf.d/icingaweb2.conf
      *
+     *  icingacli setup config webserver apache \
+     *    --file=/etc/apache2/conf.d/icingaweb2.conf
+     *    --fpm-url=localhost:9000
+     *
      *  icingacli setup config webserver nginx \
      *    --root=/usr/share/icingaweb2/public \
-     *    --fpm-uri=unix:/var/run/php5-fpm.sock
+     *    --fpm-socket-path=/var/run/php8.3-fpm.sock
      */
     public function webserverAction()
     {
@@ -157,10 +167,16 @@ class ConfigCommand extends Command
 
         $enableFpm = $this->params->shift('enable-fpm', $webserver->getEnableFpm());
 
-        $fpmUri = trim($this->params->get('fpm-uri', $webserver->getFpmUri()));
-        if (empty($fpmUri)) {
+        $fpmSocketPath = trim($this->params->get('fpm-socket-path', $webserver->getFpmSocketPath()));
+        $fpmUrl = trim($this->params->get('fpm-url'));
+        if (empty($fpmUrl)) {
+            $fpmUrl = trim($this->params->get('fpm-uri'));
+        }
+        if (empty($fpmSocketPath) && empty($fpmUrl)) {
+            $fpmUrl = $webserver->getFpmUrl();
+        } elseif (!empty($fpmSocketPath) && !empty($fpmUrl)) {
             $this->fail($this->translate(
-                'The argument --fpm-uri expects an address or path where to pass requests to FPM'
+                'Only one of the arguments --fpm-socket-path or --fpm-url must be set to pass requests to FPM'
             ));
         }
         $webserver
@@ -168,7 +184,8 @@ class ConfigCommand extends Command
             ->setConfigDir($configDir)
             ->setUrlPath($urlPath)
             ->setEnableFpm($enableFpm)
-            ->setFpmUri($fpmUri);
+            ->setFpmUrl($fpmUrl)
+            ->setFpmSocketPath($fpmSocketPath);
         $config = $webserver->generate() . "\n";
         if (($file = $this->params->get('file')) !== null) {
             if (file_exists($file) === true) {

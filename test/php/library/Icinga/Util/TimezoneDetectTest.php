@@ -8,38 +8,42 @@ use Icinga\Util\TimezoneDetect;
 
 class TimezoneDetectTest extends BaseTestCase
 {
-    public function testPositiveTimezoneOffsetSeparatedByComma()
+    public function testInvalidTimezoneNameInCookie(): void
     {
-        $this->assertTimezoneDetection('3600,0', 'Europe/Paris');
+        $tzDetect = new TimezoneDetect();
+        $tzDetect->reset();
+        
+        $_COOKIE[TimezoneDetect::$cookieName] = 'ABC';
+        $tzDetect = new TimezoneDetect();
+        $this->assertFalse(
+            $tzDetect->success(),
+            false,
+            'Failed to assert invalid timezone name is detected'
+        );
+
+        $this->assertNull(
+            $tzDetect->getTimezoneName(),
+            'Failed to assert that the timezone name will not be set for invalid timezone'
+        );
     }
 
-    public function testPositiveTimezoneOffsetSeparatedByHyphen()
-    {
-        $this->assertTimezoneDetection('3600-0', 'Europe/Paris');
-    }
-
-    public function testNegativeTimezoneOffsetSeparatedByComma()
-    {
-        $this->assertTimezoneDetection('-3600,0', 'Atlantic/Azores');
-    }
-
-    public function testNegativeTimezoneOffsetSeparatedByHyphen()
-    {
-        $this->assertTimezoneDetection('-3600-0', 'Atlantic/Azores');
-    }
-
-    protected function assertTimezoneDetection($cookieValue, $expectedTimezoneName)
+    public function testValidTimezoneNameInCookie(): void
     {
         $tzDetect = new TimezoneDetect();
         $tzDetect->reset();
 
-        $_COOKIE[TimezoneDetect::$cookieName] = $cookieValue;
+        $_COOKIE[TimezoneDetect::$cookieName] = "Europe/Berlin";
         $tzDetect = new TimezoneDetect();
+        $this->assertTrue(
+            $tzDetect->success(),
+            true,
+            'Failed to assert that the valid timezone name is detected'
+        );
+
         $this->assertSame(
             $tzDetect->getTimezoneName(),
-            $expectedTimezoneName,
-            'Failed asserting that the timezone "' . $expectedTimezoneName
-            . '" is being detected from the cookie value "' . $cookieValue . '"'
+            "Europe/Berlin",
+            'Failed to assert that the valid timezone name was correctly set'
         );
     }
 }

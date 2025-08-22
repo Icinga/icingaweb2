@@ -11,6 +11,7 @@ use Icinga\Exception\AuthenticationException;
 use Icinga\Repository\DbRepository;
 use Icinga\User;
 use PDO;
+use Zend_Db_Expr;
 
 class DbUserBackend extends DbRepository implements UserBackendInterface, Inspectable
 {
@@ -179,23 +180,28 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
     {
         if ($this->ds->getDbType() === 'pgsql') {
             // Since PostgreSQL version 9.0 the default value for bytea_output is 'hex' instead of 'escape'
-            $columns = array('password_hash' => 'ENCODE(password_hash, \'escape\')');
+            $columns = ['password_hash' => new Zend_Db_Expr('ENCODE(password_hash, \'escape\')')];
         } else {
-            $columns = array('password_hash');
+            // password_hash is intentionally not a valid query column,
+            // by wrapping it in an expression it is not validated
+            $columns = ['password_hash' => new Zend_Db_Expr('password_hash')];
         }
 
-        $nameColumn = 'name';
-        if ($this->ds->getDbType() === 'mysql') {
-            $username = strtolower($username);
-            $nameColumn = 'BINARY LOWER(name)';
-        }
-
-        $query = $this->ds->select()
-            ->from($this->prependTablePrefix('user'), $columns)
-            ->where($nameColumn, $username)
+        $query = $this
+            ->select()
+            ->from('user', $columns)
             ->where('active', true);
 
-        $statement = $this->ds->getDbAdapter()->prepare($query->getSelectQuery());
+        if ($this->ds->getDbType() === 'mysql') {
+            $username = strtolower($username);
+            $nameColumn = new Zend_Db_Expr('BINARY LOWER(name)');
+
+            $query->getQuery()->where($nameColumn, $username);
+        } else { // pgsql
+            $query->where('user', $username);
+        }
+
+        $statement = $this->ds->getDbAdapter()->prepare($query->getQuery()->getSelectQuery());
         $statement->execute();
         $statement->bindColumn(1, $lob, PDO::PARAM_LOB);
         $statement->fetch(PDO::FETCH_BOUND);

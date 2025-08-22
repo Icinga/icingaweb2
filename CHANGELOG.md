@@ -4,9 +4,80 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.12.5
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/85?closed=1).
+
+#### PHP 8.4 Support
+
+We're again a little behind schedule, but now we support PHP 8.4! This means that installations on Ubuntu 25.04 and
+Fedora 42+ can now install Icinga Web without worrying about PHP related incompatibilities. Icinga packages will be
+available in the next few days.
+
+#### Good Things Take Time
+
+There's only a single (notable) recent issue that is fixed with this release. All the others are a bit older.
+
+* External URLs set up as dashlets are not *embedded* the same as navigation items [#5346](https://github.com/Icinga/icingaweb2/issues/5346)
+
+But the team sat together a few weeks ago and fixed a bug here and there. And of course, also in Icinga Web!
+
+* Users who are not allowed to change the theme, cannot change the theme mode either [#5385](https://github.com/Icinga/icingaweb2/issues/5385)
+* Filtering for older-than events with relative time does not work [#5263](https://github.com/Icinga/icingaweb2/issues/5263)
+* External logout not working from the navigation dashboard [#5000](https://github.com/Icinga/icingaweb2/issues/5000)
+* Empty values are NULL in CSV exports [#5350](https://github.com/Icinga/icingaweb2/issues/5350)
+
+#### Breaking, Somewhat
+
+This is mainly for developers.
+
+With the support of PHP 8.4, we introduced a new environment variable, `ICINGAWEB_ENVIRONMENT`. Unless set to `dev`,
+Icinga Web will not show nor log deprecation notices anymore.
+
+### What's New in Version 2.12.4
+
+This is a hotfix release which fixes the following issue:
+
+Database login broken after upgrade [#5343](https://github.com/Icinga/icingaweb2/issues/5343)
+
+### What's New in Version 2.12.3
+
+**Notice:** This is a security release. It is recommended to upgrade _immediately_.
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/83?closed=1).
+
+#### Vulnerabilities, Closed
+
+Cross site scripting is one of the worst attacks on web based platforms. Especially, if carrying it out is as easy as
+the first two mentioned here. You might recognize the open redirect on the login. You are correct, we attempted to fix
+it already with v2.11.3 but underestimated PHP's quirks. The last is difficult to exploit, hence the lowest severity
+of all, but don't be fooled by that!
+
+All four of them are backported to v2.11.5.
+
+* XSS in embedded content [CVE-2025-27405](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-3x37-fjc3-ch8w)
+* DOM-based XSS [CVE-2025-27404](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-c6pg-h955-wf66)
+* Open redirect on login page [CVE-2025-30164](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-8r73-6686-wv8q)
+* Reflected XSS [CVE-2025-27609](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-5cjw-fwjc-8j38)
+
+Big thanks to all finders / reporters! :+1:
+
+#### Bugs, Exterminated
+
+Did you know, that we started [Icinga Notifications](https://icinga.com/docs/icinga-notifications/latest/) with support
+for PostgreSQL first? Reason for that is, we wanted to make sure we are fully compatible with it right away. To ensure
+things like logging in with a PostgreSQL authentication/group backend is case-insensitive, like it was always the case
+for MySQL. Now it **really** is case-insensitive! There are also two issues fixed, which many of you will probably have
+noticed since v2.12.2, sorry that it took so long :)
+
+* Login against Postgres DB is case-sensitive [#5223](https://github.com/Icinga/icingaweb2/issues/5223)
+* Role list has no functioning quick search [#5300](https://github.com/Icinga/icingaweb2/issues/5300)
+* After clicking on Check now, the page does not refresh itself [#5293](https://github.com/Icinga/icingaweb2/issues/5293)
+* Service States display wrong since update to 2.12.2 [#5290](https://github.com/Icinga/icingaweb2/issues/5290)
+
 ### What's New in Version 2.12.2
 
-You can find all issues related to this release on our Roadmap.
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/81?closed=1).
 
 #### General Fixes
 
@@ -62,7 +133,7 @@ but it’s now slightly improved.
 
 ### What's New in Version 2.12.1
 
-You can find all issues related to this release on our Roadmap.
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/80?closed=1).
 
 #### PHP 8.3 Support
 

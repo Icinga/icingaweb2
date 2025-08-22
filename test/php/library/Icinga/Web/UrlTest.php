@@ -71,6 +71,11 @@ class UrlTest extends BaseTestCase
         );
     }
 
+    public function testWhetherProtocolRelativeUrlsAreDetectedAsBeingExternal()
+    {
+        $this->assertTrue(Url::fromPath('//testhost/path/to/my/url.html')->isExternal());
+    }
+
     public function testWhetherGetAbsoluteUrlReturnsTheGivenUsernameAndPassword()
     {
         $url = Url::fromPath('http://testusername:testpassword@testsite.com/path/to/my/url.html');

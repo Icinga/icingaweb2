@@ -59,7 +59,7 @@ sudo htpasswd -c /etc/icingaweb2/.http-users icingaadmin
 
 #### Apache Configuration <a id="authentication-configuration-external-authentication-example-apache"></a>
 
-Add the following configuration to the `&lt;Directory&gt;` directive in the `icingaweb2.conf` web server
+Add the following configuration to the `<Directory>` directive in the `icingaweb2.conf` web server
 configuration file.
 
 ```

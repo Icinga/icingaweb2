@@ -21,7 +21,7 @@ class LocalFileStorageTest extends BaseTestCase
         parent::__construct($name, $data, $dataName);
 
         $this->oldErrorReportingLevel = error_reporting();
-        error_reporting(E_ALL | E_STRICT);
+        error_reporting(E_ALL);
 
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
             if (error_reporting() === 0) {
@@ -32,7 +32,6 @@ class LocalFileStorageTest extends BaseTestCase
             switch ($errno) {
                 case E_NOTICE:
                 case E_WARNING:
-                case E_STRICT:
                 case E_RECOVERABLE_ERROR:
                     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
             }

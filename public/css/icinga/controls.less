@@ -21,35 +21,34 @@
   }
 }
 
+form > .search-icon {
+  position: absolute;
+  left: 0.25em;
+  top: ~"calc(50% - 0.5em)";
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+form:has(> .search-icon) {
+  position: relative;
+}
+
 .controls input.search,
 input.search {
   .transition(border 0.3s ease);
-  .transition(background-image 0.2s ease);
 
-  background-image: url(../img/icons/search_white.png);
-  background-repeat: no-repeat;
-  background-size: 1em 1em;
-  background-position: .25em center;
   outline: none;
   padding-left: 1.5em;
   width: 20em;
-
-  &:focus {
-    background-image: url(../img/icons/search_icinga_blue.png);
-  }
 
   &:focus:not([readonly]) {
     border-color: @icinga-blue;
   }
 }
 
-@light-mode: {
-  #menu input.search,
-  .controls input.search,
-  input.search {
-    background-image: url(../img/icons/search.png);
-  }
-};
+form:has(input.search:focus) > .search-icon {
+  color: @icinga-blue;
+}
 
 .backend-selection,
 .pagination-control,

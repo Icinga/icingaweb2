@@ -242,6 +242,10 @@
         loadUrl: function (url, $target, data, method, action, autorefresh, progressTimer, extraHeaders) {
             var id = null;
 
+            if (url.startsWith('//') || ! url.startsWith(this.baseUrl + '/')) {
+                throw new Error('URL ' + url + ' is not relative to ' + this.baseUrl);
+            }
+
             // Default method is GET
             if ('undefined' === typeof method) {
                 method = 'GET';
@@ -1054,15 +1058,20 @@
                     errorThrown + ':',
                     $(req.responseText).text().replace(/\s+/g, ' ').slice(0, 100)
                 );
-                this.renderContentToContainer(
-                    req.responseText,
-                    req.$target,
-                    req.action,
-                    req.autorefresh,
-                    undefined,
-                    req.autosubmit,
-                    req.scripted
-                );
+
+                if (req.status === 401) {
+                    window.location.reload();
+                } else {
+                    this.renderContentToContainer(
+                        req.responseText,
+                        req.$target,
+                        req.action,
+                        req.autorefresh,
+                        undefined,
+                        req.autosubmit,
+                        req.scripted
+                    );
+                }
             } else {
                 if (errorThrown === 'abort') {
                     this.icinga.logger.debug(

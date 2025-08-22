@@ -10,9 +10,14 @@ use Icinga\Module\Setup\Webserver;
  */
 class Nginx extends Webserver
 {
-    protected $fpmUri = '127.0.0.1:9000';
+    protected $fpmUrl = '127.0.0.1:9000';
 
     protected $enableFpm = true;
+
+    protected function createFpmUri()
+    {
+        return empty($this->fpmSocketPath) ? $this->fpmUrl : $this->fpmSocketSchema . $this->fpmSocketPath;
+    }
 
     protected function getTemplate()
     {

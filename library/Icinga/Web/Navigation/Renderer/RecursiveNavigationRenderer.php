@@ -4,11 +4,10 @@
 namespace Icinga\Web\Navigation\Renderer;
 
 use Exception;
-use RecursiveIteratorIterator;
 use Icinga\Exception\IcingaException;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Navigation\NavigationItem;
-use Icinga\Web\Navigation\Renderer\NavigationItemRenderer;
+use RecursiveIteratorIterator;
 
 /**
  * Renderer for multi level navigation

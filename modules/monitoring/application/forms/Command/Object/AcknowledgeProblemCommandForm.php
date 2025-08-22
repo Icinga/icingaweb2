@@ -57,7 +57,8 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                         . ' the host or service that is having problems. Make sure you enter a brief description of'
                         . ' what you are doing.'
                     ),
-                    'attribs'       => array('class' => 'autofocus')
+                    'attribs'       => array('class' => 'autofocus'),
+                    'value'         => $config->get('settings', 'acknowledge_comment_text')
                 )
             ),
             array(

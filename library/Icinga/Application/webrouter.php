@@ -8,7 +8,7 @@ use Icinga\Web\Controller\StaticController;
 use Icinga\Web\JavaScript;
 use Icinga\Web\StyleSheet;
 
-error_reporting(E_ALL | E_STRICT);
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 
 if (isset($_SERVER['REQUEST_URI'])) {
     $ruri = $_SERVER['REQUEST_URI'];
@@ -18,7 +18,7 @@ if (isset($_SERVER['REQUEST_URI'])) {
 
 // Workaround, PHPs internal Webserver seems to mess up SCRIPT_FILENAME
 // as it prefixes its absolute path with DOCUMENT_ROOT
-if (preg_match('/^PHP .* Development Server/', $_SERVER['SERVER_SOFTWARE'])) {
+if (preg_match('/^PHP.*Development Server/', $_SERVER['SERVER_SOFTWARE'])) {
     $script = basename($_SERVER['SCRIPT_FILENAME']);
     $_SERVER['PHP_SELF'] = $_SERVER['SCRIPT_NAME'] = '/' . $script;
     $_SERVER['SCRIPT_FILENAME'] = $_SERVER['DOCUMENT_ROOT']

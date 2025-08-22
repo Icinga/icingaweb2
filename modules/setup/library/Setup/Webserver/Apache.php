@@ -10,7 +10,16 @@ use Icinga\Module\Setup\Webserver;
  */
 class Apache extends Webserver
 {
-    protected $fpmUri = '127.0.0.1:9000';
+    protected $fpmUrl = '127.0.0.1:9000';
+
+    protected $fpmUrlSchema = 'fcgi://';
+
+    protected function createFpmUri()
+    {
+        return empty($this->fpmSocketPath)
+            ? $this->fpmUrlSchema . $this->fpmUrl
+            : $this->fpmSocketSchema . $this->fpmSocketPath . '|' . $this->fpmUrlSchema . 'localhost';
+    }
 
     protected function getTemplate()
     {
@@ -23,7 +32,7 @@ Alias {urlPath} "{aliasDocumentRoot}"
 #    # Forward PHP requests to FPM
 #    SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 #    <LocationMatch "^{urlPath}/(.*\.php)$">
-#        ProxyPassMatch "fcgi://{fpmUri}/{documentRoot}/$1"
+#        ProxyPassMatch "{fpmUri}/{documentRoot}/$1"
 #    </LocationMatch>
 #</IfVersion>
 
@@ -71,7 +80,7 @@ Alias {urlPath} "{aliasDocumentRoot}"
 #        # Forward PHP requests to FPM
 #        SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 #        <FilesMatch "\.php$">
-#            SetHandler "proxy:fcgi://{fpmUri}"
+#            SetHandler "proxy:{fpmUri}"
 #            ErrorDocument 503 {urlPath}/error_unavailable.html
 #        </FilesMatch>
 #    </IfVersion>
@@ -85,7 +94,7 @@ Alias {urlPath} "{aliasDocumentRoot}"
     # Forward PHP requests to FPM
     SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
     <LocationMatch "^{urlPath}/(.*\.php)$">
-        ProxyPassMatch "fcgi://{fpmUri}/{documentRoot}/$1"
+        ProxyPassMatch "{fpmUri}/{documentRoot}/$1"
     </LocationMatch>
 </IfVersion>
 
@@ -131,7 +140,7 @@ Alias {urlPath} "{aliasDocumentRoot}"
         # Forward PHP requests to FPM
         SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
         <FilesMatch "\.php$">
-            SetHandler "proxy:fcgi://{fpmUri}"
+            SetHandler "proxy:{fpmUri}"
             ErrorDocument 503 {urlPath}/error_unavailable.html
         </FilesMatch>
     </IfVersion>

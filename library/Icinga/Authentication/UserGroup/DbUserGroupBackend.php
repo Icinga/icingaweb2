@@ -204,7 +204,7 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
         $membershipQuery = $this
             ->select()
             ->from('group_membership', array('group_name'))
-            ->where('user_name', $user->getUsername());
+            ->where('user', $user->getUsername());
 
         $memberships = array();
         foreach ($membershipQuery as $membership) {

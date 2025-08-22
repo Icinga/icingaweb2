@@ -6,7 +6,7 @@
 <?= $this->tabs->render($this); ?>
 <br/>
 <div>
-  <h1>Could not <?= $action; ?> module "<?= $moduleName; ?>"</h1>
+  <h1>Could not <?= $action; ?> module "<?= $this->escape($moduleName); ?>"</h1>
   <p>
     While operation the following error occurred:
     <br />

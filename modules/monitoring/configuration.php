@@ -284,10 +284,10 @@ $section->add(N_('Timeline'), array(
 /*
  * Reporting Section
  */
-$section = $this->menuSection(N_('Reporting'), array(
-    'icon'      => 'barchart',
+$section = $this->menuSection(N_('Reporting'), [
+    'icon'      => 'fa-chart-simple',
     'priority'  => 100
-));
+]);
 
 /*
  * Current Incidents
