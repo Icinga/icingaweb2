@@ -352,7 +352,7 @@ class Form extends Zend_Form
      *
      * @return  $this
      *
-     * @throws  ProgrammingError    In case $url is neither a string nor a instance of Icinga\Web\Url
+     * @throws  ProgrammingError    In case $url is neither a string nor an instance of Icinga\Web\Url
      */
     public function setRedirectUrl($url)
     {
