@@ -104,7 +104,7 @@ class Csp
             $scheme = parse_url($navigationItem["url"], PHP_URL_SCHEME);
 
 
-            if ($host === null || !static::validateCspPolicy($errorSource, "frame-src", $host)) {
+            if ($host === null) {
                 continue;
             }
 
@@ -135,11 +135,6 @@ class Csp
 
                 $cspDirectives[$directive] = $cspDirectives[$directive] ?? [];
                 foreach ($policies as $policy) {
-                    $source = get_class($hook);
-                    if (!static::validateCspPolicy($source, $directive, $policy)) {
-                        continue;
-                    }
-
                     $cspDirectives[$directive][] = $policy;
                 }
             }
@@ -154,34 +149,6 @@ class Csp
         
         return $header;
     }
-
-    public static function validateCspPolicy(string $source, string $directive, string $policy): bool
-    {
-        // We accept the following policies:
-        //     1. Hosts: Modules can whitelist certain domains as sources for the CSP header directives.
-        //         - A host can have a specific scheme (http or https).
-        //         - A host can whitelist all subdomains with *
-        //         - A host can contain all alphanumeric characters as well as '+', '-', '_', '.', and ':'
-        //     2. Nonce: Modules are allowed to specify custom nonce for some directives.
-        //         - A nonce is enclosed in single-quotes: "'"
-        //         - A nonce begins with 'nonce-' followed by at least 22 significant characters of base64 encoded data.
-        //           as recommended by the standard: https://content-security-policy.com/nonce/
-        if (! preg_match("/^((https?:\/\/)?\*?[a-zA-Z0-9+._\-:]+|'nonce-[a-zA-Z0-9+\/]{22,}={0,3}')$/", $policy)) {
-            Logger::debug("$source: Invalid CSP policy found: $directive $policy");
-            return false;
-        }
-
-        // We refuse all overly aggressive whitelisting by default. This includes:
-        //     1. Whitelisting all Hosts with '*'
-        //     2. Whitelisting all Hosts in a tld, e.g. 'http://*.com'
-        if (preg_match('|\*(\.[a-zA-Z]+)?$|', $directive)) {
-            Logger::debug("$source: Disallowing whitelisting all hosts. $directive");
-            return false;
-        }
-
-        return true;
-    }
-
     /**
      * Set/recreate nonce for dynamic CSS
      *
@@ -271,10 +238,14 @@ class Csp
             $configShared = Config::navigation($type);
             $configShared->getConfigObject()->setKeyColumn('name');
             foreach ($config->select() as $itemConfig) {
-                $menuItems[] = ["name" => $itemConfig->get('name'), "url" => $itemConfig->get('url')];
+                if ( $itemConfig->get("target", "") !== "_blank") {
+                    $menuItems[] = ["name" => $itemConfig->get('name'), "url" => $itemConfig->get('url')];
+                }
             }
             foreach ($configShared->select() as $itemConfig) {
-                $menuItems[] = ["name" => $itemConfig->get('name'), "url" => $itemConfig->get('url')];
+                if (Icinga::app()->hasAccessToSharedNavigationItem($itemConfig, $config) && $itemConfig->get("target", "") !== "_blank") {
+                    $menuItems[] = ["name" => $itemConfig->get('name'), "url" => $itemConfig->get('url')];
+                }
             }
         }
         return $menuItems;
