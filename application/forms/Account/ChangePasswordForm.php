@@ -41,7 +41,7 @@ class ChangePasswordForm extends Form
     public function createElements(array $formData)
     {
         $passwordPolicy = Config::app()->get('global', 'password_policy');
-        if(isset($passwordPolicy) && class_exists($passwordPolicy)) {
+        if (isset($passwordPolicy) && class_exists($passwordPolicy)) {
             $passwordPolicyObject = new $passwordPolicy();
             $this->addDescription($passwordPolicyObject->displayPasswordPolicy());
         }
