@@ -4,6 +4,7 @@
 namespace Icinga\Forms\Account;
 
 use Icinga\Application\Config;
+use Icinga\Application\Hook\PasswordPolicyHook;
 use Icinga\Authentication\PasswordValidator;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Data\Filter\Filter;
@@ -24,6 +25,23 @@ class ChangePasswordForm extends Form
     protected $backend;
 
     /**
+     * The password policy object
+     *
+     * @var PasswordPolicyHook|null
+     */
+    protected ?PasswordPolicyHook $passwordPolicyObject;
+
+    /**
+     * Constructor
+     *
+     * @param PasswordPolicyHook|null $passwordPolicyObject
+     */
+    public function __construct($passwordPolicyObject = null)
+    {
+        $this->passwordPolicyObject = $passwordPolicyObject;
+        parent::__construct();
+    }
+    /**
      * {@inheritdoc}
      */
     public function init()
@@ -33,46 +51,54 @@ class ChangePasswordForm extends Form
 
     /**
      * {@inheritdoc}
-     * @throws \Zend_Validate_Exception
      */
     public function createElements(array $formData)
     {
-        $passwordPolicy = Config::app()->get('global', 'password_policy');
-        if (isset($passwordPolicy) && class_exists($passwordPolicy)) {
-            $passwordPolicyObject = new $passwordPolicy();
-            $this->addDescription($passwordPolicyObject->displayPasswordPolicy());
+        if ($this->passwordPolicyObject === null) {
+            $passwordPolicy = Config::app()->get(
+                'global',
+                'password_policy'
+            );
+            if (isset($passwordPolicy) && class_exists($passwordPolicy)) {
+                $this->passwordPolicyObject = new $passwordPolicy();
+            }
+        }
+
+        if ($this->passwordPolicyObject) {
+            $this->addDescription(
+                $this->passwordPolicyObject->displayPasswordPolicy()
+            );
         }
 
         $this->addElement(
             'password',
             'old_password',
             array(
-                'label' => $this->translate('Old Password'),
-                'required' => true
+                'label'         => $this->translate('Old Password'),
+                'required'      => true
             )
         );
         $this->addElement(
             'password',
             'new_password',
             array(
-                'label' => $this->translate('New Password'),
-                'required' => true,
-                'validators' => array(new PasswordValidator())
+                'label'         => $this->translate('New Password'),
+                'required'      => true,
+                'validators' => [new PasswordValidator()]
             )
         );
         $this->addElement(
             'password',
             'new_password_confirmation',
             array(
-                'label' => $this->translate('Confirm New Password'),
-                'required' => true,
-                'validators' => array(
+                'label'         => $this->translate('Confirm New Password'),
+                'required'      => true,
+                'validators'        => array(
                     array('identical', false, array('new_password'))
                 )
             )
         );
     }
-
 
     /**
      * {@inheritdoc}
@@ -94,13 +120,13 @@ class ChangePasswordForm extends Form
     public function isValid($formData)
     {
         $valid = parent::isValid($formData);
-        if (!$valid) {
+        if (! $valid) {
             return false;
         }
 
         $oldPasswordEl = $this->getElement('old_password');
 
-        if (!$this->backend->authenticate($this->Auth()->getUser(), $oldPasswordEl->getValue())) {
+        if (! $this->backend->authenticate($this->Auth()->getUser(), $oldPasswordEl->getValue())) {
             $oldPasswordEl->addError($this->translate('Old password is invalid'));
             $this->markAsError();
             return false;
@@ -122,7 +148,7 @@ class ChangePasswordForm extends Form
     /**
      * Set the user backend
      *
-     * @param DbUserBackend $backend
+     * @param   DbUserBackend $backend
      *
      * @return  $this
      */
