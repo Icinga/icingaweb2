@@ -10,8 +10,6 @@ use Icinga\Data\Filter\Filter;
 use Icinga\User;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
-use ipl\Html\Text;
-use Icinga\Forms\Config\GeneralConfigForm;
 
 /**
  * Form for changing user passwords
