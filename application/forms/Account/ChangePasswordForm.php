@@ -5,11 +5,15 @@
 
 namespace Icinga\Forms\Account;
 
+use Icinga\Application\Config;
+use Icinga\Authentication\PasswordValidator;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Data\Filter\Filter;
 use Icinga\User;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
+use ipl\Html\Text;
+use Icinga\Forms\Config\GeneralConfigForm;
 
 /**
  * Form for changing user passwords
@@ -31,39 +35,49 @@ class ChangePasswordForm extends Form
         $this->setSubmitLabel($this->translate('Update Account'));
     }
 
+
     /**
      * {@inheritdoc}
+     * @throws \Zend_Validate_Exception
      */
     public function createElements(array $formData)
     {
+        $passwordPolicy = Config::app()->get('global', 'password_policy');
+        if(isset($passwordPolicy) && class_exists($passwordPolicy)) {
+            $passwordPolicyObject = new $passwordPolicy();
+            $this->addDescription($passwordPolicyObject->displayPasswordPolicy());
+        }
+
         $this->addElement(
             'password',
             'old_password',
             [
-                'label'         => $this->translate('Old Password'),
-                'required'      => true
+                'label'    => $this->translate('Old Password'),
+                'required' => true
             ]
         );
         $this->addElement(
             'password',
             'new_password',
             [
-                'label'         => $this->translate('New Password'),
-                'required'      => true
+                'label'      => $this->translate('New Password'),
+                'required'   => true,
+                'validators' => [new PasswordValidator()],
             ]
         );
         $this->addElement(
             'password',
             'new_password_confirmation',
             [
-                'label'         => $this->translate('Confirm New Password'),
-                'required'      => true,
-                'validators'        => [
+                'label'      => $this->translate('Confirm New Password'),
+                'required'   => true,
+                'validators' => [
                     ['identical', false, ['new_password']]
                 ]
             ]
         );
     }
+
 
     /**
      * {@inheritdoc}
@@ -85,13 +99,13 @@ class ChangePasswordForm extends Form
     public function isValid($formData)
     {
         $valid = parent::isValid($formData);
-        if (! $valid) {
+        if (!$valid) {
             return false;
         }
 
         $oldPasswordEl = $this->getElement('old_password');
 
-        if (! $this->backend->authenticate($this->Auth()->getUser(), $oldPasswordEl->getValue())) {
+        if (!$this->backend->authenticate($this->Auth()->getUser(), $oldPasswordEl->getValue())) {
             $oldPasswordEl->addError($this->translate('Old password is invalid'));
             $this->markAsError();
             return false;
@@ -113,7 +127,7 @@ class ChangePasswordForm extends Form
     /**
      * Set the user backend
      *
-     * @param   DbUserBackend $backend
+     * @param DbUserBackend $backend
      *
      * @return  $this
      */
