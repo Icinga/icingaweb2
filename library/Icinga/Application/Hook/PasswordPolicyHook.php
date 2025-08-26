@@ -26,5 +26,4 @@ interface PasswordPolicyHook
      * otherwise returns an error message describing the violations
      */
     public function validatePassword(string $password): ?string;
-
 }

@@ -50,14 +50,15 @@ class PasswordPolicyConfigForm extends Form
             'select',
             'global_password_policy',
             array(
-                'description' => $this->translate('Enforce strong '.
-                    'password requirements for new passwords'),
+                'description' => $this->translate(
+                    'Enforce strong password requirements for new passwords'),
                 'label'       => $this->translate('Password Policy'),
                 'multiOptions' => array_merge(
                     ['' => sprintf(' - %s - ',
-                    $this->translate('No Password Policy'))],
+                    $this->translate('No Password Policy')
+                    )],
                     $passwordPolicies
-                 ),
+                ),
             )
         );
 
