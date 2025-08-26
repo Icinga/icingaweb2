@@ -33,7 +33,6 @@ class ChangePasswordForm extends Form
         $this->setSubmitLabel($this->translate('Update Account'));
     }
 
-
     /**
      * {@inheritdoc}
      * @throws \Zend_Validate_Exception
