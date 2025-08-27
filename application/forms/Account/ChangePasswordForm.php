@@ -36,7 +36,7 @@ class ChangePasswordForm extends Form
      *
      * @param PasswordPolicyHook|null $passwordPolicyObject
      */
-    public function __construct($passwordPolicyObject = null)
+    public function __construct(?PasswordPolicyHook $passwordPolicyObject = null)
     {
         $this->passwordPolicyObject = $passwordPolicyObject;
         parent::__construct();
@@ -84,7 +84,7 @@ class ChangePasswordForm extends Form
             array(
                 'label'         => $this->translate('New Password'),
                 'required'      => true,
-                'validators' => [new PasswordValidator()]
+                'validators' => [new PasswordValidator($this->passwordPolicyObject)]
             )
         );
         $this->addElement(
