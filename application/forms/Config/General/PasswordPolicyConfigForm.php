@@ -20,7 +20,7 @@ class PasswordPolicyConfigForm extends Form
 
     public function createElements(array $formData): self
     {
-      $passwordPolicies = [];
+        $passwordPolicies = [];
 
         foreach (Hook::all('passwordpolicy') as $class => $policy) {
             $passwordPolicies[$class] = $policy->getName();
