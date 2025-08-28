@@ -40,11 +40,11 @@ class ChangePasswordForm extends Form
     {
         $passwordPolicyObject = null;
         $passwordPolicy = Config::app()->get(
-        'global',
-        'password_policy'
+            'global',
+            'password_policy'
         );
 
-        if(isset($passwordPolicy)){
+        if (isset($passwordPolicy)) {
             $passwordPolicyObject = new $passwordPolicy();
             $passwordPolicyDescription = $passwordPolicyObject->getDescription();
 
