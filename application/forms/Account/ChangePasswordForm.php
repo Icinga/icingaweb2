@@ -63,8 +63,7 @@ class ChangePasswordForm extends Form
             array(
                 'label'         => $this->translate('New Password'),
                 'required'      => true,
-                'validators' => $passwordPolicyObject !== null ?
-                        [new PasswordValidator($passwordPolicyObject)] : [],
+                'validators' => [new PasswordValidator($passwordPolicyObject)]
             )
         );
         $this->addElement(
