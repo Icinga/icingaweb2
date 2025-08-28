@@ -15,13 +15,13 @@ class NonePasswordPolicy implements PasswordPolicyHook
         return 'None';
     }
 
-    public function displayPasswordPolicy(): string
+    public function getDescription(): string
     {
         return '';
     }
 
-    public function validatePassword(string $password): ?array
+    public function validatePassword(string $password): array
     {
-        return null;
+        return [];
     }
 }
