@@ -20,19 +20,16 @@ class UserForm extends RepositoryForm
      */
     protected function createInsertElements(array $formData)
     {
-        $passwordPolicyObject = null;
         $passwordPolicy = Config::app()->get(
             'global',
             'password_policy',
             DefaultPasswordPolicy::class
         );
-        if (isset($passwordPolicy)) {
-            $passwordPolicyObject = new $passwordPolicy();
-            $passwordPolicyDescription = $passwordPolicyObject->getDescription();
+        $passwordPolicyObject = new $passwordPolicy();
+        $passwordPolicyDescription = $passwordPolicyObject->getDescription();
 
-            if ($passwordPolicyDescription != '') {
-                $this->addDescription($passwordPolicyDescription);
-            }
+        if ($passwordPolicyDescription != '') {
+            $this->addDescription($passwordPolicyDescription);
         }
 
         $this->addElement(
