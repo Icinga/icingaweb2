@@ -18,7 +18,6 @@ class NonePasswordPolicy implements PasswordPolicyHook
     public function displayPasswordPolicy(): string
     {
         return '';
-
     }
 
     public function validatePassword(string $password): ?array
