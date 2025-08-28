@@ -9,9 +9,10 @@ use ipl\I18n\Translation;
 /**
  * None Password Policy to validate all passwords
  */
-class NonePasswordPolicy implements PasswordPolicyHook
+class NoPasswordPolicy implements PasswordPolicyHook
 {
     use Translation;
+
     public function getName(): string
     {
         return $this->translate('None');

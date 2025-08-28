@@ -28,7 +28,7 @@ class DefaultPasswordPolicy implements PasswordPolicyHook
     public function getDescription(): string
     {
         return $this->translate(
-            'Password requirements: minimum 12 characters,' .
+            'Password requirements: minimum 12 characters, ' .
             'at least 1 number, 1 special character, uppercase and lowercase letters.'
         );
     }
