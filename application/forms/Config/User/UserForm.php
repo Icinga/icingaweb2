@@ -17,7 +17,6 @@ class UserForm extends RepositoryForm
      *
      * @param   array   $formData   The data sent by the user
      */
-
     protected function createInsertElements(array $formData)
     {
         $passwordPolicy = Config::app()->get('global', 'password_policy');
