@@ -9,16 +9,18 @@ use Zend_Validate_Abstract;
 class PasswordValidator extends Zend_Validate_Abstract
 {
     /**
-     * @var PasswordPolicyHook|null
+     *  The password policy object
+     *
+     * @var PasswordPolicyHook
      */
-    private ?PasswordPolicyHook $passwordPolicyObject;
+    private PasswordPolicyHook $passwordPolicyObject;
 
     /**
      * Constructor
      *
-     * @param PasswordPolicyHook|null $passwordPolicyObject
+     * @param PasswordPolicyHook $passwordPolicyObject
      */
-    public function __construct(?PasswordPolicyHook $passwordPolicyObject = null)
+    public function __construct(PasswordPolicyHook $passwordPolicyObject)
     {
         $this->passwordPolicyObject = $passwordPolicyObject;
     }
@@ -27,28 +29,17 @@ class PasswordValidator extends Zend_Validate_Abstract
      * Checks if password matches with password policy
      * throws a message if not
      *
-     * If no password policy is set, all passwords are considered valid
-     *
      * @param mixed $value The password to validate
      *
      * @return bool
-     *
      */
     public function isValid($value): bool
     {
-        $this->_messages = [];
-
-        if ($this->passwordPolicyObject === null) {
+        if ($this->passwordPolicyObject->validatePassword($value) === null) {
             return true;
         }
 
-        $errorMessage = $this->passwordPolicyObject->validatePassword($value);
-
-        if ($errorMessage !== null) {
-            $this->_messages[] = $errorMessage;
-            return false;
-        }
-
-        return true;
+        $this->_messages = $this->passwordPolicyObject->validatePassword($value);
+        return false;
     }
 }

@@ -5,6 +5,7 @@ namespace Icinga\Forms\Account;
 
 use Icinga\Application\Config;
 use Icinga\Application\Hook\PasswordPolicyHook;
+use Icinga\Application\ProvidedHook\DefaultPasswordPolicy;
 use Icinga\Authentication\PasswordValidator;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Data\Filter\Filter;
@@ -25,22 +26,12 @@ class ChangePasswordForm extends Form
     protected $backend;
 
     /**
-     * The password policy object
+     *  The password policy object
      *
-     * @var PasswordPolicyHook|null
+     * @var PasswordPolicyHook
      */
-    protected ?PasswordPolicyHook $passwordPolicyObject;
+    protected ?PasswordPolicyHook $passwordPolicyObject = null;
 
-    /**
-     * Constructor
-     *
-     * @param PasswordPolicyHook|null $passwordPolicyObject
-     */
-    public function __construct(?PasswordPolicyHook $passwordPolicyObject = null)
-    {
-        $this->passwordPolicyObject = $passwordPolicyObject;
-        parent::__construct();
-    }
     /**
      * {@inheritdoc}
      */
@@ -54,20 +45,15 @@ class ChangePasswordForm extends Form
      */
     public function createElements(array $formData)
     {
-        if ($this->passwordPolicyObject === null) {
-            $passwordPolicy = Config::app()->get(
-                'global',
-                'password_policy'
-            );
-            if (isset($passwordPolicy) && class_exists($passwordPolicy)) {
-                $this->passwordPolicyObject = new $passwordPolicy();
-            }
-        }
+        $passwordPolicy = Config::app()->get(
+            'global',
+            'password_policy'
+        );
+        $this->passwordPolicyObject = new $passwordPolicy();
+        $passwordPolicyDescription = $this->passwordPolicyObject->displayPasswordPolicy();
 
-        if ($this->passwordPolicyObject) {
-            $this->addDescription(
-                $this->passwordPolicyObject->displayPasswordPolicy()
-            );
+        if ($passwordPolicyDescription != '') {
+            $this->addDescription($passwordPolicyDescription);
         }
 
         $this->addElement(
@@ -84,7 +70,9 @@ class ChangePasswordForm extends Form
             array(
                 'label'         => $this->translate('New Password'),
                 'required'      => true,
-                'validators' => [new PasswordValidator($this->passwordPolicyObject)]
+                'validators' =>
+                    $this->passwordPolicyObject !== null ?
+                        [new PasswordValidator($this->passwordPolicyObject)] : [],
             )
         );
         $this->addElement(
