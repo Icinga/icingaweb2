@@ -26,13 +26,6 @@ class ChangePasswordForm extends Form
     protected $backend;
 
     /**
-     *  The password policy object
-     *
-     * @var PasswordPolicyHook
-     */
-    protected ?PasswordPolicyHook $passwordPolicyObject = null;
-
-    /**
      * {@inheritdoc}
      */
     public function init()
@@ -45,15 +38,19 @@ class ChangePasswordForm extends Form
      */
     public function createElements(array $formData)
     {
+        $passwordPolicyObject = null;
         $passwordPolicy = Config::app()->get(
-            'global',
-            'password_policy'
+        'global',
+        'password_policy'
         );
-        $this->passwordPolicyObject = new $passwordPolicy();
-        $passwordPolicyDescription = $this->passwordPolicyObject->displayPasswordPolicy();
 
-        if ($passwordPolicyDescription != '') {
-            $this->addDescription($passwordPolicyDescription);
+        if(isset($passwordPolicy)){
+            $passwordPolicyObject = new $passwordPolicy();
+            $passwordPolicyDescription = $passwordPolicyObject->getDescription();
+
+            if ($passwordPolicyDescription != '') {
+                $this->addDescription($passwordPolicyDescription);
+            }
         }
 
         $this->addElement(
@@ -70,9 +67,8 @@ class ChangePasswordForm extends Form
             array(
                 'label'         => $this->translate('New Password'),
                 'required'      => true,
-                'validators' =>
-                    $this->passwordPolicyObject !== null ?
-                        [new PasswordValidator($this->passwordPolicyObject)] : [],
+                'validators' => $passwordPolicyObject !== null ?
+                        [new PasswordValidator($passwordPolicyObject)] : [],
             )
         );
         $this->addElement(
