@@ -55,11 +55,10 @@ class UserForm extends RepositoryForm
             'password',
             'password',
             [
-                'required'   => true,
-                'label'      => $this->translate('Password'),
-                'validators' => $passwordPolicyObject !== null ?
-                    [new PasswordValidator($passwordPolicyObject)] : [],
-            ],
+                'required'  => true,
+                'label'     => $this->translate('Password'),
+                'validators' => [new PasswordValidator($passwordPolicyObject)]
+            ]
         );
 
         $this->setTitle($this->translate('Add a new user'));
