@@ -26,5 +26,5 @@ interface PasswordPolicyHook
      * @return string|null Returns null if the password is valid,
      * otherwise returns an error message describing the violations
      */
-    public function validatePassword(string $password): ?string;
+    public function validatePassword(string $password): ?array;
 }

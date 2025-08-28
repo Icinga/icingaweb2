@@ -4,6 +4,7 @@
 namespace Icinga\Application\ProvidedHook;
 
 use Icinga\Application\Hook\PasswordPolicyHook;
+use ipl\I18n\Translation;
 
 /**
  * Default implementation of a password policy
@@ -17,56 +18,64 @@ use Icinga\Application\Hook\PasswordPolicyHook;
  */
 class DefaultPasswordPolicy implements PasswordPolicyHook
 {
-    /**
-     * @inheritdoc
-     */
+    use Translation;
+
     public function getName(): string
     {
-        return 'Default Password Policy';
+        return 'Default';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function displayPasswordPolicy(): string
     {
-        $message = (
-            'Password requirements: ' . 'minimum 12 characters, ' .
-            'at least 1 number, ' .
-            '1 special character, ' . 'uppercase and lowercase letters'
-        );
+        $message =
+            $this->translate(
+                'Password requirements: minimum 12 characters, at least 1 number, ' .
+                '1 special character, uppercase and lowercase letters.'
+            );
         return $message;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function validatePassword(string $password): ?string
+    public function validatePassword(string $password): ?array
     {
         $violations = [];
 
         if (strlen($password) < 12) {
-            $violations[] = ('Password must be at least 12 characters long');
+            $violations[] =
+                $this->translate(
+                    'Password must be at least 12 characters long'
+                );
         }
 
         if (! preg_match('/[0-9]/', $password)) {
-            $violations[] = ('Password must contain at least one number');
+            $violations[] =
+                $this->translate(
+                    'Password must contain at least one number'
+                );
         }
 
         if (! preg_match('/[^a-zA-Z0-9]/', $password)) {
-            $violations[] = ('Password must contain at least one special character');
+            $violations[] =
+                $this->translate(
+                    'Password must contain at least one special character'
+                );
         }
 
         if (! preg_match('/[A-Z]/', $password)) {
-            $violations[] = ('Password must contain at least one uppercase letter');
+            $violations[] =
+                $this->translate(
+                    'Password must contain at least one uppercase letter'
+                );
         }
 
         if (! preg_match('/[a-z]/', $password)) {
-            $violations[] = ('Password must contain at least one lowercase letter');
+            $violations[] =
+                $this->translate(
+                    'Password must contain at least one lowercase letter'
+                );
         }
 
         if (! empty($violations)) {
-            return implode(", ", $violations);
+            return $violations;
         }
 
         return null;
