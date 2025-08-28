@@ -55,8 +55,7 @@ class UserForm extends RepositoryForm
             array(
                 'required'  => true,
                 'label'     => $this->translate('Password'),
-                'validators' => $passwordPolicyObject !== null ?
-                        [new PasswordValidator($passwordPolicyObject)] : [],
+                'validators' => [new PasswordValidator($passwordPolicyObject)]
             )
         );
 
