@@ -22,17 +22,15 @@ class DefaultPasswordPolicy implements PasswordPolicyHook
 
     public function getName(): string
     {
-        return 'Default';
+        return $this->translate('Default');
     }
 
     public function getDescription(): string
     {
-        $message =
-            $this->translate(
-                'Password requirements: minimum 12 characters, at least 1 number, ' .
-                '1 special character, uppercase and lowercase letters.'
-            );
-        return $message;
+        return $this->translate(
+            'Password requirements: minimum 12 characters,' .
+            'at least 1 number, 1 special character, uppercase and lowercase letters.'
+        );
     }
 
     public function validatePassword(string $password): array
@@ -69,10 +67,6 @@ class DefaultPasswordPolicy implements PasswordPolicyHook
             );
         }
 
-        if (! empty($violations)) {
-            return $violations;
-        }
-
-        return [];
+        return $violations;
     }
 }
