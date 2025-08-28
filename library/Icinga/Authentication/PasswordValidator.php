@@ -35,11 +35,13 @@ class PasswordValidator extends Zend_Validate_Abstract
      */
     public function isValid($value): bool
     {
-        if ($this->passwordPolicyObject->validatePassword($value) === null) {
-            return true;
+        $message = $this->passwordPolicyObject->validatePassword($value);
+
+        if (!empty($message)) {
+            $this->_messages = $message;
+            return false;
         }
 
-        $this->_messages = $this->passwordPolicyObject->validatePassword($value);
-        return false;
+        return true;
     }
 }
