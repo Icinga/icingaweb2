@@ -4,7 +4,8 @@
 namespace Icinga\Forms\Account;
 
 use Icinga\Application\Config;
-use Icinga\Application\ProvidedHook\DefaultPasswordPolicy;
+use Icinga\Application\ProvidedHook\CommonPasswordPolicy;
+use Icinga\Application\ProvidedHook\NoPasswordPolicy;
 use Icinga\Authentication\PasswordValidator;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Data\Filter\Filter;
@@ -40,7 +41,7 @@ class ChangePasswordForm extends Form
         $passwordPolicy = Config::app()->get(
             'global',
             'password_policy',
-            DefaultPasswordPolicy::class
+            NoPasswordPolicy::class
         );
         $passwordPolicyObject = new $passwordPolicy();
         $passwordPolicyDescription = $passwordPolicyObject->getDescription();

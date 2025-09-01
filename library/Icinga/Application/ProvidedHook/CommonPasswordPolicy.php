@@ -7,7 +7,7 @@ use Icinga\Application\Hook\PasswordPolicyHook;
 use ipl\I18n\Translation;
 
 /**
- * Default implementation of a password policy
+ * Common implementation of a password policy
  *
  * Enforces:
  * - Minimum length of 12 characters
@@ -16,13 +16,13 @@ use ipl\I18n\Translation;
  * - At least one uppercase letter
  * - At least one lowercase letter
  */
-class DefaultPasswordPolicy implements PasswordPolicyHook
+class CommonPasswordPolicy implements PasswordPolicyHook
 {
     use Translation;
 
     public function getName(): string
     {
-        return $this->translate('Default');
+        return $this->translate('Common');
     }
 
     public function getDescription(): string
