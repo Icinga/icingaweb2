@@ -4,7 +4,7 @@
 namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Hook;
-use Icinga\Application\ProvidedHook\DefaultPasswordPolicy;
+use Icinga\Application\ProvidedHook\CommonPasswordPolicy;
 use Icinga\Web\Form;
 
 /**
@@ -36,7 +36,7 @@ class PasswordPolicyConfigForm extends Form
                     'Enforce strong password requirements for new passwords'
                 ),
                 'label'       => $this->translate('Password Policy'),
-                'value'       => DefaultPasswordPolicy::class,
+                'value'       => CommonPasswordPolicy::class,
                 'multiOptions' =>$passwordPolicies
             ]
         );
