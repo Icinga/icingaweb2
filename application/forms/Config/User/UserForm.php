@@ -5,7 +5,8 @@ namespace Icinga\Forms\Config\User;
 
 use Icinga\Application\Config;
 use Icinga\Application\Hook\ConfigFormEventsHook;
-use Icinga\Application\ProvidedHook\DefaultPasswordPolicy;
+use Icinga\Application\ProvidedHook\CommonPasswordPolicy;
+use Icinga\Application\ProvidedHook\NoPasswordPolicy;
 use Icinga\Authentication\PasswordValidator;
 use Icinga\Data\Filter\Filter;
 use Icinga\Forms\RepositoryForm;
@@ -23,7 +24,7 @@ class UserForm extends RepositoryForm
         $passwordPolicy = Config::app()->get(
             'global',
             'password_policy',
-            DefaultPasswordPolicy::class
+            NoPasswordPolicy::class
         );
         $passwordPolicyObject = new $passwordPolicy();
         $passwordPolicyDescription = $passwordPolicyObject->getDescription();
