@@ -8,79 +8,71 @@ use Icinga\Test\BaseTestCase;
 
 class CommonPasswordPolicyTest extends BaseTestCase
 {
-    private object $object;
+    private PasswordPolicyHook $instance;
 
     public function setUp(): void
     {
-        $this->object = new CommonPasswordPolicy();
-    }
-
-    public function testClassIsInstanzOf()
-    {
-        $this->assertInstanceOf(PasswordPolicyHook::class, $this->object);
+        $this->instance = new CommonPasswordPolicy();
     }
 
     public function testMethodGetName(): void
     {
-        $this->assertSame('Common', $this->object->getName());
+        $this->assertSame('Common', $this->instance->getName());
     }
 
-    public function testValidatePasswordTooShort()
+    public function testValidatePasswordTooShort(): void
     {
-        $res = $this->object->validatePassword('Icinga1#');
+        $res = $this->instance->validatePassword('Icinga1#');
         $this->assertSame('Password must be at least 12 characters long', $res[0]);
         $this->assertCount(1, $res);
     }
 
-    public function testValidatePasswordNoNumber()
+    public function testValidatePasswordNoNumber(): void
     {
-        $res = $this->object->validatePassword('Icingaadmin#');
+        $res = $this->instance->validatePassword('Icingaadmin#');
         $this->assertSame('Password must contain at least one number', $res[0]);
-        var_dump($res);
         $this->assertCount(1, $res);
     }
 
-    public function testValidatePasswordNoSpecialCharacter()
+    public function testValidatePasswordNoSpecialCharacter(): void
     {
-        $res = $this->object->validatePassword('Icingaadmin1');
+        $res = $this->instance->validatePassword('Icingaadmin1');
         $this->assertSame('Password must contain at least one special character', $res[0]);
         $this->assertCount(1, $res);
     }
 
-    public function testValidatePasswordNoUpperCaseLetters()
+    public function testValidatePasswordNoUpperCaseLetters(): void
     {
-        $res = $this->object->validatePassword('icingaadmin1#');
+        $res = $this->instance->validatePassword('icingaadmin1#');
         $this->assertSame('Password must contain at least one uppercase letter', $res[0]);
         $this->assertCount(1, $res);
     }
 
-    public function testValidatePasswordNoLowerCaseLetters()
+    public function testValidatePasswordNoLowerCaseLetters(): void
     {
-        $res = $this->object->validatePassword('ICINGAADMIN1#');
+        $res = $this->instance->validatePassword('ICINGAADMIN1#');
         $this->assertSame('Password must contain at least one lowercase letter', $res[0]);
         $this->assertCount(1, $res);
     }
 
-    public function testValidatePasswordValid()
+    public function testValidatePasswordValid(): void
     {
-        $res = $this->object->validatePassword('Icingaadmin1#');
+        $res = $this->instance->validatePassword('Icingaadmin1#');
         $this->assertEmpty($res);
     }
 
-    public function testValidatePasswordOnlyLowerCaseLetters()
+    public function testValidatePasswordOnlyLowerCaseLetters(): void
     {
-        $res = $this->object->validatePassword('icingawebadmin');
-        var_dump($res);
+        $res = $this->instance->validatePassword('icingawebadmin');
         $this->assertCount(3, $res);
         $this->assertSame('Password must contain at least one number', $res[0]);
         $this->assertSame('Password must contain at least one special character', $res[1]);
         $this->assertSame('Password must contain at least one uppercase letter', $res[2]);
     }
 
-    public function testValidatePasswordWithLengthAndUpperCaseLetters()
+    public function testValidatePasswordWithLengthAndUpperCaseLetters(): void
     {
-        $res = $this->object->validatePassword('ICINGAADMIN');
-        var_dump($res);
+        $res = $this->instance->validatePassword('ICINGAADMIN');
         $this->assertCount(4, $res);
         $this->assertSame('Password must be at least 12 characters long', $res[0]);
         $this->assertSame('Password must contain at least one number', $res[1]);
@@ -88,12 +80,10 @@ class CommonPasswordPolicyTest extends BaseTestCase
         $this->assertSame('Password must contain at least one lowercase letter', $res[3]);
     }
 
-    public function testValidatePasswordWithManyCharacters()
+    public function testValidatePasswordWithManyCharacters(): void
     {
         $longPassword = str_repeat('a', 1000);
-        var_dump($longPassword);
-        $res = $this->object->validatePassword($longPassword);
-        var_dump($res);
+        $res = $this->instance->validatePassword($longPassword);
         $this->assertCount(3, $res);
     }
  }
