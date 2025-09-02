@@ -55,16 +55,12 @@ class Csp
      */
     public static function addHeader(Response $response): void
     {
-        $user = Auth::getInstance()->getUser();
         $header = static::getContentSecurityPolicy();
-        Logger::debug("Setting Content-Security-Policy header for user {$user->getUsername()} to $header");
         $response->setHeader('Content-Security-Policy', $header, true);
     }
 
     /**
      * Get the Content-Security-Policy for a specific user.
-     *
-     * @param User $user
      *
      * @throws RuntimeException If no nonce set for CSS
      *
@@ -230,18 +226,22 @@ class Csp
      */
     protected static function fetchNavigationItems()
     {
-        $username = Auth::getInstance()->getUser()->getUsername();
+        $user = Auth::getInstance()->getUser();
+        $menuItems = [];
+        if ($user === null) {
+            return $menuItems;
+        }
         $navigationType = Navigation::getItemTypeConfiguration();
         foreach ($navigationType as $type => $_) {
-            $config = Config::navigation($type, $username);
+            $config = Config::navigation($type, $user->getUsername());
             $config->getConfigObject()->setKeyColumn('name');
-            $configShared = Config::navigation($type);
-            $configShared->getConfigObject()->setKeyColumn('name');
             foreach ($config->select() as $itemConfig) {
-                if ( $itemConfig->get("target", "") !== "_blank") {
+                if ($itemConfig->get("target", "") !== "_blank") {
                     $menuItems[] = ["name" => $itemConfig->get('name'), "url" => $itemConfig->get('url')];
                 }
             }
+            $configShared = Config::navigation($type);
+            $configShared->getConfigObject()->setKeyColumn('name');
             foreach ($configShared->select() as $itemConfig) {
                 if (Icinga::app()->hasAccessToSharedNavigationItem($itemConfig, $config) && $itemConfig->get("target", "") !== "_blank") {
                     $menuItems[] = ["name" => $itemConfig->get('name'), "url" => $itemConfig->get('url')];
@@ -259,34 +259,44 @@ class Csp
      */
     protected static function fetchDashletsItems()
     {
-        $dashboard = new Dashboard();
-        $dashboard->setUser(Auth::getInstance()->getUser());
-        $dashboard->load();
-        $dashlets = [];
-        foreach ($dashboard->getPanes() as $pane) {
-            foreach ($pane->getDashlets() as $dashlet) {
-                $url = $dashlet->getUrl();
-                // Prefer explicit external URL parameter if present
-                $externalUrl = $url->getParam("url");
-                if ($externalUrl !== null) {
-                    $dashlets[] = [
-                        "name" => $dashlet->getName(),
-                        "url" => $externalUrl
-                    ];
-                    continue;
-                }
+       $user = Auth::getInstance()->getUser();
+       $dashlets = [];
+       if ($user === null) {
+          return $dashlets;
+       }
 
-                // Otherwise, check if the dashlet URL itself is external
-                if ($url->isExternal()) {
+       $dashboard = new Dashboard();
+       $dashboard->setUser($user);
+       $dashboard->load();
+
+       foreach ($dashboard->getPanes() as $pane) {
+          foreach ($pane->getDashlets() as $dashlet) {
+             $url = $dashlet->getUrl();
+             if ($url === null) {
+                continue;
+             }
+
+             $externalUrl = $url->getParam("url");
+             if ($externalUrl !== null && filter_var($externalUrl, FILTER_VALIDATE_URL) !== false) {
+                $dashlets[] = [
+                    "name" => $dashlet->getName(),
+                    "url" => $externalUrl
+                ];
+                continue;
+             }
+
+             if ($url->isExternal()) {
+                $absoluteUrl = $url->getAbsoluteUrl();
+                if (filter_var($absoluteUrl, FILTER_VALIDATE_URL) !== false) {
                     $dashlets[] = [
-                        "name" => $dashlet->getName(),
-                        "url" => $url->getAbsoluteUrl()
+                       "name" => $dashlet->getName(),
+                       "url" => $absoluteUrl
                     ];
                 }
-            }
-        }
-
-        return $dashlets;
+             }
+          }
+       }
+       return $dashlets;
     }
 
 }
