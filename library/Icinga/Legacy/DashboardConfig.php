@@ -56,23 +56,54 @@ class DashboardConfig extends Config
      *
      * @return  string[]
      */
-    public static function listConfigFilesForUser(User $user)
-    {
-        $files = array();
-        $dashboards = static::resolvePath('dashboards');
-        if ($handle = @opendir($dashboards)) {
-            while (false !== ($entry = readdir($handle))) {
-                if ($entry[0] === '.' || ! is_dir($dashboards . '/' . $entry)) {
-                    continue;
-                }
-                if (strtolower($entry) === strtolower($user->getUsername())) {
-                    $files[] = $dashboards . '/' . $entry . '/dashboard.ini';
-                }
+     public static function listConfigFilesForUser(User $user)
+     {
+         $files = array();
+         $dashboards = static::resolvePath('dashboards');
+         if ($handle = @opendir($dashboards)) {
+             while (false !== ($entry = readdir($handle))) {
+                 if ($entry[0] === '.' || ! is_dir($dashboards . '/' . $entry)) {
+                     continue;
+                 }
+                 if (strtolower($entry) === strtolower($user->getUsername())) {
+                     $files[] = $dashboards . '/' . $entry . '/dashboard.ini';
+                 }
+             }
+             closedir($handle);
+         }
+         if (empty($files)) {
+            $roles = $user->getRoles();
+            if (! empty($roles)) {
+               foreach($roles as $role) {
+                 if ($handle = @opendir($dashboards)) {
+                     while (false !== ($entry = readdir($handle))) {
+                         if ($entry[0] === '.' || ! is_dir($dashboards . '/' . $entry)) {
+                             continue;
+                         }
+                         if (strtolower($entry) === strtolower($role->getName())) {
+                             $files[] = $dashboards . '/' . $entry . '/dashboard.ini';
+                         }
+                     }
+                     closedir($handle);
+                 }
+               }
             }
-            closedir($handle);
-        }
-        return $files;
-    }
+         }
+         if (empty($files)) {
+           if ($handle = @opendir($dashboards)) {
+               while (false !== ($entry = readdir($handle))) {
+                   if ($entry[0] === '.' || ! is_dir($dashboards . '/' . $entry)) {
+                       continue;
+                   }
+                   if (strtolower($entry) === 'default') {
+                       $files[] = $dashboards . '/default/dashboard.ini';
+                   }
+               }
+               closedir($handle);
+           }
+         }
+         return $files;
+     }
 
     /**
      * {@inheritdoc}
