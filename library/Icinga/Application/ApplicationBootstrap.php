@@ -7,6 +7,8 @@ use DirectoryIterator;
 use ErrorException;
 use Exception;
 use Icinga\Application\ProvidedHook\DbMigration;
+use Icinga\Application\ProvidedHook\CommonPasswordPolicy;
+use Icinga\Application\ProvidedHook\NoPasswordPolicy;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\StaticTranslator;
 use LogicException;
@@ -740,6 +742,8 @@ abstract class ApplicationBootstrap
     protected function registerApplicationHooks(): self
     {
         Hook::register('DbMigration', DbMigration::class, DbMigration::class);
+        Hook::register('passwordpolicy', CommonPasswordPolicy::class, CommonPasswordPolicy::class);
+        Hook::register('passwordpolicy', NoPasswordPolicy::class, NoPasswordPolicy::class);
 
         return $this;
     }
