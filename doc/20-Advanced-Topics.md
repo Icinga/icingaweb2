@@ -157,6 +157,7 @@ Here is a list of all Icinga Web components that are capable of strict CSP.
 | Icinga Web GenericTTS Integration | [v2.1.0](https://github.com/Icinga/icingaweb2-module-generictts/releases/tag/v2.1.0)      |
 | Icinga Web Nagvis Integration     | [v1.2.0](https://github.com/Icinga/icingaweb2-module-nagvis/releases/tag/v1.2.0)          |
 | Icinga Web AWS Integration        | [v1.1.0](https://github.com/Icinga/icingaweb2-module-aws/releases/tag/v1.1.0)             |
+| Icinga Web vSphere Integration    | [v1.8.0](https://github.com/Icinga/icingaweb2-module-vspheredb/releases/tag/v1.8.0)       |
 
 
 ## Advanced Authentication Tips <a id="advanced-topics-authentication-tips"></a>
