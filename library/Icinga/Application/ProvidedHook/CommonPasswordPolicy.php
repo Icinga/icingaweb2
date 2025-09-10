@@ -38,33 +38,23 @@ class CommonPasswordPolicy implements PasswordPolicyHook
         $violations = [];
 
         if (mb_strlen($password) < 12) {
-            $violations[] = $this->translate(
-                'Password must be at least 12 characters long'
-            );
+            $violations[] = $this->translate('Password must be at least 12 characters long');
         }
 
         if (! preg_match('/[0-9]/', $password)) {
-            $violations[] = $this->translate(
-                'Password must contain at least one number'
-            );
+            $violations[] = $this->translate('Password must contain at least one number');
         }
 
         if (! preg_match('/[^a-zA-Z0-9]/', $password)) {
-            $violations[] = $this->translate(
-                'Password must contain at least one special character'
-            );
+            $violations[] = $this->translate('Password must contain at least one special character');
         }
 
         if (! preg_match('/[A-Z]/', $password)) {
-            $violations[] = $this->translate(
-                'Password must contain at least one uppercase letter'
-            );
+            $violations[] = $this->translate('Password must contain at least one uppercase letter');
         }
 
         if (! preg_match('/[a-z]/', $password)) {
-            $violations[] = $this->translate(
-                'Password must contain at least one lowercase letter'
-            );
+            $violations[] = $this->translate('Password must contain at least one lowercase letter');
         }
 
         return $violations;
