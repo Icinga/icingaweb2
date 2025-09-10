@@ -3,10 +3,10 @@
 namespace Tests\Icinga\Application;
 
 use Icinga\Application\Hook\PasswordPolicyHook;
-use Icinga\Test\BaseTestCase;
+use PHPUnit\Framework\TestCase;
 use Icinga\Application\ProvidedHook\NoPasswordPolicy;
 
-class NoPasswordPolicyTest extends BaseTestCase
+class NoPasswordPolicyTest extends TestCase
 {
     private PasswordPolicyHook $instance;
 

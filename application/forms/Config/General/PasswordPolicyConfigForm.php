@@ -4,7 +4,6 @@
 namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Hook;
-use Icinga\Application\ProvidedHook\CommonPasswordPolicy;
 use Icinga\Application\ProvidedHook\NoPasswordPolicy;
 use Icinga\Web\Form;
 
@@ -20,7 +19,7 @@ class PasswordPolicyConfigForm extends Form
         $this->setName('form_config_general_password_policy');
     }
 
-    public function createElements(array $formData): self
+    public function createElements(array $formData): static
     {
         $passwordPolicies = [];
 
