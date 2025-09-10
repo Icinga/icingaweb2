@@ -158,6 +158,95 @@ resource = icingaweb-mysql
 Please read [this chapter](20-Advanced-Topics.md#advanced-topics-authentication-tips-manual-user-database-auth)
 in order to manually create users directly inside the database.
 
+### Password Policy <a id="authentication-password-policy"></a>
+Icinga Web 2 supports password policies when using database authentication. 
+You can configure this under **Configuration > Application > General**. 
+
+By default, no password policy is enforced ('None'). 
+Icinga Web 2 provides a built-in policy called 'Common' with the following requirements:
+
+* Minimum length of 12 characters
+* At least one number
+* At least one special character
+* At least one uppercase letter
+* At least one lowercase letter
+
+#### Custom Password Policy <a id="authentication-custom-password-policy"></a>
+You can create custom password policies by developing a module with a provided hook.
+
+**Create Module Structure**
+```bash
+mkdir -p /usr/share/icingaweb2/modules/mypasswordpolicy/library/MyPasswordPolicy/ProvidedHook 
+cd /usr/share/icingaweb2/modules/mypasswordpolicy
+```
+
+Create `module.info`:
+```ini
+Name: My Password Policy
+Version: 1.0.0
+Description: Custom password policy implementation
+Author: Your Name
+```
+
+**Implement the Hook**
+
+Icinga Web 2 provides the `PasswordPolicyHook` interface with predefined methods 
+that simplify the implementation of custom password policies.
+
+Create `library/MyPasswordPolicy/ProvidedHook/PasswordPolicy.php`:
+
+```php
+namespace Icinga\Module\MyPasswordPolicy\ProvidedHook;
+
+use Icinga\Application\Hook\PasswordPolicyHook;
+
+class PasswordPolicy implements PasswordPolicyHook
+{
+    public function getName(): string
+    {
+        return 'My Custom Policy';
+    }
+
+    public function getDescription(): string
+    {
+        return 'Custom password requirements: 8+ chars, 1 number';
+    }
+
+    public function validatePassword(string $password): array
+    {
+        $violations = [];
+
+        if (strlen($password) < 8) {
+            $violations[] = 'Password must be at least 8 characters';
+        }
+
+        if (!preg_match('/[0-9]/', $password)) {
+            $violations[] = 'Password must contain at least one number';
+        }
+
+        return $violations;
+    }
+}
+```
+
+**Register the Hook**
+
+Create `run.php`:
+```php  
+/** @var $this \Icinga\Application\Modules\Module */
+
+$this->provideHook('passwordpolicy', 'PasswordPolicy');
+```
+
+
+Enable the module:
+```bash
+icingacli module enable mypasswordpolicy
+```
+
+You can choose in the settings the preferred password policy.
+
+The custom policy will now appear in **Configuration > Application > General** under Password Policy.
 
 ## Groups <a id="authentication-configuration-groups"></a>
 
