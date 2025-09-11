@@ -5,8 +5,7 @@ namespace Icinga\Forms\Config\User;
 
 use Icinga\Application\Config;
 use Icinga\Application\Hook\ConfigFormEventsHook;
-use Icinga\Application\ProvidedHook\CommonPasswordPolicy;
-use Icinga\Application\ProvidedHook\NoPasswordPolicy;
+use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
 use Icinga\Authentication\PasswordValidator;
 use Icinga\Data\Filter\Filter;
 use Icinga\Forms\RepositoryForm;
@@ -21,14 +20,14 @@ class UserForm extends RepositoryForm
      */
     protected function createInsertElements(array $formData)
     {
-        $passwordPolicy = Config::app()->get(
+        $passwordPolicyClass = Config::app()->get(
             'global',
             'password_policy',
-            NoPasswordPolicy::class
+            AnyPasswordPolicy::class
         );
-        $passwordPolicyObject = new $passwordPolicy();
-        $passwordPolicyDescription = $passwordPolicyObject->getDescription();
 
+        $passwordPolicy = new $passwordPolicyClass();
+        $passwordPolicyDescription = $passwordPolicy->getDescription();
         if ($passwordPolicyDescription != '') {
             $this->addDescription($passwordPolicyDescription);
         }
@@ -53,11 +52,11 @@ class UserForm extends RepositoryForm
         $this->addElement(
             'password',
             'password',
-            array(
-                'required'  => true,
-                'label'     => $this->translate('Password'),
-                'validators' => [new PasswordValidator($passwordPolicyObject)]
-            )
+            [
+                'required'   => true,
+                'label'      => $this->translate('Password'),
+                'validators' => [new PasswordValidator($passwordPolicy)]
+            ]
         );
 
         $this->setTitle($this->translate('Add a new user'));

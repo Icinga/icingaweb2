@@ -162,7 +162,7 @@ in order to manually create users directly inside the database.
 Icinga Web 2 supports password policies when using database authentication. 
 You can configure this under **Configuration > Application > General**. 
 
-By default, no password policy is enforced ('None'). 
+By default, no password policy is enforced ('Any'). 
 Icinga Web 2 provides a built-in policy called 'Common' with the following requirements:
 
 * Minimum length of 12 characters
