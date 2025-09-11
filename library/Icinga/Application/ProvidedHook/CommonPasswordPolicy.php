@@ -25,7 +25,7 @@ class CommonPasswordPolicy implements PasswordPolicyHook
         return $this->translate('Common');
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->translate(
             'Password requirements: minimum 12 characters, ' .

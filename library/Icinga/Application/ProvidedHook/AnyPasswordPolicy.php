@@ -18,9 +18,9 @@ class AnyPasswordPolicy implements PasswordPolicyHook
         return $this->translate('Any');
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
-        return '';
+        return null;
     }
 
     public function validatePassword(string $password): array

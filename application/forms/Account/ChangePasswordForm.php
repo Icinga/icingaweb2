@@ -47,7 +47,7 @@ class ChangePasswordForm extends Form
 
         $passwordPolicy = new $passwordPolicyClass();
         $passwordPolicyDescription = $passwordPolicy->getDescription();
-        if ($passwordPolicyDescription !== '') {
+        if ($passwordPolicyDescription !== null) {
             $this->addDescription($passwordPolicyDescription);
         }
 
