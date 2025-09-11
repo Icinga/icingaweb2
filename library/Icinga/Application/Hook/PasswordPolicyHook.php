@@ -15,9 +15,9 @@ interface PasswordPolicyHook
     /**
      * Displays the rules of the password policy for users
      *
-     * @return string
+     * @return string|null
      */
-    public function getDescription(): string;
+    public function getDescription(): ?string;
 
     /**
      * Validate a given password against the defined policy

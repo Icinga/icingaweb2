@@ -28,7 +28,7 @@ class UserForm extends RepositoryForm
 
         $passwordPolicy = new $passwordPolicyClass();
         $passwordPolicyDescription = $passwordPolicy->getDescription();
-        if ($passwordPolicyDescription != '') {
+        if ($passwordPolicyDescription !== null) {
             $this->addDescription($passwordPolicyDescription);
         }
 
