@@ -6,8 +6,7 @@
 namespace Icinga\Forms\Account;
 
 use Icinga\Application\Config;
-use Icinga\Application\ProvidedHook\CommonPasswordPolicy;
-use Icinga\Application\ProvidedHook\NoPasswordPolicy;
+use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
 use Icinga\Authentication\PasswordValidator;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Data\Filter\Filter;
@@ -40,15 +39,15 @@ class ChangePasswordForm extends Form
      */
     public function createElements(array $formData)
     {
-        $passwordPolicy = Config::app()->get(
+        $passwordPolicyClass = Config::app()->get(
             'global',
             'password_policy',
-            NoPasswordPolicy::class
+            AnyPasswordPolicy::class
         );
-        $passwordPolicyObject = new $passwordPolicy();
-        $passwordPolicyDescription = $passwordPolicyObject->getDescription();
 
-        if ($passwordPolicyDescription != '') {
+        $passwordPolicy = new $passwordPolicyClass();
+        $passwordPolicyDescription = $passwordPolicy->getDescription();
+        if ($passwordPolicyDescription !== '') {
             $this->addDescription($passwordPolicyDescription);
         }
 
@@ -66,7 +65,7 @@ class ChangePasswordForm extends Form
             [
                 'label'      => $this->translate('New Password'),
                 'required'   => true,
-                'validators' => $passwordPolicyObject !== null ? [new PasswordValidator($passwordPolicyObject)] : [],
+                'validators' => [new PasswordValidator($passwordPolicy)]
             ]
         );
         $this->addElement(

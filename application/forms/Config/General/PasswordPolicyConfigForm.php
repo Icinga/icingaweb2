@@ -4,7 +4,7 @@
 namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Hook;
-use Icinga\Application\ProvidedHook\NoPasswordPolicy;
+use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
 use Icinga\Web\Form;
 
 /**
@@ -22,25 +22,21 @@ class PasswordPolicyConfigForm extends Form
     public function createElements(array $formData): static
     {
         $passwordPolicies = [];
-
         foreach (Hook::all('passwordpolicy') as $class => $policy) {
             $passwordPolicies[$class] = $policy->getName();
         }
-
         asort($passwordPolicies);
+
         $this->addElement(
             'select',
             'global_password_policy',
             [
-                'description' => $this->translate(
-                    'Enforce strong password requirements for new passwords'
-                ),
-                'label'       => $this->translate('Password Policy'),
-                'value'       => NoPasswordPolicy::class,
-                'multiOptions' =>$passwordPolicies
+                'description'  => $this->translate('Enforce password requirements for new passwords'),
+                'label'        => $this->translate('Password Policy'),
+                'value'        => AnyPasswordPolicy::class,
+                'multiOptions' => $passwordPolicies
             ]
         );
-
 
         return $this;
     }

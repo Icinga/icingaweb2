@@ -4,20 +4,20 @@ namespace Tests\Icinga\Application;
 
 use Icinga\Application\Hook\PasswordPolicyHook;
 use PHPUnit\Framework\TestCase;
-use Icinga\Application\ProvidedHook\NoPasswordPolicy;
+use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
 
-class NoPasswordPolicyTest extends TestCase
+class AnyPasswordPolicyTest extends TestCase
 {
     private PasswordPolicyHook $instance;
 
     public function setUp(): void
     {
-        $this->instance = new NoPasswordPolicy();
+        $this->instance = new AnyPasswordPolicy();
     }
 
     public function testMethodGetName(): void
     {
-        $this->assertSame('None', $this->instance->getName());
+        $this->assertSame('Any', $this->instance->getName());
     }
 
     public function testValidatePasswordValid(): void

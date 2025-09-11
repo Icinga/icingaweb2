@@ -10,7 +10,7 @@ use ErrorException;
 use Exception;
 use Icinga\Application\ProvidedHook\DbMigration;
 use Icinga\Application\ProvidedHook\CommonPasswordPolicy;
-use Icinga\Application\ProvidedHook\NoPasswordPolicy;
+use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\StaticTranslator;
 use LogicException;
@@ -745,7 +745,7 @@ abstract class ApplicationBootstrap
     {
         Hook::register('DbMigration', DbMigration::class, DbMigration::class);
         Hook::register('PasswordPolicy', CommonPasswordPolicy::class, CommonPasswordPolicy::class);
-        Hook::register('PasswordPolicy', NoPasswordPolicy::class, NoPasswordPolicy::class);
+        Hook::register('PasswordPolicy', AnyPasswordPolicy::class, AnyPasswordPolicy::class);
 
         return $this;
     }

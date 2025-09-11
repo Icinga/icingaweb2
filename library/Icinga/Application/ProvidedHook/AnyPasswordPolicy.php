@@ -9,13 +9,13 @@ use ipl\I18n\Translation;
 /**
  * None Password Policy to validate all passwords
  */
-class NoPasswordPolicy implements PasswordPolicyHook
+class AnyPasswordPolicy implements PasswordPolicyHook
 {
     use Translation;
 
     public function getName(): string
     {
-        return $this->translate('None');
+        return $this->translate('Any');
     }
 
     public function getDescription(): string
