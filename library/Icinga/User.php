@@ -4,13 +4,13 @@
 namespace Icinga;
 
 use DateTimeZone;
-use Icinga\Authentication\AdmissionLoader;
-use InvalidArgumentException;
 use Icinga\Application\Config;
+use Icinga\Authentication\AdmissionLoader;
 use Icinga\Authentication\Role;
 use Icinga\Exception\ProgrammingError;
 use Icinga\User\Preferences;
 use Icinga\Web\Navigation\Navigation;
+use InvalidArgumentException;
 
 /**
  *  This class represents an authorized user

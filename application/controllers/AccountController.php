@@ -4,10 +4,14 @@
 namespace Icinga\Controllers;
 
 use Icinga\Application\Config;
+use Icinga\Authentication\IcingaTotp;
 use Icinga\Authentication\User\UserBackend;
+use Icinga\Common\Database;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Forms\Account\ChangePasswordForm;
+use Icinga\forms\Account\NewTotpConfigForm;
+use Icinga\Forms\Account\TotpConfigForm;
 use Icinga\Forms\PreferenceForm;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Controller;
@@ -17,6 +21,8 @@ use Icinga\Web\Controller;
  */
 class AccountController extends Controller
 {
+    use Database;
+
     /**
      * {@inheritdoc}
      */
@@ -65,6 +71,19 @@ class AccountController extends Controller
                     $this->view->changePasswordForm = $changePasswordForm;
                 }
             }
+        }
+
+        if ($user->can('user/two-factor-authentication')) {
+            $totp = IcingaTotp::loadFromDb($this->getDb(), $user->getUsername());
+            if ($totp == null) {
+                $totp = IcingaTotp::generate($user->getUsername());
+            }
+
+            $totpForm = new TotpConfigForm();
+            $totpForm->setUser($user);
+            $totpForm->setTotp($totp);
+            $totpForm->handleRequest();
+            $this->view->totpForm = $totpForm;
         }
 
         $form = new PreferenceForm();
