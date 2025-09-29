@@ -91,6 +91,3 @@ class CommonPasswordPolicyTest extends TestCase
         $this->assertCount(3, $res);
     }
  }
-
-
-
