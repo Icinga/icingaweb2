@@ -7,15 +7,20 @@ use Icinga\Application\Hook\PasswordPolicyHook;
 use ipl\I18n\Translation;
 
 /**
- * None Password Policy to validate all passwords
+ * Policy to allow any password
  */
 class AnyPasswordPolicy implements PasswordPolicyHook
 {
     use Translation;
 
+    /**
+     *  Policy named 'none' to indicate that no password policy is enforced and any password is accepted
+     *
+     * @return string
+     */
     public function getName(): string
     {
-        return $this->translate('Any');
+        return $this->translate('None');
     }
 
     public function getDescription(): ?string

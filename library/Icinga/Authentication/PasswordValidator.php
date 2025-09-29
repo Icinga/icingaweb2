@@ -9,7 +9,7 @@ use Zend_Validate_Abstract;
 class PasswordValidator extends Zend_Validate_Abstract
 {
     /**
-     *  The password policy object
+     * The password policy object
      *
      * @var PasswordPolicyHook
      */
@@ -39,6 +39,7 @@ class PasswordValidator extends Zend_Validate_Abstract
 
         if (!empty($message)) {
             $this->_messages = $message;
+
             return false;
         }
 
