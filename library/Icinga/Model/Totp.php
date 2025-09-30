@@ -31,8 +31,7 @@ class Totp extends Model
         return [
             'username',
             'secret',
-            'ctime',
-            'mtime'
+            'ctime'
         ];
     }
 }
