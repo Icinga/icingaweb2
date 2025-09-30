@@ -9,7 +9,7 @@ use Icinga\Clock\PsrClock;
 use Icinga\Common\Database;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Model\Totp as TotpModel;
+use Icinga\Model\TotpModel;
 use Icinga\Web\Session;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
