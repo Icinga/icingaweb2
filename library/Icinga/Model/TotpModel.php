@@ -4,7 +4,7 @@ namespace Icinga\Model;
 
 use ipl\Orm\Model;
 
-class Totp extends Model
+class TotpModel extends Model
 {
 
     /**
