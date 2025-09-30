@@ -9,10 +9,10 @@ use Icinga\Clock\PsrClock;
 use Icinga\Common\Database;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Model\Totp as TotpModel;
 use Icinga\Web\Session;
 use ipl\Orm\Model;
 use ipl\Orm\Query;
-use Icinga\Model\Totp as TotpModel;
 use ipl\Sql\Delete;
 use ipl\Sql\Insert;
 use ipl\Sql\Select;
@@ -43,11 +43,6 @@ class Totp
      * Column name for created time
      */
     const COLUMN_CREATED_TIME = 'ctime';
-
-    /**
-     * Column name for modified time
-     */
-    const COLUMN_MODIFIED_TIME = 'mtime';
 
     /**
      * State indicating that a secret check is required
@@ -289,8 +284,7 @@ class Totp
                                 [
                                     self::COLUMN_USERNAME => $this->username,
                                     self::COLUMN_SECRET => $this->temporarySecret,
-                                    self::COLUMN_CREATED_TIME => date('Y-m-d H:i:s'),
-                                    self::COLUMN_MODIFIED_TIME => date('Y-m-d H:i:s'),
+                                    self::COLUMN_CREATED_TIME => date('Y-m-d H:i:s')
                                 ]
                             )
                     );
@@ -299,8 +293,7 @@ class Totp
                         (new Update())
                             ->table(self::TABLE_NAME)
                             ->set([
-                                self::COLUMN_SECRET => $this->temporarySecret,
-                                self::COLUMN_MODIFIED_TIME => date('Y-m-d H:i:s'),
+                                self::COLUMN_SECRET => $this->temporarySecret
                             ])
                             ->where([self::COLUMN_USERNAME . ' = ?' => $this->username])
                     );
