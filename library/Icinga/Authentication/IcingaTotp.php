@@ -18,9 +18,9 @@ use ipl\Sql\Insert;
 use ipl\Sql\Select;
 use ipl\Sql\Update;
 use ipl\Stdlib\Filter;
-use OTPHP\TOTP as extTOTP;
+use OTPHP\TOTP;
 
-class Totp
+class IcingaTotp
 {
     use Database {
         getDb as private getWebDb;
@@ -80,15 +80,15 @@ class Totp
     /**
      * The TOTP object for the user's secret
      *
-     * @var extTOTP|null
+     * @var TOTP|null
      */
-    protected ?extTOTP $totpObject = null;
+    protected ?TOTP $totpObject = null;
     /**
      * The temporary TOTP object for the user's secret
      *
-     * @var extTOTP|null
+     * @var TOTP|null
      */
-    protected ?extTOTP $temporaryTotpObject;
+    protected ?TOTP $temporaryTotpObject;
     /**
      * The TOTP secret for the user
      *
@@ -531,13 +531,13 @@ class Totp
      * This method sets the label and issuer for the TOTP object.
      *
      * @param string|null $secret The TOTP secret to use, or null to generate a new one
-     * @return extTOTP The created TOTP object
+     * @return TOTP The created TOTP object
      */
-    private function createTotpObject(string $secret = null): extTOTP
+    private function createTotpObject(string $secret = null): TOTP
     {
         $totpObject = ($secret === null)
-            ? extTOTP::generate($this->clock)
-            : extTOTP::createFromSecret($secret, $this->clock);
+            ? TOTP::generate($this->clock)
+            : TOTP::createFromSecret($secret, $this->clock);
 
         $totpObject->setLabel(self::TOTP_LABEL);
         $totpObject->setIssuer($this->username);

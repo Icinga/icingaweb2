@@ -5,7 +5,7 @@ namespace Icinga\Forms\Account;
 use Exception;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
-use Icinga\Authentication\Totp;
+use Icinga\Authentication\IcingaTotp;
 use Icinga\Forms\PreferenceForm;
 use Icinga\User\Preferences;
 use Icinga\Web\Form;
@@ -31,9 +31,9 @@ class TotpConfigForm extends PreferenceForm
     /**
      * The TOTP instance used for managing TOTP secrets
      *
-     * @var Totp
+     * @var IcingaTotp
      */
-    protected Totp $totp;
+    protected IcingaTotp $totp;
     /**
      * Whether 2FA is enabled or not
      *
@@ -51,10 +51,11 @@ class TotpConfigForm extends PreferenceForm
     /**
      * Set the TOTP instance
      *
-     * @param Totp $totp
+     * @param IcingaTotp $totp
+     *
      * @return self
      */
-    public function setTotp(Totp $totp): self
+    public function setTotp(IcingaTotp $totp): self
     {
         $this->totp = $totp;
 
