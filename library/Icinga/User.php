@@ -4,13 +4,13 @@
 namespace Icinga;
 
 use DateTimeZone;
-use Icinga\Authentication\AdmissionLoader;
-use InvalidArgumentException;
 use Icinga\Application\Config;
+use Icinga\Authentication\AdmissionLoader;
 use Icinga\Authentication\Role;
 use Icinga\Exception\ProgrammingError;
 use Icinga\User\Preferences;
 use Icinga\Web\Navigation\Navigation;
+use InvalidArgumentException;
 
 /**
  *  This class represents an authorized user
@@ -123,18 +123,18 @@ class User
     protected $isHttpUser = false;
 
     /**
-     * Whether the user has 2FA enabled
+     * Whether the user has 2FA enabled (secret is stored in the database)
      *
      * @var bool
      */
-    protected $twoFactorEnabled = false;
+    protected bool $twoFactorEnabled = false;
 
     /**
      * Whether the user has successfully completed 2FA
      *
      * @var bool
      */
-    protected $twoFactorSuccessful = false;
+    protected bool $twoFactorSuccessful = false;
 
     /**
      * Creates a user object given the provided information
@@ -678,7 +678,7 @@ class User
      *
      * @return $this
      */
-    public function setTwoFactorEnabled(bool $enabled)
+    public function setTwoFactorEnabled(bool $enabled): static
     {
         $this->twoFactorEnabled = $enabled;
 
@@ -702,9 +702,10 @@ class User
      *
      * @return $this
      */
-    public function setTwoFactorSuccessful(bool $successful): self
+    public function setTwoFactorSuccessful(bool $successful): static
     {
         $this->twoFactorSuccessful = $successful;
+
         return $this;
     }
 }
