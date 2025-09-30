@@ -46,7 +46,7 @@ class Challenge2FAForm extends LoginForm
     {
         // TODO: Implement proper 2FA code validation
         $user = Auth::getInstance()->getUser();
-        $totp = new IcingaTotp($user->getUsername());
+        $totp = IcingaTotp::loadFromDb($this->getDb(), $user->getUsername());
         if ($totp->verify($_POST['code'])) {
 //        if ($_POST['code'] == 666) {
 
