@@ -2,360 +2,80 @@
 
 namespace Icinga\Authentication;
 
-use chillerlan\QRCode\Data\QRMatrix;
 use chillerlan\QRCode\QRCode;
-use chillerlan\QRCode\QROptions;
-use Icinga\Clock\PsrClock;
 use Icinga\Common\Database;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\ProgrammingError;
 use Icinga\Model\TotpModel;
-use Icinga\Web\Session;
-use ipl\Orm\Model;
-use ipl\Orm\Query;
+use ipl\Sql\Connection;
 use ipl\Sql\Delete;
 use ipl\Sql\Insert;
-use ipl\Sql\Select;
-use ipl\Sql\Update;
 use ipl\Stdlib\Filter;
 use OTPHP\TOTP;
+use Throwable;
 
 class IcingaTotp
 {
-    use Database {
-        getDb as private getWebDb;
+    use Database;
+
+    protected TOTP $totp;
+
+    protected string $user;
+
+    private function __construct(string $user)
+    {
+        $this->user = $user;
     }
 
-    /**
-     * Table name for TOTP records
-     */
-    const TABLE_NAME = 'icingaweb_totp';
-    /**
-     * Column name for secret
-     */
-    const COLUMN_USERNAME = 'username';
-    /**
-     * Column name for secret
-     */
-    const COLUMN_SECRET = 'secret';
-
-    /**
-     * Column name for created time
-     */
-    const COLUMN_CREATED_TIME = 'ctime';
-
-    /**
-     * State indicating that a secret check is required
-     */
-    const STATE_SECRET_CHECK_REQUIRED = 'secret_check_required';
-    /**
-     * State indicating that there are pending changes to the TOTP configuration
-     */
-    const STATE_HAS_PENDING_CHANGES = 'has_pending_changes';
-    /**
-     * State indicating that the temporary TOTP secret has been approved
-     */
-    const STATE_APPROVED_TEMPORARY_SECRET = 'approve_temporary_secret';
-
-    /**
-     * The label for the TOTP application
-     *
-     * This label is used when generating the TOTP secret and QR code.
-     * It helps identify the application in the user's TOTP app.
-     */
-    const TOTP_LABEL = 'IcingaWeb2';
-
-    /**
-     * The username for which the TOTP is configured
-     *
-     * @var string
-     */
-    protected string $username;
-    /**
-     * The clock used for TOTP generation
-     *
-     * @var PsrClock
-     */
-    protected PsrClock $clock;
-    /**
-     * The TOTP object for the user's secret
-     *
-     * @var TOTP|null
-     */
-    protected ?TOTP $totpObject = null;
-    /**
-     * The temporary TOTP object for the user's secret
-     *
-     * @var TOTP|null
-     */
-    protected ?TOTP $temporaryTotpObject;
-    /**
-     * The TOTP secret for the user
-     *
-     * @var string|null
-     */
-    protected array $currentStates = [];
-    /**
-     * The TOTP secret for the user
-     *
-     * @var string|null
-     */
-    private ?string $secret = null;
-    /**
-     * The temporary TOTP secret for the user
-     *
-     * This is used when the user is in the process of setting up a new TOTP secret.
-     * It allows the user to verify their TOTP app before making the new secret permanent.
-     *
-     * @var string|null
-     */
-    private ?string $temporarySecret = null;
-
-
-    public function __construct(string $username, ?string $secret = null)
+    protected function setTotp(TOTP $totp): static
     {
-        $this->username = $username;
-        $this->clock = new PsrClock();
-        $this->temporarySecret = $secret;
-        $this->setTotpObjects();
+        $this->totp = $totp;
+
+        return $this;
     }
 
-
-    /**
-     * Checks if a TOTP secret exists for the current user.
-     *
-     * @return bool Returns true if a TOTP secret exists, false otherwise
-     */
-    public function userHasSecret(): bool
+    public static function generate(string $user): static
     {
-        return $this->secret !== null;
+        $totp = new static($user);
+        $totp->setTotp(TOTP::generate(new PsrClock()));
+
+        return $totp;
     }
 
-    /**
-     * Checks if the user has a temporary TOTP secret.
-     *
-     * @return bool Returns true if a temporary TOTP secret exists, false otherwise
-     */
-    public function hasPendingChanges(): bool
+    public static function createFromSecret(string $secret, string $user): static
     {
-        return in_array(self::STATE_HAS_PENDING_CHANGES, $this->currentStates, true);
+        $totp = new static($user);
+        $totp->setTotp(TOTP::createFromSecret($secret, new PsrClock()));
+
+        return $totp;
     }
 
-    /**
-     * Checks if the user requires a secret check.
-     * This method checks if the current state includes the secret check requirement.
-     *
-     * @return bool Returns true if a secret check is required, false otherwise
-     */
-    public function requiresSecretCheck(): bool
+    public static function loadFromDb(Connection $db, string $user): ?static
     {
-        return in_array(self::STATE_SECRET_CHECK_REQUIRED, $this->currentStates, true);
-    }
-
-    /**
-     * Checks if the temporary TOTP secret has been approved.
-     * This method checks if the current state includes the approval of the temporary secret.
-     *
-     * @return bool Returns true if the temporary secret is approved, false otherwise
-     */
-    public function isTemporarySecretApproved(): bool
-    {
-        return in_array(self::STATE_APPROVED_TEMPORARY_SECRET, $this->currentStates, true);
-    }
-
-
-    /**
-     * Verifies the provided TOTP code against the user's secret.
-     *
-     * @param string $code The TOTP code to verify
-     * @return bool Returns true if the code is valid, false otherwise
-     */
-    public function verify(string $code): bool
-    {
-        if ($this->totpObject === null) {
-            return false;
+        $totpQuery = TotpModel::on($db)->filter(Filter::equal('username', $user));
+        $dbTotp = $totpQuery->first();
+        if ($dbTotp === null) {
+            return null;
         }
 
-        return $this->totpObject->verify($code);
+        return self::createFromSecret($dbTotp->secret, $user);
     }
 
-    /**
-     * Approves the temporary TOTP secret if the provided code is valid.
-     * To ensure that the user gets matching TOTP codes generated by their TOTP app,
-     *
-     * @param string $code The TOTP code to verify
-     * @return bool Returns true if the code is valid and the temporary secret is approved, false otherwise
-     */
-    public function approveTemporarySecret(string $code): bool
+    public static function hasDbSecret(Connection $db, string $user): bool
     {
-        if ($this->temporarySecret !== null & $this->temporaryTotpObject->verify($code)) {
-            $this->setState(self::STATE_APPROVED_TEMPORARY_SECRET);
-            $this->removeState(self::STATE_SECRET_CHECK_REQUIRED);
+        $totpQuery = TotpModel::on($db)->filter(Filter::equal('username', $user));
 
-            return true;
-        }
-
-        return false;
+        return $totpQuery->first() !== null;
     }
 
-    /**
-     * Generates a new TOTP secret for the current user.
-     * This method sets the TOTP objects and marks the state as requiring a secret check.
-     *
-     * @return self Returns the current instance for method chaining
-     */
-    public function generateSecret(): self
+    public function getSecret(): string
     {
-        $this->setTotpObjects(true)
-            ->setState(self::STATE_SECRET_CHECK_REQUIRED)
-            ->setState(self::STATE_HAS_PENDING_CHANGES)
-            ->removeState(self::STATE_APPROVED_TEMPORARY_SECRET);
-
-        return $this;
+        return $this->totp->getSecret();
     }
 
-    /**
-     * Deletes the TOTP secrets for the current user.
-     * This method clears the secrets and TOTP objects, and updates the state accordingly.
-     *
-     * @return self Returns the current instance for method chaining
-     */
-    public function deleteSecrets(): self
+    public function verify(string $otp): bool
     {
-        if ($this->secret !== null || $this->totpObject !== null
-            || $this->temporarySecret !== null || $this->temporaryTotpObject !== null) {
-            $this->secret = null;
-            $this->totpObject = null;
-            $this->temporarySecret = null;
-            $this->temporaryTotpObject = null;
-            $this->setState(self::STATE_HAS_PENDING_CHANGES)
-                ->removeState(self::STATE_SECRET_CHECK_REQUIRED)
-                ->removeState(self::STATE_APPROVED_TEMPORARY_SECRET);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Saves the current TOTP state in the session.
-     * This method is used to temporarily store the TOTP state before making it permanent.
-     *
-     * @return self Returns the current instance for method chaining
-     *
-     * @throws ProgrammingError
-     */
-    public function saveTemporaryInSession(): self
-    {
-        Session::getSession()->set(
-            'icingaweb_totp',
-            $this
-        );
-
-        return $this;
-    }
-
-    /**
-     * Makes the changes to the TOTP state permanent in the database.
-     * This method commits the changes to the database and updates the session state.
-     *
-     * @return self Returns the current instance for method chaining
-     *
-     * @throws ConfigurationError If there is an error during the database operation
-     */
-    public function makeChangesPermanent(): self
-    {
-        $db = $this->getWebDb();
-        $db->beginTransaction();
-
-        $dbEntry = $db->prepexec(
-            (new Select())
-                ->columns(['*'])
-                ->from(self::TABLE_NAME)
-                ->where([self::COLUMN_USERNAME . ' = ?' => $this->username])
-        )->getIterator()->current();
-
-        try {
-            if ($this->temporarySecret !== null) {
-                if (!$dbEntry) {
-                    $db->prepexec(
-                        (new Insert())
-                            ->into(self::TABLE_NAME)
-                            ->values(
-                                [
-                                    self::COLUMN_USERNAME => $this->username,
-                                    self::COLUMN_SECRET => $this->temporarySecret,
-                                    self::COLUMN_CREATED_TIME => date('Y-m-d H:i:s')
-                                ]
-                            )
-                    );
-                } else {
-                    $db->prepexec(
-                        (new Update())
-                            ->table(self::TABLE_NAME)
-                            ->set([
-                                self::COLUMN_SECRET => $this->temporarySecret
-                            ])
-                            ->where([self::COLUMN_USERNAME . ' = ?' => $this->username])
-                    );
-                }
-                $this->makeTemporaryObjectPermanent();
-                $db->commitTransaction();
-            } elseif ($this->secret === null && $dbEntry && $dbEntry->secret !== null) {
-                $db->prepexec(
-                    (new Delete())
-                        ->from(self::TABLE_NAME)
-                        ->where([self::COLUMN_USERNAME . ' = ?' => $this->username])
-                );
-                $db->commitTransaction();
-            }
-
-            $this->purgeStates();
-            $this->saveTemporaryInSession();
-        } catch (\Exception $e) {
-            $db->rollBackTransaction();
-            throw new ConfigurationError(
-                sprintf(
-                    'Failed to persist TOTP state for user %s: %s',
-                    $this->username,
-                    $e->getMessage()
-                ),
-                0,
-                $e
-            );
-        }
-
-
-        return $this;
-    }
-
-    /**
-     * Resets the TOTP changes made by the user.
-     * This method clears the current states, secrets, and TOTP objects,
-     * effectively reverting any changes made since the last save.
-     *
-     * @return self Returns the current instance for method chaining
-     */
-    public function resetChanges(): self
-    {
-        $this->purgeStates();
-        $this->secret = null;
-        $this->temporarySecret = null;
-        $this->totpObject = null;
-        $this->temporaryTotpObject = null;
-        $this->setTotpObjects();
-
-        return $this;
-    }
-
-    /**
-     * Retrieves the current TOTP code.
-     * This method generates a TOTP code based on the current time and the user's secret.
-     *
-     * @return string The current TOTP code
-     */
-    public function getCurrentCode(): string
-    {
-        return $this->totpObject->now();
+        // The code is valid for 10 seconds before and after the current time to allow some clock drift
+        return $this->totp->verify($otp, null, 10);
     }
 
     /**
@@ -364,250 +84,74 @@ class IcingaTotp
      *
      * @return string The rendered QR code as a string
      */
-    public function createQRCode(): ?string
+    public function createQRCode(): string
     {
-        if ($this->temporaryTotpObject === null) {
-            return null;
-        }
+        return (new QRCode())->render($this->getTotpAuthUrl());
+    }
 
+    public function getTotpAuthUrl(): string
+    {
+        $this->totp->setIssuer('icingaweb2');
+        $this->totp->setLabel($this->user);
 
-        $urlOTPAUTH = sprintf(
-            'otpauth://totp/%1$s:%2$s?secret=%3$s&issuer=%1$s',
-            urlencode(self::TOTP_LABEL),
-            urlencode($this->username),
-            urlencode($this->temporarySecret),
-        );
-        $options = new QROptions();
-        $options->drawLightModules = true;
-        $options->svgUseFillAttributes = true;
-        $options->drawCircularModules = true;
-        $options->circleRadius = 0.4;
-        $options->connectPaths = true;
-        $options->keepAsSquare = [
-            QRMatrix::M_FINDER_DARK,
-            QRMatrix::M_FINDER_DOT,
-            QRMatrix::M_ALIGNMENT_DARK,
-        ];
-
-        $options->svgDefs = '
-	<linearGradient id="rainbow" x1="1" y2="1">
-		<stop stop-color="#06062C" offset="0"/>
-		<stop stop-color="#E0009D" offset="1"/>
-	</linearGradient>
-	<style><![CDATA[
-		.dark{fill: url(#rainbow);}
-		.light{fill: #eee;}
-	]]></style>';
-
-        return (new QRCode($options))->render($urlOTPAUTH);
+        return $this->totp->getProvisioningUri();
     }
 
     /**
-     * Returns the TOTP secret for the current user.
-     * This method retrieves the secret used for generating TOTP codes.
+     * Saves the TOTP secret to the database.
      *
-     * @return string|null The TOTP secret, or null if not set
-     */
-    public function getSecret(): ?string
-    {
-        return $this->secret;
-    }
-
-    /**
-     * Returns the temporary TOTP secret.
-     * This method retrieves the temporary secret that may be used for generating TOTP codes.
+     * This method stores the TOTP secret associated with the user in the database.
      *
-     * @return string|null The temporary TOTP secret, or null if not set
+     * @throws ConfigurationError If the database operation fails
      */
-    public function getTemporarySecret(): ?string
+    public function saveToDb(): void
     {
-        return $this->temporarySecret;
-    }
-
-    /**
-     * Returns a query for the TOTP model.
-     * This method is used to fetch TOTP records from the database.
-     *
-     * @return Query|null
-     */
-    private function getTotpQuery(): ?Query
-    {
-        try {
-            $query = TotpModel::on($this->getWebDb());
-        } catch (ConfigurationError $e) {
-            $query = null;
-        }
-
-        return $query->count() > 0 ? $query : null;
-    }
-
-    /**
-     * Fetches the TOTP model for the current user.
-     * This method retrieves the TOTP record associated with the username.
-     *
-     * @return TotpModel|null
-     */
-    private function getTotpModel(): ?TotpModel
-    {
-        $query = $this->getTotpQuery();
-        if ($query === null) {
-            return null;
-        }
-
-        $totp = $query
-            ->filter(Filter::equal('username', $this->username))
-            ->first();
-        if ($totp === null) {
-            return null;
-        }
+        $db = $this->getDb();
+        $db->beginTransaction();
 
         try {
-            $totp = $this->ensureIsTotpModel($totp);
-        } catch (ConfigurationError $e) {
-            $totp = null;
-        }
-
-        return $totp;
-    }
-
-    /**
-     * Ensures that the provided model is an instance of TotpModel.
-     * This method throws a ConfigurationError if the model is not of the expected type.
-     *
-     * @param Model $totp The model to check
-     * @throws ConfigurationError
-     */
-    private function ensureIsTotpModel(Model $totp): ?TotpModel
-    {
-        if (!$totp instanceof TotpModel) {
+            $db->prepexec(
+                (new Insert())
+                    ->into('icingaweb_totp')
+                    ->values([
+                        'username' => $this->user,
+                        'secret'   => $this->getSecret(),
+                        'ctime'    => date('Y-m-d H:i:s'),
+                    ])
+            );
+            $db->commitTransaction();
+        } catch (Throwable $e) {
+            $db->rollBackTransaction();
             throw new ConfigurationError(
-                sprintf(
-                    'Expected TotpModel, got %s',
-                    get_class($totp)
-                )
+                sprintf('Failed to save TOTP secret for user %s: %s', $this->user, $e->getMessage()),
             );
         }
-
-        return $totp;
     }
 
-
     /**
-     * Sets the TOTP objects based on the current state.
-     * This method initializes the TOTP objects based on whether
-     * a new secret is being generated or an existing one is used.
+     * Removes the TOTP secret from the database.
      *
-     * @param bool $new Whether to generate a new TOTP secret
-     * @return self Returns the current instance for method chaining
+     * This method deletes the TOTP secret associated with the user from the database.
+     *
+     * @throws ConfigurationError If the database operation fails
      */
-    private function setTotpObjects(bool $new = false): self
+    public function removeFromDb(): void
     {
-        if (!$new) {
-            if ($this->secret === null && ($totpModel = $this->getTotpModel()) !== null) {
-                $this->secret = $totpModel->secret;
-            }
+        $db = $this->getDb();
+        $db->beginTransaction();
 
-            if (isset($this->totpObject)) {
-                return $this;
-            }
-            $this->temporaryTotpObject = $this->temporarySecret !== null
-                ? $this->createTotpObject($this->temporarySecret)
-                : null;
-
-            $this->totpObject = $this->secret !== null
-                ? $this->createTotpObject($this->secret)
-                : null;
-        } else {
-            $this->temporaryTotpObject = $this->createTotpObject();
-            $this->temporarySecret = $this->temporaryTotpObject->getSecret();
+        try {
+            $db->prepexec(
+                (new Delete())
+                    ->from('icingaweb_totp')
+                    ->where(['username = ?' => $this->user])
+            );
+            $db->commitTransaction();
+        } catch (Throwable $e) {
+            $db->rollBackTransaction();
+            throw new ConfigurationError(
+                sprintf('Failed to remove TOTP secret for user %s: %s', $this->user, $e->getMessage()),
+            );
         }
-
-        return $this;
-    }
-
-    /**
-     * Creates a TOTP object with the given secret.
-     * If no secret is provided, a new TOTP object is generated.
-     * This method sets the label and issuer for the TOTP object.
-     *
-     * @param string|null $secret The TOTP secret to use, or null to generate a new one
-     * @return TOTP The created TOTP object
-     */
-    private function createTotpObject(string $secret = null): TOTP
-    {
-        $totpObject = ($secret === null)
-            ? TOTP::generate($this->clock)
-            : TOTP::createFromSecret($secret, $this->clock);
-
-        $totpObject->setLabel(self::TOTP_LABEL);
-        $totpObject->setIssuer($this->username);
-
-        return $totpObject;
-    }
-
-    /**
-     * Makes the temporary TOTP object permanent.
-     * This method updates the main TOTP object and clears the temporary state.
-     *
-     * @return self Returns the current instance for method chaining
-     */
-    private function makeTemporaryObjectPermanent(): self
-    {
-        if ($this->temporaryTotpObject !== null) {
-            $this->totpObject = $this->temporaryTotpObject;
-            $this->secret = $this->totpObject->getSecret();
-            $this->temporarySecret = null;
-            $this->temporaryTotpObject = null;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Sets the current state for the TOTP object.
-     * This method adds a new state to the current states array if it does not already exist.
-     *
-     * @param string $key The state key to set
-     * @return self Returns the current instance for method chaining
-     */
-    private function setState(string $key): self
-    {
-        if (!in_array($key, $this->currentStates, true)) {
-            $this->currentStates[] = $key;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Removes a state from the current states array.
-     * This method filters out the specified state key from the current states.
-     *
-     * @param string $key The state key to remove
-     * @return self Returns the current instance for method chaining
-     */
-    private function removeState(string $key): self
-    {
-        $this->currentStates = array_filter(
-            $this->currentStates,
-            function ($state) use ($key) {
-                return $state !== $key;
-            }
-        );
-
-        return $this;
-    }
-
-    /**
-     * Purges all current states.
-     * This method clears the current states array, effectively resetting the state.
-     *
-     * @return self Returns the current instance for method chaining
-     */
-    private function purgeStates(): self
-    {
-        $this->currentStates = [];
-
-        return $this;
     }
 }
