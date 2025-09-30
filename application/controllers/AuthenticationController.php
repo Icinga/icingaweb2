@@ -8,10 +8,13 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
+use Icinga\Forms\Authentication\Cancel2faForm;
+use Icinga\Forms\Authentication\Challenge2faForm;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Helper\CookieHelper;
 use Icinga\Web\RememberMe;
+use Icinga\Web\Session;
 use Icinga\Web\Url;
 use RuntimeException;
 
@@ -41,26 +44,38 @@ class AuthenticationController extends Controller
         if (($requiresSetup = $icinga->requiresSetup()) && $icinga->setupTokenExists()) {
             $this->redirectNow(Url::fromPath('setup'));
         }
-        $form = new LoginForm();
 
-        if (RememberMe::hasCookie() && $this->hasDb()) {
-            $authenticated = false;
-            try {
-                $rememberMeOld = RememberMe::fromCookie();
-                $authenticated = $rememberMeOld->authenticate();
-                if ($authenticated) {
-                    $rememberMe = $rememberMeOld->renew();
-                    $this->getResponse()->setCookie($rememberMe->getCookie());
-                    $rememberMe->persist($rememberMeOld->getAesCrypt()->getIV());
+        $user = $this->Auth()->getUser();
+        if (
+            $user
+            && $user->getTwoFactorEnabled()
+            && Session::getSession()->get('2fa_must_challenge_token', false)
+        ) {
+            $form = new Challenge2faForm();
+            $cancel2faForm = new Cancel2faForm();
+            $cancel2faForm->handleRequest();
+        } else {
+            $form = new LoginForm();
+
+            if (RememberMe::hasCookie() && $this->hasDb()) {
+                $authenticated = false;
+                try {
+                    $rememberMeOld = RememberMe::fromCookie();
+                    $authenticated = $rememberMeOld->authenticate();
+                    if ($authenticated) {
+                        $rememberMe = $rememberMeOld->renew();
+                        $this->getResponse()->setCookie($rememberMe->getCookie());
+                        $rememberMe->persist($rememberMeOld->getAesCrypt()->getIV());
+                    }
+                } catch (RuntimeException $e) {
+                    Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
+                } catch (AuthenticationException $e) {
+                    Logger::error($e);
                 }
-            } catch (RuntimeException $e) {
-                Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
-            } catch (AuthenticationException $e) {
-                Logger::error($e);
-            }
 
-            if (! $authenticated) {
-                $this->getResponse()->setCookie(RememberMe::forget());
+                if (! $authenticated) {
+                    $this->getResponse()->setCookie(RememberMe::forget());
+                }
             }
         }
 
@@ -94,6 +109,7 @@ class AuthenticationController extends Controller
             $form->handleRequest();
         }
         $this->view->form = $form;
+        $this->view->cancel2faForm = $cancel2faForm ?? null;
         $this->view->defaultTitle = $this->translate('Icinga Web 2 Login');
         $this->view->requiresSetup = $requiresSetup;
     }

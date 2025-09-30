@@ -10,6 +10,7 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
+use Icinga\Common\Database;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
@@ -21,6 +22,8 @@ use Icinga\Web\StyleSheet;
 
 class Auth
 {
+    use Database;
+
     /**
      * Singleton instance
      *
@@ -88,6 +91,9 @@ class Auth
     public function isAuthenticated()
     {
         if ($this->user !== null) {
+            if ($this->user->getTwoFactorEnabled() && ! $this->user->getTwoFactorSuccessful()) {
+                return false;
+            }
             return true;
         }
         $this->authenticateFromSession();
@@ -129,7 +135,10 @@ class Auth
             $this->persistCurrentUser();
         }
 
-        AuditHook::logActivity('login', 'User logged in');
+        // Don't log if 2FA is enabled and hasn't been successful yet
+        if (!$user->getTwoFactorEnabled() || $user->getTwoFactorSuccessful()) {
+            AuditHook::logActivity('login', 'User logged in');
+        }
     }
 
     /**
@@ -449,5 +458,9 @@ class Auth
         // Load the user's roles
         $admissionLoader = new AdmissionLoader();
         $admissionLoader->applyRoles($user);
+
+        // Set 2FA status from the user preferences & session in the user object
+        $user->setTwoFactorEnabled(IcingaTotp::hasDbSecret($this->getDb(), $user->getUsername()));
+        $user->setTwoFactorSuccessful(Session::getSession()->get('2fa_successfully_challenged_token', false));
     }
 }

@@ -123,6 +123,20 @@ class User
     protected $isHttpUser = false;
 
     /**
+     * Whether the user has 2FA enabled (secret is stored in the database)
+     *
+     * @var bool
+     */
+    protected bool $twoFactorEnabled = false;
+
+    /**
+     * Whether the user has successfully completed 2FA
+     *
+     * @var bool
+     */
+    protected bool $twoFactorSuccessful = false;
+
+    /**
      * Creates a user object given the provided information
      *
      * @param   string      $username
@@ -645,5 +659,54 @@ class User
         }
 
         return $navigation;
+    }
+
+
+    /**
+     * Get whether the user has 2FA enabled
+     *
+     * @return bool
+     */
+    public function getTwoFactorEnabled(): bool
+    {
+        return $this->twoFactorEnabled;
+    }
+
+    /**
+     * Set whether the user has 2FA enabled
+     *
+     * @param bool $enabled
+     *
+     * @return $this
+     */
+    public function setTwoFactorEnabled(bool $enabled): static
+    {
+        $this->twoFactorEnabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * Get whether the user has successfully completed 2FA
+     *
+     * @return bool
+     */
+    public function getTwoFactorSuccessful(): bool
+    {
+        return $this->twoFactorSuccessful;
+    }
+
+    /**
+     * Set whether the user has successfully completed 2FA
+     *
+     * @param bool $successful
+     *
+     * @return $this
+     */
+    public function setTwoFactorSuccessful(bool $successful): static
+    {
+        $this->twoFactorSuccessful = $successful;
+
+        return $this;
     }
 }
