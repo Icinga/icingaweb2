@@ -2,415 +2,217 @@
 
 namespace Icinga\Forms\Account;
 
-use Exception;
-use Icinga\Application\Logger;
-use Icinga\Authentication\Auth;
 use Icinga\Authentication\IcingaTotp;
-use Icinga\Forms\PreferenceForm;
-use Icinga\User\Preferences;
+use Icinga\Common\Database;
+use Icinga\Model\TotpModel;
+use Icinga\User;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
+use ipl\Stdlib\Filter;
 
 /**
- * Form for creating, updating, enable and disable TOTP settings
+ * Form for enabling and disabling TOTP or creating and updating the TOTP secret
  *
  * This form is used to manage the TOTP settings of a user account.
  */
-class TotpConfigForm extends PreferenceForm
+class TotpConfigForm extends Form
 {
-    /**
-     * Preference keys that are used in this form
-     *
-     * @var array
-     */
-    const PREFERENCE_KEYS = [
-        'enabled_2fa',
-    ];
+    use Database;
 
-    /**
-     * The TOTP instance used for managing TOTP secrets
-     *
-     * @var IcingaTotp
-     */
+    /** @var User|null The user to work with */
+    protected ?User $user = null;
+
+    /** @var IcingaTotp The TOTP instance to work with */
     protected IcingaTotp $totp;
-    /**
-     * Whether 2FA is enabled or not
-     *
-     * @var bool
-     */
-    protected bool $enabled2FA;
 
-    public function init()
+    /** @const Label for the button to verify the totp secret */
+    protected const VERIFY_LABEL = 'Verify TOTP Secret';
+
+    /** @const Label for the button to remove the totp secret */
+    protected const REMOVE_LABEL = 'Remove TOTP Secret';
+
+    public function init(): void
     {
         $this->setName('form_totp');
-        $this->setSubmitLabel($this->translate('Save Changes'));
-        $this->setProgressLabel($this->translate('Saving'));
     }
 
     /**
-     * Set the TOTP instance
+     * Set the user to work with
+     *
+     * @param User $user The user to work with
+     *
+     * @return $this
+     */
+    public function setUser(User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Set the TOTP instance to work with
      *
      * @param IcingaTotp $totp
      *
-     * @return self
+     * @return $this
      */
-    public function setTotp(IcingaTotp $totp): self
+    public function setTotp(IcingaTotp $totp): static
     {
         $this->totp = $totp;
 
         return $this;
     }
 
-    /**
-     * Set whether 2FA is enabled or not
-     *
-     * @param bool $enabled2FA
-     * @return self
-     */
-    public function setEnabled2FA(bool $enabled2FA): self
+    public function createElements(array $formData): void
     {
-        $this->enabled2FA = $enabled2FA;
+        if (! IcingaTotp::hasDbSecret($this->getDb(), $this->user->getUsername())) {
+            $this->addElement(
+                'checkbox',
+                'enabled_2fa',
+                [
+                    'autosubmit'  => true,
+                    'label'       => $this->translate('Enable TOTP 2FA'),
+                    'description' => $this->translate(
+                        'This option allows you to enable or to disable the two factor authentication via TOTP.'
+                    ),
+                ]
+            );
+        }
 
-        return $this;
-    }
-
-    public function createElements(array $formData)
-    {
-        $this->addElement(
-            'checkbox',
-            'enabled_2fa',
-            [
-                'required' => false,
-                'autosubmit' => true,
-                'label' => $this->translate('Enable TOTP 2FA'),
-                'description' => $this->translate(
-                    'This option allows you to enable or to disable the second factor authentication via TOTP'
-                ),
-                'value' => $this->enabled2FA,
-            ]
-        );
-
-        if (isset($formData['enabled_2fa']) && $formData['enabled_2fa']
-            || $this->enabled2FA) {
+        if ($dbTotp = IcingaTotp::loadFromDb($this->getDb(), $this->user->getUsername())) {
             $this->addElement(
                 'text',
-                'totp_secret',
+                'user_totp_secret',
                 [
-                    'label' => $this->translate('TOTP Secret:'),
-                    'value' => $this->totp->getSecret() ?? $this->translate('No Secret set'),
-                    'description' => $this->translate(
-                        'If you generate a new TOTP secret, 
-                        you will need to configure your TOTP application with this secret. '
-                    ),
-                    'disabled' => true,
+                    'value' => $dbTotp->getSecret()
                 ]
             );
 
+            $this->setSubmitLabel(static::REMOVE_LABEL);
+            $this->setProgressLabel($this->translate('Removing'));
+        } elseif (isset($formData['enabled_2fa']) && $formData['enabled_2fa']) {
+            // Keep the same secret if the validation fails, otherwise the user had to scan a new QR code every time.
+            if (isset($formData['totp_secret'])) {
+                $this->totp = IcingaTotp::createFromSecret($formData['totp_secret'], $this->user->getUsername());
+            }
+
             $this->addElement(
-                'text',
-                'new_totp_secret',
-                [
-                    'label' => $this->translate('New TOTP Secret:'),
-                    'value' => $this->totp->getTemporarySecret() ?? $this->translate('No Secret set'),
-                    'description' => $this->translate(
-                        'If you reset the TOTP secret, you will need to set it up again in your TOTP application.'
-                    ),
-                    'disabled' => true,
-                ]
-            );
-
-            if ($this->totp->getTemporarySecret() !== null) {
-                $this->addElement(
-                    'text',
-                    'totp_verification_code',
-                    [
-                        'label' => $this->translate('Enter Code to verify:'),
-                        'description' => $this->translate(
-                            'Please enter the verification code from your TOTP application to verify the new secret.'
-                        ),
-                        'class' => 'autofocus content-centered',
-                        'style' => 'width: 120px;',
-                        'autocomplete' => 'off',
-                    ]
-                );
-
-
-                $this->addElement(
-                    'submit',
-                    'btn_verify_totp',
-                    [
-                        'ignore' => true,
-                        'label' => $this->translate('Verify TOTP Secret'),
-                        'decorators' => ['ViewHelper'],
-                    ]
-                );
-                if ($this->totp->isTemporarySecretApproved()) {
-                    $this->addElement(
-                        'note',
-                        'totp_secret_verified',
-                        [
-                            'value' => $this->translate('Secret is Verified'),
-                            'decorators' => ['ViewHelper'],
-                            'class' => 'alert alert-warning'
-                        ]
-                    );
-                }
-
-
-                $this->addElement(
-                    'hidden',
-                    'qr_code_image',
-                    [
-                        'required' => false,
-                        'ignore' => false,
-                        'autoInsertNotEmptyValidator' => false,
-                        'decorators' => [
-                            [
-                                'HtmlTag', [
-                                    'tag'  => 'img',
-                                    'src' => $this->totp->createQRCode(),
-                                    'class' => 'qr-code-image'
-                                ]
-                            ]
-                        ]
-                    ]
-                );
-
-                $this->addDisplayGroup(
-                    ['totp_verification_code', 'btn_verify_totp'],
-                    'verify_buttons',
-                    [
-                        'decorators' => [
-                            'FormElements',
-                            [
-                                'HtmlTag',
-                                [
-                                    'tag' => 'div',
-                                    'class' => 'control-group form-controls aligned-group'
-                                ]
-                            ]
-                        ]
-                    ]
-                );
-
-                $this->addElement(
-                    'submit',
-                    'btn_renew_totp',
-                    [
-                        'ignore' => true,
-                        'label' => $this->translate('Renew TOTP Secret'),
-                        'decorators' => ['ViewHelper'],
-                    ]
-                );
-            } else {
-                $this->addElement(
-                    'submit',
-                    'btn_generate_totp',
-                    [
-                        'ignore' => true,
-                        'label' => $this->translate('Generate TOTP Secret'),
-                        'decorators' => ['ViewHelper']
-                    ]
-                );
-            }
-
-            if ($this->totp->getSecret() !== null) {
-                $this->addElement(
-                    'submit',
-                    'btn_delete_totp',
-                    [
-                        'ignore' => true,
-                        'label' => $this->translate('Delete TOTP Secret'),
-                        'decorators' => ['ViewHelper']
-                    ]
-                );
-            }
-            $this->addDisplayGroup(
-                ['btn_delete_totp', 'btn_renew_totp', 'btn_generate_totp'],
-                'change_buttons',
+                'hidden',
+                'totp_qr_code',
                 [
                     'decorators' => [
-                        'FormElements',
                         [
                             'HtmlTag',
-                            ['tag' => 'div', 'class' => 'control-group form-controls']
+                            [
+                                'tag'   => 'img',
+                                'src'   => $this->totp->createQRCode(),
+                                'class' => 'totp-qr-code'
+                            ]
                         ]
                     ]
                 ]
             );
-        }
 
-        if ($this->totp->hasPendingChanges()
-        || ($this->preferences->get('icingaweb')['enabled_2fa'] ?? '0') !== ($formData['enabled_2fa'] ?? '0')
-        ) {
             $this->addElement(
-                'note',
-                'totp_pending_changes',
+                'textarea',
+                'totp_manual_token_url',
                 [
-                    'value' => $this->translate('Pending Changes'),
+                    'ignore'   => true,
+                    'disabled' => true,
+                    'label'    => $this->translate('Manual Token URL'),
+                    'value'    => $this->totp->getTotpAuthUrl()
+                ]
+            );
+
+            $this->addElement(
+                'number',
+                'totp_verification_code',
+                array(
+                    'label'       => $this->translate('Verification Code'),
                     'description' => $this->translate(
-                        'You have pending changes to your TOTP settings. Please verify the new secret before saving.'
+                        'Please enter the code from your authenticator app to verify your setup.'
                     ),
-                    'decorators' => ['ViewHelper'],
-                    'class' => 'alert alert-warning'
-                ]
+                    'min'         => 0,
+                    'max'         => 999999,
+                    'step'        => 1
+                )
             );
 
-            $this->addElement(
-                'submit',
-                'btn_cancel_totp',
-                [
-                    'ignore' => true,
-                    'label' => $this->translate('Cancel Changes'),
-                    'decorators' => ['ViewHelper'],
-                    'class' => 'btn-secondary'
-                ]
-            );
-
-            $this->addDisplayGroup(
-                ['totp_pending_changes'],
-                'labels',
-                [
-                    'decorators' => [
-                        'FormElements',
-                        ['HtmlTag', ['tag' => 'div', 'class' => 'form-controls']]
-                    ]
-                ]
-            );
+            $this->setSubmitLabel(static::VERIFY_LABEL);
+            $this->setProgressLabel($this->translate('Verifying'));
         }
 
         $this->addElement(
-            'submit',
-            'btn_submit',
+            'hidden',
+            'totp_secret',
             [
-                'ignore' => true,
-                'label' => $this->translate('Save Change'),
-                'decorators' => ['ViewHelper'],
-                'class' => 'btn-primary'
-            ]
-        );
-
-        $this->addDisplayGroup(
-            ['btn_submit', 'btn_cancel_totp'],
-            'submit_buttons',
-            [
-                'decorators' => [
-                    'FormElements',
-                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
-                ]
+                'value' => $this->totp->getSecret()
             ]
         );
     }
 
-    public function onSuccess()
+    public function onSuccess(): bool
     {
-        try {
-            if ($this->getElement('btn_submit') && $this->getElement('btn_submit')->isChecked()) {
-                $this->preferences = new Preferences($this->store ? $this->store->load() : array());
-                $webPreferences = $this->preferences->get('icingaweb');
-                if ($this->totp->hasPendingChanges()
-                    || $this->getValue('enabled_2fa') !== ($webPreferences['enabled_2fa'] ?? null)) {
-                    if (!$this->totp->requiresSecretCheck()) {
-                        foreach ($this->getValues() as $key => $value) {
-                            if (in_array($key, self::PREFERENCE_KEYS, true)) {
-                                $webPreferences[$key] = $value;
-                            }
-                        }
-                        $this->totp->makeChangesPermanent();
-                        Session::getSession()->delete('enabled_2fa');
-                        if ($webPreferences['enabled_2fa'] == 1) {
-                            $webPreferences['enabled_2fa'] = $this->totp->userHasSecret() ? '1' : '0';
-                        }
-                        $this->preferences->icingaweb = $webPreferences;
-                        Session::getSession()->user->setPreferences($this->preferences);
-                        $this->save();
-                        Notification::success($this->translate('Saved Changes.'));
+        $shouldRedirect = true;
 
-                        return true;
-                    } else {
-                        Notification::warning(
-                            $this->translate('The new secret needs to be verified before saving.')
-                        );
-                    }
-                } else {
-                    Notification::info($this->translate('No changes to save.'));
-                }
-            } elseif ($this->getElement('btn_generate_totp')
-                && $this->getElement('btn_generate_totp')->isChecked()) {
-                $this->totp->generateSecret()->saveTemporaryInSession();
-
-                return true;
-            } elseif ($this->getElement('btn_renew_totp')
-                && $this->getElement('btn_renew_totp')->isChecked()) {
-                $this->totp->generateSecret()->saveTemporaryInSession();
-
-                return true;
-            } elseif ($this->getElement('btn_delete_totp')
-                && $this->getElement('btn_delete_totp')->isChecked()) {
-                $this->totp->deleteSecrets()->saveTemporaryInSession();
-                Notification::info($this->translate('Deleted TOTP Secret'));
-
-                return true;
-            } elseif ($this->getElement('btn_verify_totp')
-                && $this->getElement('btn_verify_totp')->isChecked()) {
-                $verificationCode = $this->getValue('totp_verification_code');
-                if ($this->totp->approveTemporarySecret($verificationCode)) {
-                    Notification::success($this->translate('TOTP Secret verified successfully.'));
-
-                    return true;
-                } else {
-                    $this->getElement('totp_verification_code')->addError(
-                        $this->translate('Verification code is invalid.')
+        if ($this->getElement('btn_submit')) {
+            switch ($this->getValue('btn_submit')) {
+                case static::VERIFY_LABEL:
+                    $totp = IcingaTotp::createFromSecret(
+                        $this->getValue('totp_secret'),
+                        $this->user->getUsername()
                     );
-                }
-            } elseif ($this->getElement('btn_cancel_totp')
-                && $this->getElement('btn_cancel_totp')->isChecked()) {
-                $this->totp->resetChanges();
-                $this->enabled2FA = ($this->preferences->get('icingaweb')['enabled_2fa'] ?? null) === '1';
-                Session::getSession()->delete('enabled_2fa');
 
-                return true;
+                    if ($totp->verify($this->getValue('totp_verification_code'))) {
+                        $totp = IcingaTotp::createFromSecret(
+                            $this->getValue('totp_secret'),
+                            $this->user->getUsername()
+                        );
+                        $totp->saveToDb();
+
+                        Notification::success($this->translate('TOTP 2FA has been configured successfully.'));
+                    } else {
+                        Notification::error($this->translate('The verification code is invalid. Please try again.'));
+                        $shouldRedirect = false;
+                    }
+                    break;
+                case static::REMOVE_LABEL:
+                    $totp = IcingaTotp::createFromSecret(
+                        $this->getValue('totp_secret'),
+                        $this->user->getUsername()
+                    );
+                    $totp->removeFromDb();
+
+                    Notification::success($this->translate('TOTP 2FA secret has been removed.'));
+                    break;
             }
-        } catch (Exception $e) {
-            Logger::error($e);
-            Notification::error($e->getMessage());
+        } elseif ($this->getElement('enabled_2fa')) {
+            if ($this->getValue('enabled_2fa')) {
+                Session::getSession()->set('enabled_2fa', true);
+            } else {
+                Session::getSession()->delete('enabled_2fa');
+            }
         }
 
-        return false;
+        return $shouldRedirect;
     }
 
     /**
-     * Populate preferences
-     *
-     * @see Form::onRequest()
+     * {@inheritdoc}
      */
-    public function onRequest()
+    public function onRequest(): void
     {
-        $auth = Auth::getInstance();
-        $values = $auth->getUser()->getPreferences()->get('icingaweb');
+        $enabledTemporary = Session::getSession()->get('enabled_2fa');
 
-        if (($enabled = Session::getSession()->get('enabled_2fa', null)) !== null) {
-            $values['enabled_2fa'] = $enabled == 1 ? '1' : '0';
-        }
-        if (isset($values)) {
-            $this->populate($values);
-        }
-    }
+        $totpQuery = TotpModel::on($this->getDb())->filter(Filter::equal('username', $this->user->getUsername()));
+        $dbTotp = $totpQuery->first();
 
+        $this->populate([
+            'enabled_2fa' => isset($dbTotp->secret) || $enabledTemporary,
+        ]);
 
-    public function isSubmitted()
-    {
-        if (($this->getElement('btn_generate_totp') && $this->getElement('btn_generate_totp')->isChecked())
-            || ($this->getElement('btn_renew_totp') && $this->getElement('btn_renew_totp')->isChecked())
-            || ($this->getElement('btn_delete_totp') && $this->getElement('btn_delete_totp')->isChecked())
-            || ($this->getElement('btn_verify_totp') && $this->getElement('btn_verify_totp')->isChecked())
-            || ($this->getElement('btn_cancel_totp') && $this->getElement('btn_cancel_totp')->isChecked())
-            || ($this->getElement('btn_submit') && $this->getElement('btn_submit')->isChecked())
-        ) {
-            return true;
-        }
-
-        return false;
+        Session::getSession()->delete('enabled_2fa');
     }
 }
