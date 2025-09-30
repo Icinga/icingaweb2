@@ -65,11 +65,10 @@ CREATE TABLE icingaweb_schema (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE `icingaweb_totp`(
- `username` varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL,
- `secret`   varchar(255) NOT NULL,
- `ctime`    timestamp NULL DEFAULT NULL,
- `mtime`    timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
- PRIMARY KEY (`username`)
+  `username` varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `secret`   varchar(255) NOT NULL,
+  `ctime`    timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 INSERT INTO icingaweb_schema (version, timestamp, success)
