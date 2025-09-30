@@ -11,6 +11,7 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
+use Icinga\Common\Database;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
@@ -22,6 +23,8 @@ use Icinga\Web\StyleSheet;
 
 class Auth
 {
+    use Database;
+
     /**
      * Singleton instance
      *
@@ -464,7 +467,7 @@ class Auth
         $admissionLoader->applyRoles($user);
 
         // Set 2FA status from the user preferences & session in the user object
-        $user->setTwoFactorEnabled($preferences->getValue('icingaweb', 'enabled_2fa') == 1);
+        $user->setTwoFactorEnabled(IcingaTotp::hasDbSecret($this->getDb(), $user->getUsername()));
         $user->setTwoFactorSuccessful(Session::getSession()->get('challenged_successful_2fa_token', false));
     }
 }
