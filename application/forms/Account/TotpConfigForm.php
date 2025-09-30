@@ -17,7 +17,7 @@ use Icinga\Web\Session;
  *
  * This form is used to manage the TOTP settings of a user account.
  */
-class TotpForm extends PreferenceForm
+class TotpConfigForm extends PreferenceForm
 {
     /**
      * Preference keys that are used in this form

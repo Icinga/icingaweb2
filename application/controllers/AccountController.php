@@ -4,12 +4,11 @@
 namespace Icinga\Controllers;
 
 use Icinga\Application\Config;
-use Icinga\Application\Icinga;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Forms\Account\ChangePasswordForm;
-use Icinga\Forms\Account\TotpForm;
+use Icinga\Forms\Account\TotpConfigForm;
 use Icinga\Forms\PreferenceForm;
 use Icinga\Authentication\Totp;
 use Icinga\User\Preferences\PreferencesStore;
@@ -78,7 +77,7 @@ class AccountController extends Controller
                 Session::getSession()->set('enabled_2fa', $_POST['enabled_2fa'] == 1);
             }
             $totp = Session::getSession()->get('icingaweb_totp', null) ?? new Totp($user->getUsername());
-            $totpForm = (new TotpForm())
+            $totpForm = (new TotpConfigForm())
                 ->setPreferences($user->getPreferences())
                 ->setTotp($totp)
                 ->setEnabled2FA(Session::getSession()->get('enabled_2fa', false));
