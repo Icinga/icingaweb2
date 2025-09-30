@@ -4,7 +4,7 @@ namespace Icinga\Forms\Authentication;
 
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Authentication\Auth;
-use Icinga\Authentication\Totp;
+use Icinga\Authentication\IcingaTotp;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
 
@@ -46,7 +46,7 @@ class Challenge2FAForm extends LoginForm
     {
         // TODO: Implement proper 2FA code validation
         $user = Auth::getInstance()->getUser();
-        $totp = new Totp($user->getUsername());
+        $totp = new IcingaTotp($user->getUsername());
         if ($totp->verify($_POST['code'])) {
 //        if ($_POST['code'] == 666) {
 
