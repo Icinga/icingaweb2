@@ -47,7 +47,7 @@ class AuthenticationController extends Controller
 
         $user = $this->Auth()->getUser();
         if ($user !== null && $user->getTwoFactorEnabled()
-            && Session::getSession()->get('must_challenge_2fa_token', false) === true) {
+            && Session::getSession()->get('2fa_must_challenge_token', false) === true) {
             $form = new Challenge2FAForm();
             $cancel2faForm = new Cancel2FAForm();
             $cancel2faForm->handleRequest();
