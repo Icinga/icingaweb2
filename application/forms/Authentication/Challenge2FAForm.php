@@ -2,7 +2,9 @@
 
 namespace Icinga\Forms\Authentication;
 
+use Exception;
 use Icinga\Application\Hook\AuthenticationHook;
+use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\IcingaTotp;
 use Icinga\Web\Session;
@@ -55,8 +57,20 @@ class Challenge2FAForm extends LoginForm
 
             $auth->setAuthenticated($user);
 
+            if ($rememberMe = Session::getSession()->get('2fa_remember_me_cookie')) {
+                try {
+                    $this->getResponse()->setCookie($rememberMe->getCookie());
+                    $rememberMe->persist();
+                } catch (Exception $e) {
+                    Logger::error('Failed to let user "%s" stay logged in: %s', $user->getUsername(), $e);
+                }
+            }
+
+            // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
+
             $this->getResponse()->setRerenderLayout(true);
+
             return true;
         }
 

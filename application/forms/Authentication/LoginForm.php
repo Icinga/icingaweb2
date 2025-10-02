@@ -150,6 +150,24 @@ class LoginForm extends Form
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
             $auth->setAuthenticated($user);
+
+            // If user has 2FA enabled and the token hasn't been validated, redirect to login again, so that
+            // the token is challenged.
+            if ($user->getTwoFactorEnabled() && ! $user->getTwoFactorSuccessful()) {
+                $redirect = $this->getElement('redirect');
+                $redirect->setValue(
+                    Url::fromPath('authentication/login', ['redirect' => $redirect->getValue()])->getRelativeUrl()
+                );
+                Session::getSession()->set('2fa_must_challenge_token', true);
+
+                if ($this->getElement('rememberme')->isChecked()) {
+                    $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
+                    Session::getSession()->set('2fa_remember_me_cookie', $rememberMe);
+                }
+
+                return true;
+            }
+
             if ($this->getElement('rememberme')->isChecked()) {
                 try {
                     $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
@@ -162,18 +180,6 @@ class LoginForm extends Form
 
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
-
-            // If user has 2FA enabled and the token hasn't been validated, redirect to login again, so that
-            // the token is challenged.
-            if ($user->getTwoFactorEnabled() && ! $user->getTwoFactorSuccessful()) {
-                $redirect = $this->getElement('redirect');
-                $redirect->setValue(
-                    Url::fromPath('authentication/login', ['redirect' => $redirect->getValue()])->getRelativeUrl()
-                );
-                Session::getSession()->set('2fa_must_challenge_token', true);
-
-                return true;
-            }
 
             $this->getResponse()->setRerenderLayout(true);
             return true;

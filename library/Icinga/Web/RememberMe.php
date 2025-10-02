@@ -5,8 +5,8 @@ namespace Icinga\Web;
 
 use Icinga\Application\Config;
 use Icinga\Authentication\Auth;
-use Icinga\Crypt\AesCrypt;
 use Icinga\Common\Database;
+use Icinga\Crypt\AesCrypt;
 use Icinga\User;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
@@ -246,6 +246,7 @@ class RememberMe
         );
 
         if ($authenticated) {
+            $user->setTwoFactorSuccessful(true);
             $auth->setAuthenticated($user);
         }
 
