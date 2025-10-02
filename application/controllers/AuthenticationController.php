@@ -44,7 +44,7 @@ class AuthenticationController extends Controller
         if (($requiresSetup = $icinga->requiresSetup()) && $icinga->setupTokenExists()) {
             $this->redirectNow(Url::fromPath('setup'));
         }
-
+        $skip2fa = false;
         $user = $this->Auth()->getUser();
         if ($user
             && $user->getTwoFactorEnabled()
@@ -55,30 +55,31 @@ class AuthenticationController extends Controller
             $cancel2faForm->handleRequest();
         } else {
             $form = new LoginForm();
-        }
 
-        if (RememberMe::hasCookie() && $this->hasDb()) {
-            $authenticated = false;
-            try {
-                $rememberMeOld = RememberMe::fromCookie();
-                $authenticated = $rememberMeOld->authenticate();
-                if ($authenticated) {
-                    $rememberMe = $rememberMeOld->renew();
-                    $this->getResponse()->setCookie($rememberMe->getCookie());
-                    $rememberMe->persist($rememberMeOld->getAesCrypt()->getIV());
+            if (RememberMe::hasCookie() && $this->hasDb()) {
+                $authenticated = false;
+                try {
+                    $rememberMeOld = RememberMe::fromCookie();
+                    $authenticated = $rememberMeOld->authenticate();
+                    if ($authenticated) {
+                        $rememberMe = $rememberMeOld->renew();
+                        $this->getResponse()->setCookie($rememberMe->getCookie());
+                        $rememberMe->persist($rememberMeOld->getAesCrypt()->getIV());
+                        $skip2fa = true;
+                    }
+                } catch (RuntimeException $e) {
+                    Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
+                } catch (AuthenticationException $e) {
+                    Logger::error($e);
                 }
-            } catch (RuntimeException $e) {
-                Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
-            } catch (AuthenticationException $e) {
-                Logger::error($e);
-            }
 
-            if (! $authenticated) {
-                $this->getResponse()->setCookie(RememberMe::forget());
+                if (! $authenticated) {
+                    $this->getResponse()->setCookie(RememberMe::forget());
+                }
             }
         }
 
-        if ($this->Auth()->isAuthenticated()) {
+        if ($this->Auth()->isAuthenticated($skip2fa)) {
             // Call provided AuthenticationHook(s) when login action is called
             // but icinga web user is already authenticated
             AuthenticationHook::triggerLogin($this->Auth()->getUser());
