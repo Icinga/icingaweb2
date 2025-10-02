@@ -38,7 +38,8 @@
                             'dashboard/remove-pane',
                             array('pane' => $pane->getName()),
                             array(
-                                'icon'  => 'trash',
+                                'icon'  => 'cancel',
+                                'class' => 'action-link',
                                 'title' => sprintf($this->translate('Remove pane %s'), $pane->getName())
                             )
                         ); ?>
@@ -77,7 +78,8 @@
                                     'dashboard/remove-dashlet',
                                     array('pane' => $pane->getName(), 'dashlet' => $dashlet->getName()),
                                     array(
-                                        'icon'  => 'trash',
+                                        'icon'  => 'cancel',
+                                        'class' => 'action-link',
                                         'title' => sprintf($this->translate('Remove dashlet %s from pane %s'), $dashlet->getTitle(), $pane->getTitle())
                                     )
                                 ); ?>
