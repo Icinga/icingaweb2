@@ -12,8 +12,6 @@ class Cancel2FAForm extends Form
     {
         $this->setRequiredCue(null);
         $this->setName('form_cancel_2fa');
-        $this->setSubmitLabel($this->translate('Cancel'));
-        $this->setProgressLabel($this->translate('Canceling'));
         $this->setAttrib('class', 'content-centered');
     }
 
@@ -32,6 +30,22 @@ class Cancel2FAForm extends Form
             'cancel_2fa',
             [
                 'value' => true
+            ]
+        );
+
+        $this->addElement(
+            'submit',
+            'btn_submit',
+            [
+                'class'                 => 'btn-cancel',
+                'ignore'                => true,
+                'label'                 => 'Cancel',
+                'data-progress-label'   => 'Canceling',
+                'decorators'            => [
+                    'ViewHelper',
+                    ['Spinner', ['separator' => '']],
+                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
+                ]
             ]
         );
     }
