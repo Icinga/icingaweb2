@@ -465,6 +465,5 @@ class Auth
 
         // Set 2FA status from the user preferences & session in the user object
         $user->setTwoFactorEnabled(IcingaTotp::hasDbSecret($this->getDb(), $user->getUsername()));
-        $user->setTwoFactorSuccessful(Session::getSession()->get('challenged_successful_2fa_token', false));
     }
 }
