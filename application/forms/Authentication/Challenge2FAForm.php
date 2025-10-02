@@ -50,7 +50,8 @@ class Challenge2FAForm extends LoginForm
         if ($totp->verify($_POST['token'])) {
             $auth = Auth::getInstance();
             $user = $auth->getUser();
-            Session::getSession()->set('challenged_successful_2fa_token', true);
+            $user->setTwoFactorSuccessful(true);
+
             Session::getSession()->delete('2fa_must_challenge_token');
 
             $auth->setAuthenticated($user);
