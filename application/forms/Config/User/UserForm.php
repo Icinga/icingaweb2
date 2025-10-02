@@ -117,7 +117,7 @@ class UserForm extends RepositoryForm
     protected function createDeleteElements(array $formData)
     {
         $this->setTitle(sprintf($this->translate('Remove user %s?'), $this->getIdentifier()));
-        $this->setSubmitLabel($this->translate('Yes'));
+        $this->setSubmitLabel($this->translate('Confirm Removal'));
         $this->setAttrib('class', 'icinga-controls');
     }
 

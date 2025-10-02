@@ -183,7 +183,6 @@ class DashboardController extends ActionController
             }
             return true;
         });
-        $form->setTitle($this->translate('Remove Dashlet From Dashboard'));
         $form->setRedirectUrl('dashboard/settings');
         $form->handleRequest();
         $this->view->pane = $pane;
