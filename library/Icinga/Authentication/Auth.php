@@ -89,10 +89,10 @@ class Auth
      *
      * @return bool
      */
-    public function isAuthenticated()
+    public function isAuthenticated(bool $skip2fa = false)
     {
         if ($this->user !== null) {
-            if ($this->user->getTwoFactorEnabled() && ! $this->user->getTwoFactorSuccessful()) {
+            if (! $skip2fa && $this->user->getTwoFactorEnabled() && ! $this->user->getTwoFactorSuccessful()) {
                 return false;
             }
             return true;
