@@ -183,7 +183,6 @@ class DashboardController extends ActionController
             }
             return true;
         });
-        $form->setTitle($this->translate('Remove Dashlet From Dashboard'));
         $form->setRedirectUrl('dashboard/settings');
         $form->handleRequest();
         $this->view->pane = $pane;
@@ -250,7 +249,11 @@ class DashboardController extends ActionController
     public function removePaneAction()
     {
         $form = new ConfirmRemovalForm();
-        $this->createTabs();
+        $this->getTabs()->add('remove-pane', [
+            'active' => true,
+            'label'  => $this->translate('Remove Dashboard'),
+            'url'    => Url::fromRequest()
+        ]);
         $dashboard = $this->dashboard;
         if (! $this->_request->getParam('pane')) {
             throw new Zend_Controller_Action_Exception(
@@ -275,7 +278,6 @@ class DashboardController extends ActionController
             }
             return true;
         });
-        $form->setTitle($this->translate('Remove Dashboard'));
         $form->setRedirectUrl('dashboard/settings');
         $form->handleRequest();
         $this->view->pane = $pane;

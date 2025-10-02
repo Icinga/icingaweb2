@@ -91,7 +91,7 @@ class AnnouncementForm extends RepositoryForm
     protected function createDeleteElements(array $formData)
     {
         $this->setTitle(sprintf($this->translate('Remove announcement %s?'), $this->getIdentifier()));
-        $this->setSubmitLabel($this->translate('Yes'));
+        $this->setSubmitLabel($this->translate('Confirm Removal'));
         $this->setAttrib('class', 'icinga-controls');
     }
 

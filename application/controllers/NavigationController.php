@@ -189,7 +189,7 @@ class NavigationController extends Controller
             'class'         => 'link-button spinner',
             'value'         => 'btn_submit',
             'decorators'    => array('ViewHelper'),
-            'label'         => $this->view->icon('trash'),
+            'label'         => $this->view->icon('cancel'),
             'title'         => $this->translate('Unshare this navigation item')
         ));
 

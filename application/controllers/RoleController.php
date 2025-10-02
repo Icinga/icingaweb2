@@ -118,9 +118,10 @@ class RoleController extends AuthBackendController
     {
         $name = $this->params->getRequired('role');
         $role = new RoleForm();
+        $role->setAttrib('class', 'icinga-controls');
         $role->setRedirectUrl('__CLOSE__');
         $role->setRepository(new RolesConfig());
-        $role->setSubmitLabel($this->translate('Remove Role'));
+        $role->setSubmitLabel($this->translate('Confirm Removal'));
         $role->remove($name);
 
         try {
