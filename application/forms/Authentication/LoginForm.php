@@ -170,7 +170,7 @@ class LoginForm extends Form
                 $redirect->setValue(
                     Url::fromPath('authentication/login', ['redirect' => $redirect->getValue()])->getRelativeUrl()
                 );
-                Session::getSession()->set('must_challenge_2fa_token', true);
+                Session::getSession()->set('2fa_must_challenge_token', true);
 
                 return true;
             }
