@@ -51,7 +51,7 @@ class Challenge2FAForm extends LoginForm
             $auth = Auth::getInstance();
             $user = $auth->getUser();
             Session::getSession()->set('challenged_successful_2fa_token', true);
-            Session::getSession()->delete('must_challenge_2fa_token');
+            Session::getSession()->delete('2fa_must_challenge_token');
 
             $auth->setAuthenticated($user);
 
