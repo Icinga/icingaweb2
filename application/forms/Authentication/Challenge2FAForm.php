@@ -22,13 +22,13 @@ class Challenge2FAForm extends LoginForm
     {
         $this->addElement(
             'text',
-            'code',
+            'token',
             [
-                'autocapitalize' => 'off',
-                'class' => 'autofocus content-centered',
-                'placeholder' => $this->translate('Please enter your 2FA code'),
                 'required' => true,
+                'class' => 'autofocus content-centered',
+                'placeholder' => $this->translate('Please enter your 2FA token'),
                 'autocomplete' => 'off',
+                'autocapitalize' => 'off',
 
             ]
         );
@@ -47,9 +47,7 @@ class Challenge2FAForm extends LoginForm
         // TODO: Implement proper 2FA code validation
         $user = Auth::getInstance()->getUser();
         $totp = IcingaTotp::loadFromDb($this->getDb(), $user->getUsername());
-        if ($totp->verify($_POST['code'])) {
-//        if ($_POST['code'] == 666) {
-
+        if ($totp->verify($_POST['token'])) {
             $auth = Auth::getInstance();
             $user = $auth->getUser();
             Session::getSession()->set('challenged_successful_2fa_token', true);
@@ -62,7 +60,7 @@ class Challenge2FAForm extends LoginForm
             return true;
         }
 
-        $this->getElement('code')->addError($this->translate('Code is invalid!'));
+        $this->getElement('token')->addError($this->translate('Token is invalid!'));
 
         return false;
     }
