@@ -140,7 +140,7 @@ class Auth
             $this->persistCurrentUser();
         }
 
-        // don't log if 2fa hasn't been challenged yet
+        // Don't log if 2FA is enabled and hasn't been successful yet
         if (!$user->getTwoFactorEnabled() || $user->getTwoFactorSuccessful()) {
             AuditHook::logActivity('login', 'User logged in');
         }
