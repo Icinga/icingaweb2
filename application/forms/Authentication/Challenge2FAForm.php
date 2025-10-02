@@ -44,10 +44,9 @@ class Challenge2FAForm extends LoginForm
 
     public function onSuccess()
     {
-        // TODO: Implement proper 2FA code validation
         $user = Auth::getInstance()->getUser();
         $totp = IcingaTotp::loadFromDb($this->getDb(), $user->getUsername());
-        if ($totp->verify($_POST['token'])) {
+        if ($this->getElement('token') && $totp->verify($this->getValue('token'))) {
             $auth = Auth::getInstance();
             $user = $auth->getUser();
             $user->setTwoFactorSuccessful(true);
