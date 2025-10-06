@@ -17,7 +17,7 @@ class AnyPasswordPolicyTest extends TestCase
 
     public function testMethodGetName(): void
     {
-        $this->assertSame('Any', $this->instance->getName());
+        $this->assertSame('None', $this->instance->getName());
     }
 
     public function testValidatePasswordValid(): void
