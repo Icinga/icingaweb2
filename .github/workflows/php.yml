@@ -108,4 +108,4 @@ jobs:
           ICINGAWEB_TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
           ICINGAWEB_TEST_PGSQL_PORT: ${{ job.services.pgsql.ports['5432'] }}
           ICINGAWEB_LIBDIR:  vendor/
-        run: phpunit -c modules/test/phpunit.xml --verbose
+        run: phpunit --verbose
