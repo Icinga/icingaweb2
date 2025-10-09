@@ -41,7 +41,7 @@
         <exclude-pattern>*/application/views/helpers/*</exclude-pattern>
         <exclude-pattern>*/library/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php</exclude-pattern>
     </rule>
-    <rule ref="Squiz.Classes.ValidClassName.NotCamelCaps">
+    <rule ref="Squiz.Classes.ValidClassName.NotPascalCase">
         <exclude-pattern>*/application/views/helpers/*</exclude-pattern>
         <exclude-pattern>*/library/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php</exclude-pattern>
     </rule>
