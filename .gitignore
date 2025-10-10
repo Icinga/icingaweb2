@@ -3,11 +3,7 @@
 
 # Except those related to git
 !.git*
-!.travis.yml
 !.mailmap
-
-# Testing - created by test/setup_vendor.sh
-/vendor/
 
 # Exclude application log files
 var/log/*
@@ -20,3 +16,7 @@ build/*
 # Exclude dompdf font cache
 library/vendor/dompdf/lib/fonts/*.php
 library/vendor/dompdf/lib/fonts/log.htm
+
+# Exclude files from composer install
+vendor/
+composer.lock

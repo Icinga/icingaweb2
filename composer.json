@@ -1,0 +1,10 @@
+{
+  "config": {
+    "platform": {
+      "php": "8.2"
+    }
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.6"
+  }
+}
