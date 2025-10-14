@@ -17,25 +17,26 @@ class PasswordPolicyHelper
 
     public function __construct()
     {
-            $passwordPolicyClass = Config::app()->get(
-                'global',
-                'password_policy',
-                self::DEFAULT_PASSWORD_POLICY
-            );
+        $passwordPolicyClass = Config::app()->get(
+            'global',
+            'password_policy',
+            self::DEFAULT_PASSWORD_POLICY
+        );
 
-            $instance = new $passwordPolicyClass;
+        $instance = new $passwordPolicyClass;
 
-            if(class_exists($passwordPolicyClass) && ($instance instanceof PasswordPolicyHook)) {
-                $this->passwordPolicy = new $passwordPolicyClass();
-            }
+        if (class_exists($passwordPolicyClass) && ($instance instanceof PasswordPolicyHook)) {
+            $this->passwordPolicy = new $passwordPolicyClass();
+        }
     }
 
     public function addPasswordPolicyDescription(Form $form): void
     {
-            $description = $this->passwordPolicy->getDescription();
-            if ($description !== null) {
-                $form->addDescription($description);
-            }
+        $description = $this->passwordPolicy->getDescription();
+
+        if ($description !== null) {
+            $form->addDescription($description);
+        }
     }
 
     public function getPasswordValidator(): PasswordValidator
