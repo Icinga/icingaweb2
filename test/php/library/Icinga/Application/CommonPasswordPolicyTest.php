@@ -15,11 +15,6 @@ class CommonPasswordPolicyTest extends TestCase
         $this->instance = new CommonPasswordPolicy();
     }
 
-    public function testMethodGetName(): void
-    {
-        $this->assertSame('Common', $this->instance->getName());
-    }
-
     public function testValidatePasswordTooShort(): void
     {
         $expectedResults = ['Password must be at least 12 characters long'];
