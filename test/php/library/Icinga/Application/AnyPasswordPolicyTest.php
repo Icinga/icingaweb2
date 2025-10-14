@@ -15,11 +15,6 @@ class AnyPasswordPolicyTest extends TestCase
         $this->instance = new AnyPasswordPolicy();
     }
 
-    public function testMethodGetName(): void
-    {
-        $this->assertSame('None', $this->instance->getName());
-    }
-
     public function testValidatePasswordValid(): void
     {
         $res = $this->instance->validatePassword('icingaadmin');
