@@ -4,6 +4,7 @@
 namespace Icinga\Forms\Config\User;
 
 use Icinga\Application\Hook\ConfigFormEventsHook;
+use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Data\Filter\Filter;
 use Icinga\Forms\RepositoryForm;
 use Icinga\Web\Notification;
@@ -17,6 +18,10 @@ class UserForm extends RepositoryForm
      */
     protected function createInsertElements(array $formData)
     {
+        $helper = new PasswordPolicyHelper();
+        $helper->addPasswordPolicyDescription($this);
+        $passwordValidator = $helper->getPasswordValidator();
+
         $this->addElement(
             'checkbox',
             'is_active',
@@ -37,10 +42,11 @@ class UserForm extends RepositoryForm
         $this->addElement(
             'password',
             'password',
-            array(
-                'required'  => true,
-                'label'     => $this->translate('Password')
-            )
+            [
+                'required'   => true,
+                'label'      => $this->translate('Password'),
+                'validators' => [$passwordValidator]
+            ]
         );
 
         $this->setTitle($this->translate('Add a new user'));
