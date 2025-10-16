@@ -22,6 +22,7 @@ class Macro
         'HOSTADDRESS'   => 'host_address',
         'HOSTADDRESS6'  => 'host_address6',
         'SERVICEDESC'   => 'service_description',
+        'SERVICEDISP'   => 'service_display_name',
         'host.name'     => 'host_name',
         'host.address'  => 'host_address',
         'host.address6' => 'host_address6',
