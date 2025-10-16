@@ -6,6 +6,7 @@ namespace Icinga\Authentication;
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\AuditHook;
+use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\User\ExternalBackend;
@@ -246,6 +247,8 @@ class Auth
                         $user->setDomain(Config::app()->get('authentication', 'default_domain'));
                     }
                     $this->setAuthenticated($user);
+                    AuthenticationHook::triggerLogin($user);
+
                     return true;
                 }
             }
