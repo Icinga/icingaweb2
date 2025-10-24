@@ -1,14 +1,7 @@
 name: PHP Tests
 
 on:
-  push:
-    branches:
-      - main
-      - support/*
-      - release/*
-  pull_request:
-    branches:
-      - main
+  push: { }
 
 jobs:
   lint:
