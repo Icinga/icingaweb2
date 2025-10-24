@@ -399,7 +399,7 @@ You will need to install certain dependencies depending on your setup:
   monitor your infrastructure
 * A web server, e.g. Apache or Nginx
 * PHP version ≥ 7.2
-* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (≥ 0.14.2)
+* [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (≥ 0.18.0)
 * [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) (≥ 0.12)
 * The following PHP modules must be installed: cURL, json, gettext, fileinfo, intl, dom, OpenSSL and xml
 * The [pdfexport](https://github.com/Icinga/icingaweb2-module-pdfexport) module (≥0.10) is required for the
