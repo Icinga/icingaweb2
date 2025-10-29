@@ -3,7 +3,9 @@
 namespace Icinga\Application\Hook;
 
 use Icinga\Application\Hook;
+use Icinga\Application\Logger;
 use Icinga\Web\Request;
+use Throwable;
 
 abstract class RequestHook extends Hook
 {
@@ -26,7 +28,11 @@ abstract class RequestHook extends Hook
     final public static function postDispatch(Request $request): void
     {
         foreach (static::all('Request') as $hook) {
-            $hook->onPostDispatch($request);
+            try {
+                $hook->onPostDispatch($request);
+            } catch (Throwable $e) {
+                Logger::error('Failed to execute hook on request: %s', $e);
+            }
         }
     }
 }
