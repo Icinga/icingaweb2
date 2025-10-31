@@ -114,7 +114,7 @@
         }
 
         let $autoSubmittedBy;
-        if (typeof event.detail !== 'undefined' && "submittedBy" in event.detail) {
+        if (event.detail !== null && typeof event.detail === 'object' && "submittedBy" in event.detail) {
             $autoSubmittedBy = $(event.detail.submittedBy);
         }
 
