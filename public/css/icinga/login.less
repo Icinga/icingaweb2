@@ -74,12 +74,12 @@
     }
   }
 
-  input[type="submit"]:focus {
-    outline: 3px solid;
-    outline-color: @icinga-blue-light;
-  }
+  input[type="submit"], button {
+    &:focus {
+      outline: 3px solid;
+      outline-color: @icinga-blue-light;
+    }
 
-  input[type=submit] {
     border-radius: .25em;
     background: @icinga-secondary;
     color: white;
