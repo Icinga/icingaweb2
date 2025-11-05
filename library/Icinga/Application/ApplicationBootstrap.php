@@ -739,6 +739,7 @@ abstract class ApplicationBootstrap
      */
     protected function registerApplicationHooks(): self
     {
+        Hook::register('LoginButton', LBH::class, LBH::class);
         Hook::register('DbMigration', DbMigration::class, DbMigration::class);
 
         return $this;
