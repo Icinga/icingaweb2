@@ -3,6 +3,7 @@
 
 namespace Icinga\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Hook;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Hook\LoginButton\LoginButton;
@@ -11,6 +12,7 @@ use Icinga\Application\Logger;
 use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Forms\Authentication\LoginForm;
+use Icinga\forms\Authentication\LoginWithForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Helper\CookieHelper;
 use Icinga\Web\RememberMe;
@@ -98,6 +100,8 @@ class AuthenticationController extends Controller
         }
 
         $loginButtons = [];
+        $request = ServerRequest::fromGlobals();
+
         foreach (Hook::all('LoginButton') as $class => $hook) {
             /** @var Hook\LoginButtonHook $hook */
 
@@ -106,6 +110,7 @@ class AuthenticationController extends Controller
                     assert($button instanceof LoginButton);
 
                     // TODO: New form, (hash class + displayed stuff OR) hash/hex class!array_idx
+                    $loginButtons[] = (new LoginWithForm())->handleRequest($request);
                 }
             } catch (Throwable $e) {
                 Logger::error('Failed to execute login button hook: %s', $e);
