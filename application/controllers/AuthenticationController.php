@@ -3,7 +3,9 @@
 
 namespace Icinga\Controllers;
 
+use Icinga\Application\Hook;
 use Icinga\Application\Hook\AuthenticationHook;
+use Icinga\Application\Hook\LoginButton\LoginButton;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Common\Database;
@@ -14,6 +16,7 @@ use Icinga\Web\Helper\CookieHelper;
 use Icinga\Web\RememberMe;
 use Icinga\Web\Url;
 use RuntimeException;
+use Throwable;
 
 /**
  * Application wide controller for authentication
@@ -93,7 +96,25 @@ class AuthenticationController extends Controller
             }
             $form->handleRequest();
         }
+
+        $loginButtons = [];
+        foreach (Hook::all('LoginButton') as $class => $hook) {
+            /** @var Hook\LoginButtonHook $hook */
+
+            try {
+                foreach ($hook->getButtons() as $index => $button) {
+                    assert($button instanceof LoginButton);
+
+                    // TODO: New form, (hash class + displayed stuff OR) hash/hex class!array_idx
+                }
+            } catch (Throwable $e) {
+                Logger::error('Failed to execute login button hook: %s', $e);
+                continue;
+            }
+        }
+
         $this->view->form = $form;
+        $this->view->loginButtons = $loginButtons;
         $this->view->defaultTitle = $this->translate('Icinga Web 2 Login');
         $this->view->requiresSetup = $requiresSetup;
     }
