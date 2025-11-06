@@ -36,14 +36,15 @@ class ChangePasswordForm extends Form
      */
     public function createElements(array $formData)
     {
+        $validators = [];
+
         try {
             $helper = new PasswordPolicyHelper();
+            $validators[] = $helper->getPasswordValidator();
             $helper->addPasswordPolicyDescription($this);
-            $passwordValidator = $helper->getPasswordValidator();
         } catch (\Throwable $e) {
-            $passwordValidator = [];
             Logger::error($e);
-            Notification::error("The configured password policy could not be found.");
+            Notification::error("The configured password policy could not be loaded.");
         }
 
         $this->addElement(
@@ -60,7 +61,7 @@ class ChangePasswordForm extends Form
             [
                 'label'      => $this->translate('New Password'),
                 'required'   => true,
-                'validators' => [$passwordValidator]
+                'validators' => $validators
             ]
         );
         $this->addElement(

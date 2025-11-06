@@ -742,8 +742,8 @@ abstract class ApplicationBootstrap
     protected function registerApplicationHooks(): self
     {
         Hook::register('DbMigration', DbMigration::class, DbMigration::class);
-        Hook::register('passwordpolicy', CommonPasswordPolicy::class, CommonPasswordPolicy::class);
-        Hook::register('passwordpolicy', AnyPasswordPolicy::class, AnyPasswordPolicy::class);
+        Hook::register('PasswordPolicy', CommonPasswordPolicy::class, CommonPasswordPolicy::class);
+        Hook::register('PasswordPolicy', AnyPasswordPolicy::class, AnyPasswordPolicy::class);
 
         return $this;
     }

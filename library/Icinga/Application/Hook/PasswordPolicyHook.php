@@ -24,7 +24,7 @@ interface PasswordPolicyHook
      *
      * @param string $password
      * @return string[] Returns an empty array if the password is valid,
-     * otherwise returns an error message describing the violations
+     * otherwise returns error messages describing the violations
      */
     public function validatePassword(string $password): array;
 }
