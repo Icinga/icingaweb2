@@ -35,7 +35,7 @@ thoroughly.
 * [Icinga 2](https://icinga.com/docs/icinga-2) and [Icinga DB](https://icinga.com/docs/icinga-db) to
   monitor your infrastructure
 * A web server, e.g. Apache or Nginx
-* PHP version ≥ 7.2
+* PHP version ≥ 8.2
 * MariaDB
 
 ### Optional Requirements
@@ -289,7 +289,7 @@ yum install icingaweb2 icingacli
 ## Install the Web Server <a id="install-the-web-server"></a>
 
 Ensure that you have a web server with PHP installed before proceeding,
-such as Apache or Nginx with PHP version ≥ 7.2. Depending on your operating system,
+such as Apache or Nginx with PHP version ≥ 8.2. Depending on your operating system,
 you may need to install and configure the web server separately.
 An Apache configuration file to serve Icinga Web is already installed.
 If you want to use Nginx, you must manually create a configuration file using the following command.
@@ -398,7 +398,7 @@ You will need to install certain dependencies depending on your setup:
 * [Icinga 2](https://github.com/Icinga/icinga2) and [Icinga DB](https://github.com/Icinga/icingadb) to
   monitor your infrastructure
 * A web server, e.g. Apache or Nginx
-* PHP version ≥ 7.2
+* PHP version ≥ 8.2
 * [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (≥ 0.14.2)
 * [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) (≥ 0.12)
 * The following PHP modules must be installed: cURL, json, gettext, fileinfo, intl, dom, OpenSSL and xml
