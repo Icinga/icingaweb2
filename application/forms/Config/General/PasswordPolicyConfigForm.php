@@ -4,7 +4,7 @@
 namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Hook;
-use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
+use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Web\Form;
 
 /**
@@ -22,7 +22,7 @@ class PasswordPolicyConfigForm extends Form
     public function createElements(array $formData): static
     {
         $passwordPolicies = [];
-        foreach (Hook::all('passwordpolicy') as $class => $policy) {
+        foreach (Hook::all('PasswordPolicy') as $class => $policy) {
             $passwordPolicies[$class] = $policy->getName();
         }
         asort($passwordPolicies);
@@ -33,7 +33,7 @@ class PasswordPolicyConfigForm extends Form
             [
                 'description'  => $this->translate('Enforce password requirements for new passwords'),
                 'label'        => $this->translate('Password Policy'),
-                'value'        => AnyPasswordPolicy::class,
+                'value'        => PasswordPolicyHelper::DEFAULT_PASSWORD_POLICY,
                 'multiOptions' => $passwordPolicies
             ]
         );

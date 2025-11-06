@@ -6,6 +6,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Hook\PasswordPolicyHook;
 use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
 use Icinga\Authentication\PasswordValidator;
+
 use Icinga\Web\Form;
 
 class PasswordPolicyHelper
@@ -23,10 +24,14 @@ class PasswordPolicyHelper
             self::DEFAULT_PASSWORD_POLICY
         );
 
-        $instance = new $passwordPolicyClass;
+        if (class_exists($passwordPolicyClass)) {
+            $instance = new $passwordPolicyClass();
 
-        if (class_exists($passwordPolicyClass) && ($instance instanceof PasswordPolicyHook)) {
-            $this->passwordPolicy = new $passwordPolicyClass();
+            if ($instance instanceof PasswordPolicyHook) {
+                $this->passwordPolicy = $instance;
+            }
+        } else {
+            $this->passwordPolicy = self::DEFAULT_PASSWORD_POLICY;
         }
     }
 
