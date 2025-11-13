@@ -22,6 +22,7 @@
             ) ?></p>
         <?php endif ?>
         <?= $this->form ?>
+        <?= implode('', $this->loginButtons) ?>
         <div id="login-footer">
             <p>Icinga Web 2 &copy; 2013-<?= date('Y') ?></p>
             <?= $this->qlink($this->translate('icinga.com'), 'https://icinga.com') ?>
