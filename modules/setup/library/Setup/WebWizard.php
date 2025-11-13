@@ -584,11 +584,11 @@ class WebWizard extends Wizard implements SetupWizard
         $set = new RequirementSet();
 
         $set->add(new PhpVersionRequirement(array(
-            'condition'     => array('>=', '7.2'),
+            'condition'     => array('>=', '8.2'),
             'description'   => sprintf(mt(
                 'setup',
                 'Running Icinga Web 2 requires PHP version %s.'
-            ), '7.2')
+            ), '8.2')
         )));
 
         $set->add(new OSRequirement(array(
