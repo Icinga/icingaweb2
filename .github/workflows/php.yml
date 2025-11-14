@@ -98,9 +98,8 @@ jobs:
 
       - name: Setup dependencies
         run: |
-          composer init -n --require mockery/mockery:* --require ipl/i18n:@dev --require ipl/web:@dev
-          composer config platform.php 8.2
-          composer install -n --no-progress
+          composer require --no-install ipl/i18n:@dev ipl/web:@dev
+          composer install --no-progress
           git clone --depth 1 --branch snapshot/nightly https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
 
       - name: PHPUnit
@@ -108,4 +107,4 @@ jobs:
           ICINGAWEB_TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
           ICINGAWEB_TEST_PGSQL_PORT: ${{ job.services.pgsql.ports['5432'] }}
           ICINGAWEB_LIBDIR:  vendor/
-        run: phpunit -c modules/test/phpunit.xml --verbose
+        run: phpunit --verbose
