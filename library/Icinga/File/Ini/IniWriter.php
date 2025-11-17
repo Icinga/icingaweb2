@@ -3,14 +3,14 @@
 
 namespace Icinga\File\Ini;
 
+use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
+use Icinga\Exception\NotWritableError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\File\Ini\Dom\Directive;
 use Icinga\File\Ini\Dom\Document;
 use Icinga\File\Ini\Dom\Section;
-use Zend_Config_Exception;
-use Icinga\Application\Config;
 
 /**
  * A INI file adapter that respects the file structure and the comments of already existing ini files
@@ -89,22 +89,21 @@ class IniWriter
      * @param string $filename
      * @param bool $exclusiveLock
      *
-     * @throws Zend_Config_Exception
+     * @throws NotWritableError
      */
     public function write($filename = null, $exclusiveLock = false)
     {
         $filePath = isset($filename) ? $filename : $this->filename;
         $setMode = false === file_exists($filePath);
-
-        if (file_put_contents($filePath, $this->render(), $exclusiveLock ? LOCK_EX : 0) === false) {
-            throw new Zend_Config_Exception('Could not write to file "' . $filePath . '"');
+        if (@file_put_contents($filePath, $this->render(), $exclusiveLock ? LOCK_EX : 0) === false) {
+            throw new NotWritableError('Could not write to file "' . $filePath . '"');
         }
 
         if ($setMode) {
             // file was newly created
             $mode = $this->fileMode;
             if (is_int($this->fileMode) && false === @chmod($filePath, $this->fileMode)) {
-                throw new Zend_Config_Exception(sprintf('Failed to set file mode "%o" on file "%s"', $mode, $filePath));
+                throw new NotWritableError(sprintf('Failed to set file mode "%o" on file "%s"', $mode, $filePath));
             }
         }
     }
