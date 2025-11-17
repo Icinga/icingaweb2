@@ -3,10 +3,10 @@
 
 namespace Icinga\Web;
 
-use Icinga\Util\Json;
-use Zend_Controller_Request_Http;
 use Icinga\Application\Icinga;
 use Icinga\User;
+use Icinga\Util\Json;
+use Zend_Controller_Request_Http;
 
 /**
  * A request
@@ -99,6 +99,16 @@ class Request extends Zend_Controller_Request_Http
     public function isApiRequest()
     {
         return $this->getHeader('Accept') === 'application/json';
+    }
+
+    /**
+     * Get whether the request is sent by auto refresh
+     *
+     * @return bool
+     */
+    public function isAutoRefresh(): bool
+    {
+        return $this->getHeader('X-Icinga-Autorefresh');
     }
 
     /**
