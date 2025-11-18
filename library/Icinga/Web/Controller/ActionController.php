@@ -3,29 +3,30 @@
 
 namespace Icinga\Web\Controller;
 
+use Icinga\Application\Benchmark;
+use Icinga\Application\Config;
+use Icinga\Application\Hook\RequestHook;
 use Icinga\Application\Modules\Module;
+use Icinga\Authentication\Auth;
 use Icinga\Common\PdfExport;
+use Icinga\Exception\Http\HttpMethodNotAllowedException;
+use Icinga\Exception\IcingaException;
+use Icinga\Exception\ProgrammingError;
 use Icinga\File\Pdf;
+use Icinga\Forms\AutoRefreshForm;
+use Icinga\Security\SecurityException;
 use Icinga\Util\Csp;
+use Icinga\Web\Session;
+use Icinga\Web\Url;
+use Icinga\Web\UrlParams;
 use Icinga\Web\View;
+use Icinga\Web\Widget\Tabs;
+use Icinga\Web\Window;
 use ipl\I18n\Translation;
 use Zend_Controller_Action;
 use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Request_Abstract;
 use Zend_Controller_Response_Abstract;
-use Icinga\Application\Benchmark;
-use Icinga\Application\Config;
-use Icinga\Authentication\Auth;
-use Icinga\Exception\Http\HttpMethodNotAllowedException;
-use Icinga\Exception\IcingaException;
-use Icinga\Exception\ProgrammingError;
-use Icinga\Forms\AutoRefreshForm;
-use Icinga\Security\SecurityException;
-use Icinga\Web\Session;
-use Icinga\Web\Url;
-use Icinga\Web\UrlParams;
-use Icinga\Web\Widget\Tabs;
-use Icinga\Web\Window;
 
 /**
  * Base class for all core action controllers
@@ -521,6 +522,8 @@ class ActionController extends Zend_Controller_Action
         if ($this->isXhr()) {
             $this->postDispatchXhr();
         }
+
+        RequestHook::postDispatch($req);
 
         $this->shutdownSession();
     }
