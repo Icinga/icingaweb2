@@ -4,6 +4,22 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.12.6
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/86?closed=1).
+
+#### It's Like Fine Wine
+
+Icinga Web 2.12 is now two years old. But like fine wine, it gets better with age. Each fix and improvement included
+this time enhances your experience with Icinga Web. Even if just a little bit. Maybe a small annoyance is gone now, or
+something you didn't even notice was broken is fixed.
+
+But let's get to it, a small selection of fixes and improvements:
+
+* Search box shows many magnifying glasses for some community themes #5395
+* Authentication hooks are not called with external backends #5415
+* Improve Minimal layout #5386
+
 ### What's New in Version 2.12.5
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/85?closed=1).
