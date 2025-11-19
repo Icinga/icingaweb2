@@ -466,7 +466,7 @@ class Auth
         $admissionLoader = new AdmissionLoader();
         $admissionLoader->applyRoles($user);
 
-        // Set 2FA status from the user preferences & session in the user object
+        // Set 2FA status on the user object depending on whether a secret exists for the user
         $user->setTwoFactorEnabled(IcingaTotp::hasDbSecret($this->getDb(), $user->getUsername()));
     }
 }
