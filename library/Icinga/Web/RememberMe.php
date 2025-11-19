@@ -246,7 +246,7 @@ class RememberMe
         );
 
         if ($authenticated) {
-            $user->setTwoFactorSuccessful(true);
+            $user->setTwoFactorSuccessful();
             $auth->setAuthenticated($user);
         }
 

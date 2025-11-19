@@ -678,7 +678,7 @@ class User
      *
      * @return $this
      */
-    public function setTwoFactorEnabled(bool $enabled): static
+    public function setTwoFactorEnabled(bool $enabled = true): static
     {
         $this->twoFactorEnabled = $enabled;
 
@@ -702,7 +702,7 @@ class User
      *
      * @return $this
      */
-    public function setTwoFactorSuccessful(bool $successful): static
+    public function setTwoFactorSuccessful(bool $successful = true): static
     {
         $this->twoFactorSuccessful = $successful;
 
