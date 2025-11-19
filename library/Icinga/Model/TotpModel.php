@@ -8,17 +8,17 @@ use ipl\Orm\Model;
 
 class TotpModel extends Model
 {
-    public function getTableName()
+    public function getTableName(): string
     {
         return 'icingaweb_totp';
     }
 
-    public function getKeyName()
+    public function getKeyName(): string
     {
         return 'username';
     }
 
-    public function getColumns()
+    public function getColumns(): array
     {
         return [
             'username',

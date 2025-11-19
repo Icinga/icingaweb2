@@ -14,7 +14,7 @@ use Icinga\Web\Url;
 
 class Challenge2FAForm extends LoginForm
 {
-    public function init()
+    public function init(): void
     {
         $this->setRequiredCue(null);
         $this->setName('form_challenge_2fa');
@@ -22,7 +22,7 @@ class Challenge2FAForm extends LoginForm
         $this->setProgressLabel($this->translate('Verifying'));
     }
 
-    public function createElements(array $formData)
+    public function createElements(array $formData): void
     {
         $this->addElement(
             'text',
@@ -46,7 +46,7 @@ class Challenge2FAForm extends LoginForm
         );
     }
 
-    public function onSuccess()
+    public function onSuccess(): bool
     {
         $user = Auth::getInstance()->getUser();
         $totp = IcingaTotp::loadFromDb($this->getDb(), $user->getUsername());
