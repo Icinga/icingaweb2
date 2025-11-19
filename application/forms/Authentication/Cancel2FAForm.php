@@ -10,14 +10,14 @@ use Icinga\Web\Url;
 
 class Cancel2FAForm extends Form
 {
-    public function init()
+    public function init(): void
     {
         $this->setRequiredCue(null);
         $this->setName('form_cancel_2fa');
         $this->setAttrib('class', 'content-centered');
     }
 
-    public function createElements(array $formData)
+    public function createElements(array $formData): void
     {
         $this->addElement(
             'hidden',
@@ -52,7 +52,7 @@ class Cancel2FAForm extends Form
         );
     }
 
-    public function onSuccess()
+    public function onSuccess(): bool
     {
         Session::getSession()->purge();
 
