@@ -201,9 +201,6 @@ class TotpConfigForm extends Form
         return $shouldRedirect;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onRequest(): void
     {
         $enabledTemporary = Session::getSession()->get('enabled_2fa');
