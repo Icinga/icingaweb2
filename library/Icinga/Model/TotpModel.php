@@ -4,6 +4,8 @@
 
 namespace Icinga\Model;
 
+use ipl\Orm\Behavior\MillisecondTimestamp;
+use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 
 class TotpModel extends Model
@@ -25,5 +27,10 @@ class TotpModel extends Model
             'secret',
             'ctime'
         ];
+    }
+
+    public function createBehaviors(Behaviors $behaviors): void
+    {
+        $behaviors->add(new MillisecondTimestamp(['ctime']));
     }
 }
