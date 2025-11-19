@@ -28,8 +28,8 @@ class TotpConfigForm extends Form
     /** @const Label for the button to verify the totp secret */
     protected const VERIFY_LABEL = 'Verify TOTP Secret';
 
-    /** @const Label for the button to remove the totp secret */
-    protected const REMOVE_LABEL = 'Remove TOTP Secret';
+    /** @const Label for the button to remove the totp secret, which disables 2FA */
+    protected const DISABLE_LABEL = 'Disable 2FA';
 
     public function init(): void
     {
@@ -67,8 +67,8 @@ class TotpConfigForm extends Form
     public function createElements(array $formData): void
     {
         if (IcingaTotp::hasDbSecret($this->getDb(), $this->user->getUsername())) {
-            $this->setSubmitLabel(static::REMOVE_LABEL);
-            $this->setProgressLabel($this->translate('Removing'));
+            $this->setSubmitLabel(static::DISABLE_LABEL);
+            $this->setProgressLabel($this->translate('Disabling'));
         } else {
             $this->addElement(
                 'checkbox',
@@ -162,7 +162,7 @@ class TotpConfigForm extends Form
                     }
 
                     break;
-                case static::REMOVE_LABEL:
+                case static::DISABLE_LABEL:
                     $totp->removeFromDb();
                     Notification::success($this->translate('TOTP 2FA secret has been removed.'));
 
