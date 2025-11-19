@@ -131,5 +131,12 @@ CREATE TABLE "icingaweb_schema" (
   CONSTRAINT idx_icingaweb_schema_version UNIQUE (version)
 );
 
+CREATE TABLE "icingaweb_totp" (
+  "username" varchar(254) NOT NULL,
+  "secret"   varchar(255) NOT NULL,
+  "ctime"    bigint,
+  CONSTRAINT pk_icingaweb_totp PRIMARY KEY ("username")
+);
+
 INSERT INTO icingaweb_schema (version, timestamp, success)
   VALUES ('2.12.0', extract(epoch from now()) * 1000, 'y');
