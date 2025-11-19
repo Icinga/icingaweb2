@@ -6,12 +6,9 @@ namespace Icinga\Forms\Account;
 
 use Icinga\Authentication\IcingaTotp;
 use Icinga\Common\Database;
-use Icinga\Model\TotpModel;
 use Icinga\User;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
-use Icinga\Web\Session;
-use ipl\Stdlib\Filter;
 
 /**
  * Form for enabling and disabling TOTP or creating and updating the TOTP secret
@@ -190,28 +187,8 @@ class TotpConfigForm extends Form
                     Notification::success($this->translate('TOTP 2FA secret has been removed.'));
                     break;
             }
-        } elseif ($this->getElement('enabled_2fa')) {
-            if ($this->getValue('enabled_2fa')) {
-                Session::getSession()->set('enabled_2fa', true);
-            } else {
-                Session::getSession()->delete('enabled_2fa');
-            }
         }
 
         return $shouldRedirect;
-    }
-
-    public function onRequest(): void
-    {
-        $enabledTemporary = Session::getSession()->get('enabled_2fa');
-
-        $totpQuery = TotpModel::on($this->getDb())->filter(Filter::equal('username', $this->user->getUsername()));
-        $dbTotp = $totpQuery->first();
-
-        $this->populate([
-            'enabled_2fa' => isset($dbTotp->secret) || $enabledTemporary,
-        ]);
-
-        Session::getSession()->delete('enabled_2fa');
     }
 }
