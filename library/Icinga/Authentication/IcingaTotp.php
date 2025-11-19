@@ -5,6 +5,7 @@
 namespace Icinga\Authentication;
 
 use chillerlan\QRCode\QRCode;
+use DateTime;
 use Icinga\Common\Database;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Model\TotpModel;
@@ -115,7 +116,7 @@ class IcingaTotp
                     ->values([
                         'username' => $this->user,
                         'secret'   => $this->getSecret(),
-                        'ctime'    => date('Y-m-d H:i:s'),
+                        'ctime'    => (int) (new DateTime())->format("Uv"),
                     ])
             );
         } catch (Throwable $e) {
