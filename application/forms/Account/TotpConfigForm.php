@@ -66,7 +66,10 @@ class TotpConfigForm extends Form
 
     public function createElements(array $formData): void
     {
-        if (! IcingaTotp::hasDbSecret($this->getDb(), $this->user->getUsername())) {
+        if (IcingaTotp::hasDbSecret($this->getDb(), $this->user->getUsername())) {
+            $this->setSubmitLabel(static::REMOVE_LABEL);
+            $this->setProgressLabel($this->translate('Removing'));
+        } else {
             $this->addElement(
                 'checkbox',
                 'enabled_2fa',
@@ -78,69 +81,58 @@ class TotpConfigForm extends Form
                     ),
                 ]
             );
-        }
 
-        if ($dbTotp = IcingaTotp::loadFromDb($this->getDb(), $this->user->getUsername())) {
-            $this->addElement(
-                'text',
-                'user_totp_secret',
-                [
-                    'value' => $dbTotp->getSecret()
-                ]
-            );
+            if (isset($formData['enabled_2fa']) && $formData['enabled_2fa']) {
+                // Keep the same secret if validation fails, otherwise the user had to scan a new QR code every time.
+                if (isset($formData['totp_secret'])) {
+                    $this->totp = IcingaTotp::createFromSecret($formData['totp_secret'], $this->user->getUsername());
+                }
 
-            $this->setSubmitLabel(static::REMOVE_LABEL);
-            $this->setProgressLabel($this->translate('Removing'));
-        } elseif (isset($formData['enabled_2fa']) && $formData['enabled_2fa']) {
-            // Keep the same secret if the validation fails, otherwise the user had to scan a new QR code every time.
-            if (isset($formData['totp_secret'])) {
-                $this->totp = IcingaTotp::createFromSecret($formData['totp_secret'], $this->user->getUsername());
-            }
-
-            $this->addElement(
-                'hidden',
-                'totp_qr_code',
-                [
-                    'decorators' => [
-                        [
-                            'HtmlTag',
+                $this->addElement(
+                    'hidden',
+                    'totp_qr_code',
+                    [
+                        'decorators' => [
                             [
-                                'tag'   => 'img',
-                                'src'   => $this->totp->createQRCode(),
-                                'class' => 'totp-qr-code'
+                                'HtmlTag',
+                                [
+                                    'tag'   => 'img',
+                                    'src'   => $this->totp->createQRCode(),
+                                    'class' => 'totp-qr-code'
+                                ]
                             ]
                         ]
                     ]
-                ]
-            );
+                );
 
-            $this->addElement(
-                'textarea',
-                'totp_manual_token_url',
-                [
-                    'ignore'   => true,
-                    'disabled' => true,
-                    'label'    => $this->translate('Manual Token URL'),
-                    'value'    => $this->totp->getTotpAuthUrl()
-                ]
-            );
+                $this->addElement(
+                    'textarea',
+                    'totp_manual_token_url',
+                    [
+                        'ignore'   => true,
+                        'disabled' => true,
+                        'label'    => $this->translate('Manual Token URL'),
+                        'value'    => $this->totp->getTotpAuthUrl()
+                    ]
+                );
 
-            $this->addElement(
-                'number',
-                'totp_verification_code',
-                array(
-                    'label'       => $this->translate('Verification Code'),
-                    'description' => $this->translate(
-                        'Please enter the code from your authenticator app to verify your setup.'
-                    ),
-                    'min'         => 0,
-                    'max'         => 999999,
-                    'step'        => 1
-                )
-            );
+                $this->addElement(
+                    'number',
+                    'totp_verification_code',
+                    array(
+                        'label'       => $this->translate('Verification Code'),
+                        'description' => $this->translate(
+                            'Please enter the code from your authenticator app to verify your setup.'
+                        ),
+                        'min'         => 0,
+                        'max'         => 999999,
+                        'step'        => 1
+                    )
+                );
 
-            $this->setSubmitLabel(static::VERIFY_LABEL);
-            $this->setProgressLabel($this->translate('Verifying'));
+                $this->setSubmitLabel(static::VERIFY_LABEL);
+                $this->setProgressLabel($this->translate('Verifying'));
+            }
         }
 
         $this->addElement(
