@@ -157,34 +157,23 @@ class TotpConfigForm extends Form
         $shouldRedirect = true;
 
         if ($this->getElement('btn_submit')) {
+            $totp = IcingaTotp::createFromSecret($this->getValue('totp_secret'), $this->user->getUsername());
+
             switch ($this->getValue('btn_submit')) {
                 case static::VERIFY_LABEL:
-                    $totp = IcingaTotp::createFromSecret(
-                        $this->getValue('totp_secret'),
-                        $this->user->getUsername()
-                    );
-
                     if ($totp->verify($this->getValue('totp_verification_code'))) {
-                        $totp = IcingaTotp::createFromSecret(
-                            $this->getValue('totp_secret'),
-                            $this->user->getUsername()
-                        );
                         $totp->saveToDb();
-
                         Notification::success($this->translate('TOTP 2FA has been configured successfully.'));
                     } else {
-                        Notification::error($this->translate('The verification code is invalid. Please try again.'));
                         $shouldRedirect = false;
+                        Notification::error($this->translate('The verification code is invalid. Please try again.'));
                     }
+
                     break;
                 case static::REMOVE_LABEL:
-                    $totp = IcingaTotp::createFromSecret(
-                        $this->getValue('totp_secret'),
-                        $this->user->getUsername()
-                    );
                     $totp->removeFromDb();
-
                     Notification::success($this->translate('TOTP 2FA secret has been removed.'));
+
                     break;
             }
         }
