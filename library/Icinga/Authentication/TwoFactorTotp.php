@@ -8,7 +8,7 @@ use chillerlan\QRCode\QRCode;
 use DateTime;
 use Icinga\Common\Database;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Model\TotpModel;
+use Icinga\Model\TwoFactorModel;
 use ipl\Sql\Connection;
 use ipl\Sql\Delete;
 use ipl\Sql\Insert;
@@ -16,7 +16,7 @@ use ipl\Stdlib\Filter;
 use OTPHP\TOTP;
 use Throwable;
 
-class IcingaTotp
+class TwoFactorTotp
 {
     use Database;
 
@@ -38,36 +38,36 @@ class IcingaTotp
 
     public static function generate(string $user): static
     {
-        $totp = new static($user);
-        $totp->setTotp(TOTP::generate(new PsrClock()));
+        $twoFactor = new static($user);
+        $twoFactor->setTotp(TOTP::generate(new PsrClock()));
 
-        return $totp;
+        return $twoFactor;
     }
 
     public static function createFromSecret(string $secret, string $user): static
     {
-        $totp = new static($user);
-        $totp->setTotp(TOTP::createFromSecret($secret, new PsrClock()));
+        $twoFactor = new static($user);
+        $twoFactor->setTotp(TOTP::createFromSecret($secret, new PsrClock()));
 
-        return $totp;
+        return $twoFactor;
     }
 
     public static function loadFromDb(Connection $db, string $user): ?static
     {
-        $totpQuery = TotpModel::on($db)->filter(Filter::equal('username', $user));
-        $dbTotp = $totpQuery->first();
-        if ($dbTotp === null) {
+        $query = TwoFactorModel::on($db)->filter(Filter::equal('username', $user));
+        $dbTwoFactor = $query->first();
+        if ($dbTwoFactor === null) {
             return null;
         }
 
-        return self::createFromSecret($dbTotp->secret, $user);
+        return self::createFromSecret($dbTwoFactor->secret, $user);
     }
 
     public static function hasDbSecret(Connection $db, string $user): bool
     {
-        $totpQuery = TotpModel::on($db)->filter(Filter::equal('username', $user));
+        $query = TwoFactorModel::on($db)->filter(Filter::equal('username', $user));
 
-        return $totpQuery->first() !== null;
+        return $query->first() !== null;
     }
 
     public function getSecret(): string
@@ -82,7 +82,7 @@ class IcingaTotp
     }
 
     /**
-     * Creates a QR code for the TOTP secret.
+     * Creates a QR code for the 2FA TOTP secret.
      * This method generates a QR code that can be scanned by TOTP apps to set up the user's secret.
      *
      * @return string The rendered QR code as a string
@@ -101,9 +101,9 @@ class IcingaTotp
     }
 
     /**
-     * Saves the TOTP secret to the database.
+     * Saves the 2FA TOTP secret to the database.
      *
-     * This method stores the TOTP secret associated with the user in the database.
+     * This method stores the 2FA TOTP secret associated with the user in the database.
      *
      * @throws ConfigurationError If the database operation fails
      */
@@ -112,7 +112,7 @@ class IcingaTotp
         try {
             $this->getDb()->prepexec(
                 (new Insert())
-                    ->into('icingaweb_totp')
+                    ->into('icingaweb_2fa')
                     ->values([
                         'username' => $this->user,
                         'secret'   => $this->getSecret(),
@@ -121,15 +121,15 @@ class IcingaTotp
             );
         } catch (Throwable $e) {
             throw new ConfigurationError(
-                sprintf('Failed to save TOTP secret for user %s: %s', $this->user, $e->getMessage()),
+                sprintf('Failed to save 2FA TOTP secret for user %s: %s', $this->user, $e->getMessage()),
             );
         }
     }
 
     /**
-     * Removes the TOTP secret from the database.
+     * Removes the 2FA TOTP secret from the database.
      *
-     * This method deletes the TOTP secret associated with the user from the database.
+     * This method removes the 2FA TOTP secret associated with the user from the database.
      *
      * @throws ConfigurationError If the database operation fails
      */
@@ -138,12 +138,12 @@ class IcingaTotp
         try {
             $this->getDb()->prepexec(
                 (new Delete())
-                    ->from('icingaweb_totp')
+                    ->from('icingaweb_2fa')
                     ->where(['username = ?' => $this->user])
             );
         } catch (Throwable $e) {
             throw new ConfigurationError(
-                sprintf('Failed to remove TOTP secret for user %s: %s', $this->user, $e->getMessage()),
+                sprintf('Failed to remove 2FA TOTP secret for user %s: %s', $this->user, $e->getMessage()),
             );
         }
     }

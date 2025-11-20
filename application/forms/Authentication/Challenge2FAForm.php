@@ -8,7 +8,7 @@ use Exception;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
-use Icinga\Authentication\IcingaTotp;
+use Icinga\Authentication\TwoFactorTotp;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
 
@@ -49,8 +49,8 @@ class Challenge2FAForm extends LoginForm
     public function onSuccess(): bool
     {
         $user = Auth::getInstance()->getUser();
-        $totp = IcingaTotp::loadFromDb($this->getDb(), $user->getUsername());
-        if ($this->getElement('token') && $totp->verify($this->getValue('token'))) {
+        $twoFactor = TwoFactorTotp::loadFromDb($this->getDb(), $user->getUsername());
+        if ($this->getElement('token') && $twoFactor->verify($this->getValue('token'))) {
             $auth = Auth::getInstance();
             $user = $auth->getUser();
             $user->setTwoFactorSuccessful();

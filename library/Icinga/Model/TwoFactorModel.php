@@ -10,17 +10,17 @@ use ipl\Orm\Behaviors;
 use ipl\Orm\Model;
 
 /**
- * Database model for the table that stores the secrets for 2FA
+ * Database model for the table that stores the 2FA TOTP secrets
  *
  * @property string   $username The user who owns the secret
  * @property string   $secret   The secret from which the tokens are generated
  * @property DateTime $ctime    The creation time of the secret
  */
-class TotpModel extends Model
+class TwoFactorModel extends Model
 {
     public function getTableName(): string
     {
-        return 'icingaweb_totp';
+        return 'icingaweb_2fa';
     }
 
     public function getKeyName(): string
