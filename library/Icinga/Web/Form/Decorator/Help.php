@@ -43,11 +43,11 @@ class Help extends Zend_Form_Decorator_Abstract
     /**
      * Return the id used to identify the description associated with the decorated element
      *
-     * @param   Zend_Form_Element   $element    The element for which to generate a id
+     * @param   Zend_Form_Element|null   $element    The element for which to generate a id
      *
      * @return  string
      */
-    public function getDescriptionId(Zend_Form_Element $element = null)
+    public function getDescriptionId(?Zend_Form_Element $element = null)
     {
         if ($this->descriptionId === null) {
             $element = $element ?: $this->getElement();

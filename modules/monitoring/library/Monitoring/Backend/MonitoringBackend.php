@@ -233,11 +233,11 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
      * Create a data view to fetch data from
      *
      * @param   string  $name
-     * @param   array   $columns
+     * @param   array|null   $columns
      *
      * @return  \Icinga\Module\Monitoring\DataView\DataView
      */
-    public function from($name, array $columns = null)
+    public function from($name, ?array $columns = null)
     {
         $class = $this->buildViewClassName($name);
         return new $class($this, $columns);

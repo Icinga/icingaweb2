@@ -46,10 +46,10 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
     /**
      * Create a new view
      *
-     * @param ConnectionInterface   $connection
-     * @param array                 $columns
+     * @param ConnectionInterface        $connection
+     * @param array|null                 $columns
      */
-    public function __construct(ConnectionInterface $connection, array $columns = null)
+    public function __construct(ConnectionInterface $connection, ?array $columns = null)
     {
         $this->connection = $connection;
         $this->query = $connection->query($this->getQueryName(), $columns);
@@ -140,11 +140,11 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      * Create view from params
      *
      * @param   array $params
-     * @param   array $columns
+     * @param   array|null $columns
      *
      * @return  static
      */
-    public static function fromParams(array $params, array $columns = null)
+    public static function fromParams(array $params, ?array $columns = null)
     {
         $view = new static(MonitoringBackend::instance($params['backend']), $columns);
 
@@ -274,14 +274,14 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
     /**
      * Return a pivot table for the given columns based on the current query
      *
-     * @param   string  $xAxisColumn    The column to use for the x axis
-     * @param   string  $yAxisColumn    The column to use for the y axis
-     * @param   Filter  $xAxisFilter    The filter to apply on a query for the x axis
-     * @param   Filter  $yAxisFilter    The filter to apply on a query for the y axis
+     * @param   string       $xAxisColumn    The column to use for the x axis
+     * @param   string       $yAxisColumn    The column to use for the y axis
+     * @param   Filter|null  $xAxisFilter    The filter to apply on a query for the x axis
+     * @param   Filter|null  $yAxisFilter    The filter to apply on a query for the y axis
      *
      * @return  PivotTable
      */
-    public function pivot($xAxisColumn, $yAxisColumn, Filter $xAxisFilter = null, Filter $yAxisFilter = null)
+    public function pivot($xAxisColumn, $yAxisColumn, ?Filter $xAxisFilter = null, ?Filter $yAxisFilter = null)
     {
         $pivot = new PivotTable($this->query, $xAxisColumn, $yAxisColumn);
         return $pivot->setXAxisFilter($xAxisFilter)->setYAxisFilter($yAxisFilter);

@@ -159,14 +159,14 @@ class UserBackend implements ConfigAwareFactory
     /**
      * Create and return a user backend with the given name and given configuration applied to it
      *
-     * @param   string          $name
-     * @param   ConfigObject    $backendConfig
+     * @param   string               $name
+     * @param   ConfigObject|null    $backendConfig
      *
      * @return  UserBackendInterface
      *
      * @throws  ConfigurationError
      */
-    public static function create($name, ConfigObject $backendConfig = null)
+    public static function create($name, ?ConfigObject $backendConfig = null)
     {
         if ($backendConfig === null) {
             self::assertBackendsExist();

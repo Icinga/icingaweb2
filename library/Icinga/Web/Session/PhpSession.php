@@ -36,14 +36,14 @@ class PhpSession extends Session
     /**
      * Create a new PHPSession object using the provided options (if any)
      *
-     * @param   array   $options    An optional array of ini options to set
+     * @param   array|null   $options    An optional array of ini options to set
      *
      * @return  static
      *
      * @throws  ConfigurationError
      * @see     http://php.net/manual/en/session.configuration.php
      */
-    public static function create(array $options = null)
+    public static function create(?array $options = null)
     {
         return version_compare(PHP_VERSION, '7.2.0') < 0 ? new self($options) : new Php72Session($options);
     }
@@ -51,12 +51,12 @@ class PhpSession extends Session
     /**
      * Create a new PHPSession object using the provided options (if any)
      *
-     * @param   array   $options    An optional array of ini options to set
+     * @param   array|null   $options    An optional array of ini options to set
      *
      * @throws  ConfigurationError
      * @see     http://php.net/manual/en/session.configuration.php
      */
-    public function __construct(array $options = null)
+    public function __construct(?array $options = null)
     {
         $defaultCookieOptions = array(
             'use_trans_sid'     => false,

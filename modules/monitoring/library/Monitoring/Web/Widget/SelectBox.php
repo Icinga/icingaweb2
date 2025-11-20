@@ -73,11 +73,11 @@ class SelectBox extends AbstractWidget
     /**
      * Return the chosen interval value or null
      *
-     * @param   Request     $request    The request to fetch the value from
+     * @param   Request|null     $request    The request to fetch the value from
      *
      * @return  string|null
      */
-    public function getInterval(Request $request = null)
+    public function getInterval(?Request $request = null)
     {
         if ($request === null && $this->request) {
             $request = $this->request;

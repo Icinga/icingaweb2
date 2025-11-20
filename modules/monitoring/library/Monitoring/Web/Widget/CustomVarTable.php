@@ -49,7 +49,7 @@ class CustomVarTable extends BaseHtmlElement
      * @param iterable $data
      * @param ?MonitoredObject $object
      */
-    public function __construct($data, MonitoredObject $object = null)
+    public function __construct($data, ?MonitoredObject $object = null)
     {
         $this->data = $data;
         $this->object = $object;

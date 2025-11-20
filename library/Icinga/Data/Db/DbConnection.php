@@ -72,9 +72,9 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     /**
      * Create a new connection object
      *
-     * @param ConfigObject $config
+     * @param ConfigObject|null $config
      */
-    public function __construct(ConfigObject $config = null)
+    public function __construct(?ConfigObject $config = null)
     {
         $this->config = $config;
         $this->connect();
@@ -428,14 +428,14 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
      * Pass an array with a column name (the same as in $bind) and a PDO::PARAM_* constant as value
      * as fourth parameter $types to define a different type than string for a particular column.
      *
-     * @param   string  $table
-     * @param   array   $bind
-     * @param   Filter  $filter
-     * @param   array   $types
+     * @param   string       $table
+     * @param   array        $bind
+     * @param   Filter|null  $filter
+     * @param   array        $types
      *
      * @return  int             The number of affected rows
      */
-    public function update($table, array $bind, Filter $filter = null, array $types = array())
+    public function update($table, array $bind, ?Filter $filter = null, array $types = array())
     {
         $set = array();
         foreach ($bind as $column => $value) {
@@ -464,12 +464,12 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     /**
      * Delete table rows, optionally limited by using a filter
      *
-     * @param   string  $table
-     * @param   Filter  $filter
+     * @param   string       $table
+     * @param   Filter|null  $filter
      *
      * @return  int             The number of affected rows
      */
-    public function delete($table, Filter $filter = null)
+    public function delete($table, ?Filter $filter = null)
     {
         return $this->dbAdapter->delete($table, $filter ? $this->renderFilter($filter) : '');
     }

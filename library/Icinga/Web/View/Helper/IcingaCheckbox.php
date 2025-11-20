@@ -5,7 +5,7 @@ namespace Icinga\Web\View\Helper;
 
 class IcingaCheckbox extends \Zend_View_Helper_FormCheckbox
 {
-    public function icingaCheckbox($name, $value = null, $attribs = null, array $checkedOptions = null)
+    public function icingaCheckbox($name, $value = null, $attribs = null, ?array $checkedOptions = null)
     {
         if (! isset($attribs['id'])) {
             $attribs['id'] = $this->view->protectId('icingaCheckbox_' . $name);

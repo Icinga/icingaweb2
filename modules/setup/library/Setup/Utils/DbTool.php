@@ -545,15 +545,15 @@ class DbTool
     /**
      * Return whether the given privileges were granted
      *
-     * @param   array   $privileges     An array of strings with the required privilege names
-     * @param   array   $context        An array describing the context for which the given privileges need to apply.
-     *                                  Only one or more table names are currently supported
-     * @param   string  $username       The login name for which to check the privileges,
-     *                                  if NULL the current login is used
+     * @param   array        $privileges   An array of strings with the required privilege names
+     * @param   array|null   $context      An array describing the context for which the given privileges need to apply.
+     *                                     Only one or more table names are currently supported
+     * @param   string       $username     The login name for which to check the privileges,
+     *                                     if NULL the current login is used
      *
      * @return  ?bool
      */
-    public function checkPrivileges(array $privileges, array $context = null, $username = null)
+    public function checkPrivileges(array $privileges, ?array $context = null, $username = null)
     {
         if ($this->config['db'] === 'mysql') {
             return $this->checkMysqlPrivileges($privileges, false, $context, $username);
@@ -730,18 +730,18 @@ EOD;
     /**
      * Check whether the current user has the given privileges
      *
-     * @param   array   $privileges     The privilege names
-     * @param   bool    $requireGrants  Only return true when all privileges can be granted to others
-     * @param   array   $context        An array describing the context for which the given privileges need to apply.
-     *                                  Only one or more table names are currently supported
-     * @param   string  $username       The login name to which the passed privileges need to be granted
+     * @param   array       $privileges    The privilege names
+     * @param   bool        $requireGrants Only return true when all privileges can be granted to others
+     * @param   array|null  $context       An array describing the context for which the given privileges need to apply.
+     *                                     Only one or more table names are currently supported
+     * @param   string      $username      The login name to which the passed privileges need to be granted
      *
      * @return  bool
      */
     protected function checkMysqlPrivileges(
         array $privileges,
         $requireGrants = false,
-        array $context = null,
+        ?array $context = null,
         $username = null
     ) {
         $mysqlPrivileges = array_intersect($privileges, array_keys($this->mysqlGrantContexts));
@@ -835,18 +835,18 @@ EOD;
      * Note that database and table specific privileges (i.e. not SUPER, CREATE and CREATEROLE) are ignored
      * in case no connection to the database defined in the resource configuration has been established
      *
-     * @param   array   $privileges     The privilege names
-     * @param   bool    $requireGrants  Only return true when all privileges can be granted to others
-     * @param   array   $context        An array describing the context for which the given privileges need to apply.
-     *                                  Only one or more table names are currently supported
-     * @param   string  $username       The login name to which the passed privileges need to be granted
+     * @param   array       $privileges    The privilege names
+     * @param   bool        $requireGrants Only return true when all privileges can be granted to others
+     * @param   array|null  $context       An array describing the context for which the given privileges need to apply.
+     *                                     Only one or more table names are currently supported
+     * @param   string      $username      The login name to which the passed privileges need to be granted
      *
      * @return  bool
      */
     public function checkPgsqlPrivileges(
         array $privileges,
         $requireGrants = false,
-        array $context = null,
+        ?array $context = null,
         $username = null
     ) {
         $privilegesGranted = true;

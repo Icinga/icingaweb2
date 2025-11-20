@@ -34,11 +34,11 @@ abstract class ObjectActionsHook
     /**
      * Create and return a new Navigation object
      *
-     * @param   array   $actions    Optional array of actions to add to the returned object
+     * @param   array|null   $actions    Optional array of actions to add to the returned object
      *
      * @return  Navigation
      */
-    protected function createNavigation(array $actions = null)
+    protected function createNavigation(?array $actions = null)
     {
         return empty($actions) ? new Navigation() : Navigation::fromArray($actions);
     }

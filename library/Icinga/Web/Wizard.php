@@ -254,11 +254,11 @@ class Wizard
      * Validate the request data using the current page, update the wizard's
      * position and redirect to the page's redirect url upon success.
      *
-     * @param   Request     $request    The request to be processed
+     * @param   Request|null     $request    The request to be processed
      *
-     * @return  Request                 The request supposed to be processed
+     * @return  Request                      The request supposed to be processed
      */
-    public function handleRequest(Request $request = null)
+    public function handleRequest(?Request $request = null)
     {
         $page = $this->getCurrentPage();
 
@@ -377,11 +377,11 @@ class Wizard
     /**
      * Return the direction of this wizard using the given request
      *
-     * @param   Request     $request    The request to use
+     * @param   Request|null     $request    The request to use
      *
-     * @return  int                     The direction @see Wizard::FORWARD @see Wizard::BACKWARD @see Wizard::NO_CHANGE
+     * @return  int                          The direction @see Wizard::FORWARD @see Wizard::BACKWARD @see Wizard::NO_CHANGE
      */
-    protected function getDirection(Request $request = null)
+    protected function getDirection(?Request $request = null)
     {
         if ($this->parent) {
             return $this->parent->getDirection($request);
