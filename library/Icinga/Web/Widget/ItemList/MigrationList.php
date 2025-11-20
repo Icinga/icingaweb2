@@ -35,7 +35,7 @@ class MigrationList extends BaseItemList
      *
      * @param ?MigrationForm $form
      */
-    public function __construct($data, MigrationForm $form = null)
+    public function __construct($data, ?MigrationForm $form = null)
     {
         parent::__construct($data);
 
