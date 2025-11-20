@@ -38,7 +38,29 @@ class StaticController
             return;
         }
 
-        $assetRoot = $library->getStaticAssetPath();
+        preg_match('~^(\w+)/~', $assetPath, $m);
+        switch ($m[1] ?? null) {
+            case 'js':
+                $assetPath = substr($assetPath, 3);
+                $assetRoot = $library->getJsAssetPath();
+                $contentType = 'text/javascript';
+
+                break;
+            case 'css':
+                $assetPath = substr($assetPath, 4);
+                $assetRoot = $library->getCssAssetPath();
+                $contentType = 'text/css';
+
+                break;
+            case 'static':
+                $assetPath = substr($assetPath, 7);
+
+                // `static/` is the default
+            default:
+                $assetRoot = $library->getStaticAssetPath();
+                $contentType = null;
+        }
+
         if (empty($assetRoot)) {
             $app->getResponse()
                 ->setHttpResponseCode(404);
@@ -79,7 +101,7 @@ class StaticController
         } else {
             $app->getResponse()
                 ->setHeader('ETag', $eTag)
-                ->setHeader('Content-Type', mime_content_type($filePath), true)
+                ->setHeader('Content-Type', $contentType ?? mime_content_type($filePath), true)
                 ->setHeader('Last-Modified', gmdate('D, d M Y H:i:s', $fileStat['mtime']) . ' GMT')
                 ->setBody(file_get_contents($filePath));
         }
