@@ -4,13 +4,13 @@
 namespace Icinga\Controllers;
 
 use Icinga\Application\Config;
-use Icinga\Authentication\IcingaTotp;
+use Icinga\Authentication\TwoFactorTotp;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Common\Database;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Forms\Account\ChangePasswordForm;
-use Icinga\Forms\Account\TotpConfigForm;
+use Icinga\Forms\Account\TwoFactorConfigForm;
 use Icinga\Forms\PreferenceForm;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Controller;
@@ -73,16 +73,16 @@ class AccountController extends Controller
         }
 
         if ($user->can('user/two-factor-authentication')) {
-            $totp = IcingaTotp::loadFromDb($this->getDb(), $user->getUsername());
-            if ($totp === null) {
-                $totp = IcingaTotp::generate($user->getUsername());
+            $twoFactor = TwoFactorTotp::loadFromDb($this->getDb(), $user->getUsername());
+            if ($twoFactor === null) {
+                $twoFactor = TwoFactorTotp::generate($user->getUsername());
             }
 
-            $totpForm = new TotpConfigForm();
-            $totpForm->setUser($user);
-            $totpForm->setTotp($totp);
-            $totpForm->handleRequest();
-            $this->view->totpForm = $totpForm;
+            $twoFactorForm = new TwoFactorConfigForm();
+            $twoFactorForm->setUser($user);
+            $twoFactorForm->setTwoFactor($twoFactor);
+            $twoFactorForm->handleRequest();
+            $this->view->twoFactorForm = $twoFactorForm;
         }
 
         $form = new PreferenceForm();

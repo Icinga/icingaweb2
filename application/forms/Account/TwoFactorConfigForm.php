@@ -4,36 +4,36 @@
 
 namespace Icinga\Forms\Account;
 
-use Icinga\Authentication\IcingaTotp;
+use Icinga\Authentication\TwoFactorTotp;
 use Icinga\Common\Database;
 use Icinga\User;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 
 /**
- * Form for enabling and disabling TOTP or creating and updating the TOTP secret
+ * Form for enabling and disabling 2FA or creating and updating the 2FA TOTP secret
  *
- * This form is used to manage the TOTP settings of a user account.
+ * This form is used to manage the 2FA settings of a user account.
  */
-class TotpConfigForm extends Form
+class TwoFactorConfigForm extends Form
 {
     use Database;
 
     /** @var User|null The user to work with */
     protected ?User $user = null;
 
-    /** @var IcingaTotp The TOTP instance to work with */
-    protected IcingaTotp $totp;
+    /** @var TwoFactorTotp The TwoFactorTotp instance to work with */
+    protected TwoFactorTotp $twoFactor;
 
-    /** @const Label for the button to verify the totp secret */
-    protected const VERIFY_LABEL = 'Verify TOTP Secret';
+    /** @const Label for the button to verify the 2FA TOTP secret */
+    protected const VERIFY_2FA_LABEL = 'Verify 2FA TOTP Secret';
 
-    /** @const Label for the button to remove the totp secret, which disables 2FA */
-    protected const DISABLE_LABEL = 'Disable 2FA';
+    /** @const Label for the button to remove the 2FA TOTP secret, which disables 2FA */
+    protected const DISABLE_2FA_LABEL = 'Disable 2FA';
 
     public function init(): void
     {
-        $this->setName('form_totp');
+        $this->setName('form_2fa');
     }
 
     /**
@@ -51,23 +51,23 @@ class TotpConfigForm extends Form
     }
 
     /**
-     * Set the TOTP instance to work with
+     * Set the TwoFactorTotp instance to work with
      *
-     * @param IcingaTotp $totp
+     * @param TwoFactorTotp $twoFactor
      *
      * @return $this
      */
-    public function setTotp(IcingaTotp $totp): static
+    public function setTwoFactor(TwoFactorTotp $twoFactor): static
     {
-        $this->totp = $totp;
+        $this->twoFactor = $twoFactor;
 
         return $this;
     }
 
     public function createElements(array $formData): void
     {
-        if (IcingaTotp::hasDbSecret($this->getDb(), $this->user->getUsername())) {
-            $this->setSubmitLabel(static::DISABLE_LABEL);
+        if (TwoFactorTotp::hasDbSecret($this->getDb(), $this->user->getUsername())) {
+            $this->setSubmitLabel(static::DISABLE_2FA_LABEL);
             $this->setProgressLabel($this->translate('Disabling'));
         } else {
             $this->addElement(
@@ -75,7 +75,7 @@ class TotpConfigForm extends Form
                 'enabled_2fa',
                 [
                     'autosubmit'  => true,
-                    'label'       => $this->translate('Enable TOTP 2FA'),
+                    'label'       => $this->translate('Enable 2FA (TOTP)'),
                     'description' => $this->translate(
                         'This option allows you to enable or to disable the two factor authentication via TOTP.'
                     ),
@@ -84,21 +84,24 @@ class TotpConfigForm extends Form
 
             if (isset($formData['enabled_2fa']) && $formData['enabled_2fa']) {
                 // Keep the same secret if validation fails, otherwise the user had to scan a new QR code every time.
-                if (isset($formData['totp_secret'])) {
-                    $this->totp = IcingaTotp::createFromSecret($formData['totp_secret'], $this->user->getUsername());
+                if (isset($formData['2fa_totp_secret'])) {
+                    $this->twoFactor = TwoFactorTotp::createFromSecret(
+                        $formData['2fa_totp_secret'],
+                        $this->user->getUsername()
+                    );
                 }
 
                 $this->addElement(
                     'hidden',
-                    'totp_qr_code',
+                    '2fa_totp_qr_code',
                     [
                         'decorators' => [
                             [
                                 'HtmlTag',
                                 [
                                     'tag'   => 'img',
-                                    'src'   => $this->totp->createQRCode(),
-                                    'class' => 'totp-qr-code'
+                                    'src'   => $this->twoFactor->createQRCode(),
+                                    'class' => 'two-factor-totp-qr-code'
                                 ]
                             ]
                         ]
@@ -107,22 +110,22 @@ class TotpConfigForm extends Form
 
                 $this->addElement(
                     'textarea',
-                    'totp_manual_token_url',
+                    '2fa_manual_auth_url',
                     [
                         'ignore'   => true,
                         'disabled' => true,
-                        'label'    => $this->translate('Manual Token URL'),
-                        'value'    => $this->totp->getTotpAuthUrl()
+                        'label'    => $this->translate('Manual Auth URL'),
+                        'value'    => $this->twoFactor->getTotpAuthUrl()
                     ]
                 );
 
                 $this->addElement(
                     'number',
-                    'totp_verification_code',
+                    '2fa_verification_token',
                     array(
-                        'label'       => $this->translate('Verification Code'),
+                        'label'       => $this->translate('Verification Token'),
                         'description' => $this->translate(
-                            'Please enter the code from your authenticator app to verify your setup.'
+                            'Please enter the token from your authenticator app to verify your setup.'
                         ),
                         'min'         => 0,
                         'max'         => 999999,
@@ -130,16 +133,16 @@ class TotpConfigForm extends Form
                     )
                 );
 
-                $this->setSubmitLabel(static::VERIFY_LABEL);
+                $this->setSubmitLabel(static::VERIFY_2FA_LABEL);
                 $this->setProgressLabel($this->translate('Verifying'));
             }
         }
 
         $this->addElement(
             'hidden',
-            'totp_secret',
+            '2fa_totp_secret',
             [
-                'value' => $this->totp->getSecret()
+                'value' => $this->twoFactor->getSecret()
             ]
         );
     }
@@ -149,22 +152,22 @@ class TotpConfigForm extends Form
         $shouldRedirect = true;
 
         if ($this->getElement('btn_submit')) {
-            $totp = IcingaTotp::createFromSecret($this->getValue('totp_secret'), $this->user->getUsername());
+            $twoFactor = TwoFactorTotp::createFromSecret($this->getValue('2fa_totp_secret'), $this->user->getUsername());
 
             switch ($this->getValue('btn_submit')) {
-                case static::VERIFY_LABEL:
-                    if ($totp->verify($this->getValue('totp_verification_code'))) {
-                        $totp->saveToDb();
-                        Notification::success($this->translate('TOTP 2FA has been configured successfully.'));
+                case static::VERIFY_2FA_LABEL:
+                    if ($twoFactor->verify($this->getValue('2fa_verification_token'))) {
+                        $twoFactor->saveToDb();
+                        Notification::success($this->translate('2FA via TOTP has been configured successfully.'));
                     } else {
                         $shouldRedirect = false;
-                        Notification::error($this->translate('The verification code is invalid. Please try again.'));
+                        Notification::error($this->translate('The verification token is invalid. Please try again.'));
                     }
 
                     break;
-                case static::DISABLE_LABEL:
-                    $totp->removeFromDb();
-                    Notification::success($this->translate('TOTP 2FA secret has been removed.'));
+                case static::DISABLE_2FA_LABEL:
+                    $twoFactor->removeFromDb();
+                    Notification::success($this->translate('2FA TOTP secret has been removed.'));
 
                     break;
             }
