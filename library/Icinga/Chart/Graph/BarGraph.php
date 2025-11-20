@@ -53,15 +53,15 @@ class BarGraph extends Styleable implements Drawable
     /**
      * Create a new BarGraph with the given dataset
      *
-     * @param array $dataSet    An array of data points
-     * @param int   $order      The graph number displayed by this BarGraph
-     * @param array $tooltips   The tooltips to display for each value
+     * @param array      $dataSet    An array of data points
+     * @param int        $order      The graph number displayed by this BarGraph
+     * @param array|null $tooltips   The tooltips to display for each value
      */
     public function __construct(
         array $dataSet,
         array &$graphs,
         $order,
-        array $tooltips = null
+        ?array $tooltips = null
     ) {
         $this->order = $order;
         $this->dataSet = $dataSet;

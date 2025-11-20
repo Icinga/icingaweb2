@@ -94,11 +94,11 @@ class FilterEditor extends AbstractWidget
     /**
      * Set columns to search in
      *
-     * @param array $searchColumns
+     * @param array|null $searchColumns
      *
      * @return $this
      */
-    public function setSearchColumns(array $searchColumns = null)
+    public function setSearchColumns(?array $searchColumns = null)
     {
         $this->searchColumns = $searchColumns;
         return $this;
@@ -512,7 +512,7 @@ class FilterEditor extends AbstractWidget
         }
     }
 
-    protected function text(Filter $filter = null)
+    protected function text(?Filter $filter = null)
     {
         $value = $filter === null ? '' : $filter->getExpression();
         if (is_array($value)) {
@@ -554,7 +554,7 @@ class FilterEditor extends AbstractWidget
         return $res;
     }
 
-    protected function elementId($prefix, Filter $filter = null)
+    protected function elementId($prefix, ?Filter $filter = null)
     {
         if ($filter === null) {
             return $prefix . '_new_' . ($this->addTo ?: '0');
@@ -563,7 +563,7 @@ class FilterEditor extends AbstractWidget
         }
     }
 
-    protected function selectOperator(Filter $filter = null)
+    protected function selectOperator(?Filter $filter = null)
     {
         $ops = array(
             'AND' => 'AND',
@@ -579,7 +579,7 @@ class FilterEditor extends AbstractWidget
         );
     }
 
-    protected function selectSign(Filter $filter = null)
+    protected function selectSign(?Filter $filter = null)
     {
         $signs = array(
             '='  => '=',
@@ -598,13 +598,13 @@ class FilterEditor extends AbstractWidget
         );
     }
 
-    public function setColumns(array $columns = null)
+    public function setColumns(?array $columns = null)
     {
         $this->cachedColumnSelect = $columns ? $this->arrayForSelect($columns) : null;
         return $this;
     }
 
-    protected function selectColumn(Filter $filter = null)
+    protected function selectColumn(?Filter $filter = null)
     {
         $active = $filter === null ? null : $filter->getColumn();
 

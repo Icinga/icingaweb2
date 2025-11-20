@@ -188,11 +188,11 @@ class JsonResponse extends Response
     /**
      * Set the data for successful API requests
      *
-     * @param   array $successData
+     * @param   array|null $successData
      *
      * @return  $this
      */
-    public function setSuccessData(array $successData = null)
+    public function setSuccessData(?array $successData = null)
     {
         $this->successData = $successData;
         $this->status = static::STATUS_SUCCESS;

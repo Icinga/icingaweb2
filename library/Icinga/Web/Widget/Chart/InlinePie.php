@@ -151,11 +151,11 @@ class InlinePie extends AbstractWidget
     /**
      * Set the colors used by the slices of the pie chart.
      *
-     * @param   array $colors
+     * @param   array|null $colors
      *
      * @return  $this
      */
-    public function setColors(array $colors = null)
+    public function setColors(?array $colors = null)
     {
         $this->colors = $colors;
 

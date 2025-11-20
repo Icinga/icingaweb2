@@ -22,11 +22,11 @@ class Session
     /**
      * Create the session
      *
-     * @param   BaseSession  $session
+     * @param   BaseSession|null  $session
      *
      * @return  BaseSession
      */
-    public static function create(BaseSession $session = null)
+    public static function create(?BaseSession $session = null)
     {
         if ($session === null) {
             self::$session = PhpSession::create();

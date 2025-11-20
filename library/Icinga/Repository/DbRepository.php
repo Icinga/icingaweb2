@@ -415,14 +415,14 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * Pass an array with a column name (the same as in $bind) and a PDO::PARAM_* constant as value
      * as fourth parameter $types to define a different type than string for a particular column.
      *
-     * @param   string  $table
-     * @param   array   $bind
-     * @param   Filter  $filter
-     * @param   array   $types
+     * @param   string       $table
+     * @param   array        $bind
+     * @param   Filter|null  $filter
+     * @param   array        $types
      *
      * @return  int             The number of affected rows
      */
-    public function update($table, array $bind, Filter $filter = null, array $types = array())
+    public function update($table, array $bind, ?Filter $filter = null, array $types = array())
     {
         $realTable = $this->clearTableAlias($this->requireTable($table));
 
@@ -441,12 +441,12 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Delete table rows, optionally limited by using a filter
      *
-     * @param   string  $table
-     * @param   Filter  $filter
+     * @param   string       $table
+     * @param   Filter|null  $filter
      *
      * @return  int             The number of affected rows
      */
-    public function delete($table, Filter $filter = null)
+    public function delete($table, ?Filter $filter = null)
     {
         $realTable = $this->clearTableAlias($this->requireTable($table));
 
@@ -627,17 +627,17 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * If a query column or a filter column, which is part of a query filter, needs to be converted,
      * you'll need to pass $query, otherwise the column is considered a statement column.
      *
-     * @param   string              $table      The datasource's table
-     * @param   string              $name       The alias or column name for which to return a conversion method
-     * @param   string              $context    The context of the conversion: persist or retrieve
-     * @param   RepositoryQuery     $query      If given the column is considered a query column,
-     *                                          statement column otherwise
+     * @param   string                   $table      The datasource's table
+     * @param   string                   $name       The alias or column name for which to return a conversion method
+     * @param   string                   $context    The context of the conversion: persist or retrieve
+     * @param   RepositoryQuery|null     $query      If given the column is considered a query column,
+     *                                               statement column otherwise
      *
      * @return  string
      *
      * @throws  ProgrammingError    In case a conversion rule is found but not any conversion method
      */
-    protected function getConverter($table, $name, $context, RepositoryQuery $query = null)
+    protected function getConverter($table, $name, $context, ?RepositoryQuery $query = null)
     {
         if ($name instanceof Zend_Db_Expr) {
             return;
@@ -668,15 +668,15 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      *
      * This will prepend the datasource's table prefix and will apply the table's alias, if any.
      *
-     * @param   string              $table      The table to validate
-     * @param   RepositoryQuery     $query      An optional query to pass as context
-     *                                          (unused by the base implementation)
+     * @param   string                   $table      The table to validate
+     * @param   RepositoryQuery|null     $query      An optional query to pass as context
+     *                                               (unused by the base implementation)
      *
      * @return  array|string
      *
-     * @throws  ProgrammingError                In case the given table does not exist
+     * @throws  ProgrammingError                     In case the given table does not exist
      */
-    public function requireTable($table, RepositoryQuery $query = null)
+    public function requireTable($table, ?RepositoryQuery $query = null)
     {
         $virtualTable = null;
         $statementColumns = $this->getStatementColumns();
@@ -740,17 +740,17 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * Attempts to join the given column from a different table if its association to the given table cannot be
      * verified.
      *
-     * @param   string              $table  The table where to look for the column or alias
-     * @param   string              $name   The name or alias of the column to validate
-     * @param   RepositoryQuery     $query  An optional query to pass as context,
-     *                                      if not given no join will be attempted
+     * @param   string                   $table  The table where to look for the column or alias
+     * @param   string                   $name   The name or alias of the column to validate
+     * @param   RepositoryQuery|null     $query  An optional query to pass as context,
+     *                                           if not given no join will be attempted
      *
-     * @return  string                      The given column's name
+     * @return  string                           The given column's name
      *
-     * @throws  QueryException              In case the given column is not a valid query column
-     * @throws  ProgrammingError            In case the given column is not found in $table and cannot be joined in
+     * @throws  QueryException                   In case the given column is not a valid query column
+     * @throws  ProgrammingError                 In case the given column is not found in $table and cannot be joined in
      */
-    public function requireQueryColumn($table, $name, RepositoryQuery $query = null)
+    public function requireQueryColumn($table, $name, ?RepositoryQuery $query = null)
     {
         if ($name instanceof Zend_Db_Expr) {
             return $name;
@@ -789,18 +789,18 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * verified. In case of a PostgreSQL connection and if a COLLATE SQL-instruction is part of the resolved column,
      * this applies LOWER() on the column and, if given, strtolower() on the filter's expression.
      *
-     * @param   string              $table  The table where to look for the column or alias
-     * @param   string              $name   The name or alias of the column to validate
-     * @param   RepositoryQuery     $query  An optional query to pass as context,
-     *                                      if not given the column is considered being used for a statement filter
-     * @param   FilterExpression    $filter An optional filter to pass as context
+     * @param   string                   $table  The table where to look for the column or alias
+     * @param   string                   $name   The name or alias of the column to validate
+     * @param   RepositoryQuery|null     $query  An optional query to pass as context,
+     *                                           if not given the column is considered being used for a statement filter
+     * @param   FilterExpression|null    $filter An optional filter to pass as context
      *
-     * @return  string                      The given column's name
+     * @return  string                           The given column's name
      *
-     * @throws  QueryException              In case the given column is not a valid filter column
-     * @throws  ProgrammingError            In case the given column is not found in $table and cannot be joined in
+     * @throws  QueryException                   In case the given column is not a valid filter column
+     * @throws  ProgrammingError                 In case the given column is not found in $table and cannot be joined in
      */
-    public function requireFilterColumn($table, $name, RepositoryQuery $query = null, FilterExpression $filter = null)
+    public function requireFilterColumn($table, $name, ?RepositoryQuery $query = null, ?FilterExpression $filter = null)
     {
         if ($name instanceof Zend_Db_Expr) {
             return $name;

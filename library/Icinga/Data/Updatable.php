@@ -14,11 +14,11 @@ interface Updatable
     /**
      * Update the target with the given data and optionally limit the affected entries by using a filter
      *
-     * @param   string  $target
-     * @param   array   $data
-     * @param   Filter  $filter
+     * @param   string       $target
+     * @param   array        $data
+     * @param   Filter|null  $filter
      *
      * @throws  StatementException
      */
-    public function update($target, array $data, Filter $filter = null);
+    public function update($target, array $data, ?Filter $filter = null);
 }

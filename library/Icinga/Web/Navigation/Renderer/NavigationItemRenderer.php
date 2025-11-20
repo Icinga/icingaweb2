@@ -47,9 +47,9 @@ class NavigationItemRenderer
     /**
      * Create a new NavigationItemRenderer
      *
-     * @param   array   $options
+     * @param   array|null   $options
      */
-    public function __construct(array $options = null)
+    public function __construct(?array $options = null)
     {
         if (! empty($options)) {
             $this->setOptions($options);
@@ -161,11 +161,11 @@ class NavigationItemRenderer
     /**
      * Render the given navigation item as HTML anchor
      *
-     * @param   NavigationItem  $item
+     * @param   NavigationItem|null  $item
      *
      * @return  string
      */
-    public function render(NavigationItem $item = null)
+    public function render(?NavigationItem $item = null)
     {
         if ($item !== null) {
             $this->setItem($item);

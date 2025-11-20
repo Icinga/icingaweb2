@@ -122,11 +122,11 @@ class PivotTable implements Sortable
     /**
      * Set the filter to apply on the query for the x-axis
      *
-     * @param   Filter  $filter
+     * @param   Filter|null  $filter
      *
      * @return  $this
      */
-    public function setXAxisFilter(Filter $filter = null)
+    public function setXAxisFilter(?Filter $filter = null)
     {
         $this->xAxisFilter = $filter;
         return $this;
@@ -135,11 +135,11 @@ class PivotTable implements Sortable
     /**
      * Set the filter to apply on the query for the y-axis
      *
-     * @param   Filter  $filter
+     * @param   Filter|null  $filter
      *
      * @return  $this
      */
-    public function setYAxisFilter(Filter $filter = null)
+    public function setYAxisFilter(?Filter $filter = null)
     {
         $this->yAxisFilter = $filter;
         return $this;

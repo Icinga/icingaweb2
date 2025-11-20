@@ -101,7 +101,7 @@ class DbQuery extends SimpleQuery
         return $this;
     }
 
-    public function from($target, array $fields = null)
+    public function from($target, ?array $fields = null)
     {
         parent::from($target, $fields);
         $this->select->from($this->target, array());

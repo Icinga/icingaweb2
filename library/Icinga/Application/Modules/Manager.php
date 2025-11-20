@@ -641,11 +641,11 @@ class Manager
     /**
      * Detect installed modules from every path provided in modulePaths
      *
-     * @param   array   $availableDirs      Installed modules location
+     * @param   array|null   $availableDirs      Installed modules location
      *
      * @return $this
      */
-    public function detectInstalledModules(array $availableDirs = null)
+    public function detectInstalledModules(?array $availableDirs = null)
     {
         $modulePaths = $availableDirs !== null ? $availableDirs : $this->modulePaths;
         foreach ($modulePaths as $basedir) {

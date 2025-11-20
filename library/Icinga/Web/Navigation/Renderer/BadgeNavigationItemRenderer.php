@@ -88,11 +88,11 @@ abstract class BadgeNavigationItemRenderer extends NavigationItemRenderer
     /**
      * Render the given navigation item as HTML anchor with a badge
      *
-     * @param   NavigationItem  $item
+     * @param   NavigationItem|null  $item
      *
      * @return  string
      */
-    public function render(NavigationItem $item = null)
+    public function render(?NavigationItem $item = null)
     {
         if ($item === null) {
             $item = $this->getItem();

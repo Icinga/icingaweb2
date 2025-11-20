@@ -149,10 +149,10 @@ class NavigationItem implements IteratorAggregate
     /**
      * Create a new NavigationItem
      *
-     * @param   string  $name
-     * @param   array   $properties
+     * @param   string       $name
+     * @param   array|null   $properties
      */
-    public function __construct($name, array $properties = null)
+    public function __construct($name, ?array $properties = null)
     {
         $this->setName($name);
         $this->children = new Navigation();

@@ -68,9 +68,9 @@ class Config implements Countable, Iterator, Selectable
     /**
      * Create a new config
      *
-     * @param   ConfigObject    $config     The config object to handle
+     * @param   ConfigObject|null    $config     The config object to handle
      */
-    public function __construct(ConfigObject $config = null)
+    public function __construct(?ConfigObject $config = null)
     {
         $this->config = $config !== null ? $config : new ConfigObject();
     }

@@ -178,7 +178,7 @@ class LdapQuery extends SimpleQuery
      *
      * {@inheritdoc} This creates an objectClass filter.
      */
-    public function from($target, array $fields = null)
+    public function from($target, ?array $fields = null)
     {
         $this->where('objectClass', $target);
         return parent::from($target, $fields);
