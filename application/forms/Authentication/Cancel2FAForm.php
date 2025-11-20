@@ -39,11 +39,11 @@ class Cancel2FAForm extends Form
             'submit',
             'btn_submit',
             [
-                'class'                 => 'btn-cancel',
-                'ignore'                => true,
-                'label'                 => 'Cancel',
-                'data-progress-label'   => 'Canceling',
-                'decorators'            => [
+                'class'               => 'btn-cancel',
+                'ignore'              => true,
+                'label'               => 'Cancel',
+                'data-progress-label' => 'Canceling',
+                'decorators'          => [
                     'ViewHelper',
                     ['Spinner', ['separator' => '']],
                     ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]

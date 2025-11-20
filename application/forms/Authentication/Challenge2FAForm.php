@@ -28,10 +28,10 @@ class Challenge2FAForm extends LoginForm
             'text',
             'token',
             [
-                'required' => true,
-                'class' => 'autofocus content-centered',
-                'placeholder' => $this->translate('Please enter your 2FA token'),
-                'autocomplete' => 'off',
+                'required'       => true,
+                'class'          => 'autofocus content-centered',
+                'placeholder'    => $this->translate('Please enter your 2FA token'),
+                'autocomplete'   => 'off',
                 'autocapitalize' => 'off',
 
             ]
