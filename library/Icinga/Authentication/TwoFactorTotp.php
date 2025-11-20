@@ -47,8 +47,7 @@ class TwoFactorTotp
 
     public static function loadFromDb(Connection $db, string $user): ?static
     {
-        $query = TwoFactorModel::on($db)->filter(Filter::equal('username', $user));
-        $dbTwoFactor = $query->first();
+        $dbTwoFactor = TwoFactorModel::on($db)->filter(Filter::equal('username', $user))->first();
         if ($dbTwoFactor === null) {
             return null;
         }
@@ -58,9 +57,7 @@ class TwoFactorTotp
 
     public static function hasDbSecret(Connection $db, string $user): bool
     {
-        $query = TwoFactorModel::on($db)->filter(Filter::equal('username', $user));
-
-        return $query->first() !== null;
+        return TwoFactorModel::on($db)->filter(Filter::equal('username', $user))->first() !== null;
     }
 
     public function getSecret(): string
