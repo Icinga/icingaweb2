@@ -16,12 +16,18 @@ use ipl\Stdlib\Filter;
 use OTPHP\TOTP;
 use Throwable;
 
+/**
+ * This TwoFactorTotp class provides methods to generate, store and retrieve 2FA TOTP secrets.
+ * Additionally, it provides a method to verify TOTP tokens.
+ */
 class TwoFactorTotp
 {
     use Database;
 
+    /** @var TOTP The 2FA TOTP instance */
     protected TOTP $totp;
 
+    /** @var string The user for whom the 2FA TOTP instance is generated */
     protected string $user;
 
     private function __construct(string $user)
@@ -29,6 +35,11 @@ class TwoFactorTotp
         $this->user = $user;
     }
 
+    /**
+     * Generate a new 2FA TOTP instance for the given user.
+     *
+     * @return $this
+     */
     public static function generate(string $user): static
     {
         $twoFactor = new static($user);
@@ -37,6 +48,14 @@ class TwoFactorTotp
         return $twoFactor;
     }
 
+    /**
+     * Create a 2FA TOTP instance from a secret for the given user.
+     *
+     * @param string $secret The secret to use for the TOTP instance.
+     * @param string $user   The user for whom the TOTP instance is generated.
+     *
+     * @return $this
+     */
     public static function createFromSecret(string $secret, string $user): static
     {
         $twoFactor = new static($user);
@@ -45,9 +64,19 @@ class TwoFactorTotp
         return $twoFactor;
     }
 
+    /**
+     * Load a 2FA TOTP instance from the database secret for the given user.
+     *
+     * @param Connection $db   The database connection to use.
+     * @param string     $user The user for whom the TOTP instance is loaded.
+     *
+     * @return $this|null
+     */
     public static function loadFromDb(Connection $db, string $user): ?static
     {
         $dbTwoFactor = TwoFactorModel::on($db)->filter(Filter::equal('username', $user))->first();
+
+        /** @var TwoFactorModel|null $dbTwoFactor */
         if ($dbTwoFactor === null) {
             return null;
         }
@@ -55,16 +84,36 @@ class TwoFactorTotp
         return self::createFromSecret($dbTwoFactor->secret, $user);
     }
 
+    /**
+     * Check whether a 2FA TOTP secret exists for the given user in the database.
+     *
+     * @param Connection $db   The database connection to use.
+     * @param string     $user The user to check for.
+     *
+     * @return bool
+     */
     public static function hasDbSecret(Connection $db, string $user): bool
     {
         return TwoFactorModel::on($db)->filter(Filter::equal('username', $user))->first() !== null;
     }
 
+    /**
+     * Get the 2FA TOTP secret.
+     *
+     * @return string
+     */
     public function getSecret(): string
     {
         return $this->totp->getSecret();
     }
 
+    /**
+     * Verify a 2FA TOTP token.
+     *
+     * @param string $otp
+     *
+     * @return bool
+     */
     public function verify(string $otp): bool
     {
         // The code is valid for 10 seconds before and after the current time to allow some clock drift
@@ -82,6 +131,11 @@ class TwoFactorTotp
         return (new QRCode())->render($this->getTotpAuthUrl());
     }
 
+    /**
+     * Get the URL for the 2FA TOTP authenticator app.
+     *
+     * @return string
+     */
     public function getTotpAuthUrl(): string
     {
         $this->totp->setIssuer('icingaweb2');
