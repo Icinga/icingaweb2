@@ -29,17 +29,10 @@ class TwoFactorTotp
         $this->user = $user;
     }
 
-    protected function setTotp(TOTP $totp): static
-    {
-        $this->totp = $totp;
-
-        return $this;
-    }
-
     public static function generate(string $user): static
     {
         $twoFactor = new static($user);
-        $twoFactor->setTotp(TOTP::generate(new PsrClock()));
+        $twoFactor->totp = TOTP::generate(new PsrClock());
 
         return $twoFactor;
     }
@@ -47,7 +40,7 @@ class TwoFactorTotp
     public static function createFromSecret(string $secret, string $user): static
     {
         $twoFactor = new static($user);
-        $twoFactor->setTotp(TOTP::createFromSecret($secret, new PsrClock()));
+        $twoFactor->totp = TOTP::createFromSecret($secret, new PsrClock());
 
         return $twoFactor;
     }
