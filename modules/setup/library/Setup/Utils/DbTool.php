@@ -109,6 +109,17 @@ class DbTool
     );
 
     /**
+     * Prefix for MySQL PDO constants compatible with the current PHP version.
+     *
+     * In PHP 8.5+, the driver-specific constants in the PDO class are deprecated.
+     * Their replacements are available only since PHP 8.4, so this prefix
+     * ensures that the code uses the correct constant names for the running version.
+     *
+     * @var string
+     */
+    protected string $mysqlConstantPrefix;
+
+    /**
      * Create a new DbTool
      *
      * @param   array   $config     The resource configuration to use
@@ -122,6 +133,13 @@ class DbTool
         }
 
         $this->config = $config;
+        if ($this->config['db'] === 'mysql') {
+            if (version_compare(PHP_VERSION, '8.5.0', '<')) {
+                $this->mysqlConstantPrefix = 'PDO::MYSQL_ATTR_';
+            } else {
+                $this->mysqlConstantPrefix = 'Pdo\Mysql::ATTR_';
+            }
+        }
     }
 
     /**
@@ -266,24 +284,30 @@ class DbTool
                 $this->config['driver_options'] = array();
                 # The presence of these keys as empty strings or null cause non-ssl connections to fail
                 if ($this->config['ssl_key']) {
-                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_KEY] = $this->config['ssl_key'];
+                    $config['driver_options'][constant($this->mysqlConstantPrefix . 'SSL_KEY')]
+                        = $this->config['ssl_key'];
                 }
                 if ($this->config['ssl_cert']) {
-                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_CERT] = $this->config['ssl_cert'];
+                    $config['driver_options'][constant($this->mysqlConstantPrefix . 'SSL_CERT')]
+                        = $this->config['ssl_cert'];
                 }
                 if ($this->config['ssl_ca']) {
-                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_CA] = $this->config['ssl_ca'];
+                    $config['driver_options'][constant($this->mysqlConstantPrefix . 'SSL_CA')]
+                        = $this->config['ssl_ca'];
                 }
                 if ($this->config['ssl_capath']) {
-                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_CAPATH] = $this->config['ssl_capath'];
+                    $config['driver_options'][constant($this->mysqlConstantPrefix . 'SSL_CAPATH')]
+                        = $this->config['ssl_capath'];
                 }
                 if ($this->config['ssl_cipher']) {
-                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config['ssl_cipher'];
+                    $config['driver_options'][constant($this->mysqlConstantPrefix . 'SSL_CIPHER')]
+                        = $this->config['ssl_cipher'];
                 }
-                if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
+                if (
+                    defined($this->mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT')
                     && $this->config['ssl_do_not_verify_server_cert']
                 ) {
-                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+                    $config['driver_options'][constant($this->mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT')] = false;
                 }
             }
             $this->zendConn = new Zend_Db_Adapter_Pdo_Mysql($config);
@@ -321,24 +345,25 @@ class DbTool
         ) {
             # The presence of these keys as empty strings or null cause non-ssl connections to fail
             if ($this->config['ssl_key']) {
-                $driverOptions[PDO::MYSQL_ATTR_SSL_KEY] = $this->config['ssl_key'];
+                $driverOptions[constant($this->mysqlConstantPrefix . 'SSL_KEY')] = $this->config['ssl_key'];
             }
             if ($this->config['ssl_cert']) {
-                $driverOptions[PDO::MYSQL_ATTR_SSL_CERT] = $this->config['ssl_cert'];
+                $driverOptions[constant($this->mysqlConstantPrefix . 'SSL_CERT')] = $this->config['ssl_cert'];
             }
             if ($this->config['ssl_ca']) {
-                $driverOptions[PDO::MYSQL_ATTR_SSL_CA] = $this->config['ssl_ca'];
+                $driverOptions[constant($this->mysqlConstantPrefix . 'SSL_CA')] = $this->config['ssl_ca'];
             }
             if ($this->config['ssl_capath']) {
-                $driverOptions[PDO::MYSQL_ATTR_SSL_CAPATH] = $this->config['ssl_capath'];
+                $driverOptions[constant($this->mysqlConstantPrefix . 'SSL_CAPATH')] = $this->config['ssl_capath'];
             }
             if ($this->config['ssl_cipher']) {
-                $driverOptions[PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config['ssl_cipher'];
+                $driverOptions[constant($this->mysqlConstantPrefix . 'SSL_CIPHER')] = $this->config['ssl_cipher'];
             }
-            if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
+            if (
+                defined(constant($this->mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT'))
                 && $this->config['ssl_do_not_verify_server_cert']
             ) {
-                $driverOptions[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+                $driverOptions[constant($this->mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT')] = false;
             }
         }
 
