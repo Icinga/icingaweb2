@@ -9,7 +9,7 @@ use ipl\I18n\Translation;
 /**
  * Policy to allow any password
  */
-class AnyPasswordPolicy implements PasswordPolicyHook
+class AnyPasswordPolicy extends PasswordPolicyHook
 {
     use Translation;
 
@@ -28,7 +28,7 @@ class AnyPasswordPolicy implements PasswordPolicyHook
         return null;
     }
 
-    public function validatePassword(string $password): array
+    public function validate(string $password): array
     {
         return [];
     }

@@ -3,26 +3,25 @@
 
 namespace Icinga\Authentication;
 
-use Icinga\Application\Hook\PasswordPolicyHook;
 use Zend_Validate_Abstract;
 
-class PasswordValidator extends Zend_Validate_Abstract
+class PasswordPolicyValidator extends Zend_Validate_Abstract
 {
     /**
      * The password policy object
      *
-     * @var PasswordPolicyHook
+     * @var PasswordPolicy
      */
-    private PasswordPolicyHook $passwordPolicyObject;
+    protected PasswordPolicy $passwordPolicy;
 
     /**
      * Constructor
      *
-     * @param PasswordPolicyHook $passwordPolicyObject
+     * @param PasswordPolicy $passwordPolicy
      */
-    public function __construct(PasswordPolicyHook $passwordPolicyObject)
+    public function __construct(PasswordPolicy $passwordPolicy)
     {
-        $this->passwordPolicyObject = $passwordPolicyObject;
+        $this->passwordPolicy = $passwordPolicy;
     }
 
     /**
@@ -35,9 +34,9 @@ class PasswordValidator extends Zend_Validate_Abstract
      */
     public function isValid($value): bool
     {
-        $message = $this->passwordPolicyObject->validatePassword($value);
+        $message = $this->passwordPolicy->validate($value);
 
-        if (!empty($message)) {
+        if (! empty($message)) {
             $this->_messages = $message;
 
             return false;

@@ -2,13 +2,13 @@
 
 namespace Tests\Icinga\Application;
 
-use Icinga\Application\Hook\PasswordPolicyHook;
+use Icinga\Authentication\PasswordPolicy;
 use Icinga\Application\ProvidedHook\CommonPasswordPolicy;
 use PHPUnit\Framework\TestCase;
 
 class CommonPasswordPolicyTest extends TestCase
 {
-    private PasswordPolicyHook $instance;
+    protected PasswordPolicy $instance;
 
     public function setUp(): void
     {
@@ -17,54 +17,60 @@ class CommonPasswordPolicyTest extends TestCase
 
     public function testValidatePasswordTooShort(): void
     {
-        $expectedResults = ['Password must be at least 12 characters long'];
-        $res = $this->instance->validatePassword('Icinga1#');
-        $this->assertSame($expectedResults, $res);
+        $this->assertSame(
+            ['Password must be at least 12 characters long'],
+            $this->instance->validate('Icinga1#')
+        );
     }
 
     public function testValidatePasswordNoNumber(): void
     {
-        $expectedResults = ['Password must contain at least one number'];
-        $res = $this->instance->validatePassword('Icingaadmin#');
-        $this->assertSame($expectedResults, $res);
+        $this->assertSame(
+            ['Password must contain at least one number'],
+            $this->instance->validate('Icingaadmin#')
+        );
     }
 
     public function testValidatePasswordNoSpecialCharacter(): void
     {
-        $expectedResult = ['Password must contain at least one special character'];
-        $res = $this->instance->validatePassword('Icingaadmin1');
-        $this->assertSame($expectedResult, $res);
+        $this->assertSame(
+            ['Password must contain at least one special character'],
+            $this->instance->validate('Icingaadmin1')
+        );
     }
 
     public function testValidatePasswordNoUpperCaseLetters(): void
     {
-       $expectedResult = ['Password must contain at least one uppercase letter'];
-        $res = $this->instance->validatePassword('icingaadmin1#');
-        $this->assertSame($expectedResult, $res);
+        $this->assertSame(
+            ['Password must contain at least one uppercase letter'],
+            $this->instance->validate('icingaadmin1#')
+        );
     }
 
     public function testValidatePasswordNoLowerCaseLetters(): void
     {
-        $expectedResult = ['Password must contain at least one lowercase letter'];
-        $res = $this->instance->validatePassword('ICINGAADMIN1#');
-        $this->assertSame($expectedResult, $res);
+        $this->assertSame(
+            ['Password must contain at least one lowercase letter'],
+            $this->instance->validate('ICINGAADMIN1#')
+        );
     }
 
     public function testMethodValidatePasswordAlwaysReturnAnEmptyArray(): void
     {
-        $res = $this->instance->validatePassword('Icingaadmin1#');
-        $this->assertEmpty($res);
+        $this->assertEmpty($this->instance->validate('Icingaadmin1#'));
     }
 
     public function testValidatePasswordOnlyLowerCaseLetters(): void
     {
-        $expectedResult = [
+        $expected = [
             'Password must contain at least one number',
             'Password must contain at least one special character',
             'Password must contain at least one uppercase letter'
         ];
-        $res = $this->instance->validatePassword('icingawebadmin');
-        $this->assertSame($expectedResult, $res);
+        $this->assertSame(
+            $expected,
+            $this->instance->validate('icingawebadmin')
+        );
     }
 
     public function testValidatePasswordWithLengthAndUpperCaseLetters(): void
@@ -75,14 +81,16 @@ class CommonPasswordPolicyTest extends TestCase
             'Password must contain at least one special character',
             'Password must contain at least one lowercase letter',
         ];
-        $res = $this->instance->validatePassword('ICINGAADMIN');
-        $this->assertSame($expectedResult, $res);
+        $res =
+        $this->assertSame(
+            $expectedResult,
+            $this->instance->validate('ICINGAADMIN')
+        );
     }
 
     public function testValidatePasswordWithManyCharacters(): void
     {
         $longPassword = str_repeat('a', 1000);
-        $res = $this->instance->validatePassword($longPassword);
-        $this->assertCount(3, $res);
+        $this->assertCount(3, $this->instance->validate($longPassword));
     }
  }

@@ -159,11 +159,12 @@ Please read [this chapter](20-Advanced-Topics.md#advanced-topics-authentication-
 in order to manually create users directly inside the database.
 
 ### Password Policy <a id="authentication-password-policy"></a>
-Icinga Web 2 supports password policies when using database authentication. 
+
+Icinga Web supports password policies when using database authentication. 
 You can configure this under **Configuration > Application > General**. 
 
 By default, no password policy is enforced ('Any'). 
-Icinga Web 2 provides a built-in policy called 'Common' with the following requirements:
+Icinga Web provides a built-in policy called 'Common' with the following requirements:
 
 * Minimum length of 12 characters
 * At least one number
@@ -172,6 +173,7 @@ Icinga Web 2 provides a built-in policy called 'Common' with the following requi
 * At least one lowercase letter
 
 #### Custom Password Policy <a id="authentication-custom-password-policy"></a>
+
 You can create custom password policies by developing a module with a provided hook.
 
 **Create Module Structure**
@@ -190,8 +192,8 @@ Author: Your Name
 
 **Implement the Hook**
 
-Icinga Web 2 provides the `PasswordPolicyHook` interface with predefined methods 
-that simplify the implementation of custom password policies.
+Icinga Web provides the `PasswordPolicyHook` with predefined methods 
+that simplify the extension of custom password policies.
 
 Create `library/MyPasswordPolicy/ProvidedHook/PasswordPolicy.php`:
 
@@ -200,7 +202,7 @@ namespace Icinga\Module\MyPasswordPolicy\ProvidedHook;
 
 use Icinga\Application\Hook\PasswordPolicyHook;
 
-class PasswordPolicy implements PasswordPolicyHook
+class PasswordPolicy extends PasswordPolicyHook
 {
     public function getName(): string
     {
@@ -212,7 +214,7 @@ class PasswordPolicy implements PasswordPolicyHook
         return 'Custom password requirements: 8+ chars, 1 number';
     }
 
-    public function validatePassword(string $password): array
+    public function validate(string $password): array
     {
         $violations = [];
 
@@ -235,7 +237,7 @@ Create `run.php`:
 ```php  
 /** @var $this \Icinga\Application\Modules\Module */
 
-$this->provideHook('passwordpolicy', 'PasswordPolicy');
+MyPasswordPolicy::register();
 ```
 
 

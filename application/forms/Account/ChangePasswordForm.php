@@ -5,7 +5,6 @@
 
 namespace Icinga\Forms\Account;
 
-use Icinga\Application\Logger;
 use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Data\Filter\Filter;
@@ -38,17 +37,6 @@ class ChangePasswordForm extends Form
      */
     public function createElements(array $formData)
     {
-        $validators = [];
-
-        try {
-            $helper = new PasswordPolicyHelper();
-            $validators[] = $helper->getPasswordValidator();
-            $helper->addPasswordPolicyDescription($this);
-        } catch (\Throwable $e) {
-            Logger::error($e);
-            Notification::error("The configured password policy could not be loaded.");
-        }
-
         $this->addElement(
             'password',
             'old_password',
@@ -62,10 +50,12 @@ class ChangePasswordForm extends Form
             'new_password',
             [
                 'label'      => $this->translate('New Password'),
-                'required'   => true,
-                'validators' => $validators
+                'required'   => true
             ]
         );
+
+        PasswordPolicyHelper::applyPasswordPolicy($this, 'new_password');
+
         $this->addElement(
             'password',
             'new_password_confirmation',

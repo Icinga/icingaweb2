@@ -1,51 +1,95 @@
 <?php
+/* Icinga Web 2 | (c) 2016 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Authentication;
 
 use Icinga\Application\Config;
-use Icinga\Application\Hook\PasswordPolicyHook;
+use Icinga\Application\Logger;
 use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
-use Icinga\Authentication\PasswordValidator;
-
+use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Form;
 
+/*
+ * Helper for loading and applying the configured password policy and
+ * falls back to a warning if the policy configuration is invalid.
+ *
+ */
 class PasswordPolicyHelper
 {
-
+    /*
+     * Default class for password policy
+     */
     const DEFAULT_PASSWORD_POLICY = AnyPasswordPolicy::class;
 
-    private $passwordPolicy;
+    /*
+     * Configuration section for password policy in the configuration file
+     */
+    const CONFIG_SECTION = 'global';
 
-    public function __construct()
+    /*
+     * Configuration key for password policy in the configuration file
+     */
+    const CONFIG_KEY = 'password_policy';
+
+    public static function applyPasswordPolicy(Form $form, string $element)
     {
-        $passwordPolicyClass = Config::app()->get(
-            'global',
-            'password_policy',
-            self::DEFAULT_PASSWORD_POLICY
-        );
+        try {
+            $passwordPolicyClass = Config::app()->get(
+                'global',
+                'password_policy',
+                static::DEFAULT_PASSWORD_POLICY
+            );
 
-        if (class_exists($passwordPolicyClass)) {
-            $instance = new $passwordPolicyClass();
+            $passwordPolicy = static::createPolicy($passwordPolicyClass);
+            $form->getElement($element)->addValidator(new PasswordPolicyValidator($passwordPolicy));
+            static::addPasswordPolicyDescription($form, $passwordPolicy);
+        } catch (ConfigurationError $e) {
+            Logger::error($e);
 
-            if ($instance instanceof PasswordPolicyHook) {
-                $this->passwordPolicy = $instance;
-            }
-        } else {
-            $this->passwordPolicy = self::DEFAULT_PASSWORD_POLICY;
+            $form->addElement(
+                'note',
+                'error message',
+                [
+                    'escape'     => false,
+                    'decorators' => ['ViewHelper'],
+                    'value'      => sprintf(
+                        '<div class="error-message-password-policy">%s
+                                    <div>%s</div>
+                                </div>',
+                        $form->getView()->icon('warning-empty'),
+                        t('There was a problem loading the configured password policy.' .
+                        'Please contact your administrator.')
+                    ),
+                ]
+            );
         }
     }
 
-    public function addPasswordPolicyDescription(Form $form): void
+    public static function createPolicy(string $passwordPolicyClass): PasswordPolicy
     {
-        $description = $this->passwordPolicy->getDescription();
+        if ($passwordPolicyClass === static::DEFAULT_PASSWORD_POLICY) {
+            return new $passwordPolicyClass;
+        }
+
+        if (! class_exists($passwordPolicyClass)) {
+            throw new ConfigurationError(t('Password policy class %s does not exist'), $passwordPolicyClass);
+        }
+
+        $passwordPolicy = new $passwordPolicyClass();
+
+        if (! $passwordPolicy instanceof PasswordPolicy) {
+            throw new ConfigurationError(t('Password policy is not an instance of %s'), PasswordPolicy::class);
+        }
+
+        return $passwordPolicy;
+    }
+
+    public static function addPasswordPolicyDescription(Form $form, PasswordPolicy $passwordPolicy): void
+    {
+        $description = $passwordPolicy->getDescription();
 
         if ($description !== null) {
             $form->addDescription($description);
         }
-    }
-
-    public function getPasswordValidator(): PasswordValidator
-    {
-        return new PasswordValidator($this->passwordPolicy);
     }
 }
