@@ -5,6 +5,7 @@
 
 namespace Icinga\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Config;
 use Icinga\Authentication\TwoFactorTotp;
 use Icinga\Authentication\User\UserBackend;
@@ -16,6 +17,7 @@ use Icinga\Forms\Account\TwoFactorConfigForm;
 use Icinga\Forms\PreferenceForm;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Controller;
+use ipl\Html\Contract\Form;
 
 /**
  * My Account
@@ -83,7 +85,13 @@ class AccountController extends Controller
             $twoFactorForm = new TwoFactorConfigForm();
             $twoFactorForm->setUser($user);
             $twoFactorForm->setTwoFactor($twoFactor);
-            $twoFactorForm->handleRequest();
+            $twoFactorForm->on(Form::ON_SUBMIT, function (TwoFactorConfigForm $form) {
+                if ($redirectUrl = $form->getRedirectUrl()) {
+                    $this->redirectNow($redirectUrl);
+                }
+            });
+            $twoFactorForm->handleRequest(ServerRequest::fromGlobals());
+
             $this->view->twoFactorForm = $twoFactorForm;
         }
 
