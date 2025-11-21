@@ -14,6 +14,7 @@ use ipl\Sql\Delete;
 use ipl\Sql\Insert;
 use ipl\Stdlib\Filter;
 use OTPHP\TOTP;
+use PDOException;
 use Throwable;
 
 /**
@@ -94,7 +95,11 @@ class TwoFactorTotp
      */
     public static function hasDbSecret(Connection $db, string $user): bool
     {
-        return TwoFactorModel::on($db)->filter(Filter::equal('username', $user))->first() !== null;
+        try {
+            return TwoFactorModel::on($db)->filter(Filter::equal('username', $user))->first() !== null;
+        } catch (PDOException) {
+            return false;
+        }
     }
 
     /**
