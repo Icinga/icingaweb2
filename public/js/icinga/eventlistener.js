@@ -75,6 +75,4 @@
 
     Icinga.EventListener = EventListener;
 
-    define("icinga/legacy-app/EventListener", [], () => EventListener)
-
 }) (Icinga, jQuery);
