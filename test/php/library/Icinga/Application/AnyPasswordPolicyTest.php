@@ -2,13 +2,13 @@
 
 namespace Tests\Icinga\Application;
 
-use Icinga\Application\Hook\PasswordPolicyHook;
+use Icinga\Authentication\PasswordPolicy;
 use PHPUnit\Framework\TestCase;
 use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
 
 class AnyPasswordPolicyTest extends TestCase
 {
-    private PasswordPolicyHook $instance;
+    private PasswordPolicy $instance;
 
     public function setUp(): void
     {
@@ -17,7 +17,6 @@ class AnyPasswordPolicyTest extends TestCase
 
     public function testValidatePasswordValid(): void
     {
-        $res = $this->instance->validatePassword('icingaadmin');
-        $this->assertEmpty($res);
+        $this->assertEmpty($this->instance->validate('icingaadmin'));
     }
 }

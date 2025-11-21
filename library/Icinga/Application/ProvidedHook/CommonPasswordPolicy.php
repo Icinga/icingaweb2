@@ -16,9 +16,10 @@ use ipl\I18n\Translation;
  * - At least one uppercase letter
  * - At least one lowercase letter
  */
-class CommonPasswordPolicy implements PasswordPolicyHook
+class CommonPasswordPolicy extends PasswordPolicyHook
 {
     use Translation;
+
 
     public function getName(): string
     {
@@ -33,7 +34,7 @@ class CommonPasswordPolicy implements PasswordPolicyHook
         );
     }
 
-    public function validatePassword(string $password): array
+    public function validate(string $password): array
     {
         $violations = [];
 

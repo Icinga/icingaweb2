@@ -6,10 +6,12 @@ namespace Icinga\Application;
 use DirectoryIterator;
 use ErrorException;
 use Exception;
+use Icinga\Application\Hook\PasswordPolicyHook;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
 use Icinga\Application\ProvidedHook\CommonPasswordPolicy;
 use Icinga\Application\ProvidedHook\DbMigration;
+use Icinga\Authentication\PasswordPolicy;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
@@ -742,8 +744,9 @@ abstract class ApplicationBootstrap
     protected function registerApplicationHooks(): self
     {
         Hook::register('DbMigration', DbMigration::class, DbMigration::class);
-        Hook::register('PasswordPolicy', CommonPasswordPolicy::class, CommonPasswordPolicy::class);
-        Hook::register('PasswordPolicy', AnyPasswordPolicy::class, AnyPasswordPolicy::class);
+        CommonPasswordPolicy::register();
+        AnyPasswordPolicy::register();
+
 
         return $this;
     }

@@ -3,28 +3,38 @@
 
 namespace Icinga\Application\Hook;
 
-interface PasswordPolicyHook
+use Icinga\Application\Hook;
+use Icinga\Authentication\PasswordPolicy;
+
+/**
+ * This class connects with the PasswordPolicy interface to use it as hook
+ */
+abstract class PasswordPolicyHook implements PasswordPolicy
 {
     /**
-     * Get the name of the password policy
-     *
-     * @return string
-     */
-    public function getName(): string;
+    * Registers Hook as Password Policy
+    *
+    * @return void
+    */
+    public static function register(): void
+    {
+        Hook::register('PasswordPolicy', static::class, static::class);
+    }
 
     /**
-     * Displays the rules of the password policy for users
-     *
-     * @return string|null
-     */
-    public function getDescription(): ?string;
+    * Returns all registered password policies sorted by
+    *
+    * @return array
+    */
+    public static function all(): array
+    {
+        $passwordPolicies = [];
 
-    /**
-     * Validate a given password against the defined policy
-     *
-     * @param string $password
-     * @return string[] Returns an empty array if the password is valid,
-     * otherwise returns error messages describing the violations
-     */
-    public function validatePassword(string $password): array;
+        foreach (Hook::all('PasswordPolicy') as $class => $policy) {
+            $passwordPolicies[$class] = $policy->getName();
+        }
+
+        asort($passwordPolicies);
+        return $passwordPolicies;
+    }
 }
