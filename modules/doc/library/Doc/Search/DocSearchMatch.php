@@ -100,7 +100,7 @@ class DocSearchMatch
      */
     public function setLineno($lineno)
     {
-        $this->lineno = (int) $lineno;
+        $this->lineno = (int) floor($lineno);
         return $this;
     }
 
@@ -113,7 +113,7 @@ class DocSearchMatch
      */
     public function setMatchType($matchType)
     {
-        $matchType = (int) $matchType;
+        $matchType = (int) floor($matchType);
         if ($matchType !== static::MATCH_HEADER && $matchType !== static::MATCH_CONTENT) {
             throw new UnexpectedValueException();
         }
@@ -141,7 +141,7 @@ class DocSearchMatch
      */
     public function appendMatch($match, $position)
     {
-        $this->matches[(int) $position] = (string) $match;
+        $this->matches[(int) floor($position)] = (string) $match;
         return $this;
     }
 
