@@ -177,8 +177,7 @@ class DbResourceForm extends Form
                 )
             );
             if (isset($formData['use_ssl']) && $formData['use_ssl']) {
-                if (
-                    defined('\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
+                if (defined('\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
                     || defined('Pdo\Mysql::ATTR_SSL_VERIFY_SERVER_CERT')
                 ) {
                     $this->addElement(

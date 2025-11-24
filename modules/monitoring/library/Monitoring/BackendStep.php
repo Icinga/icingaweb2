@@ -116,8 +116,7 @@ class BackendStep extends Step
                 . '<td>' . str_repeat('*', strlen($this->data['resourceConfig']['password'])) . '</td>'
                 . '</tr>';
 
-            if (
-                (defined('\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
+            if ((defined('\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
                 || defined('Pdo\Mysql::ATTR_SSL_VERIFY_SERVER_CERT'))
                 && isset($this->data['resourceConfig']['ssl_do_not_verify_server_cert'])
                 && $this->data['resourceConfig']['ssl_do_not_verify_server_cert']

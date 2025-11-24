@@ -377,9 +377,9 @@ class Wizard
     /**
      * Return the direction of this wizard using the given request
      *
-     * @param   Request|null     $request    The request to use
+     * @param   Request|null   $request  The request to use
      *
-     * @return  int                          The direction @see Wizard::FORWARD @see Wizard::BACKWARD @see Wizard::NO_CHANGE
+     * @return  int                      The direction @see Wizard::FORWARD @see Wizard::BACKWARD @see Wizard::NO_CHANGE
      */
     protected function getDirection(?Request $request = null)
     {

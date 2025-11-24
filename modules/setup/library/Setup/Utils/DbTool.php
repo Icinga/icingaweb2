@@ -303,8 +303,7 @@ class DbTool
                     $config['driver_options'][constant($this->mysqlConstantPrefix . 'SSL_CIPHER')]
                         = $this->config['ssl_cipher'];
                 }
-                if (
-                    defined($this->mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT')
+                if (defined($this->mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT')
                     && $this->config['ssl_do_not_verify_server_cert']
                 ) {
                     $config['driver_options'][constant($this->mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT')] = false;
@@ -359,8 +358,7 @@ class DbTool
             if ($this->config['ssl_cipher']) {
                 $driverOptions[constant($this->mysqlConstantPrefix . 'SSL_CIPHER')] = $this->config['ssl_cipher'];
             }
-            if (
-                defined(constant($this->mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT'))
+            if (defined(constant($this->mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT'))
                 && $this->config['ssl_do_not_verify_server_cert']
             ) {
                 $driverOptions[constant($this->mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT')] = false;
