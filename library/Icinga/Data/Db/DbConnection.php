@@ -201,8 +201,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                         $adapterParamaters['driver_options'][constant($mysqlConstantPrefix . 'SSL_CIPHER')]
                             = $this->config->ssl_cipher;
                     }
-                    if (
-                        defined($mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT')
+                    if (defined($mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT')
                         && $this->config->ssl_do_not_verify_server_cert
                     ) {
                         $adapterParamaters['driver_options']
