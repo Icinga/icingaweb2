@@ -97,7 +97,7 @@ class DocSection extends TreeNode
      */
     public function setLevel($level)
     {
-        $this->level = (int) $level;
+        $this->level = (int) floor($level);
         return $this;
     }
 

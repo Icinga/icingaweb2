@@ -40,7 +40,7 @@ abstract class ApplicationStateHook
     final public function addError($id, $timestamp, $message)
     {
         $id = trim($id);
-        $timestamp = (int) $timestamp;
+        $timestamp = (int) floor($timestamp);
 
         if (! strlen($id)) {
             throw new \InvalidArgumentException('ID expected.');

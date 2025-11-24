@@ -128,7 +128,7 @@ class AcknowledgeProblemCommand extends WithCommentCommand
      */
     public function setExpireTime($expireTime)
     {
-        $this->expireTime = (int) $expireTime;
+        $this->expireTime = (int) floor($expireTime);
         return $this;
     }
 

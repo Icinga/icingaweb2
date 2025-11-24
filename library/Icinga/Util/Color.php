@@ -96,9 +96,9 @@ class Color
             $g * $g * $pg +
             $b * $b * $pb
         );
-        $rgb[0] = (int)($p + ($r - $p) * $change);
-        $rgb[1] = (int)($p + ($g - $p) * $change);
-        $rgb[2] = (int)($p + ($b - $p) * $change);
+        $rgb[0] = (int)floor(($p + ($r - $p) * $change));
+        $rgb[1] = (int)floor(($p + ($g - $p) * $change));
+        $rgb[2] = (int)floor(($p + ($b - $p) * $change));
         return $rgb;
     }
 
@@ -113,9 +113,9 @@ class Color
         $red = $rgb[0] + ($rgb[0] * $change);
         $green = $rgb[1] + ($rgb[1] * $change);
         $blue = $rgb[2] + ($rgb[2] * $change);
-        $rgb[0] = $red < 255 ? (int) $red : 255;
-        $rgb[1] = $green < 255 ? (int) $green : 255;
-        $rgb[2] = $blue < 255 ? (int) $blue : 255;
+        $rgb[0] = $red < 255 ? (int) floor($red) : 255;
+        $rgb[1] = $green < 255 ? (int) floor($green) : 255;
+        $rgb[2] = $blue < 255 ? (int) floor($blue) : 255;
         return $rgb;
     }
 }
