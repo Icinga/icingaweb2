@@ -67,7 +67,7 @@ class WebCommand extends Command
     {
         // TODO: No, that's NOT what we want
         $prog = readlink('/proc/self/exe');
-        `killall $prog`;
+        shell_exec("killall $prog");
     }
 
     protected function forkAndExit()
