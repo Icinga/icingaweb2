@@ -7,10 +7,10 @@ namespace Icinga\Forms\Account;
 use Icinga\Authentication\TwoFactorTotp;
 use Icinga\Common\Database;
 use Icinga\User;
+use Icinga\Web\Form\Validator\TotpTokenValidator;
 use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
-use ipl\Validator\CallbackValidator;
 use ipl\Web\Common\FormUid;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
@@ -124,27 +124,15 @@ class TwoFactorConfigForm extends CompatForm
                 );
 
                 $this->addElement(
-                    'number',
+                    'text',
                     '2fa_verification_token',
                     [
+                        'required'    => true,
                         'label'       => $this->translate('Verification Token'),
                         'description' => $this->translate(
                             'Please enter the token from your authenticator app to verify your setup.'
                         ),
-                        'min'         => 0,
-                        'max'         => 999999,
-                        'step'        => 1,
-                        'validators'  => [
-                            new CallbackValidator(function (string $value, CallbackValidator $validator) {
-                                if (strlen($value) !== 6) {
-                                    $validator->addMessage($this->translate('The token must be exactly 6 digits long.'));
-
-                                    return false;
-                                }
-
-                                return true;
-                            })
-                        ]
+                        'validators'  => [new TotpTokenValidator()]
                     ]
                 );
 
