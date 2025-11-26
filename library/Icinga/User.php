@@ -7,6 +7,8 @@ use DateTimeZone;
 use Icinga\Application\Config;
 use Icinga\Authentication\AdmissionLoader;
 use Icinga\Authentication\Role;
+use Icinga\Authentication\TwoFactorTotp;
+use Icinga\Common\Database;
 use Icinga\Exception\ProgrammingError;
 use Icinga\User\Preferences;
 use Icinga\Web\Navigation\Navigation;
@@ -19,6 +21,8 @@ use InvalidArgumentException;
  */
 class User
 {
+    use Database;
+
     /**
      * Firstname
      *
@@ -159,6 +163,9 @@ class User
         if ($email !== null) {
             $this->setEmail($email);
         }
+
+        // Set 2FA status on the user object depending on whether a secret exists for the user
+        $this->setTwoFactorEnabled(TwoFactorTotp::hasDbSecret($this->getDb(), $username));
     }
 
     /**
