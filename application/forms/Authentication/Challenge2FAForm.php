@@ -6,24 +6,50 @@ namespace Icinga\Forms\Authentication;
 
 use Exception;
 use Icinga\Application\Hook\AuthenticationHook;
+use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\TwoFactorTotp;
+use Icinga\Common\Database;
+use Icinga\Web\Response;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
+use ipl\Html\Attributes;
+use ipl\Html\FormDecoration\RenderElementDecorator;
+use ipl\Web\Common\CsrfCounterMeasure;
+use ipl\Web\Common\FormUid;
+use ipl\Web\Compat\CompatForm;
 
-class Challenge2FAForm extends LoginForm
+class Challenge2FAForm extends CompatForm
 {
-    public function init(): void
+    use CsrfCounterMeasure;
+    use Database;
+    use FormUid;
+
+    const SUBMIT_VERIFY = 'btn_submit_verify';
+
+    const SUBMIT_CANCEL = 'btn_submit_cancel';
+
+    public function __construct()
     {
-        $this->setRequiredCue(null);
-        $this->setName('form_challenge_2fa');
-        $this->setSubmitLabel($this->translate('Verify'));
-        $this->setProgressLabel($this->translate('Verifying'));
+        $this->addAttributes(Attributes::create(['name' => '2fa_challenge_form']));
     }
 
-    public function createElements(array $formData): void
+    /**
+     * Return the current Response
+     *
+     * @return Response
+     */
+    protected function getResponse(): Response
     {
+        return Icinga::app()->getFrontController()->getResponse();
+    }
+
+    protected function assemble(): void
+    {
+        $this->addCsrfCounterMeasure(Session::getSession()->getId());
+        $this->addElement($this->createUidElement());
+
         $this->addElement(
             'text',
             'token',
@@ -33,7 +59,31 @@ class Challenge2FAForm extends LoginForm
                 'placeholder'    => $this->translate('Please enter your 2FA token'),
                 'autocomplete'   => 'off',
                 'autocapitalize' => 'off',
+                'decorators'     => [
+                    'RenderElement' => new RenderElementDecorator(),
+                    'Errors'        => ['name' => 'Errors', 'options' => ['class' => 'errors']]
+                ]
+            ]
+        );
 
+        $this->addElement(
+            'submit',
+            self::SUBMIT_VERIFY,
+            [
+                'data-progress-label' => $this->translate('Verifying'),
+                'label'               => $this->translate('Verify'),
+            ]
+        );
+
+        $this->addElement(
+            'submit',
+            self::SUBMIT_CANCEL,
+            [
+                'ignore'              => true,
+                'formnovalidate'      => true,
+                'class'               => 'btn-cancel',
+                'label'               => $this->translate('Cancel'),
+                'data-progress-label' => $this->translate('Canceling')
             ]
         );
 
@@ -46,7 +96,7 @@ class Challenge2FAForm extends LoginForm
         );
     }
 
-    public function onSuccess(): bool
+    protected function onSuccess(): void
     {
         $user = Auth::getInstance()->getUser();
         $twoFactor = TwoFactorTotp::loadFromDb($this->getDb(), $user->getUsername());
@@ -73,11 +123,9 @@ class Challenge2FAForm extends LoginForm
 
             $this->getResponse()->setRerenderLayout(true);
 
-            return true;
+            $this->setRedirectUrl(Url::fromRequest());
         }
 
-        $this->getElement('token')->addError($this->translate('Token is invalid!'));
-
-        return false;
+        $this->getElement('token')->addMessage($this->translate('Token is invalid!'));
     }
 }
