@@ -11,7 +11,6 @@ use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
-use Icinga\Forms\Authentication\Challenge2FAForm;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Helper\CookieHelper;
@@ -47,74 +46,62 @@ class AuthenticationController extends Controller
         if (($requiresSetup = $icinga->requiresSetup()) && $icinga->setupTokenExists()) {
             $this->redirectNow(Url::fromPath('setup'));
         }
+
+        $form = (new LoginForm())
+            ->setAction(Url::fromRequest()->getAbsoluteUrl())
+            ->on(Form::ON_SUBMIT, function (LoginForm $form) {
+                if ($redirectUrl = $form->getRedirectUrl()) {
+                    $this->redirectNow($redirectUrl);
+                }
+            })
+            ->on(Form::ON_SENT, function (LoginForm $form) {
+                $isCsrfValid = $form->getElement('CSRFToken')->isValid();
+                $isCancelPressed = $form->getPressedSubmitElement()?->getName() === $form::SUBMIT_CANCEL_2FA;
+
+                if ($isCsrfValid && $isCancelPressed) {
+                    Session::getSession()->purge();
+                    $this->redirectNow(Url::fromRequest());
+                }
+            })
+            ->on(Form::ON_REQUEST, function ($request, LoginForm $form) {
+                $auth = Auth::getInstance();
+                $onlyExternal = true;
+                // TODO(el): This may be set on the auth chain once iterated. See Auth::authExternal().
+                foreach ($auth->getAuthChain() as $backend) {
+                    if (! $backend instanceof ExternalBackend) {
+                        $onlyExternal = false;
+                    }
+                }
+                if ($onlyExternal) {
+                    $form->addMessage($this->translate(
+                        'You\'re currently not authenticated using any of the web server\'s authentication'
+                        . 'mechanisms. Make sure you\'ll configure such, otherwise you\'ll not be able to login.'
+                    ));
+                    $form->onError();
+                }
+            });
+
         $skip2fa = false;
-        $user = $this->Auth()->getUser();
-        if ($user
-            && $user->getTwoFactorEnabled()
-            && Session::getSession()->get('2fa_must_challenge_token', false)
-        ) {
-            $form = (new Challenge2FAForm())
-                ->setAction(Url::fromRequest()->getAbsoluteUrl())
-                ->on(Form::ON_SUBMIT, function (Challenge2FAForm $form) {
-                    if ($redirectUrl = $form->getRedirectUrl()) {
-                        $this->redirectNow($redirectUrl);
-                    }
-                })
-                ->on(Form::ON_SENT, function (Challenge2FAForm $form) {
-                    $isCsrfValid = $form->getElement('CSRFToken')->isValid();
-                    $isCancelPressed = $form->getPressedSubmitElement()?->getName() === $form::SUBMIT_CANCEL;
 
-                    if ($isCsrfValid && $isCancelPressed) {
-                        Session::getSession()->purge();
-                        $this->redirectNow(Url::fromRequest());
-                    }
-                });
-        } else {
-            $form = (new LoginForm())
-                ->setAction(Url::fromRequest()->getAbsoluteUrl())
-                ->on(Form::ON_SUBMIT, function (LoginForm $form) {
-                    if ($redirectUrl = $form->getRedirectUrl()) {
-                        $this->redirectNow($redirectUrl);
-                    }
-                })
-                ->on(Form::ON_REQUEST, function ($request, LoginForm $form) {
-                    $auth = Auth::getInstance();
-                    $onlyExternal = true;
-                    // TODO(el): This may be set on the auth chain once iterated. See Auth::authExternal().
-                    foreach ($auth->getAuthChain() as $backend) {
-                        if (! $backend instanceof ExternalBackend) {
-                            $onlyExternal = false;
-                        }
-                    }
-                    if ($onlyExternal) {
-                        $form->addMessage($this->translate(
-                            'You\'re currently not authenticated using any of the web server\'s authentication'
-                            . 'mechanisms. Make sure you\'ll configure such, otherwise you\'ll not be able to login.'
-                        ));
-                        $form->onError();
-                    }
-                });
-
-            if (RememberMe::hasCookie() && $this->hasDb()) {
-                $authenticated = false;
-                try {
-                    $rememberMeOld = RememberMe::fromCookie();
-                    $authenticated = $rememberMeOld->authenticate();
-                    if ($authenticated) {
-                        $rememberMe = $rememberMeOld->renew();
-                        $this->getResponse()->setCookie($rememberMe->getCookie());
-                        $rememberMe->persist($rememberMeOld->getAesCrypt()->getIV());
-                        $skip2fa = true;
-                    }
-                } catch (RuntimeException $e) {
-                    Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
-                } catch (AuthenticationException $e) {
-                    Logger::error($e);
+        if (RememberMe::hasCookie() && $this->hasDb()) {
+            $authenticated = false;
+            try {
+                $rememberMeOld = RememberMe::fromCookie();
+                $authenticated = $rememberMeOld->authenticate();
+                if ($authenticated) {
+                    $rememberMe = $rememberMeOld->renew();
+                    $this->getResponse()->setCookie($rememberMe->getCookie());
+                    $rememberMe->persist($rememberMeOld->getAesCrypt()->getIV());
+                    $skip2fa = true;
                 }
+            } catch (RuntimeException $e) {
+                Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
+            } catch (AuthenticationException $e) {
+                Logger::error($e);
+            }
 
-                if (! $authenticated) {
-                    $this->getResponse()->setCookie(RememberMe::forget());
-                }
+            if (! $authenticated) {
+                $this->getResponse()->setCookie(RememberMe::forget());
             }
         }
 

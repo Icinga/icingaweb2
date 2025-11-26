@@ -9,9 +9,11 @@ use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
+use Icinga\Authentication\TwoFactorTotp;
 use Icinga\Common\Database;
 use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\User;
+use Icinga\Web\Form\Validator\TotpTokenValidator;
 use Icinga\Web\RememberMe;
 use Icinga\Web\Response;
 use Icinga\Web\Session;
@@ -32,10 +34,17 @@ class LoginForm extends CompatForm
     use Database;
     use FormUid;
 
-    /**
-     * Redirect URL
-     */
+    /** @var string Redirect URL */
     const REDIRECT_URL = 'dashboard';
+
+    /** @var string */
+    const SUBMIT_LOGIN = 'btn_submit_login';
+
+    /** @var string */
+    const SUBMIT_VERIFY_2FA = 'btn_submit_verify_2fa';
+
+    /** @var string */
+    const SUBMIT_CANCEL_2FA = 'btn_submit_cancel_2fa';
 
     public function __construct()
     {
@@ -52,11 +61,9 @@ class LoginForm extends CompatForm
         return Icinga::app()->getFrontController()->getResponse();
     }
 
-    public function assemble(): void
+    /** @return void */
+    public function assembleLoginElements(): void
     {
-        $this->addCsrfCounterMeasure(Session::getSession()->getId());
-        $this->addElement($this->createUidElement());
-
         $this->addElement(
             'text',
             'username',
@@ -115,12 +122,74 @@ class LoginForm extends CompatForm
 
         $this->addElement(
             'submit',
-            'btn_submit',
+            static::SUBMIT_LOGIN,
             [
                 'label'               => $this->translate('Login'),
                 'data-progress-label' => $this->translate('Logging in'),
             ]
         );
+    }
+
+    /** @return void */
+    public function assembleTwoFactorElements(): void
+    {
+        $this->addElement(
+            'text',
+            'token',
+            [
+                'required'       => true,
+                'class'          => 'autofocus content-centered',
+                'placeholder'    => $this->translate('Please enter your 2FA token'),
+                'autocomplete'   => 'off',
+                'autocapitalize' => 'off',
+                'decorators'     => [
+                    'RenderElement' => new RenderElementDecorator(),
+                    'Errors'        => ['name' => 'Errors', 'options' => ['class' => 'errors']]
+                ],
+                'validators'     => [new TotpTokenValidator()]
+            ]
+        );
+
+        $this->addElement(
+            'submit',
+            static::SUBMIT_VERIFY_2FA,
+            [
+                'data-progress-label' => $this->translate('Verifying'),
+                'label'               => $this->translate('Verify'),
+            ]
+        );
+
+        $this->addElement(
+            'submit',
+            static::SUBMIT_CANCEL_2FA,
+            [
+                'ignore'              => true,
+                'formnovalidate'      => true,
+                'class'               => 'btn-cancel',
+                'label'               => $this->translate('Cancel'),
+                'data-progress-label' => $this->translate('Canceling')
+            ]
+        );
+
+        $this->addElement(
+            'hidden',
+            'redirect',
+            [
+                'value' => Url::fromRequest()->getParam('redirect')
+            ]
+        );
+    }
+
+    protected function assemble(): void
+    {
+        $this->addCsrfCounterMeasure(Session::getSession()->getId());
+        $this->addElement($this->createUidElement());
+
+        if (Session::getSession()->get('2fa_must_challenge_token', false)) {
+            $this->assembleTwoFactorElements();
+        } else {
+            $this->assembleLoginElements();
+        }
 
         $this->addElement(
             'hidden',
@@ -156,78 +225,117 @@ class LoginForm extends CompatForm
 
     protected function onSuccess(): void
     {
-        $auth = Auth::getInstance();
-        $authChain = $auth->getAuthChain();
-        $authChain->setSkipExternalBackends(true);
-        $user = new User($this->getElement('username')->getValue());
-        if (! $user->hasDomain()) {
-            $user->setDomain(Config::app()->get('authentication', 'default_domain'));
-        }
-        $password = $this->getElement('password')->getValue();
-        $authenticated = $authChain->authenticate($user, $password);
-        if ($authenticated) {
-            $auth->setAuthenticated($user);
+        switch ($this->getPressedSubmitElement()?->getName()) {
+            case static::SUBMIT_LOGIN:
+                $auth = Auth::getInstance();
+                $authChain = $auth->getAuthChain();
+                $authChain->setSkipExternalBackends(true);
+                $username = $this->getElement('username')->getValue();
+                $user = new User($username);
+                // Set 2FA status on the user object depending on whether a secret exists for the user
+                $user->setTwoFactorEnabled(TwoFactorTotp::hasDbSecret($this->getDb(), $username));
+                if (! $user->hasDomain()) {
+                    $user->setDomain(Config::app()->get('authentication', 'default_domain'));
+                }
+                $password = $this->getElement('password')->getValue();
+                $authenticated = $authChain->authenticate($user, $password);
+                if ($authenticated) {
+                    if (! $user->getTwoFactorEnabled()) {
+                        $auth->setAuthenticated($user);
+                    } else {
+                        $session = Session::getSession();
+                        $session->set('2fa_must_challenge_token', true);
+                        $session->set('2fa_temporary_user', $user);
 
-            // If user has 2FA enabled and the token hasn't been validated, redirect to login again, so that
-            // the token is challenged.
-            if ($user->getTwoFactorEnabled() && ! $user->getTwoFactorSuccessful()) {
-                $redirect = $this->getElement('redirect');
-                $redirect->setValue(
-                    Url::fromPath('authentication/login', ['redirect' => $redirect->getValue()])->getRelativeUrl()
-                );
-                Session::getSession()->set('2fa_must_challenge_token', true);
+                        if ($this->getElement('rememberme')->isChecked()) {
+                            $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
+                            $session->set('2fa_remember_me_cookie', $rememberMe);
+                        }
 
-                if ($this->getElement('rememberme')->isChecked()) {
-                    $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
-                    Session::getSession()->set('2fa_remember_me_cookie', $rememberMe);
+                        $this->setRedirectUrl(Url::fromRequest());
+
+                        return;
+                    }
+
+                    if ($this->getElement('rememberme')->isChecked()) {
+                        try {
+                            $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
+                            $this->getResponse()->setCookie($rememberMe->getCookie());
+                            $rememberMe->persist();
+                        } catch (Exception $e) {
+                            Logger::error('Failed to let user "%s" stay logged in: %s', $user->getUsername(), $e);
+                        }
+                    }
+
+                    // Call provided AuthenticationHook(s) after successful login
+                    AuthenticationHook::triggerLogin($user);
+
+                    $this->getResponse()->setRerenderLayout(true);
+                    $this->setRedirectUrl($this->createRedirectUrl());
+
+                    return;
+                }
+                switch ($authChain->getError()) {
+                    case $authChain::EEMPTY:
+                        $this->addMessage($this->translate(
+                            'No authentication methods available.'
+                            . ' Did you create authentication.ini when setting up Icinga Web 2?'
+                        ));
+
+                        break;
+                    case $authChain::EFAIL:
+                        $this->addMessage($this->translate(
+                            'All configured authentication methods failed.'
+                            . ' Please check the system log or Icinga Web 2 log for more information.'
+                        ));
+
+                        break;
+                    /** @noinspection PhpMissingBreakStatementInspection */
+                    case $authChain::ENOTALL:
+                        $this->addMessage($this->translate(
+                            'Please note that not all authentication methods were available.'
+                            . ' Check the system log or Icinga Web 2 log for more information.'
+                        ));
+                    // Move to default
+                    default:
+                        $this->getElement('password')->addMessage($this->translate('Incorrect username or password'));
                 }
 
-                $this->setRedirectUrl($this->createRedirectUrl());
+                break;
 
-                return;
-            }
+            case static::SUBMIT_VERIFY_2FA:
+                $session = Session::getSession();
+                /** @var User $user */
+                $user = $session->get('2fa_temporary_user');
+                $twoFactor = TwoFactorTotp::loadFromDb($this->getDb(), $user->getUsername());
+                if ($this->getElement('token') && $twoFactor->verify($this->getValue('token'))) {
+                    $user->setTwoFactorSuccessful();
+                    $session->delete('2fa_must_challenge_token');
+                    Auth::getInstance()->setAuthenticated($user);
 
-            if ($this->getElement('rememberme')->isChecked()) {
-                try {
-                    $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
-                    $this->getResponse()->setCookie($rememberMe->getCookie());
-                    $rememberMe->persist();
-                } catch (Exception $e) {
-                    Logger::error('Failed to let user "%s" stay logged in: %s', $user->getUsername(), $e);
+                    if ($rememberMe = $session->get('2fa_remember_me_cookie')) {
+                        try {
+                            $this->getResponse()->setCookie($rememberMe->getCookie());
+                            $rememberMe->persist();
+                        } catch (Exception $e) {
+                            Logger::error('Failed to let user "%s" stay logged in: %s', $user->getUsername(), $e);
+                        }
+                    }
+
+                    // Call provided AuthenticationHook(s) after successful login
+                    AuthenticationHook::triggerLogin($user);
+
+                    $this->getResponse()->setRerenderLayout(true);
+
+                    $this->setRedirectUrl(Url::fromRequest());
+
+                    return;
                 }
-            }
 
-            // Call provided AuthenticationHook(s) after successful login
-            AuthenticationHook::triggerLogin($user);
-
-            $this->getResponse()->setRerenderLayout(true);
-            $this->setRedirectUrl($this->createRedirectUrl());
-            return;
-        }
-        switch ($authChain->getError()) {
-            case $authChain::EEMPTY:
-                $this->addMessage($this->translate(
-                    'No authentication methods available.'
-                    . ' Did you create authentication.ini when setting up Icinga Web 2?'
-                ));
-                break;
-            case $authChain::EFAIL:
-                $this->addMessage($this->translate(
-                    'All configured authentication methods failed.'
-                    . ' Please check the system log or Icinga Web 2 log for more information.'
-                ));
-                break;
-            /** @noinspection PhpMissingBreakStatementInspection */
-            case $authChain::ENOTALL:
-                $this->addMessage($this->translate(
-                    'Please note that not all authentication methods were available.'
-                    . ' Check the system log or Icinga Web 2 log for more information.'
-                ));
-                // Move to default
-            default:
-                $this->getElement('password')->addMessage($this->translate('Incorrect username or password'));
+                $this->getElement('token')->addMessage($this->translate('Token is invalid!'));
         }
 
+        // Display the messages that were added to form or form elements
         $this->onError();
     }
 
