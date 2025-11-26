@@ -11,6 +11,7 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\TwoFactorTotp;
 use Icinga\Common\Database;
+use Icinga\Web\Form\Validator\TotpTokenValidator;
 use Icinga\Web\Response;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
@@ -62,7 +63,8 @@ class Challenge2FAForm extends CompatForm
                 'decorators'     => [
                     'RenderElement' => new RenderElementDecorator(),
                     'Errors'        => ['name' => 'Errors', 'options' => ['class' => 'errors']]
-                ]
+                ],
+                'validators'     => [new TotpTokenValidator()]
             ]
         );
 
