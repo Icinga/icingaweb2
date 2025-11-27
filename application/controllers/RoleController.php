@@ -120,7 +120,7 @@ class RoleController extends AuthBackendController
         $role = new RoleForm();
         $role->setRedirectUrl('__CLOSE__');
         $role->setRepository(new RolesConfig());
-        $role->setSubmitLabel($this->translate('Remove Role'));
+        $role->setSubmitLabel($this->translate('Confirm Removal'));
         $role->remove($name);
 
         try {
