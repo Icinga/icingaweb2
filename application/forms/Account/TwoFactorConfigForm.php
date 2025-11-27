@@ -7,13 +7,16 @@ namespace Icinga\Forms\Account;
 use Icinga\Authentication\TwoFactorTotp;
 use Icinga\Common\Database;
 use Icinga\User;
+use Icinga\Web\Form\Element\FakeFormElement;
 use Icinga\Web\Form\Validator\TotpTokenValidator;
 use Icinga\Web\Notification;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Web\Common\FormUid;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
+use ipl\Web\Widget\CopyToClipboard;
 
 /**
  * Form for enabling and disabling 2FA or creating and updating the 2FA TOTP secret
@@ -79,8 +82,8 @@ class TwoFactorConfigForm extends CompatForm
                 'submit',
                 static::SUBMIT_DISABLE,
                 [
-                    'label'                 => $this->translate('Disable 2FA'),
-                    'data-progress-label'   => $this->translate('Disabling')
+                    'label'               => $this->translate('Disable 2FA'),
+                    'data-progress-label' => $this->translate('Disabling')
                 ]
             );
         } else {
@@ -88,7 +91,7 @@ class TwoFactorConfigForm extends CompatForm
                 'checkbox',
                 'enabled_2fa',
                 [
-                    'class'  => 'autosubmit',
+                    'class'       => 'autosubmit',
                     'label'       => $this->translate('Enable 2FA (TOTP)'),
                     'description' => $this->translate(
                         'This option allows you to enable or to disable the two factor authentication via TOTP.'
@@ -105,23 +108,26 @@ class TwoFactorConfigForm extends CompatForm
                     $this->twoFactor = TwoFactorTotp::createFromSecret($secret, $this->user->getUsername());
                 }
 
-                $this->addHtml(HtmlElement::create('img', Attributes::create([
-                    'class' => 'two-factor-totp-qr-code',
-                    'src' => $this->twoFactor->createQRCode()
-                ])));
+                $this->addHtml(new FakeFormElement(
+                    HtmlElement::create('img', Attributes::create([
+                        'class' => 'two-factor-totp-qr-code',
+                        'src'   => $this->twoFactor->createQRCode()
+                    ])),
+                    $this->translate('QR Code'),
+                    $this->translate('Use your authenticator app to scan the QR code.')
+                ));
 
-                $this->addElement(
-                    'textarea',
-                    '2fa_manual_auth_url',
-                    [
-                        'class'    => 'two-factor-totp-auth-url',
-                        'ignore'   => true,
-                        'disabled' => true,
-                        'label'    => $this->translate('Manual Auth URL'),
-                        'value'    => $this->twoFactor->getTotpAuthUrl(),
-                        'rows'     => 4
-                    ]
+                $manualAuthUrl = HtmlElement::create(
+                    'div',
+                    Attributes::create(['class' => 'two-factor-totp-auth-url']),
+                    new Text($this->twoFactor->getTotpAuthUrl()),
                 );
+                CopyToClipboard::attachTo($manualAuthUrl);
+                $this->addHtml(new FakeFormElement(
+                    $manualAuthUrl,
+                    $this->translate('Manual Auth URL'),
+                    $this->translate('If you have no camera to scan the QR code you can enter the auth URL manually.')
+                ));
 
                 $this->addElement(
                     'text',
