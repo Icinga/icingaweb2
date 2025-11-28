@@ -68,6 +68,8 @@ class PhpSession extends Session
         if (version_compare(PHP_VERSION, '7.1.0') < 0) {
             $defaultCookieOptions['hash_function'] = true;
             $defaultCookieOptions['hash_bits_per_character'] = 5;
+        } elseif (version_compare(PHP_VERSION, '8.4.0') < 0) {
+            $defaultCookieOptions['sid_bits_per_character'] = 5;
         }
 
         if ($options !== null) {
