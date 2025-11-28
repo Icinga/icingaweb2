@@ -106,7 +106,7 @@ class ProcessCheckResultCommand extends ObjectCommand
         if ($this->object === null) {
             throw new LogicException('You\'re required to call setObject() before calling setStatus()');
         }
-        $status = (int) floor($status);
+        $status = (int) $status;
         if (! in_array($status, self::$statusCodes[$this->object->getType()])) {
             throw new InvalidArgumentException(sprintf(
                 'The status code %u you provided is not one of the valid status codes for type %s',

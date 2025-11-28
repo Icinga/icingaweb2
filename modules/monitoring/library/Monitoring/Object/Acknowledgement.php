@@ -129,7 +129,7 @@ class Acknowledgement
      */
     public function setEntryTime($entryTime)
     {
-        $this->entryTime = (int) floor($entryTime);
+        $this->entryTime = (int) $entryTime;
 
         return $this;
     }
@@ -153,7 +153,7 @@ class Acknowledgement
      */
     public function setExpirationTime($expirationTime = null)
     {
-        $this->expirationTime = $expirationTime !== null ? (int) floor($expirationTime) : null;
+        $this->expirationTime = $expirationTime !== null ? (int) $expirationTime : null;
 
         return $this;
     }

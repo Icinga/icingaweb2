@@ -73,7 +73,7 @@ class ScheduleServiceDowntimeCommand extends AddCommentCommand
      */
     public function setStart($start)
     {
-        $this->start = (int) floor($start);
+        $this->start = (int) $start;
         return $this;
     }
 
@@ -96,7 +96,7 @@ class ScheduleServiceDowntimeCommand extends AddCommentCommand
      */
     public function setEnd($end)
     {
-        $this->end = (int) floor($end);
+        $this->end = (int) $end;
         return $this;
     }
 
@@ -165,7 +165,7 @@ class ScheduleServiceDowntimeCommand extends AddCommentCommand
      */
     public function setDuration($duration)
     {
-        $this->duration = (int) floor($duration);
+        $this->duration = (int) $duration;
         return $this;
     }
 

@@ -232,7 +232,7 @@ class DbQuery extends SimpleQuery
                 $value = strtotime($value);
             }
         } elseif (! is_int($value)) {
-            $value = (int) floor($value);
+            $value = (int) $value;
         }
 
         return $value;

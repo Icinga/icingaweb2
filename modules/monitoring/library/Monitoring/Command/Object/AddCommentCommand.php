@@ -63,7 +63,7 @@ class AddCommentCommand extends WithCommentCommand
      */
     public function setExpireTime($expireTime)
     {
-        $this->expireTime = (int) floor($expireTime);
+        $this->expireTime = (int) $expireTime;
 
         return $this;
     }

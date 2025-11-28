@@ -54,7 +54,7 @@ class DeleteCommentCommand extends IcingaCommand
      */
     public function setCommentId($commentId)
     {
-        $this->commentId = (int) floor($commentId);
+        $this->commentId = (int) $commentId;
         return $this;
     }
 

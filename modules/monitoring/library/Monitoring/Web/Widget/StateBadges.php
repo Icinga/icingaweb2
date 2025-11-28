@@ -208,7 +208,7 @@ class StateBadges extends AbstractWidget
         array $translateArgs = array()
     ) {
         $this->badges[$state] = (object) array(
-            'count'             => (int) floor($count),
+            'count'             => (int) $count,
             'filter'            => $filter,
             'translateArgs'     => $translateArgs,
             'translatePlural'   => $translatePlural,

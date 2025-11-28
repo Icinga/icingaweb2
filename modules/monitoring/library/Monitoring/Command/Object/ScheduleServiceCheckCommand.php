@@ -45,7 +45,7 @@ class ScheduleServiceCheckCommand extends ObjectCommand
      */
     public function setCheckTime($checkTime)
     {
-        $this->checkTime = (int) floor($checkTime);
+        $this->checkTime = (int) $checkTime;
         return $this;
     }
 
