@@ -94,7 +94,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
             }
 
             self::$instances[$name] = new $class($foundName, $config);
-            if ($name === null) {
+            if ($name === '') {
                 self::$instances[$foundName] = self::$instances[$name];
             }
         }
@@ -161,7 +161,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     {
         $backends = Config::module('monitoring', 'backends');
 
-        if ($name === null) {
+        if (! $name) {
             $count = 0;
 
             foreach ($backends as $name => $config) {
