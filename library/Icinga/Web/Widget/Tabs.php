@@ -181,7 +181,7 @@ EOT;
      */
     public function has($name)
     {
-        return array_key_exists($name, $this->tabs);
+        return array_key_exists($name ?? '', $this->tabs);
     }
 
     /**
