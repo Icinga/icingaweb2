@@ -94,7 +94,7 @@ class ArrayToTextTableHelper
      */
     public function setMaxWidth($maxWidth)
     {
-        $this->mW = (int) floor($maxWidth);
+        $this->mW = (int) $maxWidth;
     }
 
     /**
@@ -104,7 +104,7 @@ class ArrayToTextTableHelper
      */
     public function setMaxHeight($maxHeight)
     {
-        $this->mH = (int) floor($maxHeight);
+        $this->mH = (int) $maxHeight;
     }
 
     /**
