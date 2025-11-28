@@ -235,7 +235,7 @@ class AdmissionLoader
         $refusals = [];
 
         foreach ($permissions as $permission) {
-            if (array_key_exists($permission, self::LEGACY_PERMISSIONS)) {
+            if ($permission && array_key_exists($permission, self::LEGACY_PERMISSIONS)) {
                 $migratedGrants[] = self::LEGACY_PERMISSIONS[$permission];
             } elseif ($permission === 'no-user/password-change') {
                 $refusals[] = 'user/password-change';

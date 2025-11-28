@@ -96,7 +96,7 @@ abstract class AuditHook
      */
     protected function extractMessageValue(array $path, array $messageData)
     {
-        $key = array_shift($path);
+        $key = array_shift($path) ?? '';
         if (array_key_exists($key, $messageData)) {
             $value = $messageData[$key];
         } else {

@@ -71,8 +71,9 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
      *
      * @return MonitoringBackend
      */
-    public static function instance($name = null)
+    public static function instance($name = '')
     {
+        $name = $name ?? '';
         if (! array_key_exists($name, self::$instances)) {
             list($foundName, $config) = static::loadConfig($name);
             $type = $config->get('type');
