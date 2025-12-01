@@ -258,7 +258,7 @@ class ClassLoader
      */
     protected function namespaceHasApplictionDirectory($namespace)
     {
-        return array_key_exists($namespace ?? '', $this->applicationDirectories);
+        return array_key_exists($namespace, $this->applicationDirectories);
     }
 
     /**
