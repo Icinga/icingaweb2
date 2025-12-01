@@ -42,7 +42,7 @@ abstract class EventgridQuery extends StatehistoryQuery
      */
     public function order($columnOrAlias, $dir = null)
     {
-        if ($columnOrAlias && array_key_exists($columnOrAlias, $this->additionalColumns)) {
+        if (array_key_exists($columnOrAlias, $this->additionalColumns)) {
             $subQueries = $this->subQueries;
             $this->subQueries = array();
             parent::order($columnOrAlias, $dir);

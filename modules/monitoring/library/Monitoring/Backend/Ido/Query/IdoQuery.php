@@ -1283,7 +1283,7 @@ abstract class IdoQuery extends DbQuery
 
     protected function hasJoinedVirtualTable($name)
     {
-        return array_key_exists($name ?? '', $this->joinedVirtualTables);
+        return array_key_exists($name, $this->joinedVirtualTables);
     }
 
     /**
