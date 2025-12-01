@@ -4,8 +4,8 @@
 
 namespace Icinga\Authentication;
 
-use chillerlan\QRCode\QRCode;
 use DateTime;
+use Endroid\QrCode\Builder\Builder;
 use Icinga\Common\Database;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Model\TwoFactorModel;
@@ -133,7 +133,7 @@ class TwoFactorTotp
      */
     public function createQRCode(): string
     {
-        return (new QRCode())->render($this->getTotpAuthUrl());
+        return (new Builder(data: $this->getTotpAuthUrl()))->build()->getDataUri();
     }
 
     /**
