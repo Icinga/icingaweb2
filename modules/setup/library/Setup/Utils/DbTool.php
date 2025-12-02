@@ -134,7 +134,7 @@ class DbTool
 
         $this->config = $config;
         if ($this->config['db'] === 'mysql') {
-            if (version_compare(PHP_VERSION, '8.5.0', '<')) {
+            if (version_compare(PHP_VERSION, '8.4.0', '<')) {
                 $this->mysqlConstantPrefix = 'PDO::MYSQL_ATTR_';
             } else {
                 $this->mysqlConstantPrefix = 'Pdo\Mysql::ATTR_';
