@@ -37,7 +37,7 @@ trait Database
 
         // In PHP 8.5+, driver specific constants of the PDO class are deprecated,
         // but the replacements are ony available since php 8.4
-        if (version_compare(PHP_VERSION, '8.5.0', '<')) {
+        if (version_compare(PHP_VERSION, '8.4.0', '<')) {
             $mysqlConstantPrefix = 'PDO::MYSQL_ATTR_';
         } else {
             $mysqlConstantPrefix = 'Pdo\Mysql::ATTR_';
