@@ -10,9 +10,11 @@ use Icinga\User;
 use Icinga\Web\Form\Element\FakeFormElement;
 use Icinga\Web\Form\Validator\TotpTokenValidator;
 use Icinga\Web\Notification;
+use Icinga\Web\Session;
 use ipl\Html\Attributes;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Common\FormUid;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
@@ -25,6 +27,7 @@ use ipl\Web\Widget\CopyToClipboard;
  */
 class TwoFactorConfigForm extends CompatForm
 {
+    use CsrfCounterMeasure;
     use Database;
     use FormUid;
 
@@ -75,6 +78,7 @@ class TwoFactorConfigForm extends CompatForm
 
     protected function assemble(): void
     {
+        $this->addCsrfCounterMeasure(Session::getSession()->getId());
         $this->addElement($this->createUidElement());
 
         if (TwoFactorTotp::hasDbSecret($this->getDb(), $this->user->getUsername())) {
