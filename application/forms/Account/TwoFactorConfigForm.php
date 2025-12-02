@@ -18,6 +18,7 @@ use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Common\FormUid;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
+use ipl\Web\Widget\ActionLink;
 use ipl\Web\Widget\CopyToClipboard;
 
 /**
@@ -112,13 +113,26 @@ class TwoFactorConfigForm extends CompatForm
                     $this->twoFactor = TwoFactorTotp::createFromSecret($secret, $this->user->getUsername());
                 }
 
+                $qrCode = $this->twoFactor->createQRCode();
+
                 $this->addHtml(new FakeFormElement(
-                    HtmlElement::create('img', Attributes::create([
-                        'class' => 'two-factor-totp-qr-code',
-                        'src'   => $this->twoFactor->createQRCode()
-                    ])),
+                    HtmlElement::create(
+                        'img',
+                        Attributes::create(['class' => 'two-factor-totp-qr-code', 'src' => $qrCode])
+                    ),
                     $this->translate('QR Code'),
                     $this->translate('Use your authenticator app to scan the QR code.')
+                ));
+
+                $this->addHtml(new FakeFormElement(
+                    new ActionLink(
+                        'Download QR Code (e.g. for Recovery)',
+                        $qrCode,
+                        'download',
+                        Attributes::create(['download' => 'icinga-web-totp-qr-code.png'])
+                    ),
+                    description: $this->translate('Download the QR code to back up your two-factor'
+                        . ' authentication in case you lose access to your device.')
                 ));
 
                 $manualAuthUrl = HtmlElement::create(
