@@ -113,8 +113,10 @@ class TwoFactorConfigForm extends CompatForm
                     $this->twoFactor = TwoFactorTotp::createFromSecret($secret, $this->user->getUsername());
                 }
 
+                if(0)
                 $qrCode = $this->twoFactor->createQRCode();
 
+                if(0)
                 $this->addHtml(new FakeFormElement(
                     HtmlElement::create(
                         'img',
@@ -124,6 +126,7 @@ class TwoFactorConfigForm extends CompatForm
                     $this->translate('Use your authenticator app to scan the QR code.')
                 ));
 
+                if(0)
                 $this->addHtml(new FakeFormElement(
                     new ActionLink(
                         'Download QR Code',
