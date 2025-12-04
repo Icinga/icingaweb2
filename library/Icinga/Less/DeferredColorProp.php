@@ -93,7 +93,7 @@ class DeferredColorProp extends Less_Tree_Variable
         $this->evaluating = true;
 
         foreach ($env->frames as $frame) {
-            if (($v = $frame->variable($this->getRef()->name))) {
+            if (($v = $frame->variable($this->getRef()->getName()))) {
                 $rv = $v->value;
                 if ($rv instanceof Less_Tree_Value) {
                     $rv = $rv->compile($env);
@@ -101,6 +101,7 @@ class DeferredColorProp extends Less_Tree_Variable
 
                 // As we are at it anyway, let's cast the tree color to our color prop as well!
                 if ($rv instanceof Less_Tree_Color) {
+                    $rv = new Less_Tree_Color($rv->rgb);
                     $rv = ColorProp::fromColor($rv);
                     $rv->setName($this->getRef()->getName());
                 }

@@ -24,19 +24,32 @@ class Call extends Less_Tree_Call
         }
 
         foreach ($this->args as $arg) {
-            if (! is_array($arg->value)) {
-                continue;
-            }
+            if (isset($arg->value)) {
+                if (! is_array($arg->value)) {
+                    continue;
+                }
 
-            $name = null;
-            if ($arg->value[0] instanceof Less_Tree_Variable) {
-                // This is the case when defining a variable with a callable LESS rules such as fade, fadeout..
-                // Example: `@foo: #fff; @foo-bar: fade(@foo, 10);`
-                $name = $arg->value[0]->name;
-            } elseif ($arg->value[0] instanceof ColorPropOrVariable) {
-                // This is the case when defining a CSS rule using the LESS functions and passing
-                // a variable as an argument to them. Example: `... { color: fade(@foo, 10%); }`
-                $name = $arg->value[0]->getVariable()->name;
+                $name = null;
+                if ($arg->value[0] instanceof Less_Tree_Variable) {
+                    // This is the case when defining a variable with a callable LESS rules such as fade, fadeout..
+                    // Example: `@foo: #fff; @foo-bar: fade(@foo, 10);`
+                    $name = $arg->value[0]->name;
+                } elseif ($arg->value[0] instanceof ColorPropOrVariable) {
+                    // This is the case when defining a CSS rule using the LESS functions and passing
+                    // a variable as an argument to them. Example: `... { color: fade(@foo, 10%); }`
+                    $name = $arg->value[0]->getVariable()->name;
+                }
+            } else {
+                $name = null;
+                if ($arg instanceof Less_Tree_Variable) {
+                    // This is the case when defining a variable with a callable LESS rules such as fade, fadeout..
+                    // Example: `@foo: #fff; @foo-bar: fade(@foo, 10);`
+                    $name = $arg->name;
+                } elseif ($arg instanceof ColorPropOrVariable) {
+                    // This is the case when defining a CSS rule using the LESS functions and passing
+                    // a variable as an argument to them. Example: `... { color: fade(@foo, 10%); }`
+                    $name = $arg->getVariable()->name;
+                }
             }
 
             if ($name) {
