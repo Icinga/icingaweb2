@@ -4,6 +4,7 @@
 namespace Icinga\Less;
 
 use Less_Parser;
+use Less_Tree_Color;
 use Less_Tree_Expression;
 use Less_Tree_Rule;
 use Less_Tree_Value;
@@ -76,7 +77,7 @@ CSS;
 
     public function visitDetachedRuleset($drs)
     {
-        if ($this->variableOrigin->name === '@' . static::LIGHT_MODE_NAME) {
+        if ($this->variableOrigin && $this->variableOrigin->name === '@' . static::LIGHT_MODE_NAME) {
             $this->variableOrigin->name .= '-' . substr(sha1(uniqid(mt_rand(), true)), 0, 7);
 
             $this->lightMode->add($this->variableOrigin->name);
@@ -132,7 +133,15 @@ CSS;
             $this->variableOrigin = $r;
 
             if ($r->value instanceof Less_Tree_Value) {
-                if ($r->value->value[0] instanceof Less_Tree_Expression) {
+                if ($r->value->value[0] instanceof Less_Tree_Color ) {
+                    // 2. Check if the color was defined using a name (i.e., it doesn't have an alpha)
+                    // Less_Node_Color stores color components (R, G, B) as floats (0-255).
+                    // A simple way to trigger the hex output is to perform a trivial operation.
+
+                    // Re-creating the node from its RGB values forces the canonical hex form
+                    // when it is compiled back into CSS.
+                    $r->value->value[0] = new Less_Tree_Color($r->value->value[0]->rgb);
+                } elseif ($r->value->value[0] instanceof Less_Tree_Expression) {
                     if ($r->value->value[0]->value[0] instanceof Less_Tree_Variable) {
                         // Transform the variable definition rule into our own class
                         $r->value->value[0]->value[0] = new DeferredColorProp($r->name, $r->value->value[0]->value[0]);
@@ -209,23 +218,27 @@ CSS;
         if (! empty($calls)) {
             // Place and parse light mode calls into a new anonymous file,
             // leaving the original Less in which the light modes were defined untouched.
-            $parser = (new Less_Parser())
-                ->parse(sprintf(static::LIGHT_MODE_CSS, implode("\n", $calls)));
-
-            // Because Less variables are block scoped,
-            // we can't just access the light mode definitions in the calls above.
-            // The LightModeVisitor ensures that all calls have access to the environment in which the mode was defined.
-            // Finally, the rules are merged so that the light mode calls are also rendered to CSS.
-            $rules = new ReflectionProperty(get_class($parser), 'rules');
-            $rules->setAccessible(true);
-            $evald->rules = array_merge(
-                $evald->rules,
+            try {
+                $parser = (new Less_Parser())
+                    ->parse(sprintf(static::LIGHT_MODE_CSS, implode("\n", $calls)));
+                // Because Less variables are block scoped,
+                // we can't just access the light mode definitions in the calls above.
+                // The LightModeVisitor ensures that all calls have access to the environment in which the mode was defined.
+                // Finally, the rules are merged so that the light mode calls are also rendered to CSS.
+                $rules = new ReflectionProperty(get_class($parser), 'rules');
+                $value = $rules->getValue($parser);
                 (new LightModeVisitor())
                     ->setLightMode($this->lightMode)
-                    ->visitArray($rules->getValue($parser))
-            );
-            // The LightModeVisitor is used explicitly here instead of using it as a plugin
-            // since we only need to process the newly created rules for the light mode calls.
+                    ->visitArray($value);
+                $evald->rules = array_merge(
+                    $evald->rules,
+                    $value
+                );
+                // The LightModeVisitor is used explicitly here instead of using it as a plugin
+                // since we only need to process the newly created rules for the light mode calls.
+            } catch (\Exception $e) {
+                var_dump($e->getMessage());die;
+            }
         }
 
         return $evald;

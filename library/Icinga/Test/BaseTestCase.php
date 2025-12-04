@@ -293,21 +293,21 @@ namespace Icinga\Test {
             }
         }
 
-        /**
-         * Add assertMatchesRegularExpression() method for phpunit >= 8.0 < 9.0 for compatibility with PHP 7.2.
-         *
-         * @TODO Remove once PHP 7.2 support is not needed for testing anymore.
-         */
-        public static function assertMatchesRegularExpression(
-            string $pattern,
-            string $string,
-            string $message = ''
-        ): void {
-            if (method_exists(parent::class, 'assertMatchesRegularExpression')) {
-                parent::assertMatchesRegularExpression($pattern, $string, $message);
-            } else {
-                static::assertRegExp($pattern, $string, $message);
-            }
-        }
+//        /**
+//         * Add assertMatchesRegularExpression() method for phpunit >= 8.0 < 9.0 for compatibility with PHP 7.2.
+//         *
+//         * @TODO Remove once PHP 7.2 support is not needed for testing anymore.
+//         */
+//        public static function assertMatchesRegularExpression(
+//            string $pattern,
+//            string $string,
+//            string $message = ''
+//        ): void {
+//            if (method_exists(parent::class, 'assertMatchesRegularExpression')) {
+//                parent::assertMatchesRegularExpression($pattern, $string, $message);
+//            } else {
+//                static::assertRegExp($pattern, $string, $message);
+//            }
+//        }
     }
 }
