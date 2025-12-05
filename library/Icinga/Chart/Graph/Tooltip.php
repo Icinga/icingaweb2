@@ -85,10 +85,10 @@ class Tooltip
         }
 
         // aggregate y-values
-        $y = (int)$point[1];
+        $y = (int)floor($point[1]);
         if (isset($point[2])) {
             // load original value in case value already aggregated
-            $y = (int)$point[2];
+            $y = (int)floor($point[2]);
         }
 
         if (!isset($this->data['min']) || $this->data['min'] > $y) {

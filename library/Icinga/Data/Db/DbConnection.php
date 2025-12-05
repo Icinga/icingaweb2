@@ -72,9 +72,9 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     /**
      * Create a new connection object
      *
-     * @param ConfigObject $config
+     * @param ConfigObject|null $config
      */
-    public function __construct(ConfigObject $config = null)
+    public function __construct(?ConfigObject $config = null)
     {
         $this->config = $config;
         $this->connect();
@@ -172,27 +172,40 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 break;
             case 'mysql':
                 $adapter = 'Pdo_Mysql';
+                // In PHP 8.5+, driver specific constants of the PDO class are deprecated,
+                // but the replacements are ony available since php 8.4
+                if (version_compare(PHP_VERSION, '8.4.0', '<')) {
+                    $mysqlConstantPrefix = 'PDO::MYSQL_ATTR_';
+                } else {
+                    $mysqlConstantPrefix = 'Pdo\Mysql::ATTR_';
+                }
                 if ($this->config->use_ssl) {
                     # The presence of these keys as empty strings or null cause non-ssl connections to fail
                     if ($this->config->ssl_key) {
-                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_KEY] = $this->config->ssl_key;
+                        $adapterParamaters['driver_options'][constant($mysqlConstantPrefix . 'SSL_KEY')]
+                            = $this->config->ssl_key;
                     }
                     if ($this->config->ssl_cert) {
-                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CERT] = $this->config->ssl_cert;
+                        $adapterParamaters['driver_options'][constant($mysqlConstantPrefix . 'SSL_CERT')]
+                            = $this->config->ssl_cert;
                     }
                     if ($this->config->ssl_ca) {
-                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CA] = $this->config->ssl_ca;
+                        $adapterParamaters['driver_options'][constant($mysqlConstantPrefix . 'SSL_CA')]
+                            = $this->config->ssl_ca;
                     }
                     if ($this->config->ssl_capath) {
-                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CAPATH] = $this->config->ssl_capath;
+                        $adapterParamaters['driver_options'][constant($mysqlConstantPrefix . 'SSL_CAPATH')]
+                            = $this->config->ssl_capath;
                     }
                     if ($this->config->ssl_cipher) {
-                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config->ssl_cipher;
+                        $adapterParamaters['driver_options'][constant($mysqlConstantPrefix . 'SSL_CIPHER')]
+                            = $this->config->ssl_cipher;
                     }
-                    if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
+                    if (defined($mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT')
                         && $this->config->ssl_do_not_verify_server_cert
                     ) {
-                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+                        $adapterParamaters['driver_options']
+                        [constant($mysqlConstantPrefix . 'SSL_VERIFY_SERVER_CERT')] = false;
                     }
                 }
                 /*
@@ -202,22 +215,25 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                  * valid ANSI SQL though. Further in that case the query plan would suffer if you add more columns to
                  * the group by list.
                  */
-                $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] =
+                $driverOptions[constant($mysqlConstantPrefix . 'INIT_COMMAND')] =
                     'SET SESSION SQL_MODE=\'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,'
                     . 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_ENGINE_SUBSTITUTION\'';
                 if (isset($adapterParamaters['charset'])) {
-                    $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ', NAMES ' . $adapterParamaters['charset'];
+                    $driverOptions[constant($mysqlConstantPrefix . 'INIT_COMMAND')]
+                        .= ', NAMES ' . $adapterParamaters['charset'];
                     if (trim($adapterParamaters['charset']) === 'latin1') {
                         // Required for MySQL 8+ because we need PIPES_AS_CONCAT and
                         // have several columns with explicit COLLATE instructions
-                        $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ' COLLATE latin1_general_ci';
+                        $driverOptions[constant($mysqlConstantPrefix . 'INIT_COMMAND')]
+                            .= ' COLLATE latin1_general_ci';
                     }
 
                     unset($adapterParamaters['charset']);
                 }
 
-                $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ", time_zone='" . $this->defaultTimezoneOffset() . "'";
-                $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .=';';
+                $driverOptions[constant($mysqlConstantPrefix . 'INIT_COMMAND')]
+                    .= ", time_zone='" . $this->defaultTimezoneOffset() . "'";
+                $driverOptions[constant($mysqlConstantPrefix . 'INIT_COMMAND')] .= ';';
                 $defaultPort = 3306;
                 break;
             case 'oci':
@@ -428,14 +444,14 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
      * Pass an array with a column name (the same as in $bind) and a PDO::PARAM_* constant as value
      * as fourth parameter $types to define a different type than string for a particular column.
      *
-     * @param   string  $table
-     * @param   array   $bind
-     * @param   Filter  $filter
-     * @param   array   $types
+     * @param   string       $table
+     * @param   array        $bind
+     * @param   Filter|null  $filter
+     * @param   array        $types
      *
      * @return  int             The number of affected rows
      */
-    public function update($table, array $bind, Filter $filter = null, array $types = array())
+    public function update($table, array $bind, ?Filter $filter = null, array $types = array())
     {
         $set = array();
         foreach ($bind as $column => $value) {
@@ -464,12 +480,12 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     /**
      * Delete table rows, optionally limited by using a filter
      *
-     * @param   string  $table
-     * @param   Filter  $filter
+     * @param   string       $table
+     * @param   Filter|null  $filter
      *
      * @return  int             The number of affected rows
      */
-    public function delete($table, Filter $filter = null)
+    public function delete($table, ?Filter $filter = null)
     {
         return $this->dbAdapter->delete($table, $filter ? $this->renderFilter($filter) : '');
     }

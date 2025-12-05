@@ -9,7 +9,7 @@ use Icinga\Module\X509\Hook\SniHook;
 
 class Sni extends SniHook
 {
-    public function getHosts(Filter $filter = null)
+    public function getHosts(?Filter $filter = null)
     {
         MonitoringBackend::clearInstances();
 

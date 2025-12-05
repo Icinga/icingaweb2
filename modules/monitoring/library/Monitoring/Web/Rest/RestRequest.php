@@ -291,7 +291,11 @@ class RestRequest
             throw new CurlException('%s', curl_error($ch));
         }
 
-        curl_close($ch);
+        // In PHP 8.5+, curl handles are freed automatically and curl_close() is deprecated
+        if (version_compare(PHP_VERSION, '8.5.0', '<')) {
+            curl_close($ch);
+        }
+
         return $result;
     }
 }

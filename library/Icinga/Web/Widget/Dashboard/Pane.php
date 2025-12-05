@@ -161,10 +161,10 @@ class Pane extends UserWidget
     /**
      * Removes all or a given list of dashlets from this pane
      *
-     * @param array $dashlets Optional list of dashlet titles
-     * @return Pane $this
+     * @param array|null $dashlets Optional list of dashlet titles
+     * @return Pane      $this
      */
-    public function removeDashlets(array $dashlets = null)
+    public function removeDashlets(?array $dashlets = null)
     {
         if ($dashlets === null) {
             $this->dashlets = array();

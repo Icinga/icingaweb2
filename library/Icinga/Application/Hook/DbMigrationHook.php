@@ -200,7 +200,7 @@ abstract class DbMigrationHook implements Countable
      *
      * @return bool Whether the migration(s) have been successfully applied
      */
-    final public function run(Connection $conn = null): bool
+    final public function run(?Connection $conn = null): bool
     {
         if (! $conn) {
             $conn = $this->getDb();

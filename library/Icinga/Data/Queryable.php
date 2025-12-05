@@ -11,10 +11,10 @@ interface Queryable
     /**
      * Set the target and fields to query
      *
-     * @param   string  $target
-     * @param   array   $fields
+     * @param   string       $target
+     * @param   array|null   $fields
      *
      * @return  Fetchable
      */
-    public function from($target, array $fields = null);
+    public function from($target, ?array $fields = null);
 }

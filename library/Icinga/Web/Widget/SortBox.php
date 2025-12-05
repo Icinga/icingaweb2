@@ -66,11 +66,11 @@ class SortBox extends AbstractWidget
     /**
      * Create a SortBox with the entries from $sortFields
      *
-     * @param   string  $name           The name for the SortBox
-     * @param   array   $sortFields     An array containing the columns and their labels to be displayed in the SortBox
-     * @param   array   $sortDefaults   An array containing default sort directions for specific columns
+     * @param   string     $name         The name for the SortBox
+     * @param   array      $sortFields   An array containing the columns and their labels to be displayed in the SortBox
+     * @param   array|null $sortDefaults An array containing default sort directions for specific columns
      */
-    public function __construct($name, array $sortFields, array $sortDefaults = null)
+    public function __construct($name, array $sortFields, ?array $sortDefaults = null)
     {
         $this->name = $name;
         $this->sortFields = $sortFields;
@@ -80,13 +80,13 @@ class SortBox extends AbstractWidget
     /**
      * Create a SortBox
      *
-     * @param   string  $name           The name for the SortBox
-     * @param   array   $sortFields     An array containing the columns and their labels to be displayed in the SortBox
-     * @param   array   $sortDefaults   An array containing default sort directions for specific columns
+     * @param   string     $name         The name for the SortBox
+     * @param   array      $sortFields   An array containing the columns and their labels to be displayed in the SortBox
+     * @param   array|null $sortDefaults An array containing default sort directions for specific columns
      *
      * @return  SortBox
      */
-    public static function create($name, array $sortFields, array $sortDefaults = null)
+    public static function create($name, array $sortFields, ?array $sortDefaults = null)
     {
         return new static($name, $sortFields, $sortDefaults);
     }
@@ -154,11 +154,11 @@ class SortBox extends AbstractWidget
     /**
      * Apply the sort rules from the given or current request on the query
      *
-     * @param   Request     $request
+     * @param   Request|null     $request
      *
      * @return  $this
      */
-    public function handleRequest(Request $request = null)
+    public function handleRequest(?Request $request = null)
     {
         if ($this->query !== null) {
             if ($request === null) {

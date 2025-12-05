@@ -225,6 +225,7 @@ class Root
      */
     public function __get($key)
     {
+        $key = $key ?? '';
         if (!array_key_exists($key, $this->props)) {
             return null;
         }
@@ -237,6 +238,6 @@ class Root
      */
     public function __isset($key)
     {
-        return array_key_exists($key, $this->props);
+        return array_key_exists($key ?? '', $this->props);
     }
 }

@@ -116,7 +116,7 @@ foreach ($pivotData as $hostName => $_) {
                         'data-base-target'  => '_self'
                     )
                 ) ?>
-                <?= ++$i === (int) (count($pivotHeader['rows']) / 2) ? $expandLink : '' ?>
+                <?= ++$i === (int) floor((count($pivotHeader['rows']) / 2)) ? $expandLink : '' ?>
             </td>
         <?php endif ?>
         </tr>
