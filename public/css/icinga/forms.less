@@ -186,7 +186,8 @@ form.icinga-form {
   input[type="file"],
   .control-group > fieldset,
   textarea,
-  select {
+  select,
+  .control-group > .fake-form-element {
     flex: 1 1 auto;
     width: 0;
   }
@@ -603,4 +604,17 @@ form.icinga-form .form-info {
       margin-left: auto;
     }
   }
+}
+
+.two-factor-totp-qr-code {
+  width: 20em;
+  height: 20em;
+}
+
+.two-factor-totp-auth-url {
+  background-color: @base-disabled;
+  padding: @vertical-padding;
+  border-radius: .25em;
+  line-break: anywhere;
+  user-select: all;
 }

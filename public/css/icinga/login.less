@@ -20,6 +20,14 @@
     padding: 2em 6em;
     background-color: @login-box-background;
     .box-shadow(0, 0, 1em, 1em, @login-box-background);
+
+    .icinga-form {
+      width: unset;
+
+      .control-group {
+        margin: 1em 0;
+      }
+    }
   }
 
   #icinga-logo {
@@ -39,12 +47,21 @@
   .errors,
   .form-errors {
     list-style-type: none;
-    padding: 0.5em;
   }
 
   .errors {
-    background-color: @color-critical;
-    color: white;
+    margin: 0;
+
+    li {
+      background-color: @color-critical;
+      color: white;
+      margin: 1em 0 1em 0;
+      padding: .5em;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 
   .form-errors {
@@ -91,6 +108,11 @@
     &:hover {
       background-color: @icinga-secondary-dark;
     }
+
+    &.btn-cancel {
+      //.button(@body-bg-color, @gray, @black);
+      .button(@body-bg-color, @icinga-secondary, @icinga-secondary);
+    }
   }
 
   .config-note {
@@ -108,7 +130,7 @@
 
   .remember-me-box {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
 
     .toggle-switch {
       margin-right: 1em;
