@@ -193,7 +193,7 @@ class SingleValueSearchControl extends Form
                 }
 
                 $liAtrs = ['class' => $index === 0 ? 'default' : null];
-                $ul->addHtml(new HtmlElement('li', Attributes::create($liAtrs), new InputElement(null, $attributes)));
+                $ul->addHtml(new HtmlElement('li', Attributes::create($liAtrs), new InputElement('', $attributes)));
                 $index++;
             }
         }
