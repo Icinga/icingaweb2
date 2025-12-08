@@ -8,11 +8,10 @@ use DateTime;
 use Endroid\QrCode\Builder\Builder;
 use Icinga\Common\Database;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Model\TwoFactorModel;
 use ipl\Sql\Connection;
 use ipl\Sql\Delete;
 use ipl\Sql\Insert;
-use ipl\Stdlib\Filter;
+use ipl\Sql\Select;
 use OTPHP\TOTP;
 use PDOException;
 use Throwable;
@@ -75,10 +74,14 @@ class TwoFactorTotp
      */
     public static function loadFromDb(Connection $db, string $user): ?static
     {
-        $dbTwoFactor = TwoFactorModel::on($db)->filter(Filter::equal('username', $user))->first();
+        $select = (new Select())
+            ->from('icingaweb_2fa')
+            ->columns('secret')
+            ->where(['LOWER(username) = ?' => strtolower($user)]);
 
-        /** @var TwoFactorModel|null $dbTwoFactor */
-        if ($dbTwoFactor === null) {
+        $dbTwoFactor = $db->select($select)->fetch();
+
+        if (! $dbTwoFactor) {
             return null;
         }
 
@@ -96,7 +99,12 @@ class TwoFactorTotp
     public static function hasDbSecret(Connection $db, string $user): bool
     {
         try {
-            return TwoFactorModel::on($db)->filter(Filter::equal('username', $user))->first() !== null;
+            $select = (new Select())
+                ->from('icingaweb_2fa')
+                ->columns('username')
+                ->where(['LOWER(username) = ?' => strtolower($user)]);
+
+            return ! empty($db->select($select)->fetchAll());
         } catch (PDOException) {
             return false;
         }
@@ -188,7 +196,7 @@ class TwoFactorTotp
             $this->getDb()->prepexec(
                 (new Delete())
                     ->from('icingaweb_2fa')
-                    ->where(['username = ?' => $this->user])
+                    ->where(['LOWER(username) = ?' => strtolower($this->user)])
             );
         } catch (Throwable $e) {
             throw new ConfigurationError(
