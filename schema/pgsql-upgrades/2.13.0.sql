@@ -4,3 +4,9 @@ CREATE TABLE "icingaweb_2fa" (
   "ctime"    bigint,
   CONSTRAINT pk_icingaweb_2fa PRIMARY KEY ("username")
 );
+
+CREATE UNIQUE INDEX idx_icingaweb_2fa
+  ON "icingaweb_2fa"
+  USING btree (
+    lower((username)::text)
+);
