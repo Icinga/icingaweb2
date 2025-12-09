@@ -161,7 +161,7 @@ class UserController extends AuthBackendController
                 'class'         => 'link-button spinner',
                 'value'         => 'btn_submit',
                 'decorators'    => array('ViewHelper'),
-                'label'         => $this->view->icon('trash'),
+                'label'         => $this->view->icon('cancel'),
                 'title'         => $this->translate('Cancel this membership')
             ));
             $this->view->removeForm = $removeForm;
