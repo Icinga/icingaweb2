@@ -135,16 +135,16 @@ class TwoFactorConfigForm extends CompatForm
                         . ' authentication in case you lose access to your device.')
                 ));
 
-                $manualAuthUrl = HtmlElement::create(
+                $manualSecret = HtmlElement::create(
                     'div',
-                    Attributes::create(['class' => 'two-factor-totp-auth-url']),
-                    new Text($this->twoFactor->getTotpAuthUrl()),
+                    Attributes::create(['class' => 'two-factor-manual-secret']),
+                    new Text($this->twoFactor->getSecret()),
                 );
-                CopyToClipboard::attachTo($manualAuthUrl);
+                CopyToClipboard::attachTo($manualSecret);
                 $this->addHtml(new FakeFormElement(
-                    $manualAuthUrl,
-                    $this->translate('Manual Auth URL'),
-                    $this->translate('If you have no camera to scan the QR code you can enter the auth URL manually.')
+                    $manualSecret,
+                    $this->translate('Manual Secret'),
+                    $this->translate('If you have no camera to scan the QR code you can enter the secret manually.')
                 ));
 
                 $this->addElement(
