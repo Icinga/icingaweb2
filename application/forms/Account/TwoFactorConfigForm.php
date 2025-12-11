@@ -20,6 +20,7 @@ use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
 use ipl\Web\Widget\ActionLink;
 use ipl\Web\Widget\CopyToClipboard;
+use ipl\Web\Widget\Icon;
 
 /**
  * Form for enabling and disabling 2FA or creating and updating the 2FA TOTP secret
@@ -92,6 +93,24 @@ class TwoFactorConfigForm extends CompatForm
                 ]
             );
         } else {
+            $twoFactorEnabled = $this->getPopulatedValue('enabled_2fa') === 'y';
+            if ($twoFactorEnabled) {
+                $this->addHtml(HtmlElement::create(
+                    'div',
+                    Attributes::create(['class' => 'two-factor-warning']),
+                    [
+                        new Icon('warning'),
+                        HtmlElement::create(
+                            'p',
+                            null,
+                            new Text(
+                                $this->translate('Make sure to save the QR code or the secret for recovery purposes!')
+                            )
+                        )
+                    ]
+                ));
+            }
+
             $this->addElement(
                 'checkbox',
                 'enabled_2fa',
@@ -104,7 +123,7 @@ class TwoFactorConfigForm extends CompatForm
                 ]
             );
 
-            if ($this->getPopulatedValue('enabled_2fa') === 'y') {
+            if ($twoFactorEnabled) {
                 // Keep the secret after form submission, otherwise every form submission would generate a new secret.
                 // This would result in the following:
                 // - Users would have to scan a new QR code every time the verification fails.
