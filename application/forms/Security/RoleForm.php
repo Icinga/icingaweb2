@@ -573,9 +573,6 @@ class RoleForm extends RepositoryForm
             'user/password-change' => [
                 'description' => t('Allow password changes in the account preferences')
             ],
-            'user/two-factor-authentication'=> [
-                'description' => t('Allow 2FA configuration in the account preferences')
-            ],
             'user/application/stacktraces' => [
                 'description' => t('Allow to adjust in the preferences whether to show stacktraces')
             ],

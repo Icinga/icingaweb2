@@ -74,24 +74,23 @@ class AccountController extends Controller
             }
         }
 
-        if ($user->can('user/two-factor-authentication')) {
-            $twoFactor = TwoFactorTotp::loadFromDb($this->getDb(), $user->getUsername());
-            if ($twoFactor === null) {
-                $twoFactor = TwoFactorTotp::generate($user->getUsername());
-            }
-
-            $twoFactorForm = new TwoFactorConfigForm();
-            $twoFactorForm->setUser($user);
-            $twoFactorForm->setTwoFactor($twoFactor);
-            $twoFactorForm->on(Form::ON_SUBMIT, function (TwoFactorConfigForm $form) {
-                if ($redirectUrl = $form->getRedirectUrl()) {
-                    $this->redirectNow($redirectUrl);
-                }
-            });
-            $twoFactorForm->handleRequest(ServerRequest::fromGlobals());
-
-            $this->view->twoFactorForm = $twoFactorForm;
+        $twoFactor = TwoFactorTotp::loadFromDb($this->getDb(), $user->getUsername());
+        if ($twoFactor === null) {
+            $twoFactor = TwoFactorTotp::generate($user->getUsername());
         }
+
+        $twoFactorForm = new TwoFactorConfigForm();
+        $twoFactorForm->setUser($user);
+        $twoFactorForm->setTwoFactor($twoFactor);
+        $twoFactorForm->on(Form::ON_SUBMIT, function (TwoFactorConfigForm $form) {
+            if ($redirectUrl = $form->getRedirectUrl()) {
+                $this->redirectNow($redirectUrl);
+            }
+        });
+        $twoFactorForm->handleRequest(ServerRequest::fromGlobals());
+
+        $this->view->twoFactorForm = $twoFactorForm;
+
 
         $form = new PreferenceForm();
         $form->setPreferences($user->getPreferences());
