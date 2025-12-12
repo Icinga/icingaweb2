@@ -1,4 +1,0 @@
-<?php if ($object->perfdata): ?>
-<h2><?= $this->translate('Performance data') ?></h2>
-<div id="check-perfdata-<?= $this->escape(str_replace(' ', '-', $object->check_command)) ?>"><?= $this->perfdata($object->perfdata) ?></div>
-<?php endif ?>
