@@ -7,7 +7,6 @@ use Icinga\Test\BaseTestCase;
 use Icinga\Application\Config;
 use Icinga\Forms\Config\UserBackendConfigForm;
 use Icinga\Forms\Config\UserBackendReorderForm;
-use Icinga\Application\Icinga;
 
 class UserBackendConfigFormWithoutSave extends UserBackendConfigForm
 {
@@ -30,7 +29,7 @@ class UserBackendReorderFormProvidingConfigFormWithoutSave extends UserBackendRe
     }
 }
 
-class AuthenticationBackendReorderFormTest extends BaseTestCase
+class UserBackendReorderFormTest extends BaseTestCase
 {
     public function testMoveBackend()
     {

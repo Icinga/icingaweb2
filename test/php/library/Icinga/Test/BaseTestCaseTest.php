@@ -5,6 +5,8 @@ namespace Tests\Icinga\Test;
 
 use Mockery;
 use Icinga\Test\BaseTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
 
 class BaseTestCaseTest extends BaseTestCase
 {
@@ -19,27 +21,21 @@ class BaseTestCaseTest extends BaseTestCase
         }
     }
 
-    /**
-     * @dataProvider mysqlDb
-     */
+    #[DataProvider('mysqlDb')]
     public function testWhetherMySqlProviderAnnotationSetsUpZendDbAdapter($resource)
     {
         $this->setupDbProvider($resource);
         $this->assertInstanceOf('Zend_Db_Adapter_Pdo_Mysql', $resource->getDbAdapter());
     }
 
-    /**
-     * @dataProvider mysqlDb
-     */
+    #[DataProvider('mysqlDb')]
     public function testWhetherMySqlAdapterWorks($resource)
     {
         $this->setupDbProvider($resource);
         $this->dbAdapterSqlLoadTable($resource);
     }
 
-    /**
-     * @dataProvider mysqlDb
-     */
+    #[DataProvider('mysqlDb')]
     public function testWhetherCreatingTablesWithMySqlAdapterWorks($resource)
     {
         $this->setupDbProvider($resource);
@@ -50,10 +46,8 @@ class BaseTestCaseTest extends BaseTestCase
         $this->assertCount(1, $tables);
     }
 
-    /**
-     * @dataProvider mysqlDb
-     * @depends testWhetherCreatingTablesWithMySqlAdapterWorks
-     */
+    #[DataProvider('mysqlDb')]
+    #[Depends('testWhetherCreatingTablesWithMySqlAdapterWorks')]
     public function testWhetherSetupDbProviderCleansUpMySqlAdapter($resource)
     {
         $this->setupDbProvider($resource);
@@ -62,27 +56,21 @@ class BaseTestCaseTest extends BaseTestCase
         $this->assertCount(0, $tables);
     }
 
-    /**
-     * @dataProvider pgsqlDb
-     */
+    #[DataProvider('pgsqlDb')]
     public function testWhetherPgSqlProviderAnnotationSetsUpZendDbAdapter($resource)
     {
         $this->setupDbProvider($resource);
         $this->assertInstanceOf('Zend_Db_Adapter_Pdo_Pgsql', $resource->getDbAdapter());
     }
 
-    /**
-     * @dataProvider pgsqlDb
-     */
+    #[DataProvider('pgsqlDb')]
     public function testWhetherPgSqlAdapterWorks($resource)
     {
         $this->setupDbProvider($resource);
         $this->dbAdapterSqlLoadTable($resource);
     }
 
-    /**
-     * @dataProvider pgsqlDb
-     */
+    #[DataProvider('pgsqlDb')]
     public function testWhetherCreatingTablesWithPgSqlAdapterWorks($resource)
     {
         $this->setupDbProvider($resource);
@@ -93,10 +81,8 @@ class BaseTestCaseTest extends BaseTestCase
         $this->assertCount(1, $tables);
     }
 
-    /**
-     * @dataProvider pgsqlDb
-     * @depends testWhetherCreatingTablesWithPgSqlAdapterWorks
-     */
+    #[DataProvider('pgsqlDb')]
+    #[Depends('testWhetherCreatingTablesWithPgSqlAdapterWorks')]
     public function testWhetherSetupDbProviderCleansUpPgSqlAdapter($resource)
     {
         $this->setupDbProvider($resource);
@@ -105,27 +91,21 @@ class BaseTestCaseTest extends BaseTestCase
         $this->assertCount(0, $tables);
     }
 
-    /**
-     * @dataProvider oracleDb
-     */
+    #[DataProvider('oracleDb')]
     public function testWhetherOciProviderAnnotationSetsUpZendDbAdapter($resource)
     {
         $this->setupDbProvider($resource);
         $this->assertInstanceOf('Zend_Db_Adapter_Pdo_Oci', $resource->getDbAdapter());
     }
 
-    /**
-     * @dataProvider oracleDb
-     */
+    #[DataProvider('oracleDb')]
     public function testWhetherOciAdapterWorks($resource)
     {
         $this->setupDbProvider($resource);
         $this->dbAdapterSqlLoadTable($resource);
     }
 
-    /**
-     * @dataProvider oracleDb
-     */
+    #[DataProvider('oracleDb')]
     public function testWhetherCreatingTablesWithOciAdapterWorks($resource)
     {
         $this->setupDbProvider($resource);
@@ -136,10 +116,8 @@ class BaseTestCaseTest extends BaseTestCase
         $this->assertCount(1, $tables);
     }
 
-    /**
-     * @dataProvider oracleDb
-     * @depends testWhetherCreatingTablesWithOciAdapterWorks
-     */
+    #[DataProvider('oracleDb')]
+    #[Depends('testWhetherCreatingTablesWithOciAdapterWorks')]
     public function testWhetherSetupDbProviderCleansUpOciAdapter($resource)
     {
         $this->setupDbProvider($resource);

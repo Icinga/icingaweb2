@@ -19,8 +19,8 @@ class TemporaryLocalFileStorageTest extends BaseTestCase
 
         $storage = null;
 
-        $this->assertFileNotExists($fooPath);
-        $this->assertFileNotExists($barPath);
+        $this->assertFileDoesNotExist($fooPath);
+        $this->assertFileDoesNotExist($barPath);
     }
 
     public function testDestructorRemovesDirectories()
@@ -32,7 +32,7 @@ class TemporaryLocalFileStorageTest extends BaseTestCase
 
         $storage = null;
 
-        $this->assertDirectoryNotExists($dirPath);
+        $this->assertDirectoryDoesNotExist($dirPath);
     }
 
     public function testDestructorRemovesNestedDirectories()
@@ -46,6 +46,6 @@ class TemporaryLocalFileStorageTest extends BaseTestCase
 
         $storage = null;
 
-        $this->assertDirectoryNotExists($aPath);
+        $this->assertDirectoryDoesNotExist($aPath);
     }
 }
