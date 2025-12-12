@@ -7,11 +7,12 @@ namespace Tests\Icinga\Web;
 // of the global state (e.g. autoloaders are in the global state)
 require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 
-use Mockery;
 use Icinga\Test\BaseTestCase;
 use Icinga\Web\Widget\Dashboard;
-use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Dashlet;
+use Icinga\Web\Widget\Dashboard\Pane;
+use Mockery;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 
 class DashletWithMockedView extends Dashlet
 {
@@ -277,10 +278,9 @@ class DashboardTest extends BaseTestCase
     }
 
     /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
      * @depends testWhetherCreatePaneCreatesAPane
      */
+    #[RunInSeparateProcess]
     public function testWhetherDetermineActivePaneThrowsAnExceptionIfCouldNotDetermineInvalidPane()
     {
         $this->expectException(\Icinga\Exception\ProgrammingError::class);
@@ -314,10 +314,9 @@ class DashboardTest extends BaseTestCase
     }
 
     /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
      * @depends testWhetherCreatePaneCreatesAPane
      */
+    #[RunInSeparateProcess]
     public function testWhetherDetermineActivePaneDeterminesActiveValidPane()
     {
         $dashboard = new DashboardWithPredefinableActiveName();
