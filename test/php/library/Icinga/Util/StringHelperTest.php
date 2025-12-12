@@ -6,7 +6,7 @@ namespace Tests\Icinga\Util;
 use Icinga\Test\BaseTestCase;
 use Icinga\Util\StringHelper;
 
-class StringTest extends BaseTestCase
+class StringHelperTest extends BaseTestCase
 {
     public function testWhetherTrimSplitReturnsACorrectValue()
     {

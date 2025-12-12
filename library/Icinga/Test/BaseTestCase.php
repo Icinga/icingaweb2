@@ -165,7 +165,7 @@ namespace Icinga\Test {
          * @return  ConfigObject
          * @throws  RuntimeException
          */
-        protected function createDbConfigFor($name)
+        protected static function createDbConfigFor($name)
         {
             if (array_key_exists($name, self::$dbConfiguration)) {
                 $config = new ConfigObject(self::$dbConfiguration[$name]);
@@ -193,10 +193,10 @@ namespace Icinga\Test {
          *
          * @return  array
          */
-        protected function createDbConnectionFor($name)
+        protected static function createDbConnectionFor($name)
         {
             try {
-                $conn = ResourceFactory::createResource($this->createDbConfigFor($name));
+                $conn = ResourceFactory::createResource(static::createDbConfigFor($name));
             } catch (Exception $e) {
                 $conn = $e->getMessage();
             }
@@ -211,9 +211,9 @@ namespace Icinga\Test {
          *
          * @return DbConnection
          */
-        public function mysqlDb()
+        public static function mysqlDb()
         {
-            return $this->createDbConnectionFor('mysql');
+            return static::createDbConnectionFor('mysql');
         }
 
         /**
@@ -221,9 +221,9 @@ namespace Icinga\Test {
          *
          * @return DbConnection
          */
-        public function pgsqlDb()
+        public static function pgsqlDb()
         {
-            return $this->createDbConnectionFor('pgsql');
+            return static::createDbConnectionFor('pgsql');
         }
 
         /**
@@ -231,9 +231,9 @@ namespace Icinga\Test {
          *
          * @return DbConnection
          */
-        public function oracleDb()
+        public static function oracleDb()
         {
-            return $this->createDbConnectionFor('oracle');
+            return static::createDbConnectionFor('oracle');
         }
 
         /**
@@ -248,7 +248,7 @@ namespace Icinga\Test {
         {
             if (!is_file($filename)) {
                 throw new RuntimeException(
-                    'Sql file not found: ' . $filename . ' (test=' . $this->getName() . ')'
+                    'Sql file not found: ' . $filename . ' (test=' . $this->name() . ')'
                 );
             }
 
@@ -256,7 +256,7 @@ namespace Icinga\Test {
 
             if (!$sqlData) {
                 throw new RuntimeException(
-                    'Sql file is empty: ' . $filename . ' (test=' . $this->getName() . ')'
+                    'Sql file is empty: ' . $filename . ' (test=' . $this->name() . ')'
                 );
             }
 

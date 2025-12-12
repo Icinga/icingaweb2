@@ -15,7 +15,6 @@ class PhpSessionTest extends BaseTestCase
         }
         return PhpSession::create(
             array(
-                'use_cookies'   => false,
                 'save_path'     => '/tmp',
                 'test_session_name' => 'IcingawebUnittest'
             )
