@@ -145,11 +145,11 @@ abstract class RepositoryForm extends Form
     /**
      * Add a new entry
      *
-     * @param   array   $data   The defaults to use, if any
+     * @param   array|null   $data   The defaults to use, if any
      *
      * @return  $this
      */
-    public function add(array $data = null)
+    public function add(?array $data = null)
     {
         $this->mode = static::MODE_INSERT;
         $this->data = $data;
@@ -159,12 +159,12 @@ abstract class RepositoryForm extends Form
     /**
      * Edit an entry
      *
-     * @param   string  $name   The entry's name
-     * @param   array   $data   The entry's current data
+     * @param   string       $name   The entry's name
+     * @param   array|null   $data   The entry's current data
      *
      * @return  $this
      */
-    public function edit($name, array $data = null)
+    public function edit($name, ?array $data = null)
     {
         $this->mode = static::MODE_UPDATE;
         $this->identifier = $name;

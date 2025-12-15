@@ -16,13 +16,14 @@ abstract class AuditHook
      *
      * Propagates the given message details to all known hook implementations.
      *
-     * @param   string  $type       An arbitrary name identifying the type of activity
-     * @param   string  $message    A detailed description possibly referencing parameters in $data
-     * @param   array   $data       Additional information (How this is stored or used is up to each implementation)
-     * @param   string  $identity   An arbitrary name identifying the responsible subject, defaults to the current user
-     * @param   int     $time       A timestamp defining when the activity occurred, defaults to now
+     * @param   string      $type       An arbitrary name identifying the type of activity
+     * @param   string      $message    A detailed description possibly referencing parameters in $data
+     * @param   array|null  $data       Additional information (How this is stored or used is up to each implementation)
+     * @param   string      $identity   An arbitrary name identifying the responsible subject,
+     *                                   defaults to the current user
+     * @param   int         $time       A timestamp defining when the activity occurred, defaults to now
      */
-    public static function logActivity($type, $message, array $data = null, $identity = null, $time = null)
+    public static function logActivity($type, $message, ?array $data = null, $identity = null, $time = null)
     {
         if (! Hook::has('audit')) {
             return;
@@ -60,13 +61,13 @@ abstract class AuditHook
     /**
      * Log a message to the audit log
      *
-     * @param   int     $time       A timestamp defining when the activity occurred
-     * @param   string  $identity   An arbitrary name identifying the responsible subject
-     * @param   string  $type       An arbitrary name identifying the type of activity
-     * @param   string  $message    A detailed description of the activity
-     * @param   array   $data       Additional activity information
+     * @param   int          $time       A timestamp defining when the activity occurred
+     * @param   string       $identity   An arbitrary name identifying the responsible subject
+     * @param   string       $type       An arbitrary name identifying the type of activity
+     * @param   string       $message    A detailed description of the activity
+     * @param   array|null   $data       Additional activity information
      */
-    abstract public function logMessage($time, $identity, $type, $message, array $data = null);
+    abstract public function logMessage($time, $identity, $type, $message, ?array $data = null);
 
     /**
      * Substitute the given message with its accompanying data

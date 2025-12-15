@@ -239,12 +239,12 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      *
      * Query will return all available columns if none are given here.
      *
-     * @param   mixed   $target
-     * @param   array   $fields
+     * @param   mixed        $target
+     * @param   array|null   $fields
      *
      * @return  $this
      */
-    public function from($target, array $fields = null)
+    public function from($target, ?array $fields = null)
     {
         $this->target = $target;
         if ($fields !== null) {

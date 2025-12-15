@@ -1149,11 +1149,11 @@ class Form extends Zend_Form
      * Redirects to the url set with setRedirectUrl() upon success. See onSuccess()
      * and onRequest() wherewith you can customize the processing logic.
      *
-     * @param   Request     $request    The request to be processed
+     * @param   Request|null     $request    The request to be processed
      *
      * @return  Request                 The request supposed to be processed
      */
-    public function handleRequest(Request $request = null)
+    public function handleRequest(?Request $request = null)
     {
         if ($request === null) {
             $request = $this->getRequest();
@@ -1546,11 +1546,11 @@ class Form extends Zend_Form
     /**
      * Render this form
      *
-     * @param   Zend_View_Interface     $view   The view context to use
+     * @param   Zend_View_Interface|null     $view   The view context to use
      *
      * @return  string
      */
-    public function render(Zend_View_Interface $view = null)
+    public function render(?Zend_View_Interface $view = null)
     {
         $this->create();
         return parent::render($view);
