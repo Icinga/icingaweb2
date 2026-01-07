@@ -42,7 +42,7 @@
 
         initialize: function () {
             $('html').removeClass('no-js').addClass('js');
-            this.enableTimeCounters();
+            // this.enableTimeCounters();
             this.triggerWindowResize();
             this.fadeNotificationsAway();
 
