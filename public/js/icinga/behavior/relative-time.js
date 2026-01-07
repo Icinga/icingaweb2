@@ -27,69 +27,73 @@
 
         update() {
             const now = Date.now();
-            const elements = document.querySelectorAll('time[data-relative-time]');
+            const ONE_HOUR_SEC = 60 * 60;
+
+            const getDatetimeMs = (el) => {
+                const dt = el.dateTime || el.getAttribute('datetime');
+                if (!dt) {
+                    return NaN;
+                }
+
+                return Date.parse(dt);
+            };
 
             document.querySelectorAll('time[data-relative-time="ago"], time[data-relative-time="since"]')
-                .forEach(el => {
-                    let partialTime = /(\d{1,2})m (\d{1,2})s/.exec(el.innerHTML);
-                    let mode = el.dataset.relativeTime;
+                .forEach((el) => {
+                    const mode = el.dataset.relativeTime;
 
-                    if (partialTime !== null) {
-                        var minute = parseInt(partialTime[1], 10),
-                            second = parseInt(partialTime[2], 10);
-                        if (second < 59) {
-                            ++second;
-                        } else {
-                            ++minute;
-                            second = 0;
-                        }
-
-                        el.innerHTML = this.render(minute, second, mode);
+                    const ts = getDatetimeMs(el);
+                    if (!Number.isFinite(ts)) {
+                        return;
                     }
+
+                    let diffSec = Math.floor((now - ts) / 1000);
+                    if (diffSec < 0) {
+                        diffSec = 0;
+                    }
+
+                    if (diffSec >= ONE_HOUR_SEC) {
+                        return;
+                    }
+
+                    const minute = Math.floor(diffSec / 60);
+                    const second = diffSec % 60;
+
+                    el.innerHTML = this.render(minute, second, mode);
                 });
 
             document.querySelectorAll('time[data-relative-time="until"]')
-                .forEach(el => {
-                    var partialTime = /(-?)(\d{1,2})m (\d{1,2})s/.exec(el.innerHTML);
-                    if (partialTime !== null) {
-                        var minute = parseInt(partialTime[2], 10),
-                            second = parseInt(partialTime[3], 10),
-                            invert = partialTime[1];
-                        if (invert.length) {
-                            // Count up because partial time is negative
-                            if (second < 59) {
-                                ++second;
-                            } else {
-                                ++minute;
-                                second = 0;
-                            }
-                        } else {
-                            // Count down because partial time is positive
-                            if (second === 0) {
-                                if (minute === 0) {
-                                    // Invert counter
-                                    minute = 0;
-                                    second = 1;
-                                    invert = '-';
-                                } else {
-                                    --minute;
-                                    second = 59;
-                                }
-                            } else {
-                                --second;
-                            }
-
-                            if (minute === 0 && second === 0 && el.dataset.relativeTime === 'until' && el.dataset.agoLabel) {
-                                el.innerText = el.dataset.agoLabel;
-                                el.removeAttribute('data-relative-time');
-                                el.dataset.relativeTime = 'ago';
-
-                                return;
-                            }
-                        }
-
-                        el.innerHTML = this.render(minute, second, 'until', invert);
+                .forEach((el) => {
+                    const ts = getDatetimeMs(el);
+                    if (!Number.isFinite(ts)) {
+                        return;
                     }
+
+                    const remainingSec = Math.ceil((ts - now) / 1000);
+
+                    if (Math.abs(remainingSec) >= ONE_HOUR_SEC) {
+                        return;
+                    }
+
+                    if (remainingSec === 0 && el.dataset.agoLabel) {
+                        el.innerText = el.dataset.agoLabel;
+                        el.dataset.relativeTime = 'ago';
+
+                        return;
+                    }
+
+                    let invert = '';
+                    let absSec = remainingSec;
+
+                    if (remainingSec < 0) {
+                        invert = '-';
+                        absSec = -remainingSec;
+                    }
+
+                    const minute = Math.floor(absSec / 60);
+                    const second = absSec % 60;
+
+                    el.innerHTML = this.render(minute, second, 'until', invert);
                 });
         }
 
