@@ -181,7 +181,7 @@ class UserBackend implements ConfigAwareFactory
             $name = $backendConfig->name;
         }
 
-        if (! ($backendType = strtolower($backendConfig->backend))) {
+        if ($backendConfig->backend === null || ! ($backendType = strtolower($backendConfig->backend))) {
             throw new ConfigurationError(
                 'Authentication configuration for user backend "%s" is missing the \'backend\' directive',
                 $name
