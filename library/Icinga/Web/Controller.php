@@ -113,14 +113,14 @@ class Controller extends ModuleActionController
      *
      * The widget is set on the `sortBox' view property only if the current view has not been requested as compact
      *
-     * @param   array       $columns    An array containing the sort columns, with the
-     *                                  submit value as the key and the label as the value
-     * @param   Sortable    $query      Query to apply the user chosen sort rules on
-     * @param   array       $defaults   An array containing default sort directions for specific columns
+     * @param   array            $columns    An array containing the sort columns, with the
+     *                                       submit value as the key and the label as the value
+     * @param   Sortable|null    $query      Query to apply the user chosen sort rules on
+     * @param   array|null       $defaults   An array containing default sort directions for specific columns
      *
      * @return  $this
      */
-    protected function setupSortControl(array $columns, Sortable $query = null, array $defaults = null)
+    protected function setupSortControl(array $columns, ?Sortable $query = null, ?array $defaults = null)
     {
         $request = $this->getRequest();
         $sortBox = SortBox::create('sortbox-' . $request->getActionName(), $columns, $defaults);
@@ -219,10 +219,10 @@ class Controller extends ModuleActionController
      * $filterable->getSearchColumns() is called to provide the respective columns if $filterColumns or $searchColumns
      * is not given.
      *
-     * @param   Filterable  $filterable         The filterable to create a filter editor for
-     * @param   array       $filterColumns      The filter columns to offer to the user
-     * @param   array       $searchColumns      The search columns to utilize for quick searches
-     * @param   array       $preserveParams     The url parameters to preserve
+     * @param   Filterable       $filterable         The filterable to create a filter editor for
+     * @param   array|null       $filterColumns      The filter columns to offer to the user
+     * @param   array|null       $searchColumns      The search columns to utilize for quick searches
+     * @param   array|null       $preserveParams     The url parameters to preserve
      *
      * @return  $this
      *
@@ -230,9 +230,9 @@ class Controller extends ModuleActionController
      */
     protected function setupFilterControl(
         Filterable $filterable,
-        array $filterColumns = null,
-        array $searchColumns = null,
-        array $preserveParams = null
+        ?array $filterColumns = null,
+        ?array $searchColumns = null,
+        ?array $preserveParams = null
     ) {
         $defaultPreservedParams = array(
             'limit', // setupPaginationControl()

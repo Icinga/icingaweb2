@@ -85,9 +85,9 @@ class AuthChain implements Authenticatable, Iterator
     /**
      * Create a new authentication chain from config
      *
-     * @param Config $config User backends configuration
+     * @param Config|null $config User backends configuration
      */
-    public function __construct(Config $config = null)
+    public function __construct(?Config $config = null)
     {
         if ($config === null) {
             try {

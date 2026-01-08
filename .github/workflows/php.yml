@@ -17,7 +17,6 @@ jobs:
     with:
       databases: true
       php-extensions: ldap
-      phpunit-version: 9.6
       dependencies: |
         {
           "./icinga-php/ipl"                : "https://github.com/Icinga/icinga-php-library.git#snapshot/nightly",

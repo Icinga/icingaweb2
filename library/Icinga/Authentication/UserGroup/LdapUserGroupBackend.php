@@ -661,14 +661,14 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
     /**
      * Validate that the requested table exists
      *
-     * @param   string              $table      The table to validate
-     * @param   RepositoryQuery     $query      An optional query to pass as context
+     * @param   string                   $table      The table to validate
+     * @param   RepositoryQuery|null     $query      An optional query to pass as context
      *
      * @return  string
      *
-     * @throws  ProgrammingError                In case the given table does not exist
+     * @throws  ProgrammingError                     In case the given table does not exist
      */
-    public function requireTable($table, RepositoryQuery $query = null)
+    public function requireTable($table, ?RepositoryQuery $query = null)
     {
         if ($query !== null) {
             $query->getQuery()->setBase($this->groupBaseDn);
@@ -683,15 +683,15 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
     /**
      * Validate that the given column is a valid query target and return it or the actual name if it's an alias
      *
-     * @param   string              $table  The table where to look for the column or alias
-     * @param   string              $name   The name or alias of the column to validate
-     * @param   RepositoryQuery     $query  An optional query to pass as context
+     * @param   string                   $table  The table where to look for the column or alias
+     * @param   string                   $name   The name or alias of the column to validate
+     * @param   RepositoryQuery|null     $query  An optional query to pass as context
      *
-     * @return  string                      The given column's name
+     * @return  string                           The given column's name
      *
-     * @throws  QueryException              In case the given column is not a valid query column
+     * @throws  QueryException                   In case the given column is not a valid query column
      */
-    public function requireQueryColumn($table, $name, RepositoryQuery $query = null)
+    public function requireQueryColumn($table, $name, ?RepositoryQuery $query = null)
     {
         $column = parent::requireQueryColumn($table, $name, $query);
         if (($name === 'user_name' || $name === 'group_name') && $query !== null) {
