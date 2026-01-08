@@ -20,12 +20,27 @@
 
         onRendered(event) {
             let _this = event.data.self;
+            const root = event.currentTarget || event.target;
+            const hasRelativeTime =
+                (root.matches && root.matches('time[data-relative-time]')) ||
+                root.querySelector('time[data-relative-time]');
+
+            if (!hasRelativeTime) {
+                return;
+            }
+
+            if (_this._relativeTimeTimerRegistered) {
+                _this.update(root);
+
+                return;
+            }
+            _this._relativeTimeTimerRegistered = true;
 
             _this.update();
             _this.icinga.timer.register(_this.update, _this, 1000);
         }
 
-        update() {
+        update(root = document) {
             const now = Date.now();
             const ONE_HOUR_SEC = 60 * 60;
 
@@ -38,7 +53,7 @@
                 return Date.parse(dt);
             };
 
-            document.querySelectorAll('time[data-relative-time="ago"], time[data-relative-time="since"]')
+            root.querySelectorAll('time[data-relative-time="ago"], time[data-relative-time="since"]')
                 .forEach((el) => {
                     const mode = el.dataset.relativeTime;
 
@@ -62,7 +77,7 @@
                     el.innerHTML = this.render(minute, second, mode);
                 });
 
-            document.querySelectorAll('time[data-relative-time="until"]')
+            root.querySelectorAll('time[data-relative-time="until"]')
                 .forEach((el) => {
                     const ts = getDatetimeMs(el);
                     if (!Number.isFinite(ts)) {
