@@ -4,6 +4,7 @@
 namespace Icinga\Authentication\UserGroup;
 
 use Exception;
+use Icinga\Application\Config;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\LdapUserBackend;
 use Icinga\Application\Logger;
@@ -802,6 +803,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
         }
 
         if ($config->user_backend && $config->user_backend !== 'none') {
+            UserBackend::setConfig(Config::app('authentication'));
             $userBackend = UserBackend::create($config->user_backend);
             if (! $userBackend instanceof LdapUserBackend) {
                 throw new ConfigurationError('User backend "%s" is not of type LDAP', $config->user_backend);
