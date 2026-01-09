@@ -186,7 +186,8 @@ form.icinga-form {
   input[type="file"],
   .control-group > fieldset,
   textarea,
-  select {
+  select,
+  .control-group > .fake-form-element {
     flex: 1 1 auto;
     width: 0;
   }
@@ -602,5 +603,45 @@ form.icinga-form .form-info {
     label:first-of-type {
       margin-left: auto;
     }
+  }
+}
+
+.two-factor-totp-qr-code {
+  width: 20em;
+  height: 20em;
+}
+
+.two-factor-manual-secret {
+  background-color: @base-disabled;
+  padding: @vertical-padding;
+  border-radius: .25em;
+  line-break: anywhere;
+  user-select: all;
+}
+
+
+.two-factor-warning {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 1em;
+
+  width: fit-content;
+  margin: 0 auto 1em auto;
+  padding: .5em 1em;
+  border: 1px solid @state-warning;
+  border-radius: .25em;
+
+  i.icon{
+    color: @state-warning;
+    font-size: 1.5em;
+
+    &::before {
+      margin-right: 0;
+    }
+  }
+
+  p {
+    margin: 0;
   }
 }

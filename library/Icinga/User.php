@@ -4,13 +4,13 @@
 namespace Icinga;
 
 use DateTimeZone;
-use Icinga\Authentication\AdmissionLoader;
-use InvalidArgumentException;
 use Icinga\Application\Config;
+use Icinga\Authentication\AdmissionLoader;
 use Icinga\Authentication\Role;
 use Icinga\Exception\ProgrammingError;
 use Icinga\User\Preferences;
 use Icinga\Web\Navigation\Navigation;
+use InvalidArgumentException;
 
 /**
  *  This class represents an authorized user
@@ -121,6 +121,20 @@ class User
      * @var bool
      */
     protected $isHttpUser = false;
+
+    /**
+     * Whether the user has 2FA enabled (secret is stored in the database)
+     *
+     * @var bool
+     */
+    protected bool $twoFactorEnabled = false;
+
+    /**
+     * Whether the user has successfully completed 2FA
+     *
+     * @var bool
+     */
+    protected bool $twoFactorSuccessful = false;
 
     /**
      * Creates a user object given the provided information
@@ -645,5 +659,53 @@ class User
         }
 
         return $navigation;
+    }
+
+    /**
+     * Get whether the user has 2FA enabled
+     *
+     * @return bool
+     */
+    public function getTwoFactorEnabled(): bool
+    {
+        return $this->twoFactorEnabled;
+    }
+
+    /**
+     * Set whether the user has 2FA enabled
+     *
+     * @param bool $enabled
+     *
+     * @return $this
+     */
+    public function setTwoFactorEnabled(bool $enabled = true): static
+    {
+        $this->twoFactorEnabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * Get whether the user has successfully completed 2FA
+     *
+     * @return bool
+     */
+    public function getTwoFactorSuccessful(): bool
+    {
+        return $this->twoFactorSuccessful;
+    }
+
+    /**
+     * Set whether the user has successfully completed 2FA
+     *
+     * @param bool $successful
+     *
+     * @return $this
+     */
+    public function setTwoFactorSuccessful(bool $successful = true): static
+    {
+        $this->twoFactorSuccessful = $successful;
+
+        return $this;
     }
 }
