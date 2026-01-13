@@ -28,7 +28,7 @@ use Icinga\Web\StyleSheet;
 use Icinga\Web\View;
 
 /**
- * Use this if you want to make use of Icinga functionality in other web projects
+ * Use this if you want to make use of Icinga functionality in Icinga Web itself
  *
  * Usage example:
  * <code>
