@@ -5,6 +5,7 @@ namespace Icinga\Application\Hook;
 use Icinga\User;
 use Icinga\Web\Hook;
 use Icinga\Application\Logger;
+use Throwable;
 
 /**
  * Icinga Web Authentication Hook base class
@@ -29,12 +30,39 @@ abstract class AuthenticationHook
     }
 
     /**
+     * Triggered after Icinga Web authenticates a user with the current session
+     *
+     * @param User $user
+     */
+    public function onAuthFromSession(User $user): void
+    {
+    }
+
+    /**
      * Triggered before logout from Icinga Web
      *
      * @param User $user
      */
     public function onLogout(User $user)
     {
+    }
+
+    /**
+     * Call the onAuthFromSession() method of all registered {@link AuthenticationHook}s
+     *
+     * @param User $user
+     */
+    public static function triggerAuthFromSession(User $user): void
+    {
+        /** @var static $hook */
+        foreach (Hook::all(self::NAME) as $hook) {
+            try {
+                $hook->onAuthFromSession($user);
+            } catch (Throwable $e) {
+                // Avoid error propagation if a hook failed in a third party application
+                Logger::error($e);
+            }
+        }
     }
 
     /**

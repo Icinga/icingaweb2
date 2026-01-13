@@ -230,6 +230,10 @@ class Auth
                 $this->removeAuthorization();
             }
         }
+
+        if ($this->user !== null) {
+            AuthenticationHook::triggerAuthFromSession($this->user);
+        }
     }
 
     /**
