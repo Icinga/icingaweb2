@@ -40,6 +40,31 @@
             _this.icinga.timer.register(_this.update, _this, 1000);
         }
 
+        stop(event) {
+            const _this = event?.data?.self || this;
+
+            if (!_this._relativeTimeTimerRegistered) {
+                return;
+            }
+
+            const t = _this.icinga.timer;
+
+            if (_this._timerHandle != null && typeof t.unregister === 'function') {
+                try { t.unregister(_this._timerHandle); } catch (e) { /* ignore */ }
+            }
+
+            if (typeof t.unregister === 'function') {
+                try { t.unregister(_this.update, _this); } catch (e) { /* ignore */ }
+            }
+
+            if (typeof t.remove === 'function') {
+                try { t.remove(_this._timerHandle); } catch (e) { /* ignore */ }
+            }
+
+            _this._timerHandle = null;
+            _this._relativeTimeTimerRegistered = false;
+        }
+
         update(root = document) {
             const now = Date.now();
             const ONE_HOUR_SEC = 60 * 60;
