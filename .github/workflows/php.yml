@@ -24,7 +24,8 @@ jobs:
           "./icinga-php/vendor"             : "https://github.com/Icinga/icinga-php-thirdparty.git#snapshot/nightly",
           "./icingaweb2-modules/icingadb"   : "https://github.com/Icinga/icingadb-web.git",
           "./icingaweb2-modules/pdfexport"  : "https://github.com/Icinga/icingaweb2-module-pdfexport.git",
-          "./icingaweb2-modules/x509"       : "https://github.com/Icinga/icingaweb2-module-x509.git"
+          "./icingaweb2-modules/x509"       : "https://github.com/Icinga/icingaweb2-module-x509.git",
+          "./icingaweb2-modules/monitoring" : "https://github.com/Icinga/icingaweb2-module-monitoring.git"
         }
       env: |
         {
