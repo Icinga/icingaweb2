@@ -29,12 +29,21 @@ class PasswordPolicyValidator extends Zend_Validate_Abstract
      * throws a message if not
      *
      * @param mixed $value The password to validate
-     *
+     * @param mixed|null $context The data of the form
      * @return bool
      */
-    public function isValid($value): bool
+    public function isValid($value, mixed $context = null): bool
     {
-        $message = $this->passwordPolicy->validate($value);
+        $oldPassword = null;
+
+        if (is_array($context)) {
+            $oldPasswordValue = $context['old_password'] ?? null;
+            if ($oldPasswordValue !== null && $oldPasswordValue !== '') {
+                $oldPassword = $oldPasswordValue;
+            }
+        }
+
+        $message = $this->passwordPolicy->validate($value, $oldPassword);
 
         if (! empty($message)) {
             $this->_messages = $message;

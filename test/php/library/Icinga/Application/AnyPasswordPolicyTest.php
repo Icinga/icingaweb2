@@ -17,6 +17,6 @@ class AnyPasswordPolicyTest extends TestCase
 
     public function testValidatePasswordValid(): void
     {
-        $this->assertEmpty($this->instance->validate('icingaadmin'));
+        $this->assertEmpty($this->instance->validate('icingaadmin', 'null'));
     }
 }

@@ -28,7 +28,7 @@ class AnyPasswordPolicy extends PasswordPolicyHook
         return null;
     }
 
-    public function validate(string $password): array
+    public function validate(string $newPassword, ?string $oldPassword): array
     {
         return [];
     }

@@ -22,9 +22,10 @@ interface PasswordPolicy
     /**
      * Validate a given password against the defined policy
      *
-     * @param string $password
+     * @param string $newPassword
+     * @param string|null $oldPassword
      * @return string[] Returns an empty array if the password is valid,
      * otherwise returns error messages describing the violations
      */
-    public function validate(string $password): array;
+    public function validate(string $newPassword, ?string $oldPassword): array;
 }

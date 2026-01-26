@@ -31,7 +31,7 @@ class PasswordPolicyHelper
      */
     const CONFIG_KEY = 'password_policy';
 
-    public static function applyPasswordPolicy(Form $form, string $element)
+    public static function applyPasswordPolicy(Form $form, string $newPassword, ?string $oldPassword)
     {
         try {
             $passwordPolicyClass = Config::app()->get(
@@ -41,7 +41,12 @@ class PasswordPolicyHelper
             );
 
             $passwordPolicy = static::createPolicy($passwordPolicyClass);
-            $form->getElement($element)->addValidator(new PasswordPolicyValidator($passwordPolicy));
+
+//            if($oldPassword !== null) {
+                $form->getElement($oldPassword);
+//            }
+
+            $form->getElement($newPassword)->addValidator(new PasswordPolicyValidator($passwordPolicy));
             static::addPasswordPolicyDescription($form, $passwordPolicy);
         } catch (ConfigurationError $e) {
             Logger::error($e);

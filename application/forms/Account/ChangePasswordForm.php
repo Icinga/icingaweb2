@@ -52,7 +52,7 @@ class ChangePasswordForm extends Form
             ]
         );
 
-        PasswordPolicyHelper::applyPasswordPolicy($this, 'new_password');
+        PasswordPolicyHelper::applyPasswordPolicy($this, 'new_password', 'old_password');
 
         $this->addElement(
             'password',

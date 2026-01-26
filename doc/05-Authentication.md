@@ -214,16 +214,20 @@ class PasswordPolicy extends PasswordPolicyHook
         return 'Custom password requirements: 8+ chars, 1 number';
     }
 
-    public function validate(string $password): array
+    public function validate(string $newPassword, ?string $oldPassword): array;
     {
         $violations = [];
 
-        if (strlen($password) < 8) {
+        if (strlen($newPassword) < 8) {
             $violations[] = 'Password must be at least 8 characters';
         }
 
-        if (!preg_match('/[0-9]/', $password)) {
+        if (!preg_match('/[0-9]/', $newPassword)) {
             $violations[] = 'Password must contain at least one number';
+        }
+        
+        if ($oldPassword !== null && hash_equals($oldPassword, $newPassword)) {
+            $violations[] = 'New password must be different from the old password';
         }
 
         return $violations;
