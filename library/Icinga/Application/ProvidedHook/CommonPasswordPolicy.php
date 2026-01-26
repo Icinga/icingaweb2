@@ -34,27 +34,27 @@ class CommonPasswordPolicy extends PasswordPolicyHook
         );
     }
 
-    public function validate(string $password): array
+    public function validate(string $newPassword, ?string $oldPassword): array
     {
         $violations = [];
 
-        if (mb_strlen($password) < 12) {
+        if (mb_strlen($newPassword) < 12) {
             $violations[] = $this->translate('Password must be at least 12 characters long');
         }
 
-        if (! preg_match('/[0-9]/', $password)) {
+        if (! preg_match('/[0-9]/', $newPassword)) {
             $violations[] = $this->translate('Password must contain at least one number');
         }
 
-        if (! preg_match('/[^a-zA-Z0-9]/', $password)) {
+        if (! preg_match('/[^a-zA-Z0-9]/', $newPassword)) {
             $violations[] = $this->translate('Password must contain at least one special character');
         }
 
-        if (! preg_match('/[A-Z]/', $password)) {
+        if (! preg_match('/[A-Z]/', $newPassword)) {
             $violations[] = $this->translate('Password must contain at least one uppercase letter');
         }
 
-        if (! preg_match('/[a-z]/', $password)) {
+        if (! preg_match('/[a-z]/', $newPassword)) {
             $violations[] = $this->translate('Password must contain at least one lowercase letter');
         }
 
