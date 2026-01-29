@@ -1,0 +1,11 @@
+name: Maintenance
+
+on:
+  schedule:
+    - cron: '0 11 * * 1-5' # Every weekday (Mon-Fri) at 11:00 AM UTC
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  php:
+    name: Stale
+    uses: Icinga/github-actions/.github/workflows/stale.yml@main
