@@ -4,8 +4,10 @@
 namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Icinga;
+use Icinga\Authentication\Auth;
 use Icinga\Data\ResourceFactory;
 use Icinga\Web\Form;
+use Icinga\Util\Csp;
 
 /**
  * Configuration form for general application options
@@ -60,12 +62,19 @@ class ApplicationConfigForm extends Form
             'security_use_strict_csp',
             [
                 'label'         => $this->translate('Enable strict content security policy'),
+                'autosubmit'    => true,
                 'description'   => $this->translate(
                     'Set whether to use strict content security policy (CSP).'
                     . ' This setting helps to protect from cross-site scripting (XSS).'
                 )
             ]
         );
+
+        if ($formData['security_use_strict_csp']) {
+            Csp::createNonce();
+            $header = Csp::getContentSecurityPolicy(Auth::getInstance()->getUser());
+            $this->addHint("Content-Security-Policy: $header");
+        }
 
         $this->addElement(
             'text',
