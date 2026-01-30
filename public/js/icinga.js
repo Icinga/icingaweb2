@@ -100,6 +100,8 @@
             this.events     = new Icinga.Events(this);
             this.history    = new Icinga.History(this);
 
+            define("icinga/legacy-app/Icinga", [], () => Icinga);
+
             // Initialize all available behaviors
             for (const name in Icinga.Behaviors) {
                 const behavior = new Icinga.Behaviors[name](this);
