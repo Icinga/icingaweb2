@@ -1,5 +1,5 @@
 <?php
-/* Icinga Web 2 | (c) 2016 Icinga Development Team | GPLv2+ */
+/* Icinga Web 2 | (c) 2025 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Authentication;
 
@@ -8,12 +8,9 @@ use Icinga\Application\Logger;
 use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Form;
+use ipl\I18n\Translation;
+use LogicException;
 
-/*
- * Helper for loading and applying the configured password policy and
- * falls back to a warning if the policy configuration is invalid.
- *
- */
 class PasswordPolicyHelper
 {
     /*
@@ -21,18 +18,28 @@ class PasswordPolicyHelper
      */
     const DEFAULT_PASSWORD_POLICY = AnyPasswordPolicy::class;
 
-    /*
+    /**
      * Configuration section for password policy in the configuration file
      */
     const CONFIG_SECTION = 'global';
 
-    /*
+    /**
      * Configuration key for password policy in the configuration file
      */
     const CONFIG_KEY = 'password_policy';
 
-    public static function applyPasswordPolicy(Form $form, string $newPassword, ?string $oldPassword)
-    {
+    /**
+     * Load the configured password policy, fall back to a warning if the policy configuration is invalid.
+     * On success, attaches the policy validator to the given new-password form element.
+     */
+    public static function applyPasswordPolicy(
+        Form $form,
+        string $newPasswordElementName,
+        ?string $oldPasswordElementName = null
+    ) {
+        if ($oldPasswordElementName !== null && $form->getElement($oldPasswordElementName) === null) {
+            throw new LogicException();
+        }
         try {
             $passwordPolicyClass = Config::app()->get(
                 'global',
@@ -41,35 +48,43 @@ class PasswordPolicyHelper
             );
 
             $passwordPolicy = static::createPolicy($passwordPolicyClass);
-
-//            if($oldPassword !== null) {
-                $form->getElement($oldPassword);
-//            }
-
-            $form->getElement($newPassword)->addValidator(new PasswordPolicyValidator($passwordPolicy));
+            // getElement() may return null if the element does not exist, causing this call to fail.
+            $form->getElement($newPasswordElementName)->addValidator(
+                new PasswordPolicyValidator($passwordPolicy, $oldPasswordElementName)
+            );
             static::addPasswordPolicyDescription($form, $passwordPolicy);
         } catch (ConfigurationError $e) {
             Logger::error($e);
 
             $form->addElement(
                 'note',
-                'error message',
+                'bogus',
                 [
-                    'escape'     => false,
-                    'decorators' => ['ViewHelper'],
-                    'value'      => sprintf(
-                        '<div class="error-message-password-policy">%s
-                                    <div>%s</div>
-                                </div>',
-                        $form->getView()->icon('warning-empty'),
-                        t('There was a problem loading the configured password policy.' .
-                        'Please contact your administrator.')
+                    'decorators' => [
+                        'ViewHelper',
+                        [['HtmlTag#text' => 'HtmlTag'], ['tag' => 'div']],
+                        [
+                            ['HtmlTag#i' => 'HtmlTag'],
+                            [
+                                'tag'       => 'i',
+                                'class'     => 'form-notification-icon icon fa fa-circle-exclamation',
+                                'placement' => 'prepend',
+                            ],
+                        ],
+                        [['HtmlTag#div' => 'HtmlTag'], ['tag' => 'div', 'class' => 'form-notifications error']],
+                    ],
+                    'value' => t(
+                        'There was a problem loading the configured password policy. '
+                        . 'Please contact your administrator.'
                     ),
                 ]
             );
         }
     }
-
+/**
+ * Create and validate a password policy instance from the given class name and ensure it implements the
+ *  password policy interface.
+ */
     public static function createPolicy(string $passwordPolicyClass): PasswordPolicy
     {
         if ($passwordPolicyClass === static::DEFAULT_PASSWORD_POLICY) {
@@ -83,7 +98,11 @@ class PasswordPolicyHelper
         $passwordPolicy = new $passwordPolicyClass();
 
         if (! $passwordPolicy instanceof PasswordPolicy) {
-            throw new ConfigurationError(t('Password policy is not an instance of %s'), PasswordPolicy::class);
+            throw new ConfigurationError(
+                t('Password policy %s is not an instance of %s'),
+                $passwordPolicyClass,
+                PasswordPolicy::class
+            );
         }
 
         return $passwordPolicy;

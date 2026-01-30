@@ -82,7 +82,6 @@ class StyleSheet
         'css/icinga/health.less',
         'css/icinga/php-diff.less',
         'css/icinga/pending-migration.less',
-        'css/icinga/password-policy-helper.less',
     ];
 
     /**

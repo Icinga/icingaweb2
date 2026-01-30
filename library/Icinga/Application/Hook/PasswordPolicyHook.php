@@ -7,34 +7,38 @@ use Icinga\Application\Hook;
 use Icinga\Authentication\PasswordPolicy;
 
 /**
- * This class connects with the PasswordPolicy interface to use it as hook
+ * Base class for hookable password policies
  */
 abstract class PasswordPolicyHook implements PasswordPolicy
 {
     /**
-    * Registers Hook as Password Policy
-    *
-    * @return void
-    */
+     * Hook name
+     */
+    protected const HOOK_NAME = 'PasswordPolicy';
+
+    /**
+     * Register password policy
+     *
+     * @return void
+     */
     public static function register(): void
     {
-        Hook::register('PasswordPolicy', static::class, static::class);
+        Hook::register(self::HOOK_NAME, static::class, static::class);
     }
 
     /**
-    * Returns all registered password policies sorted by
-    *
-    * @return array
-    */
+     * Return all registered password policies sorted by name
+     *
+     * @return array
+     */
     public static function all(): array
     {
         $passwordPolicies = [];
-
         foreach (Hook::all('PasswordPolicy') as $class => $policy) {
             $passwordPolicies[$class] = $policy->getName();
         }
-
         asort($passwordPolicies);
+
         return $passwordPolicies;
     }
 }

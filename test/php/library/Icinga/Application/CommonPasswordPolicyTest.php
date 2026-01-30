@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class CommonPasswordPolicyTest extends TestCase
 {
-    protected PasswordPolicy $instance;
+    protected passwordPolicy $instance;
 
     public function setUp(): void
     {
@@ -19,7 +19,7 @@ class CommonPasswordPolicyTest extends TestCase
     {
         $this->assertSame(
             ['Password must be at least 12 characters long'],
-            $this->instance->validate('Icinga1#', 'null')
+            $this->instance->validate('Icinga1#')
         );
     }
 
@@ -27,7 +27,7 @@ class CommonPasswordPolicyTest extends TestCase
     {
         $this->assertSame(
             ['Password must contain at least one number'],
-            $this->instance->validate('Icingaadmin#', 'null')
+            $this->instance->validate('Icingaadmin#')
         );
     }
 
@@ -35,7 +35,7 @@ class CommonPasswordPolicyTest extends TestCase
     {
         $this->assertSame(
             ['Password must contain at least one special character'],
-            $this->instance->validate('Icingaadmin1', 'null')
+            $this->instance->validate('Icingaadmin1')
         );
     }
 
@@ -43,7 +43,7 @@ class CommonPasswordPolicyTest extends TestCase
     {
         $this->assertSame(
             ['Password must contain at least one uppercase letter'],
-            $this->instance->validate('icingaadmin1#', 'null')
+            $this->instance->validate('icingaadmin1#')
         );
     }
 
@@ -51,13 +51,13 @@ class CommonPasswordPolicyTest extends TestCase
     {
         $this->assertSame(
             ['Password must contain at least one lowercase letter'],
-            $this->instance->validate('ICINGAADMIN1#', 'null')
+            $this->instance->validate('ICINGAADMIN1#')
         );
     }
 
-    public function testMethodValidatePasswordAlwaysReturnAnEmptyArray(): void
+    public function testValidatePasswordValid(): void
     {
-        $this->assertEmpty($this->instance->validate('Icingaadmin1#', 'null'));
+        $this->assertEmpty($this->instance->validate('Icingaadmin1#'));
     }
 
     public function testValidatePasswordOnlyLowerCaseLetters(): void
@@ -69,7 +69,7 @@ class CommonPasswordPolicyTest extends TestCase
         ];
         $this->assertSame(
             $expected,
-            $this->instance->validate('icingawebadmin', 'null')
+            $this->instance->validate('icingawebadmin')
         );
     }
 
@@ -81,16 +81,9 @@ class CommonPasswordPolicyTest extends TestCase
             'Password must contain at least one special character',
             'Password must contain at least one lowercase letter',
         ];
-        $res =
         $this->assertSame(
             $expectedResult,
-            $this->instance->validate('ICINGAADMIN', 'null')
+            $this->instance->validate('ICINGAADMIN')
         );
-    }
-
-    public function testValidatePasswordWithManyCharacters(): void
-    {
-        $longPassword = str_repeat('a', 1000);
-        $this->assertCount(3, $this->instance->validate($longPassword, 'null'));
     }
  }

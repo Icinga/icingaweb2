@@ -5,6 +5,12 @@ namespace Icinga\Authentication;
 
 use Zend_Validate_Abstract;
 
+/**
+ * Use the provided password policy to validate the new password.
+ * Optionally, retrieve the old password from the form context using the configured form element name
+ * and pass it to the policy for comparative validation.
+ * Delegate all validation logic to the policy instance and expose any returned violation messages.
+ */
 class PasswordPolicyValidator extends Zend_Validate_Abstract
 {
     /**
@@ -15,29 +21,30 @@ class PasswordPolicyValidator extends Zend_Validate_Abstract
     protected PasswordPolicy $passwordPolicy;
 
     /**
+     * Name of the old password element
+     *
+     * @var string|null
+     */
+    protected ?string $oldPasswordElementName;
+
+    /**
      * Constructor
      *
      * @param PasswordPolicy $passwordPolicy
+     * @param string|null $oldPasswordElementName
      */
-    public function __construct(PasswordPolicy $passwordPolicy)
+    public function __construct(PasswordPolicy $passwordPolicy, ?string $oldPasswordElementName = null)
     {
         $this->passwordPolicy = $passwordPolicy;
+        $this->oldPasswordElementName = $oldPasswordElementName;
     }
 
-    /**
-     * Checks if password matches with password policy
-     * throws a message if not
-     *
-     * @param mixed $value The password to validate
-     * @param mixed|null $context The data of the form
-     * @return bool
-     */
     public function isValid($value, mixed $context = null): bool
     {
         $oldPassword = null;
 
         if (is_array($context)) {
-            $oldPasswordValue = $context['old_password'] ?? null;
+            $oldPasswordValue = $context[$this->oldPasswordElementName] ?? null;
             if ($oldPasswordValue !== null && $oldPasswordValue !== '') {
                 $oldPassword = $oldPasswordValue;
             }

@@ -13,13 +13,9 @@ class AnyPasswordPolicy extends PasswordPolicyHook
 {
     use Translation;
 
-    /**
-     *  Policy named 'none' to indicate that no password policy is enforced and any password is accepted
-     *
-     * @return string
-     */
     public function getName(): string
     {
+        // Policy is named 'None' to indicate that no password policy is enforced and any password is accepted
         return $this->translate('None');
     }
 
@@ -28,7 +24,7 @@ class AnyPasswordPolicy extends PasswordPolicyHook
         return null;
     }
 
-    public function validate(string $newPassword, ?string $oldPassword): array
+    public function validate(string $newPassword, ?string $oldPassword = null): array
     {
         return [];
     }
