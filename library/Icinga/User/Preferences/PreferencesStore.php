@@ -282,8 +282,9 @@ class PreferencesStore
             }
         } catch (Exception $e) {
             throw new NotWritableError(
-                'Cannot update preferences for user %s in database',
+                'Cannot update preferences for user %s in database: %s',
                 $this->getUser()->getUsername(),
+                $e->getMessage(),
                 $e
             );
         }

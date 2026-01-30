@@ -14,6 +14,7 @@ use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\User;
 use Icinga\Web\Form;
 use Icinga\Web\RememberMe;
+use Icinga\Web\Session;
 use Icinga\Web\Url;
 
 /**
@@ -161,6 +162,19 @@ class LoginForm extends Form
 
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
+
+            // If user has 2FA enabled and the token hasn't been validated, redirect to login again, so that
+            // the token is challenged.
+            if ($user->getTwoFactorEnabled() && ! $user->getTwoFactorSuccessful()) {
+                $redirect = $this->getElement('redirect');
+                $redirect->setValue(
+                    Url::fromPath('authentication/login', ['redirect' => $redirect->getValue()])->getRelativeUrl()
+                );
+                Session::getSession()->set('must_challenge_2fa_token', true);
+
+                return true;
+            }
+
             $this->getResponse()->setRerenderLayout(true);
             return true;
         }
