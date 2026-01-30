@@ -8,14 +8,19 @@ interface PasswordPolicy
     /**
      * Get the name of the password policy
      *
+     * Displayed when configuring a password policy.
+     *
      * @return string
      */
     public function getName(): string;
 
     /**
-     * Displays the rules of the password policy for users
-     *
-     * @return string|null
+     * * Get the description of the password policy
+     * *
+     * * Displayed when creating or changing passwords while the policy is active.
+     * * Should contain the rules of the policy.
+     * *
+     * * @return ?string
      */
     public function getDescription(): ?string;
 
@@ -27,5 +32,5 @@ interface PasswordPolicy
      * @return string[] Returns an empty array if the password is valid,
      * otherwise returns error messages describing the violations
      */
-    public function validate(string $newPassword, ?string $oldPassword): array;
+    public function validate(string $newPassword, ?string $oldPassword = null): array;
 }

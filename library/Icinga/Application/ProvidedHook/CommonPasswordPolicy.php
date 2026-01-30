@@ -20,7 +20,6 @@ class CommonPasswordPolicy extends PasswordPolicyHook
 {
     use Translation;
 
-
     public function getName(): string
     {
         return $this->translate('Common');
@@ -34,7 +33,7 @@ class CommonPasswordPolicy extends PasswordPolicyHook
         );
     }
 
-    public function validate(string $newPassword, ?string $oldPassword): array
+    public function validate(string $newPassword, ?string $oldPassword = null): array
     {
         $violations = [];
 

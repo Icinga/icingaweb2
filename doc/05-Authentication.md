@@ -163,8 +163,8 @@ in order to manually create users directly inside the database.
 Icinga Web supports password policies when using database authentication. 
 You can configure this under **Configuration > Application > General**. 
 
-By default, no password policy is enforced ('Any'). 
-Icinga Web provides a built-in policy called 'Common' with the following requirements:
+By default, no password policy is enforced (`Any`). 
+Icinga Web provides a built-in policy called `Common` with the following requirements:
 
 * Minimum length of 12 characters
 * At least one number
@@ -178,16 +178,16 @@ You can create custom password policies by developing a module with a provided h
 
 **Create Module Structure**
 ```bash
-mkdir -p /usr/share/icingaweb2/modules/mypasswordpolicy/library/MyPasswordPolicy/ProvidedHook 
+mkdir -p /usr/share/icingaweb2/modules/mypasswordpolicy/library/Mypasswordpolicy/ProvidedHook 
 cd /usr/share/icingaweb2/modules/mypasswordpolicy
 ```
 
 Create `module.info`:
 ```ini
+Module: mypasswordpolicy
 Name: My Password Policy
 Version: 1.0.0
 Description: Custom password policy implementation
-Author: Your Name
 ```
 
 **Implement the Hook**
@@ -195,15 +195,19 @@ Author: Your Name
 Icinga Web provides the `PasswordPolicyHook` with predefined methods 
 that simplify the extension of custom password policies.
 
-Create `library/MyPasswordPolicy/ProvidedHook/PasswordPolicy.php`:
+Create `library/Mypasswordpolicy/ProvidedHook/PasswordPolicy.php`:
 
 ```php
-namespace Icinga\Module\MyPasswordPolicy\ProvidedHook;
+<?php
 
-use Icinga\Application\Hook\PasswordPolicyHook;
+namespace Icinga\Module\Mypasswordpolicy\ProvidedHook;
+
+use Icinga\Application\Hook\PasswordPolicyHook;use ipl\I18n\Translation;
 
 class PasswordPolicy extends PasswordPolicyHook
 {
+    use Translation;
+    
     public function getName(): string
     {
         return 'My Custom Policy';
@@ -214,7 +218,7 @@ class PasswordPolicy extends PasswordPolicyHook
         return 'Custom password requirements: 8+ chars, 1 number';
     }
 
-    public function validate(string $newPassword, ?string $oldPassword): array;
+    public function validate(string $newPassword, ?string $oldPassword = null): array;
     {
         $violations = [];
 
@@ -222,7 +226,7 @@ class PasswordPolicy extends PasswordPolicyHook
             $violations[] = 'Password must be at least 8 characters';
         }
 
-        if (!preg_match('/[0-9]/', $newPassword)) {
+        if (! preg_match('/[0-9]/', $newPassword)) {
             $violations[] = 'Password must contain at least one number';
         }
         
@@ -233,17 +237,19 @@ class PasswordPolicy extends PasswordPolicyHook
         return $violations;
     }
 }
+?>
 ```
 
 **Register the Hook**
 
 Create `run.php`:
-```php  
-/** @var $this \Icinga\Application\Modules\Module */
+```php
+<?php
 
-MyPasswordPolicy::register();
+use Icinga\Module\Mypasswordpolicy\ProvidedHook\MyPasswordPolicy;
+Mypasswordpolicy::register();
+?>
 ```
-
 
 Enable the module:
 ```bash
