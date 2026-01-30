@@ -7,6 +7,7 @@ use Icinga\Forms\Config\General\ApplicationConfigForm;
 use Icinga\Forms\Config\General\DefaultAuthenticationDomainConfigForm;
 use Icinga\Forms\Config\General\LoggingConfigForm;
 use Icinga\Forms\Config\General\ThemingConfigForm;
+use Icinga\Forms\Config\General\PasswordPolicyConfigForm;
 use Icinga\Forms\ConfigForm;
 
 /**
@@ -32,9 +33,11 @@ class GeneralConfigForm extends ConfigForm
         $loggingConfigForm = new LoggingConfigForm();
         $themingConfigForm = new ThemingConfigForm();
         $domainConfigForm = new DefaultAuthenticationDomainConfigForm();
+        $passwordPolicyConfigForm = new PasswordPolicyConfigForm();
         $this->addSubForm($appConfigForm->create($formData));
         $this->addSubForm($loggingConfigForm->create($formData));
         $this->addSubForm($themingConfigForm->create($formData));
         $this->addSubForm($domainConfigForm->create($formData));
+        $this->addSubForm($passwordPolicyConfigForm->create($formData));
     }
 }

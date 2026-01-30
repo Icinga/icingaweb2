@@ -4,9 +4,13 @@
 namespace Icinga\Forms\Config\User;
 
 use Icinga\Application\Hook\ConfigFormEventsHook;
+use Icinga\Application\Logger;
+use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Data\Filter\Filter;
 use Icinga\Forms\RepositoryForm;
+use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Notification;
+use Throwable;
 
 class UserForm extends RepositoryForm
 {
@@ -38,10 +42,11 @@ class UserForm extends RepositoryForm
             'password',
             'password',
             array(
-                'required'  => true,
-                'label'     => $this->translate('Password')
+                'required'   => true,
+                'label'      => $this->translate('Password')
             )
         );
+        PasswordPolicyHelper::applyPasswordPolicy($this, 'password');
 
         $this->setTitle($this->translate('Add a new user'));
         $this->setSubmitLabel($this->translate('Add'));
