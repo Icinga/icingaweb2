@@ -13,8 +13,15 @@ use Icinga\Web\Form;
  */
 abstract class ConfigFormEventsHook
 {
+    use Essentials;
+
     /** @var array Array of errors found while processing the form event hooks */
     private static $lastErrors = [];
+
+    protected static function getHookName(): string
+    {
+        return 'ConfigFormEvents';
+    }
 
     /**
      * Get whether the hook applies to the given config form
