@@ -11,9 +11,16 @@ use Icinga\Application\Logger;
  */
 abstract class ApplicationStateHook
 {
+    use Essentials;
+
     const ERROR = 'error';
 
     private $messages = [];
+
+    protected static function getHookName(): string
+    {
+        return 'ApplicationState';
+    }
 
     final public function hasMessages()
     {

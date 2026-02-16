@@ -11,6 +11,13 @@ use Icinga\Application\Logger;
 
 abstract class AuditHook
 {
+    use Essentials;
+
+    protected static function getHookName(): string
+    {
+        return 'audit';
+    }
+
     /**
      * Log an activity to the audit log
      *
