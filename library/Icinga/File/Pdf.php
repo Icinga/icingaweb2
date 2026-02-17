@@ -8,11 +8,11 @@ namespace Icinga\File;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Exception;
+use Icinga\Application\Hook\PdfexportHook;
 use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Util\Environment;
 use Icinga\Web\FileCache;
-use Icinga\Web\Hook;
 use Icinga\Web\Url;
 
 class Pdf
@@ -56,8 +56,8 @@ class Pdf
 
         $request = $controller->getRequest();
 
-        if (Hook::has('Pdfexport')) {
-            $pdfexport = Hook::first('Pdfexport');
+        if (PdfexportHook::isRegistered()) {
+            $pdfexport = PdfexportHook::first();
             $pdfexport->streamPdfFromHtml($html, sprintf(
                 '%s-%s-%d',
                 $request->getControllerName(),

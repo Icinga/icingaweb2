@@ -33,7 +33,7 @@ abstract class AuditHook
      */
     public static function logActivity($type, $message, ?array $data = null, $identity = null, $time = null)
     {
-        if (! Hook::has('audit')) {
+        if (! static::isRegistered()) {
             return;
         }
 
@@ -45,8 +45,7 @@ abstract class AuditHook
             $time = time();
         }
 
-        foreach (Hook::all('audit') as $hook) {
-            /** @var self $hook */
+        foreach (static::all() as $hook) {
             try {
                 $formattedMessage = $message;
                 if ($data !== null) {
