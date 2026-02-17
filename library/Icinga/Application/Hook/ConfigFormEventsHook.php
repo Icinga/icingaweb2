@@ -101,14 +101,13 @@ abstract class ConfigFormEventsHook
     {
         self::$lastErrors = [];
 
-        if (! Hook::has('ConfigFormEvents')) {
+        if (! static::registered()) {
             return true;
         }
 
         $success = true;
 
-        foreach (Hook::all('ConfigFormEvents') as $hook) {
-            /** @var self $hook */
+        foreach (static::all() as $hook) {
             if (! $hook->runAppliesTo($form)) {
                 continue;
             }

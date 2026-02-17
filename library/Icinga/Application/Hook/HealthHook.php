@@ -4,7 +4,6 @@
 namespace Icinga\Application\Hook;
 
 use Exception;
-use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Exception\IcingaException;
@@ -148,9 +147,7 @@ abstract class HealthHook
     final public static function collectHealthData()
     {
         $checks = [];
-        foreach (Hook::all('health') as $hook) {
-            /** @var self $hook */
-
+        foreach (static::all() as $hook) {
             try {
                 $hook->checkHealth();
                 $url = $hook->getUrl();
