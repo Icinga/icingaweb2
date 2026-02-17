@@ -128,7 +128,9 @@ class WebWizard extends Wizard implements SetupWizard
             /** @var ModulePage $modulePage */
             $modulePage = $this->getPage('setup_modules')->populate($modulePageData);
             foreach ($modulePage->getModuleWizards() as $moduleWizard) {
-                $this->addPage($moduleWizard);
+                if (! $moduleWizard instanceof ModuleDependency) {
+                    $this->addPage($moduleWizard);
+                }
             }
         }
     }
