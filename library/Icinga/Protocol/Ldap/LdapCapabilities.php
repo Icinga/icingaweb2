@@ -308,7 +308,7 @@ class LdapCapabilities
      */
     public static function discoverCapabilities(LdapConnection $connection)
     {
-        $ds = $connection->getConnection();
+        $ds = $connection->bind()->getConnection();
 
         $fields = array(
             'configurationNamingContext',
