@@ -6,9 +6,9 @@ namespace Icinga\Authentication;
 use Generator;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
-use Icinga\Data\ConfigObject;
 use Icinga\User;
 use Icinga\Util\StringHelper;
 
@@ -18,32 +18,32 @@ use Icinga\Util\StringHelper;
 class AdmissionLoader
 {
     const LEGACY_PERMISSIONS = [
-        'admin'                                 => 'application/announcements',
-        'application/stacktraces'               => 'user/application/stacktraces',
-        'application/share/navigation'          => 'user/share/navigation',
+        'admin'                               => 'application/announcements',
+        'application/stacktraces'             => 'user/application/stacktraces',
+        'application/share/navigation'        => 'user/share/navigation',
         // Migrating config/application/* would include config/modules, so that's skipped
         //'config/application/*'                  => 'config/*',
-        'config/application/general'            => 'config/general',
-        'config/application/resources'          => 'config/resources',
-        'config/application/navigation'         => 'config/navigation',
-        'config/application/userbackend'        => 'config/access-control/users',
-        'config/application/usergroupbackend'   => 'config/access-control/groups',
-        'config/authentication/*'               => 'config/access-control/*',
-        'config/authentication/users/*'         => 'config/access-control/users',
-        'config/authentication/users/show'      => 'config/access-control/users',
-        'config/authentication/users/add'       => 'config/access-control/users',
-        'config/authentication/users/edit'      => 'config/access-control/users',
-        'config/authentication/users/remove'    => 'config/access-control/users',
-        'config/authentication/groups/*'        => 'config/access-control/groups',
-        'config/authentication/groups/show'     => 'config/access-control/groups',
-        'config/authentication/groups/edit'     => 'config/access-control/groups',
-        'config/authentication/groups/add'      => 'config/access-control/groups',
-        'config/authentication/groups/remove'   => 'config/access-control/groups',
-        'config/authentication/roles/*'         => 'config/access-control/roles',
-        'config/authentication/roles/show'      => 'config/access-control/roles',
-        'config/authentication/roles/add'       => 'config/access-control/roles',
-        'config/authentication/roles/edit'      => 'config/access-control/roles',
-        'config/authentication/roles/remove'    => 'config/access-control/roles'
+        'config/application/general'          => 'config/general',
+        'config/application/resources'        => 'config/resources',
+        'config/application/navigation'       => 'config/navigation',
+        'config/application/userbackend'      => 'config/access-control/users',
+        'config/application/usergroupbackend' => 'config/access-control/groups',
+        'config/authentication/*'             => 'config/access-control/*',
+        'config/authentication/users/*'       => 'config/access-control/users',
+        'config/authentication/users/show'    => 'config/access-control/users',
+        'config/authentication/users/add'     => 'config/access-control/users',
+        'config/authentication/users/edit'    => 'config/access-control/users',
+        'config/authentication/users/remove'  => 'config/access-control/users',
+        'config/authentication/groups/*'      => 'config/access-control/groups',
+        'config/authentication/groups/show'   => 'config/access-control/groups',
+        'config/authentication/groups/edit'   => 'config/access-control/groups',
+        'config/authentication/groups/add'    => 'config/access-control/groups',
+        'config/authentication/groups/remove' => 'config/access-control/groups',
+        'config/authentication/roles/*'       => 'config/access-control/roles',
+        'config/authentication/roles/show'    => 'config/access-control/roles',
+        'config/authentication/roles/add'     => 'config/access-control/roles',
+        'config/authentication/roles/edit'    => 'config/access-control/roles',
+        'config/authentication/roles/remove'  => 'config/access-control/roles'
     ];
 
     /** @var Role[] */
@@ -64,9 +64,9 @@ class AdmissionLoader
     /**
      * Whether the user or groups are a member of the role
      *
-     * @param   string          $username
-     * @param   array           $userGroups
-     * @param   ConfigObject    $section
+     * @param string       $username
+     * @param array        $userGroups
+     * @param ConfigObject $section
      *
      * @return  bool
      */
@@ -101,7 +101,7 @@ class AdmissionLoader
      *
      * This will also resolve any parent-child relationships.
      *
-     * @param string $name
+     * @param string       $name
      * @param ConfigObject $section
      *
      * @return Generator
@@ -166,7 +166,7 @@ class AdmissionLoader
     /**
      * Apply permissions, restrictions and roles to the given user
      *
-     * @param   User    $user
+     * @param User $user
      */
     public function applyRoles(User $user)
     {
@@ -183,43 +183,48 @@ class AdmissionLoader
         $assignedRoles = [];
         $isUnrestricted = false;
         foreach ($this->roleConfig as $roleName => $roleConfig) {
-            $assigned = $this->match($username, $userGroups, $roleConfig);
-            if ($assigned) {
+            if ($this->match($username, $userGroups, $roleConfig)) {
                 $assignedRoles[] = $roleName;
-            }
 
-            if (! isset($roles[$roleName]) && $assigned) {
-                foreach ($this->loadRole($roleName, $roleConfig) as $role) {
-                    /** @var Role $role */
-                    if (isset($roles[$role->getName()])) {
-                        continue;
-                    }
+                if (! isset($roles[$roleName])) {
+                    foreach ($this->loadRole($roleName, $roleConfig) as $role) {
+                        /** @var Role $role */
+                        if (isset($roles[$role->getName()])) {
+                            continue;
+                        }
 
-                    $roles[$role->getName()] = $role;
+                        $roles[$role->getName()] = $role;
 
-                    $permissions = array_merge(
-                        $permissions,
-                        array_diff($role->getPermissions(), $permissions)
-                    );
-
-                    $roleRestrictions = $role->getRestrictions();
-                    foreach ($roleRestrictions as $name => & $restriction) {
-                        $restriction = str_replace(
-                            '$user.local_name$',
-                            $user->getLocalUsername(),
-                            $restriction
+                        $permissions = array_merge(
+                            $permissions,
+                            array_diff($role->getPermissions(), $permissions)
                         );
-                        $restrictions[$name][] = $restriction;
-                    }
 
-                    $role->setRestrictions($roleRestrictions);
+                        $roleRestrictions = $role->getRestrictions();
+                        foreach ($roleRestrictions as $name => & $restriction) {
+                            $restriction = str_replace(
+                                '$user.local_name$',
+                                $user->getLocalUsername(),
+                                $restriction
+                            );
+                            $restrictions[$name][] = $restriction;
+                        }
 
-                    if (! $isUnrestricted) {
-                        $isUnrestricted = $role->isUnrestricted();
+                        $role->setRestrictions($roleRestrictions);
+
+                        if (! $isUnrestricted) {
+                            $isUnrestricted = $role->isUnrestricted();
+                        }
                     }
                 }
             }
         }
+
+        Logger::debug(
+            'Groups assigned for user "%s": %s',
+            $user->getUsername(),
+            join(', ', $assignedRoles)
+        );
 
         $user->setAdditional('assigned_roles', $assignedRoles);
 
