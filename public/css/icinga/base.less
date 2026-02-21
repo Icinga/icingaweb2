@@ -193,7 +193,10 @@
 // Make padding not affect the final computed width of an element
 html {
   box-sizing: border-box;
+
+  scrollbar-color: var(--scrollbar-thumb-color, @scrollbar-thumb-color) transparent;
 }
+
 details > * {
   // children somehow default to content-box no matter the inheritance
   box-sizing: border-box;
