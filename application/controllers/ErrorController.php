@@ -6,6 +6,7 @@ namespace Icinga\Controllers;
 use Icinga\Application\Hook\DbMigrationHook;
 use Icinga\Application\MigrationManager;
 use Icinga\Exception\IcingaException;
+use Throwable;
 use Zend_Controller_Plugin_ErrorHandler;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
@@ -96,17 +97,23 @@ class ErrorController extends ActionController
                         $mm = MigrationManager::instance();
                         $action = $this->getRequest()->getActionName();
                         $controller = $this->getRequest()->getControllerName();
-                        if ($action !== 'hint' && $controller !== 'migrations' && $mm->hasMigrations($moduleName)) {
-                            // The view renderer from IPL web doesn't render the HTML content set in the respective
-                            // controller if the error_handler request param is set, as it doesn't support error
-                            // rendering. Since this error handler isn't caused by the migrations controller, we can
-                            // safely unset this.
-                            $this->setParam('error_handler', null);
-                            $this->forward('hint', 'migrations', 'default', [
-                                DbMigrationHook::MIGRATION_PARAM => $moduleName
-                            ]);
+                        $hasPending = false;
+                        try {
+                            $hasPending = $mm->hasPendingMigrations();
+                            if ($action !== 'hint' && $controller !== 'migrations' && $mm->hasMigrations($moduleName)) {
+                                // The view renderer from IPL web doesn't render the HTML content set in the respective
+                                // controller if the error_handler request param is set, as it doesn't support error
+                                // rendering. Since this error handler isn't caused by the migrations controller, we can
+                                // safely unset this.
+                                $this->setParam('error_handler', null);
+                                $this->forward('hint', 'migrations', 'default', [
+                                    DbMigrationHook::MIGRATION_PARAM => $moduleName
+                                ]);
 
-                            return;
+                                return;
+                            }
+                        } catch (Throwable $e) {
+                        //suppress
                         }
 
                         $this->getResponse()->setHttpResponseCode(500);
