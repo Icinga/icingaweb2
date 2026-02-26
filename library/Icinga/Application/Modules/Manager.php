@@ -3,6 +3,7 @@
 
 namespace Icinga\Application\Modules;
 
+use Fiber;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
@@ -187,8 +188,23 @@ class Manager
     public function loadEnabledModules()
     {
         if (! $this->loadedAllEnabledModules) {
+            $async = ! $this->app->isCli();
             foreach ($this->listEnabledModules() as $name) {
-                $this->loadModule($name);
+                if ($async) {
+                    // May be suspended during authentication and resumed upon finish
+                    (new Fiber(function () use ($name) {
+                        Logger::debug(
+                            'Loading enabled module "%s" asynchronously (Process %d; Fiber %d)',
+                            $name,
+                            getmypid() ?: 0,
+                            spl_object_id(Fiber::getCurrent())
+                        );
+
+                        $this->loadModule($name);
+                    }))->start();
+                } else {
+                    $this->loadModule($name);
+                }
             }
 
             $this->loadedAllEnabledModules = true;

@@ -4,6 +4,7 @@
 namespace Icinga\Authentication;
 
 use Exception;
+use Fiber;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\AuditHook;
 use Icinga\Application\Hook\AuthenticationHook;
@@ -19,6 +20,7 @@ use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Session;
 use Icinga\Web\StyleSheet;
+use LogicException;
 
 class Auth
 {
@@ -50,6 +52,23 @@ class Auth
      */
     private $user;
 
+    /**
+     * Whether the user has been authenticated
+     *
+     * If true, this does NOT mean authentication was successful.
+     *
+     * @var bool
+     */
+    private bool $authenticated = false;
+
+    /**
+     * Fibers that were suspended during authentication
+     *
+     * This is used to resume fibers after authentication has been performed.
+     *
+     * @var Fiber[]
+     */
+    private array $suspendedFibers = [];
 
     /**
      * @see getInstance()
@@ -88,14 +107,23 @@ class Auth
      */
     public function isAuthenticated()
     {
-        if ($this->user !== null) {
-            return true;
+        if (! $this->authenticated) {
+            $fiber = Fiber::getCurrent();
+            if ($fiber !== null) {
+                Logger::debug(
+                    'Fiber %d of process %d attempts authentication, suspending it.',
+                    spl_object_id($fiber),
+                    getmypid() ?: 0
+                );
+
+                $this->suspendedFibers[] = $fiber;
+                Fiber::suspend();
+            } else {
+                trigger_error('Authentication can no longer be triggered implicitly', E_USER_DEPRECATED);
+            }
         }
-        $this->authenticateFromSession();
-        if ($this->user === null && ! $this->authExternal()) {
-            return false;
-        }
-        return true;
+
+        return $this->user !== null;
     }
 
     public function setAuthenticated(User $user, $persist = true)
@@ -210,6 +238,51 @@ class Auth
     public function setUser(User $user)
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Authenticate the user
+     *
+     * This method will try to authenticate the user using the session first, then external backends and finally HTTP
+     * authentication. If authentication has already been performed, an exception will be thrown.
+     *
+     * @throws LogicException If authentication has already been performed
+     *
+     * @return $this
+     */
+    public function authenticate(): static
+    {
+        if ($this->authenticated) {
+            throw new LogicException('Cannot perform authentication more than once');
+        }
+
+        $this->authenticateFromSession();
+        if ($this->user === null) {
+            $this->authExternal();
+
+            if ($this->user === null
+                && $this->getRequest()->isApiRequest()
+                && ! $this->getRequest()->isXmlHttpRequest()
+            ) {
+                $this->authHttp();
+            }
+        }
+
+        $this->authenticated = true;
+
+        foreach ($this->suspendedFibers as $fiber) {
+            Logger::debug(
+                'Authentication performed, resuming fiber %d of process %d.',
+                spl_object_id($fiber),
+                getmypid() ?: 0
+            );
+
+            $fiber->resume();
+        }
+
+        $this->suspendedFibers = [];
 
         return $this;
     }
