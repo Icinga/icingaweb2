@@ -12,6 +12,7 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
     * `service_last_time_unknown`
     * `service_last_time_warning`
     * `service_last_time_critical`
+* The `IniWriter::write()` method now throws `NotWritableError` instead of `Zend_Config_Exception`.
 
 ## Upgrading to Icinga Web 2.12.2
 
