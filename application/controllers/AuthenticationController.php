@@ -3,17 +3,23 @@
 
 namespace Icinga\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Application\ClassLoader;
 use Icinga\Application\Hook\AuthenticationHook;
+use Icinga\Application\Hook\LoginButton\LoginButton;
+use Icinga\Application\Hook\LoginButtonHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
+use Icinga\Forms\Authentication\ButtonForm;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Helper\CookieHelper;
 use Icinga\Web\RememberMe;
 use Icinga\Web\Url;
 use RuntimeException;
+use Throwable;
 
 /**
  * Application wide controller for authentication
@@ -93,7 +99,33 @@ class AuthenticationController extends Controller
             }
             $form->handleRequest();
         }
+
+        $loginButtons = [];
+        $request = ServerRequest::fromGlobals();
+
+        foreach (LoginButtonHook::all() as $class => $hook) {
+            try {
+                foreach ($hook->getButtons() as $index => $button) {
+                    assert($button instanceof LoginButton);
+
+                    $loginButtons[] = (new ButtonForm(
+                        "$class!$index",
+                        $button,
+                        ClassLoader::classBelongsToModule($class) ? ClassLoader::extractModuleName($class) : null
+                    ))
+                        ->on(ButtonForm::ON_SUCCESS, function () use ($button): void {
+                            ($button->onClick)();
+                        })
+                        ->handleRequest($request);
+                }
+            } catch (Throwable $e) {
+                Logger::error('Failed to execute login button hook: %s', $e);
+                continue;
+            }
+        }
+
         $this->view->form = $form;
+        $this->view->loginButtons = $loginButtons;
         $this->view->defaultTitle = $this->translate('Icinga Web 2 Login');
         $this->view->requiresSetup = $requiresSetup;
     }
