@@ -66,6 +66,8 @@ class Hook
      * @param   string  $name   One of the predefined hook names
      *
      * @return  bool
+     *
+     * @deprecated Use {@link Hook\Essentials::registered} instead
      */
     public static function has($name)
     {
@@ -265,6 +267,8 @@ class Hook
      * @param   string  $name   One of the predefined hook names
      *
      * @return  array
+     *
+     * @deprecated Use {@link Hook\Essentials::all} instead
      */
     public static function all($name): array
     {
@@ -289,6 +293,8 @@ class Hook
      * @param   string  $name   One of the predefined hook names
      *
      * @return  null|mixed
+     *
+     * @deprecated Use {@link Hook\Essentials::first} instead
      */
     public static function first($name)
     {
@@ -312,6 +318,8 @@ class Hook
      * @param   string      $class          Your class name, must inherit one of the
      *                                      classes in the Icinga/Application/Hook folder
      * @param   bool        $alwaysRun      To run the hook always (e.g. without permission check)
+     *
+     * @deprecated Use {@link Hook\Essentials::register} instead
      */
     public static function register($name, $key, $class, $alwaysRun = false)
     {

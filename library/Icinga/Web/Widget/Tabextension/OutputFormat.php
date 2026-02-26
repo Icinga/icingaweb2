@@ -3,6 +3,7 @@
 
 namespace Icinga\Web\Widget\Tabextension;
 
+use Icinga\Application\Hook\PdfexportHook;
 use Icinga\Application\Platform;
 use Icinga\Application\Hook;
 use Icinga\Web\Url;
@@ -82,7 +83,7 @@ class OutputFormat implements Tabextension
     {
         $supportedTypes = array();
 
-        $pdfexport = Hook::has('Pdfexport');
+        $pdfexport = PdfexportHook::registered();
 
         if ($pdfexport || Platform::extensionLoaded('gd')) {
             $supportedTypes[self::TYPE_PDF] = array(

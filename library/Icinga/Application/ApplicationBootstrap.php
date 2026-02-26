@@ -739,7 +739,7 @@ abstract class ApplicationBootstrap
      */
     protected function registerApplicationHooks(): self
     {
-        Hook::register('DbMigration', DbMigration::class, DbMigration::class);
+        DbMigration::register();
 
         return $this;
     }

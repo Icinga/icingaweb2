@@ -17,12 +17,19 @@ use Icinga\Exception\IcingaException;
  */
 abstract class TicketHook
 {
+    use Essentials;
+
     /**
      * Last error, if any
      *
      * @var string|null
      */
     protected $lastError;
+
+    protected static function getHookName(): string
+    {
+        return 'ticket';
+    }
 
     /**
      * Create a new ticket hook

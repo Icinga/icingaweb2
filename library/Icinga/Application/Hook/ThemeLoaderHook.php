@@ -11,6 +11,13 @@ namespace Icinga\Application\Hook;
  */
 abstract class ThemeLoaderHook
 {
+    use Essentials;
+
+    protected static function getHookName(): string
+    {
+        return 'ThemeLoader';
+    }
+
     /**
      * Get the path for the given theme
      *
