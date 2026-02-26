@@ -237,9 +237,7 @@ git push -f origin fix/style-detail-view
 
 ## <a id="contributing-testing"></a> Testing
 
-Basic unit test coverage is provided by running `icingacli test php unit`.
-
-Snapshot packages from the laster development branch are available inside the
+Snapshot packages from the latest development branch are available inside the
 [package repository](https://packages.icinga.com).
 
 You can help test-drive the latest Icinga 2 snapshot packages inside the

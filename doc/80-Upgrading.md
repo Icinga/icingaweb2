@@ -7,18 +7,22 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
 **Breaking changes**
 
-* The following columns of the `Servicestatus` table, which previously displayed the date time (string) as a fetched value, now display the unix timestamp to support relative time filters:
+* The following columns of the `Servicestatus` table, which previously displayed the date time (string) as a fetched
+  value, now display the unix timestamp to support relative time filters:
     * `service_last_time_ok`
     * `service_last_time_unknown`
     * `service_last_time_warning`
     * `service_last_time_critical`
 * The `IniWriter::write()` method now throws `NotWritableError` instead of `Zend_Config_Exception`.
+* The *test* module has been removed. Running the unit tests is still possible by executing `phpunit` in the base
+  directory of the Icinga Web 2 repository.
 
 ## Upgrading to Icinga Web 2.12.2
 
 **Framework changes affecting third-party code**
 
-* `Icinga\Module\Monitoring\Hook\PluginOutputHook` When rendering the Icinga check output, the output and long_output fields are now concatenated with a newline (\n) before any post-processing occurs, such as through a PluginOutputHook
+* `Icinga\Module\Monitoring\Hook\PluginOutputHook` When rendering the Icinga check output, the output and long_output 
+  fields are now concatenated with a newline (\n) before any post-processing occurs, such as through a PluginOutputHook
 
 ## Upgrading to Icinga Web 2.12.0
 
