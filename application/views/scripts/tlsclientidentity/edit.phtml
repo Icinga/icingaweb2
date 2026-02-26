@@ -1,0 +1,78 @@
+<?php
+use Icinga\Util\TimezoneDetect;
+
+/** @var \Icinga\Web\View $this */
+/** @var array $cert */
+/** @var array $pubKey */
+
+$timezoneDetect = new TimezoneDetect();
+$timeZone = new DateTimeZone(
+    $timezoneDetect->success() ? $timezoneDetect->getTimezoneName() : date_default_timezone_get()
+);
+
+$subject = array();
+foreach ($cert['info']['subject'] as $key => $value) {
+    $subject[] = $this->escape("$key = " . var_export($value, true));
+}
+
+$issuer = array();
+foreach ($cert['info']['issuer'] as $key => $value) {
+    $issuer[] = $this->escape("$key = " . var_export($value, true));
+}
+?>
+<div class="controls">
+    <?= /** @var \Icinga\Web\Widget\Tabs $tabs */ $tabs ?>
+</div>
+<div class="content">
+    <?= /** @var \Icinga\Forms\Config\Tls\RootCaCollection\EditForm $editForm */ $editForm ?>
+
+    <h1><?= /** @var \Icinga\Web\View $this */ $this->translate('TLS Client Certificate') ?></h1>
+
+    <table class="name-value-list">
+        <tr>
+            <td><?= $this->escape($this->translate('Subject', 'x509.certificate')) ?></td>
+            <td><?= implode('<br>', $subject) ?></td>
+        </tr>
+        <tr>
+            <td><?= $this->escape($this->translate('Issuer', 'x509.certificate')) ?></td>
+            <td><?= implode('<br>', $issuer) ?></td>
+        </tr>
+        <tr>
+            <td><?= $this->escape($this->translate('Valid from', 'x509.certificate')) ?></td>
+            <td><?= $this->escape(
+                DateTime::createFromFormat('U', $cert['info']['validFrom_time_t'])
+                    ->setTimezone($timeZone)
+                    ->format(DateTime::ISO8601)
+            ) ?></td>
+        </tr>
+        <tr>
+            <td><?= $this->escape($this->translate('Valid until', 'x509.certificate')) ?></td>
+            <td><?= $this->escape(
+                DateTime::createFromFormat('U', $cert['info']['validTo_time_t'])
+                    ->setTimezone($timeZone)
+                    ->format(DateTime::ISO8601)
+            ) ?></td>
+        </tr>
+        <tr>
+            <td><?= $this->escape($this->translate('SHA256 fingerprint', 'x509.certificate')) ?></td>
+            <td><?= $this->escape(implode(' ', str_split(strtoupper($cert['sha256']), 2))) ?></td>
+        </tr>
+        <tr>
+            <td><?= $this->escape($this->translate('SHA1 fingerprint', 'x509.certificate')) ?></td>
+            <td><?= $this->escape(implode(' ', str_split(strtoupper($cert['sha1']), 2))) ?></td>
+        </tr>
+    </table>
+
+    <h1><?= /** @var \Icinga\Web\View $this */ $this->translate('TLS Client Public Key') ?></h1>
+
+    <table class="name-value-list">
+        <tr>
+            <td><?= $this->escape($this->translate('SHA256 fingerprint', 'x509.certificate')) ?></td>
+            <td><?= $this->escape(implode(' ', str_split(strtoupper($pubKey['sha256']), 2))) ?></td>
+        </tr>
+        <tr>
+            <td><?= $this->escape($this->translate('SHA1 fingerprint', 'x509.certificate')) ?></td>
+            <td><?= $this->escape(implode(' ', str_split(strtoupper($pubKey['sha1']), 2))) ?></td>
+        </tr>
+    </table>
+</div>

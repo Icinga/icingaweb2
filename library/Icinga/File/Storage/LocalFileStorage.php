@@ -4,6 +4,7 @@
 namespace Icinga\File\Storage;
 
 use ErrorException;
+use Icinga\Application\Icinga;
 use Icinga\Exception\AlreadyExistsException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Exception\NotReadableError;
@@ -25,6 +26,21 @@ class LocalFileStorage implements StorageInterface
      * @var string
      */
     protected $baseDir;
+
+    /**
+     * Factory for the common storage directory with optional subdirectory
+     *
+     * @param   string  $subDir
+     *
+     * @return  static
+     */
+    public static function common($subDir = null)
+    {
+        $baseDir = Icinga::app()->getStorageDir($subDir);
+        static::ensureDir($baseDir);
+
+        return new static($baseDir);
+    }
 
     /**
      * Constructor
@@ -149,10 +165,10 @@ class LocalFileStorage implements StorageInterface
      *
      * @throws  NotWritableError
      */
-    protected function ensureDir($dir)
+    protected static function ensureDir($dir)
     {
         if (! is_dir($dir)) {
-            $this->ensureDir(dirname($dir));
+            static::ensureDir(dirname($dir));
 
             try {
                 mkdir($dir, 02770);
