@@ -21,7 +21,7 @@ abstract class AuthenticationHook
     const NAME = 'authentication';
 
     /**
-     * Triggered after login in Icinga Web and when calling login action even if already authenticated in Icinga Web
+     * Triggered after login in Icinga Web and when calling login action
      *
      * @param User $user
      */
