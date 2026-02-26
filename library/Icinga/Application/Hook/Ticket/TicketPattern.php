@@ -41,6 +41,7 @@ class TicketPattern implements ArrayAccess
 
     public function offsetGet($offset): ?string
     {
+        $offset = $offset ?? '';
         return array_key_exists($offset, $this->match) ? $this->match[$offset] : null;
     }
 

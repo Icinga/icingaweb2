@@ -14,10 +14,10 @@ interface Reducible
     /**
      * Delete entries in the given target, optionally limiting the affected entries by using a filter
      *
-     * @param   string  $target
-     * @param   Filter  $filter
+     * @param   string       $target
+     * @param   Filter|null  $filter
      *
      * @throws  StatementException
      */
-    public function delete($target, Filter $filter = null);
+    public function delete($target, ?Filter $filter = null);
 }

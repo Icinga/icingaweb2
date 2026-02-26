@@ -26,11 +26,12 @@ class ErrorLabeller extends Zend_Translate_Adapter
 
     public function isTranslated($messageId, $original = false, $locale = null)
     {
-        return array_key_exists($messageId, $this->messages);
+        return array_key_exists($messageId ?? '', $this->messages);
     }
 
     public function translate($messageId, $locale = null)
     {
+        $messageId = $messageId ?? '';
         if (array_key_exists($messageId, $this->messages)) {
             return $this->messages[$messageId];
         }

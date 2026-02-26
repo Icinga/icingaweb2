@@ -37,12 +37,12 @@ class SimpleTree implements IteratorAggregate
     /**
      * Add a child node
      *
-     * @param   TreeNode $child
-     * @param   TreeNode $parent
+     * @param   TreeNode     $child
+     * @param   TreeNode|null $parent
      *
      * @return $this
      */
-    public function addChild(TreeNode $child, TreeNode $parent = null)
+    public function addChild(TreeNode $child, ?TreeNode $parent = null)
     {
         if ($parent === null) {
             $parent = $this->sentinel;

@@ -1,6 +1,5 @@
 includes:
-	- phpstan-baseline-standard.neon
-	- phpstan-baseline-by-php-version.php
+	- phpstan-baseline.neon
 
 parameters:
     level: max
@@ -14,13 +13,11 @@ parameters:
         - library/Icinga
         - modules/doc/application
         - modules/migrate/application
-        - modules/monitoring/application
         - modules/setup/application
         - modules/test/application
         - modules/translation/application
         - modules/doc/library
         - modules/migrate/library
-        - modules/monitoring/library
         - modules/setup/library
         - modules/translation/library
 
@@ -40,7 +37,5 @@ parameters:
         - ipl\Orm\Model
         - Icinga\Data\ConfigObject
         - Icinga\Web\View
-        - Icinga\Module\Monitoring\Object\MonitoredObject
-        - Icinga\Module\Monitoring\DataView\DataView
         - Icinga\Web\Session\SessionNamespace
         - Icinga\User\Preferences

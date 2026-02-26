@@ -102,12 +102,12 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      *
      * This notifies the repository about each desired query column.
      *
-     * @param   mixed   $target     The target from which to fetch the columns
-     * @param   array   $columns    If null or an empty array, all columns will be fetched
+     * @param   mixed        $target     The target from which to fetch the columns
+     * @param   array|null   $columns    If null or an empty array, all columns will be fetched
      *
      * @return  $this
      */
-    public function from($target, array $columns = null)
+    public function from($target, ?array $columns = null)
     {
         $this->query = $this->repository->getDataSource($target)->select();
         $this->query->from($this->repository->requireTable($target, $this));
@@ -146,12 +146,12 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      *
      * This notifies the repository about each desired query column.
      *
-     * @param   mixed   $target             The target where to look for each column
-     * @param   array   $desiredColumns     Pass null or an empty array to require all query columns
+     * @param   mixed        $target             The target where to look for each column
+     * @param   array|null   $desiredColumns     Pass null or an empty array to require all query columns
      *
      * @return  array                       The desired columns indexed by their respective alias
      */
-    protected function prepareQueryColumns($target, array $desiredColumns = null)
+    protected function prepareQueryColumns($target, ?array $desiredColumns = null)
     {
         $this->customAliases = array();
         if (empty($desiredColumns)) {

@@ -12,21 +12,21 @@ interface DbTest
      *
      * @return DbConnection
      */
-    public function mysqlDb();
+    public static function mysqlDb();
 
     /**
      * PHPUnit provider for pgsql
      *
      * @return DbConnection
      */
-    public function pgsqlDb();
+    public static function pgsqlDb();
 
     /**
      * PHPUnit provider for oracle
      *
      * @return DbConnection
      */
-    public function oracleDb();
+    public static function oracleDb();
 
     /**
      * Executes sql file on PDO object

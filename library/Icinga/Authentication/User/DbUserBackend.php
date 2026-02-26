@@ -134,11 +134,11 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
     /**
      * Update table rows with the given data, optionally limited by using a filter
      *
-     * @param   string  $table
-     * @param   array   $bind
-     * @param   Filter  $filter
+     * @param   string       $table
+     * @param   array        $bind
+     * @param   Filter|null  $filter
      */
-    public function update($table, array $bind, Filter $filter = null, array $types = array())
+    public function update($table, array $bind, ?Filter $filter = null, array $types = array())
     {
         $this->requireTable($table);
         $bind['last_modified'] = date('Y-m-d H:i:s');

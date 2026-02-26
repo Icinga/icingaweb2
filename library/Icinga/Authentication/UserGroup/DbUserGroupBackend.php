@@ -142,11 +142,11 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
     /**
      * Update table rows with the given data, optionally limited by using a filter
      *
-     * @param   string  $table
-     * @param   array   $bind
-     * @param   Filter  $filter
+     * @param   string       $table
+     * @param   array        $bind
+     * @param   Filter|null  $filter
      */
-    public function update($table, array $bind, Filter $filter = null, array $types = array())
+    public function update($table, array $bind, ?Filter $filter = null, array $types = array())
     {
         $bind['last_modified'] = date('Y-m-d H:i:s');
         parent::update($table, $bind, $filter);
@@ -155,10 +155,10 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
     /**
      * Delete table rows, optionally limited by using a filter
      *
-     * @param   string  $table
-     * @param   Filter  $filter
+     * @param   string       $table
+     * @param   Filter|null  $filter
      */
-    public function delete($table, Filter $filter = null)
+    public function delete($table, ?Filter $filter = null)
     {
         if ($table === 'group') {
             parent::delete('group_membership', $filter);

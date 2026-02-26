@@ -219,7 +219,7 @@ abstract class Repository implements Selectable
      * @param   Selectable|null $ds The datasource to use.
      *                              Only pass null if you have overridden {@link getDataSource()}!
      */
-    public function __construct(Selectable $ds = null)
+    public function __construct(?Selectable $ds = null)
     {
         $this->ds = $ds;
         $this->aliasTableMap = array();
@@ -694,11 +694,11 @@ abstract class Repository implements Selectable
     /**
      * Return a new query for the given columns
      *
-     * @param   array   $columns    The desired columns, if null all columns will be queried
+     * @param   array|null   $columns    The desired columns, if null all columns will be queried
      *
      * @return  RepositoryQuery
      */
-    public function select(array $columns = null)
+    public function select(?array $columns = null)
     {
         $query = new RepositoryQuery($this);
         $query->from($this->getBaseTable(), $columns);
@@ -733,16 +733,16 @@ abstract class Repository implements Selectable
     /**
      * Convert a value supposed to be transmitted to the data source
      *
-     * @param   string              $table      The table where to persist the value
-     * @param   string              $name       The alias or column name
-     * @param   mixed               $value      The value to convert
-     * @param   RepositoryQuery     $query      An optional query to pass as context
+     * @param   string                   $table      The table where to persist the value
+     * @param   string                   $name       The alias or column name
+     * @param   mixed                    $value      The value to convert
+     * @param   RepositoryQuery|null     $query      An optional query to pass as context
      *                                          (Directly passed through to $this->getConverter)
      *
      * @return  mixed                           If conversion was possible, the converted value,
      *                                          otherwise the unchanged value
      */
-    public function persistColumn($table, $name, $value, RepositoryQuery $query = null)
+    public function persistColumn($table, $name, $value, ?RepositoryQuery $query = null)
     {
         $converter = $this->getConverter($table, $name, 'persist', $query);
         if ($converter !== null) {
@@ -755,16 +755,16 @@ abstract class Repository implements Selectable
     /**
      * Convert a value which was fetched from the data source
      *
-     * @param   string              $table      The table the value has been fetched from
-     * @param   string              $name       The alias or column name
-     * @param   mixed               $value      The value to convert
-     * @param   RepositoryQuery     $query      An optional query to pass as context
-     *                                          (Directly passed through to $this->getConverter)
+     * @param   string                   $table      The table the value has been fetched from
+     * @param   string                   $name       The alias or column name
+     * @param   mixed                    $value      The value to convert
+     * @param   RepositoryQuery|null     $query      An optional query to pass as context
+     *                                               (Directly passed through to $this->getConverter)
      *
-     * @return  mixed                           If conversion was possible, the converted value,
-     *                                          otherwise the unchanged value
+     * @return  mixed                                If conversion was possible, the converted value,
+     *                                               otherwise the unchanged value
      */
-    public function retrieveColumn($table, $name, $value, RepositoryQuery $query = null)
+    public function retrieveColumn($table, $name, $value, ?RepositoryQuery $query = null)
     {
         $converter = $this->getConverter($table, $name, 'retrieve', $query);
         if ($converter !== null) {
@@ -777,17 +777,17 @@ abstract class Repository implements Selectable
     /**
      * Return the name of the conversion method for the given alias or column name and context
      *
-     * @param   string              $table      The datasource's table
-     * @param   string              $name       The alias or column name for which to return a conversion method
-     * @param   string              $context    The context of the conversion: persist or retrieve
-     * @param   RepositoryQuery     $query      An optional query to pass as context
+     * @param   string                   $table      The datasource's table
+     * @param   string                   $name       The alias or column name for which to return a conversion method
+     * @param   string                   $context    The context of the conversion: persist or retrieve
+     * @param   RepositoryQuery|null     $query      An optional query to pass as context
      *                                          (unused by the base implementation)
      *
      * @return  ?string
      *
      * @throws  ProgrammingError    In case a conversion rule is found but not any conversion method
      */
-    protected function getConverter($table, $name, $context, RepositoryQuery $query = null)
+    protected function getConverter($table, $name, $context, ?RepositoryQuery $query = null)
     {
         $conversionRules = $this->getConversionRules();
         if (! isset($conversionRules[$table])) {
@@ -950,15 +950,15 @@ abstract class Repository implements Selectable
     /**
      * Validate that the requested table exists and resolve it's real name if necessary
      *
-     * @param   string              $table      The table to validate
-     * @param   RepositoryQuery     $query      An optional query to pass as context
-     *                                          (unused by the base implementation)
+     * @param   string                   $table      The table to validate
+     * @param   RepositoryQuery|null     $query      An optional query to pass as context
+     *                                               (unused by the base implementation)
      *
-     * @return  string                          The table's name, may differ from the given one
+     * @return  string                               The table's name, may differ from the given one
      *
-     * @throws  ProgrammingError                In case the given table does not exist
+     * @throws  ProgrammingError                     In case the given table does not exist
      */
-    public function requireTable($table, RepositoryQuery $query = null)
+    public function requireTable($table, ?RepositoryQuery $query = null)
     {
         $queryColumns = $this->getQueryColumns();
         if (! isset($queryColumns[$table])) {
@@ -976,15 +976,15 @@ abstract class Repository implements Selectable
     /**
      * Recurse the given filter, require each column for the given table and convert all values
      *
-     * @param   string              $table      The table being filtered
-     * @param   Filter              $filter     The filter to recurse
-     * @param   RepositoryQuery     $query      An optional query to pass as context
-     *                                          (Directly passed through to $this->requireFilterColumn)
-     * @param   bool                $clone      Whether to clone $filter first
+     * @param   string                   $table      The table being filtered
+     * @param   Filter                   $filter     The filter to recurse
+     * @param   RepositoryQuery|null     $query      An optional query to pass as context
+     *                                               (Directly passed through to $this->requireFilterColumn)
+     * @param   bool                     $clone      Whether to clone $filter first
      *
-     * @return  Filter                          The udpated filter
+     * @return  Filter                               The udpated filter
      */
-    public function requireFilter($table, Filter $filter, RepositoryQuery $query = null, $clone = true)
+    public function requireFilter($table, Filter $filter, ?RepositoryQuery $query = null, $clone = true)
     {
         if ($clone) {
             $filter = clone $filter;
@@ -1124,15 +1124,15 @@ abstract class Repository implements Selectable
     /**
      * Validate that the given column is a valid query target and return it or the actual name if it's an alias
      *
-     * @param   string              $table  The table where to look for the column or alias
-     * @param   string              $name   The name or alias of the column to validate
-     * @param   RepositoryQuery     $query  An optional query to pass as context (unused by the base implementation)
+     * @param   string                  $table  The table where to look for the column or alias
+     * @param   string                  $name   The name or alias of the column to validate
+     * @param   RepositoryQuery|null    $query  An optional query to pass as context (unused by the base implementation)
      *
-     * @return  string                      The given column's name
+     * @return  string                          The given column's name
      *
-     * @throws  QueryException              In case the given column is not a valid query column
+     * @throws  QueryException                  In case the given column is not a valid query column
      */
-    public function requireQueryColumn($table, $name, RepositoryQuery $query = null)
+    public function requireQueryColumn($table, $name, ?RepositoryQuery $query = null)
     {
         if (($column = $this->resolveQueryColumnAlias($table, $name)) !== null) {
             $alias = $name;
@@ -1171,16 +1171,16 @@ abstract class Repository implements Selectable
     /**
      * Validate that the given column is a valid filter target and return it or the actual name if it's an alias
      *
-     * @param   string              $table  The table where to look for the column or alias
-     * @param   string              $name   The name or alias of the column to validate
-     * @param   RepositoryQuery     $query  An optional query to pass as context (unused by the base implementation)
-     * @param   FilterExpression    $filter An optional filter to pass as context (unused by the base implementation)
+     * @param   string                 $table  The table where to look for the column or alias
+     * @param   string                 $name   The name or alias of the column to validate
+     * @param   RepositoryQuery|null   $query  An optional query to pass as context (unused by the base implementation)
+     * @param   FilterExpression|null  $filter An optional filter to pass as context (unused by the base implementation)
      *
-     * @return  string                      The given column's name
+     * @return  string                         The given column's name
      *
-     * @throws  QueryException              In case the given column is not a valid filter column
+     * @throws  QueryException                 In case the given column is not a valid filter column
      */
-    public function requireFilterColumn($table, $name, RepositoryQuery $query = null, FilterExpression $filter = null)
+    public function requireFilterColumn($table, $name, ?RepositoryQuery $query = null, ?FilterExpression $filter = null)
     {
         if (($column = $this->resolveQueryColumnAlias($table, $name)) !== null) {
             $alias = $name;

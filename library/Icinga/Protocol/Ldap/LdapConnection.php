@@ -416,12 +416,12 @@ class LdapConnection implements Selectable, Inspectable
     /**
      * Retrieve an array containing all rows of the result set
      *
-     * @param   LdapQuery   $query      The query returning the result set
-     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
+     * @param   LdapQuery        $query      The query returning the result set
+     * @param   array|null       $fields     Request these attributes instead of the ones registered in the given query
      *
      * @return  array
      */
-    public function fetchAll(LdapQuery $query, array $fields = null)
+    public function fetchAll(LdapQuery $query, ?array $fields = null)
     {
         $this->bind();
 
@@ -435,12 +435,12 @@ class LdapConnection implements Selectable, Inspectable
     /**
      * Fetch the first row of the result set
      *
-     * @param   LdapQuery   $query      The query returning the result set
-     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
+     * @param   LdapQuery        $query      The query returning the result set
+     * @param   array|null       $fields     Request these attributes instead of the ones registered in the given query
      *
      * @return  mixed
      */
-    public function fetchRow(LdapQuery $query, array $fields = null)
+    public function fetchRow(LdapQuery $query, ?array $fields = null)
     {
         $clonedQuery = clone $query;
         $clonedQuery->limit(1);
@@ -452,14 +452,14 @@ class LdapConnection implements Selectable, Inspectable
     /**
      * Fetch the first column of all rows of the result set as an array
      *
-     * @param   LdapQuery   $query      The query returning the result set
-     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
+     * @param   LdapQuery        $query      The query returning the result set
+     * @param   array|null       $fields     Request these attributes instead of the ones registered in the given query
      *
      * @return  array
      *
      * @throws  ProgrammingError        In case no attribute is being requested
      */
-    public function fetchColumn(LdapQuery $query, array $fields = null)
+    public function fetchColumn(LdapQuery $query, ?array $fields = null)
     {
         if ($fields === null) {
             $fields = $query->getColumns();
@@ -485,12 +485,12 @@ class LdapConnection implements Selectable, Inspectable
     /**
      * Fetch the first column of the first row of the result set
      *
-     * @param   LdapQuery   $query      The query returning the result set
-     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
+     * @param   LdapQuery        $query      The query returning the result set
+     * @param   array|null       $fields     Request these attributes instead of the ones registered in the given query
      *
      * @return  string
      */
-    public function fetchOne(LdapQuery $query, array $fields = null)
+    public function fetchOne(LdapQuery $query, ?array $fields = null)
     {
         $row = $this->fetchRow($query, $fields);
         if ($row === false) {
@@ -521,14 +521,14 @@ class LdapConnection implements Selectable, Inspectable
      *
      * The first column is the key, the second column is the value.
      *
-     * @param   LdapQuery   $query      The query returning the result set
-     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
+     * @param   LdapQuery        $query      The query returning the result set
+     * @param   array|null       $fields     Request these attributes instead of the ones registered in the given query
      *
      * @return  array
      *
-     * @throws  ProgrammingError        In case there are less than two attributes being requested
+     * @throws  ProgrammingError             In case there are less than two attributes being requested
      */
-    public function fetchPairs(LdapQuery $query, array $fields = null)
+    public function fetchPairs(LdapQuery $query, ?array $fields = null)
     {
         if ($fields === null) {
             $fields = $query->getColumns();
@@ -572,7 +572,7 @@ class LdapConnection implements Selectable, Inspectable
      *
      * @return StdClass|bool
      */
-    public function fetchByDn($dn, array $fields = null)
+    public function fetchByDn($dn, ?array $fields = null)
     {
         return $this->select()
             ->from('*', $fields)
@@ -721,14 +721,14 @@ class LdapConnection implements Selectable, Inspectable
     /**
      * Run the given LDAP query and return the resulting entries
      *
-     * @param   LdapQuery   $query      The query to fetch results with
-     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
+     * @param   LdapQuery        $query      The query to fetch results with
+     * @param   array|null       $fields     Request these attributes instead of the ones registered in the given query
      *
      * @return  array
      *
      * @throws  LdapException           In case an error occured while fetching the results
      */
-    protected function runQuery(LdapQuery $query, array $fields = null)
+    protected function runQuery(LdapQuery $query, ?array $fields = null)
     {
         $limit = $query->getLimit();
         $offset = $query->hasOffset() ? $query->getOffset() : 0;
@@ -852,15 +852,15 @@ class LdapConnection implements Selectable, Inspectable
      *
      * This utilizes paged search requests as defined in RFC 2696.
      *
-     * @param   LdapQuery   $query      The query to fetch results with
-     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
-     * @param   int         $pageSize   The maximum page size, defaults to self::PAGE_SIZE
+     * @param   LdapQuery        $query      The query to fetch results with
+     * @param   array|null       $fields     Request these attributes instead of the ones registered in the given query
+     * @param   int              $pageSize   The maximum page size, defaults to self::PAGE_SIZE
      *
      * @return  array
      *
      * @throws  LdapException           In case an error occured while fetching the results
      */
-    protected function runPagedQuery(LdapQuery $query, array $fields = null, $pageSize = null)
+    protected function runPagedQuery(LdapQuery $query, ?array $fields = null, $pageSize = null)
     {
         if ($pageSize === null) {
             $pageSize = static::PAGE_SIZE;
@@ -1206,7 +1206,7 @@ class LdapConnection implements Selectable, Inspectable
      *
      * @throws  LdapException       In case the connection is not possible
      */
-    protected function prepareNewConnection(Inspection $info = null)
+    protected function prepareNewConnection(?Inspection $info = null)
     {
         if (! isset($info)) {
             $info = new Inspection('');
@@ -1249,19 +1249,19 @@ class LdapConnection implements Selectable, Inspectable
     /**
      * Perform a LDAP search and return the result or false on error
      *
-     * @param   LdapQuery   $query
-     * @param   array       $attributes     An array of the required attributes
-     * @param   int         $attrsonly      Should be set to 1 if only attribute types are wanted
-     * @param   int         $sizelimit      Enables you to limit the count of entries fetched
-     * @param   int         $timelimit      Sets the number of seconds how long is spend on the search
-     * @param   int         $deref
-     * @param   array       $controls       LDAP Controls to send with the request (Only supported with PHP v7.3+)
+     * @param   LdapQuery        $query
+     * @param   array|null       $attributes     An array of the required attributes
+     * @param   int              $attrsonly      Should be set to 1 if only attribute types are wanted
+     * @param   int              $sizelimit      Enables you to limit the count of entries fetched
+     * @param   int              $timelimit      Sets the number of seconds how long is spend on the search
+     * @param   int              $deref
+     * @param   array            $controls       LDAP Controls to send with the request (Only supported with PHP v7.3+)
      *
      * @throws  LogicException              If the LDAP query search scope is unsupported
      */
     public function ldapSearch(
         LdapQuery $query,
-        array $attributes = null,
+        ?array $attributes = null,
         $attrsonly = 0,
         $sizelimit = 0,
         $timelimit = 0,
