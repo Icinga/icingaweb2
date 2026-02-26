@@ -3,20 +3,29 @@
 
 namespace Icinga\Authentication;
 
+use Exception;
 use Generator;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use Icinga\Common\Database;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\NotReadableError;
 use Icinga\Data\ConfigObject;
+use Icinga\Model\Role as RoleModel;
+use Icinga\Model\RolePermission;
+use Icinga\Model\RoleRestriction;
 use Icinga\User;
 use Icinga\Util\StringHelper;
+use ipl\Sql\Connection;
+use ipl\Sql\Select;
+use ipl\Stdlib\Filter;
 
 /**
  * Retrieve restrictions and permissions for users
  */
 class AdmissionLoader
 {
+    use Database;
+
     const LEGACY_PERMISSIONS = [
         'admin'                                 => 'application/announcements',
         'application/stacktraces'               => 'user/application/stacktraces',
@@ -52,12 +61,27 @@ class AdmissionLoader
     /** @var ConfigObject */
     protected $roleConfig;
 
+    /**
+     * Database where the roles are stored
+     *
+     * @var ?Connection
+     */
+    protected $rolesDb = null;
+
     public function __construct()
     {
         try {
-            $this->roleConfig = Config::app('roles');
-        } catch (NotReadableError $e) {
-            Logger::error('Can\'t access roles configuration. An exception was thrown:', $e);
+            if (Config::app()->get('global', 'store_roles_in_db')) {
+                $db = $this->getDb();
+
+                RoleModel::on($db)->limit(1)->columns('id')->first();
+
+                $this->rolesDb = $db;
+            } else {
+                $this->roleConfig = Config::app('roles');
+            }
+        } catch (Exception $e) {
+            Logger::error('Can\'t access roles storage. An exception was thrown:', $e);
         }
     }
 
@@ -170,6 +194,10 @@ class AdmissionLoader
      */
     public function applyRoles(User $user)
     {
+        if ($this->rolesDb !== null) {
+            $this->applyDbRoles($user);
+        }
+
         if ($this->roleConfig === null) {
             return;
         }
@@ -226,6 +254,138 @@ class AdmissionLoader
         $user->setIsUnrestricted($isUnrestricted);
         $user->setRestrictions($isUnrestricted ? [] : $restrictions);
         $user->setPermissions($permissions);
+        $user->setRoles(array_values($roles));
+    }
+
+    /**
+     * Apply permissions, restrictions and roles from the database to the given user
+     *
+     * @param User $user
+     */
+    private function applyDbRoles(User $user): void
+    {
+        $direct = (new Select())
+            ->from('icingaweb_role')
+            ->where([
+                'id IN ?' => (new Select())
+                    ->from('icingaweb_role_user')
+                    ->where(['user_name IN (?)' => [$user->getUsername(), '*']])
+                    ->columns('role_id')
+            ])
+            ->columns(['id', 'parent_id', 'name', 'unrestricted', 'direct' => '1']);
+
+        $userGroups = $user->getGroups();
+        $roleData = [];
+        $roles = [];
+        $assignedRoles = [];
+        $unrestricted = false;
+
+        if ($userGroups) {
+            $userGroups = array_values($userGroups);
+
+            $direct->orWhere([
+                'id IN ?' => (new Select())
+                    ->from('icingaweb_role_group')
+                    ->where(['group_name IN (?)' => $userGroups])
+                    ->columns('role_id')
+            ]);
+        }
+
+        // Not a UNION ALL to handle circular relationships.
+        // Due to the "direct" column such may still appear twice.
+        // Hence ORDER BY direct, so that the last one (direct=1) wins.
+        $query = (new Select())
+            ->with(
+                $direct->union(
+                    (new Select())
+                        ->from(['r' => 'icingaweb_role'])
+                        ->join('rl', 'rl.parent_id = r.id')
+                        ->columns(['r.id', 'r.parent_id', 'r.name', 'r.unrestricted', 'direct' => '0'])
+                ),
+                'rl',
+                true
+            )
+            ->from('rl')
+            ->orderBy('direct')
+            ->columns(['id', 'parent_id', 'name', 'unrestricted', 'direct']);
+
+        foreach ($this->rolesDb->select($query) as $row) {
+            $roleData[$row->id] = $row;
+        }
+
+        foreach ($roleData as $row) {
+            $roles[$row->id] = (new Role())
+                ->setName($row->name)
+                ->setIsUnrestricted($row->unrestricted);
+
+            if ($row->direct) {
+                $assignedRoles[] = $row->name;
+            }
+
+            if ($row->unrestricted) {
+                $unrestricted = true;
+            }
+        }
+
+        foreach ($roleData as $row) {
+            if ($row->parent_id) {
+                $parent = $roles[$row->parent_id];
+                $child = $roles[$row->id];
+
+                $child->setParent($parent);
+                $parent->addChild($child);
+            }
+        }
+
+        $filter = Filter::equal('role_id', array_keys($roles));
+        $permissions = [];
+        $allPermissions = [];
+        $refusals = [];
+        $restrictions = [];
+        $allRestrictions = [];
+
+        foreach (RolePermission::on($this->rolesDb)->filter($filter) as $row) {
+            if ($row->allowed) {
+                $permissions[$row->role_id][] = $row->permission;
+            }
+
+            if ($row->denied) {
+                $refusals[$row->role_id][] = $row->permission;
+            }
+        }
+
+        foreach ($permissions as $roleId => & $rolePermissions) {
+            list($rolePermissions, $newRefusals) = $this->migrateLegacyPermissions($rolePermissions);
+
+            if ($newRefusals) {
+                array_push($refusals[$roleId], ...$newRefusals);
+            }
+
+            $roles[$roleId]->setPermissions($rolePermissions);
+            array_push($allPermissions, ...$rolePermissions);
+        }
+
+        foreach ($refusals as $roleId => $roleRefusals) {
+            $roles[$roleId]->setRefusals($roleRefusals);
+        }
+
+        foreach (RoleRestriction::on($this->rolesDb)->filter($filter) as $row) {
+            $restrictions[$row->role_id][$row->restriction] = $row->filter;
+        }
+
+        foreach ($restrictions as $roleId => & $roleRestrictions) {
+            foreach ($roleRestrictions as $name => & $restriction) {
+                $restriction = str_replace('$user.local_name$', $user->getLocalUsername(), $restriction);
+                $allRestrictions[$name][] = $restriction;
+            }
+
+            $roles[$roleId]->setRestrictions($roleRestrictions);
+        }
+
+        $user->setAdditional('assigned_roles', $assignedRoles);
+        $user->setIsUnrestricted($unrestricted);
+        $user->setRestrictions($unrestricted ? [] : $allRestrictions);
+        $user->setPermissions(array_values(array_unique($allPermissions)));
         $user->setRoles(array_values($roles));
     }
 
