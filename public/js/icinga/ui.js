@@ -41,7 +41,6 @@
 
         initialize: function () {
             $('html').removeClass('no-js').addClass('js');
-            this.enableTimeCounters();
             this.triggerWindowResize();
             this.fadeNotificationsAway();
 
@@ -124,15 +123,6 @@
                     $newLink.appendTo($('head'));
                 }
             });
-        },
-
-        enableTimeCounters: function () {
-            this.timeCounterTimer = this.icinga.timer.register(
-                this.refreshTimeSince,
-                this,
-                1000
-            );
-            return this;
         },
 
         disableTimeCounters: function () {
@@ -474,72 +464,6 @@
                 this.currentLayout +
                 loading
             );
-        },
-
-        /**
-         * Refresh partial time counters
-         *
-         * This function runs every second.
-         */
-        refreshTimeSince: function () {
-            $('.time-ago, .time-since').each(function (idx, el) {
-                var partialTime = /(\d{1,2})m (\d{1,2})s/.exec(el.innerHTML);
-                if (partialTime !== null) {
-                    var minute = parseInt(partialTime[1], 10),
-                        second = parseInt(partialTime[2], 10);
-                    if (second < 59) {
-                        ++second;
-                    } else {
-                        ++minute;
-                        second = 0;
-                    }
-                    el.innerHTML = el.innerHTML.substring(0, partialTime.index) + minute.toString() + 'm '
-                        + second.toString() + 's' + el.innerHTML.substring(partialTime.index + partialTime[0].length);
-                }
-            });
-
-            $('.time-until').each(function (idx, el) {
-                var partialTime = /(-?)(\d{1,2})m (\d{1,2})s/.exec(el.innerHTML);
-                if (partialTime !== null) {
-                    var minute = parseInt(partialTime[2], 10),
-                        second = parseInt(partialTime[3], 10),
-                        invert = partialTime[1];
-                    if (invert.length) {
-                        // Count up because partial time is negative
-                        if (second < 59) {
-                            ++second;
-                        } else {
-                            ++minute;
-                            second = 0;
-                        }
-                    } else {
-                        // Count down because partial time is positive
-                        if (second === 0) {
-                            if (minute === 0) {
-                                // Invert counter
-                                minute = 0;
-                                second = 1;
-                                invert = '-';
-                            } else {
-                                --minute;
-                                second = 59;
-                            }
-                        } else {
-                            --second;
-                        }
-
-                        if (minute === 0 && second === 0 && el.dataset.agoLabel) {
-                            el.innerText = el.dataset.agoLabel;
-                            el.classList.remove('time-until');
-                            el.classList.add('time-ago');
-
-                            return;
-                        }
-                    }
-                    el.innerHTML = el.innerHTML.substring(0, partialTime.index) + invert + minute.toString() + 'm '
-                        + second.toString() + 's' + el.innerHTML.substring(partialTime.index + partialTime[0].length);
-                }
-            });
         },
 
         createFontSizeCalculator: function () {
