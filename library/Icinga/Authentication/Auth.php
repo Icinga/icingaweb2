@@ -11,6 +11,7 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
+use Icinga\Common\Database;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
@@ -22,6 +23,8 @@ use Icinga\Web\StyleSheet;
 
 class Auth
 {
+    use Database;
+
     /**
      * Singleton instance
      *
@@ -86,15 +89,22 @@ class Auth
      *
      * @return bool
      */
-    public function isAuthenticated()
+    public function isAuthenticated(bool $skip2fa = false)
     {
         if ($this->user !== null) {
+            if (! $skip2fa && $this->user->getTwoFactorEnabled() && ! $this->user->getTwoFactorSuccessful()) {
+                return false;
+            }
             return true;
         }
         $this->authenticateFromSession();
         if ($this->user === null && ! $this->authExternal()) {
             return false;
         }
+
+        // 2fa check from must happen here, to apply the 2fa challenge for external users as well
+        // but the session authentication would also get the 2fa challenge
+
         return true;
     }
 
@@ -130,7 +140,10 @@ class Auth
             $this->persistCurrentUser();
         }
 
-        AuditHook::logActivity('login', 'User logged in');
+        // Don't log if 2FA is enabled and hasn't been successful yet
+        if (! $user->getTwoFactorEnabled() || $user->getTwoFactorSuccessful()) {
+            AuditHook::logActivity('login', 'User logged in');
+        }
     }
 
     /**
@@ -456,5 +469,8 @@ class Auth
         // Load the user's roles
         $admissionLoader = new AdmissionLoader();
         $admissionLoader->applyRoles($user);
+
+//        // Set 2FA status on the user object depending on whether a secret exists for the user
+//        $user->setTwoFactorEnabled(TwoFactorTotp::hasDbSecret($this->getDb(), $user->getUsername()));
     }
 }

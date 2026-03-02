@@ -131,5 +131,18 @@ CREATE TABLE "icingaweb_schema" (
   CONSTRAINT idx_icingaweb_schema_version UNIQUE (version)
 );
 
+CREATE TABLE "icingaweb_2fa" (
+  "username" varchar(254) NOT NULL,
+  "secret"   varchar(255) NOT NULL,
+  "ctime"    bigint NOT NULL,
+  CONSTRAINT pk_icingaweb_2fa PRIMARY KEY ("username")
+);
+
+CREATE UNIQUE INDEX idx_icingaweb_2fa
+  ON "icingaweb_2fa"
+  USING btree (
+    lower((username)::text)
+);
+
 INSERT INTO icingaweb_schema (version, timestamp, success)
   VALUES ('2.12.0', extract(epoch from now()) * 1000, 'y');

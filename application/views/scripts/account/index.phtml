@@ -6,6 +6,10 @@
     <h1><?= $this->translate('Account') ?></h1>
     <?= $changePasswordForm ?>
 <?php endif ?>
+<?php if (isset($twoFactorForm)): ?>
+    <h1><?= $this->translate('2 Factor Authentication') ?></h1>
+    <?= $twoFactorForm ?>
+<?php endif ?>
     <h1><?= $this->translate('Preferences') ?></h1>
     <?= $form ?>
 </div>
