@@ -137,6 +137,16 @@ wget https://packages.icinga.com/subscription/rhel/ICINGA-release.repo -O /etc/y
 If you are using RHEL you need to additionally enable the `optional` and `codeready-builder`
 repository before installing the [EPEL rpm package](https://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F).
 
+#### RHEL 9
+
+```bash
+ARCH=$( /bin/arch )
+
+subscription-manager repos --enable "codeready-builder-for-rhel-9-${ARCH}-rpms"
+
+dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+```
+
 #### RHEL 8
 
 ```bash
@@ -257,7 +267,7 @@ yum install icingaweb2 icingacli
 <!-- {% if not icingaDocs %} -->
 #### RHEL
 <!-- {% endif %} -->
-#### RHEL 8
+#### RHEL 8 or Later
 ```bash
 dnf install icingaweb2 icingacli
 ```
