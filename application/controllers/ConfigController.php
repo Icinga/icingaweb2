@@ -3,8 +3,13 @@
 
 namespace Icinga\Controllers;
 
+use DateTime;
 use Exception;
 use Icinga\Application\Version;
+use Icinga\Common\Database;
+use Icinga\Forms\Security\RoleForm;
+use Icinga\Model\Role;
+use Icinga\Util\StringHelper;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
@@ -23,12 +28,18 @@ use Icinga\Web\Controller;
 use Icinga\Web\Notification;
 use Icinga\Web\Url;
 use Icinga\Web\Widget;
+use ipl\Sql\Connection;
+use ipl\Sql\Insert;
+use ipl\Sql\Select;
+use ipl\Sql\Update;
 
 /**
  * Application and module configuration
  */
 class ConfigController extends Controller
 {
+    use Database;
+
     /**
      * Create and return the tabs to display when showing application configuration
      */
@@ -99,19 +110,127 @@ class ConfigController extends Controller
         $form->setOnSuccess(function (GeneralConfigForm $form) {
             $config = Config::app();
             $useStrictCsp = (bool) $config->get('security', 'use_strict_csp', false);
+            $storeRolesInDb = (bool) $config->get('global', 'store_roles_in_db', false);
             if ($form->onSuccess() === false) {
                 return false;
             }
 
             $appConfigForm = $form->getSubForm('form_config_general_application');
-            if ($appConfigForm && (bool) $appConfigForm->getValue('security_use_strict_csp') !== $useStrictCsp) {
-                $this->getResponse()->setReloadWindow(true);
+
+            if ($appConfigForm) {
+                if ((bool) $appConfigForm->getValue('security_use_strict_csp') !== $useStrictCsp) {
+                    $this->getResponse()->setReloadWindow(true);
+                }
+
+                if (! $storeRolesInDb && $appConfigForm->getValue('global_store_roles_in_db')) {
+                    $this->migrateRolesToFreshDb();
+                }
             }
         })->handleRequest();
 
         $this->view->form = $form;
         $this->view->title = $this->translate('General');
         $this->createApplicationTabs()->activate('general');
+    }
+
+    /**
+     * Migrate roles.ini to database if the latter contains no roles
+     */
+    private function migrateRolesToFreshDb(): void
+    {
+        $roles = Config::app('roles');
+        $now = (new DateTime())->getTimestamp() * 1000;
+
+        $this->getDb()->transaction(function (Connection $db) use ($roles, $now) {
+            if (Role::on($db)->columns('id')->first()) {
+                return;
+            }
+
+            foreach ($roles as $name => $role) {
+                $db->prepexec(
+                    (new Insert())
+                        ->into('icingaweb_role')
+                        ->columns(['name', 'unrestricted', 'ctime'])
+                        ->values([$name, $role->unrestricted ? 'y' : 'n', $now])
+                );
+
+                $id = $db->lastInsertId();
+                $permissions = StringHelper::trimSplit($role->permissions);
+                $refusals = StringHelper::trimSplit($role->refusals);
+                $permissionsAndRefusals = [];
+
+                foreach (StringHelper::trimSplit($role->users) as $user) {
+                    $db->prepexec(
+                        (new Insert())
+                            ->into('icingaweb_role_user')
+                            ->columns(['role_id', 'user_name'])
+                            ->values([$id, $user])
+                    );
+                }
+
+                foreach (StringHelper::trimSplit($role->groups) as $group) {
+                    $db->prepexec(
+                        (new Insert())
+                            ->into('icingaweb_role_group')
+                            ->columns(['role_id', 'group_name'])
+                            ->values([$id, $group])
+                    );
+                }
+
+                foreach ([$permissions, $refusals] as $permissionsOrRefusals) {
+                    foreach ($permissionsOrRefusals as $permissionOrRefusal) {
+                        $permissionsAndRefusals[$permissionOrRefusal] = ['allowed' => 'n', 'denied' => 'n'];
+                    }
+                }
+
+                foreach ($permissions as $permission) {
+                    $permissionsAndRefusals[$permission]['allowed'] = 'y';
+                }
+
+                foreach ($refusals as $refusal) {
+                    $permissionsAndRefusals[$refusal]['denied'] = 'y';
+                }
+
+                foreach ($permissionsAndRefusals as $permission => $authz) {
+                    $db->prepexec(
+                        (new Insert())
+                            ->into('icingaweb_role_permission')
+                            ->columns(['role_id', 'permission', 'allowed', 'denied'])
+                            ->values([$id, $permission, $authz['allowed'], $authz['denied']])
+                    );
+                }
+
+                foreach (RoleForm::collectProvidedPrivileges()[1] as $restrictionList) {
+                    foreach ($restrictionList as $restriction => $_) {
+                        if (isset($role->$restriction)) {
+                            $db->prepexec(
+                                (new Insert())
+                                    ->into('icingaweb_role_restriction')
+                                    ->columns(['role_id', 'restriction', 'filter'])
+                                    ->values([$id, $restriction, $role->$restriction])
+                            );
+                        }
+                    }
+                }
+            }
+
+            foreach ($roles as $name => $role) {
+                if (isset($role->parent)) {
+                    $db->prepexec(
+                        (new Update())
+                            ->table('icingaweb_role')
+                            ->set([
+                                'parent_id' => (new Select())
+                                    ->from('icingaweb_role')
+                                    ->where(['name = ?' => $role->parent])
+                                    ->columns(['id'])
+                                ,
+                            ])
+                            ->where(['name = ?' => $name])
+                    );
+                }
+            }
+        });
     }
 
     /**
