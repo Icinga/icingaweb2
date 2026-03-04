@@ -6,16 +6,18 @@ namespace Icinga\Application;
 use DirectoryIterator;
 use ErrorException;
 use Exception;
-use Icinga\Application\ProvidedHook\DbMigration;
-use ipl\I18n\GettextTranslator;
-use ipl\I18n\StaticTranslator;
-use LogicException;
 use Icinga\Application\Modules\Manager as ModuleManager;
+use Icinga\Application\ProvidedHook\DbMigration;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\NotReadableError;
 use Icinga\Exception\IcingaException;
+use Icinga\Exception\NotReadableError;
+use ipl\I18n\GettextTranslator;
+use ipl\I18n\StaticTranslator;
+use LogicException;
+use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
+use Icinga\Application\ProvidedHook\CommonPasswordPolicy;
 
 /**
  * This class bootstraps a thin Icinga application layer
@@ -740,6 +742,8 @@ abstract class ApplicationBootstrap
     protected function registerApplicationHooks(): self
     {
         Hook::register('DbMigration', DbMigration::class, DbMigration::class);
+        CommonPasswordPolicy::register();
+        AnyPasswordPolicy::register();
 
         return $this;
     }
