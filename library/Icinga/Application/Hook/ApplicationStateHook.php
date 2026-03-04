@@ -3,7 +3,6 @@
 
 namespace Icinga\Application\Hook;
 
-use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 
 /**
@@ -11,9 +10,16 @@ use Icinga\Application\Logger;
  */
 abstract class ApplicationStateHook
 {
+    use Essentials;
+
     const ERROR = 'error';
 
     private $messages = [];
+
+    protected static function getHookName(): string
+    {
+        return 'ApplicationState';
+    }
 
     final public function hasMessages()
     {
@@ -64,12 +70,11 @@ abstract class ApplicationStateHook
     {
         $messages = [];
 
-        if (! Hook::has('ApplicationState')) {
+        if (! static::registered()) {
             return $messages;
         }
 
-        foreach (Hook::all('ApplicationState') as $hook) {
-            /** @var self $hook */
+        foreach (static::all() as $hook) {
             try {
                 $hook->collectMessages();
             } catch (\Exception $e) {

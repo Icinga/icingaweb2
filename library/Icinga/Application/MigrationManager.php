@@ -301,8 +301,7 @@ final class MigrationManager implements Countable
     {
         $this->pendingMigrations = [];
 
-        /** @var DbMigrationHook $hook */
-        foreach (Hook::all('DbMigration') as $hook) {
+        foreach (DbMigrationHook::all() as $hook) {
             if (empty($hook->getMigrations())) {
                 continue;
             }

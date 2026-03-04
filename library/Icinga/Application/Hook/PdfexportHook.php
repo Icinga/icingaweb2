@@ -8,6 +8,13 @@ namespace Icinga\Application\Hook;
  */
 abstract class PdfexportHook
 {
+    use Essentials;
+
+    protected static function getHookName(): string
+    {
+        return 'Pdfexport';
+    }
+
     /**
      * Get whether PDF export is supported
      *
