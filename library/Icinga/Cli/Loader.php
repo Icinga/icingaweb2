@@ -182,7 +182,7 @@ class Loader
         }
     }
 
-    public function parseParams(Params $params = null)
+    public function parseParams(?Params $params = null)
     {
         if ($params === null) {
             $params = $this->app->getParams();
@@ -235,13 +235,13 @@ class Loader
         return $this;
     }
 
-    public function handleParams(Params $params = null)
+    public function handleParams(?Params $params = null)
     {
         $this->parseParams($params);
         $this->dispatch();
     }
 
-    public function dispatch(Params $overrideParams = null)
+    public function dispatch(?Params $overrideParams = null)
     {
         if ($this->commandName === null) {
             fwrite(STDERR, $this->docs()->usage($this->moduleName));

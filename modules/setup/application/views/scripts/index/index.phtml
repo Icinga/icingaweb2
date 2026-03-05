@@ -8,7 +8,7 @@ $pages = $wizard->getPages();
 $finished = isset($success);
 $configPages = array_slice($pages, 3, count($pages) - 4, true);
 $currentPos = array_search($wizard->getCurrentPage(), $pages, true);
-list($configPagesLeft, $configPagesRight) = array_chunk($configPages, (int)(count($configPages) / 2), true);
+list($configPagesLeft, $configPagesRight) = array_chunk($configPages, (int)floor((count($configPages) / 2)), true);
 $setupStyle = (new Style())
     ->setSelector('.setup-header > .progress-bar')
     ->setNonce(Csp::getStyleNonce());

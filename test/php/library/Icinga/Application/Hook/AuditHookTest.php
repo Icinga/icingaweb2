@@ -8,7 +8,7 @@ use Icinga\Test\BaseTestCase;
 
 class TestAuditHook extends AuditHook
 {
-    public function logMessage($time, $identity, $type, $message, array $data = null)
+    public function logMessage($time, $identity, $type, $message, ?array $data = null)
     {
         // TODO: Implement logMessage() method.
     }

@@ -63,7 +63,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      *
      * @throws  ProgrammingError    In case the given data source does not provide a valid key column
      */
-    public function __construct(Config $ds = null)
+    public function __construct(?Config $ds = null)
     {
         parent::__construct($ds); // First! Due to init().
 
@@ -263,13 +263,13 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     /**
      * Update the target with the given data and optionally limit the affected entries by using a filter
      *
-     * @param   string  $target
-     * @param   array   $data
-     * @param   Filter  $filter
+     * @param   string       $target
+     * @param   array        $data
+     * @param   Filter|null  $filter
      *
      * @throws  StatementException  In case the operation has failed
      */
-    public function update($target, array $data, Filter $filter = null)
+    public function update($target, array $data, ?Filter $filter = null)
     {
         $ds = $this->getDataSource($target);
         $newData = $this->requireStatementColumns($target, $data);
@@ -338,12 +338,12 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     /**
      * Delete entries in the given target, optionally limiting the affected entries by using a filter
      *
-     * @param   string  $target
-     * @param   Filter  $filter
+     * @param   string       $target
+     * @param   Filter|null  $filter
      *
      * @throws  StatementException  In case the operation has failed
      */
-    public function delete($target, Filter $filter = null)
+    public function delete($target, ?Filter $filter = null)
     {
         $ds = $this->getDataSource($target);
 
