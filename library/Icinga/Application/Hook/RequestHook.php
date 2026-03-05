@@ -7,7 +7,7 @@ use Icinga\Application\Logger;
 use Icinga\Web\Request;
 use Throwable;
 
-abstract class RequestHook extends Hook
+abstract class RequestHook
 {
     /**
      * Triggered after a request has been dispatched
@@ -27,7 +27,7 @@ abstract class RequestHook extends Hook
      */
     final public static function postDispatch(Request $request): void
     {
-        foreach (static::all('Request') as $hook) {
+        foreach (Hook::all('Request') as $hook) {
             try {
                 $hook->onPostDispatch($request);
             } catch (Throwable $e) {
