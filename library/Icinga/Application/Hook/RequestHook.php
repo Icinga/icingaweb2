@@ -27,12 +27,32 @@ abstract class RequestHook
      */
     final public static function postDispatch(Request $request): void
     {
-        foreach (Hook::all('Request') as $hook) {
+        foreach (static::all() as $hook) {
             try {
                 $hook->onPostDispatch($request);
             } catch (Throwable $e) {
                 Logger::error('Failed to execute hook on request: %s', $e);
             }
         }
+    }
+
+    /**
+     * Get all registered implementations
+     *
+     * @return static[]
+     */
+    public static function all(): array
+    {
+        return Hook::all('RequestHook');
+    }
+
+    /**
+     * Register the class as a RequestHook implementation
+     *
+     * Call this method on your implementation during module initialization to make Icinga Web aware of your hook.
+     */
+    public static function register(): void
+    {
+        Hook::register('RequestHook', static::class, static::class, true);
     }
 }
