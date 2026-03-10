@@ -15,6 +15,15 @@ use Icinga\Authentication\LoginButton;
  */
 abstract class LoginButtonHook
 {
+    use Essentials {
+        register as protected parentRegister;
+    }
+
+    protected static function getHookName(): string
+    {
+        return 'LoginButton';
+    }
+
     /**
      * Get the buttons to display below the login form
      *
@@ -26,22 +35,12 @@ abstract class LoginButtonHook
     abstract public function getButtons(): array;
 
     /**
-     * Get all registered implementations
+     * Register a hook provider
      *
-     * @return static[]
-     */
-    public static function all(): array
-    {
-        return Hook::all('LoginButton');
-    }
-
-    /**
-     * Register the class as a LoginButton hook implementation
-     *
-     * Call this method on your implementation during module initialization to make Icinga Web aware of your hook.
+     * Always runs the hook, without permission check. Latter makes no sense on the login page.
      */
     public static function register(): void
     {
-        Hook::register('LoginButton', static::class, static::class, true);
+        static::parentRegister(true);
     }
 }
