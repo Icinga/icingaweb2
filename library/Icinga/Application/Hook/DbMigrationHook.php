@@ -196,11 +196,11 @@ abstract class DbMigrationHook implements Countable
      * Apply all pending migrations of this hook
      *
      * @param ?Connection $conn Use the provided database connection to apply the migrations.
-     *        Is only used to elevate database users with insufficient privileges.
+     *   Is only used to elevate database users with insufficient privileges.
      *
      * @return bool Whether the migration(s) have been successfully applied
      */
-    final public function run(Connection $conn = null): bool
+    final public function run(?Connection $conn = null): bool
     {
         if (! $conn) {
             $conn = $this->getDb();

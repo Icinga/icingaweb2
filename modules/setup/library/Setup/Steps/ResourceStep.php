@@ -7,6 +7,7 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Setup\Step;
+use Pdo\Mysql;
 
 class ResourceStep extends Step
 {
@@ -92,7 +93,7 @@ class ResourceStep extends Step
                 . '<td>' . str_repeat('*', strlen($this->data['dbResourceConfig']['password'])) . '</td>'
                 . '</tr>';
 
-            if (defined('\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
+            if (defined(Mysql::class . '::ATTR_SSL_VERIFY_SERVER_CERT')
                 && isset($this->data['resourceConfig']['ssl_do_not_verify_server_cert'])
                 && $this->data['resourceConfig']['ssl_do_not_verify_server_cert']
             ) {

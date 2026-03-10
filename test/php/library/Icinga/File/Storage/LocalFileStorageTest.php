@@ -11,16 +11,11 @@ use Icinga\Test\BaseTestCase;
 
 class LocalFileStorageTest extends BaseTestCase
 {
-    /**
-     * @var int
-     */
-    protected $oldErrorReportingLevel;
+    protected static int $oldErrorReportingLevel;
 
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public static function setUpBeforeClass(): void
     {
-        parent::__construct($name, $data, $dataName);
-
-        $this->oldErrorReportingLevel = error_reporting();
+        static::$oldErrorReportingLevel = error_reporting();
         error_reporting(E_ALL);
 
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
@@ -40,9 +35,9 @@ class LocalFileStorageTest extends BaseTestCase
         });
     }
 
-    public function __destruct()
+    public static function tearDownAfterClass(): void
     {
-        error_reporting($this->oldErrorReportingLevel);
+        error_reporting(static::$oldErrorReportingLevel);
         restore_error_handler();
     }
 

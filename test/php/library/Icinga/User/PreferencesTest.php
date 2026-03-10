@@ -6,7 +6,7 @@ namespace Tests\Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\Test\BaseTestCase;
 
-class PreferfencesTest extends BaseTestCase
+class PreferencesTest extends BaseTestCase
 {
     public function testWhetherPreferencesCanBeSet()
     {

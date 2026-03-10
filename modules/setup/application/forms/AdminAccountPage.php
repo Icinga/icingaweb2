@@ -85,11 +85,11 @@ class AdminAccountPage extends Form
     /**
      * Set the user group backend configuration to use
      *
-     * @param   array   $config
+     * @param ?array $config
      *
-     * @return  $this
+     * @return $this
      */
-    public function setGroupConfig(array $config = null)
+    public function setGroupConfig(?array $config = null)
     {
         $this->groupConfig = $config;
         return $this;

@@ -73,7 +73,7 @@ class LineGraph extends Styleable implements Drawable
         array $dataset,
         array &$graphs,
         $order,
-        array $tooltips = null
+        ?array $tooltips = null
     ) {
         usort($dataset, array($this, 'sortByX'));
         $this->dataset = $dataset;

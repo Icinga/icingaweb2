@@ -6,6 +6,7 @@ namespace Icinga\Module\Setup\Utils;
 use PDO;
 use PDOException;
 use LogicException;
+use Pdo\Mysql;
 use Zend_Db_Adapter_Pdo_Abstract;
 use Zend_Db_Adapter_Pdo_Mysql;
 use Zend_Db_Adapter_Pdo_Pgsql;
@@ -266,24 +267,24 @@ class DbTool
                 $this->config['driver_options'] = array();
                 # The presence of these keys as empty strings or null cause non-ssl connections to fail
                 if ($this->config['ssl_key']) {
-                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_KEY] = $this->config['ssl_key'];
+                    $config['driver_options'][Mysql::ATTR_SSL_KEY] = $this->config['ssl_key'];
                 }
                 if ($this->config['ssl_cert']) {
-                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_CERT] = $this->config['ssl_cert'];
+                    $config['driver_options'][Mysql::ATTR_SSL_CERT] = $this->config['ssl_cert'];
                 }
                 if ($this->config['ssl_ca']) {
-                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_CA] = $this->config['ssl_ca'];
+                    $config['driver_options'][Mysql::ATTR_SSL_CA] = $this->config['ssl_ca'];
                 }
                 if ($this->config['ssl_capath']) {
-                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_CAPATH] = $this->config['ssl_capath'];
+                    $config['driver_options'][Mysql::ATTR_SSL_CAPATH] = $this->config['ssl_capath'];
                 }
                 if ($this->config['ssl_cipher']) {
-                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config['ssl_cipher'];
+                    $config['driver_options'][Mysql::ATTR_SSL_CIPHER] = $this->config['ssl_cipher'];
                 }
-                if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
+                if (defined(Mysql::class . '::ATTR_SSL_VERIFY_SERVER_CERT')
                     && $this->config['ssl_do_not_verify_server_cert']
                 ) {
-                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+                    $config['driver_options'][Mysql::ATTR_SSL_VERIFY_SERVER_CERT] = false;
                 }
             }
             $this->zendConn = new Zend_Db_Adapter_Pdo_Mysql($config);
@@ -321,24 +322,24 @@ class DbTool
         ) {
             # The presence of these keys as empty strings or null cause non-ssl connections to fail
             if ($this->config['ssl_key']) {
-                $driverOptions[PDO::MYSQL_ATTR_SSL_KEY] = $this->config['ssl_key'];
+                $driverOptions[Mysql::ATTR_SSL_KEY] = $this->config['ssl_key'];
             }
             if ($this->config['ssl_cert']) {
-                $driverOptions[PDO::MYSQL_ATTR_SSL_CERT] = $this->config['ssl_cert'];
+                $driverOptions[Mysql::ATTR_SSL_CERT] = $this->config['ssl_cert'];
             }
             if ($this->config['ssl_ca']) {
-                $driverOptions[PDO::MYSQL_ATTR_SSL_CA] = $this->config['ssl_ca'];
+                $driverOptions[Mysql::ATTR_SSL_CA] = $this->config['ssl_ca'];
             }
             if ($this->config['ssl_capath']) {
-                $driverOptions[PDO::MYSQL_ATTR_SSL_CAPATH] = $this->config['ssl_capath'];
+                $driverOptions[Mysql::ATTR_SSL_CAPATH] = $this->config['ssl_capath'];
             }
             if ($this->config['ssl_cipher']) {
-                $driverOptions[PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config['ssl_cipher'];
+                $driverOptions[Mysql::ATTR_SSL_CIPHER] = $this->config['ssl_cipher'];
             }
-            if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
+            if (defined(Mysql::class . '::ATTR_SSL_VERIFY_SERVER_CERT')
                 && $this->config['ssl_do_not_verify_server_cert']
             ) {
-                $driverOptions[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+                $driverOptions[Mysql::ATTR_SSL_VERIFY_SERVER_CERT] = false;
             }
         }
 
@@ -545,15 +546,15 @@ class DbTool
     /**
      * Return whether the given privileges were granted
      *
-     * @param   array   $privileges     An array of strings with the required privilege names
-     * @param   array   $context        An array describing the context for which the given privileges need to apply.
-     *                                  Only one or more table names are currently supported
-     * @param   string  $username       The login name for which to check the privileges,
-     *                                  if NULL the current login is used
+     * @param array $privileges An array of strings with the required privilege names
+     * @param ?array $context An array describing the context for which the given privileges need to apply.
+     *   Only one or more table names are currently supported
+     * @param string $username The login name for which to check the privileges,
+     *   if NULL the current login is used
      *
-     * @return  ?bool
+     * @return ?bool
      */
-    public function checkPrivileges(array $privileges, array $context = null, $username = null)
+    public function checkPrivileges(array $privileges, ?array $context = null, $username = null)
     {
         if ($this->config['db'] === 'mysql') {
             return $this->checkMysqlPrivileges($privileges, false, $context, $username);
@@ -730,18 +731,18 @@ EOD;
     /**
      * Check whether the current user has the given privileges
      *
-     * @param   array   $privileges     The privilege names
-     * @param   bool    $requireGrants  Only return true when all privileges can be granted to others
-     * @param   array   $context        An array describing the context for which the given privileges need to apply.
-     *                                  Only one or more table names are currently supported
-     * @param   string  $username       The login name to which the passed privileges need to be granted
+     * @param array $privileges The privilege names
+     * @param bool $requireGrants Only return true when all privileges can be granted to others
+     * @param ?array $context An array describing the context for which the given privileges need to apply.
+     *   Only one or more table names are currently supported
+     * @param string $username The login name to which the passed privileges need to be granted
      *
-     * @return  bool
+     * @return bool
      */
     protected function checkMysqlPrivileges(
         array $privileges,
         $requireGrants = false,
-        array $context = null,
+        ?array $context = null,
         $username = null
     ) {
         $mysqlPrivileges = array_intersect($privileges, array_keys($this->mysqlGrantContexts));
@@ -835,18 +836,18 @@ EOD;
      * Note that database and table specific privileges (i.e. not SUPER, CREATE and CREATEROLE) are ignored
      * in case no connection to the database defined in the resource configuration has been established
      *
-     * @param   array   $privileges     The privilege names
-     * @param   bool    $requireGrants  Only return true when all privileges can be granted to others
-     * @param   array   $context        An array describing the context for which the given privileges need to apply.
-     *                                  Only one or more table names are currently supported
-     * @param   string  $username       The login name to which the passed privileges need to be granted
+     * @param array $privileges The privilege names
+     * @param bool $requireGrants Only return true when all privileges can be granted to others
+     * @param ?array $context An array describing the context for which the given privileges need to apply.
+     *   Only one or more table names are currently supported
+     * @param string $username The login name to which the passed privileges need to be granted
      *
-     * @return  bool
+     * @return bool
      */
     public function checkPgsqlPrivileges(
         array $privileges,
         $requireGrants = false,
-        array $context = null,
+        ?array $context = null,
         $username = null
     ) {
         $privilegesGranted = true;

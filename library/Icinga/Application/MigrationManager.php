@@ -131,7 +131,7 @@ final class MigrationManager implements Countable
      *
      * @return bool
      */
-    public function apply(DbMigrationHook $hook, array $elevateConfig = null): bool
+    public function apply(DbMigrationHook $hook, ?array $elevateConfig = null): bool
     {
         if ($hook->isModule() && $this->hasMigrations(DbMigrationHook::DEFAULT_MODULE)) {
             Logger::error(
@@ -164,7 +164,7 @@ final class MigrationManager implements Countable
      *
      * @return bool
      */
-    public function applyAll(array $elevateConfig = null): bool
+    public function applyAll(?array $elevateConfig = null): bool
     {
         $default = DbMigrationHook::DEFAULT_MODULE;
         if ($this->hasMigrations($default)) {
@@ -218,7 +218,7 @@ final class MigrationManager implements Countable
      *
      * @return bool
      */
-    public function validateDatabasePrivileges(array $elevateConfig = null, bool $canIssueGrant = false): bool
+    public function validateDatabasePrivileges(?array $elevateConfig = null, bool $canIssueGrant = false): bool
     {
         if (! $this->hasPendingMigrations()) {
             return true;
@@ -324,7 +324,7 @@ final class MigrationManager implements Countable
      */
     protected function checkRequiredPrivileges(
         Sql\Connection $conn,
-        array $elevateConfig = null,
+        ?array $elevateConfig = null,
         bool $canIssueGrants = false
     ): bool {
         if ($elevateConfig) {

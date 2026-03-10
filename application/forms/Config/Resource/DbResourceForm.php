@@ -5,6 +5,7 @@ namespace Icinga\Forms\Config\Resource;
 
 use Icinga\Application\Platform;
 use Icinga\Web\Form;
+use Pdo\Mysql;
 
 /**
  * Form class for adding/modifying database resources
@@ -177,7 +178,7 @@ class DbResourceForm extends Form
                 )
             );
             if (isset($formData['use_ssl']) && $formData['use_ssl']) {
-                if (defined('\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
+                if (defined(Mysql::class . '::ATTR_SSL_VERIFY_SERVER_CERT')) {
                     $this->addElement(
                         'checkbox',
                         'ssl_do_not_verify_server_cert',
