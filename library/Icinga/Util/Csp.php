@@ -59,6 +59,91 @@ class Csp
         $response->setHeader('Content-Security-Policy', $header, true);
     }
 
+    public static function collectContentSecurityPolicyDirectives(): array
+    {
+        $policyDirectives = [];
+
+        // Whitelist the hosts in the custom NavigationItems configured for the user,
+        // so that the iframes can be rendered properly.
+        /** @var ConfigObject[] $navigationItems */
+        $navigationItems = self::fetchDashletNavigationItemConfigs();
+        foreach ($navigationItems as $navigationItem) {
+            $errorSource = sprintf("Navigation item %s", $navigationItem['name']);
+
+            $host = parse_url($navigationItem["url"], PHP_URL_HOST);
+            // Make sure $url is actually valid;
+            if (filter_var($navigationItem["url"], FILTER_VALIDATE_URL) === false) {
+                Logger::debug("$errorSource: Skipping invalid url: $host");
+                continue;
+            }
+
+            $scheme = parse_url($navigationItem["url"], PHP_URL_SCHEME);
+
+            if ($host === null) {
+                continue;
+            }
+
+            $policy = $host;
+            if ($scheme !== null) {
+                $policy = "$scheme://$host";
+            }
+
+            $policyDirectives[] = [
+                'directives' => [
+                    'frame-src' => [$policy],
+                ],
+                'reason'   => $navigationItem['reason'],
+            ];
+//
+//            $cspDirectives['frame-src'][] = $policy;
+        }
+        // Allow modules to add their own csp directives in a limited fashion.
+        /** @var CspDirectiveHook $hook */
+        foreach (Hook::all('CspDirective') as $hook) {
+            $directives = [];
+            foreach ($hook->getCspDirectives() as $directive => $policies) {
+                // policy names contain only lowercase letters and '-'. Reject anything else.
+                if (!preg_match('|^[a-z\-]+$|', $directive)) {
+                    $errorSource = get_class($hook);
+                    Logger::debug("$errorSource: Invalid CSP directive found: $directive");
+                    continue;
+                }
+
+                // The default-src can only ever be 'self'. Disallow any updates to it.
+                if ($directive === "default-src") {
+                    $errorSource = get_class($hook);
+                    Logger::debug("$errorSource: Changing default-src is forbidden.");
+                    continue;
+                }
+
+//                $cspDirectives[$directive] = $cspDirectives[$directive] ?? [];
+//                foreach ($policies as $policy) {
+//                    $cspDirectives[$directive][] = $policy;
+//                }
+
+                if (count($policies) === 0) {
+                    continue;
+                }
+
+                $directives[$directive] = $policies;
+            }
+
+            if (count($directives) === 0) {
+                continue;
+            }
+
+            $policyDirectives[] = [
+                "directives" => $directives,
+                "reason" => [
+                    "type" => "hook",
+                    "hook" => get_class($hook),
+                ],
+            ];
+        }
+
+        return $policyDirectives;
+    }
+
     /**
      * Get the Content-Security-Policy for a specific user.
      *
@@ -83,63 +168,18 @@ class Csp
             'frame-src' => []
         ];
 
-        // Whitelist the hosts in the custom NavigationItems configured for the user,
-        // so that the iframes can be rendered properly.
-        /** @var ConfigObject[] $navigationItems */
-        $navigationItems = self::fetchDashletNavigationItemConfigs();
-        foreach ($navigationItems as $navigationItem) {
-            $errorSource = sprintf("Navigation item %s", $navigationItem['name']);
+        $policyDirectives = self::collectContentSecurityPolicyDirectives();
 
-            $host = parse_url($navigationItem["url"], PHP_URL_HOST);
-            // Make sure $url is actually valid;
-            if (filter_var($navigationItem["url"], FILTER_VALIDATE_URL) === false) {
-                Logger::debug("$errorSource: Skipping invalid url: $host");
-                continue;
-            }
-
-            $scheme = parse_url($navigationItem["url"], PHP_URL_SCHEME);
-
-
-            if ($host === null) {
-                continue;
-            }
-
-            $policy = $host;
-            if ($scheme !== null) {
-                $policy = "$scheme://$host";
-            }
-
-            $cspDirectives['frame-src'][] = $policy;
-        }
-        // Allow modules to add their own csp directives in a limited fashion.
-        /** @var CspDirectiveHook $hook */
-        foreach (Hook::all('CspDirective') as $hook) {
-            foreach ($hook->getCspDirectives() as $directive => $policies) {
-                // policy names contain only lowercase letters and '-'. Reject anything else.
-                if (!preg_match('|^[a-z\-]+$|', $directive)) {
-                    $errorSource = get_class($hook);
-                    Logger::debug("$errorSource: Invalid CSP directive found: $directive");
-                    continue;
-                }
-
-                // The default-src can only ever be 'self'. Disallow any updates to it.
-                if ($directive === "default-src") {
-                    $errorSource = get_class($hook);
-                    Logger::debug("$errorSource: Changing default-src is forbidden.");
-                    continue;
-                }
-
-                $cspDirectives[$directive] = $cspDirectives[$directive] ?? [];
-                foreach ($policies as $policy) {
-                    $cspDirectives[$directive][] = $policy;
-                }
+        foreach ($policyDirectives as $directive) {
+            foreach ($directive['directives'] as $directive => $policies) {
+                $cspDirectives[$directive] = array_merge($cspDirectives[$directive], $policies);
             }
         }
 
         $header = "default-src 'self'; ";
-        foreach ($cspDirectives as $directive => $policies) {
-            if (!empty($policies)) {
-                $header .= ' ' . implode(' ', array_merge([$directive, "'self'"], array_unique($policies))) . ';';
+        foreach ($cspDirectives as $directive => $policyDirectives) {
+            if (!empty($policyDirectives)) {
+                $header .= ' ' . implode(' ', array_merge([$directive, "'self'"], array_unique($policyDirectives))) . ';';
             }
         }
         
@@ -237,14 +277,33 @@ class Csp
             $config->getConfigObject()->setKeyColumn('name');
             foreach ($config->select() as $itemConfig) {
                 if ($itemConfig->get("target", "") !== "_blank") {
-                    $menuItems[] = ["name" => $itemConfig->get('name'), "url" => $itemConfig->get('url')];
+                    $menuItems[] = [
+                        "name" => $itemConfig->get('name'),
+                        "url" => $itemConfig->get('url'),
+                        "reason" => [
+                            'type' => 'navigation',
+                            'name' => $itemConfig->get('name'),
+                            'shared' => false,
+                        ]
+                    ];
                 }
             }
             $configShared = Config::navigation($type);
             $configShared->getConfigObject()->setKeyColumn('name');
             foreach ($configShared->select() as $itemConfig) {
-                if (Icinga::app()->hasAccessToSharedNavigationItem($itemConfig, $config) && $itemConfig->get("target", "") !== "_blank") {
-                    $menuItems[] = ["name" => $itemConfig->get('name'), "url" => $itemConfig->get('url')];
+                if (
+                    Icinga::app()->hasAccessToSharedNavigationItem($itemConfig, $config) &&
+                    $itemConfig->get("target", "") !== "_blank"
+                ) {
+                    $menuItems[] = [
+                        "name" => $itemConfig->get('name'),
+                        "url" => $itemConfig->get('url'),
+                        "reason" => [
+                            'type' => 'navigation',
+                            'name' => $itemConfig->get('name'),
+                            'shared' => true,
+                        ]
+                    ];
                 }
             }
         }
@@ -280,7 +339,13 @@ class Csp
              if ($externalUrl !== null && filter_var($externalUrl, FILTER_VALIDATE_URL) !== false) {
                 $dashlets[] = [
                     "name" => $dashlet->getName(),
-                    "url" => $externalUrl
+                    "url" => $externalUrl,
+                    "reason" => [
+                        "type" => "dashlet",
+                        "user" => $user->getUsername(),
+                        "pane" => $pane->getName(),
+                        "dashlet" => $dashlet->getName(),
+                    ],
                 ];
                 continue;
              }
@@ -290,7 +355,13 @@ class Csp
                 if (filter_var($absoluteUrl, FILTER_VALIDATE_URL) !== false) {
                     $dashlets[] = [
                        "name" => $dashlet->getName(),
-                       "url" => $absoluteUrl
+                       "url" => $absoluteUrl,
+                       "reason" => [
+                            "type" => "dashlet-iframe",
+                            "user" => $user->getUsername(),
+                            "pane" => $pane->getName(),
+                            "dashlet" => $dashlet->getName(),
+                        ],
                     ];
                 }
              }
