@@ -4,8 +4,10 @@
 namespace Icinga\Controllers;
 
 use Exception;
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Version;
-use Icinga\Util\Csp;
+use Icinga\Forms\Config\General\CspConfigForm;
+use Icinga\Web\Widget\CspConfigurationTable;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
@@ -24,7 +26,6 @@ use Icinga\Web\Controller;
 use Icinga\Web\Notification;
 use Icinga\Web\Url;
 use Icinga\Web\Widget;
-use ipl\Html\Table;
 
 /**
  * Application and module configuration
@@ -96,54 +97,25 @@ class ConfigController extends Controller
     public function generalAction()
     {
         $this->assertPermission('config/general');
-        $form = new GeneralConfigForm();
-        $form->setIniConfig(Config::app());
-        $form->setOnSuccess(function (GeneralConfigForm $form) {
-            $config = Config::app();
-            $useStrictCsp = (bool) $config->get('security', 'use_strict_csp', false);
-            if ($form->onSuccess() === false) {
-                return false;
-            }
 
-            $appConfigForm = $form->getSubForm('form_config_general_application');
-            if ($appConfigForm && (bool) $appConfigForm->getValue('security_use_strict_csp') !== $useStrictCsp) {
-                $this->getResponse()->setReloadWindow(true);
-            }
-        })->handleRequest();
-
-        $this->view->form = $form;
         $this->view->title = $this->translate('General');
 
-        $this->view->cspTable = "";
-        if ($form->getSubForm('form_config_general_application')->getValue('security_use_strict_csp')) {
-            $table = new Table();
-            $table->add(Table::tr([
-                Table::th(t('Type')),
-                Table::th(t('Info')),
-                Table::th(t('Directive')),
-                Table::th(t('Value')),
-            ]));
-            $policyDirectives = Csp::collectContentSecurityPolicyDirectives();
-            foreach ($policyDirectives as $directiveGroup) {
-                $reason = $directiveGroup['reason'];
-                $type = $reason['type'];
-                $info = match ($type) {
-                    'dashlet' => $reason['pane'] . '/' . $reason['dashlet'],
-                    'hook' => $reason['hook'],
-                    default => '-',
-                };
-                foreach ($directiveGroup['directives'] as $directive => $policies) {
-                    $table->add(Table::tr([
-                        Table::td($type),
-                        Table::td($info),
-                        Table::td($directive),
-                        Table::td(join(', ', $policies)),
-                    ]));
-                }
-            }
+        $form = new GeneralConfigForm();
+        $form->setIniConfig(Config::app());
+        $form->handleRequest();
 
-            $this->view->cspTable = $table->render();
-        }
+        $this->view->form = $form;
+
+        $cspForm = new CspConfigForm();
+        $config = Config::app();
+        $cspForm->populate([
+            'use_strict_csp' => $config->get('security', 'use_strict_csp'),
+            'custom_csp' => $config->get('security', 'custom_csp'),
+        ]);
+        $cspForm->handleRequest(ServerRequest::fromGlobals());
+        $this->view->cspForm = $cspForm;
+
+        $this->view->cspTable = (new CspConfigurationTable())->render();
 
         $this->createApplicationTabs()->activate('general');
     }
