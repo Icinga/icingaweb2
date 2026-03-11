@@ -141,6 +141,8 @@ class Csp
             ];
         }
 
+        $policyDirectives = array_merge($policyDirectives, self::fetchCustomCspDirectives());
+
         return $policyDirectives;
     }
 
@@ -172,6 +174,9 @@ class Csp
 
         foreach ($policyDirectives as $directive) {
             foreach ($directive['directives'] as $directive => $policies) {
+                if (! isset($cspDirectives[$directive])) {
+                    $cspDirectives[$directive] = [];
+                }
                 $cspDirectives[$directive] = array_merge($cspDirectives[$directive], $policies);
             }
         }
@@ -239,7 +244,37 @@ class Csp
 
         return static::$instance;
     }
-    
+
+    public static function fetchCustomCspDirectives(): array
+    {
+        $config = Config::app();
+        $setting = $config->get('security', 'custom_csp');
+
+        if ($setting === null) {
+            return [];
+        }
+
+        $menuDirectives = [];
+
+        $sections = explode(';', $setting);
+        foreach ($sections as $section) {
+            $parts = explode(' ', trim($section));
+            if (count ($parts) < 2) {
+                continue;
+            }
+            $directive = array_shift($parts);
+            $menuDirectives[] = [
+                'directives' => [
+                    $directive => $parts,
+                ],
+                'reason' => [
+                    'type' => 'custom',
+                ],
+            ];
+        }
+
+        return $menuDirectives;
+    }
 
     /**
      * Fetches and merges configurations for navigation menu items and dashlets.
