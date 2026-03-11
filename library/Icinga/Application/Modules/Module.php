@@ -4,6 +4,7 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
+use Fiber;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Hook;
@@ -1068,7 +1069,22 @@ class Module
      */
     public function getUserBackends()
     {
-        $this->launchConfigScript();
+        // TODO: Remove with v2.14
+        if (Fiber::getCurrent() === null) {
+            (new Fiber(function () {
+                Logger::debug(
+                    'Running config script of module "%s" asynchronously (Process %d; Fiber %d)',
+                    $this->getName(),
+                    getmypid() ?: 0,
+                    spl_object_id(Fiber::getCurrent())
+                );
+
+                $this->launchConfigScript();
+            }))->start();
+        } else {
+            $this->launchConfigScript();
+        }
+
         return $this->userBackends;
     }
 
@@ -1079,7 +1095,22 @@ class Module
      */
     public function getUserGroupBackends()
     {
-        $this->launchConfigScript();
+        // TODO: Remove with v2.14
+        if (Fiber::getCurrent() === null) {
+            (new Fiber(function () {
+                Logger::debug(
+                    'Running config script of module "%s" asynchronously (Process %d; Fiber %d)',
+                    $this->getName(),
+                    getmypid() ?: 0,
+                    spl_object_id(Fiber::getCurrent())
+                );
+
+                $this->launchConfigScript();
+            }))->start();
+        } else {
+            $this->launchConfigScript();
+        }
+
         return $this->userGroupBackends;
     }
 
@@ -1180,6 +1211,21 @@ class Module
      */
     protected function provideUserBackend($identifier, $className)
     {
+        if ($this->registered) {
+            trigger_error(sprintf(
+                'Module "%s" already registered. Providing user backend "%s" in configuration.php'
+                . ' has no effect as of version 2.14. Put it in run.php instead.',
+                $this->getName(),
+                $identifier
+            ), E_USER_DEPRECATED);
+            Logger::warning(
+                'Module "%s" already registered. Providing user backend "%s" in configuration.php'
+                . ' has no effect as of version 2.14. Put it in run.php instead.',
+                $this->getName(),
+                $identifier
+            );
+        }
+
         $this->userBackends[strtolower($identifier)] = $className;
         return $this;
     }
@@ -1194,6 +1240,21 @@ class Module
      */
     protected function provideUserGroupBackend($identifier, $className)
     {
+        if ($this->registered) {
+            trigger_error(sprintf(
+                'Module "%s" already registered. Providing user group backend "%s" in configuration.php'
+                . ' has no effect as of version 2.14. Put it in run.php instead.',
+                $this->getName(),
+                $identifier
+            ), E_USER_DEPRECATED);
+            Logger::warning(
+                'Module "%s" already registered. Providing user group backend "%s" in configuration.php'
+                . ' has no effect as of version 2.14. Put it in run.php instead.',
+                $this->getName(),
+                $identifier
+            );
+        }
+
         $this->userGroupBackends[strtolower($identifier)] = $className;
         return $this;
     }
@@ -1324,18 +1385,6 @@ class Module
         foreach ($this->routes as $name => $route) {
             $router->addRoute($name, $route);
         }
-        $router->addRoute(
-            $this->name . '_jsprovider',
-            new Zend_Controller_Router_Route(
-                'js/' . $this->name . '/:file',
-                array(
-                    'action'        => 'javascript',
-                    'controller'    => 'static',
-                    'module'        => 'default',
-                    'module_name'   => $this->name
-                )
-            )
-        );
         $router->addRoute(
             $this->name . '_img',
             new Zend_Controller_Router_Route_Regex(

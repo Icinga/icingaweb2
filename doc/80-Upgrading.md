@@ -5,6 +5,12 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
 ## Upgrading to Icinga Web 2.13
 
+**Deprecations**
+
+* Providing a custom user or group backend inside a module's configuration.php is deprecated and won't work as of v2.14.
+  * It will still work as previously under the right circumstances, but will still be broken if it broke beforehand.
+  * To keep it working as of v2.14 or make it work now, provide the custom backend inside the module's run.php instead.
+
 **Breaking changes**
 
 * The following columns of the `Servicestatus` table, which previously displayed the date time (string) as a fetched
