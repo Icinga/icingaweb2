@@ -59,14 +59,25 @@ class CspConfigForm extends CompatForm
 
         $useCustomCsp = $this->getPopulatedValue('use_custom_csp', 'n') === 'y';
         $this->addElement('textarea', 'custom_csp', [
-            'label' => 'Custom CSP',
+            'label' => $useCustomCsp ? $this->translate('Custom CSP') : $this->translate('Generated CSP'),
             'description' => $this->translate(
                 'Set a custom CSP-Header. This completely overrides the automatically generated one.'
             ),
             'disabled' => ! $useCustomCsp,
         ]);
 
+        $this->addElement('submit', 'submit', [
+            'label' => t('Save changes'),
+        ]);
+
         $customCspElement = $this->getElement('custom_csp');
+        if ($this->hasBeenSubmitted()) {
+            if (! $useCustomCsp) {
+                $customCspElement->setValue(Csp::getAutomaticContentSecurityPolicy());
+            }
+            return;
+        }
+
         if ($useCustomCsp) {
             $value = $this->getPopulatedValue('hidden_custom_csp');
             if (! empty($value)) {
@@ -78,10 +89,6 @@ class CspConfigForm extends CompatForm
             $this->getElement('hidden_custom_csp')->setValue($this->getValue('custom_csp'));
             $customCspElement->setValue(Csp::getAutomaticContentSecurityPolicy());
         }
-
-        $this->addElement('submit', 'submit', [
-            'label' => t('Save changes'),
-        ]);
     }
 
     protected function onSuccess(): void
@@ -91,7 +98,10 @@ class CspConfigForm extends CompatForm
         $section = $config->getSection('security');
         $section['use_strict_csp'] = $this->getValue('use_strict_csp');
         $section['use_custom_csp'] = $this->getValue('use_custom_csp');
-        $section['custom_csp'] = $this->getValue('custom_csp');
+        $useCustomCsp = $this->getPopulatedValue('use_custom_csp', 'n') === 'y';
+        if ($useCustomCsp) {
+            $section['custom_csp'] = $this->getPopulatedValue('custom_csp');
+        }
         $config->setSection('security', $section);
 
         $config->saveIni();
