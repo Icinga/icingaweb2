@@ -162,7 +162,7 @@ class Csp
         return self::getAutomaticContentSecurityPolicy();
     }
 
-    public static function getCustomContentSecurityPolicy(): ?string
+    protected static function getCustomContentSecurityPolicy(): ?string
     {
         $csp = static::getInstance();
 
@@ -171,9 +171,11 @@ class Csp
         }
 
         $config = Config::app();
-        $raw = $config->get('security', 'custom_csp');
-        $formated = str_replace('{style_nonce}', "'nonce{$csp->styleNonce}'", $raw);
-        return $formated;
+        $customCsp = $config->get('security', 'custom_csp');
+        $customCsp = str_replace("\r\n", ' ', $customCsp);
+        $customCsp = str_replace("\n", ' ', $customCsp);
+        $customCsp = str_replace('{style_nonce}', "'nonce-{$csp->styleNonce}'", $customCsp);
+        return $customCsp;
     }
 
     /**
