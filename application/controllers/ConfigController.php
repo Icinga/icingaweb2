@@ -106,11 +106,11 @@ class ConfigController extends Controller
 
         $this->view->form = $form;
 
-        $cspForm = new CspConfigForm();
         $config = Config::app();
+        $cspForm = new CspConfigForm($config);
         $cspForm->populate([
             'use_strict_csp' => $config->get('security', 'use_strict_csp'),
-            'custom_csp' => $config->get('security', 'custom_csp'),
+            'use_custom_csp' => $config->get('security', 'use_custom_csp'),
         ]);
         $cspForm->handleRequest(ServerRequest::fromGlobals());
         $this->view->cspForm = $cspForm;

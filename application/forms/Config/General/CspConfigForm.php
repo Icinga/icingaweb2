@@ -3,6 +3,7 @@
 namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Config;
+use Icinga\Util\Csp;
 use Icinga\Web\Session;
 use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Common\FormUid;
@@ -13,8 +14,11 @@ class CspConfigForm extends CompatForm
     use FormUid;
     use CsrfCounterMeasure;
 
-    public function __construct()
+    protected Config $config;
+
+    public function __construct(Config $config)
     {
+        $this->config = $config;
         $this->setAttribute("name", "csp_config");
         $this->applyDefaultElementDecorators();
     }
@@ -37,13 +41,43 @@ class CspConfigForm extends CompatForm
             ],
         );
 
+        $this->addElement(
+            'checkbox',
+            'use_custom_csp',
+            [
+                'label'         => $this->translate('Enable Custom CSP'),
+                'description'   => $this->translate(
+                    'Specify whether to use a custom, user provided, string as the CSP-Header.'
+                    . ' If you decide to provide your own CSP-Header, you are entirely responsible for keeping it'
+                    . ' up-to-date.'
+                ),
+                'class' => 'autosubmit',
+            ]
+        );
+
+        $this->addElement('hidden', 'hidden_custom_csp');
+
+        $useCustomCsp = $this->getPopulatedValue('use_custom_csp', 'n') === 'y';
         $this->addElement('textarea', 'custom_csp', [
             'label' => 'Custom CSP',
             'description' => $this->translate(
-                'Set custom CSP directives. These values are parsed and merged with the values supplied by modules'
-                . ' and navigation items.'
+                'Set a custom CSP-Header. This completely overrides the automatically generated one.'
             ),
+            'disabled' => ! $useCustomCsp,
         ]);
+
+        $customCspElement = $this->getElement('custom_csp');
+        if ($useCustomCsp) {
+            $value = $this->getPopulatedValue('hidden_custom_csp');
+            if (! empty($value)) {
+                $customCspElement->setValue($value);
+            } else {
+                $customCspElement->setValue($this->config->get('security', 'custom_csp'));
+            }
+        } else {
+            $this->getElement('hidden_custom_csp')->setValue($this->getValue('custom_csp'));
+            $customCspElement->setValue(Csp::getAutomaticContentSecurityPolicy());
+        }
 
         $this->addElement('submit', 'submit', [
             'label' => t('Save changes'),
@@ -56,6 +90,7 @@ class CspConfigForm extends CompatForm
 
         $section = $config->getSection('security');
         $section['use_strict_csp'] = $this->getValue('use_strict_csp');
+        $section['use_custom_csp'] = $this->getValue('use_custom_csp');
         $section['custom_csp'] = $this->getValue('custom_csp');
         $config->setSection('security', $section);
 
