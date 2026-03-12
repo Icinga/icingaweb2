@@ -329,8 +329,7 @@ class Csp
             $configShared = Config::navigation($type);
             $configShared->getConfigObject()->setKeyColumn('name');
             foreach ($configShared->select() as $itemConfig) {
-                if (
-                    Icinga::app()->hasAccessToSharedNavigationItem($itemConfig, $config) &&
+                if (Icinga::app()->hasAccessToSharedNavigationItem($itemConfig, $config) &&
                     $itemConfig->get("target", "") !== "_blank"
                 ) {
                     $menuItems[] = [
