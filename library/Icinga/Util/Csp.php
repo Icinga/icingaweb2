@@ -156,10 +156,24 @@ class Csp
     {
         $config = Config::app();
         if ($config->get('security', 'use_custom_csp', 'y') === 'y') {
-            return $config->get('security', 'custom_csp', '');
+            return self::getCustomContentSecurityPolicy();
         }
 
         return self::getAutomaticContentSecurityPolicy();
+    }
+
+    public static function getCustomContentSecurityPolicy(): ?string
+    {
+        $csp = static::getInstance();
+
+        if (empty($csp->styleNonce)) {
+            throw new RuntimeException('No nonce set for CSS');
+        }
+
+        $config = Config::app();
+        $raw = $config->get('security', 'custom_csp');
+        $formated = str_replace('{style_nonce}', "'nonce{$csp->styleNonce}'", $raw);
+        return $formated;
     }
 
     /**
