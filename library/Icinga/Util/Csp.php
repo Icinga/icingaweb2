@@ -4,6 +4,7 @@
 
 namespace Icinga\Util;
 
+use Generator;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\CspDirectiveHook;
 use Icinga\Application\Icinga;
@@ -11,6 +12,7 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Data\ConfigObject;
 use Icinga\Web\Navigation\Navigation;
+use Icinga\Web\Navigation\NavigationItem;
 use Icinga\Web\Response;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Window;
@@ -300,58 +302,60 @@ class Csp
      * and shared configurations, and returns a list of menu items.
      *
      * @return array Each item is an associative array with 'name' and 'url' keys.
-     * Example: [ ['name' => 'Home', 'url' => '/'], ['name' => 'Profile', 'url' => '/profile'] ]
+     * Example: [ ['name' => 'Home', 'url' => '/', 'reason' => [...] ], ... ]
      */
     protected static function fetchNavigationItems(): array
     {
-        $user = Auth::getInstance()->getUser();
-        $menuItems = [];
-        if ($user === null) {
-            return $menuItems;
+        $auth = Auth::getInstance();
+        if (! $auth->isAuthenticated()) {
+            return [];
         }
+
+        $origins = [];
         $navigationType = Navigation::getItemTypeConfiguration();
         foreach ($navigationType as $type => $_) {
-            $config = Config::navigation($type, $user->getUsername());
-            $config->getConfigObject()->setKeyColumn('name');
-            foreach ($config->select() as $itemConfig) {
-                if ($itemConfig->get("target", "") !== "_blank") {
-                    $menuItems[] = [
-                        "name"   => $itemConfig->get('name'),
-                        "url"    => $itemConfig->get('url'),
-                        "reason" => [
+            $navigation = new Navigation();
+            foreach ($navigation->load($type) as $navItem) {
+                foreach (self::yieldNavigation($navItem) as $name => $url) {
+                    $origins[] = [
+                        'name'   => $name,
+                        'url'    => $url->getScheme() . '://' . $url->getHost(),
+                        'reason' => [
                             'type'   => 'navigation',
-                            'name'   => $itemConfig->get('name'),
-                            'shared' => false,
-                        ],
-                    ];
-                }
-            }
-            $configShared = Config::navigation($type);
-            $configShared->getConfigObject()->setKeyColumn('name');
-            foreach ($configShared->select() as $itemConfig) {
-                if (Icinga::app()->hasAccessToSharedNavigationItem($itemConfig, $config) &&
-                    $itemConfig->get("target", "") !== "_blank"
-                ) {
-                    $menuItems[] = [
-                        "name"   => $itemConfig->get('name'),
-                        "url"    => $itemConfig->get('url'),
-                        "reason" => [
-                            'type'   => 'navigation',
-                            'name'   => $itemConfig->get('name'),
-                            'shared' => true,
+                            'name'   => $name,
+                            'parent' => $navItem->getName(),
+                            'navType' => $type,
                         ],
                     ];
                 }
             }
         }
-        return $menuItems;
+
+        return $origins;
+    }
+
+    protected static function yieldNavigation(NavigationItem $item): Generator
+    {
+        if ($item->hasChildren()) {
+            foreach ($item as $child) {
+                yield from self::yieldNavigation($child);
+            }
+        } else {
+            $url = $item->getUrl();
+            if ($url === null) {
+                return;
+            }
+            if ($item->getTarget() !== '_blank' && $url->isExternal()) {
+                yield $item->getName() => $item->getUrl();
+            }
+        }
     }
 
     /**
      * Fetches all dashlets for the current user that have an external URL.
      *
      * @return array A list of dashlets with their names and absolute URLs.
-     * // returns [['name' => 'Dashlet Name', 'url' => 'https://external.dashlet.com'], ...]
+     * // returns [ ['name' => 'Dashlet Name', 'url' => 'https://external.dashlet.com', 'reason' => [...] ], ...]
      */
     protected static function fetchDashletsItems(): array
     {
