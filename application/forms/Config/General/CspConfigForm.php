@@ -100,7 +100,7 @@ class CspConfigForm extends CompatForm
         $section['use_custom_csp'] = $this->getValue('use_custom_csp');
         $useCustomCsp = $this->getPopulatedValue('use_custom_csp', 'n') === 'y';
         if ($useCustomCsp) {
-            $section['custom_csp'] = $this->getPopulatedValue('custom_csp');
+            $section['custom_csp'] = $this->getValue('custom_csp');
         }
         $config->setSection('security', $section);
 
