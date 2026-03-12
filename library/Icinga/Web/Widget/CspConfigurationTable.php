@@ -30,6 +30,9 @@ class CspConfigurationTable extends Table
             $reason = $directiveGroup['reason'];
             $type = $reason['type'];
             $info = match ($type) {
+                'navigation' => $reason['navType']
+                    . '/' . ($reason['parent'] !== null ? ($reason['parent'] . '/') : '')
+                    . $reason['name'],
                 'dashlet' => $reason['pane'] . '/' . $reason['dashlet'],
                 'hook' => $reason['hook'],
                 default => '-',
