@@ -58,13 +58,25 @@ class CspConfigForm extends CompatForm
         $this->addElement('hidden', 'hidden_custom_csp');
 
         $useCustomCsp = $this->getPopulatedValue('use_custom_csp', 'n') === 'y';
-        $this->addElement('textarea', 'custom_csp', [
-            'label' => $useCustomCsp ? $this->translate('Custom CSP') : $this->translate('Generated CSP'),
-            'description' => $this->translate(
-                'Set a custom CSP-Header. This completely overrides the automatically generated one.'
-            ),
-            'disabled' => ! $useCustomCsp,
-        ]);
+        if ($useCustomCsp) {
+            $this->addElement('textarea', 'custom_csp', [
+                'label'       => $this->translate('Custom CSP'),
+                'description' => $this->translate(
+                    'Set a custom CSP-Header. This completely overrides the automatically generated one.'
+                    . ' Use the placeholder {style_nonce} to insert the automatically generated style nonce.'
+                ),
+                'disabled'    => false,
+            ]);
+        } else {
+            $this->addElement('textarea', 'custom_csp', [
+                'label'       => $this->translate('Generated CSP'),
+                'description' => $this->translate(
+                    'This is the current CSP-Header. You can always safely go back to this by disabling the'
+                    . ' Enable Custom CSP checkbox above.'
+                ),
+                'disabled'    => true,
+            ]);
+        }
 
         $this->addElement('submit', 'submit', [
             'label' => t('Save changes'),
