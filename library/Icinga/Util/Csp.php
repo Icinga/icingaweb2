@@ -18,6 +18,7 @@ use RuntimeException;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Widget\Dashboard;
 
+use Throwable;
 use function ipl\Stdlib\get_php_type;
 
 /**
@@ -94,66 +95,78 @@ class Csp
                 ],
                 'reason'   => $navigationItem['reason'],
             ];
-//
-//            $cspDirectives['frame-src'][] = $policy;
         }
+
         // Allow modules to add their own csp directives in a limited fashion.
-        /** @var CspDirectiveHook $hook */
-        foreach (Hook::all('CspDirective') as $hook) {
+        foreach (CspDirectiveHook::all() as $hook) {
             $directives = [];
-            foreach ($hook->getCspDirectives() as $directive => $policies) {
-                // policy names contain only lowercase letters and '-'. Reject anything else.
-                if (!preg_match('|^[a-z\-]+$|', $directive)) {
-                    $errorSource = get_class($hook);
-                    Logger::debug("$errorSource: Invalid CSP directive found: $directive");
+            try {
+                foreach ($hook->getCspDirectives() as $directive => $policies) {
+                    // policy names contain only lowercase letters and '-'. Reject anything else.
+                    if (! preg_match('|^[a-z\-]+$|', $directive)) {
+                        $errorSource = get_class($hook);
+                        Logger::debug("$errorSource: Invalid CSP directive found: $directive");
+                        continue;
+                    }
+
+                    // The default-src can only ever be 'self'. Disallow any updates to it.
+                    if ($directive === "default-src") {
+                        $errorSource = get_class($hook);
+                        Logger::debug("$errorSource: Changing default-src is forbidden.");
+                        continue;
+                    }
+
+                    if (count($policies) === 0) {
+                        continue;
+                    }
+
+                    $directives[$directive] = $policies;
+                }
+
+                if (count($directives) === 0) {
                     continue;
                 }
 
-                // The default-src can only ever be 'self'. Disallow any updates to it.
-                if ($directive === "default-src") {
-                    $errorSource = get_class($hook);
-                    Logger::debug("$errorSource: Changing default-src is forbidden.");
-                    continue;
-                }
-
-//                $cspDirectives[$directive] = $cspDirectives[$directive] ?? [];
-//                foreach ($policies as $policy) {
-//                    $cspDirectives[$directive][] = $policy;
-//                }
-
-                if (count($policies) === 0) {
-                    continue;
-                }
-
-                $directives[$directive] = $policies;
+                $policyDirectives[] = [
+                    "directives" => $directives,
+                    "reason"     => [
+                        "type" => "hook",
+                        "hook" => get_class($hook),
+                    ],
+                ];
+            } catch (Throwable $e) {
+                Logger::error('Failed to CSP hook on request: %s', $e);
             }
-
-            if (count($directives) === 0) {
-                continue;
-            }
-
-            $policyDirectives[] = [
-                "directives" => $directives,
-                "reason" => [
-                    "type" => "hook",
-                    "hook" => get_class($hook),
-                ],
-            ];
         }
-
-        $policyDirectives = array_merge($policyDirectives, self::fetchCustomCspDirectives());
 
         return $policyDirectives;
     }
 
     /**
-     * Get the Content-Security-Policy for a specific user.
+     * Get the Content-Security-Policy.
      *
      * @throws RuntimeException If no nonce set for CSS
      *
      * @return string Returns the generated header value.
      */
     public static function getContentSecurityPolicy(): string
+    {
+        $config = Config::app();
+        if ($config->get('security', 'use_custom_csp', 'y') === 'y') {
+            return $config->get('security', 'custom_csp', '');
+        }
+
+        return self::getAutomaticContentSecurityPolicy();
+    }
+
+    /**
+     * Get the automatically generated Content-Security-Policy.
+     *
+     * @throws RuntimeException If no nonce set for CSS
+     *
+     * @return string Returns the generated header value.
+     */
+    public static function getAutomaticContentSecurityPolicy(): string
     {
         $csp = static::getInstance();
 
@@ -162,7 +175,7 @@ class Csp
         }
 
         // These are the default directives that should always be enforced. 'self' is valid for all
-        // directives and will therefor not be listed here.
+        // directives and will therefore not be listed here.
         $cspDirectives = [
             'style-src' => ["'nonce-{$csp->styleNonce}'"],
             'font-src' => ["data:"],
@@ -190,6 +203,7 @@ class Csp
         
         return $header;
     }
+
     /**
      * Set/recreate nonce for dynamic CSS
      *
@@ -243,37 +257,6 @@ class Csp
         }
 
         return static::$instance;
-    }
-
-    public static function fetchCustomCspDirectives(): array
-    {
-        $config = Config::app();
-        $setting = $config->get('security', 'custom_csp');
-
-        if ($setting === null) {
-            return [];
-        }
-
-        $menuDirectives = [];
-
-        $sections = explode(';', $setting);
-        foreach ($sections as $section) {
-            $parts = explode(' ', trim($section));
-            if (count ($parts) < 2) {
-                continue;
-            }
-            $directive = array_shift($parts);
-            $menuDirectives[] = [
-                'directives' => [
-                    $directive => $parts,
-                ],
-                'reason' => [
-                    'type' => 'custom',
-                ],
-            ];
-        }
-
-        return $menuDirectives;
     }
 
     /**
