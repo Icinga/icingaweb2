@@ -3,6 +3,8 @@
 
 namespace Icinga\Application\Hook;
 
+use Icinga\Application\Hook;
+
 abstract class CspDirectiveHook
 {
     /**
@@ -15,4 +17,24 @@ abstract class CspDirectiveHook
      * @return array<string, string[]> The CSP directives are the keys and the policies the values.
      */
     abstract public function getCspDirectives(): array;
+
+    /**
+     * Get all registered implementations
+     *
+     * @return static[]
+     */
+    public static function all(): array
+    {
+        return Hook::all('CspDirective');
+    }
+
+    /**
+     * Register the class as a RequestHook implementation
+     *
+     * Call this method on your implementation during module initialization to make Icinga Web aware of your hook.
+     */
+    public static function register(): void
+    {
+        Hook::register('CspDirective', static::class, static::class, true);
+    }
 }
