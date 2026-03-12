@@ -4,18 +4,17 @@
 
 namespace Icinga\Util;
 
+use Icinga\Application\Config;
 use Icinga\Application\Hook\CspDirectiveHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Data\ConfigObject;
-use Icinga\Web\Response;
-use Icinga\Web\Window;
-use Icinga\Application\Config;
-use RuntimeException;
 use Icinga\Web\Navigation\Navigation;
+use Icinga\Web\Response;
 use Icinga\Web\Widget\Dashboard;
-
+use Icinga\Web\Window;
+use RuntimeException;
 use Throwable;
 use function ipl\Stdlib\get_php_type;
 
@@ -96,7 +95,7 @@ class Csp
                 'directives' => [
                     'frame-src' => [$policy],
                 ],
-                'reason'   => $navigationItem['reason'],
+                'reason'     => $navigationItem['reason'],
             ];
         }
 
@@ -148,9 +147,9 @@ class Csp
     /**
      * Get the Content-Security-Policy.
      *
+     * @return string Returns the generated header value.
      * @throws RuntimeException If no nonce set for CSS
      *
-     * @return string Returns the generated header value.
      */
     public static function getContentSecurityPolicy(): string
     {
@@ -181,9 +180,9 @@ class Csp
     /**
      * Get the automatically generated Content-Security-Policy.
      *
+     * @return string Returns the generated header value.
      * @throws RuntimeException If no nonce set for CSS
      *
-     * @return string Returns the generated header value.
      */
     public static function getAutomaticContentSecurityPolicy(): string
     {
@@ -197,9 +196,9 @@ class Csp
         // directives and will therefore not be listed here.
         $cspDirectives = [
             'style-src' => ["'nonce-{$csp->styleNonce}'"],
-            'font-src' => ["data:"],
-            'img-src' => ["data:"],
-            'frame-src' => []
+            'font-src'  => ["data:"],
+            'img-src'   => ["data:"],
+            'frame-src' => [],
         ];
 
         $policyDirectives = self::collectContentSecurityPolicyDirectives();
@@ -215,11 +214,13 @@ class Csp
 
         $header = "default-src 'self'; ";
         foreach ($cspDirectives as $directive => $policyDirectives) {
-            if (!empty($policyDirectives)) {
-                $header .= ' ' . implode(' ', array_merge([$directive, "'self'"], array_unique($policyDirectives))) . ';';
+            if (! empty($policyDirectives)) {
+                $header .= ' ' .
+                    implode(' ', array_merge([$directive, "'self'"], array_unique($policyDirectives)))
+                    . ';';
             }
         }
-        
+
         return $header;
     }
 
@@ -265,8 +266,8 @@ class Csp
                 throw new RuntimeException(
                     sprintf(
                         'Nonce value is expected to be string, got %s instead',
-                        get_php_type($nonce)
-                    )
+                        get_php_type($nonce),
+                    ),
                 );
             }
 
@@ -288,7 +289,7 @@ class Csp
     {
         return array_merge(
             self::fetchNavigationItems(),
-            self::fetchDashletsItems()
+            self::fetchDashletsItems(),
         );
     }
 
@@ -315,13 +316,13 @@ class Csp
             foreach ($config->select() as $itemConfig) {
                 if ($itemConfig->get("target", "") !== "_blank") {
                     $menuItems[] = [
-                        "name" => $itemConfig->get('name'),
-                        "url" => $itemConfig->get('url'),
+                        "name"   => $itemConfig->get('name'),
+                        "url"    => $itemConfig->get('url'),
                         "reason" => [
-                            'type' => 'navigation',
-                            'name' => $itemConfig->get('name'),
+                            'type'   => 'navigation',
+                            'name'   => $itemConfig->get('name'),
                             'shared' => false,
-                        ]
+                        ],
                     ];
                 }
             }
@@ -333,13 +334,13 @@ class Csp
                     $itemConfig->get("target", "") !== "_blank"
                 ) {
                     $menuItems[] = [
-                        "name" => $itemConfig->get('name'),
-                        "url" => $itemConfig->get('url'),
+                        "name"   => $itemConfig->get('name'),
+                        "url"    => $itemConfig->get('url'),
                         "reason" => [
-                            'type' => 'navigation',
-                            'name' => $itemConfig->get('name'),
+                            'type'   => 'navigation',
+                            'name'   => $itemConfig->get('name'),
                             'shared' => true,
-                        ]
+                        ],
                     ];
                 }
             }
@@ -355,56 +356,55 @@ class Csp
      */
     protected static function fetchDashletsItems(): array
     {
-       $user = Auth::getInstance()->getUser();
-       $dashlets = [];
-       if ($user === null) {
-          return $dashlets;
-       }
+        $user = Auth::getInstance()->getUser();
+        $dashlets = [];
+        if ($user === null) {
+            return $dashlets;
+        }
 
-       $dashboard = new Dashboard();
-       $dashboard->setUser($user);
-       $dashboard->load();
+        $dashboard = new Dashboard();
+        $dashboard->setUser($user);
+        $dashboard->load();
 
-       foreach ($dashboard->getPanes() as $pane) {
-          foreach ($pane->getDashlets() as $dashlet) {
-             $url = $dashlet->getUrl();
-             if ($url === null) {
-                continue;
-             }
+        foreach ($dashboard->getPanes() as $pane) {
+            foreach ($pane->getDashlets() as $dashlet) {
+                $url = $dashlet->getUrl();
+                if ($url === null) {
+                    continue;
+                }
 
-             $externalUrl = $url->getParam("url");
-             if ($externalUrl !== null && filter_var($externalUrl, FILTER_VALIDATE_URL) !== false) {
-                $dashlets[] = [
-                    "name" => $dashlet->getName(),
-                    "url" => $externalUrl,
-                    "reason" => [
-                        "type" => "dashlet",
-                        "user" => $user->getUsername(),
-                        "pane" => $pane->getName(),
-                        "dashlet" => $dashlet->getName(),
-                    ],
-                ];
-                continue;
-             }
-
-             if ($url->isExternal()) {
-                $absoluteUrl = $url->getAbsoluteUrl();
-                if (filter_var($absoluteUrl, FILTER_VALIDATE_URL) !== false) {
+                $externalUrl = $url->getParam("url");
+                if ($externalUrl !== null && filter_var($externalUrl, FILTER_VALIDATE_URL) !== false) {
                     $dashlets[] = [
-                       "name" => $dashlet->getName(),
-                       "url" => $absoluteUrl,
-                       "reason" => [
-                            "type" => "dashlet-iframe",
-                            "user" => $user->getUsername(),
-                            "pane" => $pane->getName(),
+                        "name"   => $dashlet->getName(),
+                        "url"    => $externalUrl,
+                        "reason" => [
+                            "type"    => "dashlet",
+                            "user"    => $user->getUsername(),
+                            "pane"    => $pane->getName(),
                             "dashlet" => $dashlet->getName(),
                         ],
                     ];
+                    continue;
                 }
-             }
-          }
-       }
-       return $dashlets;
-    }
 
+                if ($url->isExternal()) {
+                    $absoluteUrl = $url->getAbsoluteUrl();
+                    if (filter_var($absoluteUrl, FILTER_VALIDATE_URL) !== false) {
+                        $dashlets[] = [
+                            "name"   => $dashlet->getName(),
+                            "url"    => $absoluteUrl,
+                            "reason" => [
+                                "type"    => "dashlet-iframe",
+                                "user"    => $user->getUsername(),
+                                "pane"    => $pane->getName(),
+                                "dashlet" => $dashlet->getName(),
+                            ],
+                        ];
+                    }
+                }
+            }
+        }
+        return $dashlets;
+    }
 }
