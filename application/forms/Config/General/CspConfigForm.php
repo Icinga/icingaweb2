@@ -1,5 +1,7 @@
 <?php
 
+/* Icinga Web 2 | (c) 2026 Icinga GmbH | GPLv2+ */
+
 namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Config;

@@ -1,5 +1,7 @@
 <?php
 
+/* Icinga Web 2 | (c) 2026 Icinga Development Team | GPLv2+ */
+
 namespace Icinga\Web\Widget;
 
 use Icinga\Util\Csp;
