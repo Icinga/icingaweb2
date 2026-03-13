@@ -4,8 +4,10 @@
 namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Icinga;
+use Icinga\Authentication\Auth;
 use Icinga\Data\ResourceFactory;
 use Icinga\Web\Form;
+use Icinga\Util\Csp;
 
 /**
  * Configuration form for general application options
@@ -53,18 +55,6 @@ class ApplicationConfigForm extends Form
                     . " This can also be set in a user's preferences."
                 )
             )
-        );
-
-        $this->addElement(
-            'checkbox',
-            'security_use_strict_csp',
-            [
-                'label'         => $this->translate('Enable strict content security policy'),
-                'description'   => $this->translate(
-                    'Set whether to use strict content security policy (CSP).'
-                    . ' This setting helps to protect from cross-site scripting (XSS).'
-                )
-            ]
         );
 
         $this->addElement(

@@ -4,7 +4,10 @@
 namespace Icinga\Controllers;
 
 use Exception;
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Version;
+use Icinga\Forms\Config\General\CspConfigForm;
+use Icinga\Web\Widget\CspConfigurationTable;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
@@ -94,23 +97,26 @@ class ConfigController extends Controller
     public function generalAction()
     {
         $this->assertPermission('config/general');
+
+        $this->view->title = $this->translate('General');
+
         $form = new GeneralConfigForm();
         $form->setIniConfig(Config::app());
-        $form->setOnSuccess(function (GeneralConfigForm $form) {
-            $config = Config::app();
-            $useStrictCsp = (bool) $config->get('security', 'use_strict_csp', false);
-            if ($form->onSuccess() === false) {
-                return false;
-            }
-
-            $appConfigForm = $form->getSubForm('form_config_general_application');
-            if ($appConfigForm && (bool) $appConfigForm->getValue('security_use_strict_csp') !== $useStrictCsp) {
-                $this->getResponse()->setReloadWindow(true);
-            }
-        })->handleRequest();
+        $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->title = $this->translate('General');
+
+        $config = Config::app();
+        $cspForm = new CspConfigForm($config);
+        $cspForm->populate([
+            'use_strict_csp' => $config->get('security', 'use_strict_csp'),
+            'use_custom_csp' => $config->get('security', 'use_custom_csp'),
+        ]);
+        $cspForm->handleRequest(ServerRequest::fromGlobals());
+        $this->view->cspForm = $cspForm;
+
+        $this->view->cspTable = (new CspConfigurationTable())->render();
+
         $this->createApplicationTabs()->activate('general');
     }
 
