@@ -85,6 +85,7 @@ class CspConfigForm extends CompatForm
         $customCspElement = $this->getElement('custom_csp');
         if ($this->hasBeenSubmitted()) {
             if (! $useCustomCsp) {
+                Csp::createNonce();
                 $customCspElement->setValue(Csp::getAutomaticContentSecurityPolicy());
             }
             return;
@@ -99,6 +100,7 @@ class CspConfigForm extends CompatForm
             }
         } else {
             $this->getElement('hidden_custom_csp')->setValue($this->getValue('custom_csp'));
+            Csp::createNonce();
             $customCspElement->setValue(Csp::getAutomaticContentSecurityPolicy());
         }
     }
