@@ -65,8 +65,8 @@ class CspConfigForm extends CompatForm
                 CalloutType::Warning,
                 $this->translate(
                     'Be aware that the custom CSP-Header completely overrides the automatically generated one.'
-                    . ' This means that you are solely responsible for keeping the custom CSP-Header up-to-date and secure.'
-                    . ' If you do not know what you are doing, please leave this checkbox unchecked.'
+                    . ' This means that you are solely responsible for keeping the custom CSP-Header up-to-date'
+                    . ' and secure. If you do not know what you are doing, please leave this checkbox unchecked.'
                 ),
                 $this->translate('Warning: Use at your own risk!'),
             ))->setFormElement());
