@@ -66,40 +66,7 @@ class Csp
 
     public static function collectContentSecurityPolicyDirectives(): array
     {
-        $policyDirectives = [];
-
-        // Whitelist the hosts in the custom NavigationItems configured for the user,
-        // so that the iframes can be rendered properly.
-        /** @var ConfigObject[] $navigationItems */
-        $navigationItems = self::fetchDashletNavigationItemConfigs();
-        foreach ($navigationItems as $navigationItem) {
-            $errorSource = sprintf("Navigation item %s", $navigationItem['name']);
-
-            $host = parse_url($navigationItem["url"], PHP_URL_HOST);
-            // Make sure $url is actually valid;
-            if (filter_var($navigationItem["url"], FILTER_VALIDATE_URL) === false) {
-                Logger::debug("$errorSource: Skipping invalid url: $host");
-                continue;
-            }
-
-            $scheme = parse_url($navigationItem["url"], PHP_URL_SCHEME);
-
-            if ($host === null) {
-                continue;
-            }
-
-            $policy = $host;
-            if ($scheme !== null) {
-                $policy = "$scheme://$host";
-            }
-
-            $policyDirectives[] = [
-                'directives' => [
-                    'frame-src' => [$policy],
-                ],
-                'reason'     => $navigationItem['reason'],
-            ];
-        }
+        $policyDirectives = self::fetchDashletNavigationItemConfigs();
 
         // Allow modules to add their own csp directives in a limited fashion.
         foreach (CspDirectiveHook::all() as $hook) {
@@ -285,7 +252,6 @@ class Csp
      * Fetches and merges configurations for navigation menu items and dashlets.
      *
      * @return array An array containing both navigation items and dashlet configurations.
-     * // returns [['name' => 'Item Name', 'url' => 'https://example.com'], ...]
      */
     protected static function fetchDashletNavigationItemConfigs(): array
     {
@@ -301,8 +267,7 @@ class Csp
      * Iterates through all registered navigation types, loads both user-specific
      * and shared configurations, and returns a list of menu items.
      *
-     * @return array Each item is an associative array with 'name' and 'url' keys.
-     * Example: [ ['name' => 'Home', 'url' => '/', 'reason' => [...] ], ... ]
+     * @return array A list of CSP directives, one for each navigation-item that has an external URL.
      */
     protected static function fetchNavigationItems(): array
     {
@@ -318,14 +283,15 @@ class Csp
             foreach ($navigation->load($type) as $navItem) {
                 foreach (self::yieldNavigation($navItem) as $name => $url) {
                     $origins[] = [
-                        'name'   => $name,
-                        'url'    => $url->getScheme() . '://' . $url->getHost(),
+                        'directives' => [
+                            'frame-src' => [$url->getScheme() . '://' . $url->getHost()],
+                        ],
                         'reason' => [
                             'type'   => 'navigation',
                             'name'   => $name,
                             'parent' => $navItem->getName(),
                             'navType' => $type,
-                        ],
+                        ]
                     ];
                 }
             }
@@ -354,60 +320,49 @@ class Csp
     /**
      * Fetches all dashlets for the current user that have an external URL.
      *
-     * @return array A list of dashlets with their names and absolute URLs.
-     * // returns [ ['name' => 'Dashlet Name', 'url' => 'https://external.dashlet.com', 'reason' => [...] ], ...]
+     * @return array A list of CSP directives, one for each dashlet that has an external URL.
      */
     protected static function fetchDashletsItems(): array
     {
         $user = Auth::getInstance()->getUser();
-        $dashlets = [];
+        $origins = [];
         if ($user === null) {
-            return $dashlets;
+            return $origins;
         }
 
         $dashboard = new Dashboard();
         $dashboard->setUser($user);
         $dashboard->load();
 
+        /** @var Dashboard\Pane $pane */
         foreach ($dashboard->getPanes() as $pane) {
+            /** @var Dashboard\Dashlet $dashlet */
             foreach ($pane->getDashlets() as $dashlet) {
                 $url = $dashlet->getUrl();
                 if ($url === null) {
                     continue;
                 }
 
-                $externalUrl = $url->getParam("url");
-                if ($externalUrl !== null && filter_var($externalUrl, FILTER_VALIDATE_URL) !== false) {
-                    $dashlets[] = [
-                        "name"   => $dashlet->getName(),
-                        "url"    => $externalUrl,
-                        "reason" => [
-                            "type"    => "dashlet",
-                            "user"    => $user->getUsername(),
-                            "pane"    => $pane->getName(),
-                            "dashlet" => $dashlet->getName(),
-                        ],
-                    ];
+                $absoluteUrl = $url->isExternal()
+                    ? $url->getAbsoluteUrl()
+                    : $url->getParam('url');
+                if ($absoluteUrl === null || filter_var($absoluteUrl, FILTER_VALIDATE_URL) === false) {
                     continue;
                 }
 
-                if ($url->isExternal()) {
-                    $absoluteUrl = $url->getAbsoluteUrl();
-                    if (filter_var($absoluteUrl, FILTER_VALIDATE_URL) !== false) {
-                        $dashlets[] = [
-                            "name"   => $dashlet->getName(),
-                            "url"    => $absoluteUrl,
-                            "reason" => [
-                                "type"    => "dashlet-iframe",
-                                "user"    => $user->getUsername(),
-                                "pane"    => $pane->getName(),
-                                "dashlet" => $dashlet->getName(),
-                            ],
-                        ];
-                    }
-                }
+                $origins[] = [
+                    'directives' => [
+                        'frame-src' => [$absoluteUrl],
+                    ],
+                    'reason' => [
+                        'type'    => 'dashlet',
+                        'user'    => $user->getUsername(),
+                        'pane'    => $pane->getName(),
+                        'dashlet' => $dashlet->getName(),
+                    ]
+                ];
             }
         }
-        return $dashlets;
+        return $origins;
     }
 }
