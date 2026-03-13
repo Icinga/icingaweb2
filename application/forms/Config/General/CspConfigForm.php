@@ -7,9 +7,11 @@ namespace Icinga\Forms\Config\General;
 use Icinga\Application\Config;
 use Icinga\Util\Csp;
 use Icinga\Web\Session;
+use ipl\Web\Common\CalloutType;
 use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Common\FormUid;
 use ipl\Web\Compat\CompatForm;
+use ipl\Web\Widget\Callout;
 
 class CspConfigForm extends CompatForm
 {
@@ -50,8 +52,6 @@ class CspConfigForm extends CompatForm
                 'label'         => $this->translate('Enable Custom CSP'),
                 'description'   => $this->translate(
                     'Specify whether to use a custom, user provided, string as the CSP-Header.'
-                    . ' If you decide to provide your own CSP-Header, you are entirely responsible for keeping it'
-                    . ' up-to-date.'
                 ),
                 'class' => 'autosubmit',
             ]
@@ -61,6 +61,16 @@ class CspConfigForm extends CompatForm
 
         $useCustomCsp = $this->getPopulatedValue('use_custom_csp', 'n') === 'y';
         if ($useCustomCsp) {
+            $this->addHtml((new Callout(
+                CalloutType::Warning,
+                $this->translate(
+                    'Be aware that the custom CSP-Header completely overrides the automatically generated one.'
+                    . ' This means that you are solely responsible for keeping the custom CSP-Header up-to-date and secure.'
+                    . ' If you do not know what you are doing, please leave this checkbox unchecked.'
+                ),
+                $this->translate('Warning: Use at your own risk!'),
+            ))->setFormElement());
+
             $this->addElement('textarea', 'custom_csp', [
                 'label'       => $this->translate('Custom CSP'),
                 'description' => $this->translate(
