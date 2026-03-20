@@ -8,7 +8,7 @@ use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
 
 class AnyPasswordPolicyTest extends TestCase
 {
-    private passwordPolicy $instance;
+    protected passwordPolicy $instance;
 
     public function setUp(): void
     {
