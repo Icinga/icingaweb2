@@ -13,11 +13,7 @@ use Zend_Validate_Abstract;
  */
 class PasswordPolicyValidator extends Zend_Validate_Abstract
 {
-    /**
-     * The password policy object
-     *
-     * @var PasswordPolicy
-     */
+    /** @var PasswordPolicy Policy to use for validation */
     protected PasswordPolicy $passwordPolicy;
 
     /**
