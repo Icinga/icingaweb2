@@ -44,8 +44,8 @@ class UserForm extends RepositoryForm
             'password',
             'password',
             array(
-                'required'   => true,
-                'label'      => $this->translate('Password')
+                'required'  => true,
+                'label'     => $this->translate('Password')
             )
         );
         PasswordPolicyHelper::applyPasswordPolicy($this, 'password');
