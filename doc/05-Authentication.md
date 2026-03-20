@@ -255,7 +255,7 @@ Mypasswordpolicy::register();
 
 
 Enable the module:
-```bash
+```shell
 icingacli module enable mypasswordpolicy
 ```
 
