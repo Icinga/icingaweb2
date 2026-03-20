@@ -28,7 +28,7 @@ class PasswordPolicyValidator extends Zend_Validate_Abstract
     protected ?string $oldPasswordElementName;
 
     /**
-     * Constructor
+     * Create a new PasswordPolicyValidator
      *
      * @param PasswordPolicy $passwordPolicy
      * @param string|null $oldPasswordElementName
