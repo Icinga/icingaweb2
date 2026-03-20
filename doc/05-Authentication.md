@@ -244,6 +244,7 @@ class PasswordPolicy extends PasswordPolicyHook
 **Register the Hook**
 
 Create `run.php`:
+
 ```php
 <?php
 
