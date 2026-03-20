@@ -15,12 +15,12 @@ interface PasswordPolicy
     public function getName(): string;
 
     /**
-     * * Get the description of the password policy
-     * *
-     * * Displayed when creating or changing passwords while the policy is active.
-     * * Should contain the rules of the policy.
-     * *
-     * * @return ?string
+     * Get the description of the password policy
+     *
+     * Displayed when creating or changing passwords while the policy is active.
+     * Should contain the rules of the policy.
+     *
+     * @return ?string
      */
     public function getDescription(): ?string;
 
