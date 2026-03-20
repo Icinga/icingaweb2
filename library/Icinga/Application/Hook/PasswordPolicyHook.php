@@ -11,9 +11,7 @@ use Icinga\Authentication\PasswordPolicy;
  */
 abstract class PasswordPolicyHook implements PasswordPolicy
 {
-    /**
-     * Hook name
-     */
+    /** @var string Hook name *(
     protected const HOOK_NAME = 'PasswordPolicy';
 
     /**
@@ -29,7 +27,7 @@ abstract class PasswordPolicyHook implements PasswordPolicy
     /**
      * Return all registered password policies sorted by name
      *
-     * @return array
+     * @return array<string, string>
      */
     public static function all(): array
     {

@@ -15,19 +15,13 @@ use LogicException;
 
 class PasswordPolicyHelper
 {
-    /*
-     * Default class for password policy
-     */
+    /** @var class-string<PasswordPolicy> Default password policy class */
     const DEFAULT_PASSWORD_POLICY = AnyPasswordPolicy::class;
 
-    /**
-     * Configuration section for password policy in the configuration file
-     */
+    /** @var string INI configuration section for password policy */
     const CONFIG_SECTION = 'global';
 
-    /**
-     * Configuration key for password policy in the configuration file
-     */
+    /** @var string INI configuration key for password policy */
     const CONFIG_KEY = 'password_policy';
 
     /**
@@ -42,6 +36,7 @@ class PasswordPolicyHelper
         if ($oldPasswordElementName !== null && $form->getElement($oldPasswordElementName) === null) {
             throw new LogicException();
         }
+
         try {
             $passwordPolicyClass = Config::app()->get(
                 'global',
@@ -83,10 +78,16 @@ class PasswordPolicyHelper
             );
         }
     }
-/**
- * Create and validate a password policy instance from the given class name and ensure it implements the
- *  password policy interface.
- */
+
+    /**
+     * Create a {@link PasswordPolicy} instance from the given class name
+     *
+     * @param class-string<PasswordPolicy> $passwordPolicyClass
+     *
+     * @return PasswordPolicy
+     *
+     * @throws ConfigurationError If class does not exist or does not implement {@link PasswordPolicy}
+     */
     public static function createPolicy(string $passwordPolicyClass): PasswordPolicy
     {
         if ($passwordPolicyClass === static::DEFAULT_PASSWORD_POLICY) {

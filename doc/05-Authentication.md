@@ -177,12 +177,14 @@ Icinga Web provides a built-in policy called `Common` with the following require
 You can create custom password policies by developing a module with a provided hook.
 
 **Create Module Structure**
+
 ```bash
 mkdir -p /usr/share/icingaweb2/modules/mypasswordpolicy/library/Mypasswordpolicy/ProvidedHook 
 cd /usr/share/icingaweb2/modules/mypasswordpolicy
 ```
 
 Create `module.info`:
+
 ```ini
 Module: mypasswordpolicy
 Name: My Password Policy
@@ -258,8 +260,6 @@ Enable the module:
 ```shell
 icingacli module enable mypasswordpolicy
 ```
-
-You can choose in the settings the preferred password policy.
 
 The custom policy will now appear in **Configuration > Application > General** under Password Policy.
 

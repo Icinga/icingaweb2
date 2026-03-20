@@ -75,14 +75,14 @@ class CommonPasswordPolicyTest extends TestCase
 
     public function testValidatePasswordWithLengthAndUpperCaseLetters(): void
     {
-        $expectedResult = [
+        $expected = [
             'Password must be at least 12 characters long',
             'Password must contain at least one number',
             'Password must contain at least one special character',
-            'Password must contain at least one lowercase letter',
+            'Password must contain at least one lowercase letter'
         ];
         $this->assertSame(
-            $expectedResult,
+            $expected,
             $this->instance->validate('ICINGAADMIN')
         );
     }

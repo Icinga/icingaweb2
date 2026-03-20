@@ -1,5 +1,7 @@
 <?php
-/* Icinga Web 2 | (c) 2025 Icinga GmbH | GPLv2+ */
+
+// SPDX-FileCopyrightText: 2026 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Authentication;
 
@@ -28,9 +30,10 @@ interface PasswordPolicy
      * Validate a given password against the defined policy
      *
      * @param string $newPassword
-     * @param string|null $oldPassword
+     * @param ?string $oldPassword
+     * 
      * @return string[] Returns an empty array if the password is valid,
-     * otherwise returns error messages describing the violations
+     *   otherwise returns error messages describing the violations
      */
     public function validate(string $newPassword, ?string $oldPassword = null): array;
 }

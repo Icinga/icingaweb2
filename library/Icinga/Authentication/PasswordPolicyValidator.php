@@ -1,14 +1,17 @@
 <?php
-/* Icinga Web 2 | (c) 2025 Icinga GmbH | GPLv2+ */
+
+// SPDX-FileCopyrightText: 2026 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 namespace Icinga\Authentication;
 
 use Zend_Validate_Abstract;
 
 /**
- * Use the provided password policy to validate the new password.
+ * Validate passwords against a configured policy
+ * 
  * Optionally, retrieve the old password from the form context using the configured form element name
- * and pass it to the policy for comparative validation.
+ * and pass it to the policy for validation.
  * Delegate all validation logic to the policy instance and expose any returned violation messages.
  */
 class PasswordPolicyValidator extends Zend_Validate_Abstract
@@ -23,7 +26,7 @@ class PasswordPolicyValidator extends Zend_Validate_Abstract
      * Create a new PasswordPolicyValidator
      *
      * @param PasswordPolicy $passwordPolicy
-     * @param string|null $oldPasswordElementName
+     * @param ?string $oldPasswordElementName
      */
     public function __construct(PasswordPolicy $passwordPolicy, ?string $oldPasswordElementName = null)
     {
