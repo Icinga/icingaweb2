@@ -205,11 +205,9 @@ Create `library/Mypasswordpolicy/ProvidedHook/PasswordPolicy.php`:
 namespace Icinga\Module\Mypasswordpolicy\ProvidedHook;
 
 use Icinga\Application\Hook\PasswordPolicyHook;
-use ipl\I18n\Translation;
 
 class PasswordPolicy extends PasswordPolicyHook
 {
-    use Translation;
     
     public function getName(): string
     {
