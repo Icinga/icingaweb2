@@ -16,11 +16,7 @@ class PasswordPolicyValidator extends Zend_Validate_Abstract
     /** @var PasswordPolicy Policy to use for validation */
     protected PasswordPolicy $passwordPolicy;
 
-    /**
-     * Name of the old password element
-     *
-     * @var string|null
-     */
+    /** @var ?string Name of the old password form element */
     protected ?string $oldPasswordElementName;
 
     /**
