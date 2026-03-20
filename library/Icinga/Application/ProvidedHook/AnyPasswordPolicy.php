@@ -15,7 +15,7 @@ class AnyPasswordPolicy extends PasswordPolicyHook
 
     public function getName(): string
     {
-        // Policy is named 'None' to indicate that no password policy is enforced and any password is accepted
+        // Policy is named 'None' to indicate that no password policy is enforced and any password is accepted.
         return $this->translate('None');
     }
 
