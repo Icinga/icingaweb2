@@ -111,7 +111,7 @@ class PasswordPolicyHelper
 
         if (! class_exists($passwordPolicyClass)) {
             throw new ConfigurationError(
-                $this->translate('Password policy class %s does not exist'), 
+                $this->translate('Password policy class %s does not exist'),
                 $passwordPolicyClass
             );
         }
