@@ -29,11 +29,11 @@ class PasswordPolicyHelper
     /**
      * Load the configured password policy, fall back to a warning if the policy configuration is invalid.
      * On success, attaches the policy validator to the given new-password form element.
-     * 
+     *
      * @param Form $form
      * @param string $newPasswordElementName
      * @param string|null $oldPasswordElementName Optional name of the old password form element for comparison
-     * 
+     *
      * @return void
      *
      * @throws LogicException If the old password element is specified but does not exist in the form
@@ -48,7 +48,8 @@ class PasswordPolicyHelper
         if ($oldPasswordElementName !== null && $form->getElement($oldPasswordElementName) === null) {
             throw new LogicException(sprintf(
                 $this->translate('Form element "%s" was specified but does not exist in the form'),
-                $oldPasswordElementName));
+                $oldPasswordElementName
+            ));
         }
 
         try {
@@ -109,7 +110,10 @@ class PasswordPolicyHelper
         }
 
         if (! class_exists($passwordPolicyClass)) {
-            throw new ConfigurationError($this->translate('Password policy class %s does not exist'), $passwordPolicyClass);
+            throw new ConfigurationError(
+                $this->translate('Password policy class %s does not exist'), 
+                $passwordPolicyClass
+            );
         }
 
         $passwordPolicy = new $passwordPolicyClass();
@@ -127,7 +131,7 @@ class PasswordPolicyHelper
 
     /**
      * Retrieve the description from the given password policy and add it to the form for display to the user.
-     * 
+     *
      * @param Form $form
      * @param PasswordPolicy $passwordPolicy
      * @return void
