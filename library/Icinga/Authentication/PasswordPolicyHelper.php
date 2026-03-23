@@ -15,6 +15,8 @@ use LogicException;
 
 class PasswordPolicyHelper
 {
+    use Translation;
+
     /** @var class-string<PasswordPolicy> Default password policy class */
     const DEFAULT_PASSWORD_POLICY = AnyPasswordPolicy::class;
 
@@ -27,14 +29,26 @@ class PasswordPolicyHelper
     /**
      * Load the configured password policy, fall back to a warning if the policy configuration is invalid.
      * On success, attaches the policy validator to the given new-password form element.
+     * 
+     * @param Form $form
+     * @param string $newPasswordElementName
+     * @param string|null $oldPasswordElementName Optional name of the old password form element for comparison
+     * 
+     * @return void
+     *
+     * @throws LogicException If the old password element is specified but does not exist in the form
+     * @throws ConfigurationError If the password policy class is misconfigured
      */
+ 
     public static function applyPasswordPolicy(
         Form $form,
         string $newPasswordElementName,
         ?string $oldPasswordElementName = null
     ) {
         if ($oldPasswordElementName !== null && $form->getElement($oldPasswordElementName) === null) {
-            throw new LogicException();
+            throw new LogicException(sprintf(
+                $this->translate('Form element "%s" was specified but does not exist in the form'),
+                $oldPasswordElementName));
         }
 
         try {
@@ -70,7 +84,7 @@ class PasswordPolicyHelper
                         ],
                         [['HtmlTag#div' => 'HtmlTag'], ['tag' => 'div', 'class' => 'form-notifications error']],
                     ],
-                    'value' => t(
+                    'value' => $this->translate(
                         'There was a problem loading the configured password policy. '
                         . 'Please contact your administrator.'
                     ),
@@ -80,7 +94,7 @@ class PasswordPolicyHelper
     }
 
     /**
-     * Create a {@link PasswordPolicy} instance from the given class name
+     * Create a {@link PasswordPolicy} instance from the given class name.
      *
      * @param class-string<PasswordPolicy> $passwordPolicyClass
      *
@@ -95,14 +109,14 @@ class PasswordPolicyHelper
         }
 
         if (! class_exists($passwordPolicyClass)) {
-            throw new ConfigurationError(t('Password policy class %s does not exist'), $passwordPolicyClass);
+            throw new ConfigurationError($this->translate('Password policy class %s does not exist'), $passwordPolicyClass);
         }
 
         $passwordPolicy = new $passwordPolicyClass();
 
         if (! $passwordPolicy instanceof PasswordPolicy) {
             throw new ConfigurationError(
-                t('Password policy %s is not an instance of %s'),
+                $this->translate('Password policy %s is not an instance of %s'),
                 $passwordPolicyClass,
                 PasswordPolicy::class
             );
@@ -111,6 +125,13 @@ class PasswordPolicyHelper
         return $passwordPolicy;
     }
 
+    /**
+     * Retrieve the description from the given password policy and add it to the form for display to the user.
+     * 
+     * @param Form $form
+     * @param PasswordPolicy $passwordPolicy
+     * @return void
+     */
     public static function addPasswordPolicyDescription(Form $form, PasswordPolicy $passwordPolicy): void
     {
         $description = $passwordPolicy->getDescription();

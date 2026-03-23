@@ -31,9 +31,9 @@ interface PasswordPolicy
      *
      * @param string $newPassword
      * @param ?string $oldPassword
-     * 
+     *
      * @return string[] Returns an empty array if the password is valid,
-     *   otherwise returns error messages describing the violations
+     * otherwise returns error messages describing the violations
      */
     public function validate(string $newPassword, ?string $oldPassword = null): array;
 }

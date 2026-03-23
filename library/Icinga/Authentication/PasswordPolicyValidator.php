@@ -9,7 +9,7 @@ use Zend_Validate_Abstract;
 
 /**
  * Validate passwords against a configured policy
- * 
+ *
  * Optionally, retrieve the old password from the form context using the configured form element name
  * and pass it to the policy for validation.
  * Delegate all validation logic to the policy instance and expose any returned violation messages.
