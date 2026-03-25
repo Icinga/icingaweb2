@@ -229,7 +229,11 @@ class Manager
             $module = new Module($this->app, $name, $basedir);
         }
 
-        if ($name !== 'ipl' && $name !== 'reactbundle') {
+        if ($name !== 'ipl'
+            && $name !== 'reactbundle'
+            // Skip incubator registration if icinga-php-legacy exists.
+            && ($name !== 'incubator' || ! $this->app->getLibraries()->has('icinga-php-legacy'))
+        ) {
             $module->register();
         }
 

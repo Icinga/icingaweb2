@@ -689,6 +689,16 @@ class Module
             $requiredLibraries['icinga-php-thirdparty'] = $requiredModules['reactbundle'];
         }
 
+        // Register incubator as a library requirement only if icinga-php-legacy is present.
+        // The icinga-php-legacy package is not a core requirement of Icinga Web -
+        // only modules that depend on it install it, e.g., director or vspheredb.
+        if (isset($requiredModules['incubator'])
+            && ! isset($requiredLibraries['icinga-php-legacy'])
+            && $this->app->getLibraries()->has('icinga-php-legacy')
+        ) {
+            $requiredLibraries['icinga-php-legacy'] = $requiredModules['incubator'];
+        }
+
         return $requiredLibraries;
     }
 
@@ -722,6 +732,11 @@ class Module
 
         // Both modules are deprecated and their successors are now dependencies of web itself
         unset($requiredModules['ipl'], $requiredModules['reactbundle']);
+
+        // Counterpart to getRequiredLibraries: Skip incubator requirement if icinga-php-legacy exists.
+        if (isset($requiredModules['incubator']) && $this->app->getLibraries()->has('icinga-php-legacy')) {
+            unset($requiredModules['incubator']);
+        }
 
         return $requiredModules;
     }
