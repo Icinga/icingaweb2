@@ -100,6 +100,17 @@ class ApplicationConfigForm extends Form
             )
         );
 
+        $this->addElement(
+            'checkbox',
+            'global_store_roles_in_db',
+            [
+                'label'         => $this->translate('Store Roles in Database'),
+                'description'   => $this->translate(
+                    'Set whether to store roles used for access control in the database selected above.'
+                )
+            ]
+        );
+
         return $this;
     }
 }

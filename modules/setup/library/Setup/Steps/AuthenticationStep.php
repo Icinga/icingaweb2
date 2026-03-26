@@ -3,23 +3,29 @@
 
 namespace Icinga\Module\Setup\Steps;
 
+use DateTime;
 use Exception;
 use Icinga\Application\Config;
+use Icinga\Common\Database;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\IcingaException;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Module\Setup\Step;
+use ipl\Sql\Connection;
+use ipl\Sql\Insert;
 
 class AuthenticationStep extends Step
 {
+    use Database;
+
     protected $data;
 
     protected $dbError;
 
     protected $authIniError;
 
-    protected $permIniError;
+    protected $roleError;
 
     public function __construct(array $data)
     {
@@ -29,11 +35,15 @@ class AuthenticationStep extends Step
     public function apply()
     {
         $success = $this->createAuthenticationIni();
+
         if (isset($this->data['adminAccountData']['resourceConfig'])) {
             $success &= $this->createAccount();
         }
 
-        $success &= $this->createRolesIni();
+        if (isset($this->data['rolesResourceConfig'])) {
+            $success &= $this->createRoles();
+        }
+
         return $success;
     }
 
@@ -61,34 +71,59 @@ class AuthenticationStep extends Step
         return true;
     }
 
-    protected function createRolesIni()
+    protected function createRoles(): bool
     {
-        if (isset($this->data['adminAccountData']['username'])) {
-            $config = array(
-                'users'         => $this->data['adminAccountData']['username'],
-                'permissions'   => '*'
-            );
-
-            if ($this->data['backendConfig']['backend'] === 'db') {
-                $config['groups'] = mt('setup', 'Administrators', 'setup.role.name');
-            }
-        } else { // isset($this->data['adminAccountData']['groupname'])
-            $config = array(
-                'groups'        => $this->data['adminAccountData']['groupname'],
-                'permissions'   => '*'
-            );
-        }
-
         try {
-            Config::fromArray(array(mt('setup', 'Administrators', 'setup.role.name') => $config))
-                ->setConfigFile(Config::resolvePath('roles.ini'))
-                ->saveIni();
+            $this->getDb(new ConfigObject($this->data['rolesResourceConfig']))->transaction(function (Connection $db) {
+                $admins = mt('setup', 'Administrators', 'setup.role.name');
+
+                $db->prepexec(
+                    (new Insert())
+                        ->into('icingaweb_role')
+                        ->columns(['name', 'ctime'])
+                        ->values([$admins, (new DateTime())->getTimestamp() * 1000])
+                );
+
+                $id = $db->lastInsertId();
+
+                $db->prepexec(
+                    (new Insert())
+                        ->into('icingaweb_role_permission')
+                        ->columns(['role_id', 'permission', 'allowed'])
+                        ->values([$id, '*', 'y'])
+                );
+
+                if (isset($this->data['adminAccountData']['username'])) {
+                    $db->prepexec(
+                        (new Insert())
+                            ->into('icingaweb_role_user')
+                            ->columns(['role_id', 'user_name'])
+                            ->values([$id, $this->data['adminAccountData']['username']])
+                    );
+
+                    if ($this->data['backendConfig']['backend'] === 'db') {
+                        $db->prepexec(
+                            (new Insert())
+                                ->into('icingaweb_role_group')
+                                ->columns(['role_id', 'group_name'])
+                                ->values([$id, $admins])
+                        );
+                    }
+                } else {
+                    $db->prepexec(
+                        (new Insert())
+                            ->into('icingaweb_role_group')
+                            ->columns(['role_id', 'group_name'])
+                            ->values([$id, $this->data['adminAccountData']['groupname']])
+                    );
+                }
+            });
         } catch (Exception $e) {
-            $this->permIniError = $e;
+            $this->roleError = $e;
             return false;
         }
 
-        $this->permIniError = false;
+        $this->roleError = false;
         return true;
     }
 
@@ -211,7 +246,7 @@ class AuthenticationStep extends Step
             $report[] = sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->dbError));
         }
 
-        if ($this->permIniError === false) {
+        if ($this->roleError === false) {
             $report[] = isset($this->data['adminAccountData']['username']) ? sprintf(
                 mt('setup', 'Account "%s" has been successfully defined as initial administrator.'),
                 $this->data['adminAccountData']['username']
@@ -219,7 +254,7 @@ class AuthenticationStep extends Step
                 mt('setup', 'The members of the user group "%s" were successfully defined as initial administrators.'),
                 $this->data['adminAccountData']['groupname']
             );
-        } elseif ($this->permIniError !== null) {
+        } elseif ($this->roleError !== null) {
             $report[] = isset($this->data['adminAccountData']['username']) ? sprintf(
                 mt('setup', 'Unable to define account "%s" as initial administrator. An error occured:'),
                 $this->data['adminAccountData']['username']
@@ -230,7 +265,7 @@ class AuthenticationStep extends Step
                 ),
                 $this->data['adminAccountData']['groupname']
             );
-            $report[] = sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->permIniError));
+            $report[] = sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->roleError));
         }
 
         return $report;
