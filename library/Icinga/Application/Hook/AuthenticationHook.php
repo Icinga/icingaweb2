@@ -18,10 +18,17 @@ use Throwable;
  */
 abstract class AuthenticationHook
 {
+    use HookEssentials;
+
     /**
      * Name of the hook
      */
     const NAME = 'authentication';
+
+    final protected static function getHookName(): string
+    {
+        return static::NAME;
+    }
 
     /**
      * Triggered after login in Icinga Web and when calling login action

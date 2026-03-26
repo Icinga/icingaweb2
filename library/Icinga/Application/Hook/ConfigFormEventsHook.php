@@ -5,7 +5,6 @@
 
 namespace Icinga\Application\Hook;
 
-use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
 use Icinga\Web\Form;
@@ -15,8 +14,15 @@ use Icinga\Web\Form;
  */
 abstract class ConfigFormEventsHook
 {
+    use HookEssentials;
+
     /** @var array Array of errors found while processing the form event hooks */
     private static $lastErrors = [];
+
+    final protected static function getHookName(): string
+    {
+        return 'ConfigFormEvents';
+    }
 
     /**
      * Get whether the hook applies to the given config form

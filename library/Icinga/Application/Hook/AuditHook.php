@@ -8,11 +8,17 @@ namespace Icinga\Application\Hook;
 use Exception;
 use InvalidArgumentException;
 use Icinga\Authentication\Auth;
-use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 
 abstract class AuditHook
 {
+    use HookEssentials;
+
+    final protected static function getHookName(): string
+    {
+        return 'audit';
+    }
+
     /**
      * Log an activity to the audit log
      *

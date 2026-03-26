@@ -5,13 +5,21 @@
 
 namespace Icinga\Application\Hook;
 
-use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 use Icinga\Web\Request;
 use Throwable;
 
 abstract class RequestHook
 {
+    use HookEssentials {
+        register as protected parentRegister;
+    }
+
+    final protected static function getHookName(): string
+    {
+        return 'RequestHook';
+    }
+
     /**
      * Triggered after a request has been dispatched
      *
@@ -40,22 +48,12 @@ abstract class RequestHook
     }
 
     /**
-     * Get all registered implementations
-     *
-     * @return static[]
-     */
-    public static function all(): array
-    {
-        return Hook::all('RequestHook');
-    }
-
-    /**
      * Register the class as a RequestHook implementation
      *
      * Call this method on your implementation during module initialization to make Icinga Web aware of your hook.
      */
     public static function register(): void
     {
-        Hook::register('RequestHook', static::class, static::class, true);
+        static::parentRegister(true);
     }
 }
