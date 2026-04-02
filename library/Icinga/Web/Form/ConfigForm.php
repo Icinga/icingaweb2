@@ -241,10 +241,6 @@ class ConfigForm extends CompatForm
         }
 
         [$section, $key] = $this->getIniKeyFromName($name);
-        if (! $this->config->hasSection($section)) {
-            return $default;
-        }
-
         return $this->config->get($section, $key, $default);
     }
 
