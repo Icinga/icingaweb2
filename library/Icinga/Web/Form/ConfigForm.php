@@ -120,11 +120,13 @@ class ConfigForm extends CompatForm
      *
      * @param bool $create
      *
-     * @return void
+     * @return static
      */
-    public function setIsCreateForm(bool $create = true): void
+    public function setIsCreateForm(bool $create = true): static
     {
         $this->isCreateForm = $create;
+
+        return $this;
     }
 
     /**
@@ -142,11 +144,13 @@ class ConfigForm extends CompatForm
      *
      * @param bool $allowDeletion
      *
-     * @return void
+     * @return static
      */
-    public function setAllowDeletion(bool $allowDeletion = true): void
+    public function setAllowDeletion(bool $allowDeletion = true): static
     {
         $this->allowDeletion = $allowDeletion;
+
+        return $this;
     }
 
     /**
