@@ -5,9 +5,10 @@
 
 namespace Tests\Icinga\Util;
 
+use Icinga\Less\Visitor;
 use Icinga\Test\BaseTestCase;
-use Icinga\Util\LessParser;
 use Less_Exception_Compiler;
+use Less_Parser;
 
 class LessParserTest extends BaseTestCase
 {
@@ -17,12 +18,12 @@ class LessParserTest extends BaseTestCase
     {
         parent::setUp();
 
-        $this->lessc = new LessParser();
+        $this->lessc = new Less_Parser(['plugins' => [new Visitor()]]);
     }
 
     protected function compileLess($less)
     {
-        return $this->lessc->compile($less);
+        return $this->lessc->parse($less)->getCss();
     }
 
     public function testSimpleVariables()
@@ -546,9 +547,13 @@ LESS
   :root {
     --my-color: orange;
   }
+}
+@media (min-height: 999999px), print, (prefers-color-scheme: light) and (min-height: 999999px) {
   :root {
     --my-other-color: green;
   }
+}
+@media (min-height: 999999px), print, (prefers-color-scheme: light) and (min-height: 999999px) {
   .icinga-module.module-test {
     --greenish-color: lime;
     --blueish-color: navy;

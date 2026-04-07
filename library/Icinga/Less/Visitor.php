@@ -6,6 +6,8 @@
 namespace Icinga\Less;
 
 use Less_Parser;
+use Less_Tree;
+use Less_Tree_DetachedRuleset;
 use Less_Tree_Expression;
 use Less_Tree_Rule;
 use Less_Tree_Value;
@@ -36,15 +38,6 @@ CSS;
     public $isPreEvalVisitor = true;
 
     /**
-     * Whether calling var() CSS function
-     *
-     * If that's the case, don't try to replace compiled Less colors with CSS var() function calls.
-     *
-     * @var bool|string
-     */
-    protected $callingVar = false;
-
-    /**
      * Whether defining a variable
      *
      * If that's the case, don't try to replace compiled Less colors with CSS var() function calls.
@@ -56,14 +49,6 @@ CSS;
     /** @var Less_Tree_Rule If defining a variable, determines the origin rule of the variable */
     protected $variableOrigin;
 
-    /** @var LightMode Light mode registry */
-    protected $lightMode;
-
-    /** @var false|string Whether parsing module Less */
-    protected $moduleScope = false;
-
-    /** @var null|string CSS module selector if any */
-    protected $moduleSelector;
 
     public function visitCall($c)
     {
@@ -78,20 +63,6 @@ CSS;
 
     public function visitDetachedRuleset($drs)
     {
-        if ($this->variableOrigin->name === '@' . static::LIGHT_MODE_NAME) {
-            $this->variableOrigin->name .= '-' . substr(sha1(uniqid(mt_rand(), true)), 0, 7);
-
-            $this->lightMode->add($this->variableOrigin->name);
-
-            if ($this->moduleSelector !== false) {
-                $this->lightMode->setSelector($this->variableOrigin->name, $this->moduleSelector);
-            }
-
-            $drs = LightModeDefinition::fromDetachedRuleset($drs)
-                ->setLightMode($this->lightMode)
-                ->setName($this->variableOrigin->name);
-        }
-
         // Since a detached ruleset is a variable definition in the first place,
         // just reset that we define a variable.
         $this->definingVariable = false;
@@ -125,6 +96,19 @@ CSS;
 
     public function visitRule($r)
     {
+        if ($r->name === '@' . static::LIGHT_MODE_NAME
+            && $r->value instanceof Less_Tree_DetachedRuleset
+        ) {
+            $name = uniqid(static::LIGHT_MODE_NAME);
+
+            $r->name = "@{$name}";
+
+            $parser = (new Less_Parser())->parse(sprintf(static::LIGHT_MODE_CSS, "@{$name}();"));
+            $rules = (new ReflectionProperty(Less_Parser::class, 'rules'))->getValue($parser);
+
+            return [$r, ...$rules];
+        }
+
         if ($r->name[0] === '@' && $r->variable) {
             if ($this->definingVariable !== false) {
                 throw new LogicException('Already defining a variable');
@@ -154,33 +138,6 @@ CSS;
         }
     }
 
-    public function visitRuleset($rs)
-    {
-        // Method is required, otherwise visitRulesetOut will not be called.
-        return $rs;
-    }
-
-    public function visitRulesetOut($rs)
-    {
-        if ($this->moduleScope !== false
-            && isset($rs->selectors)
-            && spl_object_hash($rs->selectors[0]) === $this->moduleScope
-        ) {
-            $this->moduleSelector = null;
-            $this->moduleScope = false;
-        }
-    }
-
-    public function visitSelector($s)
-    {
-        if ($s->_oelements_len === 2 && $s->_oelements[0] === '.icinga-module') {
-            $this->moduleSelector = implode('', $s->_oelements);
-            $this->moduleScope = spl_object_hash($s);
-        }
-
-        return $s;
-    }
-
     public function visitVariable($v)
     {
         if ($this->definingVariable !== false) {
@@ -193,42 +150,6 @@ CSS;
 
     public function run($node)
     {
-        $this->lightMode = new LightMode();
-
-        $evald = $this->visitObj($node);
-
-        // The visitor has registered all light modes in visitDetachedRuleset, but has not called them yet.
-        // Now the light mode calls are prepared with the appropriate CSS selectors.
-        $calls = [];
-        foreach ($this->lightMode as $mode) {
-            if ($this->lightMode->hasSelector($mode)) {
-                $calls[] = "{$this->lightMode->getSelector($mode)} {\n$mode();\n}";
-            } else {
-                $calls[] = "$mode();";
-            }
-        }
-
-        if (! empty($calls)) {
-            // Place and parse light mode calls into a new anonymous file,
-            // leaving the original Less in which the light modes were defined untouched.
-            $parser = (new Less_Parser())
-                ->parse(sprintf(static::LIGHT_MODE_CSS, implode("\n", $calls)));
-
-            // Because Less variables are block scoped,
-            // we can't just access the light mode definitions in the calls above.
-            // The LightModeVisitor ensures that all calls have access to the environment in which the mode was defined.
-            // Finally, the rules are merged so that the light mode calls are also rendered to CSS.
-            $rules = new ReflectionProperty(get_class($parser), 'rules');
-            $evald->rules = array_merge(
-                $evald->rules,
-                (new LightModeVisitor())
-                    ->setLightMode($this->lightMode)
-                    ->visitArray($rules->getValue($parser))
-            );
-            // The LightModeVisitor is used explicitly here instead of using it as a plugin
-            // since we only need to process the newly created rules for the light mode calls.
-        }
-
-        return $evald;
+        $this->visitObj($node);
     }
 }

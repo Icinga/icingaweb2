@@ -6,8 +6,10 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Logger;
-use Icinga\Util\LessParser;
+use Icinga\Less\Visitor;
 use Less_Exception_Parser;
+use Less_Parser;
+use Less_Tree;
 
 /**
  * Compile LESS into CSS
@@ -19,7 +21,7 @@ class LessCompiler
     /**
      * lessphp compiler
      *
-     * @var LessParser
+     * @var Less_Parser
      */
     protected $lessc;
 
@@ -63,7 +65,7 @@ class LessCompiler
      */
     public function __construct()
     {
-        $this->lessc = new LessParser();
+        $this->lessc = new Less_Parser(['plugins' => [new Visitor()]]);
     }
 
     /**
@@ -161,7 +163,7 @@ class LessCompiler
      */
     public function compress()
     {
-        $this->lessc->setFormatter('compressed');
+        $this->lessc->setOption('compress', true);
         return $this;
     }
 
@@ -224,7 +226,7 @@ class LessCompiler
             return preg_replace(
                 '/(\.icinga-module\.module-[^\s]+) (#layout\.[^\s]+)/m',
                 '\2 \1',
-                $this->lessc->compile($this->source)
+                $this->lessc->parse($this->source)->getCss()
             );
         } catch (Less_Exception_Parser $e) {
             $excerpt = substr($this->source, $e->index - 500, 1000);
