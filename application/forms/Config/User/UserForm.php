@@ -6,6 +6,7 @@
 namespace Icinga\Forms\Config\User;
 
 use Icinga\Application\Hook\ConfigFormEventsHook;
+use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Data\Filter\Filter;
 use Icinga\Forms\RepositoryForm;
 use Icinga\Web\Notification;
@@ -13,37 +14,53 @@ use Icinga\Web\Notification;
 class UserForm extends RepositoryForm
 {
     /**
-     * Create and add elements to this form to insert or update a user
+     * Create and add common elements to this form
      *
-     * @param   array   $formData   The data sent by the user
+     * @param array $formData The data sent by the user
+     *
+     * @return void
      */
-    protected function createInsertElements(array $formData)
+    protected function createCommonElements(array $formData): void
     {
         $this->addElement(
             'checkbox',
             'is_active',
             [
-                'value'         => true,
-                'label'         => $this->translate('Active'),
-                'description'   => $this->translate('Prevents the user from logging in if unchecked')
+                'value'       => true,
+                'label'       => $this->translate('Active'),
+                'description' => $this->translate('Prevents the user from logging in if unchecked')
             ]
         );
         $this->addElement(
             'text',
             'user_name',
             [
-                'required'  => true,
-                'label'     => $this->translate('Username')
+                'required' => true,
+                'label'    => $this->translate('Username')
             ]
         );
+    }
+
+    /**
+     * Create and add elements to this form to insert or update a user
+     *
+     * @param array $formData The data sent by the user
+     *
+     * @return void
+     */
+    protected function createInsertElements(array $formData)
+    {
+        $this->createCommonElements($formData);
+
         $this->addElement(
             'password',
             'password',
             [
-                'required'  => true,
-                'label'     => $this->translate('Password')
+                'required' => true,
+                'label'    => $this->translate('Password')
             ]
         );
+        PasswordPolicyHelper::apply($this, 'password');
 
         $this->setTitle($this->translate('Add a new user'));
         $this->setSubmitLabel($this->translate('Add'));
@@ -52,11 +69,13 @@ class UserForm extends RepositoryForm
     /**
      * Create and add elements to this form to update a user
      *
-     * @param   array   $formData   The data sent by the user
+     * @param array $formData The data sent by the user
+     *
+     * @return void
      */
     protected function createUpdateElements(array $formData)
     {
-        $this->createInsertElements($formData);
+        $this->createCommonElements($formData);
 
         $this->addElement(
             'password',
@@ -66,6 +85,7 @@ class UserForm extends RepositoryForm
                 'label'         => $this->translate('Password'),
             ]
         );
+        PasswordPolicyHelper::apply($this, 'password');
 
         $this->setTitle(sprintf($this->translate('Edit user %s'), $this->getIdentifier()));
         $this->setSubmitLabel($this->translate('Save'));
