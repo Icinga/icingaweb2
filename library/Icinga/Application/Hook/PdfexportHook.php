@@ -32,7 +32,7 @@ abstract class PdfexportHook
      *
      * @param ValidHtml $html The HTML to render to PDF
      *
-     * @return mixed
+     * @return string
      */
     abstract public function htmlToPdf(ValidHtml $html): string;
 }
