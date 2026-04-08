@@ -5,6 +5,8 @@
 
 namespace Icinga\Application\Hook;
 
+use ipl\Html\ValidHtml;
+
 /**
  * Base class for the PDF Export Hook
  */
@@ -15,13 +17,22 @@ abstract class PdfexportHook
      *
      * @return  bool
      */
-    abstract public function isSupported();
+    abstract public function isSupported(): bool;
 
     /**
      * Render the specified HTML to PDF and stream it to the client
      *
-     * @param   string  $html       The HTML to render to PDF
-     * @param   string  $filename   The filename for the generated PDF
+     * @param ValidHtml $html The HTML to render to PDF
+     * @param string $filename The filename for the generated PDF
      */
-    abstract public function streamPdfFromHtml($html, $filename);
+    abstract public function streamPdfFromHtml(ValidHtml $html, string $filename): never;
+
+    /**
+     * Render the specified HTML to PDF and return the PDF document as a string
+     *
+     * @param ValidHtml $html The HTML to render to PDF
+     *
+     * @return mixed
+     */
+    abstract public function htmlToPdf(ValidHtml $html): string;
 }
