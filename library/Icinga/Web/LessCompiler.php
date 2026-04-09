@@ -5,26 +5,17 @@
 
 namespace Icinga\Web;
 
+use Exception;
 use Icinga\Application\Logger;
-use Icinga\Less\Visitor;
-use Less_Exception_Parser;
-use Less_Parser;
-use Less_Tree;
+use ipl\Web\Less\CssVarVisitor;
+use ipl\Web\Less\DetachedRulesetCallVisitor;
+use ipl\Web\Less\WikimediaLessCompiler;
 
 /**
  * Compile LESS into CSS
- *
- * Comments will be removed always. lessc is messing them up.
  */
 class LessCompiler
 {
-    /**
-     * lessphp compiler
-     *
-     * @var Less_Parser
-     */
-    protected $lessc;
-
     /**
      * Array of LESS files
      *
@@ -59,14 +50,6 @@ class LessCompiler
      * @var string
      */
     protected $themeMode;
-
-    /**
-     * Create a new LESS compiler
-     */
-    public function __construct()
-    {
-        $this->lessc = new Less_Parser(['plugins' => [new Visitor()]]);
-    }
 
     /**
      * Add a Web 2 LESS file
@@ -157,79 +140,65 @@ class LessCompiler
     }
 
     /**
-     * Instruct the compiler to minify CSS
-     *
-     * @return  $this
-     */
-    public function compress()
-    {
-        $this->lessc->setOption('compress', true);
-        return $this;
-    }
-
-    /**
      * Render to CSS
      *
-     * @return  string
+     * @param bool $minify Whether to minify the CSS
+     *
+     * @return string
      */
-    public function render()
+    public function render(bool $minify = false): string
     {
-        foreach ($this->lessFiles as $lessFile) {
-            $this->source .= file_get_contents($lessFile);
+        // Use `@import (less)` throughout to force the imported file to be treated as a regular Less file,
+        // regardless of its extension. Regular CSS files would leave the import statement in the output.
+        $imports = array_map(fn($file) => "@import (less) \"$file\";", $this->lessFiles);
+
+        foreach (array_filter($this->moduleLessFiles) as $name => $files) {
+            $imports = array_merge($imports, [
+                ".icinga-module.module-$name {",
+                ...array_map(fn($file) => "    @import (less) \"$file\";", $files),
+                "}\n",
+            ]);
         }
-
-        $moduleCss = '';
-        foreach ($this->moduleLessFiles as $moduleName => $moduleLessFiles) {
-            $moduleCss .= '.icinga-module.module-' . $moduleName . ' {';
-
-            foreach ($moduleLessFiles as $moduleLessFile) {
-                $moduleCss .= file_get_contents($moduleLessFile);
-            }
-            $moduleCss .= '}';
-        }
-
-        $this->source .= $moduleCss;
 
         if ($this->theme !== null) {
-            $this->source .= file_get_contents($this->theme);
+            $imports[] = "@import (less) \"$this->theme\";";
         }
 
         if ($this->themeMode !== null) {
-            $this->source .= file_get_contents($this->themeMode);
+            $imports[] = "@import (less) \"$this->themeMode\";";
         }
+
+        $less = implode("\n", $imports);
+
+        $lightModeTemplate = <<<'LESS'
+@media (min-height: @prefer-light-color-scheme), print,
+(prefers-color-scheme: light) and (min-height: @enable-color-preference) {
+    {ruleset}
+}
+LESS;
+        $compiler = new WikimediaLessCompiler([
+            // Despite its name, relativeUrls doesn't preserve relative URLs. It rewrites
+            // them to the resolved path of the Less file they appear in. We concatenate
+            // all Less files via @import, which also lets the parser report the affected
+            // file in error messages. Enabling relativeUrls would turn e.g.
+            // "../img/icinga-logo.svg" into an absolute resolved path like
+            // /public/css/icinga/img/icinga-logo.svg, which is not publicly accessible.
+            'relativeUrls' => false,
+            'math'         => 'always',
+            'plugins'      => [
+                new CssVarVisitor(),
+                new DetachedRulesetCallVisitor('light-mode', $lightModeTemplate),
+            ],
+        ]);
 
         try {
             return preg_replace(
                 '/(\.icinga-module\.module-[^\s]+) (#layout\.[^\s]+)/m',
                 '\2 \1',
-                $this->lessc->parse($this->source)->getCss()
+                $compiler->compile($less, $minify),
             );
-        } catch (Less_Exception_Parser $e) {
-            $excerpt = substr($this->source, $e->index - 500, 1000);
-
-            $lines = [];
-            $found = false;
-            $pos = $e->index - 500;
-            foreach (explode("\n", $excerpt) as $i => $line) {
-                if ($i === 0) {
-                    $pos += strlen($line);
-                    $lines[] = '.. ' . $line;
-                } else {
-                    $pos += strlen($line) + 1;
-                    $sep = '   ';
-                    if (! $found && $pos > $e->index) {
-                        $found = true;
-                        $sep = '!! ';
-                    }
-
-                    $lines[] = $sep . $line;
-                }
-            }
-
-            $lines[] = '..';
-            $excerpt = join("\n", $lines);
-
-            return sprintf("%s\n%s\n\n\n%s", $e->getMessage(), $e->getTraceAsString(), $excerpt);
+        } catch (Exception $e) {
+            return "\n" . $e->getMessage() . "\n\nStack trace:\n" . $e->getTraceAsString();
         }
     }
 }
