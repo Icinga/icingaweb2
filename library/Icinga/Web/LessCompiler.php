@@ -12,81 +12,63 @@ use ipl\Web\Less\DetachedRulesetCallVisitor;
 use ipl\Web\Less\WikimediaLessCompiler;
 
 /**
- * Compile LESS into CSS
+ * Compile Less into CSS
  */
 class LessCompiler
 {
-    /**
-     * Array of LESS files
-     *
-     * @var string[]
-     */
-    protected $lessFiles = array();
+    /** @var string[] Core Less and CSS files */
+    protected array $lessFiles = [];
+
+    /** @var array<string, string[]> Module Less and CSS files indexed by module name */
+    protected array $moduleLessFiles = [];
+
+    protected ?string $source = null;
+
+    /** @var string|null Path to the Less theme file */
+    protected ?string $theme = null;
+
+    /** @var string|null Path to the Less theme mode file */
+    protected ?string $themeMode = null;
 
     /**
-     * Array of module LESS files indexed by module names
+     * Add a core Less or CSS file
      *
-     * @var array[]
+     * @param string $lessFile Path to the Less or CSS file
+     *
+     * @return $this
      */
-    protected $moduleLessFiles = array();
-
-    /**
-     * LESS source
-     *
-     * @var string
-     */
-    protected $source;
-
-    /**
-     * Path of the LESS theme
-     *
-     * @var string
-     */
-    protected $theme;
-
-    /**
-     * Path of the LESS theme mode
-     *
-     * @var string
-     */
-    protected $themeMode;
-
-    /**
-     * Add a Web 2 LESS file
-     *
-     * @param   string  $lessFile   Path to the LESS file
-     *
-     * @return  $this
-     */
-    public function addLessFile($lessFile)
+    public function addLessFile(string $lessFile): static
     {
         $this->lessFiles[] = realpath($lessFile);
+
         return $this;
     }
 
     /**
-     * Add a module LESS file
+     * Add a module Less or CSS file
      *
-     * @param   string  $moduleName Name of the module
-     * @param   string  $lessFile   Path to the LESS file
+     * @param string $moduleName Name of the module
+     * @param string $lessFile Path to the Less or CSS file
      *
-     * @return  $this
+     * @return $this
      */
-    public function addModuleLessFile($moduleName, $lessFile)
+    public function addModuleLessFile(string $moduleName, string $lessFile): static
     {
         if (! isset($this->moduleLessFiles[$moduleName])) {
-            $this->moduleLessFiles[$moduleName] = array();
+            $this->moduleLessFiles[$moduleName] = [];
         }
+
         $this->moduleLessFiles[$moduleName][] = realpath($lessFile);
+
         return $this;
     }
 
     /**
-     * Get the list of LESS files added to the compiler
+     * Get all file paths registered with the compiler
      *
      * @return string[]
      */
-    public function getLessFiles()
+    public function getLessFiles(): array
     {
         $lessFiles = $this->lessFiles;
 
@@ -106,45 +88,47 @@ class LessCompiler
     }
 
     /**
-     * Set the path to the LESS theme
+     * Set the path to the Less theme file
      *
-     * @param   ?string  $theme  Path to the LESS theme
+     * @param ?string $theme Path to the Less theme file, or null to unset
      *
-     * @return  $this
+     * @return $this
      */
-    public function setTheme($theme)
+    public function setTheme(?string $theme): static
     {
         if ($theme === null || (is_file($theme) && is_readable($theme))) {
             $this->theme = $theme;
         } else {
             Logger::error('Can\t load theme %s. Make sure that the theme exists and is readable', $theme);
         }
+
         return $this;
     }
 
     /**
-     * Set the path to the LESS theme mode
+     * Set the path to the Less theme mode file
      *
-     * @param   string  $themeMode  Path to the LESS theme mode
+     * @param string $themeMode Path to the Less theme mode file
      *
-     * @return  $this
+     * @return $this
      */
-    public function setThemeMode($themeMode)
+    public function setThemeMode(string $themeMode): static
     {
         if (is_file($themeMode) && is_readable($themeMode)) {
             $this->themeMode = $themeMode;
         } else {
             Logger::error('Can\t load theme mode %s. Make sure that the theme mode exists and is readable', $themeMode);
         }
+
         return $this;
     }
 
     /**
-     * Render to CSS
+     * Compile all registered Less sources to CSS
      *
-     * @param bool $minify Whether to minify the CSS
+     * @param bool $minify Whether to minify the output
      *
-     * @return string
+     * @return string Compiled CSS, or an error message with stack trace on compiler failure
      */
     public function render(bool $minify = false): string
     {
