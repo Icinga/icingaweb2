@@ -266,8 +266,8 @@
 
   .flyout-content {
     overflow: auto;
-    // Partially escape to have ems calculated
-    max-height: calc(~"100vh - " 50/12em);
+    @height: 50/12em;
+    max-height: calc(100vh - @height);
     padding: .5em 0;
     position: relative;
   }
