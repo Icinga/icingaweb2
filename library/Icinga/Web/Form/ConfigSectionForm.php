@@ -9,6 +9,16 @@ use Icinga\Web\Widget\ShowConfiguration;
 use ipl\Html\Contract\FormSubmitElement;
 use ipl\Validator\CallbackValidator;
 
+/**
+ * Base class for configuration forms that manage a single INI section
+ *
+ * Extends {@see ConfigForm} with support for creating, renaming, and deleting
+ * named sections. Element names map directly to keys within the section rather
+ * than encoding the section via the {@see ConfigForm} double-underscore convention.
+ *
+ * Emits {@see self::ON_DELETE} after a section is deleted and {@see self::ON_RENAME}
+ * after a section is renamed.
+ */
 class ConfigSectionForm extends ConfigForm
 {
     /** @var string Name of the delete button element */
@@ -22,6 +32,9 @@ class ConfigSectionForm extends ConfigForm
 
     /** @var string Event emitted when the form has successfully deleted a configuration section */
     public const ON_DELETE = 'delete';
+
+    /** @var string Event emitted when the form has successfully renamed a configuration section */
+    public const ON_RENAME = 'rename';
 
     /**
      * A list of elements that should not be saved to the configuration
@@ -59,39 +72,49 @@ class ConfigSectionForm extends ConfigForm
      */
     protected bool $allowDeletion = true;
 
+    /**
+     * Whether the form allows renaming of the configuration section
+     *
+     * @var bool
+     */
+    protected bool $allowRename = true;
+
     public function __construct()
     {
         $this->on(static::ON_SENT, function () {
             if ($this->shouldDelete()) {
                 $this->handleDelete();
                 $this->emit(static::ON_DELETE, [$this]);
+            } elseif ($this->shouldRename()) {
+                $oldName = $this->section;
+                $this->handleRename();
+                $this->emit(static::ON_RENAME, [
+                    $this,
+                    $oldName,
+                    $this->section,
+                ]);
             }
         });
     }
 
+    protected function populateFromConfig(): void
+    {
+        if ($this->allowRename()) {
+            $this->populate([
+                static::NAME_ELEMENT_NAME => $this->getPopulatedValue(static::NAME_ELEMENT_NAME, $this->section),
+            ]);
+        }
+
+        parent::populateFromConfig();
+    }
+
     public function isValidEvent($event): bool
     {
-        // Check for our new event and return true if it is valid
-        if ($event === static::ON_DELETE) {
+        if ($event === static::ON_DELETE || $event === static::ON_RENAME) {
             return true;
         }
 
-        // Call the parent function to still validate all previous added events
         return parent::isValidEvent($event);
-    }
-
-    /**
-     * Set the configuration to use when populating and saving
-     *
-     * @param Config $config The configuration to use
-     *
-     * @return $this
-     */
-    public function setConfig(Config $config): static
-    {
-        $this->config = $config;
-
-        return $this;
     }
 
     /**
@@ -160,6 +183,22 @@ class ConfigSectionForm extends ConfigForm
         return $this->allowDeletion;
     }
 
+    public function setAllowRename(bool $allowRename = true): static
+    {
+        $this->allowRename = $allowRename;
+
+        return $this;
+    }
+
+    public function allowRename(): bool
+    {
+        if ($this->isCreateForm()) {
+            return false;
+        }
+
+        return $this->allowRename;
+    }
+
     /**
      * Handle the deletion of the configuration section
      *
@@ -186,6 +225,22 @@ class ConfigSectionForm extends ConfigForm
             $this->setContent($content);
             throw $e;
         }
+    }
+
+    /**
+     * Handle the renaming of the configuration section
+     *
+     * @return void
+     */
+    protected function handleRename(): void
+    {
+        $newName = $this->getPopulatedValue(static::NAME_ELEMENT_NAME);
+        $section = $this->config->getSection($this->section);
+        $this->config->removeSection($this->section);
+        $this->config->setSection($newName, $section);
+        $this->section = $newName;
+
+        $this->onSuccess();
     }
 
     /**
@@ -222,7 +277,7 @@ class ConfigSectionForm extends ConfigForm
      */
     protected function addSectionNameElement(array $params = []): void
     {
-        if (! $this->isCreateForm()) {
+        if (! $this->isCreateForm() && ! $this->allowRename()) {
             return;
         }
 
@@ -234,6 +289,10 @@ class ConfigSectionForm extends ConfigForm
 
         $uniqueValidator = new CallbackValidator(function ($value, CallbackValidator $validator) {
             if (empty($value)) {
+                return true;
+            }
+
+            if ($value === $this->section) {
                 return true;
             }
 
@@ -303,5 +362,14 @@ class ConfigSectionForm extends ConfigForm
         $this->getElement(static::SUBMIT_BUTTON_NAME)
             ->getWrapper()
             ->prepend($deleteButton);
+    }
+
+    private function shouldRename(): bool
+    {
+        if (! $this->allowRename() || ! $this->hasBeenSubmitted()) {
+            return false;
+        }
+
+        return $this->allowRename() && $this->section !== $this->getPopulatedValue(static::NAME_ELEMENT_NAME);
     }
 }
