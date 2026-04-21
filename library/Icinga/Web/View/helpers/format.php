@@ -45,7 +45,7 @@ $this->addHelperFunction('timeAgo', function ($time, $timeOnly = false, $require
         return '';
     }
     return sprintf(
-        '<span class="relative-time time-ago" title="%s">%s</span>',
+        '<time class="time-ago" data-relative-time="ago" title="%s" datetime="%1$s">%s</time>',
         DateFormatter::formatDateTime($time),
         DateFormatter::timeAgo($time, $timeOnly, $requireTime)
     );
@@ -56,7 +56,7 @@ $this->addHelperFunction('timeSince', function ($time, $timeOnly = false, $requi
         return '';
     }
     return sprintf(
-        '<span class="relative-time time-since" title="%s">%s</span>',
+        '<time class="time-since" data-relative-time="since" title="%s" datetime="%1$s">%s</time>',
         DateFormatter::formatDateTime($time),
         DateFormatter::timeSince($time, $timeOnly, $requireTime)
     );
@@ -67,7 +67,7 @@ $this->addHelperFunction('timeUntil', function ($time, $timeOnly = false, $requi
         return '';
     }
     return sprintf(
-        '<span class="relative-time time-until" title="%s">%s</span>',
+        '<time class="time-until" data-relative-time="until" title="%s" datetime="%1$s">%s</time>',
         DateFormatter::formatDateTime($time),
         DateFormatter::timeUntil($time, $timeOnly, $requireTime)
     );
