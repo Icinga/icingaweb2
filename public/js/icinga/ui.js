@@ -20,8 +20,6 @@
 
         this.debugTimer = null;
 
-        this.timeCounterTimer = null;
-
         // detect currentLayout
         var classList = $('#layout').attr('class').split(/\s+/);
         var _this = this;
@@ -124,12 +122,6 @@
                     $newLink.appendTo($('head'));
                 }
             });
-        },
-
-        disableTimeCounters: function () {
-            this.icinga.timer.unregister(this.timeCounterTimer);
-            this.timeCounterTimer = null;
-            return this;
         },
 
         /**
@@ -563,7 +555,6 @@
             // This is gonna be hard, clean up the mess
             this.icinga = null;
             this.debugTimer = null;
-            this.timeCounterTimer = null;
         }
     };
 
