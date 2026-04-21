@@ -20,8 +20,6 @@
 
         this.debugTimer = null;
 
-        this.timeCounterTimer = null;
-
         // detect currentLayout
         var classList = $('#layout').attr('class').split(/\s+/);
         var _this = this;
@@ -42,7 +40,6 @@
 
         initialize: function () {
             $('html').removeClass('no-js').addClass('js');
-            this.enableTimeCounters();
             this.triggerWindowResize();
             this.fadeNotificationsAway();
 
@@ -125,21 +122,6 @@
                     $newLink.appendTo($('head'));
                 }
             });
-        },
-
-        enableTimeCounters: function () {
-            this.timeCounterTimer = this.icinga.timer.register(
-                this.refreshTimeSince,
-                this,
-                1000
-            );
-            return this;
-        },
-
-        disableTimeCounters: function () {
-            this.icinga.timer.unregister(this.timeCounterTimer);
-            this.timeCounterTimer = null;
-            return this;
         },
 
         /**
@@ -477,72 +459,6 @@
             );
         },
 
-        /**
-         * Refresh partial time counters
-         *
-         * This function runs every second.
-         */
-        refreshTimeSince: function () {
-            $('.time-ago, .time-since').each(function (idx, el) {
-                var partialTime = /(\d{1,2})m (\d{1,2})s/.exec(el.innerHTML);
-                if (partialTime !== null) {
-                    var minute = parseInt(partialTime[1], 10),
-                        second = parseInt(partialTime[2], 10);
-                    if (second < 59) {
-                        ++second;
-                    } else {
-                        ++minute;
-                        second = 0;
-                    }
-                    el.innerHTML = el.innerHTML.substring(0, partialTime.index) + minute.toString() + 'm '
-                        + second.toString() + 's' + el.innerHTML.substring(partialTime.index + partialTime[0].length);
-                }
-            });
-
-            $('.time-until').each(function (idx, el) {
-                var partialTime = /(-?)(\d{1,2})m (\d{1,2})s/.exec(el.innerHTML);
-                if (partialTime !== null) {
-                    var minute = parseInt(partialTime[2], 10),
-                        second = parseInt(partialTime[3], 10),
-                        invert = partialTime[1];
-                    if (invert.length) {
-                        // Count up because partial time is negative
-                        if (second < 59) {
-                            ++second;
-                        } else {
-                            ++minute;
-                            second = 0;
-                        }
-                    } else {
-                        // Count down because partial time is positive
-                        if (second === 0) {
-                            if (minute === 0) {
-                                // Invert counter
-                                minute = 0;
-                                second = 1;
-                                invert = '-';
-                            } else {
-                                --minute;
-                                second = 59;
-                            }
-                        } else {
-                            --second;
-                        }
-
-                        if (minute === 0 && second === 0 && el.dataset.agoLabel) {
-                            el.innerText = el.dataset.agoLabel;
-                            el.classList.remove('time-until');
-                            el.classList.add('time-ago');
-
-                            return;
-                        }
-                    }
-                    el.innerHTML = el.innerHTML.substring(0, partialTime.index) + invert + minute.toString() + 'm '
-                        + second.toString() + 's' + el.innerHTML.substring(partialTime.index + partialTime[0].length);
-                }
-            });
-        },
-
         createFontSizeCalculator: function () {
             var $el = $('<div id="fontsize-calc">&nbsp;</div>');
             $('#layout').append($el);
@@ -639,7 +555,6 @@
             // This is gonna be hard, clean up the mess
             this.icinga = null;
             this.debugTimer = null;
-            this.timeCounterTimer = null;
         }
     };
 

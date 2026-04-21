@@ -3,6 +3,14 @@
 Specific version upgrades are described below. Please note that upgrades are incremental. An upgrade from
 v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
+## Upgrading to Icinga Web 2.14
+
+**Framework changes affecting third-party code**
+
+* Our JavaScript implementation to update relative times in the UI has been removed from Icinga Web, and an updated
+  implementation now resides as part of the Icinga PHP Library. https://github.com/Icinga/ipl-web/pull/350 explains
+  differences and how to ensure future compatibility.
+
 ## Upgrading to Icinga Web 2.13
 
 **Deprecations**
