@@ -27,18 +27,14 @@ format            | json/csv/sql  | Selected views can be exported as JSON or CS
 Examples for `showFullscreen`:
 
 http://localhost/icingaweb2/dashboard?showFullscreen
-http://localhost/icingaweb2/monitoring/list/services?service_problem=1&sort=service_severity&showFullscreen
 
 Examples for `showCompact`:
 
 http://localhost/icingaweb2/dashboard?showCompact&showFullscreen
-http://localhost/icingaweb2/monitoring/list/services?service_problem=1&sort=service_severity&showCompact
 
 Examples for `format`:
 
-http://localhost/icingaweb2/monitoring/list/services?format=json
-http://localhost/icingaweb2/monitoring/list/services?service_problem=1&sort=service_severity&dir=desc&format=csv
-
+http://localhost/icingaweb2/health?format=json
 
 ## VirtualHost Configuration <a id="virtualhost-configuration"></a>
 
@@ -203,7 +199,7 @@ about
 
 * manual creation of the Icinga Web 2 database `icingaweb2` including a default user (optional as authentication and session backend)
 * additional configuration for the application
-* additional configuration for the monitoring module (e.g. the IDO database and external command pipe from Icinga 2)
+* additional configuration for the desired modules (e.g. the database resource and external command pipe from Icinga 2)
 
 This comes in handy if you are planning to deploy Icinga Web 2 automatically using
 Puppet, Ansible, Chef, etc.
@@ -308,41 +304,6 @@ users               = "icingaadmin"
 permissions         = "*"
 ```
 
-### Icinga Web 2 Manual Configuration Monitoring Module <a id="web-setup-manual-from-source-config-monitoring-module"></a>
-
-
-**config.ini** defining additional security settings.
-
-```
-vim /etc/icingaweb2/modules/monitoring/config.ini
-
-[security]
-protected_customvars = "*pw*,*pass*,community"
-```
-
-**backends.ini** referencing the Icinga 2 DB IDO resource.
-
-```
-vim /etc/icingaweb2/modules/monitoring/backends.ini
-
-[icinga2]
-type                = "ido"
-resource            = "icinga2"
-```
-
-**commandtransports.ini** defining the Icinga 2 API command transport.
-
-```
-vim /etc/icingaweb2/modules/monitoring/commandtransports.ini
-
-[icinga2]
-transport = "api"
-host = "localhost"
-port = "5665"
-username = "api"
-password = "api"
-```
-
 ### Icinga Web 2 Manual Setup Login <a id="web-setup-manual-from-source-login"></a>
 
 Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/icingaweb2`.
@@ -384,14 +345,12 @@ The structure of the configurations looks like the following:
 /etc/icingaweb2/
 /etc/icingaweb2/authentication.ini
 /etc/icingaweb2/modules
-/etc/icingaweb2/modules/monitoring
-/etc/icingaweb2/modules/monitoring/config.ini
-/etc/icingaweb2/modules/monitoring/instances.ini
-/etc/icingaweb2/modules/monitoring/backends.ini
+/etc/icingaweb2/modules/<module-name>
+/etc/icingaweb2/modules/<module-name>/<configfile>
 /etc/icingaweb2/roles.ini
 /etc/icingaweb2/config.ini
 /etc/icingaweb2/enabledModules
-/etc/icingaweb2/enabledModules/monitoring
+/etc/icingaweb2/enabledModules/<module-name>
 /etc/icingaweb2/enabledModules/doc
 /etc/icingaweb2/resources.ini
 ```
