@@ -7,6 +7,7 @@ namespace Icinga\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Config;
+use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Authentication\TwoFactorTotp;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Common\Database;
@@ -14,6 +15,7 @@ use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Forms\Account\ChangePasswordForm;
 use Icinga\Forms\Account\TwoFactorConfigForm;
+use Icinga\Forms\Account\TwoFactorChooseMethodForm;
 use Icinga\Forms\PreferenceForm;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Controller;
@@ -76,23 +78,33 @@ class AccountController extends Controller
             }
         }
 
-        $twoFactor = TwoFactorTotp::loadFromDb($this->getDb(), $user->getUsername());
-        if ($twoFactor === null) {
-            $twoFactor = TwoFactorTotp::generate($user->getUsername());
+        // #################################################################################### TODO remove this comment
+
+        $twoFactorChooseMethodForm = new TwoFactorChooseMethodForm();
+        $twoFactorChooseMethodForm->handleRequest(ServerRequest::fromGlobals());
+        $this->view->twoFactorForm = $twoFactorChooseMethodForm;
+
+        if (false) {
+            $twoFactor = TwoFactorTotp::loadFromDb($this->getDb(), $user->getUsername());
+            if ($twoFactor === null) {
+                $twoFactor = TwoFactorTotp::generate($user->getUsername());
+            }
+
+
+            $twoFactorForm = new TwoFactorConfigForm();
+            $twoFactorForm->setUser($user);
+            $twoFactorForm->setTwoFactor($twoFactor);
+            $twoFactorForm->on(Form::ON_SUBMIT, function (TwoFactorConfigForm $form) {
+                if ($redirectUrl = $form->getRedirectUrl()) {
+                    $this->redirectNow($redirectUrl);
+                }
+            });
+            $twoFactorForm->handleRequest(ServerRequest::fromGlobals());
+
+            $this->view->twoFactorForm = $twoFactorForm;
         }
 
-        $twoFactorForm = new TwoFactorConfigForm();
-        $twoFactorForm->setUser($user);
-        $twoFactorForm->setTwoFactor($twoFactor);
-        $twoFactorForm->on(Form::ON_SUBMIT, function (TwoFactorConfigForm $form) {
-            if ($redirectUrl = $form->getRedirectUrl()) {
-                $this->redirectNow($redirectUrl);
-            }
-        });
-        $twoFactorForm->handleRequest(ServerRequest::fromGlobals());
-
-        $this->view->twoFactorForm = $twoFactorForm;
-
+        // #################################################################################### TODO remove this comment
 
         $form = new PreferenceForm();
         $form->setPreferences($user->getPreferences());
