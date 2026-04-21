@@ -58,14 +58,14 @@ The following shows a role definition from the configuration file mentioned abov
 [winadmin]
 users = "jdoe, janedoe"
 groups = "admin"
-permissions = "config/*, module/monitoring, monitoring/commands/schedule-check"
+permissions = "config/*, module/icingadb, icingadb/command/schedule-check"
 refusals = "config/authentication"
-monitoring/filter/objects = "host_name=*win*"
+icingadb/filter/objects = "host.name=*win*"
 ```
 
 This describes a role with the name `winadmin`. The users `jdoe` and `janedoe` are members of it. Just like the
 members of group `admin` are. Full configuration access is granted, except of the authentication configuration,
-which is forbidden. It also grants access to the *monitoring* module which includes the ability to re-schedule
+which is forbidden. It also grants access to the *icingadb* module which includes the ability to re-schedule
 checks, but only on objects related to hosts whose name contain `win`.
 
 #### Syntax
@@ -81,7 +81,7 @@ groups                    | Comma-separated list of **group names** whose users 
 permissions               | Comma-separated list of **permissions** granted by this role.
 refusals                  | Comma-separated list of **permissions** refused by this role.
 unrestricted              | If set to `1`, owners of this role are not restricted in any way (Default: `0`)
-monitoring/filter/objects | **Filter expression** that restricts the access to monitoring objects.
+icingadb/filter/objects   | **Filter expression** that restricts the access to icingadb objects.
 
 ### Administrative Roles
 
@@ -128,12 +128,7 @@ user/\*                      | allow all account related functionalities
 user/application/stacktraces | allow to adjust in the preferences whether to show stacktraces
 user/password-change         | allow password changes in the account preferences
 user/share/navigation        | allow to share navigation items
-module/`<moduleName>`        | allow access to module `<moduleName>` (e.g. `module/monitoring`)
-
-### Monitoring Module Permissions
-
-The built-in monitoring module defines an additional set of permissions, that
-is described in detail in the monitoring module documentation.
+module/`<moduleName>`        | allow access to module `<moduleName>` (e.g. `module/icingadb`)
 
 ## Restrictions
 
@@ -141,8 +136,8 @@ Restrictions can be used to define what a user can see by specifying an expressi
 data. By default, when no restrictions are defined, a user will be able to see the entire data that is available.
 
 The syntax of the expression used to define a particular restriction varies. This can be a comma-separated list of
-terms, or [a full-blown filter](06-Security.md#filter-expressions). For more details on particular restrictions,
-check the table below or the module's documentation providing the restriction.
+terms, or a full-blown filter. For more details on particular restrictions, check the table below or the module's
+documentation providing the restriction.
 
 ### General Restrictions
 
@@ -157,86 +152,4 @@ It is possible to reference the local username (without the domain part) of the 
 this, put the macro `$user.local_name$` in the restriction where you want it to appear.
 
 This can come in handy if you have e.g. an attribute on hosts or services defining which user is responsible for it:
-`_host_deputy=$user.local_name$|_service_deputy=$user.local_name$`
-
-### Filter Expressions
-
-Filters operate on columns. A complete list of all available filter columns on hosts and services can be found in
-the monitoring module documentation.
-
-Any filter expression that is allowed in the filtered view, is also an allowed filter expression.
-This means, that it is possible to define negations, wildcards, and even nested
-filter expressions containing AND and OR-Clauses.
-
-The filter expression will be **implicitly** added as an **AND-Clause** to each query on
-the filtered data. The following shows the filter expression `host_name=*win*` being applied on `monitoring/filter/objects`.
-
-
-Regular filter query:
-
-    AND-- service_problem = 1
-     |
-     +--- service_handled = 0
-
-
-With our restriction applied, any user affected by this restrictions will see the
-results of this query instead:
-
-
-    AND-- host_name = *win*
-     |
-     +--AND-- service_problem = 1
-         |
-         +--- service_handled = 0
-
-#### Stacking Filters
-
-When multiple roles assign restrictions to the same user, either directly or indirectly
-through a group, all filters will be combined using an **OR-Clause**, resulting in the final
-expression:
-
-
-       AND-- OR-- $FILTER1
-        |     |
-        |     +-- $FILTER2
-        |     |
-        |     +-- $FILTER3
-        |
-        +--AND-- service_problem = 1
-            |
-            +--- service_handled = 0
-
-
-As a result, a user is be able to see hosts that are matched by **ANY** of
-the filter expressions. The following examples will show the usefulness of this behavior:
-
-#### Example 1: Negation
-
-```
-[winadmin]
-groups = "windows-admins"
-monitoring/filter/objects = "host_name=*win*"
-```
-
-Will display only hosts and services whose host name contains  **win**.
-
-```
-[webadmin]
-groups = "web-admins"
-monitoring/filter/objects = "host_name!=*win*"
-```
-
-Will only match hosts and services whose host name does **not** contain **win**
-
-Notice that because of the behavior of two stacking filters, a user that is member of **windows-admins** and **web-admins**, will now be able to see both, Windows and non-Windows hosts and services.
-
-#### Example 2: Hostgroups
-
-```
-[unix-server]
-groups = "unix-admins"
-monitoring/filter/objects = "(hostgroup_name=bsd-servers|hostgroup_name=linux-servers)"
-```
-
-This role allows all members of the group unix-admins to see hosts and services
-that are part of the host-group linux-servers or the host-group bsd-servers.
+`host.vars.deputy=$user.local_name$|service.vars.deputy=$user.local_name$`
