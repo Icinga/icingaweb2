@@ -3,7 +3,7 @@
 This module is provided with the Icinga Web 2 package and does
 not need any extra installation step.
 
-## Enable the Module <a id="monitoring-module-enable"></a>
+## Enable the Module <a id="doc-module-enable"></a>
 
 Navigate to `Configuration` -> `Modules` -> `doc` and enable
 the module.

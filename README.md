@@ -12,8 +12,8 @@
 ## About
 
 **Icinga Web 2** is the next generation open source monitoring web interface, framework
-and command-line interface developed by the [Icinga Project](https://icinga.com/), supporting Icinga 2,
-Icinga Core and any other monitoring backend compatible with the IDO database.
+and command-line interface developed by the [Icinga GmbH](https://icinga.com/), supporting Icinga 2,
+Icinga DB Web and many more modules.
 
 ![Icinga Web 2 Monitoring Module with Graphite](doc/res/monitoring-module-preview.png "Icinga Web 2 Monitoring Module with Graphite")
 

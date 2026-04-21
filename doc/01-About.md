@@ -51,13 +51,9 @@ configuration like the [Director](https://github.com/Icinga/icingaweb2-module-di
 
 See [here](08-Modules.md#modules) for information on how to install and configure modules.
 
-### The monitoring module <a id="about-monitoring"></a>
+### Icinga DB Web
 
-> **Note for Icinga DB Users**
->
-> This module is only for the IDO backend. Use [Icinga DB Web](https://github.com/Icinga/icingadb-web) instead.
-
-This is the core module for most Icinga Web 2 users.
+[Icinga DB Web](https://icinga.com/docs/icinga-db-web/latest/) is the core module for most Icinga Web 2 users.
 
 It provides an intuitive user interface for monitoring with Icinga 2.
 There are lots of list and detail views (e.g. for hosts and services)
@@ -65,8 +61,6 @@ you can sort and filter depending on what you want to see.
 
 You can also control the monitoring process itself by sending external commands to Icinga.
 Most such actions (like rescheduling a check) can be done with just a single click in the UI.
-
-More details about this module can be found in [this chapter](../modules/monitoring/doc/01-About.md#monitoring-module-about).
 
 ### Documentation <a id="about-documentation"></a>
 

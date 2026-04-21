@@ -25,7 +25,6 @@
         <exclude-pattern>library/Icinga/File/Pdf.php</exclude-pattern>
         <exclude-pattern>library/Icinga/Util/LessParser.php</exclude-pattern>
         <exclude-pattern>modules/doc/library/Doc/Renderer/DocSectionRenderer.php</exclude-pattern>
-        <exclude-pattern>modules/monitoring/library/Monitoring/Plugin.php</exclude-pattern>
     </rule>
     <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
         <exclude-pattern>*/test/php/*</exclude-pattern>
@@ -45,8 +44,5 @@
         <exclude-pattern>*/application/views/helpers/*</exclude-pattern>
         <exclude-pattern>*/library/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php</exclude-pattern>
     </rule>
-    <rule ref="Generic.Files.LineLength.TooLong">
-        <exclude-pattern>*/modules/monitoring/library/Monitoring/Backend/Ido/Query/*</exclude-pattern>
-        <exclude-pattern>*/modules/monitoring/library/Monitoring/Backend/Livestatus/Query/*</exclude-pattern>
-    </rule>
+    <rule ref="Generic.Files.LineLength.TooLong"/>
 </ruleset>
