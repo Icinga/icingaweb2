@@ -10,46 +10,27 @@ use Icinga\Authentication\TwoFactor;
 
 abstract class TwoFactorHook implements TwoFactor
 {
-    /**
-     * Load the implementation from the method name
-     *
-     * @param string $name
-     *
-     * @return ?TwoFactor
-     */
-    public static function fromName(string $name): ?TwoFactor
-    {
-        foreach (static::all() as $twoFactorMethod) {
-            if ($twoFactorMethod->getName() === $name) {
-                return $twoFactorMethod;
-            }
-        }
+    public const NAME = 'TwoFactor';
 
-        return null;
+    /**
+     * Register the class as a two-factor hook implementation
+     *
+     * Call this on your implementation during module initialization to make Icinga Web aware of your hook.
+     */
+    public static function register(): void
+    {
+        Hook::register(static::NAME, static::class, static::class, true);
     }
 
     /**
-     * Load two-factor method configured in the database
+     * Get all registered implementations sorted alphabetically by their name
      *
-     * @return ?TwoFactor Return the configured two-factor method or null if no method is configured
-     */
-    public static function loadFromDb(): ?TwoFactor
-    {
-        // TODO (jr): get method from database
-        $dbMethod = '...';
-
-        return static::fromName($dbMethod);
-    }
-
-    /**
-     * Get all registered implementations sorted by the method names
-     *
-     * @return array<string, static>
+     * @return TwoFactor[]
      */
     public static function all(): array
     {
         $twoFactorMethods = [];
-        foreach (Hook::all('TwoFactor') as $method) {
+        foreach (Hook::all(static::NAME) as $method) {
             $twoFactorMethods[$method->getName()] = $method;
         }
         ksort($twoFactorMethods, SORT_STRING | SORT_FLAG_CASE);
@@ -58,12 +39,46 @@ abstract class TwoFactorHook implements TwoFactor
     }
 
     /**
-     * Register the class as a two-factor hook implementation
+     * Get the alphabetically first implementation, or null if none are registered
      *
-     * Call this method on your implementation during module initialization to make Icinga Web aware of your hook.
+     * @return ?TwoFactor
      */
-    public static function register(): void
+    public static function first(): ?TwoFactor
     {
-        Hook::register('TwoFactor', static::class, static::class, true);
+        return static::all()[0] ?? null;
+    }
+
+    /**
+     * Get the implementation with the given name, or null if no such implementation is registered
+     *
+     * @param string $name The value returned by {@link TwoFactor::getName()} of the desired implementation
+     *
+     * @return ?TwoFactor
+     */
+    public static function fromName(string $name): ?TwoFactor
+    {
+        foreach (static::all() as $method) {
+            if ($method->getName() === $name) {
+                return $method;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the implementation the currently authenticated user is enrolled in, or null if they are not enrolled
+     *
+     * @return ?TwoFactor
+     */
+    public static function loadEnrolled(): ?TwoFactor
+    {
+        foreach (static::all() as $method) {
+            if ($method->isEnrolled()) {
+                return $method;
+            }
+        }
+
+        return null;
     }
 }
