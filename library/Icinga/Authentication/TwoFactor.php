@@ -7,6 +7,7 @@ namespace Icinga\Authentication;
 
 use Icinga\Exception\ConfigurationError;
 use Icinga\User;
+use ipl\Stdlib\Contract\Validator;
 use ipl\Web\Compat\CompatForm;
 
 interface TwoFactor
@@ -30,11 +31,11 @@ interface TwoFactor
     /**
      * Get whether a user is enrolled in this 2FA method
      *
-     * Implementations typically query the database for a stored credential (secret, key, ...).
-     * Returns false if the lookup fails, so callers can treat an unavailable backend
-     * the same as "not yet enrolled".
+     * If $user is null, the currently authenticated user will be used. Implementations typically
+     * query the database for a stored credential (secret, key, ...). Returns false if the lookup
+     * fails, so callers can treat an unavailable backend the same as "not yet enrolled".
      *
-     * @param ?User $user The user to check for, if not set the currently authenticated user will be used
+     * @param ?User $user The user to check for
      *
      * @return bool
      */
@@ -93,4 +94,9 @@ interface TwoFactor
      * @param CompatForm $form The successfully submitted form
      */
     public function onSuccessEnrollmentForm(CompatForm $form): void;
+
+    /**
+     * @return Validator[] Validators to validate the challenge input
+     */
+    public function getChallengeFormValidators(): array;
 }

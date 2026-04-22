@@ -7,10 +7,27 @@ namespace Icinga\Application\Hook;
 
 use Icinga\Application\Hook;
 use Icinga\Authentication\TwoFactor;
+use Icinga\User;
 
 abstract class TwoFactorHook implements TwoFactor
 {
     public const NAME = 'TwoFactor';
+
+    /** @var ?User The user this instance was loaded for, set by {@link loadEnrolled()} */
+    protected ?User $user = null;
+
+    /**
+     * Set the user this instance is acting for
+     *
+     * Called automatically by {@link loadEnrolled()}. Implementations can read $this->user
+     * in methods like verify() where no user parameter is available.
+     *
+     * @param ?User $user
+     */
+    public function setUser(?User $user): void
+    {
+        $this->user = $user;
+    }
 
     /**
      * Register the class as a two-factor hook implementation
@@ -67,14 +84,20 @@ abstract class TwoFactorHook implements TwoFactor
     }
 
     /**
-     * Get the implementation the currently authenticated user is enrolled in, or null if they are not enrolled
+     * Get the implementation a user is enrolled in, or null if they are not enrolled
+     *
+     * If $user is null, the currently authenticated user is used.
+     *
+     * @param ?User $user The user to check for
      *
      * @return ?TwoFactor
      */
-    public static function loadEnrolled(): ?TwoFactor
+    public static function loadEnrolled(?User $user = null): ?TwoFactor
     {
         foreach (static::all() as $method) {
-            if ($method->isEnrolled()) {
+            if ($method->isEnrolled($user)) {
+                $method->setUser($user);
+
                 return $method;
             }
         }

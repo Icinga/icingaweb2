@@ -8,6 +8,7 @@ namespace Icinga\Forms\Authentication;
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\AuthenticationHook;
+use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
@@ -15,7 +16,6 @@ use Icinga\Authentication\TwoFactorTotp;
 use Icinga\Common\Database;
 use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\User;
-use Icinga\Web\Form\Validator\TotpTokenValidator;
 use Icinga\Web\RememberMe;
 use Icinga\Web\Response;
 use Icinga\Web\Session;
@@ -135,6 +135,11 @@ class LoginForm extends CompatForm
     /** @return void */
     public function assembleTwoFactorElements(): void
     {
+        $session = Session::getSession();
+        /** @var User $user */
+        $user = $session->get('2fa_temporary_user');
+        $twoFactorMethod = TwoFactorHook::loadEnrolled($user);
+
         $this->addElement(
             'text',
             'token',
@@ -148,7 +153,7 @@ class LoginForm extends CompatForm
                     'RenderElement' => new RenderElementDecorator(),
                     'Errors'        => ['name' => 'Errors', 'options' => ['class' => 'errors']]
                 ],
-                'validators'     => [new TotpTokenValidator()]
+                'validators' => $twoFactorMethod->getChallengeFormValidators()
             ]
         );
 
@@ -187,7 +192,7 @@ class LoginForm extends CompatForm
         $this->addCsrfCounterMeasure(Session::getSession()->getId());
         $this->addElement($this->createUidElement());
 
-        if (Session::getSession()->get('2fa_must_challenge_token', false)) {
+        if (Session::getSession()->get('2fa_must_challenge', false)) {
             $this->assembleTwoFactorElements();
         } else {
             $this->assembleLoginElements();
@@ -235,7 +240,7 @@ class LoginForm extends CompatForm
                 $username = $this->getElement('username')->getValue();
                 $user = new User($username);
                 // Set 2FA status on the user object depending on whether a secret exists for the user
-                $user->setTwoFactorEnabled(TwoFactorTotp::hasDbSecret($this->getDb(), $username));
+                $user->setTwoFactorEnabled(TwoFactorHook::loadEnrolled($user) !== null);
                 if (! $user->hasDomain()) {
                     $user->setDomain(Config::app()->get('authentication', 'default_domain'));
                 }
@@ -246,7 +251,7 @@ class LoginForm extends CompatForm
                         $auth->setAuthenticated($user);
                     } else {
                         $session = Session::getSession();
-                        $session->set('2fa_must_challenge_token', true);
+                        $session->set('2fa_must_challenge', true);
                         $session->set('2fa_temporary_user', $user);
 
                         if ($this->getElement('rememberme')->isChecked()) {
@@ -309,10 +314,10 @@ class LoginForm extends CompatForm
                 $session = Session::getSession();
                 /** @var User $user */
                 $user = $session->get('2fa_temporary_user');
-                $twoFactor = TwoFactorTotp::loadFromDb($this->getDb(), $user->getUsername());
-                if ($this->getElement('token') && $twoFactor->verify($this->getValue('token'))) {
+                $twoFactorMethod = TwoFactorHook::loadEnrolled($user);
+                if ($this->getElement('token') && $twoFactorMethod->verify($this->getValue('token'))) {
                     $user->setTwoFactorSuccessful();
-                    $session->delete('2fa_must_challenge_token');
+                    $session->delete('2fa_must_challenge');
                     Auth::getInstance()->setAuthenticated($user);
 
                     if ($rememberMe = $session->get('2fa_remember_me_cookie')) {
