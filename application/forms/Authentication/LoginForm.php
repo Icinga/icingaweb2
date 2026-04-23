@@ -333,8 +333,7 @@ class LoginForm extends CompatForm
                     AuthenticationHook::triggerLogin($user);
 
                     $this->getResponse()->setRerenderLayout(true);
-
-                    $this->setRedirectUrl(Url::fromRequest());
+                    $this->setRedirectUrl($this->createRedirectUrl());
 
                     return;
                 }
