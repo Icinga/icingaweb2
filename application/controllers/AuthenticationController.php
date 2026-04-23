@@ -88,8 +88,6 @@ class AuthenticationController extends Controller
                 }
             });
 
-        $skip2fa = false;
-
         if (RememberMe::hasCookie() && $this->hasDb()) {
             $authenticated = false;
             try {
@@ -99,7 +97,6 @@ class AuthenticationController extends Controller
                     $rememberMe = $rememberMeOld->renew();
                     $this->getResponse()->setCookie($rememberMe->getCookie());
                     $rememberMe->persist($rememberMeOld->getAesCrypt()->getIV());
-                    $skip2fa = true;
                 }
             } catch (RuntimeException $e) {
                 Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
@@ -112,7 +109,7 @@ class AuthenticationController extends Controller
             }
         }
 
-        if ($this->Auth()->isAuthenticated($skip2fa)) {
+        if ($this->Auth()->isAuthenticated()) {
             // Call provided AuthenticationHook(s) when login action is called
             // but icinga web user is already authenticated
             AuthenticationHook::triggerLogin($this->Auth()->getUser());
