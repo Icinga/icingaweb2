@@ -42,28 +42,6 @@ interface TwoFactor
     public function isEnrolled(?User $user = null): bool;
 
     /**
-     * Enroll the currently authenticated user in this 2FA method
-     *
-     * Persists whatever credential was assembled during {@link assembleEnrollmentForm()} —
-     * e.g. for TOTP this would be the shared secret. Should only be called after a successful
-     * {@link verify()} so the credential is confirmed to work before it is stored. After a
-     * successful call of this method, {@link isEnrolled()} must return true for the same user.
-     *
-     * @throws ConfigurationError If persisting the credential fails
-     */
-    public function enroll(): void;
-
-    /**
-     * Unenroll the currently authenticated user from this 2FA method
-     *
-     * Removes the stored credential from the backend. After a successful call of this method,
-     * {@link isEnrolled()} must return false for the same user.
-     *
-     * @throws ConfigurationError If removing the credential fails
-     */
-    public function unenroll(): void;
-
-    /**
      * Verify a 2FA token provided by the user
      *
      * Called both during login (to gate access) and during enrollment (to confirm
