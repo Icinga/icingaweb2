@@ -6,6 +6,7 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Config;
+use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Authentication\Auth;
 use Icinga\Common\Database;
 use Icinga\Crypt\AesCrypt;
@@ -238,6 +239,7 @@ class RememberMe
         $authChain = $auth->getAuthChain();
         $authChain->setSkipExternalBackends(true);
         $user = new User($this->username);
+        $user->setTwoFactorEnabled(TwoFactorHook::loadEnrolled($user) !== null);
         if (! $user->hasDomain()) {
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
