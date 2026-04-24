@@ -12,6 +12,15 @@ use ipl\Web\Compat\CompatForm;
 
 interface TwoFactor
 {
+    /** @var string Name of the token text input in the verification form */
+    const TOKEN_INPUT = '2fa_token';
+
+    /** @var string Name of the verify submit button in the verification form */
+    const SUBMIT_VERIFY_2FA = 'btn_submit_verify_2fa';
+
+    /** @var string Name of the cancel submit button in the verification form */
+    const SUBMIT_CANCEL_2FA = 'btn_submit_cancel_2fa';
+
     /**
      * Get the unique machine-readable identifier for this 2FA method
      *
@@ -66,7 +75,7 @@ interface TwoFactor
      * Handle a successful enrollment form submission
      *
      * Called from the enrollment base form's {@link CompatForm::onSuccess()} handler. Implementations
-     * read the submitted values, call {@link enroll()} or {@link unenroll()} as appropriate, and set
+     * read the submitted values, persist or remove the credential internally as appropriate, and set
      * a redirect URL on the form via {@link CompatForm::setRedirectUrl()}.
      *
      * @param CompatForm $form The successfully submitted form
@@ -74,7 +83,15 @@ interface TwoFactor
     public function onSuccessEnrollmentForm(CompatForm $form): void;
 
     /**
-     * @return Validator[] Validators to validate the challenge input
+     * Add the method-specific form elements to the login form
+     *
+     * Called from the login form's assemble method when a 2FA challenge is required.
+     * Implementations add the token input using {@link TOKEN_INPUT} as its name and
+     * the verify submit button using {@link SUBMIT_VERIFY_2FA} as its name. To cancel
+     * the verification process a cancel button using {@link SUBMIT_CANCEL_2FA} as its
+     * name should be created.
+     *
+     * @param CompatForm $form The form to add elements to
      */
-    public function getChallengeFormValidators(): array;
+    public function assembleVerificationForm(CompatForm $form): void;
 }

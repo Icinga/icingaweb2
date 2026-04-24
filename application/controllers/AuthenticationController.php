@@ -9,11 +9,13 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\ClassLoader;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Hook\LoginButtonHook;
+use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\LoginButton;
 use Icinga\Authentication\LoginButtonForm;
 use Icinga\Authentication\Auth;
+use Icinga\Authentication\TwoFactor;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
@@ -63,7 +65,7 @@ class AuthenticationController extends Controller
             })
             ->on(Form::ON_SENT, function (LoginForm $form) {
                 $isCsrfValid = $form->getElement('CSRFToken')->isValid();
-                $isCancelPressed = $form->getPressedSubmitElement()?->getName() === $form::SUBMIT_CANCEL_2FA;
+                $isCancelPressed = $form->getPressedSubmitElement()?->getName() === TwoFactor::SUBMIT_CANCEL_2FA;
 
                 if ($isCsrfValid && $isCancelPressed) {
                     Session::getSession()->purge();

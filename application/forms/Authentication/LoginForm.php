@@ -12,6 +12,7 @@ use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
+use Icinga\Authentication\TwoFactor;
 use Icinga\Authentication\TwoFactorTotp;
 use Icinga\Common\Database;
 use Icinga\Exception\Http\HttpBadRequestException;
@@ -42,12 +43,6 @@ class LoginForm extends CompatForm
     /** @var string */
     const SUBMIT_LOGIN = 'btn_submit_login';
 
-    /** @var string */
-    const SUBMIT_VERIFY_2FA = 'btn_submit_verify_2fa';
-
-    /** @var string */
-    const SUBMIT_CANCEL_2FA = 'btn_submit_cancel_2fa';
-
     public function __construct()
     {
         $this->setAttribute('name', 'form_login');
@@ -63,7 +58,11 @@ class LoginForm extends CompatForm
         return Icinga::app()->getFrontController()->getResponse();
     }
 
-    /** @return void */
+    /**
+     * Assemble the login form elements
+     *
+     * @return void
+     */
     public function assembleLoginElements(): void
     {
         $this->addElement(
@@ -132,68 +131,15 @@ class LoginForm extends CompatForm
         );
     }
 
-    /** @return void */
-    public function assembleTwoFactorElements(): void
-    {
-        $session = Session::getSession();
-        /** @var User $user */
-        $user = $session->get('2fa_temporary_user');
-        $twoFactorMethod = TwoFactorHook::loadEnrolled($user);
-
-        $this->addElement(
-            'text',
-            'token',
-            [
-                'required'       => true,
-                'class'          => 'autofocus content-centered',
-                'placeholder'    => $this->translate('Please enter your 2FA token'),
-                'autocomplete'   => 'off',
-                'autocapitalize' => 'off',
-                'decorators'     => [
-                    'RenderElement' => new RenderElementDecorator(),
-                    'Errors'        => ['name' => 'Errors', 'options' => ['class' => 'errors']]
-                ],
-                'validators' => $twoFactorMethod->getChallengeFormValidators()
-            ]
-        );
-
-        $this->addElement(
-            'submit',
-            static::SUBMIT_VERIFY_2FA,
-            [
-                'data-progress-label' => $this->translate('Verifying'),
-                'label'               => $this->translate('Verify'),
-            ]
-        );
-
-        $this->addElement(
-            'submit',
-            static::SUBMIT_CANCEL_2FA,
-            [
-                'ignore'              => true,
-                'formnovalidate'      => true,
-                'class'               => 'btn-cancel',
-                'label'               => $this->translate('Cancel'),
-                'data-progress-label' => $this->translate('Canceling')
-            ]
-        );
-
-        $this->addElement(
-            'hidden',
-            'redirect',
-            [
-                'value' => Url::fromRequest()->getParam('redirect')
-            ]
-        );
-    }
-
     protected function assemble(): void
     {
         $this->addCsrfCounterMeasure(Session::getSession()->getId());
         $this->addElement($this->createUidElement());
+        $session = Session::getSession();
 
-        if (Session::getSession()->get('2fa_must_challenge', false)) {
-            $this->assembleTwoFactorElements();
+        if ($session->get('2fa_must_challenge', false)) {
+            TwoFactorHook::loadEnrolled($session->get('2fa_temporary_user'))
+                ->assembleVerificationForm($this);
         } else {
             $this->assembleLoginElements();
         }
@@ -239,7 +185,6 @@ class LoginForm extends CompatForm
                 $authChain->setSkipExternalBackends(true);
                 $username = $this->getElement('username')->getValue();
                 $user = new User($username);
-                // Set 2FA status on the user object depending on whether a secret exists for the user
                 $user->setTwoFactorEnabled(TwoFactorHook::loadEnrolled($user) !== null);
                 if (! $user->hasDomain()) {
                     $user->setDomain(Config::app()->get('authentication', 'default_domain'));
@@ -310,12 +255,15 @@ class LoginForm extends CompatForm
 
                 break;
 
-            case static::SUBMIT_VERIFY_2FA:
+            case TwoFactor::SUBMIT_VERIFY_2FA:
                 $session = Session::getSession();
                 /** @var User $user */
                 $user = $session->get('2fa_temporary_user');
                 $twoFactorMethod = TwoFactorHook::loadEnrolled($user);
-                if ($this->getElement('token') && $twoFactorMethod->verify($this->getValue('token'))) {
+                if (
+                    $this->getElement(TwoFactor::TOKEN_INPUT)
+                    && $twoFactorMethod->verify($this->getValue(TwoFactor::TOKEN_INPUT))
+                ) {
                     $user->setTwoFactorSuccessful();
                     $session->delete('2fa_must_challenge');
                     Auth::getInstance()->setAuthenticated($user);
@@ -338,7 +286,7 @@ class LoginForm extends CompatForm
                     return;
                 }
 
-                $this->getElement('token')->addMessage($this->translate('Token is invalid!'));
+                $this->getElement(TwoFactor::TOKEN_INPUT)->addMessage($this->translate('Token is invalid!'));
         }
 
         // Display the messages that were added to form or form elements
