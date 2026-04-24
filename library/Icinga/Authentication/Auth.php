@@ -471,8 +471,5 @@ class Auth
         // Load the user's roles
         $admissionLoader = new AdmissionLoader();
         $admissionLoader->applyRoles($user);
-
-//        // Set 2FA status on the user object depending on whether a secret exists for the user
-//        $user->setTwoFactorEnabled(TwoFactorTotp::hasDbSecret($this->getDb(), $user->getUsername()));
     }
 }
