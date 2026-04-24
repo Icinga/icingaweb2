@@ -6,6 +6,7 @@
 namespace Icinga\Application\Hook;
 
 use Icinga\Application\Hook;
+use Icinga\Authentication\Auth;
 use Icinga\Authentication\TwoFactor;
 use Icinga\User;
 
@@ -103,5 +104,18 @@ abstract class TwoFactorHook implements TwoFactor
         }
 
         return null;
+    }
+
+    /**
+     * Get the username for the user this instance is acting for
+     *
+     * Returns the username from {@link $user} when set (login/verification flow), or falls back
+     * to the session's authenticated user (enrollment flow). Returns null if neither is available.
+     *
+     * @return ?string
+     */
+    protected function getUsername(): ?string
+    {
+        return $this->user?->getUsername() ?? Auth::getInstance()->getUser()?->getUsername();
     }
 }
