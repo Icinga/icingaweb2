@@ -63,24 +63,38 @@ interface TwoFactor
     public function verify(string $token): bool;
 
     /**
+     * Verify the submitted credential and persist it for the currently authenticated user
+     *
+     * Called from the enrollment form's {@link CompatForm::onSuccess()} handler when the enroll
+     * button is pressed. Read the method-specific values from $form, verify that the credential
+     * works, and store it on success.
+     *
+     * @param CompatForm $form The successfully submitted enrollment form
+     *
+     * @return bool true if the credential was verified and stored, false if verification failed
+     *
+     * @throws ConfigurationError If the credential cannot be persisted
+     */
+    public function enroll(CompatForm $form): bool;
+
+    /**
+     * Remove the stored credential for the currently authenticated user
+     *
+     * Called from the enrollment form's {@link CompatForm::onSuccess()} handler when the unenroll
+     * button is pressed. After this call {@link isEnrolled()} will return false for the same user.
+     *
+     * @throws ConfigurationError If the credential cannot be removed
+     */
+    public function unenroll(): void;
+
+    /**
      * Add the method-specific form elements to the enrollment form
      *
      * Called from the enrollment base form's {@link CompatForm::assemble()} method.
      *
      * @param CompatForm $form The form to add elements to
      */
-    public function assembleEnrollmentForm(CompatForm $form): void;
-
-    /**
-     * Handle a successful enrollment form submission
-     *
-     * Called from the enrollment base form's {@link CompatForm::onSuccess()} handler. Implementations
-     * read the submitted values, persist or remove the credential internally as appropriate, and set
-     * a redirect URL on the form via {@link CompatForm::setRedirectUrl()}.
-     *
-     * @param CompatForm $form The successfully submitted form
-     */
-    public function onSuccessEnrollmentForm(CompatForm $form): void;
+    public function assembleEnrollmentFormElements(CompatForm $form): void;
 
     /**
      * Add the method-specific form elements to the login form
