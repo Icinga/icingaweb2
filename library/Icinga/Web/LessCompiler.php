@@ -6,10 +6,10 @@
 namespace Icinga\Web;
 
 use Exception;
-use Icinga\Application\Logger;
 use ipl\Web\Less\CssVarVisitor;
 use ipl\Web\Less\DetachedRulesetCallVisitor;
 use ipl\Web\Less\WikimediaLessCompiler;
+use RuntimeException;
 
 /**
  * Compile Less into CSS
@@ -36,10 +36,12 @@ class LessCompiler
      * @param string $lessFile Path to the Less or CSS file
      *
      * @return $this
+     *
+     * @throws RuntimeException If the file does not exist or is not readable
      */
     public function addLessFile(string $lessFile): static
     {
-        $this->lessFiles[] = realpath($lessFile);
+        $this->lessFiles[] = $this->resolveReadableFile($lessFile);
 
         return $this;
     }
@@ -51,6 +53,8 @@ class LessCompiler
      * @param string $lessFile Path to the Less or CSS file
      *
      * @return $this
+     *
+     * @throws RuntimeException If the file does not exist or is not readable
      */
     public function addModuleLessFile(string $moduleName, string $lessFile): static
     {
@@ -58,7 +62,7 @@ class LessCompiler
             $this->moduleLessFiles[$moduleName] = [];
         }
 
-        $this->moduleLessFiles[$moduleName][] = realpath($lessFile);
+        $this->moduleLessFiles[$moduleName][] = $this->resolveReadableFile($lessFile);
 
         return $this;
     }
@@ -93,14 +97,12 @@ class LessCompiler
      * @param ?string $theme Path to the Less theme file, or null to unset
      *
      * @return $this
+     *
+     * @throws RuntimeException If the file does not exist or is not readable
      */
     public function setTheme(?string $theme): static
     {
-        if ($theme === null || (is_file($theme) && is_readable($theme))) {
-            $this->theme = $theme;
-        } else {
-            Logger::error('Can\t load theme %s. Make sure that the theme exists and is readable', $theme);
-        }
+        $this->theme = $theme === null ? null : $this->resolveReadableFile($theme);
 
         return $this;
     }
@@ -111,16 +113,33 @@ class LessCompiler
      * @param string $themeMode Path to the Less theme mode file
      *
      * @return $this
+     *
+     * @throws RuntimeException If the file does not exist or is not readable
      */
     public function setThemeMode(string $themeMode): static
     {
-        if (is_file($themeMode) && is_readable($themeMode)) {
-            $this->themeMode = $themeMode;
-        } else {
-            Logger::error('Can\t load theme mode %s. Make sure that the theme mode exists and is readable', $themeMode);
-        }
+        $this->themeMode = $this->resolveReadableFile($themeMode);
 
         return $this;
+    }
+
+    /**
+     * Resolve a file path to its canonical form and verify it is readable
+     *
+     * @param string $path Path to the Less or CSS file
+     *
+     * @return string Canonical path to the file
+     *
+     * @throws RuntimeException If the file does not exist or is not readable
+     */
+    protected function resolveReadableFile(string $path): string
+    {
+        $resolved = realpath($path);
+        if ($resolved !== false && is_file($resolved) && is_readable($resolved)) {
+            return $resolved;
+        }
+
+        throw new RuntimeException("Can't load Less file $path. Make sure that the file exists and is readable");
     }
 
     /**
