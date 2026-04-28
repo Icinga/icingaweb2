@@ -9,6 +9,7 @@ use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Authentication\TwoFactor;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
+use ipl\Html\FormElement\FieldsetElement;
 use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Common\FormUid;
 use ipl\Web\Compat\CompatForm;
@@ -62,9 +63,15 @@ class TwoFactorEnrollmentForm extends CompatForm
             return;
         }
 
-        if ($twoFactor = TwoFactorHook::fromName($this->getPopulatedValue(static::TWO_FACTOR_METHOD_KEY) ?? '')) {
-            $twoFactor->assembleEnrollmentFormElements($this);
+        $twoFactor = TwoFactorHook::fromName($this->getPopulatedValue(static::TWO_FACTOR_METHOD_KEY) ?? '');
+
+        if (! $twoFactor) {
+            return;
         }
+
+        $configFieldset = new FieldsetElement($twoFactor->getName());
+        $this->addElement($configFieldset);
+        $twoFactor->assembleEnrollmentFormElements($configFieldset);
 
         $this->addElement('submit', static::SUBMIT_ENROLL, [
             'label'               => $this->translate('Enroll'),
@@ -78,7 +85,9 @@ class TwoFactorEnrollmentForm extends CompatForm
 
         switch ($this->getPressedSubmitElement()?->getName()) {
             case static::SUBMIT_ENROLL:
-                if (! $twoFactor->enroll($this)) {
+                /** @var FieldsetElement $configFieldset */
+                $configFieldset = $this->getElement($twoFactor->getName());
+                if (! $twoFactor->enroll($configFieldset)) {
                     Notification::error($this->translate('The verification failed. Please try again.'));
 
                     // Don't redirect in this case, as the user might want to try again.

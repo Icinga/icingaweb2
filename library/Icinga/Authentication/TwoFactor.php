@@ -7,6 +7,7 @@ namespace Icinga\Authentication;
 
 use Icinga\Exception\ConfigurationError;
 use Icinga\User;
+use ipl\Html\FormElement\FieldsetElement;
 use ipl\Stdlib\Contract\Validator;
 use ipl\Web\Compat\CompatForm;
 
@@ -66,16 +67,17 @@ interface TwoFactor
      * Verify the submitted credential and persist it for the currently authenticated user
      *
      * Called from the enrollment form's {@link CompatForm::onSuccess()} handler when the enroll
-     * button is pressed. Read the method-specific values from $form, verify that the credential
-     * works, and store it on success.
+     * button is pressed. Read the method-specific values from $fieldset, verify that the
+     * credential works, and store it on success.
      *
-     * @param CompatForm $form The successfully submitted enrollment form
+     * @param FieldsetElement $fieldset The method-specific fieldset containing the submitted
+     *   credential elements
      *
      * @return bool true if the credential was verified and stored, false if verification failed
      *
      * @throws ConfigurationError If the credential cannot be persisted
      */
-    public function enroll(CompatForm $form): bool;
+    public function enroll(FieldsetElement $fieldset): bool;
 
     /**
      * Remove the stored credential for the currently authenticated user
@@ -88,13 +90,13 @@ interface TwoFactor
     public function unenroll(): void;
 
     /**
-     * Add the method-specific form elements to the enrollment form
+     * Add the method-specific fieldset to the enrollment form
      *
-     * Called from the enrollment base form's {@link CompatForm::assemble()} method.
+     * Called from the enrollment form's {@link CompatForm::assemble()} method.
      *
-     * @param CompatForm $form The form to add elements to
+     * @param FieldsetElement $fieldset The method-specific fieldset to add elements to
      */
-    public function assembleEnrollmentFormElements(CompatForm $form): void;
+    public function assembleEnrollmentFormElements(FieldsetElement $fieldset): void;
 
     /**
      * Add the method-specific form elements to the login form
