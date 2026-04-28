@@ -231,11 +231,8 @@ apt-get install icingaweb2 icingacli
 #### Ubuntu
 <!-- {% endif %} -->
 ```bash
-apt-get install icingaweb2 libapache2-mod-php icingacli
+apt-get install icingaweb2 icingacli
 ```
-
-The additional package `libapache2-mod-php` is necessary on Ubuntu to automatically
-install a web server and PHP and make Icinga Web 2 work out-of-the-box.
 <!-- {% endif %} -->
 
 <!-- {% if centos or rhel or amazon_linux %} -->
