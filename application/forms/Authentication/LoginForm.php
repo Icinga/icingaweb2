@@ -12,8 +12,6 @@ use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
-use Icinga\Authentication\TwoFactor;
-use Icinga\Authentication\TwoFactorTotp;
 use Icinga\Common\Database;
 use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\User;
@@ -43,6 +41,15 @@ class LoginForm extends CompatForm
     /** @var string */
     const SUBMIT_LOGIN = 'btn_submit_login';
 
+    /** @var string Name of the token text input in the verification form */
+    const TOKEN_INPUT = '2fa_token';
+
+    /** @var string Name of the verify submit button in the verification form */
+    const SUBMIT_VERIFY_2FA = 'btn_submit_verify_2fa';
+
+    /** @var string Name of the cancel submit button in the verification form */
+    const SUBMIT_CANCEL_2FA = 'btn_submit_cancel_2fa';
+
     public function __construct()
     {
         $this->setAttribute('name', 'form_login');
@@ -63,7 +70,7 @@ class LoginForm extends CompatForm
      *
      * @return void
      */
-    public function assembleLoginElements(): void
+    protected function assembleLoginElements(): void
     {
         $this->addElement(
             'text',
@@ -131,6 +138,34 @@ class LoginForm extends CompatForm
         );
     }
 
+    protected function assembleTwoFactorElements(): void
+    {
+        $this->addElement('text', static::TOKEN_INPUT, [
+            'required'       => true,
+            'class'          => 'autofocus content-centered',
+            'placeholder'    => $this->translate('Please enter your 2FA token'),
+            'autocomplete'   => 'off',
+            'autocapitalize' => 'off',
+            'decorators'     => [
+                'RenderElement' => new RenderElementDecorator(),
+                'Errors'        => ['name' => 'Errors', 'options' => ['class' => 'errors']]
+            ]
+        ]);
+
+        $this->addElement('submit', static::SUBMIT_VERIFY_2FA, [
+            'data-progress-label' => $this->translate('Verifying'),
+            'label'               => $this->translate('Verify')
+        ]);
+
+        $this->addElement('submit', static::SUBMIT_CANCEL_2FA, [
+            'ignore'              => true,
+            'formnovalidate'      => true,
+            'class'               => 'btn-cancel',
+            'label'               => $this->translate('Cancel'),
+            'data-progress-label' => $this->translate('Canceling')
+        ]);
+    }
+
     protected function assemble(): void
     {
         $this->addCsrfCounterMeasure(Session::getSession()->getId());
@@ -138,8 +173,7 @@ class LoginForm extends CompatForm
         $session = Session::getSession();
 
         if ($session->get('2fa_must_challenge', false)) {
-            TwoFactorHook::loadEnrolled($session->get('2fa_temporary_user'))
-                ->assembleVerificationForm($this);
+            $this->assembleTwoFactorElements();
         } else {
             $this->assembleLoginElements();
         }
@@ -255,14 +289,14 @@ class LoginForm extends CompatForm
 
                 break;
 
-            case TwoFactor::SUBMIT_VERIFY_2FA:
+            case static::SUBMIT_VERIFY_2FA:
                 $session = Session::getSession();
                 /** @var User $user */
                 $user = $session->get('2fa_temporary_user');
                 $twoFactorMethod = TwoFactorHook::loadEnrolled($user);
                 if (
-                    $this->getElement(TwoFactor::TOKEN_INPUT)
-                    && $twoFactorMethod->verify($this->getValue(TwoFactor::TOKEN_INPUT))
+                    $this->getElement(static::TOKEN_INPUT)
+                    && $twoFactorMethod->verify($this->getValue(static::TOKEN_INPUT))
                 ) {
                     $user->setTwoFactorSuccessful();
                     $session->delete('2fa_must_challenge');
@@ -286,7 +320,7 @@ class LoginForm extends CompatForm
                     return;
                 }
 
-                $this->getElement(TwoFactor::TOKEN_INPUT)->addMessage($this->translate('Token is invalid!'));
+                $this->getElement(static::TOKEN_INPUT)->addMessage($this->translate('Token is invalid!'));
         }
 
         // Display the messages that were added to form or form elements
