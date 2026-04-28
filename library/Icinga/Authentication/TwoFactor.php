@@ -6,6 +6,7 @@
 namespace Icinga\Authentication;
 
 use Icinga\Exception\ConfigurationError;
+use Icinga\Forms\Account\TwoFactorEnrollmentForm;
 use Icinga\User;
 use ipl\Html\FormElement\FieldsetElement;
 use ipl\Stdlib\Contract\Validator;
@@ -66,9 +67,9 @@ interface TwoFactor
     /**
      * Verify the submitted credential and persist it for the currently authenticated user
      *
-     * Called from the enrollment form's {@link CompatForm::onSuccess()} handler when the enroll
-     * button is pressed. Read the method-specific values from $fieldset, verify that the
-     * credential works, and store it on success.
+     * Called from {@link TwoFactorEnrollmentForm::onSuccess()} when the enroll button is
+     * pressed. Read the method-specific values from $fieldset, verify that the credential
+     * works, and store it on success.
      *
      * @param FieldsetElement $fieldset The method-specific fieldset containing the submitted
      *   credential elements
@@ -82,8 +83,8 @@ interface TwoFactor
     /**
      * Remove the stored credential for the currently authenticated user
      *
-     * Called from the enrollment form's {@link CompatForm::onSuccess()} handler when the unenroll
-     * button is pressed. After this call {@link isEnrolled()} will return false for the same user.
+     * Called from {@link TwoFactorEnrollmentForm::onSuccess()} when the unenroll button is
+     * pressed. After this call {@link isEnrolled()} will return false for the same user.
      *
      * @throws ConfigurationError If the credential cannot be removed
      */
@@ -92,7 +93,7 @@ interface TwoFactor
     /**
      * Add the method-specific fieldset to the enrollment form
      *
-     * Called from the enrollment form's {@link CompatForm::assemble()} method.
+     * Called from {@link TwoFactorEnrollmentForm::assemble()}.
      *
      * @param FieldsetElement $fieldset The method-specific fieldset to add elements to
      */
