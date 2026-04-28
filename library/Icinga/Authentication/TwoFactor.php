@@ -9,7 +9,6 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Forms\Account\TwoFactorEnrollmentForm;
 use Icinga\User;
 use ipl\Html\FormElement\FieldsetElement;
-use ipl\Stdlib\Contract\Validator;
 use ipl\Web\Compat\CompatForm;
 
 interface TwoFactor
