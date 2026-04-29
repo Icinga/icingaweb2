@@ -56,7 +56,7 @@ class TwoFactorController extends CompatController
             ->add('two-factor', [
                 'title' => $this->translate('Configure two-factor authentication'),
                 'label' => $this->translate('Two-Factor Auth'),
-                'url'   => 'two-factor/config',
+                'url'   => 'two-factor/config'
             ]);
     }
 }
