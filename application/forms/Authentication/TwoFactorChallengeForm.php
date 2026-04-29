@@ -8,8 +8,8 @@ use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
+use Icinga\Authentication\TwoFactorState;
 use Icinga\Exception\Http\HttpBadRequestException;
-use Icinga\User;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
 use ipl\Html\FormDecoration\RenderElementDecorator;
@@ -73,9 +73,8 @@ class TwoFactorChallengeForm extends CompatForm
 
     protected function onSuccess(): void
     {
-        $session = Session::getSession();
-        /** @var User $user */
-        $user = $session->get('2fa_temporary_user');
+        $twoFactorState = new TwoFactorState();
+        $user = $twoFactorState->getChallengedUser();
         $twoFactorMethod = TwoFactorHook::loadEnrolled($user);
 // TODO message is not shown | Is the check really needed? talk with eric
 //        if ($twoFactorMethod === null) {
@@ -85,13 +84,11 @@ class TwoFactorChallengeForm extends CompatForm
 //        }
         if ($twoFactorMethod->verify($this->getValue(static::TOKEN_INPUT))) {
             $user->setTwoFactorSuccessful();
-            $session->delete('2fa_must_challenge');
-            $session->delete('2fa_temporary_user');
             Auth::getInstance()->setAuthenticated($user);
 
             $response = Icinga::app()->getResponse();
 
-            if ($rememberMe = $session->get('2fa_remember_me_cookie')) {
+            if ($rememberMe = $twoFactorState->getRememberMeCookie()) {
                 try {
                     $response->setCookie($rememberMe->getCookie());
                     $rememberMe->persist();
@@ -99,6 +96,8 @@ class TwoFactorChallengeForm extends CompatForm
                     Logger::error('Failed to let user "%s" stay logged in: %s', $user->getUsername(), $e);
                 }
             }
+
+            $twoFactorState->completeChallenge();
 
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);

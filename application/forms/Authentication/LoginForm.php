@@ -12,6 +12,7 @@ use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
+use Icinga\Authentication\TwoFactorState;
 use Icinga\Common\Database;
 use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\User;
@@ -140,13 +141,12 @@ class LoginForm extends CompatForm
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
             if ($user->getTwoFactorEnabled()) {
-                $session = Session::getSession();
-                $session->set('2fa_must_challenge', true);
-                $session->set('2fa_temporary_user', $user);
+                $twoFactorState = new TwoFactorState();
+                $twoFactorState->challenge($user);
 
                 if ($this->getElement('rememberme')->isChecked()) {
                     $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
-                    $session->set('2fa_remember_me_cookie', $rememberMe);
+                    $twoFactorState->setRememberMeCookie($rememberMe);
                 }
 
                 $redirectUrl = Url::fromPath('authentication/twofactor');

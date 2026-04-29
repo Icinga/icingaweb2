@@ -13,6 +13,7 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\LoginButton;
 use Icinga\Authentication\LoginButtonForm;
 use Icinga\Authentication\Auth;
+use Icinga\Authentication\TwoFactorState;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
@@ -51,7 +52,8 @@ class AuthenticationController extends CompatController
      */
     public function loginAction()
     {
-        if (Session::getSession()->get('2fa_temporary_user', false)) {
+        $twoFactorState = new TwoFactorState();
+        if ($twoFactorState->isChallenged()) {
             $redirectUrl = Url::fromPath('authentication/twofactor');
             if ($redirect = Url::fromRequest()->getParam('redirect')) {
                 $redirectUrl->setParam('redirect', $redirect);
@@ -201,7 +203,8 @@ class AuthenticationController extends CompatController
 
     public function twofactorAction(): void
     {
-        if (! Session::getSession()->get('2fa_temporary_user', false)) {
+        $twoFactorState = new TwoFactorState();
+        if (! $twoFactorState->isChallenged()) {
             $this->redirectToLogin();
         }
 
