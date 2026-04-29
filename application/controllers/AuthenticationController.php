@@ -62,15 +62,6 @@ class AuthenticationController extends CompatController
                     $this->redirectNow($redirectUrl);
                 }
             })
-            ->on(Form::ON_SENT, function (LoginForm $form) {
-                $isCsrfValid = $form->getElement('CSRFToken')->isValid();
-                $isCancelPressed = $form->getPressedSubmitElement()?->getName() === LoginForm::SUBMIT_CANCEL_2FA;
-
-                if ($isCsrfValid && $isCancelPressed) {
-                    Session::getSession()->purge();
-                    $this->redirectNow(Url::fromRequest());
-                }
-            })
             ->on(Form::ON_REQUEST, function ($request, LoginForm $form) {
                 $auth = Auth::getInstance();
                 $onlyExternal = true;
