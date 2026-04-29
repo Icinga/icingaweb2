@@ -79,7 +79,7 @@ class LoginForm extends CompatForm
                 'required'       => true,
                 'autocomplete'   => 'username',
                 'autocapitalize' => 'off',
-                'class'          => ! isset($formData['username']) ? 'autofocus' : '',
+                'class'          => $this->getPopulatedValue('username') === null ? 'autofocus' : '',
                 'placeholder'    => $this->translate('Username'),
                 'decorators'     => [
                     'RenderElement' => new RenderElementDecorator(),
@@ -97,7 +97,7 @@ class LoginForm extends CompatForm
             [
                 'required'     => true,
                 'autocomplete' => 'current-password',
-                'class'        => isset($formData['username']) ? 'autofocus' : '',
+                'class'        => $this->getPopulatedValue('username') !== null ? 'autofocus' : '',
                 'placeholder'  => $this->translate('Password'),
                 'decorators'   => [
                     'RenderElement' => new RenderElementDecorator(),
