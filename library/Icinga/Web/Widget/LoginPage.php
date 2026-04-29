@@ -6,14 +6,13 @@
 namespace Icinga\Web\Widget;
 
 use ipl\Html\Attributes;
+use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
-use ipl\Html\HtmlString;
 use ipl\Html\Text;
 use ipl\Html\ValidHtml;
 use ipl\I18n\Translation;
 use ipl\Web\Url;
-use ipl\Web\Widget\Icon;
 
 /**
  * Login page — logo, footer, social links, and decorative orbs
@@ -37,21 +36,20 @@ class LoginPage extends HtmlDocument
     protected bool $requiresSetup;
 
     /**
-     * @param ValidHtml|ValidHtml[] $formContent One or more elements to render
-     *   in the centre of the login box (e.g. a LoginForm, a
-     *   TwoFactorChallengeForm, LoginButtonForm instances)
-     * @param bool $requiresSetup When true, show the setup-wizard config note
-     *   above the form
+     * @param ValidHtml|ValidHtml[] $formContent One or more elements to render in the centre of the login box
+     *   (e.g. a LoginForm, a TwoFactorChallengeForm, LoginButtonForm instances)
+     * @param bool $requiresSetup When true, show the setup-wizard config note above the form
      */
     public function __construct(ValidHtml|array $formContent, bool $requiresSetup = false)
     {
         $this->formContent = is_array($formContent) ? $formContent : [$formContent];
         $this->requiresSetup = $requiresSetup;
 
-        $login = HtmlElement::create('div', Attributes::create(['id' => 'login']), [
-            $this->assembleLoginForm(),
-            $this->assembleSocialLinks()
-        ]);
+        $login = HtmlElement::create(
+            'div',
+            Attributes::create(['id' => 'login']),
+            [$this->assembleLoginForm(), $this->assembleSocialLinks()]
+        );
 
         $this->addHtml($login);
 
@@ -60,6 +58,11 @@ class LoginPage extends HtmlDocument
         }
     }
 
+    /**
+     * Assemble the centred login box containing the logo, form content, and footer
+     *
+     * @return HtmlElement
+     */
     protected function assembleLoginForm(): HtmlElement
     {
         $accessibilityNotice = HtmlElement::create(
@@ -78,10 +81,10 @@ class LoginPage extends HtmlDocument
             HtmlElement::create('div', Attributes::create(['id' => 'icinga-logo', 'aria-hidden' => 'true']))
         );
 
-        $inner = HtmlElement::create('div', Attributes::create([
-            'class'            => 'login-form',
-            'data-base-target' => 'layout'
-        ]));
+        $inner = HtmlElement::create(
+            'div',
+            Attributes::create(['class' => 'login-form', 'data-base-target' => 'layout'])
+        );
 
         $inner->addHtml($accessibilityNotice, $logo);
 
@@ -98,8 +101,20 @@ class LoginPage extends HtmlDocument
         return $inner;
     }
 
+    /**
+     * Assemble the setup-wizard configuration note shown when no authentication method is configured
+     *
+     * @return HtmlElement
+     */
     protected function assembleSetupNote(): HtmlElement
     {
+        $setupNote = $this->translate(
+            'It appears that you did not configure Icinga Web 2 yet so it\'s not possible to log in'
+            . ' without any defined authentication method. Please define an authentication method by'
+            . ' following the instructions in the %s or by using our %s.',
+            '<documentation_link> or by using our <setup-wizard_link>'
+        );
+
         $docLink = HtmlElement::create(
             'a',
             Attributes::create([
@@ -121,41 +136,33 @@ class LoginPage extends HtmlDocument
         return HtmlElement::create(
             'p',
             Attributes::create(['class' => 'config-note']),
-            [
-                Text::create($this->translate(
-                    'It appears that you did not configure Icinga Web 2 yet so it\'s not possible to log in'
-                    . ' without any defined authentication method. Please define a authentication method by'
-                    . ' following the instructions in the '
-                )),
-                $docLink,
-                Text::create($this->translate(' or by using our ')),
-                $setupLink,
-                Text::create('.')
-            ]
+            Html::sprintf($setupNote, $docLink, $setupLink)
         );
     }
 
+    /**
+     * Assemble the footer containing the copyright notice and the icinga.com link
+     *
+     * @return HtmlElement
+     */
     protected function assembleFooter(): HtmlElement
     {
-        $copyright = HtmlElement::create('p', null, [
-            Text::create('Icinga Web 2 '),
-            new HtmlString('&copy;'),
-            Text::create(' 2013-' . date('Y'))
-        ]);
+        $copyright = HtmlElement::create('p', null, Text::create('Icinga Web 2 © 2013-' . date('Y')));
 
         $icingaLink = HtmlElement::create(
             'a',
             Attributes::create(['href' => 'https://icinga.com']),
-            Text::create($this->translate('icinga.com'))
+            Text::create('icinga.com')
         );
 
-        return HtmlElement::create(
-            'div',
-            Attributes::create(['id' => 'login-footer']),
-            [$copyright, $icingaLink]
-        );
+        return HtmlElement::create('div', Attributes::create(['id' => 'login-footer']), [$copyright, $icingaLink]);
     }
 
+    /**
+     * Assemble the social links list rendered in the bottom-right corner of the page
+     *
+     * @return HtmlElement
+     */
     protected function assembleSocialLinks(): HtmlElement
     {
         $facebook = HtmlElement::create(
@@ -197,7 +204,11 @@ class LoginPage extends HtmlDocument
         return HtmlElement::create('ul', Attributes::create(['id' => 'social']), [$facebook, $github]);
     }
 
-    /** @return HtmlElement[] */
+    /**
+     * Assemble the decorative orb elements positioned around the background
+     *
+     * @return HtmlElement[]
+     */
     protected function assembleOrbs(): array
     {
         $orbs = [
