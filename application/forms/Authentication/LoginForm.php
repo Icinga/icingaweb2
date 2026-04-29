@@ -133,7 +133,8 @@ class LoginForm extends CompatForm
         $authChain->setSkipExternalBackends(true);
         $username = $this->getElement('username')->getValue();
         $user = new User($username);
-        $user->setTwoFactorEnabled(TwoFactorHook::loadEnrolled($user) !== null);
+        $twoFactorMethod = TwoFactorHook::loadEnrolled($user);
+        $user->setTwoFactorEnabled($twoFactorMethod !== null);
         if (! $user->hasDomain()) {
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
@@ -143,6 +144,11 @@ class LoginForm extends CompatForm
             if ($user->getTwoFactorEnabled()) {
                 $twoFactorState = new TwoFactorState();
                 $twoFactorState->challenge($user);
+                Logger::info(
+                    'User "%s" has been challenged for two-factor verification using method "%s"',
+                    $user->getUsername(),
+                    $twoFactorMethod->getName()
+                );
 
                 if ($this->getElement('rememberme')->isChecked()) {
                     $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);

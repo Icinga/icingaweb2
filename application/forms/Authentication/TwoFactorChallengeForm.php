@@ -83,6 +83,11 @@ class TwoFactorChallengeForm extends CompatForm
 //            return;
 //        }
         if ($twoFactorMethod->verify($this->getValue(static::TOKEN_INPUT))) {
+            Logger::info(
+                'User "%s" passed two-factor verification using method "%s"',
+                $user->getUsername(),
+                $twoFactorMethod->getName()
+            );
             $user->setTwoFactorSuccessful();
             Auth::getInstance()->setAuthenticated($user);
 
@@ -108,6 +113,11 @@ class TwoFactorChallengeForm extends CompatForm
             return;
         }
 
+        Logger::warning(
+            'Two-factor verification failed for user "%s" using method "%s"',
+            $user->getUsername(),
+            $twoFactorMethod->getName()
+        );
         $this->getElement(static::TOKEN_INPUT)->addMessage($this->translate('Token is invalid!'));
     }
 
