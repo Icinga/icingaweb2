@@ -126,6 +126,8 @@ class AuthenticationController extends Controller
 
             $this->redirectNow($redirectUrl);
         }
+
+        $request = ServerRequest::fromGlobals();
         if (! $requiresSetup) {
             $cookies = new CookieHelper($this->getRequest());
             if (! $cookies->isSupported()) {
@@ -136,11 +138,10 @@ class AuthenticationController extends Controller
                     ->sendResponse();
                 exit;
             }
-            $form->handleRequest(ServerRequest::fromGlobals());
+            $form->handleRequest($request);
         }
 
         $loginButtons = [];
-        $request = ServerRequest::fromGlobals();
 
         foreach (LoginButtonHook::all() as $class => $hook) {
             try {
