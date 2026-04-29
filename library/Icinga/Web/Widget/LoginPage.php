@@ -5,13 +5,14 @@
 
 namespace Icinga\Web\Widget;
 
+use Icinga\Authentication\LoginButtonForm;
 use ipl\Html\Attributes;
 use ipl\Html\Html;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
-use ipl\Html\ValidHtml;
 use ipl\I18n\Translation;
+use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
 
 /**
@@ -29,20 +30,23 @@ class LoginPage extends HtmlDocument
 {
     use Translation;
 
-    /** @var ValidHtml[] Form content to render inside .login-form */
-    protected array $formContent;
+    protected CompatForm $form;
+
+    /** @var LoginButtonForm[] */
+    protected array $loginButtons;
 
     /** @var bool Whether to show the setup-wizard configuration note */
     protected bool $requiresSetup;
 
     /**
-     * @param ValidHtml|ValidHtml[] $formContent One or more elements to render in the centre of the login box
-     *   (e.g. a LoginForm, a TwoFactorChallengeForm, LoginButtonForm instances)
+     * @param CompatForm $form Primary form to render in the centre of the login box
+     * @param LoginButtonForm[] $loginButtons Additional login button forms to render below the primary form
      * @param bool $requiresSetup When true, show the setup-wizard config note above the form
      */
-    public function __construct(ValidHtml|array $formContent, bool $requiresSetup = false)
+    public function __construct(CompatForm $form, array $loginButtons = [], bool $requiresSetup = false)
     {
-        $this->formContent = is_array($formContent) ? $formContent : [$formContent];
+        $this->form = $form;
+        $this->loginButtons = $loginButtons;
         $this->requiresSetup = $requiresSetup;
 
         $login = HtmlElement::create(
@@ -92,8 +96,10 @@ class LoginPage extends HtmlDocument
             $inner->addHtml($this->assembleSetupNote());
         }
 
-        foreach ($this->formContent as $content) {
-            $inner->addHtml($content);
+        $inner->addHtml($this->form);
+
+        foreach ($this->loginButtons as $button) {
+            $inner->addHtml($button);
         }
 
         $inner->addHtml($this->assembleFooter());

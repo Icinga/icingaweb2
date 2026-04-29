@@ -170,8 +170,7 @@ class AuthenticationController extends CompatController
 
         // Suppress the rendering of an empty tab bar
         $this->controls = new HtmlDocument();
-        $content = array_filter(array_merge([$form], $loginButtons));
-        $this->addContent(new LoginPage($content, $requiresSetup));
+        $this->addContent(new LoginPage($form, $loginButtons, $requiresSetup));
     }
 
     /**
