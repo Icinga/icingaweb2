@@ -17,6 +17,7 @@ use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Forms\Authentication\LoginForm;
+use Icinga\Forms\Authentication\TwoFactorChallengeForm;
 use Icinga\Web\Helper\CookieHelper;
 use Icinga\Web\RememberMe;
 use Icinga\Web\Session;
@@ -50,6 +51,14 @@ class AuthenticationController extends CompatController
      */
     public function loginAction()
     {
+        if (Session::getSession()->get('2fa_temporary_user', false)) {
+            $redirectUrl = Url::fromPath('authentication/twofactor');
+            if ($redirect = Url::fromRequest()->getParam('redirect')) {
+                $redirectUrl->setParam('redirect', $redirect);
+            }
+            $this->redirectNow($redirectUrl);
+        }
+
         $icinga = Icinga::app();
         if (($requiresSetup = $icinga->requiresSetup()) && $icinga->setupTokenExists()) {
             $this->redirectNow(Url::fromPath('setup'));
@@ -188,5 +197,55 @@ class AuthenticationController extends CompatController
 
             $this->redirectToLogin();
         }
+    }
+
+    public function twofactorAction(): void
+    {
+        if (! Session::getSession()->get('2fa_temporary_user', false)) {
+            $this->redirectToLogin();
+        }
+
+        $form = (new TwoFactorChallengeForm())
+            ->setAction(Url::fromRequest()->getAbsoluteUrl())
+            ->on(Form::ON_SUBMIT, function (TwoFactorChallengeForm $form) {
+                if ($redirectUrl = $form->getRedirectUrl()) {
+                    $this->redirectNow($redirectUrl);
+                }
+            })
+            ->on(Form::ON_SENT, function (TwoFactorChallengeForm $form) {
+                $isCsrfValid = $form->getElement('CSRFToken')->isValid();
+                $isCancelPressed =
+                    $form->getPressedSubmitElement()?->getName() === TwoFactorChallengeForm::SUBMIT_CANCEL_2FA;
+
+                if ($isCsrfValid && $isCancelPressed) {
+                    Session::getSession()->purge();
+                    $redirectUrl = Url::fromPath('authentication/login');
+                    if ($redirect = Url::fromRequest()->getParam('redirect')) {
+                        $redirectUrl->setParam('redirect', $redirect);
+                    }
+                    $this->redirectNow($redirectUrl);
+                }
+            })
+            ->handleRequest($this->getServerRequest());
+
+        if ($this->Auth()->isAuthenticated()) {
+            $redirect = $this->params->get('redirect');
+            if ($redirect) {
+                $redirectUrl = Url::fromPath($redirect, [], $this->getRequest());
+                if ($redirectUrl->isExternal()) {
+                    $this->httpBadRequest('nope');
+                }
+            } else {
+                $redirectUrl = $form->createRedirectUrl();
+            }
+
+            $this->redirectNow($redirectUrl);
+        }
+
+        $this->setTitle($this->translate('Icinga Web 2 Two-Factor Auth'));
+
+        // Suppress the rendering of an empty tab bar
+        $this->controls = new HtmlDocument();
+        $this->addContent(new LoginPage($form));
     }
 }
