@@ -5,7 +5,6 @@
 
 namespace Icinga\Controllers;
 
-use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\ClassLoader;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Hook\LoginButtonHook;
@@ -18,19 +17,21 @@ use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Forms\Authentication\LoginForm;
-use Icinga\Web\Controller;
 use Icinga\Web\Helper\CookieHelper;
 use Icinga\Web\RememberMe;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\LoginPage;
+use ipl\Html\HtmlDocument;
 use ipl\Html\Contract\Form;
+use ipl\Web\Compat\CompatController;
 use RuntimeException;
 use Throwable;
 
 /**
  * Application wide controller for authentication
  */
-class AuthenticationController extends Controller
+class AuthenticationController extends CompatController
 {
     use Database;
 
@@ -127,7 +128,7 @@ class AuthenticationController extends Controller
             $this->redirectNow($redirectUrl);
         }
 
-        $request = ServerRequest::fromGlobals();
+        $request = $this->getServerRequest();
         if (! $requiresSetup) {
             $cookies = new CookieHelper($this->getRequest());
             if (! $cookies->isSupported()) {
@@ -163,12 +164,12 @@ class AuthenticationController extends Controller
                 continue;
             }
         }
+        $this->setTitle($this->translate('Icinga Web 2 Login'));
 
-        $this->view->form = $form;
-        $this->view->cancel2faForm = $cancel2faForm ?? null;
-        $this->view->loginButtons = $loginButtons;
-        $this->view->defaultTitle = $this->translate('Icinga Web 2 Login');
-        $this->view->requiresSetup = $requiresSetup;
+        // Suppress the rendering of an empty tab bar
+        $this->controls = new HtmlDocument();
+        $content = array_filter(array_merge([$form], $loginButtons));
+        $this->addContent(new LoginPage($content, $requiresSetup));
     }
 
     /**
