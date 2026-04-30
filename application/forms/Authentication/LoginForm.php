@@ -8,136 +8,138 @@ namespace Icinga\Forms\Authentication;
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\AuthenticationHook;
+use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
-use Icinga\Common\Database;
 use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\User;
-use Icinga\Web\Form;
 use Icinga\Web\RememberMe;
+use Icinga\Web\Session;
 use Icinga\Web\Url;
+use ipl\Html\FormDecoration\ErrorsDecorator;
+use ipl\Html\FormDecoration\HtmlTagDecorator;
+use ipl\Html\FormDecoration\LabelDecorator;
+use ipl\Html\FormDecoration\RenderElementDecorator;
+use ipl\Web\Common\CsrfCounterMeasure;
+use ipl\Web\Common\FormUid;
+use ipl\Web\Compat\CompatForm;
+use ipl\Web\Compat\FormDecorator\CheckboxDecorator;
+use ipl\Web\Compat\FormDecorator\DescriptionDecorator;
 
 /**
  * Form for user authentication
  */
-class LoginForm extends Form
+class LoginForm extends CompatForm
 {
-    use Database;
+    use CsrfCounterMeasure;
+    use FormUid;
 
-    const DEFAULT_CLASSES = 'icinga-controls';
-
-    /**
-     * Redirect URL
-     */
-    const REDIRECT_URL = 'dashboard';
-
-    public static $defaultElementDecorators = [
-        ['ViewHelper', ['separator' => '']],
-        ['Help', []],
-        ['Errors', ['separator' => '']],
-        ['HtmlTag', ['tag' => 'div', 'class' => 'control-group']]
-    ];
+    /** @var string Redirect URL */
+    public const REDIRECT_URL = 'dashboard';
 
     /**
-     * {@inheritdoc}
+     * Create a new LoginForm
      */
-    public function init()
+    public function __construct()
     {
-        $this->setRequiredCue(null);
-        $this->setName('form_login');
-        $this->setSubmitLabel($this->translate('Login'));
-        $this->setProgressLabel($this->translate('Logging in'));
+        $this->setAttribute('name', 'form_login');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createElements(array $formData)
+    protected function assemble(): void
     {
-        $this->addElement(
-            'text',
-            'username',
-            array(
-                'autofocus'         => '',
-                'autocapitalize'    => 'off',
-                'autocomplete'      => 'username',
-                'placeholder'       => $this->translate('Username'),
-                'required'          => true
-            )
-        );
-        $this->addElement(
-            'password',
-            'password',
-            array(
-                'required'      => true,
-                'autocomplete'  => 'current-password',
-                'placeholder'   => $this->translate('Password'),
-            )
-        );
-        $this->addElement(
-            'checkbox',
-            'rememberme',
-            [
-                'label'         => $this->translate('Stay logged in'),
-                'decorators'    => [
-                    ['ViewHelper', ['separator' => '']],
-                    ['Label', [
-                        'tag'       => 'span',
-                        'separator' => '',
-                        'class'     => 'control-label',
-                        'placement' => 'APPEND'
-                    ]],
-                    ['Help', []],
-                    ['Errors', ['separator' => '']],
-                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group remember-me-box']]
-                ]
-            ]
-        );
-        if (! RememberMe::isSupported()) {
-            $this->getElement('rememberme')
-                ->setAttrib('disabled', true)
-                ->setDescription($this->translate(
+        $this->addCsrfCounterMeasure(Session::getSession()->getId());
+        $this->addElement($this->createUidElement());
+
+        $this->addElement('text', 'username', [
+            'autocapitalize' => 'off',
+            'autocomplete'   => 'username',
+            'autofocus'      => '',
+            'decorators'     => [
+                'RenderElement' => new RenderElementDecorator(),
+                'Errors'        => (new ErrorsDecorator())->setClass('errors'),
+                'ControlGroup'  => (new HtmlTagDecorator())->setTag('div')->setClass('control-group')
+            ],
+            'placeholder'    => $this->translate('Username'),
+            'required'       => true
+        ]);
+
+        $this->addElement('password', 'password', [
+            'autocomplete' => 'current-password',
+            'decorators'   => [
+                'RenderElement' => new RenderElementDecorator(),
+                'Errors'        => (new ErrorsDecorator())->setClass('errors'),
+                'ControlGroup'  => (new HtmlTagDecorator())->setTag('div')->setClass('control-group')
+            ],
+            'placeholder'  => $this->translate('Password'),
+            'required'     => true
+        ]);
+
+        $rememberMeSupported = RememberMe::isSupported();
+        $this->addElement('checkbox', 'rememberme', [
+            'decorators'  => [
+                'Checkbox'      => new CheckboxDecorator(),
+                'RenderElement' => new RenderElementDecorator(),
+                'Label'         => new LabelDecorator(),
+                'Description'   => new DescriptionDecorator(),
+                'ControlGroup'  => (new HtmlTagDecorator())->setTag('div')->setClass('control-group remember-me-box')
+            ],
+            'description' => ! $rememberMeSupported
+                ? $this->translate(
                     'Staying logged in requires a database configuration backend'
                     . ' and an appropriate OpenSSL encryption method'
-                ));
-        }
+                )
+                : null,
+            'disabled'    => ! $rememberMeSupported,
+            'label'       => $this->translate('Stay logged in'),
+        ]);
 
-        $this->addElement(
-            'hidden',
-            'redirect',
-            array(
-                'value' => Url::fromRequest()->getParam('redirect')
-            )
-        );
+        $this->addElement('submit', 'submit_login', [
+            'data-progress-label' => $this->translate('Logging in'),
+            'label'               => $this->translate('Login')
+        ]);
+
+        $this->addElement('hidden', 'redirect', ['value' => Url::fromRequest()->getParam('redirect')]);
     }
 
     /**
-     * {@inheritdoc}
+     * Compute the post-login redirect URL
+     *
+     * @return Url
+     *
+     * @throws HttpBadRequestException If the redirect url is external
      */
-    public function getRedirectUrl()
+    public function createRedirectUrl(): Url
     {
         $redirect = null;
-        if ($this->created) {
+        if ($this->hasBeenAssembled) {
             $redirect = $this->getElement('redirect')->getValue();
         }
 
-        if (empty($redirect) || strpos($redirect, 'authentication/logout') !== false) {
+        if (empty($redirect) || str_contains($redirect, 'authentication/logout')) {
             $redirect = static::REDIRECT_URL;
         }
 
         $redirectUrl = Url::fromPath($redirect);
         if ($redirectUrl->isExternal()) {
-            throw new HttpBadRequestException('nope');
+            throw new HttpBadRequestException('Redirect to an external host is not allowed');
         }
 
         return $redirectUrl;
     }
 
     /**
-     * {@inheritdoc}
+     * Authenticate the user and redirect on success, or display an error message on failure
+     *
+     * Skips external backends and applies the configured default domain when the
+     * username contains no domain. On success, persists the RememberMe cookie when
+     * requested, triggers registered {@see AuthenticationHook}s, and redirects to
+     * the URL returned by {@see createRedirectUrl()}. On failure, adds an
+     * appropriate error message to the form and calls {@see onError()}.
+     *
+     * @return void
      */
-    public function onSuccess()
+    protected function onSuccess(): void
     {
         $auth = Auth::getInstance();
         $authChain = $auth->getAuthChain();
@@ -150,10 +152,11 @@ class LoginForm extends Form
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
             $auth->setAuthenticated($user);
+            $response = Icinga::app()->getResponse();
             if ($this->getElement('rememberme')->isChecked()) {
                 try {
                     $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
-                    $this->getResponse()->setCookie($rememberMe->getCookie());
+                    $response->setCookie($rememberMe->getCookie());
                     $rememberMe->persist();
                 } catch (Exception $e) {
                     Logger::error('Failed to let user "%s" stay logged in: %s', $user->getUsername(), $e);
@@ -162,40 +165,47 @@ class LoginForm extends Form
 
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
-            $this->getResponse()->setRerenderLayout(true);
-            return true;
+
+            $response->setRerenderLayout();
+            $this->setRedirectUrl($this->createRedirectUrl());
+
+            return;
         }
         switch ($authChain->getError()) {
             case $authChain::EEMPTY:
-                $this->addError($this->translate(
+                $this->addMessage($this->translate(
                     'No authentication methods available.'
                     . ' Did you create authentication.ini when setting up Icinga Web 2?'
                 ));
+
                 break;
             case $authChain::EFAIL:
-                $this->addError($this->translate(
+                $this->addMessage($this->translate(
                     'All configured authentication methods failed.'
                     . ' Please check the system log or Icinga Web 2 log for more information.'
                 ));
+
                 break;
             /** @noinspection PhpMissingBreakStatementInspection */
             case $authChain::ENOTALL:
-                $this->addError($this->translate(
+                $this->addMessage($this->translate(
                     'Please note that not all authentication methods were available.'
                     . ' Check the system log or Icinga Web 2 log for more information.'
                 ));
-                // Move to default
+            // Move to default
             default:
-                $this->getElement('password')->addError($this->translate('Incorrect username or password'));
-                break;
+                $this->getElement('password')->addMessage($this->translate('Incorrect username or password'));
         }
-        return false;
+
+        $this->onError();
     }
 
     /**
-     * {@inheritdoc}
+     * Show an error when all configured backends are external
+     *
+     * @return void
      */
-    public function onRequest()
+    public function onRequest(): void
     {
         $auth = Auth::getInstance();
         $onlyExternal = true;
@@ -206,10 +216,11 @@ class LoginForm extends Form
             }
         }
         if ($onlyExternal) {
-            $this->addError($this->translate(
-                'You\'re currently not authenticated using any of the web server\'s authentication mechanisms.'
-                . ' Make sure you\'ll configure such, otherwise you\'ll not be able to login.'
+            $this->addMessage($this->translate(
+                'You\'re currently not authenticated using any of the web server\'s authentication'
+                . ' mechanisms. Make sure you\'ll configure such, otherwise you\'ll not be able to login.'
             ));
+            $this->onError();
         }
     }
 }
