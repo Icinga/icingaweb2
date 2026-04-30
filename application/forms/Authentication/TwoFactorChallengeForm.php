@@ -22,9 +22,6 @@ class TwoFactorChallengeForm extends CompatForm
     use CsrfCounterMeasure;
     use FormUid;
 
-    /** @var string Redirect URL */
-    const REDIRECT_URL = 'dashboard';
-
     /** @var string Name of the token text input in the verification form */
     const TOKEN_INPUT = '2fa_token';
 
@@ -134,7 +131,7 @@ class TwoFactorChallengeForm extends CompatForm
         }
 
         if (empty($redirect) || str_contains($redirect, 'authentication/logout')) {
-            $redirect = static::REDIRECT_URL;
+            $redirect = LoginForm::REDIRECT_URL;
         }
 
         $redirectUrl = Url::fromPath($redirect);
