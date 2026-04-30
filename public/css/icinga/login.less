@@ -111,8 +111,15 @@
     }
 
     &.btn-cancel {
-      //.button(@body-bg-color, @gray, @black);
-      .button(@body-bg-color, @icinga-secondary, @icinga-secondary);
+      background: @gray;
+      //background: transparent;
+      //border: 2px solid @icinga-secondary;
+      //color: @icinga-secondary;
+
+      &:hover {
+        background-color: @icinga-secondary;
+        color: white;
+      }
     }
   }
 
