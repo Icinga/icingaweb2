@@ -9,6 +9,7 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\AuditHook;
 use Icinga\Application\Hook\AuthenticationHook;
+use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\User\ExternalBackend;
@@ -306,6 +307,16 @@ class Auth
         }
         $password = $credentials[1];
         if ($this->getAuthChain()->setSkipExternalBackends(true)->authenticate($user, $password)) {
+            if (TwoFactorHook::loadEnrolled($user) !== null) {
+                Logger::warning(
+                    'API request rejected for user "%s": two-factor authentication cannot be completed via the API',
+                    $user->getUsername()
+                );
+                $this->getResponse()->json()
+                    ->setHttpResponseCode(403)
+                    ->setErrorMessage('Two-factor authentication is required and cannot be completed via the API')
+                    ->sendResponse();
+            }
             $this->setAuthenticated($user, false);
             $user->setIsHttpUser(true);
             return true;
