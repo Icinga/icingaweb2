@@ -48,78 +48,56 @@ class LoginForm extends CompatForm
         $this->addCsrfCounterMeasure(Session::getSession()->getId());
         $this->addElement($this->createUidElement());
 
-        $this->addElement(
-            'text',
-            'username',
-            [
-                'required'       => true,
-                'autocomplete'   => 'username',
-                'autocapitalize' => 'off',
-                'class'          => $this->getPopulatedValue('username') === null ? 'autofocus' : '',
-                'placeholder'    => $this->translate('Username'),
-                'decorators'     => [
-                    'RenderElement' => new RenderElementDecorator(),
-                    'ControlGroup'  => [
-                        'name'    => 'HtmlTag',
-                        'options' => ['tag' => 'div', 'class' => 'control-group']
-                    ]
+        $this->addElement('text', 'username', [
+            'required'       => true,
+            'autocomplete'   => 'username',
+            'autocapitalize' => 'off',
+            'class'          => $this->getPopulatedValue('username') === null ? 'autofocus' : '',
+            'placeholder'    => $this->translate('Username'),
+            'decorators'     => [
+                'RenderElement' => new RenderElementDecorator(),
+                'ControlGroup'  => [
+                    'name'    => 'HtmlTag',
+                    'options' => ['tag' => 'div', 'class' => 'control-group']
                 ]
             ]
-        );
+        ]);
 
-        $this->addElement(
-            'password',
-            'password',
-            [
-                'required'     => true,
-                'autocomplete' => 'current-password',
-                'class'        => $this->getPopulatedValue('username') !== null ? 'autofocus' : '',
-                'placeholder'  => $this->translate('Password'),
-                'decorators'   => [
-                    'RenderElement' => new RenderElementDecorator(),
-                    'Errors'        => ['name' => 'Errors', 'options' => ['class' => 'errors']],
-                    'ControlGroup'  => [
-                        'name'    => 'HtmlTag',
-                        'options' => ['tag' => 'div', 'class' => 'control-group']
-                    ]
+        $this->addElement('password', 'password', [
+            'required'     => true,
+            'autocomplete' => 'current-password',
+            'class'        => $this->getPopulatedValue('username') !== null ? 'autofocus' : '',
+            'placeholder'  => $this->translate('Password'),
+            'decorators'   => [
+                'RenderElement' => new RenderElementDecorator(),
+                'Errors'        => ['name' => 'Errors', 'options' => ['class' => 'errors']],
+                'ControlGroup'  => [
+                    'name'    => 'HtmlTag',
+                    'options' => ['tag' => 'div', 'class' => 'control-group']
                 ]
             ]
-        );
+        ]);
 
-        $this->addElement(
-            'checkbox',
-            'rememberme',
-            [
-                'label'      => $this->translate('Stay logged in'),
-                'disabled'   => ! RememberMe::isSupported(),
-                'decorators' => [
-                    'Checkbox'      => new CheckboxDecorator(),
-                    'RenderElement' => new RenderElementDecorator(),
-                    'Label'         => new LabelDecorator(),
-                    'ControlGroup'  => [
-                        'name'    => 'HtmlTag',
-                        'options' => ['tag' => 'div', 'class' => 'control-group remember-me-box']
-                    ]
+        $this->addElement('checkbox', 'rememberme', [
+            'label'      => $this->translate('Stay logged in'),
+            'disabled'   => ! RememberMe::isSupported(),
+            'decorators' => [
+                'Checkbox'      => new CheckboxDecorator(),
+                'RenderElement' => new RenderElementDecorator(),
+                'Label'         => new LabelDecorator(),
+                'ControlGroup'  => [
+                    'name'    => 'HtmlTag',
+                    'options' => ['tag' => 'div', 'class' => 'control-group remember-me-box']
                 ]
             ]
-        );
+        ]);
 
-        $this->addElement(
-            'submit',
-            'submit_login',
-            [
-                'label'               => $this->translate('Login'),
-                'data-progress-label' => $this->translate('Logging in'),
-            ]
-        );
+        $this->addElement('submit', 'submit_login', [
+            'label'               => $this->translate('Login'),
+            'data-progress-label' => $this->translate('Logging in'),
+        ]);
 
-        $this->addElement(
-            'hidden',
-            'redirect',
-            [
-                'value' => Url::fromRequest()->getParam('redirect')
-            ]
-        );
+        $this->addElement('hidden', 'redirect', ['value' => Url::fromRequest()->getParam('redirect')]);
     }
 
     protected function onSuccess(): void
