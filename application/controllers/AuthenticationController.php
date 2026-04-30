@@ -54,11 +54,7 @@ class AuthenticationController extends CompatController
     {
         $twoFactorState = new TwoFactorState();
         if ($twoFactorState->isChallenged()) {
-            $redirectUrl = Url::fromPath('authentication/twofactor');
-            if ($redirect = Url::fromRequest()->getParam('redirect')) {
-                $redirectUrl->setParam('redirect', $redirect);
-            }
-            $this->redirectNow($redirectUrl);
+            $this->redirectNow($this->withRedirect('authentication/twofactor'));
         }
 
         $icinga = Icinga::app();
@@ -221,11 +217,7 @@ class AuthenticationController extends CompatController
 
                 if ($isCsrfValid && $isCancelPressed) {
                     Session::getSession()->purge();
-                    $redirectUrl = Url::fromPath('authentication/login');
-                    if ($redirect = Url::fromRequest()->getParam('redirect')) {
-                        $redirectUrl->setParam('redirect', $redirect);
-                    }
-                    $this->redirectNow($redirectUrl);
+                    $this->redirectNow($this->withRedirect('authentication/login'));
                 }
             })
             ->handleRequest($this->getServerRequest());
@@ -235,5 +227,14 @@ class AuthenticationController extends CompatController
         // Suppress the rendering of an empty tab bar
         $this->controls = new HtmlDocument();
         $this->addContent(new LoginPage($form));
+    }
+
+    protected function withRedirect(string $path): Url
+    {
+        $url = Url::fromPath($path);
+        if ($redirect = $this->params->get('redirect')) {
+            $url->setParam('redirect', $redirect);
+        }
+        return $url;
     }
 }
