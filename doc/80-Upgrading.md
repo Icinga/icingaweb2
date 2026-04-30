@@ -10,6 +10,11 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 * Our JavaScript implementation to update relative times in the UI has been removed from Icinga Web, and an updated
   implementation now resides as part of the Icinga PHP Library. https://github.com/Icinga/ipl-web/pull/350 explains
   differences and how to ensure future compatibility.
+* Less CSS compilation has been moved from Icinga Web to the [Icinga PHP Library](https://github.com/Icinga/ipl-web)
+  (`ipl-web`), which uses `wikimedia/less.php` 5.5 (up from 3.2.1). No action is required from users, and module
+  developers should not encounter breaking changes in their Less files. The `wikimedia/less.php`
+  [changelog](https://github.com/wikimedia/less.php/blob/master/CHANGES.md) covers all changes introduced between
+  these versions.
 
 ## Upgrading to Icinga Web 2.13
 

@@ -230,16 +230,12 @@ class StyleSheet
      */
     public function render($minified = false)
     {
-        if ($minified) {
-            $this->lessCompiler->compress();
-        }
-
         $css = '';
         foreach ($this->cssFiles as $cssFile) {
             $css .= file_get_contents($cssFile);
         }
 
-        return $css . $this->lessCompiler->render();
+        return $css . $this->lessCompiler->render($minified);
     }
 
     /**

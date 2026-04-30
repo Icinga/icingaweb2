@@ -5,103 +5,74 @@
 
 namespace Icinga\Web;
 
-use Icinga\Application\Logger;
-use Icinga\Util\LessParser;
-use Less_Exception_Parser;
+use Exception;
+use ipl\Web\Less\CssVarVisitor;
+use ipl\Web\Less\DetachedRulesetCallVisitor;
+use ipl\Web\Less\WikimediaLessCompiler;
+use RuntimeException;
 
 /**
- * Compile LESS into CSS
- *
- * Comments will be removed always. lessc is messing them up.
+ * Compile Less into CSS
  */
 class LessCompiler
 {
-    /**
-     * lessphp compiler
-     *
-     * @var LessParser
-     */
-    protected $lessc;
+    /** @var string[] Core Less and CSS files */
+    protected array $lessFiles = [];
+
+    /** @var array<string, string[]> Module Less and CSS files indexed by module name */
+    protected array $moduleLessFiles = [];
+
+    protected ?string $source = null;
+
+    /** @var string|null Path to the Less theme file */
+    protected ?string $theme = null;
+
+    /** @var string|null Path to the Less theme mode file */
+    protected ?string $themeMode = null;
 
     /**
-     * Array of LESS files
+     * Add a core Less or CSS file
      *
-     * @var string[]
-     */
-    protected $lessFiles = array();
-
-    /**
-     * Array of module LESS files indexed by module names
+     * @param string $lessFile Path to the Less or CSS file
      *
-     * @var array[]
-     */
-    protected $moduleLessFiles = array();
-
-    /**
-     * LESS source
+     * @return $this
      *
-     * @var string
+     * @throws RuntimeException If the file does not exist or is not readable
      */
-    protected $source;
-
-    /**
-     * Path of the LESS theme
-     *
-     * @var string
-     */
-    protected $theme;
-
-    /**
-     * Path of the LESS theme mode
-     *
-     * @var string
-     */
-    protected $themeMode;
-
-    /**
-     * Create a new LESS compiler
-     */
-    public function __construct()
+    public function addLessFile(string $lessFile): static
     {
-        $this->lessc = new LessParser();
-    }
+        $this->lessFiles[] = $this->resolveReadableFile($lessFile);
 
-    /**
-     * Add a Web 2 LESS file
-     *
-     * @param   string  $lessFile   Path to the LESS file
-     *
-     * @return  $this
-     */
-    public function addLessFile($lessFile)
-    {
-        $this->lessFiles[] = realpath($lessFile);
         return $this;
     }
 
     /**
-     * Add a module LESS file
+     * Add a module Less or CSS file
      *
-     * @param   string  $moduleName Name of the module
-     * @param   string  $lessFile   Path to the LESS file
+     * @param string $moduleName Name of the module
+     * @param string $lessFile Path to the Less or CSS file
      *
-     * @return  $this
+     * @return $this
+     *
+     * @throws RuntimeException If the file does not exist or is not readable
      */
-    public function addModuleLessFile($moduleName, $lessFile)
+    public function addModuleLessFile(string $moduleName, string $lessFile): static
     {
         if (! isset($this->moduleLessFiles[$moduleName])) {
-            $this->moduleLessFiles[$moduleName] = array();
+            $this->moduleLessFiles[$moduleName] = [];
         }
-        $this->moduleLessFiles[$moduleName][] = realpath($lessFile);
+
+        $this->moduleLessFiles[$moduleName][] = $this->resolveReadableFile($lessFile);
+
         return $this;
     }
 
     /**
-     * Get the list of LESS files added to the compiler
+     * Get all file paths registered with the compiler
      *
      * @return string[]
      */
-    public function getLessFiles()
+    public function getLessFiles(): array
     {
         $lessFiles = $this->lessFiles;
 
@@ -121,137 +92,116 @@ class LessCompiler
     }
 
     /**
-     * Set the path to the LESS theme
+     * Set the path to the Less theme file
      *
-     * @param   ?string  $theme  Path to the LESS theme
+     * @param ?string $theme Path to the Less theme file, or null to unset
      *
-     * @return  $this
+     * @return $this
+     *
+     * @throws RuntimeException If the file does not exist or is not readable
      */
-    public function setTheme($theme)
+    public function setTheme(?string $theme): static
     {
-        if ($theme === null || (is_file($theme) && is_readable($theme))) {
-            $this->theme = $theme;
-        } else {
-            Logger::error('Can\t load theme %s. Make sure that the theme exists and is readable', $theme);
-        }
+        $this->theme = $theme === null ? null : $this->resolveReadableFile($theme);
+
         return $this;
     }
 
     /**
-     * Set the path to the LESS theme mode
+     * Set the path to the Less theme mode file
      *
-     * @param   string  $themeMode  Path to the LESS theme mode
+     * @param string $themeMode Path to the Less theme mode file
      *
-     * @return  $this
+     * @return $this
+     *
+     * @throws RuntimeException If the file does not exist or is not readable
      */
-    public function setThemeMode($themeMode)
+    public function setThemeMode(string $themeMode): static
     {
-        if (is_file($themeMode) && is_readable($themeMode)) {
-            $this->themeMode = $themeMode;
-        } else {
-            Logger::error('Can\t load theme mode %s. Make sure that the theme mode exists and is readable', $themeMode);
-        }
+        $this->themeMode = $this->resolveReadableFile($themeMode);
+
         return $this;
     }
 
     /**
-     * Instruct the compiler to minify CSS
+     * Resolve a file path to its canonical form and verify it is readable
      *
-     * @return  $this
+     * @param string $path Path to the Less or CSS file
+     *
+     * @return string Canonical path to the file
+     *
+     * @throws RuntimeException If the file does not exist or is not readable
      */
-    public function compress()
+    protected function resolveReadableFile(string $path): string
     {
-        $this->lessc->setFormatter('compressed');
-        return $this;
+        $resolved = realpath($path);
+        if ($resolved !== false && is_file($resolved) && is_readable($resolved)) {
+            return $resolved;
+        }
+
+        throw new RuntimeException("Can't load Less file $path. Make sure that the file exists and is readable");
     }
 
     /**
-     * Render to CSS
+     * Compile all registered Less sources to CSS
      *
-     * @return  string
+     * @param bool $minify Whether to minify the output
+     *
+     * @return string Compiled CSS, or an error message with stack trace on compiler failure
      */
-    public function render()
+    public function render(bool $minify = false): string
     {
-        foreach ($this->lessFiles as $lessFile) {
-            $this->source .= file_get_contents($lessFile);
+        // Use `@import (less)` throughout to force the imported file to be treated as a regular Less file,
+        // regardless of its extension. Regular CSS files would leave the import statement in the output.
+        $imports = array_map(fn($file) => "@import (less) \"$file\";", $this->lessFiles);
+
+        foreach (array_filter($this->moduleLessFiles) as $name => $files) {
+            $imports = array_merge($imports, [
+                ".icinga-module.module-$name {",
+                ...array_map(fn($file) => "    @import (less) \"$file\";", $files),
+                "}\n",
+            ]);
         }
-
-        $moduleCss = '';
-        $exportedVars = [];
-        foreach ($this->moduleLessFiles as $moduleName => $moduleLessFiles) {
-            $moduleCss .= '.icinga-module.module-' . $moduleName . ' {';
-
-            foreach ($moduleLessFiles as $moduleLessFile) {
-                $content = file_get_contents($moduleLessFile);
-
-                $pattern = '/^@exports:\s*{((?:\s*@[^:}]+:[^;]*;\s+)+)};$/m';
-                if (preg_match_all($pattern, $content, $matches, PREG_SET_ORDER)) {
-                    foreach ($matches as $match) {
-                        $content = str_replace($match[0], '', $content);
-                        foreach (explode("\n", trim($match[1])) as $line) {
-                            list($name, $value) = explode(':', $line, 2);
-                            $exportedVars[trim($name)] = trim($value, ' ;');
-                        }
-                    }
-                }
-
-                $moduleCss .= $content;
-            }
-
-            $moduleCss .= '}';
-        }
-
-        $this->source .= $moduleCss;
-
-        $varExports = '';
-        foreach ($exportedVars as $name => $value) {
-            $varExports .= sprintf("%s: %s;\n", $name, $value);
-        }
-
-        // exported vars are injected at the beginning to avoid that they are
-        // able to override other variables, that's what themes are for
-        $this->source = $varExports . "\n\n" . $this->source;
 
         if ($this->theme !== null) {
-            $this->source .= file_get_contents($this->theme);
+            $imports[] = "@import (less) \"$this->theme\";";
         }
 
         if ($this->themeMode !== null) {
-            $this->source .= file_get_contents($this->themeMode);
+            $imports[] = "@import (less) \"$this->themeMode\";";
         }
+
+        $less = implode("\n", $imports);
+
+        $lightModeTemplate = <<<'LESS'
+@media (min-height: @prefer-light-color-scheme), print,
+(prefers-color-scheme: light) and (min-height: @enable-color-preference) {
+    {ruleset}
+}
+LESS;
+        $compiler = new WikimediaLessCompiler([
+            // Despite its name, relativeUrls doesn't preserve relative URLs. It rewrites
+            // them to the resolved path of the Less file they appear in. We concatenate
+            // all Less files via @import, which also lets the parser report the affected
+            // file in error messages. Enabling relativeUrls would turn e.g.
+            // "../img/icinga-logo.svg" into an absolute resolved path like
+            // /public/css/icinga/img/icinga-logo.svg, which is not publicly accessible.
+            'relativeUrls' => false,
+            'math'         => 'always',
+            'plugins'      => [
+                new CssVarVisitor(),
+                new DetachedRulesetCallVisitor('light-mode', $lightModeTemplate),
+            ],
+        ]);
 
         try {
             return preg_replace(
                 '/(\.icinga-module\.module-[^\s]+) (#layout\.[^\s]+)/m',
                 '\2 \1',
-                $this->lessc->compile($this->source)
+                $compiler->compile($less, $minify),
             );
-        } catch (Less_Exception_Parser $e) {
-            $excerpt = substr($this->source, $e->index - 500, 1000);
-
-            $lines = [];
-            $found = false;
-            $pos = $e->index - 500;
-            foreach (explode("\n", $excerpt) as $i => $line) {
-                if ($i === 0) {
-                    $pos += strlen($line);
-                    $lines[] = '.. ' . $line;
-                } else {
-                    $pos += strlen($line) + 1;
-                    $sep = '   ';
-                    if (! $found && $pos > $e->index) {
-                        $found = true;
-                        $sep = '!! ';
-                    }
-
-                    $lines[] = $sep . $line;
-                }
-            }
-
-            $lines[] = '..';
-            $excerpt = join("\n", $lines);
-
-            return sprintf("%s\n%s\n\n\n%s", $e->getMessage(), $e->getTraceAsString(), $excerpt);
+        } catch (Exception $e) {
+            return "\n" . $e->getMessage() . "\n\nStack trace:\n" . $e->getTraceAsString();
         }
     }
 }
