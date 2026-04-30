@@ -240,9 +240,8 @@ class JavaScript
         try {
             $dependencies = $match[2] ? Json::decode($match[2]) : [];
             foreach ($dependencies as &$dependencyName) {
-                if ($dependencyName === 'exports' || str_starts_with($dependencyName, 'icinga/legacy-app/')) {
+                if ($dependencyName === 'exports') {
                     // exports is a special keyword and doesn't need optimization
-                    // 'app/legacy-app/...' is a custom-defined path and doesn’t need optimization either.
                     continue;
                 }
 
