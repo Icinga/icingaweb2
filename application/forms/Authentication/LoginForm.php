@@ -17,7 +17,6 @@ use Icinga\Common\Database;
 use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\User;
 use Icinga\Web\RememberMe;
-use Icinga\Web\Response;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
 use ipl\Html\FormDecoration\LabelDecorator;
