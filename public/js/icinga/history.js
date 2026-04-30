@@ -230,7 +230,7 @@
         applyLocationBar: function (onload = false) {
             let col2State = this.getCol2State();
 
-            if (onload && document.querySelector('#layout > #login')) {
+            if (onload && document.querySelector('#layout #login')) {
                 // The user landed on the login
                 let redirectInput = document.querySelector('#login form input[name=redirect]');
                 redirectInput.value = redirectInput.value + col2State;
