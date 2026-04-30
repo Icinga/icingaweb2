@@ -230,20 +230,6 @@ class AuthenticationController extends CompatController
             })
             ->handleRequest($this->getServerRequest());
 
-        if ($this->Auth()->isAuthenticated()) {
-            $redirect = $this->params->get('redirect');
-            if ($redirect) {
-                $redirectUrl = Url::fromPath($redirect, [], $this->getRequest());
-                if ($redirectUrl->isExternal()) {
-                    $this->httpBadRequest('nope');
-                }
-            } else {
-                $redirectUrl = $form->createRedirectUrl();
-            }
-
-            $this->redirectNow($redirectUrl);
-        }
-
         $this->setTitle($this->translate('Icinga Web 2 Two-Factor Auth'));
 
         // Suppress the rendering of an empty tab bar
