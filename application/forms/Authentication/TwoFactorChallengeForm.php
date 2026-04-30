@@ -23,17 +23,17 @@ class TwoFactorChallengeForm extends CompatForm
     use FormUid;
 
     /** @var string Name of the token text input in the verification form */
-    const TOKEN_INPUT = '2fa_token';
+    const TOKEN = 'twofactor_token';
 
     /** @var string Name of the verify submit button in the verification form */
-    const SUBMIT_VERIFY_2FA = 'btn_submit_verify_2fa';
+    const SUBMIT_VERIFY = 'submit_twofactor_verify';
 
     /** @var string Name of the cancel submit button in the verification form */
-    const SUBMIT_CANCEL_2FA = 'btn_submit_cancel_2fa';
+    const SUBMIT_CANCEL = 'submit_twofactor_cancel';
 
     public function __construct()
     {
-        $this->setAttribute('name', 'form_2fa_challenge');
+        $this->setAttribute('name', 'form_twofactor_challenge');
     }
 
     protected function assemble(): void
@@ -41,7 +41,7 @@ class TwoFactorChallengeForm extends CompatForm
         $this->addCsrfCounterMeasure(Session::getSession()->getId());
         $this->addElement($this->createUidElement());
 
-        $this->addElement('text', static::TOKEN_INPUT, [
+        $this->addElement('text', static::TOKEN, [
             'required'       => true,
             'class'          => 'autofocus content-centered',
             'placeholder'    => $this->translate('Please enter your 2FA token'),
@@ -52,12 +52,12 @@ class TwoFactorChallengeForm extends CompatForm
             ]
         ]);
 
-        $this->addElement('submit', static::SUBMIT_VERIFY_2FA, [
+        $this->addElement('submit', static::SUBMIT_VERIFY, [
             'data-progress-label' => $this->translate('Verifying'),
             'label'               => $this->translate('Verify')
         ]);
 
-        $this->addElement('submit', static::SUBMIT_CANCEL_2FA, [
+        $this->addElement('submit', static::SUBMIT_CANCEL, [
             'ignore'              => true,
             'formnovalidate'      => true,
             'class'               => 'btn-cancel',
@@ -79,7 +79,7 @@ class TwoFactorChallengeForm extends CompatForm
 //
 //            return;
 //        }
-        if ($twoFactorMethod->verify($this->getValue(static::TOKEN_INPUT))) {
+        if ($twoFactorMethod->verify($this->getValue(static::TOKEN))) {
             Logger::info(
                 'User "%s" passed two-factor verification using method "%s"',
                 $user->getUsername(),
@@ -115,7 +115,7 @@ class TwoFactorChallengeForm extends CompatForm
             $user->getUsername(),
             $twoFactorMethod->getName()
         );
-        $this->getElement(static::TOKEN_INPUT)->addMessage($this->translate('Token is invalid!'));
+        $this->getElement(static::TOKEN)->addMessage($this->translate('Token is invalid!'));
     }
 
     /**

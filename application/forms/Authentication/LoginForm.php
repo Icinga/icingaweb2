@@ -38,9 +38,6 @@ class LoginForm extends CompatForm
     /** @var string Redirect URL */
     const REDIRECT_URL = 'dashboard';
 
-    /** @var string */
-    const SUBMIT_LOGIN = 'btn_submit_login';
-
     public function __construct()
     {
         $this->setAttribute('name', 'form_login');
@@ -109,7 +106,7 @@ class LoginForm extends CompatForm
 
         $this->addElement(
             'submit',
-            static::SUBMIT_LOGIN,
+            'submit_login',
             [
                 'label'               => $this->translate('Login'),
                 'data-progress-label' => $this->translate('Logging in'),

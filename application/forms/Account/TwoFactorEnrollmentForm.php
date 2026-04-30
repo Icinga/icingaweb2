@@ -20,19 +20,19 @@ class TwoFactorEnrollmentForm extends CompatForm
     use CsrfCounterMeasure;
     use FormUid;
 
-    public const TWO_FACTOR_METHOD_KEY = 'twofactor_method';
+    public const METHOD = 'twofactor_method';
 
     /** @var string The submit button to enroll into a 2FA method */
-    protected const SUBMIT_ENROLL = 'twofactor_submit_enroll';
+    protected const SUBMIT_ENROLL = 'submit_twofactor_enroll';
 
     /** @var string The submit button to unenroll from a 2FA method */
-    protected const SUBMIT_UNENROLL = 'twofactor_submit_unenroll';
+    protected const SUBMIT_UNENROLL = 'submit_twofactor_unenroll';
 
     public function __construct(
         /** @var bool Whether the user is already enrolled into a 2FA method */
         protected bool $isEnrolled
     ) {
-        $this->setAttribute('name', 'form_2fa_enrollment');
+        $this->setAttribute('name', 'form_twofactor_enrollment');
     }
 
     protected function assemble(): void
@@ -40,7 +40,7 @@ class TwoFactorEnrollmentForm extends CompatForm
         $this->addCsrfCounterMeasure(Session::getSession()->getId());
         $this->addElement($this->createUidElement());
 
-        $this->addElement('select', static::TWO_FACTOR_METHOD_KEY, [
+        $this->addElement('select', static::METHOD, [
             'label'    => '2FA Method',
             'class'    => 'autosubmit',
             'disabled' => $this->isEnrolled,
@@ -63,7 +63,7 @@ class TwoFactorEnrollmentForm extends CompatForm
             return;
         }
 
-        $twoFactor = TwoFactorHook::fromName($this->getPopulatedValue(static::TWO_FACTOR_METHOD_KEY) ?? '');
+        $twoFactor = TwoFactorHook::fromName($this->getPopulatedValue(static::METHOD) ?? '');
 
         if (! $twoFactor) {
             return;
@@ -81,7 +81,7 @@ class TwoFactorEnrollmentForm extends CompatForm
 
     protected function onSuccess(): void
     {
-        $twoFactor = TwoFactorHook::fromName($this->getValue(static::TWO_FACTOR_METHOD_KEY) ?? '');
+        $twoFactor = TwoFactorHook::fromName($this->getValue(static::METHOD) ?? '');
 
         switch ($this->getPressedSubmitElement()?->getName()) {
             case static::SUBMIT_ENROLL:

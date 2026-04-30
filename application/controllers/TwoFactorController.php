@@ -22,9 +22,7 @@ class TwoFactorController extends CompatController
         $enrolledMethodName = TwoFactorHook::loadEnrolled()?->getName();
 
         $chooseMethodForm = (new TwoFactorEnrollmentForm($enrolledMethodName !== null))
-            ->populate([
-                TwoFactorEnrollmentForm::TWO_FACTOR_METHOD_KEY => $enrolledMethodName
-            ])
+            ->populate([TwoFactorEnrollmentForm::METHOD => $enrolledMethodName])
             ->on(Form::ON_SUBMIT, function (TwoFactorEnrollmentForm $form) {
                 if ($redirectUrl = $form->getRedirectUrl()) {
                     $this->redirectNow($redirectUrl);

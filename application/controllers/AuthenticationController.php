@@ -217,7 +217,7 @@ class AuthenticationController extends CompatController
             ->on(Form::ON_SENT, function (TwoFactorChallengeForm $form) {
                 $isCsrfValid = $form->getElement('CSRFToken')->isValid();
                 $isCancelPressed =
-                    $form->getPressedSubmitElement()?->getName() === TwoFactorChallengeForm::SUBMIT_CANCEL_2FA;
+                    $form->getPressedSubmitElement()?->getName() === TwoFactorChallengeForm::SUBMIT_CANCEL;
 
                 if ($isCsrfValid && $isCancelPressed) {
                     Session::getSession()->purge();
