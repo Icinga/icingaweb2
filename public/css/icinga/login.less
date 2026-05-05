@@ -110,15 +110,23 @@
       background-color: @icinga-secondary-dark;
     }
 
-    &.btn-cancel {
-      background: @gray;
-      //background: transparent;
-      //border: 2px solid @icinga-secondary;
-      //color: @icinga-secondary;
+    &.btn-back-to-login-link {
+      width: fit-content;
+      height: fit-content;
+      margin: 0 auto;
+      padding: 0;
+      background: none;
+
+      p {
+        margin: 0;
+      }
 
       &:hover {
-        background-color: @icinga-secondary;
-        color: white;
+        opacity: 0.8;
+
+        p {
+          text-decoration: underline;
+        }
       }
     }
   }

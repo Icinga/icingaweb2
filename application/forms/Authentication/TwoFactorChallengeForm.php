@@ -12,10 +12,14 @@ use Icinga\Authentication\TwoFactorState;
 use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
+use ipl\Html\Attributes;
 use ipl\Html\FormDecoration\RenderElementDecorator;
+use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Common\FormUid;
 use ipl\Web\Compat\CompatForm;
+use ipl\Web\Widget\Icon;
 
 class TwoFactorChallengeForm extends CompatForm
 {
@@ -57,12 +61,14 @@ class TwoFactorChallengeForm extends CompatForm
             'label'               => $this->translate('Verify')
         ]);
 
-        $this->addElement('submit', static::SUBMIT_CANCEL, [
-            'ignore'              => true,
-            'formnovalidate'      => true,
-            'class'               => 'btn-cancel',
-            'label'               => $this->translate('Cancel'),
-            'data-progress-label' => $this->translate('Canceling')
+        $this->addElement('submitButton', static::SUBMIT_CANCEL, [
+            'ignore'         => true,
+            'formnovalidate' => true,
+            'class'          => 'btn-back-to-login-link',
+            'label'          => [
+                new Icon('arrow-left'),
+                HtmlElement::create('p', Attributes::create(), Text::create($this->translate('Back to login')))
+            ]
         ]);
 
         $this->addElement('hidden', 'redirect', ['value' => Url::fromRequest()->getParam('redirect')]);
