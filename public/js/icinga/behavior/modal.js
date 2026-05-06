@@ -92,17 +92,16 @@
             const req = this.icinga.loader.loadUrl(url, $(modal.querySelector('#modal-content')));
             req.addToHistory = false;
 
-            const _this = this;
-            req.done(function () {
-                _this.setTitle(req.$target.data('icingaTitle').replace(/\s::\s.*/, ''));
-                _this.show();
-                _this.focus();
+            req.done(() => {
+                this.setTitle(req.$target.data('icingaTitle').replace(/\s::\s.*/, ''));
+                this.show();
+                this.focus();
             });
-            req.fail(function (req, _, errorThrown) {
+            req.fail((req, _, errorThrown) => {
                 if (req.status >= 500) {
                     // Yes, that's done twice (by us and by the base fail handler),
                     // but `renderContentToContainer` does too many useful things..
-                    _this.icinga.loader.renderContentToContainer(req.responseText, $(redirectTarget), req.action);
+                    this.icinga.loader.renderContentToContainer(req.responseText, $(redirectTarget), req.action);
                 } else if (req.status > 0) {
                     const msg = "".concat(...iterator.map(
                         not$.render("<div>" + req.responseText + "</div>").querySelectorAll('.error-message'),
@@ -112,10 +111,10 @@
                         errorThrown += ': ' + msg;
                     }
 
-                    _this.icinga.loader.createNotice('error', errorThrown);
+                    this.icinga.loader.createNotice('error', errorThrown);
                 }
 
-                _this.hide();
+                this.hide();
             });
 
             return false;
@@ -158,18 +157,17 @@
             const req = this.icinga.loader.submitForm($(form), $autoSubmittedBy, $button);
             req.addToHistory = false;
 
-            const _this = this;
-            req.done(function (data, textStatus, req) {
+            req.done((data, textStatus, req) => {
                 const title = req.getResponseHeader('X-Icinga-Title');
                 if (!! title) {
-                    _this.setTitle(decodeURIComponent(title).replace(/\s::\s.*/, ''));
+                    this.setTitle(decodeURIComponent(title).replace(/\s::\s.*/, ''));
                 }
 
                 if (req.getResponseHeader('X-Icinga-Redirect')) {
-                    _this.hide();
+                    this.hide();
                 }
-            }).always(function () {
-                delete _this.modal?.dataset.noIcingaAjax;
+            }).always(() => {
+                delete this.modal?.dataset.noIcingaAjax;
             });
 
             if (! ('baseTarget' in form.dataset) && 'redirectTarget' in this.modal.dataset) {
@@ -329,10 +327,9 @@
                 this.modal.classList.add("wobble");
             }
 
-            const _this = this;
-            this._wobbleTimeout = setTimeout(function () {
-                _this.modal?.classList.remove("wobble");
-                _this._wobbleTimeout = null;
+            this._wobbleTimeout = setTimeout(() => {
+                this.modal?.classList.remove("wobble");
+                this._wobbleTimeout = null;
             }, 1000 - timingOffset);
         }
 
@@ -352,11 +349,10 @@
             this.modal.classList.remove("active");
 
             // Using `setTimeout` here to let the transition finish
-            const _this = this;
-            setTimeout(function () {
-                not$(_this.modal.querySelector('#modal-content'))
+            setTimeout(() => {
+                not$(this.modal.querySelector('#modal-content'))
                     .trigger('close-modal')
-                    .then(() => _this.modal = null);
+                    .then(() => this.modal = null);
             }, 200);
         }
     }
