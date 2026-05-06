@@ -6,9 +6,13 @@
     'use strict';
 
     let functions = null;
+    let iterator;
+    let not$;
 
     try {
         functions = require('icinga/icinga-php-library/functions');
+        iterator = require('icinga/icinga-php-library/iterator');
+        not$ = require('icinga/icinga-php-library/notjQuery');
     } catch (error) {
         console.error('Failed to require library:', error);
     }
@@ -22,21 +26,38 @@
         constructor(icinga) {
             super(icinga);
 
-            this.$layout = $('#layout');
-            this.$ghost = $('#modal-ghost');
+            this._modal = null;
+            this.layout = document.getElementById('layout');
+            this.ghost = document.getElementById('modal-ghost');
             this.hasChanges = false;
             this._wobbleTimeout = null;
 
-            this.on('submit', '#modal form', this.onFormSubmit, this);
-            this.on('change', '#modal form select.autosubmit', this.onFormAutoSubmit, this);
-            this.on('change', '#modal form input.autosubmit', this.onFormAutoSubmit, this);
-            this.on('click', '[data-icinga-modal][href]', this.onModalToggleClick, this);
-            this.on('mousedown', '#layout > #modal', this.onModalLeave, this);
-            this.on('click', '.modal-header > button', this.onModalClose, this);
-            this.on('paste', '#modal form', this.onPaste, this);
-            this.on('change', '#modal form', this.onChange, this);
-            this.on('keydown', '#modal form', this.onKeyDown, this);
-            this.on('keydown', this.onEscapeKey, this);
+            this.on('submit', '#modal form', this.onFormSubmit.bind(this));
+            this.on('change', '#modal form select.autosubmit', this.onFormAutoSubmit.bind(this));
+            this.on('change', '#modal form input.autosubmit', this.onFormAutoSubmit.bind(this));
+            this.on('click', '[data-icinga-modal][href]', this.onModalToggleClick.bind(this));
+            this.on('mousedown', '#layout > #modal', this.onModalLeave.bind(this));
+            this.on('click', '.modal-header > button', this.onModalClose.bind(this));
+            this.on('paste', '#modal form', this.onPaste.bind(this));
+            this.on('change', '#modal form', this.onChange.bind(this));
+            this.on('keydown', '#modal form', this.onKeyDown.bind(this));
+            this.on('keydown', this.onEscapeKey.bind(this));
+        }
+
+        get modal() {
+            if (this._modal === null) {
+                this._modal = document.getElementById('modal');
+            }
+
+            return this._modal;
+        }
+
+        set modal(value) {
+            if (value !== this._modal && this._modal !== null) {
+                this._modal.remove();
+            }
+
+            this._modal = value;
         }
 
         /**
@@ -46,41 +67,47 @@
          * @returns {boolean}
          */
         onModalToggleClick(event) {
-            const _this = event.data.self;
-            const $a = $(event.currentTarget);
-            let url = $a.attr('href');
-            const $modal = _this.$ghost.clone();
-            const $redirectTarget = $a.closest('.container');
+            const a = event.currentTarget;
+            let url = a.getAttribute('href');
+            const modal = this.ghost.cloneNode(true);
+            const redirectTarget = a.closest('.container');
 
-            _this.modalOpener = event.currentTarget;
+            this.modalOpener = event.currentTarget;
 
             // Disable pointer events to block further function calls
-            _this.modalOpener.style.pointerEvents = 'none';
+            this.modalOpener.style.pointerEvents = 'none';
 
             // Add showCompact, we don't want controls in a modal
-            url = _this.icinga.utils.addUrlFlag(url, 'showCompact');
+            url = this.icinga.utils.addUrlFlag(url, 'showCompact');
 
-            // Set the toggle's container to use it as redirect target
-            $modal.data('redirectTarget', $redirectTarget);
+            if (redirectTarget !== null) {
+                // Set the toggle's container to use it as redirect target
+                modal.dataset.redirectTarget = this.icinga.utils.getCSSPath(redirectTarget);
+            }
 
             // Final preparations, the id is required so that it's not `display:none` anymore
-            $modal.attr('id', 'modal');
-            _this.$layout.append($modal);
+            modal.setAttribute('id', 'modal');
+            this.layout.append(modal);
 
-            const req = _this.icinga.loader.loadUrl(url, $modal.find('#modal-content'));
+            const req = this.icinga.loader.loadUrl(url, $(modal.querySelector('#modal-content')));
             req.addToHistory = false;
+
+            const _this = this;
             req.done(function () {
-                _this.setTitle($modal, req.$target.data('icingaTitle').replace(/\s::\s.*/, ''));
-                _this.show($modal);
-                _this.focus($modal);
+                _this.setTitle(req.$target.data('icingaTitle').replace(/\s::\s.*/, ''));
+                _this.show();
+                _this.focus();
             });
             req.fail(function (req, _, errorThrown) {
                 if (req.status >= 500) {
                     // Yes, that's done twice (by us and by the base fail handler),
                     // but `renderContentToContainer` does too many useful things..
-                    _this.icinga.loader.renderContentToContainer(req.responseText, $redirectTarget, req.action);
+                    _this.icinga.loader.renderContentToContainer(req.responseText, $(redirectTarget), req.action);
                 } else if (req.status > 0) {
-                    const msg = $(req.responseText).find('.error-message').text();
+                    const msg = "".concat(...iterator.map(
+                        not$.render("<div>" + req.responseText + "</div>").querySelectorAll('.error-message'),
+                        (el) => el.innerText
+                    ));
                     if (msg && msg !== errorThrown) {
                         errorThrown += ': ' + msg;
                     }
@@ -88,7 +115,7 @@
                     _this.icinga.loader.createNotice('error', errorThrown);
                 }
 
-                _this.hide($modal);
+                _this.hide();
             });
 
             return false;
@@ -98,13 +125,10 @@
          * Event handler for form submits within a modal.
          *
          * @param event {Event} The `submit` event triggered by a form within the modal
-         * @param $autoSubmittedBy {jQuery} The element triggering the auto submit, if any
          * @returns {boolean}
          */
         onFormSubmit(event) {
-            const _this = event.data.self;
-            const $form = $(event.currentTarget).closest('form');
-            const $modal = $form.closest('#modal');
+            const form = event.currentTarget.closest('form');
 
             let $button;
             if (typeof event.originalEvent !== 'undefined'
@@ -114,13 +138,13 @@
             }
 
             // Safari fallback only
-            const $rememberedSubmitButton = $form.data('submitButton');
+            const $rememberedSubmitButton = $(form).data('submitButton');
             if (typeof $rememberedSubmitButton !== 'undefined') {
-                if (typeof $button === 'undefined' && $form.has($rememberedSubmitButton)) {
+                if (typeof $button === 'undefined' && $rememberedSubmitButton[0].closest('form') === form) {
                     $button = $rememberedSubmitButton;
                 }
 
-                $form.removeData('submitButton');
+                $(form).removeData('submitButton');
             }
 
             let $autoSubmittedBy;
@@ -129,30 +153,35 @@
             }
 
             // Prevent our other JS from running
-            $modal[0].dataset.noIcingaAjax = '';
+            this.modal.dataset.noIcingaAjax = '';
 
-            const req = _this.icinga.loader.submitForm($form, $autoSubmittedBy, $button);
+            const req = this.icinga.loader.submitForm($(form), $autoSubmittedBy, $button);
             req.addToHistory = false;
+
+            const _this = this;
             req.done(function (data, textStatus, req) {
                 const title = req.getResponseHeader('X-Icinga-Title');
                 if (!! title) {
-                    _this.setTitle($modal, decodeURIComponent(title).replace(/\s::\s.*/, ''));
+                    _this.setTitle(decodeURIComponent(title).replace(/\s::\s.*/, ''));
                 }
 
                 if (req.getResponseHeader('X-Icinga-Redirect')) {
-                    _this.hide($modal);
+                    _this.hide();
                 }
             }).always(function () {
-                delete $modal[0].dataset.noIcingaAjax;
+                delete _this.modal?.dataset.noIcingaAjax;
             });
 
-            if (! ('baseTarget' in $form[0].dataset)) {
-                req.$redirectTarget = $modal.data('redirectTarget');
+            if (! ('baseTarget' in form.dataset) && 'redirectTarget' in this.modal.dataset) {
+                req.$redirectTarget = $(this.modal.dataset.redirectTarget);
             }
 
             if (typeof $autoSubmittedBy === 'undefined') {
                 // otherwise the form is submitted several times by clicking the "Submit" button several times
-                $form.find('input[type=submit],button[type=submit],button:not([type])').prop('disabled', true);
+                form.querySelectorAll('input[type=submit],button[type=submit],button:not([type])')
+                    .forEach(function(button) {
+                        button.setAttribute("disabled", "disabled");
+                    });
             }
 
             event.stopPropagation();
@@ -167,17 +196,12 @@
          * @returns {boolean}
          */
         onFormAutoSubmit(event) {
-            let form = event.currentTarget.form;
-            let modal = form.closest('#modal');
+            const form = event.currentTarget.form;
 
             // Prevent our other JS from running
-            modal.dataset.noIcingaAjax = '';
+            this.modal.dataset.noIcingaAjax = '';
 
-            form.dispatchEvent(new CustomEvent('submit', {
-                cancelable: true,
-                bubbles: true,
-                detail: {submittedBy: event.currentTarget}
-            }));
+            not$(form).trigger('submit', { submittedBy: event.currentTarget });
         };
 
         /**
@@ -186,14 +210,11 @@
          * @param event {Event} The `click` event triggered by clicking on the overlay
          */
         onModalLeave(event) {
-            const _this = event.data.self;
-            const $target = $(event.target);
-
-            if ($target.is('#modal')) {
-                if (_this.hasChanges) {
-                    _this.wobble($target);
+            if (event.target === this.modal) {
+                if (this.hasChanges) {
+                    this.wobble();
                 } else {
-                    _this.hide($target);
+                    this.hide();
                 }
             }
         }
@@ -208,16 +229,10 @@
                 return;
             }
 
-            const _this = event.data.self;
-            const $modal = _this.$layout.children('#modal');
-            if (! $modal.length) {
-                return;
-            }
-
-            if (_this.hasChanges) {
-                _this.wobble($modal);
+            if (this.hasChanges) {
+                this.wobble();
             } else if (! event.isDefaultPrevented()) {
-                _this.hide($modal);
+                this.hide();
             }
         }
 
@@ -227,9 +242,7 @@
          * @param event {Event} The `click` event triggered by clicking on the close button
          */
         onModalClose(event) {
-            const _this = event.data.self;
-
-            _this.hide($(event.currentTarget).closest('#modal'));
+            this.hide();
         }
 
         /**
@@ -238,13 +251,11 @@
          * @param event The `paste` event triggered by pasting into the form
          */
         onPaste(event) {
-            const _this = event.data.self;
-
             /** @type {ClipboardEvent} */
             const originalEvent = event.originalEvent;
             if (originalEvent.clipboardData.types.length) {
                 // Only set hasChanges flag if clipboard data is present
-                _this.hasChanges = true;
+                this.hasChanges = true;
             }
         }
 
@@ -258,10 +269,8 @@
          * @param event {KeyboardEvent} The `keydown` event triggered by pushing a key
          */
         onKeyDown(event) {
-            const _this = event.data.self;
-
             if (! functions?.isSpecialKeyPress(event)) {
-                _this.hasChanges = true;
+                this.hasChanges = true;
             }
         }
 
@@ -274,51 +283,42 @@
          * @param event {Event} The change event
          */
         onChange(event) {
-            const _this = event.data.self;
-            _this.hasChanges = true;
+            this.hasChanges = true;
         }
 
         /**
          * Make final preparations and add the modal to the DOM
-         *
-         * @param $modal {jQuery} The modal element
          */
-        show($modal) {
-            $modal.addClass('active');
+        show() {
+            this.modal.classList.add("active");
         }
 
         /**
          * Set a title for the modal
          *
-         * @param $modal {jQuery} The modal element
          * @param title {string} The title
          */
-        setTitle($modal, title) {
-            $modal.find('.modal-header > h1').html(title);
+        setTitle(title) {
+            this.modal.querySelector('.modal-header > h1').textContent = title;
         }
 
         /**
          * Focus the modal
-         *
-         * @param $modal {jQuery} The modal element
          */
-        focus($modal) {
-            this.icinga.ui.focusElement($modal.find('.modal-window'));
+        focus() {
+            this.icinga.ui.focusElement($(this.modal.querySelector('.modal-window')));
         }
 
         /**
          * Wobble the modal
-         *
-         * @param $modal {jQuery} The modal element
          */
-        wobble($modal) {
-            const modal = $modal[0];
+        wobble() {
             let timingOffset = 0;
             if (this._wobbleTimeout !== null) {
                 clearTimeout(this._wobbleTimeout);
                 // Do not interrupt the animation by removing the class too early.
                 // This is done by identifying the running animation and synchronizing the timeout with it.
-                for (const animation of modal.getAnimations({subtree: true})) {
+                for (const animation of this.modal.getAnimations({subtree: true})) {
                     if (animation.effect?.target?.matches('.modal-window')) {
                         timingOffset = animation.currentTime;
 
@@ -326,32 +326,37 @@
                     }
                 }
             } else {
-                modal.classList.add("wobble");
+                this.modal.classList.add("wobble");
             }
 
             const _this = this;
             this._wobbleTimeout = setTimeout(function () {
-                modal.classList.remove("wobble");
+                _this.modal?.classList.remove("wobble");
                 _this._wobbleTimeout = null;
             }, 1000 - timingOffset);
         }
 
         /**
          * Hide the modal and remove it from the DOM
-         *
-         * @param $modal {jQuery} The modal element
          */
-        hide($modal) {
+        hide() {
+            if (this.modal === null) {
+                return;
+            }
+
             // Remove pointerEvent none style to make the button clickable again
             this.modalOpener.style.pointerEvents = '';
             this.modalOpener = null;
             this.hasChanges = false;
 
-            $modal.removeClass('active');
+            this.modal.classList.remove("active");
+
             // Using `setTimeout` here to let the transition finish
+            const _this = this;
             setTimeout(function () {
-                $modal.find('#modal-content').trigger('close-modal');
-                $modal.remove();
+                not$(_this.modal.querySelector('#modal-content'))
+                    .trigger('close-modal')
+                    .then(() => _this.modal = null);
             }, 200);
         }
     }
