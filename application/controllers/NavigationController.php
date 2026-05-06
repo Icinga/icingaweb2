@@ -131,31 +131,28 @@ class NavigationController extends Controller
 
         $this->view->title = $this->translate('Navigation');
         $this->getTabs()
-        ->add(
-            'account',
-            [
+            ->add('account', [
                 'title' => $this->translate('Update your account'),
                 'label' => $this->translate('My Account'),
-                'url'   => 'account'
-            ]
-        )
-        ->add(
-            'navigation',
-            [
-                'active'    => true,
-                'title'     => $this->translate('List and configure your own navigation items'),
-                'label'     => $this->translate('Navigation'),
-                'url'       => 'navigation'
-            ]
-        )
-        ->add(
-            'devices',
-            [
+                'url'   => 'account',
+            ])
+            ->add('navigation', [
+                'active' => true,
+                'title'  => $this->translate('List and configure your own navigation items'),
+                'label'  => $this->translate('Navigation'),
+                'url'    => 'navigation',
+            ])
+            ->add('devices', [
                 'title' => $this->translate('List of devices you are logged in'),
                 'label' => $this->translate('My Devices'),
-                'url'   => 'my-devices'
-            ]
-        );
+                'url'   => 'my-devices',
+            ])
+            ->add('two-factor', [
+                'title' => $this->translate('Configure two-factor authentication'),
+                'label' => $this->translate('Two-Factor Auth'),
+                'url'   => 'two-factor/config',
+            ]);
+
         $this->setupSortControl(
             [
                 'type'  => $this->translate('Type'),

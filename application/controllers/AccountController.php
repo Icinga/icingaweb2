@@ -28,21 +28,23 @@ class AccountController extends Controller
             ->add('account', [
                 'title' => $this->translate('Update your account'),
                 'label' => $this->translate('My Account'),
-                'url'   => 'account'
+                'url'   => 'account',
             ])
             ->add('navigation', [
                 'title' => $this->translate('List and configure your own navigation items'),
                 'label' => $this->translate('Navigation'),
-                'url'   => 'navigation'
+                'url'   => 'navigation',
             ])
-            ->add(
-                'devices',
-                [
-                    'title' => $this->translate('List of devices you are logged in'),
-                    'label' => $this->translate('My Devices'),
-                    'url'   => 'my-devices'
-                ]
-            );
+            ->add('devices', [
+                'title' => $this->translate('List of devices you are logged in'),
+                'label' => $this->translate('My Devices'),
+                'url'   => 'my-devices',
+            ])
+            ->add('two-factor', [
+                'title' => $this->translate('Configure two-factor authentication'),
+                'label' => $this->translate('Two-Factor Auth'),
+                'url'   => 'two-factor/config',
+            ]);
     }
 
     /**

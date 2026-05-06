@@ -23,30 +23,27 @@ class MyDevicesController extends CompatController
     public function init()
     {
         $this->getTabs()
-            ->add(
-                'account',
-                [
-                    'title' => $this->translate('Update your account'),
-                    'label' => $this->translate('My Account'),
-                    'url'   => 'account'
-                ]
-            )
-            ->add(
-                'navigation',
-                [
-                    'title'     => $this->translate('List and configure your own navigation items'),
-                    'label'     => $this->translate('Navigation'),
-                    'url'       => 'navigation'
-                ]
-            )
-            ->add(
-                'devices',
-                [
-                    'title' => $this->translate('List of devices you are logged in'),
-                    'label' => $this->translate('My Devices'),
-                    'url'   => 'my-devices'
-                ]
-            )->activate('devices');
+            ->add('account', [
+                'title' => $this->translate('Update your account'),
+                'label' => $this->translate('My Account'),
+                'url'   => 'account',
+            ])
+            ->add('navigation', [
+                'title' => $this->translate('List and configure your own navigation items'),
+                'label' => $this->translate('Navigation'),
+                'url'   => 'navigation',
+            ])
+            ->add('devices', [
+                'title' => $this->translate('List of devices you are logged in'),
+                'label' => $this->translate('My Devices'),
+                'url'   => 'my-devices',
+            ])
+            ->add('two-factor', [
+                'title' => $this->translate('Configure two-factor authentication'),
+                'label' => $this->translate('Two-Factor Auth'),
+                'url'   => 'two-factor/config',
+            ])
+            ->activate('devices');
     }
 
     public function indexAction()
