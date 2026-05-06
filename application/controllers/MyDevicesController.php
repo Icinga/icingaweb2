@@ -5,6 +5,8 @@
 
 namespace Icinga\Controllers;
 
+use Icinga\Application\Hook;
+use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Common\Database;
 use Icinga\Web\Notification;
 use Icinga\Web\RememberMe;
@@ -47,6 +49,14 @@ class MyDevicesController extends CompatController
                     'url'   => 'my-devices'
                 )
             )->activate('devices');
+
+        if (Hook::has(TwoFactorHook::NAME)) {
+            $this->getTabs()->add('two-factor', [
+                'title' => $this->translate('Configure two-factor authentication'),
+                'label' => $this->translate('Two-Factor Auth'),
+                'url'   => 'two-factor/config',
+            ]);
+        }
     }
 
     public function indexAction()

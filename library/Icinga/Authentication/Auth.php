@@ -9,10 +9,12 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\AuditHook;
 use Icinga\Application\Hook\AuthenticationHook;
+use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
+use Icinga\Common\Database;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
@@ -24,6 +26,8 @@ use Icinga\Web\StyleSheet;
 
 class Auth
 {
+    use Database;
+
     /**
      * Singleton instance
      *
@@ -91,12 +95,19 @@ class Auth
     public function isAuthenticated()
     {
         if ($this->user !== null) {
+            if ($this->user->getTwoFactorEnabled() && ! $this->user->getTwoFactorSuccessful()) {
+                return false;
+            }
             return true;
         }
         $this->authenticateFromSession();
         if ($this->user === null && ! $this->authExternal()) {
             return false;
         }
+
+        // 2fa check from must happen here, to apply the 2fa challenge for external users as well
+        // but the session authentication would also get the 2fa challenge
+
         return true;
     }
 
@@ -132,7 +143,10 @@ class Auth
             $this->persistCurrentUser();
         }
 
-        AuditHook::logActivity('login', 'User logged in');
+        // Don't log if 2FA is enabled and hasn't been successful yet
+        if (! $user->getTwoFactorEnabled() || $user->getTwoFactorSuccessful()) {
+            AuditHook::logActivity('login', 'User logged in');
+        }
     }
 
     /**
@@ -293,6 +307,16 @@ class Auth
         }
         $password = $credentials[1];
         if ($this->getAuthChain()->setSkipExternalBackends(true)->authenticate($user, $password)) {
+            if (TwoFactorHook::loadEnrolled($user) !== null) {
+                Logger::warning(
+                    'API request rejected for user "%s": two-factor authentication cannot be completed via the API',
+                    $user->getUsername()
+                );
+                $this->getResponse()->json()
+                    ->setHttpResponseCode(403)
+                    ->setErrorMessage('Two-factor authentication is required and cannot be completed via the API')
+                    ->sendResponse();
+            }
             $this->setAuthenticated($user, false);
             $user->setIsHttpUser(true);
             return true;

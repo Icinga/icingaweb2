@@ -6,9 +6,10 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Config;
+use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Authentication\Auth;
-use Icinga\Crypt\AesCrypt;
 use Icinga\Common\Database;
+use Icinga\Crypt\AesCrypt;
 use Icinga\User;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
@@ -238,6 +239,7 @@ class RememberMe
         $authChain = $auth->getAuthChain();
         $authChain->setSkipExternalBackends(true);
         $user = new User($this->username);
+        $user->setTwoFactorEnabled(TwoFactorHook::loadEnrolled($user) !== null);
         if (! $user->hasDomain()) {
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
@@ -248,6 +250,7 @@ class RememberMe
         );
 
         if ($authenticated) {
+            $user->setTwoFactorSuccessful();
             $auth->setAuthenticated($user);
         }
 

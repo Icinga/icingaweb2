@@ -7,6 +7,8 @@ namespace Icinga\Controllers;
 
 use Exception;
 use Icinga\Application\Config;
+use Icinga\Application\Hook;
+use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Exception\NotFoundError;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\Filter\FilterMatchCaseInsensitive;
@@ -156,6 +158,13 @@ class NavigationController extends Controller
                 'url'   => 'my-devices'
             )
         );
+        if (Hook::has(TwoFactorHook::NAME)) {
+            $this->getTabs()->add('two-factor', [
+                'title' => $this->translate('Configure two-factor authentication'),
+                'label' => $this->translate('Two-Factor Auth'),
+                'url'   => 'two-factor/config',
+            ]);
+        }
         $this->setupSortControl(
             array(
                 'type'  => $this->translate('Type'),

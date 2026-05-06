@@ -6,7 +6,10 @@
 namespace Icinga\Controllers;
 
 use Icinga\Application\Config;
+use Icinga\Application\Hook;
+use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Authentication\User\UserBackend;
+use Icinga\Common\Database;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Forms\Account\ChangePasswordForm;
@@ -19,6 +22,8 @@ use Icinga\Web\Controller;
  */
 class AccountController extends Controller
 {
+    use Database;
+
     /**
      * {@inheritdoc}
      */
@@ -43,6 +48,13 @@ class AccountController extends Controller
                     'url'   => 'my-devices'
                 )
             );
+        if (Hook::has(TwoFactorHook::NAME)) {
+            $this->getTabs()->add('two-factor', [
+                'title' => $this->translate('Configure two-factor authentication'),
+                'label' => $this->translate('Two-Factor Auth'),
+                'url'   => 'two-factor/config',
+            ]);
+        }
     }
 
     /**

@@ -5,7 +5,6 @@
 
 namespace Icinga\Controllers;
 
-use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\ClassLoader;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Hook\LoginButtonHook;
@@ -13,20 +12,28 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\LoginButton;
 use Icinga\Authentication\LoginButtonForm;
+use Icinga\Authentication\Auth;
+use Icinga\Authentication\TwoFactorState;
+use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Forms\Authentication\LoginForm;
-use Icinga\Web\Controller;
+use Icinga\Forms\Authentication\TwoFactorChallengeForm;
 use Icinga\Web\Helper\CookieHelper;
 use Icinga\Web\RememberMe;
+use Icinga\Web\Session;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\LoginPage;
+use ipl\Html\HtmlDocument;
+use ipl\Html\Contract\Form;
+use ipl\Web\Compat\CompatController;
 use RuntimeException;
 use Throwable;
 
 /**
  * Application wide controller for authentication
  */
-class AuthenticationController extends Controller
+class AuthenticationController extends CompatController
 {
     use Database;
 
@@ -45,11 +52,40 @@ class AuthenticationController extends Controller
      */
     public function loginAction()
     {
+        $twoFactorState = new TwoFactorState();
+        if ($twoFactorState->isChallenged()) {
+            $this->redirectNow($this->withRedirect('authentication/twofactor'));
+        }
+
         $icinga = Icinga::app();
         if (($requiresSetup = $icinga->requiresSetup()) && $icinga->setupTokenExists()) {
             $this->redirectNow(Url::fromPath('setup'));
         }
-        $form = new LoginForm();
+
+        $form = (new LoginForm())
+            ->setAction(Url::fromRequest()->getAbsoluteUrl())
+            ->on(Form::ON_SUBMIT, function (LoginForm $form) {
+                if ($redirectUrl = $form->getRedirectUrl()) {
+                    $this->redirectNow($redirectUrl);
+                }
+            })
+            ->on(Form::ON_REQUEST, function ($request, LoginForm $form) {
+                $auth = Auth::getInstance();
+                $onlyExternal = true;
+                // TODO(el): This may be set on the auth chain once iterated. See Auth::authExternal().
+                foreach ($auth->getAuthChain() as $backend) {
+                    if (! $backend instanceof ExternalBackend) {
+                        $onlyExternal = false;
+                    }
+                }
+                if ($onlyExternal) {
+                    $form->addMessage($this->translate(
+                        'You\'re currently not authenticated using any of the web server\'s authentication'
+                        . 'mechanisms. Make sure you\'ll configure such, otherwise you\'ll not be able to login.'
+                    ));
+                    $form->onError();
+                }
+            });
 
         if (RememberMe::hasCookie() && $this->hasDb()) {
             $authenticated = false;
@@ -84,11 +120,13 @@ class AuthenticationController extends Controller
                     $this->httpBadRequest('nope');
                 }
             } else {
-                $redirectUrl = $form->getRedirectUrl();
+                $redirectUrl = $form->createRedirectUrl();
             }
 
             $this->redirectNow($redirectUrl);
         }
+
+        $request = $this->getServerRequest();
         if (! $requiresSetup) {
             $cookies = new CookieHelper($this->getRequest());
             if (! $cookies->isSupported()) {
@@ -99,11 +137,10 @@ class AuthenticationController extends Controller
                     ->sendResponse();
                 exit;
             }
-            $form->handleRequest();
+            $form->handleRequest($request);
         }
 
         $loginButtons = [];
-        $request = ServerRequest::fromGlobals();
 
         foreach (LoginButtonHook::all() as $class => $hook) {
             try {
@@ -125,11 +162,11 @@ class AuthenticationController extends Controller
                 continue;
             }
         }
+        $this->setTitle($this->translate('Icinga Web 2 Login'));
 
-        $this->view->form = $form;
-        $this->view->loginButtons = $loginButtons;
-        $this->view->defaultTitle = $this->translate('Icinga Web 2 Login');
-        $this->view->requiresSetup = $requiresSetup;
+        // Suppress the rendering of an empty tab bar
+        $this->controls = new HtmlDocument();
+        $this->addContent(new LoginPage($form, $loginButtons, $requiresSetup));
     }
 
     /**
@@ -157,5 +194,47 @@ class AuthenticationController extends Controller
 
             $this->redirectToLogin();
         }
+    }
+
+    public function twofactorAction(): void
+    {
+        $twoFactorState = new TwoFactorState();
+        if (! $twoFactorState->isChallenged()) {
+            $this->redirectToLogin();
+        }
+
+        $form = (new TwoFactorChallengeForm())
+            ->setAction(Url::fromRequest()->getAbsoluteUrl())
+            ->on(Form::ON_SUBMIT, function (TwoFactorChallengeForm $form) {
+                if ($redirectUrl = $form->getRedirectUrl()) {
+                    $this->redirectNow($redirectUrl);
+                }
+            })
+            ->on(Form::ON_SENT, function (TwoFactorChallengeForm $form) {
+                $isCsrfValid = $form->getElement('CSRFToken')->isValid();
+                $isCancelPressed =
+                    $form->getPressedSubmitElement()?->getName() === TwoFactorChallengeForm::SUBMIT_CANCEL;
+
+                if ($isCsrfValid && $isCancelPressed) {
+                    Session::getSession()->purge();
+                    $this->redirectNow($this->withRedirect('authentication/login'));
+                }
+            })
+            ->handleRequest($this->getServerRequest());
+
+        $this->setTitle($this->translate('Icinga Web 2 Two-Factor Auth'));
+
+        // Suppress the rendering of an empty tab bar
+        $this->controls = new HtmlDocument();
+        $this->addContent(new LoginPage($form));
+    }
+
+    protected function withRedirect(string $path): Url
+    {
+        $url = Url::fromPath($path);
+        if ($redirect = $this->params->get('redirect')) {
+            $url->setParam('redirect', $redirect);
+        }
+        return $url;
     }
 }
