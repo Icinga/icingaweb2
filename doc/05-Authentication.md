@@ -291,3 +291,46 @@ asks that backend to authenticate the user with the sAMAccountName "jdoe".
 When the user "jdoe@icinga.com" logs in, Icinga Web 2 walks through all configured authentication backends until it
 finds one which is responsible for that user -- e.g. a MariaDB or MySQL backend (SQL database backends aren't domain-aware). Then
 Icinga Web 2 asks that backend to authenticate the user with the username "jdoe@icinga.com".
+
+## Two-Factor Authentication <a id="two-factor-authentication"></a>
+
+Icinga Web supports two-factor authentication (2FA) through an implementable hook. When a module that provides a
+`TwoFactor` hook implementation is enabled, users can enroll their accounts. After a successful password authentication,
+enrolled users must complete a second verification step before the session is established.
+
+2FA enforcement depends on the applicable hooks provided. If the module that provides an enrolled method is disabled or
+otherwise unavailable, Icinga Web cannot load that method and cannot enforce its challenge.
+
+### Enrolling in 2FA <a id="two-factor-authentication-enrolling"></a>
+
+Open your account settings and switch to the **Two-Factor Auth** tab. Select a 2FA method from the dropdown, follow the
+method-specific steps to set up your credential, and click **Enroll**.
+
+Make sure to store any recovery information (e.g. a secret key or backup codes) provided during enrollment on a separate
+device. If you lose access to your 2FA credential, an administrator must remove your enrollment. You will not be able
+to do this by yourself because the login requires a valid token.
+
+### Logging in with 2FA <a id="two-factor-authentication-login"></a>
+
+After entering your username and password you are redirected to a second page. Enter your credential and click
+**Verify**. Use **Back to login** to cancel and return to the password step.
+
+Valid remember-me cookies act as trusted-device sessions and do not trigger a fresh 2FA challenge until the cookie is
+revoked or expires. Enrolling in or unenrolling from 2FA revokes existing remember-me cookies for the user.
+
+Sessions established by an external authentication backend remain governed by that backend. The Icinga Web login form
+2FA challenge is not applied to external authentication sessions.
+
+HTTP Basic authentication for API requests cannot complete an interactive 2FA challenge. If an API request authenticates
+with HTTP Basic credentials for a user enrolled in a currently registered 2FA method, Icinga Web rejects the request
+with HTTP status `403`.
+
+### Unenrolling from 2FA <a id="two-factor-authentication-unenrolling"></a>
+
+Open the **Two-Factor Auth** tab in your account settings and click **Unenroll**. This removes your stored credential
+immediately.
+
+### Replacing your 2FA credential <a id="two-factor-authentication-replacing"></a>
+
+To replace your credential, for example because it was compromised, click **Unenroll** first, then follow the
+enrollment steps again with the new credential.
