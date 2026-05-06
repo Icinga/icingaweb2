@@ -7,6 +7,14 @@
 
     Icinga.Behaviors = Icinga.Behaviors || {};
 
+    let functions = null;
+
+    try {
+        functions = require('icinga/icinga-php-library/functions');
+    } catch (error) {
+        console.error('Failed to require library:', error);
+    }
+
     /**
      * Behavior for modal dialogs.
      *
@@ -18,6 +26,8 @@
         this.icinga = icinga;
         this.$layout = $('#layout');
         this.$ghost = $('#modal-ghost');
+        this.hasChanges = false;
+        this._wobbleTimeout = null;
 
         this.on('submit', '#modal form', this.onFormSubmit, this);
         this.on('change', '#modal form select.autosubmit', this.onFormAutoSubmit, this);
@@ -25,7 +35,10 @@
         this.on('click', '[data-icinga-modal][href]', this.onModalToggleClick, this);
         this.on('mousedown', '#layout > #modal', this.onModalLeave, this);
         this.on('click', '.modal-header > button', this.onModalClose, this);
-        this.on('keydown', this.onKeyDown, this);
+        this.on('paste', '#modal form', this.onPaste, this);
+        this.on('change', '#modal form', this.onChange, this);
+        this.on('keydown', '#modal form', this.onKeyDown, this);
+        this.on('keydown', this.onEscapeKey, this);
     };
 
     Modal.prototype = new Icinga.EventListener();
@@ -181,7 +194,34 @@
         var $target = $(event.target);
 
         if ($target.is('#modal')) {
-            _this.hide($target);
+            if (_this.hasChanges) {
+                _this.wobble($target);
+            } else {
+                _this.hide($target);
+            }
+        }
+    };
+
+    /**
+     * Event handler for closing the modal. Closes it when the user pushes ESC.
+     *
+     * @param event {KeyboardEvent} The `keydown` event triggered by pushing a key
+     */
+    Modal.prototype.onEscapeKey = function(event) {
+        if (event.key !== 'Escape') {
+            return;
+        }
+
+        const _this = event.data.self;
+        const $modal = _this.$layout.children('#modal');
+        if (! $modal.length) {
+            return;
+        }
+
+        if (_this.hasChanges) {
+            _this.wobble($modal);
+        } else if (! event.isDefaultPrevented()) {
+            _this.hide($modal);
         }
     };
 
@@ -197,19 +237,49 @@
     };
 
     /**
-     * Event handler for closing the modal. Closes it when the user pushed ESC.
+     * Event handler for pasting into the modal form. Sets the hasChanges flag to true.
      *
-     * @param event {Event} The `keydown` event triggered by pushing a key
+     * @param event The `paste` event triggered by pasting into the form
+     */
+    Modal.prototype.onPaste = function(event) {
+        const _this = event.data.self;
+
+        /** @type {ClipboardEvent} */
+        const originalEvent = event.originalEvent;
+        if (originalEvent.clipboardData.types.length) {
+            // Only set hasChanges flag if clipboard data is present
+            _this.hasChanges = true;
+        }
+    };
+
+    /**
+     * Event handler for input into the modal form. Sets the hasChanges flag to true.
+     *
+     * This is needed to detect changes in the form, as the `change` event is not always reliable.
+     * Unless a text input or textarea is blurred, the `change` event might not be triggered.
+     * Pushing Escape in this case would still close the modal without this.
+     *
+     * @param event {KeyboardEvent} The `keydown` event triggered by pushing a key
      */
     Modal.prototype.onKeyDown = function(event) {
-        var _this = event.data.self;
+        const _this = event.data.self;
 
-        if (! event.isDefaultPrevented() && event.key === 'Escape') {
-            let $modal = _this.$layout.children('#modal');
-            if ($modal.length) {
-                _this.hide($modal);
-            }
+        if (! functions?.isSpecialKeyPress(event)) {
+            _this.hasChanges = true;
         }
+    };
+
+    /**
+     * Event handler to register whether the modal form has been changed.
+     *
+     * In addition to `onKeyDown`, this is needed because checkboxes or select elements
+     * do only trigger the `change` event, but at least rather reliably.
+     *
+     * @param event {Event} The change event
+     */
+    Modal.prototype.onChange = function(event) {
+        const _this = event.data.self;
+        _this.hasChanges = true;
     };
 
     /**
@@ -241,6 +311,36 @@
     };
 
     /**
+     * Wobble the modal
+     *
+     * @param $modal {jQuery} The modal element
+     */
+    Modal.prototype.wobble = function($modal) {
+        const modal = $modal[0];
+        let timingOffset = 0;
+        if (this._wobbleTimeout !== null) {
+            clearTimeout(this._wobbleTimeout);
+            // Do not interrupt the animation by removing the class too early.
+            // This is done by identifying the running animation and synchronizing the timeout with it.
+            for (const animation of modal.getAnimations({ subtree: true })) {
+                if (animation.effect?.target?.matches('.modal-window')) {
+                    timingOffset = animation.currentTime;
+
+                    break;
+                }
+            }
+        } else {
+            modal.classList.add("wobble");
+        }
+
+        const _this = this;
+        this._wobbleTimeout = setTimeout(function () {
+            modal.classList.remove("wobble");
+            _this._wobbleTimeout = null;
+        }, 1000 - timingOffset);
+    };
+
+    /**
      * Hide the modal and remove it from the DOM
      *
      * @param $modal {jQuery} The modal element
@@ -249,6 +349,7 @@
         // Remove pointerEvent none style to make the button clickable again
         this.modalOpener.style.pointerEvents = '';
         this.modalOpener = null;
+        this.hasChanges = false;
 
         $modal.removeClass('active');
         // Using `setTimeout` here to let the transition finish

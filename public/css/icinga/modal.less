@@ -29,6 +29,11 @@
     align-items: center;
     justify-content: center;
   }
+
+  &.wobble .modal-window {
+    /* The duration must match what modal.js.wobble expects (1s) */
+    .wobble-effect(@distance: 10px; @rotation: 0deg);
+  }
 }
 
 #modal-content {
