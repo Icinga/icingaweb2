@@ -8,9 +8,11 @@ namespace Icinga\Forms\Authentication;
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\AuthenticationHook;
+use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
+use Icinga\Authentication\TwoFactorState;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\User;
@@ -26,6 +28,7 @@ use ipl\Web\Common\FormUid;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Compat\FormDecorator\CheckboxDecorator;
 use ipl\Web\Compat\FormDecorator\DescriptionDecorator;
+use Throwable;
 
 /**
  * Form for user authentication
@@ -132,10 +135,14 @@ class LoginForm extends CompatForm
      * Authenticate the user and redirect on success, or display an error message on failure
      *
      * Skips external backends and applies the configured default domain when the
-     * username contains no domain. On success, persists the RememberMe cookie when
-     * requested, triggers registered {@see AuthenticationHook}s, and redirects to
-     * the URL returned by {@see createRedirectUrl()}. On failure, adds an
-     * appropriate error message to the form and calls {@see onError()}.
+     * username contains no domain. If the user is enrolled in a two-factor method,
+     * stores the challenge in the session and redirects to the two-factor challenge
+     * page instead of completing login immediately; optionally persists the
+     * RememberMe record at this point so it can be issued after the challenge
+     * succeeds. On full success, persists the RememberMe cookie when requested,
+     * triggers registered {@see AuthenticationHook}s, and redirects to the URL
+     * returned by {@see createRedirectUrl()}. On failure, adds an appropriate
+     * error message to the form and calls {@see onError()}.
      *
      * @return void
      */
@@ -151,6 +158,44 @@ class LoginForm extends CompatForm
         $password = $this->getElement('password')->getValue();
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
+            try {
+                $twoFactor = TwoFactorHook::loadEnrolled($user);
+            } catch (Throwable $e) {
+                $this->logAndShowError($e, $this->translate(
+                    'Two-factor authentication is currently unavailable: {error}. Contact your administrator.',
+                ));
+
+                return;
+            }
+
+            if ($twoFactor !== null) {
+                $twoFactorState = new TwoFactorState(Session::getSession());
+                $twoFactorState->challenge($user);
+                Logger::info(
+                    'User "%s" has been challenged for two-factor verification using method "%s"',
+                    $user->getUsername(),
+                    $twoFactor->getName(),
+                );
+
+                if ($this->getElement('rememberme')->isChecked()) {
+                    try {
+                        $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
+                        $twoFactorState->setRememberMeCookie($rememberMe);
+                    } catch (Throwable $e) {
+                        Logger::error('Failed to let user "%s" stay logged in: %s', $user->getUsername(), $e);
+                    }
+                }
+
+                $redirectUrl = Url::fromPath('authentication/twofactor');
+                if ($redirect = Url::fromRequest()->getParam('redirect')) {
+                    $redirectUrl->setParam('redirect', $redirect);
+                }
+
+                $this->setRedirectUrl($redirectUrl);
+
+                return;
+            }
+
             $auth->setAuthenticated($user);
             $response = Icinga::app()->getResponse();
             if ($this->getElement('rememberme')->isChecked()) {
