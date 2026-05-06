@@ -18,7 +18,9 @@ use ipl\Web\Url;
 /**
  * Login page with logo, footer, social links, and decorative orbs
  *
- * Wraps a login form in the standard login page structure.
+ * Wraps any form content in the standard login page structure. Used for
+ * both the login form and the 2FA challenge form so the visual chrome is
+ * defined in one place.
  *
  * Extends `HtmlDocument` rather than `BaseHtmlElement` because the login
  * page emits `#login` and seven `.orb` sibling divs at the top level —
