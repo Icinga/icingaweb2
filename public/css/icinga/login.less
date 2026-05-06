@@ -109,6 +109,26 @@
     &:hover {
       background-color: @icinga-secondary-dark;
     }
+
+    &.btn-back-to-login-link {
+      width: fit-content;
+      height: fit-content;
+      margin: 0 auto;
+      padding: 0;
+      background: none;
+
+      p {
+        margin: 0;
+      }
+
+      &:hover {
+        opacity: 0.8;
+
+        span {
+          text-decoration: underline;
+        }
+      }
+    }
   }
 
   .config-note {
