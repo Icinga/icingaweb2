@@ -299,6 +299,23 @@ class RememberMe
     }
 
     /**
+     * Remove all remember me entries for the given user from the database
+     *
+     * @param string $username
+     *
+     * @return void
+     */
+    public static function removeAllByUsername(string $username): void
+    {
+        $rememberMe = new static();
+        if (! $rememberMe->hasDb()) {
+            return;
+        }
+
+        $rememberMe->getDb()->delete(static::TABLE, ['username = ?' => $username]);
+    }
+
+    /**
      * Create renewed remember me cookie
      *
      * @return static New remember me cookie which has to be sent to the client
