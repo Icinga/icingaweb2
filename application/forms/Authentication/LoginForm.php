@@ -14,8 +14,8 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\TwoFactorState;
 use Icinga\Authentication\User\ExternalBackend;
-use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\User;
+use Icinga\Web\Form\Element\LoginRedirect;
 use Icinga\Web\RememberMe;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
@@ -102,33 +102,7 @@ class LoginForm extends CompatForm
             'label'               => $this->translate('Login')
         ]);
 
-        $this->addElement('hidden', 'redirect', ['value' => Url::fromRequest()->getParam('redirect')]);
-    }
-
-    /**
-     * Compute the post-login redirect URL
-     *
-     * @return Url
-     *
-     * @throws HttpBadRequestException If the redirect url is external
-     */
-    public function createRedirectUrl(): Url
-    {
-        $redirect = null;
-        if ($this->hasBeenAssembled) {
-            $redirect = $this->getElement('redirect')->getValue();
-        }
-
-        if (empty($redirect) || str_contains($redirect, 'authentication/logout')) {
-            $redirect = static::REDIRECT_URL;
-        }
-
-        $redirectUrl = Url::fromPath($redirect);
-        if ($redirectUrl->isExternal()) {
-            throw new HttpBadRequestException('Redirect to an external host is not allowed');
-        }
-
-        return $redirectUrl;
+        $this->addElement(new LoginRedirect('redirect', ['value' => Url::fromRequest()->getParam('redirect')]));
     }
 
     /**
@@ -141,7 +115,7 @@ class LoginForm extends CompatForm
      * RememberMe record at this point so it can be issued after the challenge
      * succeeds. On full success, persists the RememberMe cookie when requested,
      * triggers registered {@see AuthenticationHook}s, and redirects to the URL
-     * returned by {@see createRedirectUrl()}. On failure, adds an appropriate
+     * returned by {@see LoginRedirect::getUrl()}. On failure, adds an appropriate
      * error message to the form and calls {@see onError()}.
      *
      * @return void
@@ -212,7 +186,9 @@ class LoginForm extends CompatForm
             AuthenticationHook::triggerLogin($user);
 
             $response->setRerenderLayout();
-            $this->setRedirectUrl($this->createRedirectUrl());
+            /** @var LoginRedirect $redirectElement */
+            $redirectElement = $this->getElement('redirect');
+            $this->setRedirectUrl($redirectElement->getUrl());
 
             return;
         }
