@@ -103,7 +103,7 @@ class AuthenticationController extends CompatController
                     $this->httpBadRequest('Redirect to an external host is not allowed');
                 }
             } else {
-                $redirectUrl = $form->createRedirectUrl();
+                $redirectUrl = Url::fromPath(LoginForm::REDIRECT_URL);
             }
 
             $this->redirectNow($redirectUrl);

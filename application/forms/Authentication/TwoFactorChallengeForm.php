@@ -12,7 +12,7 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\TwoFactorState;
-use Icinga\Exception\Http\HttpBadRequestException;
+use Icinga\Web\Form\Element\LoginRedirect;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
 use ipl\Html\Attributes;
@@ -84,7 +84,7 @@ class TwoFactorChallengeForm extends CompatForm
             ],
         ]);
 
-        $this->addElement('hidden', 'redirect', ['value' => Url::fromRequest()->getParam('redirect')]);
+        $this->addElement(new LoginRedirect('redirect', ['value' => Url::fromRequest()->getParam('redirect')]));
     }
 
     /**
@@ -173,7 +173,9 @@ class TwoFactorChallengeForm extends CompatForm
             AuthenticationHook::triggerLogin($user);
 
             $response->setRerenderLayout();
-            $this->setRedirectUrl($this->createRedirectUrl());
+            /** @var LoginRedirect $redirect */
+            $redirect = $this->getElement('redirect');
+            $this->setRedirectUrl($redirect->getUrl());
 
             return;
         }
@@ -184,29 +186,5 @@ class TwoFactorChallengeForm extends CompatForm
             $twoFactor->getName(),
         );
         $this->getElement(static::TOKEN)->addMessage($this->translate('Token is invalid!'));
-    }
-
-    /**
-     * @return Url
-     *
-     * @throws HttpBadRequestException
-     */
-    public function createRedirectUrl(): Url
-    {
-        $redirect = null;
-        if ($this->hasBeenAssembled) {
-            $redirect = $this->getElement('redirect')->getValue();
-        }
-
-        if (empty($redirect) || str_contains($redirect, 'authentication/logout')) {
-            $redirect = LoginForm::REDIRECT_URL;
-        }
-
-        $redirectUrl = Url::fromPath($redirect);
-        if ($redirectUrl->isExternal()) {
-            throw new HttpBadRequestException('nope');
-        }
-
-        return $redirectUrl;
     }
 }
