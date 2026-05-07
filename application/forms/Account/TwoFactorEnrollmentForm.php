@@ -7,6 +7,7 @@ namespace Icinga\Forms\Account;
 
 use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\User;
+use Icinga\Web\RememberMe;
 use ipl\Html\FormElement\FieldsetElement;
 use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Common\FormUid;
@@ -130,7 +131,6 @@ class TwoFactorEnrollmentForm extends CompatForm
 
                     return;
                 }
-                $this->setRedirectUrl(Url::fromRequest());
 
                 break;
             case static::SUBMIT_UNENROLL:
@@ -145,9 +145,17 @@ class TwoFactorEnrollmentForm extends CompatForm
 
                     return;
                 }
-                $this->setRedirectUrl(Url::fromRequest());
 
                 break;
+            default:
+                return;
         }
+
+        // Revoke all remember-me cookies for the current user. On enrollment, existing
+        // cookies would bypass the new 2FA requirement. On unenrollment, cookies issued
+        // during the enrolled period were only granted after a successful 2FA challenge
+        // and should not remain valid.
+        RememberMe::removeAllByUsername($this->user->getUsername());
+        $this->setRedirectUrl(Url::fromRequest());
     }
 }
