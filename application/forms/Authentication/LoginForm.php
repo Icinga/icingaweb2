@@ -47,6 +47,9 @@ class LoginForm extends CompatForm
     public function __construct()
     {
         $this->setAttribute('name', 'form_login');
+        // Use a unique id so loader.js doesn't restore focus to the submit button
+        // of a subsequently rendered form that would match the same selector.
+        $this->setAttribute('id', 'login-form');
     }
 
     protected function assemble(): void
