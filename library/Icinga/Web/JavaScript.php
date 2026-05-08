@@ -32,7 +32,6 @@ class JavaScript
         'js/icinga/module.js',
         'js/icinga/timezone.js',
         'js/icinga/behavior/application-state.js',
-        'js/icinga/behavior/autofocus.js',
         'js/icinga/behavior/collapsible.js',
         'js/icinga/behavior/detach.js',
         'js/icinga/behavior/dropdown.js',
