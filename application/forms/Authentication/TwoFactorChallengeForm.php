@@ -13,6 +13,7 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\TwoFactorState;
 use Icinga\Web\Form\Element\LoginRedirect;
+use Icinga\Web\RememberMe;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
 use ipl\Html\Attributes;
@@ -158,10 +159,10 @@ class TwoFactorChallengeForm extends CompatForm
 
             $response = Icinga::app()->getResponse();
 
-            if ($rememberMe = $twoFactorState->getRememberMeCookie()) {
+            if ($cookieData = $twoFactorState->getRememberMeCookieData()) {
                 try {
+                    $rememberMe = RememberMe::fromCookieData($cookieData);
                     $response->setCookie($rememberMe->getCookie());
-                    $rememberMe->persist();
                 } catch (Exception $e) {
                     Logger::error('Failed to let user "%s" stay logged in: %s', $user->getUsername(), $e);
                 }

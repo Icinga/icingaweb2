@@ -6,7 +6,6 @@
 namespace Icinga\Authentication;
 
 use Icinga\User;
-use Icinga\Web\RememberMe;
 use Icinga\Web\Session\Session;
 use Icinga\Web\Session\SessionNamespace;
 
@@ -21,8 +20,8 @@ class TwoFactorState
     /** @var string Session key storing the challenged User */
     protected const SESSION_CHALLENGED_USER = 'challenged_user';
 
-    /** @var string Session key storing the temporary {@see RememberMe} instance */
-    protected const SESSION_REMEMBER_ME_COOKIE = 'remember_me_cookie';
+    /** @var string Session key storing the raw remember-me cookie */
+    protected const SESSION_REMEMBER_ME_COOKIE_DATA = 'remember_me_cookie_data';
 
     /** @var SessionNamespace Session namespace scoping the challenge state */
     protected SessionNamespace $session;
@@ -59,7 +58,7 @@ class TwoFactorState
     public function completeChallenge(): void
     {
         $this->session->delete(static::SESSION_CHALLENGED_USER);
-        $this->session->delete(static::SESSION_REMEMBER_ME_COOKIE);
+        $this->session->delete(static::SESSION_REMEMBER_ME_COOKIE_DATA);
     }
 
     /**
@@ -73,25 +72,25 @@ class TwoFactorState
     }
 
     /**
-     * Set the remember-me instance to issue after a successful challenge
+     * Set the remember-me cookie value to issue after a successful challenge
      *
-     * @param RememberMe $cookie Temporary remember-me instance
+     * @param string $cookieData
      *
      * @return void
      */
-    public function setRememberMeCookie(RememberMe $cookie): void
+    public function setRememberMeCookieData(string $cookieData): void
     {
-        $this->session->set(static::SESSION_REMEMBER_ME_COOKIE, $cookie);
+        $this->session->set(static::SESSION_REMEMBER_ME_COOKIE_DATA, $cookieData);
     }
 
     /**
-     * Get the stored remember-me instance
+     * Get the stored remember-me cookie value
      *
-     * @return ?RememberMe
+     * @return ?string null if no value was set
      */
-    public function getRememberMeCookie(): ?RememberMe
+    public function getRememberMeCookieData(): ?string
     {
-        return $this->session->get(static::SESSION_REMEMBER_ME_COOKIE);
+        return $this->session->get(static::SESSION_REMEMBER_ME_COOKIE_DATA);
     }
 
     /**
