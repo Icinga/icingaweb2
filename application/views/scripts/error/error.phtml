@@ -4,16 +4,27 @@
 </div>
 <?php endif ?>
 <div class="content">
+<div class="clipboard-wrapper">
+<button type="button"
+        class="copy-to-clipboard"
+        data-icinga-clipboard
+        tabindex="-1"
+        data-copied-label="<?= $this->translate('Copied') ?>"
+        title="<?= $this->translate('Copy to clipboard') ?>"
+>
+    <i class="icon fa fa-clone"></i>
+</button>
+<div class="error-message-wrapper" data-clipboard-source>
 <?php
 if (isset($stackTraces)) {
     foreach ($messages as $i => $message) {
-        echo '<p tabindex="-1" class="autofocus error-message">' . nl2br($this->escape($message)) . '</p>'
+        echo '<p class="error-message">' . nl2br($this->escape($message)) . '<br></p>'
             . '<hr>'
-            . '<pre>' . $this->escape($stackTraces[$i]) . '</pre>';
+            . '<pre>' . $this->escape($stackTraces[$i]) . '<br></pre>';
     }
 } else {
     foreach ($messages as $message) {
-        echo '<p tabindex="-1" class="autofocus error-message">' . nl2br($this->escape($message)) . '</p>';
+        echo '<p class="error-message">' . nl2br($this->escape($message)) . '</p>';
     }
 }
 
@@ -84,6 +95,8 @@ if (isset($module)) {
 
 // The following doesn't use ipl\Html because that's what the error possibly is about
 ?>
+</div>
+</div>
 <?php if (! empty($coreReason)): ?>
 <div class="error-reason">
 <?php endif ?>
