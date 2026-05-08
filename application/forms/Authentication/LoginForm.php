@@ -154,7 +154,8 @@ class LoginForm extends CompatForm
                 if ($this->getElement('rememberme')->isChecked()) {
                     try {
                         $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
-                        $twoFactorState->setRememberMeCookie($rememberMe);
+                        $rememberMe->persist();
+                        $twoFactorState->setRememberMeCookieData($rememberMe->getCookie()->getValue());
                     } catch (Throwable $e) {
                         Logger::error('Failed to let user "%s" stay logged in: %s', $user->getUsername(), $e);
                     }
@@ -175,8 +176,8 @@ class LoginForm extends CompatForm
             if ($this->getElement('rememberme')->isChecked()) {
                 try {
                     $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
-                    $response->setCookie($rememberMe->getCookie());
                     $rememberMe->persist();
+                    $response->setCookie($rememberMe->getCookie());
                 } catch (Exception $e) {
                     Logger::error('Failed to let user "%s" stay logged in: %s', $user->getUsername(), $e);
                 }

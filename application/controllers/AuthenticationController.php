@@ -187,7 +187,8 @@ class AuthenticationController extends CompatController
     public function twofactorAction(): void
     {
         $session = Session::getSession();
-        if (! (new TwoFactorState($session))->isChallenged()) {
+        $twoFactorState = new TwoFactorState($session);
+        if (! $twoFactorState->isChallenged()) {
             $this->redirectToLogin();
         }
 
@@ -199,7 +200,7 @@ class AuthenticationController extends CompatController
                     $this->redirectNow($redirectUrl);
                 }
             })
-            ->on(Form::ON_SENT, function (TwoFactorChallengeForm $form) use ($session) {
+            ->on(Form::ON_SENT, function (TwoFactorChallengeForm $form) use ($session, $twoFactorState) {
                 // ON_SENT because cancel is not the primary submit button and never
                 // triggers ON_SUBMIT. CSRF is checked manually. Without it a forged
                 // request could destroy the session and drop the 2FA challenge.
@@ -208,6 +209,15 @@ class AuthenticationController extends CompatController
                     $form->getPressedSubmitElement()?->getName() === TwoFactorChallengeForm::SUBMIT_CANCEL;
 
                 if ($csrfValid && $cancelPressed) {
+                    // The login flow may have persisted a remember-me record before
+                    // issuing the challenge. Remove it now since the challenge was
+                    // canceled and the cookie was never delivered to the browser.
+                    if ($cookieData = $twoFactorState->getRememberMeCookieData()) {
+                        $data = explode('|', $cookieData);
+                        $iv = base64_decode(array_pop($data));
+                        (new RememberMe())->remove(bin2hex($iv));
+                    }
+
                     $session->purge();
                     $this->redirectNow($this->withRedirect('authentication/login'));
                 }
