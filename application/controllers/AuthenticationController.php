@@ -128,7 +128,7 @@ class AuthenticationController extends CompatController
                         $button,
                         ClassLoader::classBelongsToModule($class) ? ClassLoader::extractModuleName($class) : null
                     ))
-                        ->on(LoginButtonForm::ON_SUCCESS, function () use ($button): void {
+                        ->on(Form::ON_SUBMIT, function () use ($button): void {
                             ($button->onClick)();
                         })
                         ->handleRequest($request);
