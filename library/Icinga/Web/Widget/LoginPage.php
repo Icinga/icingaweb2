@@ -175,7 +175,8 @@ class LoginPage extends HtmlDocument
                     'href'       => 'https://www.facebook.com/icinga',
                     'target'     => '_blank',
                     'title'      => $this->translate('Icinga on Facebook'),
-                    'aria-label' => $this->translate('Icinga on Facebook')
+                    'aria-label' => $this->translate('Icinga on Facebook'),
+                    'rel'        => 'noopener noreferrer'
                 ]),
                 HtmlElement::create('i', Attributes::create([
                     'class'       => 'icon-facebook-squared',
@@ -194,6 +195,7 @@ class LoginPage extends HtmlDocument
                     'target'     => '_blank',
                     'title'      => $this->translate('Icinga on GitHub'),
                     'aria-label' => $this->translate('Icinga on GitHub'),
+                    'rel'        => 'noopener noreferrer'
                 ]),
                 HtmlElement::create('i', Attributes::create([
                     'class'       => 'icon-github-circled',
