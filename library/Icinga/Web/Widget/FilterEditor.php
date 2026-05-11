@@ -489,11 +489,7 @@ class FilterEditor extends AbstractWidget
     {
         if ($this->addTo && $this->addTo === $filter->getId()) {
             return
-                   preg_replace(
-                       '/ class="autosubmit"/',
-                       ' class="autofocus"',
-                       $this->selectOperator()
-                   )
+                $this->selectOperator()
                   . '<ul><li>'
                   . $this->selectColumn($filter)
                   . $this->selectSign($filter)

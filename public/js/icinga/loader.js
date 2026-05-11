@@ -211,10 +211,20 @@
             }
 
             var req = this.loadUrl(url, $target, data, method, undefined, undefined, undefined, extraHeaders);
-            req.forceFocus = $autoSubmittedBy ? $autoSubmittedBy : $button.length ? $button : null;
             req.autosubmit = !! $autoSubmittedBy;
             req.addToHistory = method === 'GET';
             req.progressTimer = progressTimer;
+
+            if ($form[0].querySelector('[autofocus]') !== null) {
+                // Leave focus handling up to the form
+                req.forceFocus = null;
+            } else if ($autoSubmittedBy) {
+                req.forceFocus = $autoSubmittedBy;
+            } else if ($button.length) {
+                req.forceFocus = $button;
+            } else {
+                req.forceFocus = null;
+            }
 
             if ($autoSubmittedBy) {
                 const $closestControls = $autoSubmittedBy.closest('.controls');

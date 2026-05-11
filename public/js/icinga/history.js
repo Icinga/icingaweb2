@@ -256,7 +256,7 @@
                 // User navigated forward
                 this.icinga.ui.moveToLeft();
                 loadCol1 = false;
-            } else if (currentCol1Url === col2Url) {
+            } else if (col2Url && currentCol1Url === col2Url) {
                 // User navigated back
                 this.icinga.ui.moveToRight();
                 loadCol2 = false;

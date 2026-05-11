@@ -17,7 +17,7 @@
         {
             super(icinga);
 
-            this.on('rendered', '#main > .container', this.onRendered, this);
+            this.on('rendered', '#main > .container, #layout', this.onRendered, this);
 
             /**
              * Clipboard buttons
@@ -30,6 +30,10 @@
 
         onRendered(event)
         {
+            if (event.currentTarget !== event.target) {
+                return;
+            }
+
             let _this = event.data.self;
 
             event.currentTarget.querySelectorAll('[data-icinga-clipboard]').forEach(button => {
