@@ -1,5 +1,8 @@
 <?php
 
+// SPDX-FileCopyrightText: 2026 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 namespace Icinga\Web\Form;
 
 use Exception;
@@ -27,9 +30,6 @@ class ConfigSectionForm extends ConfigForm
     /** @var string Name of the element containing the section name */
     protected const NAME_ELEMENT_NAME = 'name';
 
-    /** @var string Name of the submit button element */
-    protected const SUBMIT_BUTTON_NAME = 'store';
-
     /** @var string Event emitted when the form has successfully deleted a configuration section */
     public const ON_DELETE = 'delete';
 
@@ -42,13 +42,6 @@ class ConfigSectionForm extends ConfigForm
      * @var string[]
      */
     protected array $ignoredElements = [self::SUBMIT_BUTTON_NAME, self::DELETE_BUTTON_NAME, self::NAME_ELEMENT_NAME];
-
-    /**
-     * The configuration to work with
-     *
-     * @var Config|null
-     */
-    protected ?Config $config = null;
 
     /**
      * The section to work with.
@@ -202,6 +195,10 @@ class ConfigSectionForm extends ConfigForm
     /**
      * Handle the deletion of the configuration section
      *
+     * This method is called when the delete button is pressed.
+     * It deletes the underlying section regardless of whether form validation passed.
+     * This is done to allow for deletion of sections that contain invalid configuration.
+     *
      * @return void
      */
     protected function handleDelete(): void
@@ -229,6 +226,10 @@ class ConfigSectionForm extends ConfigForm
 
     /**
      * Handle the renaming of the configuration section
+     *
+     * This method is called when the rename button is pressed.
+     * It renames the underlying section and updates the section name in the form.
+     * Renaming is allowed regardless of whether form validation passed.
      *
      * @return void
      */
@@ -268,8 +269,9 @@ class ConfigSectionForm extends ConfigForm
     }
 
     /**
-     * Add the section name element to the form. This element is used to create a new configuration section with the
-     * given name. The added element automatically validates that the name is unique within the configuration.
+     * Add the section name element to the form. This element is used to create
+     * a new configuration section with the given name. The added element
+     * automatically validates that the name is unique within the configuration.
      *
      * @param array $params Additional parameters to pass to the element constructor
      *
@@ -370,6 +372,6 @@ class ConfigSectionForm extends ConfigForm
             return false;
         }
 
-        return $this->allowRename() && $this->section !== $this->getPopulatedValue(static::NAME_ELEMENT_NAME);
+        return $this->section !== $this->getPopulatedValue(static::NAME_ELEMENT_NAME);
     }
 }

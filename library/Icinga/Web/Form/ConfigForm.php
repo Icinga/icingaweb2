@@ -87,7 +87,7 @@ class ConfigForm extends CompatForm
         $parts = explode('__', $name, 2);
 
         if (count($parts) !== 2) {
-            return null;
+            return [null, null];
         }
 
         return $parts;
