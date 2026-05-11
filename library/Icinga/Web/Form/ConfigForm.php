@@ -65,16 +65,19 @@ class ConfigForm extends CompatForm
      */
     protected function populateFromConfig(): void
     {
+        $populate = [];
         foreach ($this->getElements() as $element) {
             [$section, $key] = $this->getIniKeyFromName($element->getName());
             if ($section === null || $key === null) {
                 continue;
             }
             $value = $this->getPopulatedValue($element->getName()) ?? $this->config->get($section, $key);
-            $this->populate([
-                $element->getName() => $value,
-            ]);
+            if ($value === null) {
+                continue;
+            }
+            $populate[$element->getName()] = $value;
         }
+        $this->populate($populate);
     }
 
     /**
