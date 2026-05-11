@@ -138,10 +138,10 @@ class ConfigForm extends CompatForm
             if ($section === null || $key === null) {
                 continue;
             }
-            $value = $this->getConfigValue($element->getName());
 
+            $value = $this->getPopulatedValue($element->getName());
             $configSection = $this->config->getSection($section);
-            if (empty($value)) {
+            if ((string) $value === '') {
                 unset($configSection[$key]);
             } else {
                 $configSection->$key = $value;
