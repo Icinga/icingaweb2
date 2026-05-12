@@ -107,21 +107,15 @@ class ConfigForm extends CompatForm
      * Get the value of a configuration key from an element name
      *
      * @param string $name The element name
-     * @param mixed $default The default value to return if the element does not exist or the value is empty
+     * @param mixed $default The default value to return if the config entry does not exist
      *
      * @return mixed The value of the configuration key or the default value
      */
     public function getConfigValue(string $name, mixed $default = null): mixed
     {
         [$section, $key] = $this->getIniKeyFromName($name);
-        if ($section !== null && $key !== null) {
-            if (! $this->hasElement($name)) {
-                return $default;
-            }
-
-            if (($value = $this->getPopulatedValue($name)) !== null) {
-                return $value;
-            }
+        if ($section === null || $key === null) {
+            return $default;
         }
 
         return $this->config->get($section, $key, $default);

@@ -77,14 +77,6 @@ class ConfigSectionForm extends ConfigForm
             if ($this->shouldDelete()) {
                 $this->handleDelete();
                 $this->emit(static::ON_DELETE, [$this]);
-            } elseif ($this->shouldRename()) {
-                $oldName = $this->section;
-                $this->handleRename();
-                $this->emit(static::ON_RENAME, [
-                    $this,
-                    $oldName,
-                    $this->section,
-                ]);
             }
         });
     }
@@ -251,6 +243,14 @@ class ConfigSectionForm extends ConfigForm
      */
     protected function handleRename(): void
     {
+        if (! $this->config) {
+            throw new ProgrammingError('Config must be set before renaming a configuration section.');
+        }
+
+        if ($this->section === null) {
+            throw new ProgrammingError('Section must be set before renaming a configuration section.');
+        }
+
         $newName = $this->getPopulatedValue(static::NAME_ELEMENT_NAME);
         $section = $this->config->getSection($this->section);
         $this->config->removeSection($this->section);
@@ -345,7 +345,22 @@ class ConfigSectionForm extends ConfigForm
             }
         }
 
+        $oldSection = $this->section;
+        $isRename = $this->shouldRename();
+
+        if ($isRename) {
+            $this->handleRename();
+        }
+
         parent::onSuccess();
+
+        if ($isRename) {
+            $this->emit(static::ON_RENAME, [
+                $this,
+                $oldSection,
+                $this->section,
+            ]);
+        }
     }
 
     protected function addButtonElements(): void
