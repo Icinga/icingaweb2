@@ -163,8 +163,10 @@ class ConfigSectionForm extends ConfigForm
     }
 
     /**
-     * Is the form allowed to delete the configuration section.
+     * Whether the form is allowed to delete the configuration section
+     *
      * Note: Creation forms are never allowed to be deleted.
+     *
      * @return bool
      */
     public function allowDeletion(): bool
@@ -176,6 +178,13 @@ class ConfigSectionForm extends ConfigForm
         return $this->allowDeletion;
     }
 
+    /**
+     * Set the ability to rename the configuration section
+     *
+     * @param bool $allowRename Whether the form is allowed to rename the configuration section
+     *
+     * @return $this
+     */
     public function setAllowRename(bool $allowRename = true): static
     {
         $this->allowRename = $allowRename;
@@ -183,6 +192,13 @@ class ConfigSectionForm extends ConfigForm
         return $this;
     }
 
+    /**
+     * Whether the form is allowed to rename the configuration section
+     *
+     * Note: Creation forms are never allowed to be rename forms.
+     *
+     * @return bool
+     */
     public function allowRename(): bool
     {
         if ($this->isCreateForm()) {
@@ -232,6 +248,8 @@ class ConfigSectionForm extends ConfigForm
      * Renaming is allowed regardless of whether form validation passed.
      *
      * @return void
+     *
+     * @throws ProgrammingError
      */
     protected function handleRename(): void
     {
@@ -269,9 +287,11 @@ class ConfigSectionForm extends ConfigForm
     }
 
     /**
-     * Add the section name element to the form. This element is used to create
-     * a new configuration section with the given name. The added element
-     * automatically validates that the name is unique within the configuration.
+     * Add the section name element to the form
+     *
+     * This element is used to create a new configuration section with the given
+     * name. The added element automatically validates that the name is unique
+     * within the configuration.
      *
      * @param array $params Additional parameters to pass to the element constructor
      *
@@ -314,13 +334,6 @@ class ConfigSectionForm extends ConfigForm
         $this->addElement('text', static::NAME_ELEMENT_NAME, $params);
     }
 
-    /**
-     * Get the section and key from the element name.
-     *
-     * @param string $name The element name
-     *
-     * @return string[]|null
-     */
     protected function getIniKeyFromName(string $name): ?array
     {
         return [$this->section, $name];
@@ -339,11 +352,6 @@ class ConfigSectionForm extends ConfigForm
         parent::onSuccess();
     }
 
-    /**
-     * Add the store and optionally the delete buttons to the form.
-     *
-     * @return void
-     */
     protected function addButtonElements(): void
     {
         parent::addButtonElements();
@@ -366,6 +374,11 @@ class ConfigSectionForm extends ConfigForm
             ->prepend($deleteButton);
     }
 
+    /**
+     * Check if the form should rename the section for this request
+     *
+     * @return bool
+     */
     private function shouldRename(): bool
     {
         if (! $this->allowRename() || ! $this->hasBeenSubmitted()) {

@@ -60,6 +60,8 @@ class ConfigForm extends CompatForm
      * Populate the form elements from the configuration
      *
      * @return void
+     *
+     * @throws ProgrammingError
      */
     protected function populateFromConfig(): void
     {
@@ -76,7 +78,7 @@ class ConfigForm extends CompatForm
     }
 
     /**
-     * Get the section and key from the element name.
+     * Get the section and key from the element name
      *
      * @param string $name The element name
      *
@@ -118,7 +120,10 @@ class ConfigForm extends CompatForm
     /**
      * Persist the current configuration to disk
      *
-     * If an error occurs, the form will be re-rendered with the error message and the raw INI configuration.
+     * If an error occurs, the form will be re-rendered with the error message
+     * and the raw INI configuration.
+     *
+     * @throws ProgrammingError
      */
     protected function save(): void
     {
@@ -168,7 +173,7 @@ class ConfigForm extends CompatForm
     }
 
     /**
-     * Add the store button to the form.
+     * Add the store button to the form
      *
      * @return void
      */
