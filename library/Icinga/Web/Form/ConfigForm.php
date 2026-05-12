@@ -7,6 +7,7 @@ namespace Icinga\Web\Form;
 
 use Exception;
 use Icinga\Application\Config;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\ShowConfiguration;
 use ipl\Web\Compat\CompatForm;
 
@@ -65,6 +66,10 @@ class ConfigForm extends CompatForm
      */
     protected function populateFromConfig(): void
     {
+        if (! $this->config) {
+            throw new ProgrammingError("A config object must be set before populating the form.");
+        }
+
         $populate = [];
         foreach ($this->getElements() as $element) {
             [$section, $key] = $this->getIniKeyFromName($element->getName());
@@ -108,15 +113,17 @@ class ConfigForm extends CompatForm
      */
     public function getConfigValue(string $name, mixed $default = null): mixed
     {
-        if (! $this->hasElement($name)) {
-            return $default;
-        }
-
-        if (($value = $this->getPopulatedValue($name)) !== null) {
-            return $value;
-        }
-
         [$section, $key] = $this->getIniKeyFromName($name);
+        if ($section !== null && $key !== null) {
+            if (! $this->hasElement($name)) {
+                return $default;
+            }
+
+            if (($value = $this->getPopulatedValue($name)) !== null) {
+                return $value;
+            }
+        }
+
         return $this->config->get($section, $key, $default);
     }
 
@@ -130,6 +137,10 @@ class ConfigForm extends CompatForm
      */
     protected function save(): void
     {
+        if (! $this->config) {
+            throw new ProgrammingError("A config object must be set before saving the configuration.");
+        }
+
         foreach ($this->getElements() as $element) {
             if (in_array($element->getName(), $this->ignoredElements)) {
                 continue;

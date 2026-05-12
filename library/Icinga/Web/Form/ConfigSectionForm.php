@@ -6,7 +6,6 @@
 namespace Icinga\Web\Form;
 
 use Exception;
-use Icinga\Application\Config;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\ShowConfiguration;
 use ipl\Html\Contract\FormSubmitElement;
@@ -245,7 +244,6 @@ class ConfigSectionForm extends ConfigForm
      *
      * This method is called when the rename button is pressed.
      * It renames the underlying section and updates the section name in the form.
-     * Renaming is allowed regardless of whether form validation passed.
      *
      * @return void
      *
@@ -258,8 +256,6 @@ class ConfigSectionForm extends ConfigForm
         $this->config->removeSection($this->section);
         $this->config->setSection($newName, $section);
         $this->section = $newName;
-
-        $this->onSuccess();
     }
 
     /**
@@ -381,7 +377,7 @@ class ConfigSectionForm extends ConfigForm
      */
     private function shouldRename(): bool
     {
-        if (! $this->allowRename() || ! $this->hasBeenSubmitted()) {
+        if (! $this->allowRename() || ! $this->hasBeenSubmitted() || ! $this->isValid()) {
             return false;
         }
 
