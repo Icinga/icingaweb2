@@ -6,6 +6,7 @@
 namespace Icinga\Web\Form;
 
 use Exception;
+use Icinga\Application\Config;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\ShowConfiguration;
 use ipl\Html\Contract\FormSubmitElement;
@@ -43,14 +44,6 @@ class ConfigSectionForm extends ConfigForm
     protected array $ignoredElements = [self::SUBMIT_BUTTON_NAME, self::DELETE_BUTTON_NAME, self::NAME_ELEMENT_NAME];
 
     /**
-     * The section to work with.
-     * If not set, the section is determined from the element name.
-     *
-     * @var string|null
-     */
-    protected ?string $section = null;
-
-    /**
      * Whether the form is used for creating a new configuration section
      *
      * @var bool
@@ -71,8 +64,14 @@ class ConfigSectionForm extends ConfigForm
      */
     protected bool $allowRename = true;
 
-    public function __construct()
-    {
+    public function __construct(
+        Config $config,
+        protected ?string $section = null,
+    ) {
+        parent::__construct($config);
+
+        $this->isCreateForm = $section === null;
+
         $this->on(static::ON_SENT, function () {
             if ($this->shouldDelete()) {
                 $this->handleDelete();
@@ -102,35 +101,7 @@ class ConfigSectionForm extends ConfigForm
     }
 
     /**
-     * Set the section to use when populating and saving
-     *
-     * @param string $section The section to use
-     *
-     * @return $this
-     */
-    public function setSection(string $section): static
-    {
-        $this->section = $section;
-
-        return $this;
-    }
-
-    /**
-     * Set whether the form is used for creating a new configuration section, with a name that can be chosen by the user
-     *
-     * @param bool $create
-     *
-     * @return static
-     */
-    public function setIsCreateForm(bool $create = true): static
-    {
-        $this->isCreateForm = $create;
-
-        return $this;
-    }
-
-    /**
-     * Is the form used for creating a new configuration section
+     * Is the form used for creating a new configuration section?
      *
      * @return bool
      */
@@ -210,10 +181,6 @@ class ConfigSectionForm extends ConfigForm
      */
     protected function handleDelete(): void
     {
-        if ($this->section === null) {
-            throw new ProgrammingError('Section must be set before deleting a configuration section.');
-        }
-
         try {
             $this->config->removeSection($this->section);
             $this->config->saveIni();
@@ -243,10 +210,6 @@ class ConfigSectionForm extends ConfigForm
      */
     protected function handleRename(): void
     {
-        if (! $this->config) {
-            throw new ProgrammingError('Config must be set before renaming a configuration section.');
-        }
-
         if ($this->section === null) {
             throw new ProgrammingError('Section must be set before renaming a configuration section.');
         }

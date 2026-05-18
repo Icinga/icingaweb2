@@ -7,7 +7,6 @@ namespace Icinga\Web\Form;
 
 use Exception;
 use Icinga\Application\Config;
-use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\ShowConfiguration;
 use ipl\Web\Compat\CompatForm;
 
@@ -26,25 +25,9 @@ class ConfigForm extends CompatForm
      */
     protected array $ignoredElements = [self::SUBMIT_BUTTON_NAME];
 
-    /**
-     * The configuration to work with
-     *
-     * @var Config|null
-     */
-    protected ?Config $config = null;
-
-    /**
-     * Set the configuration to use when populating and saving
-     *
-     * @param Config $config The configuration to use
-     *
-     * @return $this
-     */
-    public function setConfig(Config $config): static
-    {
-        $this->config = $config;
-
-        return $this;
+    public function __construct(
+        protected Config $config,
+    ) {
     }
 
     public function ensureAssembled(): static
@@ -61,15 +44,9 @@ class ConfigForm extends CompatForm
      * Populate the form elements from the configuration
      *
      * @return void
-     *
-     * @throws ProgrammingError
      */
     protected function populateFromConfig(): void
     {
-        if (! $this->config) {
-            throw new ProgrammingError("A config object must be set before populating the form.");
-        }
-
         $populate = [];
         foreach ($this->getElements() as $element) {
             [$section, $key] = $this->getIniKeyFromName($element->getName());
@@ -126,15 +103,9 @@ class ConfigForm extends CompatForm
      *
      * If an error occurs, the form will be re-rendered with the error message
      * and the raw INI configuration.
-     *
-     * @throws ProgrammingError
      */
     protected function save(): void
     {
-        if (! $this->config) {
-            throw new ProgrammingError("A config object must be set before saving the configuration.");
-        }
-
         foreach ($this->getElements() as $element) {
             if (in_array($element->getName(), $this->ignoredElements)) {
                 continue;
