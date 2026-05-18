@@ -30,12 +30,14 @@ use Icinga\Chart\Unit\AxisUnit;
  * $this->chart = new GridChart();
  * $this->chart->setAxisLabel("X axis label", "Y axis label");
  * $this->chart->setXAxis(Axis::CalendarUnit());
- * $this->chart->drawLines(
- * array(
- *      'data'  => array(
- *          array(time()-7200, 10),array(time()-3620, 30), array(time()-1800, 15), array(time(), 92))
- *      )
- * );
+ * $this->chart->drawLines([
+ *     'data' => [
+ *         [time()-7200, 10],
+ *         [time()-3620, 30],
+ *         [time()-1800, 15],
+ *         [time(), 92]
+ *     ]
+ * ]);
  * </code>
  * </pre>
  */

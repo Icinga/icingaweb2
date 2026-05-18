@@ -33,13 +33,13 @@ use Icinga\Exception\ProgrammingError;
  *  @param  bool            $escape
  * }
  *
- * @method string img($url, $params = null, array $properties = array()) {
+ * @method string img($url, $params = null, array $properties = []) {
  *  @param  Url|string|null $url
  *  @param  string[]|null   $params
  *  @param  string[]        $properties
  * }
  *
- * @method string icon($img, $title = null, array $properties = array()) {
+ * @method string icon($img, $title = null, array $properties = []) {
  *  @param  string      $img
  *  @param  string|null $title
  *  @param  string[]    $properties

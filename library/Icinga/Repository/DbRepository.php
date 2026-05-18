@@ -60,9 +60,9 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * To define a rule use the name of a base table as key and another array of table names as probable join
      * targets ordered by priority. (Ascending: Lower means higher priority)
      * <code>
-     *  array(
-     *      'table_name' => array('target1', 'target2', 'target3')
-     *  )
+     *  [
+     *      'table_name' => ['target1', 'target2', 'target3']
+     *  ]
      * </code>
      *
      * @todo    Support for tree-ish rules
@@ -77,13 +77,13 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * This may be initialized by repositories which are going to make use of table aliases. It allows to provide
      * alias-less column names to be used for a statement. The array needs to be in the following format:
      * <code>
-     *  array(
-     *      'table_name' => array(
+     *  [
+     *      'table_name' => [
      *          'column1',
      *          'alias1' => 'column2',
      *          'alias2' => 'column3'
-     *      )
-     *  )
+     *      ]
+     *  ]
      * </code>
      *
      * @var array

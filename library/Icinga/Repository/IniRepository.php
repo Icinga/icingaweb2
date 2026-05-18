@@ -32,13 +32,13 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      *
      * This must be initialized by concrete repository implementations, in the following format
      * <code>
-     * array(
-     *   'table_name' => array(
+     * [
+     *   'table_name' => [
      *     'name'      => 'name_of_the_ini_file_without_extension',
      *     'keyColumn' => 'the_name_of_the_column_to_use_as_key_column',
-     *    ['module'    => 'the_name_of_the_module_if_any']
-     *   )
-     * )
+     *    ('module'    => 'the_name_of_the_module_if_any')
+     *   ]
+     * ]
      * </code>
      *
      * @var array

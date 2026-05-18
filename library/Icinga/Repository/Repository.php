@@ -72,13 +72,13 @@ abstract class Repository implements Selectable
      *
      * This must be initialized by concrete repository implementations, in the following format
      * <code>
-     *  array(
-     *      'baseTable' => array(
+     *  [
+     *      'baseTable' => [
      *          'column1',
      *          'alias1' => 'column2',
      *          'alias2' => 'column3'
-     *      )
-     *  )
+     *      ]
+     *  ]
      * </code>
      *
      * @var array
@@ -106,10 +106,10 @@ abstract class Repository implements Selectable
      *
      * This may be intialized by concrete repository implementations, in the following format
      * <code>
-     *  array(
+     *  [
      *      'alias_or_column_name',
      *      'label_to_show_in_the_filter_editor' => 'alias_or_column_name'
-     *  )
+     *  ]
      * </code>
      *
      * @var array
@@ -142,22 +142,22 @@ abstract class Repository implements Selectable
      *
      * This may be initialized by concrete repository implementations, in the following format
      * <code>
-     *  array(
-     *      'alias_or_column_name' => array(
+     *  [
+     *      'alias_or_column_name' => [
      *          'order'     => 'asc'
-     *      ),
-     *      'alias_or_column_name' => array(
-     *          'columns'   => array(
+     *      ],
+     *      'alias_or_column_name' => [
+     *          'columns'   => [
      *              'once_more_the_alias_or_column_name_as_in_the_parent_key',
      *              'an_additional_alias_or_column_name_with_a_specific_direction asc'
-     *          ),
+     *          ],
      *          'order'     => 'desc'
-     *      ),
-     *      'alias_or_column_name' => array(
-     *          'columns'   => array('a_different_alias_or_column_name_designated_to_act_as_the_only_sort_column')
+     *      ],
+     *      'alias_or_column_name' => [
+     *          'columns'   => ['a_different_alias_or_column_name_designated_to_act_as_the_only_sort_column']
      *          // Ascendant sort by default
-     *      )
-     *  )
+     *      ]
+     *  ]
      * </code>
      * Note that it's mandatory to supply the alias name in case there is one.
      *

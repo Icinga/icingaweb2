@@ -18,13 +18,13 @@ use stdClass;
  *
  * match this one:
  *
- * array(
- *   'foo' => array(
- *     'bar' => array(
+ * [
+ *   'foo' => [
+ *     'bar' => [
  *       'baz' => 'deadbeef'  // <---
- *     )
- *   )
- * )
+ *     ]
+ *   ]
+ * ]
  */
 class GlobFilter
 {

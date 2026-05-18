@@ -18,7 +18,7 @@ use Countable;
  *
  * $preferences = new Preferences(); // Start with empty preferences
  *
- * $preferences = new Preferences(array('aPreference' => 'value')); // Start with initial preferences
+ * $preferences = new Preferences(['aPreference' => 'value']); // Start with initial preferences
  *
  * $preferences->aNewPreference = 'value'; // Set a preference
  *

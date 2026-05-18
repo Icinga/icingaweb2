@@ -149,10 +149,10 @@ class StringHelper
      *
      * <pre>
      *  cartesianProduct(
-     *      array(array('foo', 'bar'), array('mumble', 'grumble', null)),
+     *      [['foo', 'bar'], ['mumble', 'grumble', null]],
      *      '_'
      *  );
-     *     => array('foo_mumble', 'foo_grumble', 'bar_mumble', 'bar_grumble', 'foo', 'bar')
+     *     => ['foo_mumble', 'foo_grumble', 'bar_mumble', 'bar_grumble', 'foo', 'bar']
      * </pre>
      *
      * @param   array   $sets   An array of arrays containing all sets for which the cartesian
