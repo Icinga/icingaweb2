@@ -21,7 +21,7 @@ class Setup implements IteratorAggregate
 
     public function __construct()
     {
-        $this->steps = array();
+        $this->steps = [];
     }
 
     public function getIterator(): Traversable
@@ -73,7 +73,7 @@ class Setup implements IteratorAggregate
      */
     public function getSummary()
     {
-        $summaries = array();
+        $summaries = [];
         foreach ($this->steps as $step) {
             $summaries[] = $step->getSummary();
         }
@@ -88,7 +88,7 @@ class Setup implements IteratorAggregate
      */
     public function getReport()
     {
-        $reports = array();
+        $reports = [];
         foreach ($this->steps as $step) {
             $report = $step->getReport();
             if (! empty($report)) {

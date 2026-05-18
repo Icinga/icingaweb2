@@ -51,7 +51,7 @@ class DocSearchIterator extends RecursiveFilterIterator
     {
         /** @var $section DocSection */
         $section = $this->current();
-        $matches = array();
+        $matches = [];
         if (($match = $this->search->search($section->getTitle())) !== null) {
             $matches[] = $match->setMatchType(DocSearchMatch::MATCH_HEADER);
         }

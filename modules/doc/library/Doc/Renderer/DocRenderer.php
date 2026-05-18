@@ -35,7 +35,7 @@ abstract class DocRenderer extends RecursiveIteratorIterator
      *
      * @var array
      */
-    protected $urlParams = array();
+    protected $urlParams = [];
 
     /**
      * View
@@ -108,7 +108,7 @@ abstract class DocRenderer extends RecursiveIteratorIterator
      */
     public function setUrlParams(array $urlParams)
     {
-        $this->urlParams = array_map(array($this, 'encodeUrlParam'), $urlParams);
+        $this->urlParams = array_map([$this, 'encodeUrlParam'], $urlParams);
         return $this;
     }
 
@@ -171,7 +171,7 @@ abstract class DocRenderer extends RecursiveIteratorIterator
      */
     public static function encodeUrlParam($param)
     {
-        return str_replace(array('%2F','%5C'), array('%252F','%255C'), rawurlencode($param));
+        return str_replace(['%2F','%5C'], ['%252F','%255C'], rawurlencode($param));
     }
 
     /**
@@ -183,7 +183,7 @@ abstract class DocRenderer extends RecursiveIteratorIterator
      */
     public static function decodeUrlParam($param)
     {
-        return str_replace(array('%2F', '%5C'), array('/', '\\'), $param);
+        return str_replace(['%2F', '%5C'], ['/', '\\'], $param);
     }
 
     /**

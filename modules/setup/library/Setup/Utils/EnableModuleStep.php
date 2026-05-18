@@ -25,7 +25,7 @@ class EnableModuleStep extends Step
     {
         $this->moduleNames = $moduleNames;
 
-        $this->modulePaths = array();
+        $this->modulePaths = [];
         if (($appModulePath = realpath(Icinga::app()->getApplicationDir() . '/../modules')) !== false) {
             $this->modulePaths[] = $appModulePath;
         }
@@ -61,7 +61,7 @@ class EnableModuleStep extends Step
         $okMessage = mt('setup', 'Module "%s" has been successfully enabled.');
         $failMessage = mt('setup', 'Module "%s" could not be enabled. An error occured:');
 
-        $report = array();
+        $report = [];
         foreach ($this->moduleNames as $moduleName) {
             if (isset($this->errors[$moduleName])) {
                 $report[] = sprintf($failMessage, $moduleName);

@@ -63,7 +63,7 @@ class DbTool
      *
      * @var array
      */
-    protected $mysqlGrantContexts = array(
+    protected $mysqlGrantContexts = [
         'ALL'                       => 31,
         'ALL PRIVILEGES'            => 31,
         'ALTER'                     => 13,
@@ -92,14 +92,14 @@ class DbTool
         'SHUTDOWN'                  => 1,
         'SUPER'                     => 1,
         'UPDATE'                    => 29
-    );
+    ];
 
     /**
      * All PostgreSQL GRANT privileges with their respective level identifiers
      *
      * @var array
      */
-    protected $pgsqlGrantContexts = array(
+    protected $pgsqlGrantContexts = [
         'ALL'               => 63,
         'ALL PRIVILEGES'    => 63,
         'CREATE'            => 13,
@@ -109,7 +109,7 @@ class DbTool
         'EXECUTE'           => 32,
         'USAGE'             => 33,
         'CREATEROLE'        => 1
-    );
+    ];
 
     /**
      * Create a new DbTool
@@ -256,17 +256,17 @@ class DbTool
             return;
         }
 
-        $config = array(
+        $config = [
             'dbname'    => $dbname,
             'host'      => $this->config['host'],
             'port'      => $this->config['port'],
             'username'  => $this->config['username'],
             'password'  => $this->config['password']
-        );
+        ];
 
         if ($this->config['db'] === 'mysql') {
             if (isset($this->config['use_ssl']) && $this->config['use_ssl']) {
-                $this->config['driver_options'] = array();
+                $this->config['driver_options'] = [];
                 # The presence of these keys as empty strings or null cause non-ssl connections to fail
                 if ($this->config['ssl_key']) {
                     $config['driver_options'][Mysql::ATTR_SSL_KEY] = $this->config['ssl_key'];
@@ -313,10 +313,10 @@ class DbTool
             return;
         }
 
-        $driverOptions = array(
+        $driverOptions = [
             PDO::ATTR_TIMEOUT => 1,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        );
+        ];
 
         if ($this->config['db'] === 'mysql'
             && isset($this->config['use_ssl'])
@@ -439,7 +439,7 @@ class DbTool
     public function escapeTableWildcards($tableName)
     {
         if ($this->config['db'] === 'mysql') {
-            return str_replace(array('_', '%'), array('\_', '\%'), $tableName);
+            return str_replace(['_', '%'], ['\_', '\%'], $tableName);
         }
 
         throw new LogicException('Unable to escape table wildcards.');
@@ -474,7 +474,7 @@ class DbTool
      *
      * @return  int
      */
-    public function exec($statement, $params = array())
+    public function exec($statement, $params = [])
     {
         if (empty($params)) {
             return $this->pdoConn->exec($statement);
@@ -495,7 +495,7 @@ class DbTool
      *
      * @return  mixed
      */
-    public function query($statement, $params = array())
+    public function query($statement, $params = [])
     {
         if ($this->zendConn !== null) {
             return $this->zendConn->query($statement, $params);
@@ -603,8 +603,8 @@ class DbTool
                 $this->quoteIdentifier($host)
             );
 
-            $dbPrivileges = array();
-            $tablePrivileges = array();
+            $dbPrivileges = [];
+            $tablePrivileges = [];
             foreach (array_intersect($privileges, array_keys($this->mysqlGrantContexts)) as $privilege) {
                 if (! empty($context) && $this->mysqlGrantContexts[$privilege] & static::TABLE_LEVEL) {
                     $tablePrivileges[] = $privilege;
@@ -628,7 +628,7 @@ class DbTool
                 );
             }
         } elseif ($this->config['db'] === 'pgsql') {
-            $dbPrivileges = array();
+            $dbPrivileges = [];
             $schemaPrivileges = [];
             foreach (array_intersect($privileges, array_keys($this->pgsqlGrantContexts)) as $privilege) {
                 if ($this->pgsqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
@@ -692,16 +692,16 @@ EOD;
 
             $query = $this->query(
                 $queryString,
-                array(
+                [
                     ':current'  => $this->config['username'],
                     ':wanted'   => $username
-                )
+                ]
             );
             return count($query->fetchAll()) > 0;
         } elseif ($this->config['db'] === 'pgsql') {
             $query = $this->query(
                 'SELECT 1 FROM pg_catalog.pg_user WHERE usename = :ident LIMIT 1',
-                array(':ident' => $username)
+                [':ident' => $username]
             );
             return count($query->fetchAll()) === 1;
         }
@@ -719,7 +719,7 @@ EOD;
             list($_, $host) = explode('@', $this->query('select current_user()')->fetchColumn());
             $this->exec(
                 'CREATE USER :user@:host IDENTIFIED BY :passw',
-                array(':user' => $username, ':host' => $host, ':passw' => $password)
+                [':user' => $username, ':host' => $host, ':passw' => $password]
             );
         } elseif ($this->config['db'] === 'pgsql') {
             $this->exec(sprintf(
@@ -752,8 +752,8 @@ EOD;
         $grantee = "'" . ($username === null ? $this->config['username'] : $username) . "'@'" . $host . "'";
 
         if (isset($this->config['dbname'])) {
-            $dbPrivileges = array();
-            $tablePrivileges = array();
+            $dbPrivileges = [];
+            $tablePrivileges = [];
             foreach ($mysqlPrivileges as $privilege) {
                 if (! empty($context) && $this->mysqlGrantContexts[$privilege] & static::TABLE_LEVEL) {
                     $tablePrivileges[] = $privilege;
@@ -775,8 +775,8 @@ EOD;
                     . ($requireGrants ? " AND is_grantable = 'YES'" : '');
 
                 $dbAndTableQuery = $this->query(
-                    sprintf($queryString, join(',', array_map(array($this, 'quote'), $dbPrivileges))),
-                    array(':grantee' => $grantee, ':dbname' => $this->escapeTableWildcards($this->config['dbname']))
+                    sprintf($queryString, join(',', array_map([$this, 'quote'], $dbPrivileges))),
+                    [':grantee' => $grantee, ':dbname' => $this->escapeTableWildcards($this->config['dbname'])]
                 );
                 $grantedDbAndTablePrivileges = (int) $dbAndTableQuery->fetchObject()->matches;
                 if ($grantedDbAndTablePrivileges === count($dbPrivileges)) {
@@ -790,11 +790,11 @@ EOD;
                     $dbExclusivePrivileges = array_diff($dbPrivileges, $tablePrivileges);
                     if (! empty($dbExclusivePrivileges)) {
                         $dbExclusiveQuery = $this->query(
-                            sprintf($queryString, join(',', array_map(array($this, 'quote'), $dbExclusivePrivileges))),
-                            array(
+                            sprintf($queryString, join(',', array_map([$this, 'quote'], $dbExclusivePrivileges))),
+                            [
                                 ':grantee'  => $grantee,
                                 ':dbname'   => $this->escapeTableWildcards($this->config['dbname'])
-                            )
+                            ]
                         );
                         $dbPrivilegesGranted = (int) $dbExclusiveQuery->fetchObject()->matches === count(
                             $dbExclusivePrivileges
@@ -809,10 +809,10 @@ EOD;
                     . ' FROM information_schema.table_privileges'
                     . ' WHERE grantee = :grantee'
                     . ' AND table_schema = :dbname'
-                    . ' AND table_name IN (' . join(',', array_map(array($this, 'quote'), $context)) . ')'
-                    . ' AND privilege_type IN (' . join(',', array_map(array($this, 'quote'), $tablePrivileges)) . ')'
+                    . ' AND table_name IN (' . join(',', array_map([$this, 'quote'], $context)) . ')'
+                    . ' AND privilege_type IN (' . join(',', array_map([$this, 'quote'], $tablePrivileges)) . ')'
                     . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
-                    array(':grantee' => $grantee, ':dbname' => $this->config['dbname'])
+                    [':grantee' => $grantee, ':dbname' => $this->config['dbname']]
                 );
                 $expectedAmountOfMatches = count($context) * count($tablePrivileges);
                 $tablePrivilegesGranted = (int) $query->fetchObject()->matches === $expectedAmountOfMatches;
@@ -825,9 +825,9 @@ EOD;
 
         $query = $this->query(
             'SELECT COUNT(*) as matches FROM information_schema.user_privileges WHERE grantee = :grantee'
-            . ' AND privilege_type IN (' . join(',', array_map(array($this, 'quote'), $mysqlPrivileges)) . ')'
+            . ' AND privilege_type IN (' . join(',', array_map([$this, 'quote'], $mysqlPrivileges)) . ')'
             . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
-            array(':grantee' => $grantee)
+            [':grantee' => $grantee]
         );
         return (int) $query->fetchObject()->matches === count($mysqlPrivileges);
     }
@@ -859,7 +859,7 @@ EOD;
 
         if ($this->dbFromConfig) {
             $schemaPrivileges = [];
-            $dbPrivileges = array();
+            $dbPrivileges = [];
             if (! $isSuperUser) {
                 foreach (array_intersect($privileges, array_keys($this->pgsqlGrantContexts)) as $privilege) {
                     if ($this->pgsqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
@@ -893,11 +893,11 @@ EOD;
                     foreach ($dbPrivileges as $dbPrivilege) {
                         $query = $this->query(
                             'SELECT has_database_privilege(:user, :dbname, :privilege) AS db_privilege_granted',
-                            array(
+                            [
                                 ':user'         => $owner,
                                 ':dbname'       => $this->config['dbname'],
                                 ':privilege'    => $dbPrivilege . ($requireGrants ? ' WITH GRANT OPTION' : '')
-                            )
+                            ]
                         );
                         if (! $query->fetchObject()->db_privilege_granted) {
                             // The user doesn't fully have the provided privileges.
@@ -930,7 +930,7 @@ EOD;
             if (in_array('CREATE', $privileges, true)) {
                 $query = $this->query(
                     'select rolcreatedb from pg_roles where rolname = :user',
-                    array(':user' => $username !== null ? $username : $this->config['username'])
+                    [':user' => $username !== null ? $username : $this->config['username']]
                 );
                 $privilegesGranted = $query->fetchColumn() !== false;
             }
@@ -939,7 +939,7 @@ EOD;
         if ($privilegesGranted && in_array('CREATEROLE', $privileges, true)) {
             $query = $this->query(
                 'select rolcreaterole from pg_roles where rolname = :user',
-                array(':user' => $username !== null ? $username : $this->config['username'])
+                [':user' => $username !== null ? $username : $this->config['username']]
             );
             $privilegesGranted = $query->fetchColumn() !== false;
         }

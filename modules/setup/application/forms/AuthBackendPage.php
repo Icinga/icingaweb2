@@ -30,7 +30,7 @@ class AuthBackendPage extends Form
      *
      * @var string[]
      */
-    protected $suggestions = array();
+    protected $suggestions = [];
 
     /**
      * Initialize this page
@@ -99,7 +99,7 @@ class AuthBackendPage extends Form
 
             $backendForm = new LdapBackendForm();
             $backendForm->setSuggestions($this->suggestions);
-            $backendForm->setResources(array($this->config['name']));
+            $backendForm->setResources([$this->config['name']]);
             $backendForm->create($formData);
             $backendForm->getElement('resource')->setIgnore(true);
             $this->addDescription($this->translate(
@@ -109,7 +109,7 @@ class AuthBackendPage extends Form
             $this->addElement(
                 'select',
                 'type',
-                array(
+                [
                     'ignore'            => true,
                     'required'          => true,
                     'autosubmit'        => true,
@@ -117,12 +117,12 @@ class AuthBackendPage extends Form
                     'description'       => $this->translate(
                         'The type of the resource being used for this authenticaton provider'
                     ),
-                    'multiOptions'      => array(
+                    'multiOptions'      => [
                         'ldap'      => 'LDAP',
                         'msldap'    => 'ActiveDirectory'
-                    ),
+                    ],
                     'value'             => $type
-                )
+                ]
             );
         }
 
@@ -201,15 +201,15 @@ class AuthBackendPage extends Form
                 $this->addElement(
                     'note',
                     'inspection_output',
-                    array(
+                    [
                         'order'         => 0,
                         'value'         => '<strong>' . $this->translate('Validation Log') . "</strong>\n\n"
                             . join("\n", array_map($join, $inspection->toArray())),
-                        'decorators'    => array(
+                        'decorators'    => [
                             'ViewHelper',
-                            array('HtmlTag', array('tag' => 'pre', 'class' => 'log-output')),
-                        )
-                    )
+                            ['HtmlTag', ['tag' => 'pre', 'class' => 'log-output']],
+                        ]
+                    ]
                 );
 
                 if ($inspection->hasError()) {
@@ -240,13 +240,13 @@ class AuthBackendPage extends Form
         $this->addElement(
             'checkbox',
             'skip_validation',
-            array(
+            [
                 'order'         => 0,
                 'ignore'        => true,
                 'required'      => true,
                 'label'         => $this->translate('Skip Validation'),
                 'description'   => $this->translate('Check this to not to validate authentication using this backend')
-            )
+            ]
         );
     }
 

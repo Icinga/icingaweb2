@@ -75,15 +75,15 @@ class UserDomainMigration
     {
         $announces = new AnnouncementIniRepository();
 
-        $query = $announces->select(array('author'));
+        $query = $announces->select(['author']);
 
         if ($this->map !== null) {
             $query->where('author', array_keys($this->map));
         }
 
-        $migratedUsers = array();
+        $migratedUsers = [];
 
-        foreach ($announces->select(array('author')) as $announce) {
+        foreach ($announces->select(['author']) as $announce) {
             $user = new User($announce->author);
 
             if (! $this->mustMigrate($user)) {
@@ -98,7 +98,7 @@ class UserDomainMigration
 
             $announces->update(
                 'announcement',
-                array('author' => $migrated->getUsername()),
+                ['author' => $migrated->getUsername()],
                 Filter::where('author', $user->getUsername())
             );
 
@@ -110,7 +110,7 @@ class UserDomainMigration
     {
         $directory = Config::resolvePath('dashboards');
 
-        $migration = array();
+        $migration = [];
 
         if (DirectoryIterator::isReadable($directory)) {
             foreach (new DirectoryIterator($directory) as $username => $path) {
@@ -190,7 +190,7 @@ class UserDomainMigration
 
         $query = $conn
             ->select()
-            ->from('icingaweb_user_preference', array('username'))
+            ->from('icingaweb_user_preference', ['username'])
             ->group('username');
 
         if ($this->map !== null) {
@@ -199,7 +199,7 @@ class UserDomainMigration
 
         $users = $query->fetchColumn();
 
-        $migration = array();
+        $migration = [];
 
         foreach ($users as $username) {
             $user = new User($username);
@@ -219,7 +219,7 @@ class UserDomainMigration
             foreach ($migration as $originalUsername => $username) {
                 $conn->update(
                     'icingaweb_user_preference',
-                    array('username' => $username),
+                    ['username' => $username],
                     Filter::where('username', $originalUsername)
                 );
             }
@@ -276,7 +276,7 @@ class UserDomainMigration
 
             $query = $conn
                 ->select()
-                ->from('icingaweb_user', array('name'))
+                ->from('icingaweb_user', ['name'])
                 ->group('name');
 
             if ($this->map !== null) {
@@ -285,7 +285,7 @@ class UserDomainMigration
 
             $users = $query->fetchColumn();
 
-            $migration = array();
+            $migration = [];
 
             foreach ($users as $username) {
                 $user = new User($username);
@@ -305,7 +305,7 @@ class UserDomainMigration
                 foreach ($migration as $originalUsername => $username) {
                     $conn->update(
                         'icingaweb_user',
-                        array('name' => $username),
+                        ['name' => $username],
                         Filter::where('name', $originalUsername)
                     );
                 }
@@ -329,7 +329,7 @@ class UserDomainMigration
 
             $query = $conn
                 ->select()
-                ->from('icingaweb_group_membership', array('username'))
+                ->from('icingaweb_group_membership', ['username'])
                 ->group('username');
 
             if ($this->map !== null) {
@@ -338,7 +338,7 @@ class UserDomainMigration
 
             $users = $query->fetchColumn();
 
-            $migration = array();
+            $migration = [];
 
             foreach ($users as $username) {
                 $user = new User($username);
@@ -358,7 +358,7 @@ class UserDomainMigration
                 foreach ($migration as $originalUsername => $username) {
                     $conn->update(
                         'icingaweb_group_membership',
-                        array('username' => $username),
+                        ['username' => $username],
                         Filter::where('username', $originalUsername)
                     );
                 }

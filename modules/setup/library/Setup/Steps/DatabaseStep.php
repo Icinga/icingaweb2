@@ -23,7 +23,7 @@ class DatabaseStep extends Step
     public function __construct(array $data)
     {
         $this->data = $data;
-        $this->messages = array();
+        $this->messages = [];
     }
 
     public function apply()

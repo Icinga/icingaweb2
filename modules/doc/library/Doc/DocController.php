@@ -40,7 +40,7 @@ class DocController extends Controller
      * @param string    $imageUrl   URL to images
      * @param array     $urlParams  Additional URL parameters
      */
-    protected function renderChapter($path, $chapter, $url, $imageUrl = null, array $urlParams = array())
+    protected function renderChapter($path, $chapter, $url, $imageUrl = null, array $urlParams = [])
     {
         $parser = new DocParser($path);
         $section = new DocSectionRenderer($parser->getDocTree(), DocSectionRenderer::decodeUrlParam($chapter));
@@ -56,12 +56,12 @@ class DocController extends Controller
         $title = $first === null ? ucfirst($chapter) : $first->getTitle();
         $this->view->title = $title;
         $this->getTabs()
-            ->add('toc', array(
+            ->add('toc', [
                 'active'    => true,
                 'title'     => $title,
                 'url'       => Url::fromRequest()
-            ))
-            ->extend(new OutputFormat(array(OutputFormat::TYPE_CSV, OutputFormat::TYPE_JSON)));
+            ])
+            ->extend(new OutputFormat([OutputFormat::TYPE_CSV, OutputFormat::TYPE_JSON]));
         $this->render('chapter', null, true);
     }
 
@@ -73,7 +73,7 @@ class DocController extends Controller
      * @param string    $url        URL to replace links with
      * @param array     $urlParams  Additional URL parameters
      */
-    protected function renderToc($path, $name, $url, array $urlParams = array())
+    protected function renderToc($path, $name, $url, array $urlParams = [])
     {
         $parser = new DocParser($path);
         $toc = new DocTocRenderer($parser->getDocTree()->getIterator());
@@ -83,12 +83,12 @@ class DocController extends Controller
         $name = ucfirst($name);
         $title = sprintf($this->translate('%s Documentation'), $name);
         $this->getTabs()
-            ->add('toc', array(
+            ->add('toc', [
                 'active'    => true,
                 'title'     => $title,
                 'url'       => Url::fromRequest()
-            ))
-            ->extend(new OutputFormat(array(OutputFormat::TYPE_CSV, OutputFormat::TYPE_JSON)));
+            ])
+            ->extend(new OutputFormat([OutputFormat::TYPE_CSV, OutputFormat::TYPE_JSON]));
         $this->render('toc', null, true);
     }
 
@@ -100,7 +100,7 @@ class DocController extends Controller
      * @param string    $url
      * @param array     $urlParams
      */
-    protected function renderPdf($path, $name, $url, array $urlParams = array())
+    protected function renderPdf($path, $name, $url, array $urlParams = [])
     {
         $parser = new DocParser($path);
         $toc = new DocTocRenderer($parser->getDocTree()->getIterator());

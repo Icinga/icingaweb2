@@ -34,10 +34,10 @@ class GettextTranslationHelper
      *
      * @var array
      */
-    private $sourceExtensions = array(
+    private $sourceExtensions = [
         'php',
         'phtml'
-    );
+    ];
 
     /**
      * The module manager of the application's bootstrap
@@ -159,14 +159,14 @@ class GettextTranslationHelper
         $this->moduleDir = $this->moduleMgr->getModuleDir($module);
         $this->tablePath = implode(
             DIRECTORY_SEPARATOR,
-            array(
+            [
                 $this->moduleDir,
                 'application',
                 'locale',
                 $this->locale,
                 'LC_MESSAGES',
                 $module . '.po'
-            )
+            ]
         );
 
         $this->createFileCatalog();
@@ -184,14 +184,14 @@ class GettextTranslationHelper
         $this->moduleDir = $this->moduleMgr->getModuleDir($module);
         $this->tablePath = implode(
             DIRECTORY_SEPARATOR,
-            array(
+            [
                 $this->moduleDir,
                 'application',
                 'locale',
                 $this->locale,
                 'LC_MESSAGES',
                 $module . '.po'
-            )
+            ]
         );
 
         $this->compileTranslationTable();
@@ -232,7 +232,7 @@ class GettextTranslationHelper
         shell_exec(
             implode(
                 ' ',
-                array(
+                [
                     $this->getConfig()->get('translation', 'xgettext', '/usr/bin/env xgettext'),
                     '--language=PHP',
                     '--keyword=translate',
@@ -258,7 +258,7 @@ class GettextTranslationHelper
                     '--from-code=' . self::FILE_ENCODING,
                     '--files-from="' . $this->catalogPath . '"',
                     '--output="' . $this->templatePath . '"'
-                )
+                ]
             )
         );
     }
@@ -270,7 +270,7 @@ class GettextTranslationHelper
      */
     private function updateHeader($path)
     {
-        $headerInfo = array(
+        $headerInfo = [
             'title' => $this->moduleMgr->getModule($this->moduleName)->getTitle(),
             'copyright_holder' => 'TEAM NAME',
             'copyright_year' => date('Y'),
@@ -288,31 +288,31 @@ class GettextTranslationHelper
             'language_team_name' => 'LANGUAGE',
             'language_team_url' => 'LL@li.org',
             'charset' => self::FILE_ENCODING
-        );
+        ];
 
         $content = file_get_contents($path);
         if (strpos($content, '# ') === 0) {
-            $authorInfo = array();
+            $authorInfo = [];
             if (preg_match('@# (.+) <(.+)>, (\d+|YEAR)\.@', $content, $authorInfo)) {
                 $headerInfo['author_name'] = $authorInfo[1];
                 $headerInfo['author_mail'] = $authorInfo[2];
                 $headerInfo['author_year'] = $authorInfo[3];
             }
-            $revisionInfo = array();
+            $revisionInfo = [];
             if (preg_match('@Revision-Date: (\d{4}-\d{2}-\d{2} \d{2}:\d{2}\+\d{4})@', $content, $revisionInfo)) {
                 $headerInfo['po_revision_date'] = $revisionInfo[1];
             }
-            $translatorInfo = array();
+            $translatorInfo = [];
             if (preg_match('@Last-Translator: (.+) <(.+)>@', $content, $translatorInfo)) {
                 $headerInfo['translator_name'] = $translatorInfo[1];
                 $headerInfo['translator_mail'] = $translatorInfo[2];
             }
-            $languageTeamInfo = array();
+            $languageTeamInfo = [];
             if (preg_match('@Language-Team: (.+) <(.+)>@', $content, $languageTeamInfo)) {
                 $headerInfo['language_team_name'] = $languageTeamInfo[1];
                 $headerInfo['language_team_url'] = $languageTeamInfo[2];
             }
-            $languageInfo = array();
+            $languageInfo = [];
             if (preg_match('@Language: ([a-z]{2}_[A-Z]{2})@', $content, $languageInfo)) {
                 $headerInfo['language'] = $languageInfo[1];
             }
@@ -322,7 +322,7 @@ class GettextTranslationHelper
             $path,
             implode(
                 PHP_EOL,
-                array(
+                [
                     '# ' . $headerInfo['title'] . '.',
                     '# Copyright (C) ' . $headerInfo['copyright_year'] . ' ' . $headerInfo['copyright_holder'],
                     '# This file is distributed under the same license as ' . $headerInfo['project_name'] . '.',
@@ -349,7 +349,7 @@ class GettextTranslationHelper
                     '"X-Poedit-Basepath: .\n"',
                     '"X-Poedit-SearchPath-0: .\n"',
                     ''
-                )
+                ]
             ) . PHP_EOL . substr($content, strpos($content, '#: '))
         );
     }
@@ -404,7 +404,7 @@ class GettextTranslationHelper
             );
         }
 
-        $subdirs = array();
+        $subdirs = [];
         while (($filename = readdir($directoryHandle)) !== false) {
             if ($filename[0] === '.' || $filename === 'vendor') {
                 continue;
@@ -432,11 +432,11 @@ class GettextTranslationHelper
         shell_exec(
             implode(
                 ' ',
-                array(
+                [
                     $this->getConfig()->get('translation', 'msgfmt', '/usr/bin/env msgfmt'),
                     '-o ' . $targetPath,
                     $this->tablePath
-                )
+                ]
             )
         );
     }

@@ -86,7 +86,7 @@ class RequirementSetTest extends BaseTestCase
     public function testFlatMixedRequirementsOfTypeAnd()
     {
         $mandatoryOptionalTrueSet = new RequirementSet();
-        $mandatoryOptionalTrueSet->add(new TrueRequirement(array('optional' => true)));
+        $mandatoryOptionalTrueSet->add(new TrueRequirement(['optional' => true]));
         $mandatoryOptionalTrueSet->add(new FalseRequirement());
         $this->assertFalse(
             $mandatoryOptionalTrueSet->fulfilled(),
@@ -95,14 +95,14 @@ class RequirementSetTest extends BaseTestCase
 
         $mandatoryOptionalFalseSet = new RequirementSet();
         $mandatoryOptionalFalseSet->add(new TrueRequirement());
-        $mandatoryOptionalFalseSet->add(new FalseRequirement(array('optional' => true)));
+        $mandatoryOptionalFalseSet->add(new FalseRequirement(['optional' => true]));
         $this->assertTrue(
             $mandatoryOptionalFalseSet->fulfilled(),
             'A mandatory set of type and with one mandatory True- and one optional FalseRequirement is not fulfilled'
         );
 
         $optionalOptionalTrueSet = new RequirementSet(true);
-        $optionalOptionalTrueSet->add(new TrueRequirement(array('optional' => true)));
+        $optionalOptionalTrueSet->add(new TrueRequirement(['optional' => true]));
         $optionalOptionalTrueSet->add(new FalseRequirement());
         $this->assertTrue(
             $optionalOptionalTrueSet->fulfilled(),
@@ -111,7 +111,7 @@ class RequirementSetTest extends BaseTestCase
 
         $optionalOptionalFalseSet = new RequirementSet(true);
         $optionalOptionalFalseSet->add(new TrueRequirement());
-        $optionalOptionalFalseSet->add(new FalseRequirement(array('optional' => true)));
+        $optionalOptionalFalseSet->add(new FalseRequirement(['optional' => true]));
         $this->assertTrue(
             $optionalOptionalFalseSet->fulfilled(),
             'A optional set of type and with one mandatory True- and one optional FalseRequirement is not fulfilled'
@@ -177,7 +177,7 @@ class RequirementSetTest extends BaseTestCase
     public function testFlatMixedRequirementsOfTypeOr()
     {
         $mandatoryOptionalTrueSet = new RequirementSet(false, RequirementSet::MODE_OR);
-        $mandatoryOptionalTrueSet->add(new TrueRequirement(array('optional' => true)));
+        $mandatoryOptionalTrueSet->add(new TrueRequirement(['optional' => true]));
         $mandatoryOptionalTrueSet->add(new FalseRequirement());
         $this->assertTrue(
             $mandatoryOptionalTrueSet->fulfilled(),
@@ -186,14 +186,14 @@ class RequirementSetTest extends BaseTestCase
 
         $mandatoryOptionalFalseSet = new RequirementSet(false, RequirementSet::MODE_OR);
         $mandatoryOptionalFalseSet->add(new TrueRequirement());
-        $mandatoryOptionalFalseSet->add(new FalseRequirement(array('optional' => true)));
+        $mandatoryOptionalFalseSet->add(new FalseRequirement(['optional' => true]));
         $this->assertTrue(
             $mandatoryOptionalFalseSet->fulfilled(),
             'A mandatory set of type or with one mandatory True- and one optional FalseRequirement is not fulfilled'
         );
 
         $optionalOptionalTrueSet = new RequirementSet(true, RequirementSet::MODE_OR);
-        $optionalOptionalTrueSet->add(new TrueRequirement(array('optional' => true)));
+        $optionalOptionalTrueSet->add(new TrueRequirement(['optional' => true]));
         $optionalOptionalTrueSet->add(new FalseRequirement());
         $this->assertTrue(
             $optionalOptionalTrueSet->fulfilled(),
@@ -202,7 +202,7 @@ class RequirementSetTest extends BaseTestCase
 
         $optionalOptionalFalseSet = new RequirementSet(true, RequirementSet::MODE_OR);
         $optionalOptionalFalseSet->add(new TrueRequirement());
-        $optionalOptionalFalseSet->add(new FalseRequirement(array('optional' => true)));
+        $optionalOptionalFalseSet->add(new FalseRequirement(['optional' => true]));
         $this->assertTrue(
             $optionalOptionalFalseSet->fulfilled(),
             'A optional set of type or with one mandatory True- and one optional FalseRequirement is not fulfilled'
@@ -276,19 +276,19 @@ class RequirementSetTest extends BaseTestCase
         $mandatoryMandatoryTrueSet = new RequirementSet();
         $mandatoryMandatoryTrueSet->add(new TrueRequirement());
         $mandatoryOptionalTrueSet = new RequirementSet();
-        $mandatoryOptionalTrueSet->add(new TrueRequirement(array('optional' => true)));
+        $mandatoryOptionalTrueSet->add(new TrueRequirement(['optional' => true]));
         $mandatoryMandatoryFalseSet = new RequirementSet();
         $mandatoryMandatoryFalseSet->add(new FalseRequirement());
         $mandatoryOptionalFalseSet = new RequirementSet();
-        $mandatoryOptionalFalseSet->add(new FalseRequirement(array('optional' => true)));
+        $mandatoryOptionalFalseSet->add(new FalseRequirement(['optional' => true]));
         $optionalMandatoryTrueSet = new RequirementSet(true);
         $optionalMandatoryTrueSet->add(new TrueRequirement());
         $optionalOptionalTrueSet = new RequirementSet(true);
-        $optionalOptionalTrueSet->add(new TrueRequirement(array('optional' => true)));
+        $optionalOptionalTrueSet->add(new TrueRequirement(['optional' => true]));
         $optionalMandatoryFalseSet = new RequirementSet(true);
         $optionalMandatoryFalseSet->add(new FalseRequirement());
         $optionalOptionalFalseSet = new RequirementSet(true);
-        $optionalOptionalFalseSet->add(new FalseRequirement(array('optional' => true)));
+        $optionalOptionalFalseSet->add(new FalseRequirement(['optional' => true]));
 
         $mandatoryMandatoryOptionalTrueSet = new RequirementSet();
         $mandatoryMandatoryOptionalTrueSet->merge($mandatoryOptionalTrueSet);
@@ -394,19 +394,19 @@ class RequirementSetTest extends BaseTestCase
         $mandatoryMandatoryTrueSet = new RequirementSet(false, RequirementSet::MODE_OR);
         $mandatoryMandatoryTrueSet->add(new TrueRequirement());
         $mandatoryOptionalTrueSet = new RequirementSet(false, RequirementSet::MODE_OR);
-        $mandatoryOptionalTrueSet->add(new TrueRequirement(array('optional' => true)));
+        $mandatoryOptionalTrueSet->add(new TrueRequirement(['optional' => true]));
         $mandatoryMandatoryFalseSet = new RequirementSet(false, RequirementSet::MODE_OR);
         $mandatoryMandatoryFalseSet->add(new FalseRequirement());
         $mandatoryOptionalFalseSet = new RequirementSet(false, RequirementSet::MODE_OR);
-        $mandatoryOptionalFalseSet->add(new FalseRequirement(array('optional' => true)));
+        $mandatoryOptionalFalseSet->add(new FalseRequirement(['optional' => true]));
         $optionalMandatoryTrueSet = new RequirementSet(true, RequirementSet::MODE_OR);
         $optionalMandatoryTrueSet->add(new TrueRequirement());
         $optionalOptionalTrueSet = new RequirementSet(true, RequirementSet::MODE_OR);
-        $optionalOptionalTrueSet->add(new TrueRequirement(array('optional' => true)));
+        $optionalOptionalTrueSet->add(new TrueRequirement(['optional' => true]));
         $optionalMandatoryFalseSet = new RequirementSet(true, RequirementSet::MODE_OR);
         $optionalMandatoryFalseSet->add(new FalseRequirement());
         $optionalOptionalFalseSet = new RequirementSet(true, RequirementSet::MODE_OR);
-        $optionalOptionalFalseSet->add(new FalseRequirement(array('optional' => true)));
+        $optionalOptionalFalseSet->add(new FalseRequirement(['optional' => true]));
 
         $mandatoryMandatoryOptionalTrueSet = new RequirementSet(false, RequirementSet::MODE_OR);
         $mandatoryMandatoryOptionalTrueSet->merge($mandatoryOptionalTrueSet);

@@ -25,7 +25,7 @@ class ModulePage extends Form
         $this->setName('setup_modules');
         $this->setViewScript('form/setup-modules.phtml');
 
-        $this->modulePaths = array();
+        $this->modulePaths = [];
         if (($appModulePath = realpath(Icinga::app()->getApplicationDir() . '/../modules')) !== false) {
             $this->modulePaths[] = $appModulePath;
         }
@@ -44,12 +44,12 @@ class ModulePage extends Form
             $this->addElement(
                 'checkbox',
                 $module->getName(),
-                array(
+                [
                     'description'   => $module->getDescription(),
                     'label'         => ucfirst($module->getName()),
                     'value'         => (int) $checked,
-                    'decorators'    => array('ViewHelper')
-                )
+                    'decorators'    => ['ViewHelper']
+                ]
             );
         }
     }
@@ -62,7 +62,7 @@ class ModulePage extends Form
         if ($this->modules !== null) {
             return $this->modules;
         } else {
-            $this->modules = array();
+            $this->modules = [];
         }
 
         $moduleManager = Icinga::app()->getModuleManager();
@@ -84,7 +84,7 @@ class ModulePage extends Form
     {
         $modules = $this->getModules();
 
-        $checked = array();
+        $checked = [];
         foreach ($this->getElements() as $name => $element) {
             if (array_key_exists($name, $modules) && $element->isChecked()) {
                 $checked[$name] = $modules[$name];
@@ -98,7 +98,7 @@ class ModulePage extends Form
     {
         $checked = $this->getCheckedModules();
 
-        $wizards = array();
+        $wizards = [];
         foreach ($checked as $name => $module) {
             if ($module->providesSetupWizard()) {
                 $wizards[$name] = $module->getSetupWizard();

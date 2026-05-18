@@ -47,7 +47,7 @@ class AuthenticationPage extends Form
             }
         }
 
-        $backendTypes = array();
+        $backendTypes = [];
         if (Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
             $backendTypes['db'] = $this->translate('Database');
         }
@@ -59,13 +59,13 @@ class AuthenticationPage extends Form
         $this->addElement(
             'select',
             'type',
-            array(
+            [
                 'required'      => true,
                 'autosubmit'    => true,
                 'label'         => $this->translate('Authentication Type'),
                 'description'   => $this->translate('The type of authentication to use when accessing Icinga Web 2'),
                 'multiOptions'  => $backendTypes
-            )
+            ]
         );
     }
 }

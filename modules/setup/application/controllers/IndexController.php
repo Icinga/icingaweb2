@@ -55,14 +55,14 @@ class IndexController extends Controller
             $restartForm->addElement(
                 'button',
                 'btn_submit',
-                array(
+                [
                     'type'          => 'submit',
                     'value'         => 'btn_submit',
                     'escape'        => false,
                     'label'         => $this->view->icon('reply-all'),
                     'title'         => $this->translate('Restart the setup'),
-                    'decorators'    => array('ViewHelper')
-                )
+                    'decorators'    => ['ViewHelper']
+                ]
             );
 
             $this->view->restartForm = $restartForm;
@@ -79,12 +79,12 @@ class IndexController extends Controller
     {
         $this->assertHttpMethod('POST');
 
-        $form = new Form(array(
+        $form = new Form([
             'onSuccess' => function () {
                 $wizard = new WebWizard();
                 $wizard->clearSession(false);
             }
-        ));
+        ]);
         $form->setUidDisabled();
         $form->setRedirectUrl('setup');
         $form->setSubmitLabel('btn_submit');

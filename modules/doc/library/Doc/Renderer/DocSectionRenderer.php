@@ -29,7 +29,7 @@ class DocSectionRenderer extends DocRenderer
      *
      * @var array
      */
-    protected $content = array();
+    protected $content = [];
 
     /**
      * Search criteria to highlight
@@ -194,9 +194,9 @@ class DocSectionRenderer extends DocRenderer
         /** @var \DOMElement $img */
         $path = $this->getView()->getHelper('Url')->url(
             array_merge(
-                array(
+                [
                     'image' => trim($img->getAttribute('src'))
-                ),
+                ],
                 $this->urlParams
             ),
             $this->imageUrl,
@@ -225,9 +225,9 @@ class DocSectionRenderer extends DocRenderer
         $path = $this->getView()->getHelper('Url')->url(
             array_merge(
                 $this->urlParams,
-                array(
+                [
                     'chapter' => $this->encodeUrlParam($chapter->getChapter()->getId())
-                )
+                ]
             ),
             $this->url,
             false,
@@ -259,9 +259,9 @@ class DocSectionRenderer extends DocRenderer
         $path = $this->getView()->getHelper('Url')->url(
             array_merge(
                 $this->urlParams,
-                array(
+                [
                     'chapter' => $this->encodeUrlParam($section->getChapter()->getId())
-                )
+                ]
             ),
             $this->url,
             false,
@@ -314,27 +314,27 @@ class DocSectionRenderer extends DocRenderer
             }
             $html = preg_replace_callback(
                 '#<pre><code class="language-php">(.*?)</code></pre>#s',
-                array($this, 'highlightPhp'),
+                [$this, 'highlightPhp'],
                 $html
             );
             $html = preg_replace_callback(
                 '/<img[^>]+>/',
-                array($this, 'replaceImg'),
+                [$this, 'replaceImg'],
                 $html
             );
             $html = preg_replace_callback(
                 '#<blockquote>.+?</blockquote>#ms',
-                array($this, 'markupNotes'),
+                [$this, 'markupNotes'],
                 $html
             );
             $html = preg_replace_callback(
                 '/<a\s+(?P<attribs>[^>]*?\s+)?href="(?:(?!http:\/\/)[^"#]*)#(?P<section>[^"]+)"/',
-                array($this, 'replaceSectionLink'),
+                [$this, 'replaceSectionLink'],
                 $html
             );
             $html = preg_replace_callback(
                 '/<a\s+(?P<attribs>[^>]*?\s+)?href="(?:\d+-)?(?P<chapter>[^\/"#]+).md"/',
-                array($this, 'replaceChapterLink'),
+                [$this, 'replaceChapterLink'],
                 $html
             );
             if ($search !== null) {
