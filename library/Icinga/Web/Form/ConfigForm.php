@@ -49,10 +49,10 @@ class ConfigForm extends CompatForm
     {
         $populate = [];
         foreach ($this->getElements() as $element) {
-            [$section, $key] = $this->getIniKeyFromName($element->getName());
-            if ($section === null || $key === null) {
+            if (($parts = $this->getIniKeyFromName($element->getName())) === null) {
                 continue;
             }
+            [$section, $key] = $parts;
             $value = $this->getPopulatedValue($element->getName()) ?? $this->config->get($section, $key);
             if ($value === null) {
                 continue;
@@ -67,17 +67,13 @@ class ConfigForm extends CompatForm
      *
      * @param string $name The element name
      *
-     * @return string[]|null
+     * @return array{string, string}|null
      */
     protected function getIniKeyFromName(string $name): ?array
     {
         $parts = explode('__', $name, 2);
 
-        if (count($parts) !== 2) {
-            return [null, null];
-        }
-
-        return $parts;
+        return count($parts) === 2 ? $parts : null;
     }
 
     /**
@@ -90,10 +86,10 @@ class ConfigForm extends CompatForm
      */
     public function getConfigValue(string $name, mixed $default = null): mixed
     {
-        [$section, $key] = $this->getIniKeyFromName($name);
-        if ($section === null || $key === null) {
+        if (($parts = $this->getIniKeyFromName($name)) === null) {
             return $default;
         }
+        [$section, $key] = $parts;
 
         return $this->config->get($section, $key, $default);
     }
@@ -110,10 +106,10 @@ class ConfigForm extends CompatForm
             if (in_array($element->getName(), $this->ignoredElements)) {
                 continue;
             }
-            [$section, $key] = $this->getIniKeyFromName($element->getName());
-            if ($section === null || $key === null) {
+            if (($parts = $this->getIniKeyFromName($element->getName())) === null) {
                 continue;
             }
+            [$section, $key] = $parts;
 
             $value = $this->getPopulatedValue($element->getName());
             $configSection = $this->config->getSection($section);

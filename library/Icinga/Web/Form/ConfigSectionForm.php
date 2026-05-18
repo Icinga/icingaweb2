@@ -295,6 +295,10 @@ class ConfigSectionForm extends ConfigForm
 
     protected function getIniKeyFromName(string $name): ?array
     {
+        if ($this->section === null) {
+            return null;
+        }
+
         return [$this->section, $name];
     }
 
