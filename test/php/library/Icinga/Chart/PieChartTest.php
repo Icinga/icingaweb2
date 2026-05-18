@@ -16,11 +16,11 @@ class PieChartTest extends BaseTestCase
     {
         $chart = new PieChart();
         $chart->drawPie(
-            array(
+            [
                 'label' => 'My bar',
                 'color' => 'black', 'green', 'red',
-                'data'  => array(50,50,50)
-            )
+                'data'  => [50,50,50]
+            ]
         );
         $doc = new DOMDocument();
         $doc->preserveWhiteSpace = false;

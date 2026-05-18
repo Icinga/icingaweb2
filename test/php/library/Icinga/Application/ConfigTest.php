@@ -38,7 +38,7 @@ class ConfigTest extends BaseTestCase
 
     public function testWhetherConfigIsCountable()
     {
-        $config = Config::fromArray(array('a' => 'b', 'c' => array('d' => 'e')));
+        $config = Config::fromArray(['a' => 'b', 'c' => ['d' => 'e']]);
 
         $this->assertInstanceOf('Countable', $config, 'Config does not implement interface `Countable\'');
         $this->assertEquals(2, count($config), 'Config does not count sections correctly');
@@ -46,18 +46,18 @@ class ConfigTest extends BaseTestCase
 
     public function testWhetherConfigIsTraversable()
     {
-        $config = Config::fromArray(array('a' => array(), 'c' => array()));
+        $config = Config::fromArray(['a' => [], 'c' => []]);
         $config->setSection('e');
 
         $this->assertInstanceOf('Iterator', $config, 'Config does not implement interface `Iterator\'');
 
-        $actual = array();
+        $actual = [];
         foreach ($config as $key => $_) {
             $actual[] = $key;
         }
 
         $this->assertEquals(
-            array('a', 'c', 'e'),
+            ['a', 'c', 'e'],
             $actual,
             'Config does not iterate properly in the order its sections were inserted'
         );
@@ -74,10 +74,10 @@ class ConfigTest extends BaseTestCase
 
     public function testWhetherItIsPossibleToRetrieveAllSectionNames()
     {
-        $config = Config::fromArray(array('a' => array('b' => 'c'), 'd' => array('e' => 'f')));
+        $config = Config::fromArray(['a' => ['b' => 'c'], 'd' => ['e' => 'f']]);
 
         $this->assertEquals(
-            array('a', 'd'),
+            ['a', 'd'],
             $config->keys(),
             'Config::keys does not list section names correctly'
         );
@@ -85,10 +85,10 @@ class ConfigTest extends BaseTestCase
 
     public function testWhetherConfigCanBeConvertedToAnArray()
     {
-        $config = Config::fromArray(array('a' => 'b', 'c' => array('d' => 'e')));
+        $config = Config::fromArray(['a' => 'b', 'c' => ['d' => 'e']]);
 
         $this->assertEquals(
-            array('a' => 'b', 'c' => array('d' => 'e')),
+            ['a' => 'b', 'c' => ['d' => 'e']],
             $config->toArray(),
             'Config::toArray does not return the correct array'
         );
@@ -96,7 +96,7 @@ class ConfigTest extends BaseTestCase
 
     public function testWhetherItIsPossibleToDirectlyRetrieveASectionProperty()
     {
-        $config = Config::fromArray(array('a' => array('b' => 'c')));
+        $config = Config::fromArray(['a' => ['b' => 'c']]);
 
         $this->assertEquals(
             'c',
@@ -125,7 +125,7 @@ class ConfigTest extends BaseTestCase
 
     public function testWhetherConfigReturnsSingleSections()
     {
-        $config = Config::fromArray(array('a' => array('b' => 'c')));
+        $config = Config::fromArray(['a' => ['b' => 'c']]);
 
         $this->assertInstanceOf(
             'Icinga\Data\ConfigObject',
@@ -140,7 +140,7 @@ class ConfigTest extends BaseTestCase
     public function testWhetherConfigSetsSingleSections()
     {
         $config = new Config();
-        $config->setSection('a', array('b' => 'c'));
+        $config->setSection('a', ['b' => 'c']);
 
         $this->assertInstanceOf(
             'Icinga\Data\ConfigObject',
@@ -148,7 +148,7 @@ class ConfigTest extends BaseTestCase
             'Config::setSection does not set a new section'
         );
 
-        $config->setSection('a', array('bb' => 'cc'));
+        $config->setSection('a', ['bb' => 'cc']);
 
         $this->assertNull(
             $config->getSection('a')->b,
@@ -166,7 +166,7 @@ class ConfigTest extends BaseTestCase
      */
     public function testWhetherConfigRemovesSingleSections()
     {
-        $config = Config::fromArray(array('a' => array('b' => 'c'), 'd' => array('e' => 'f')));
+        $config = Config::fromArray(['a' => ['b' => 'c'], 'd' => ['e' => 'f']]);
         $config->removeSection('a');
 
         $this->assertEquals(
@@ -198,7 +198,7 @@ class ConfigTest extends BaseTestCase
     {
         $this->expectException(\UnexpectedValueException::class);
 
-        $config = Config::fromArray(array('a' => 'b'));
+        $config = Config::fromArray(['a' => 'b']);
         $config->get('a', 'b');
     }
 
@@ -220,17 +220,17 @@ class ConfigTest extends BaseTestCase
         $config = Config::fromIni(Config::resolvePath('config.ini'));
 
         $this->assertEquals(
-            array(
-                'logging' => array(
+            [
+                'logging' => [
                     'enable'    => 1
-                ),
-                'backend' => array(
+                ],
+                'backend' => [
                     'type'      => 'db',
                     'user'      => 'user',
                     'password'  => 'password',
                     'disable'   => 1
-                )
-            ),
+                ]
+            ],
             $config->toArray(),
             'Config::fromIni does not load INI files correctly'
         );
@@ -257,17 +257,17 @@ class ConfigTest extends BaseTestCase
         $config = Config::app('config', true);
 
         $this->assertEquals(
-            array(
-                'logging' => array(
+            [
+                'logging' => [
                     'enable'    => 1
-                ),
-                'backend' => array(
+                ],
+                'backend' => [
                     'type'      => 'db',
                     'user'      => 'user',
                     'password'  => 'password',
                     'disable'   => 1
-                )
-            ),
+                ]
+            ],
             $config->toArray(),
             'Config::app does not load INI files correctly'
         );
@@ -281,11 +281,11 @@ class ConfigTest extends BaseTestCase
         $config = Config::module('amodule');
 
         $this->assertEquals(
-            array(
-                'menu' => array(
+            [
+                'menu' => [
                     'breadcrumb' => 1
-                )
-            ),
+                ]
+            ],
             $config->toArray(),
             'Config::module does not load INI files correctly'
         );

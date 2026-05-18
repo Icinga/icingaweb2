@@ -16,11 +16,11 @@ class GraphChartTest extends BaseTestCase
     {
         $chart = new GridChart();
         $chart->drawBars(
-            array(
+            [
                 'label' => 'My bar',
                 'color' => 'black',
-                'data'  => array(array(0, 0), array(1,1), array(1,2))
-            )
+                'data'  => [[0, 0], [1,1], [1,2]]
+            ]
         );
         $doc = new DOMDocument();
         $doc->preserveWhiteSpace = false;
@@ -35,11 +35,11 @@ class GraphChartTest extends BaseTestCase
     {
         $chart = new GridChart();
         $chart->drawLines(
-            array(
+            [
                 'label' => 'My bar',
                 'color' => 'black',
-                'data'  => array(array(0, 0), array(1,1), array(1,2))
-            )
+                'data'  => [[0, 0], [1,1], [1,2]]
+            ]
         );
         $doc = new DOMDocument();
         $doc->preserveWhiteSpace = false;

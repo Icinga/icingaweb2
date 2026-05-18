@@ -10,7 +10,7 @@ use Icinga\Test\BaseTestCase;
 
 class LdapUtilsTest extends BaseTestCase
 {
-    protected static $validDn = array(
+    protected static $validDn = [
         'dc=example,dc=com',
         'dc=example, dc=com',
         'dc = example , dc = com',
@@ -18,14 +18,14 @@ class LdapUtilsTest extends BaseTestCase
         '0.9.2342.19200300.100.1.25=Example,0.9.2342.19200300.100.1.25=Com',
         'CN=host,OU=Datacenter Servers,DC=example,DC=com',
         'CN=Doe\, John,OU=Admin Users,DC=example,DC=com'
-    );
+    ];
 
-    protected static $invalidDn = array(
+    protected static $invalidDn = [
         'testuser',
         'heinzimüller',
         'test.user@example.com',
         'test,user@example.com',
-    );
+    ];
 
     public function testIsDnForValidValues()
     {

@@ -120,6 +120,6 @@ class HookTest extends BaseTestCase
 
     public function testReturnsAnEmptyArrayWithNoRegisteredHook()
     {
-        $this->assertEquals(array(), Hook::all('not_existing'));
+        $this->assertEquals([], Hook::all('not_existing'));
     }
 }

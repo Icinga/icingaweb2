@@ -16,10 +16,10 @@ class PhpSessionTest extends BaseTestCase
             $this->markTestSkipped('Could not write to session directory');
         }
         return PhpSession::create(
-            array(
+            [
                 'save_path'     => '/tmp',
                 'test_session_name' => 'IcingawebUnittest'
-            )
+            ]
         );
     }
     /**
@@ -72,14 +72,14 @@ class PhpSessionTest extends BaseTestCase
         $session = $this->getSession();
         $namespace = $session->getNamespace('test');
         $namespace->set('some_key', 'some_val');
-        $namespace->set('an_array', array(1, 2, 3));
+        $namespace->set('an_array', [1, 2, 3]);
         $session->write();
         $session->clear();
         $this->assertFalse($session->hasNamespace('test'));
         $session->read();
         $namespace = $session->getNamespace('test');
         $this->assertEquals($namespace->get('some_key'), 'some_val');
-        $this->assertEquals($namespace->get('an_array'), array(1, 2, 3));
+        $this->assertEquals($namespace->get('an_array'), [1, 2, 3]);
     }
 
     /**

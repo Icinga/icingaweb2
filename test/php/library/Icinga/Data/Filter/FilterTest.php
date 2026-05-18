@@ -66,29 +66,29 @@ class FilterTest extends BaseTestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->sampleData = array(
-            (object) array(
+        $this->sampleData = [
+            (object) [
                 'host'    => 'localhost',
                 'problem' => '1',
                 'service' => 'ping',
                 'state'   => '2',
                 'handled' => '1'
-            ),
-            (object) array(
+            ],
+            (object) [
                 'host'    => 'localhost',
                 'problem' => '1',
                 'service' => 'www.icinga.com',
                 'state'   => '0',
                 'handled' => '0'
-            ),
-            (object) array(
+            ],
+            (object) [
                 'host'    => 'localhost',
                 'problem' => '1',
                 'service' => 'www.icinga.com',
                 'state'   => '1',
                 'handled' => '0'
-            )
-        );
+            ]
+        ];
     }
 // TODO: expect exception when filtering for invalid column
 
@@ -149,7 +149,7 @@ class FilterTest extends BaseTestCase
         $this->assertTrue(
             Filter::where(
                 'service',
-                array('nada', 'nothing', 'ping')
+                ['nada', 'nothing', 'ping']
             )->matches($this->row(0))
         );
     }
@@ -159,7 +159,7 @@ class FilterTest extends BaseTestCase
         $this->assertFalse(
             Filter::where(
                 'service',
-                array('nada', 'nothing', 'ping')
+                ['nada', 'nothing', 'ping']
             )->matches($this->row(1))
         );
     }
@@ -218,55 +218,55 @@ class FilterTest extends BaseTestCase
     {
         $columnWithWhitespaces = Filter::where(' host ', 'localhost');
         $this->assertTrue(
-            $columnWithWhitespaces->matches((object) array(
+            $columnWithWhitespaces->matches((object) [
                 'host' => 'localhost'
-            )),
+            ]),
             'Filter doesn\'t remove leading and trailing whitespaces from columns'
         );
         $expressionWithLeadingWhitespaces = Filter::where('host', ' localhost');
         $this->assertTrue(
-            $expressionWithLeadingWhitespaces->matches((object) array(
+            $expressionWithLeadingWhitespaces->matches((object) [
                 'host' => ' localhost'
-            )),
+            ]),
             'Filter doesn\'t take leading whitespaces of expressions into account'
         );
         $this->assertFalse(
-            $expressionWithLeadingWhitespaces->matches((object) array(
+            $expressionWithLeadingWhitespaces->matches((object) [
                 'host' => ' localhost '
-            )),
+            ]),
             'Filter doesn\'t take trailing whitespaces of expressions into account'
         );
         $expressionWithTrailingWhitespaces = Filter::where('host', 'localhost ');
         $this->assertTrue(
-            $expressionWithTrailingWhitespaces->matches((object) array(
+            $expressionWithTrailingWhitespaces->matches((object) [
                 'host' => 'localhost '
-            )),
+            ]),
             'Filter doesn\'t take trailing whitespaces of expressions into account'
         );
         $this->assertFalse(
-            $expressionWithTrailingWhitespaces->matches((object) array(
+            $expressionWithTrailingWhitespaces->matches((object) [
                 'host' => ' localhost '
-            )),
+            ]),
             'Filter doesn\'t take leading whitespaces of expressions into account'
         );
         $expressionWithLeadingAndTrailingWhitespaces = Filter::where('host', ' localhost ');
         $this->assertTrue(
-            $expressionWithLeadingAndTrailingWhitespaces->matches((object) array(
+            $expressionWithLeadingAndTrailingWhitespaces->matches((object) [
                 'host' => ' localhost '
-            )),
+            ]),
             'Filter doesn\'t take leading and trailing whitespaces of expressions into account'
         );
         $this->assertFalse(
-            $expressionWithLeadingAndTrailingWhitespaces->matches((object) array(
+            $expressionWithLeadingAndTrailingWhitespaces->matches((object) [
                 'host' => ' localhost  '
-            )),
+            ]),
             'Filter doesn\'t take leading and trailing whitespaces of expressions into account'
         );
         $queryStringWithWhitespaces = Filter::fromQueryString(' host = localhost ');
         $this->assertTrue(
-            $queryStringWithWhitespaces->matches((object) array(
+            $queryStringWithWhitespaces->matches((object) [
                 'host' => ' localhost '
-            )),
+            ]),
             'Filter doesn\'t take leading and trailing whitespaces of expressions in query strings into account'
         );
     }

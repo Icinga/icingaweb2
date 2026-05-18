@@ -13,9 +13,9 @@ class ASN1Test extends BaseTestCase
 {
     public function testAllValidGeneralizedTimeCombinations()
     {
-        foreach (array('', '04', '0405', '0460') as $is) {
-            foreach (array('', ',7890', '.7890') as $frac) {
-                foreach (array('Z', '-07', '-0742', '+07', '+0742') as $tz) {
+        foreach (['', '04', '0405', '0460'] as $is) {
+            foreach (['', ',7890', '.7890'] as $frac) {
+                foreach (['Z', '-07', '-0742', '+07', '+0742'] as $tz) {
                     $this->assertValidGeneralizedTime("1970010203$is$frac$tz");
                 }
             }
@@ -46,7 +46,7 @@ class ASN1Test extends BaseTestCase
         $this->assertValidGeneralizedTime('19700102030460Z');
         $this->assertBadGeneralizedTime('19700102030461Z');
 
-        foreach (array('-', '+') as $sign) {
+        foreach (['-', '+'] as $sign) {
             $this->assertValidGeneralizedTime("1970010203{$sign}00");
             $this->assertValidGeneralizedTime("1970010203{$sign}23");
             $this->assertBadGeneralizedTime("1970010203{$sign}24");

@@ -145,7 +145,7 @@ class BaseTestCaseTest extends BaseTestCase
 
     protected function dbAdapterSqlLoadTable($resource)
     {
-        $sqlContent = array();
+        $sqlContent = [];
         $sqlContent[] = 'CREATE TABLE dummyData(value VARCHAR(50) NOT NULL PRIMARY KEY);';
         for ($i=0; $i<20; $i++) {
             $sqlContent[] = 'INSERT INTO dummyData VALUES(\'' . uniqid(). '\');';

@@ -14,12 +14,12 @@ class QueryTest extends BaseTestCase
     private function emptySelect()
     {
         $config = new ConfigObject(
-            array(
+            [
                 'hostname' => 'localhost',
                 'root_dn'  => 'dc=example,dc=com',
                 'bind_dn'  => 'cn=user,ou=users,dc=example,dc=com',
                 'bind_pw'  => '***'
-            )
+            ]
         );
 
         $connection = new LdapConnection($config);
@@ -29,7 +29,7 @@ class QueryTest extends BaseTestCase
     private function prepareSelect()
     {
         $select = $this->emptySelect();
-        $select->from('dummyClass', array('testIntColumn', 'testStringColumn'))
+        $select->from('dummyClass', ['testIntColumn', 'testStringColumn'])
             ->where('testIntColumn', 1)
             ->where('testStringColumn', 'test')
             ->where('testWildcard', 'abc*')

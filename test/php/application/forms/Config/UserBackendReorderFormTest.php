@@ -36,16 +36,16 @@ class UserBackendReorderFormTest extends BaseTestCase
     public function testMoveBackend()
     {
         $config = Config::fromArray(
-            array(
+            [
                 'test1' => '',
                 'test2' => '',
                 'test3' => ''
-            )
+            ]
         );
 
         $this->getRequestMock()->shouldReceive('getMethod')->andReturn('POST')
             ->shouldReceive('isPost')->andReturn(true)
-            ->shouldReceive('getPost')->andReturn(array('backend_newpos' => 'test3|1'));
+            ->shouldReceive('getPost')->andReturn(['backend_newpos' => 'test3|1']);
 
         $form = new UserBackendReorderFormProvidingConfigFormWithoutSave();
         $form->setIniConfig($config);
@@ -54,7 +54,7 @@ class UserBackendReorderFormTest extends BaseTestCase
         $form->handleRequest();
 
         $this->assertEquals(
-            array('test1', 'test3', 'test2'),
+            ['test1', 'test3', 'test2'],
             UserBackendConfigFormWithoutSave::$newConfig->keys(),
             'Moving elements with UserBackendReorderForm does not seem to properly work'
         );
