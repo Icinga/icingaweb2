@@ -8,7 +8,7 @@ or if users are spread over multiple places.
 
 ## Configuration <a id="authentication-configuration"></a>
 
-Navigate into **Configuration > Application > Authentication **.
+Navigate into **Configuration > Application > Access Control Backends**.
 
 Authentication methods are configured in the `/etc/icingaweb2/authentication.ini` file.
 
