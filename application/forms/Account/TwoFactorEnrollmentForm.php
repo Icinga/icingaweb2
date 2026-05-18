@@ -5,14 +5,17 @@
 
 namespace Icinga\Forms\Account;
 
+use Icinga\Application\ClassLoader;
 use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\User;
 use Icinga\Web\RememberMe;
+use ipl\Html\Attributes;
 use ipl\Html\FormElement\FieldsetElement;
 use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Common\FormUid;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
+use LogicException;
 use Throwable;
 
 /**
@@ -100,6 +103,20 @@ class TwoFactorEnrollmentForm extends CompatForm
 
             return;
         }
+
+        if ($configFieldset->getName() !== $twoFactor->getName()) {
+            throw new LogicException(sprintf(
+                '%s::assembleEnrollmentFormElements() must not rename the fieldset. The name "%s" is used'
+                . ' as the element key in onSuccess() to retrieve the fieldset, but it was changed to "%s".',
+                $twoFactor::class,
+                $twoFactor->getName(),
+                $configFieldset->getName(),
+            ));
+        }
+
+        $configFieldset->addAttributes(Attributes::create([
+            'class' => 'icinga-module module-' . ClassLoader::extractModuleName($twoFactor::class),
+        ]));
 
         $this->addElement('submit', static::SUBMIT_ENROLL, [
             'label'               => $this->translate('Enroll'),
