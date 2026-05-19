@@ -31,34 +31,34 @@ class DbUserGroupBackendForm extends Form
         $this->addElement(
             'text',
             'name',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Backend Name'),
                 'description'   => $this->translate(
                     'The name of this user group backend that is used to differentiate it from others'
                 )
-            )
+            ]
         );
 
         $resourceNames = $this->getDatabaseResourceNames();
         $this->addElement(
             'select',
             'resource',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Database Connection'),
                 'description'   => $this->translate('The database connection to use for this backend'),
-                'multiOptions'  => empty($resourceNames) ? array() : array_combine($resourceNames, $resourceNames)
-            )
+                'multiOptions'  => empty($resourceNames) ? [] : array_combine($resourceNames, $resourceNames)
+            ]
         );
 
         $this->addElement(
             'hidden',
             'backend',
-            array(
+            [
                 'disabled'  => true, // Prevents the element from being submitted, see #7717
                 'value'     => 'db'
-            )
+            ]
         );
     }
 
@@ -69,7 +69,7 @@ class DbUserGroupBackendForm extends Form
      */
     protected function getDatabaseResourceNames()
     {
-        $names = array();
+        $names = [];
         foreach (ResourceFactory::getResourceConfigs() as $name => $config) {
             if (strtolower($config->type) === 'db') {
                 $names[] = $name;

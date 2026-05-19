@@ -101,7 +101,7 @@ class PreferenceForm extends Form
         $oldLocale = $currentPreferences->getValue('icingaweb', 'language');
         $defaultTheme = Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME);
 
-        $this->preferences = new Preferences($this->store ? $this->store->load() : array());
+        $this->preferences = new Preferences($this->store ? $this->store->load() : []);
         $webPreferences = $this->preferences->get('icingaweb');
         foreach ($this->getValues() as $key => $value) {
             if ($value === ''
@@ -199,7 +199,7 @@ class PreferenceForm extends Form
                 $this->addElement(
                     'select',
                     'theme',
-                    array(
+                    [
                         'label'         => $this->translate('Theme', 'Form element label'),
                         'multiOptions'  => $themes,
                         'autosubmit'    => true,
@@ -208,7 +208,7 @@ class PreferenceForm extends Form
                             'theme',
                             $defaultTheme
                         )
-                    )
+                    ]
                 );
             }
         }
@@ -257,7 +257,7 @@ class PreferenceForm extends Form
         /** @var GettextTranslator $translator */
         $translator = StaticTranslator::$instance;
 
-        $languages = array();
+        $languages = [];
         $availableLocales = $translator->listLocales();
 
         $locale = $this->getLocale($availableLocales);
@@ -270,7 +270,7 @@ class PreferenceForm extends Form
             $languages[$language] = $language;
         }
 
-        $tzList = array();
+        $tzList = [];
         $tzList['autodetect'] = sprintf(
             $this->translate('Browser (%s)', 'preferences.form'),
             $this->getDefaultTimezone()
@@ -282,31 +282,31 @@ class PreferenceForm extends Form
         $this->addElement(
             'select',
             'language',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Your Current Language'),
                 'description'   => $this->translate('Use the following language to display texts and messages'),
                 'multiOptions'  => $languages,
                 'value'         => substr(setlocale(LC_ALL, 0), 0, 5)
-            )
+            ]
         );
 
         $this->addElement(
             'select',
             'timezone',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Your Current Timezone'),
                 'description'   => $this->translate('Use the following timezone for dates and times'),
                 'multiOptions'  => $tzList,
                 'value'         => $this->getDefaultTimezone()
-            )
+            ]
         );
 
         $this->addElement(
             'select',
             'show_application_state_messages',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Show application state messages'),
                 'description'   => $this->translate('Whether to show application state messages.'),
@@ -317,33 +317,33 @@ class PreferenceForm extends Form
                     1        => $this->translate('Yes'),
                     0        => $this->translate('No')],
                 'value'         => 'system'
-            )
+            ]
         );
 
         if (Auth::getInstance()->hasPermission('user/application/stacktraces')) {
             $this->addElement(
                 'checkbox',
                 'show_stacktraces',
-                array(
+                [
                     'value'         => $this->getDefaultShowStacktraces(),
                     'label'         => $this->translate('Show Stacktraces'),
                     'description'   => $this->translate('Set whether to show an exception\'s stacktrace.')
-                )
+                ]
             );
         }
 
         $this->addElement(
             'checkbox',
             'show_benchmark',
-            array(
+            [
                 'label'     => $this->translate('Use benchmark')
-            )
+            ]
         );
 
         $this->addElement(
             'checkbox',
             'auto_refresh',
-            array(
+            [
                 'required'      => false,
                 'autosubmit'    => true,
                 'label'         => $this->translate('Enable auto refresh'),
@@ -351,7 +351,7 @@ class PreferenceForm extends Form
                     'This option allows you to enable or to disable the global page content auto refresh'
                 ),
                 'value'         => 1
-            )
+            ]
         );
 
         if (isset($formData['auto_refresh']) && $formData['auto_refresh']) {
@@ -378,59 +378,59 @@ class PreferenceForm extends Form
         $this->addElement(
             'number',
             'default_page_size',
-            array(
+            [
                 'label'         => $this->translate('Default page size'),
                 'description'   => $this->translate('Default number of items per page for list views'),
                 'placeholder'   => 25,
                 'min'           => 25,
                 'step'          => 1
-            )
+            ]
         );
 
         if ($this->store) {
             $this->addElement(
                 'submit',
                 'btn_submit',
-                array(
+                [
                     'ignore'        => true,
                     'label'         => $this->translate('Save to the Preferences'),
-                    'decorators'    => array('ViewHelper'),
+                    'decorators'    => ['ViewHelper'],
                     'class'         => 'btn-primary'
-                )
+                ]
             );
         }
 
         $this->addElement(
             'submit',
             'btn_submit_session',
-            array(
+            [
                 'ignore'        => true,
                 'label'         => $this->translate('Save for the current Session'),
-                'decorators'    => array('ViewHelper')
-            )
+                'decorators'    => ['ViewHelper']
+            ]
         );
 
         $this->setAttrib('data-progress-element', 'preferences-progress');
         $this->addElement(
             'note',
             'preferences-progress',
-            array(
-                'decorators'    => array(
+            [
+                'decorators'    => [
                     'ViewHelper',
-                    array('Spinner', array('id' => 'preferences-progress'))
-                )
-            )
+                    ['Spinner', ['id' => 'preferences-progress']]
+                ]
+            ]
         );
 
         $this->addDisplayGroup(
-            array('btn_submit', 'btn_submit_session', 'preferences-progress'),
+            ['btn_submit', 'btn_submit_session', 'preferences-progress'],
             'submit_buttons',
-            array(
-                'decorators' => array(
+            [
+                'decorators' => [
                     'FormElements',
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
-                )
-            )
+                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
+                ]
+            ]
         );
     }
 

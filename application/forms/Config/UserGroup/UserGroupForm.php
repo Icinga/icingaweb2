@@ -22,10 +22,10 @@ class UserGroupForm extends RepositoryForm
         $this->addElement(
             'text',
             'group_name',
-            array(
+            [
                 'required'  => true,
                 'label'     => $this->translate('Group Name')
-            )
+            ]
         );
 
         if ($this->shouldInsert()) {

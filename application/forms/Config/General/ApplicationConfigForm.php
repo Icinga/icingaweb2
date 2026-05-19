@@ -34,27 +34,27 @@ class ApplicationConfigForm extends Form
         $this->addElement(
             'checkbox',
             'global_show_stacktraces',
-            array(
+            [
                 'value'         => true,
                 'label'         => $this->translate('Show Stacktraces'),
                 'description'   => $this->translate(
                     'Set whether to show an exception\'s stacktrace by default. This can also'
                     . ' be set in a user\'s preferences with the appropriate permission.'
                 )
-            )
+            ]
         );
 
         $this->addElement(
             'checkbox',
             'global_show_application_state_messages',
-            array(
+            [
                 'value'         => true,
                 'label'         => $this->translate('Show Application State Messages'),
                 'description'   => $this->translate(
                     "Set whether to show application state messages."
                     . " This can also be set in a user's preferences."
                 )
-            )
+            ]
         );
 
         $this->addElement(
@@ -72,7 +72,7 @@ class ApplicationConfigForm extends Form
         $this->addElement(
             'text',
             'global_module_path',
-            array(
+            [
                 'label'         => $this->translate('Module Path'),
                 'required'      => true,
                 'value'         => implode(':', Icinga::app()->getModuleManager()->getModuleDirs()),
@@ -81,7 +81,7 @@ class ApplicationConfigForm extends Form
                     . 'colons. Modules that don\'t exist in these directories can still be symlinked in '
                     . 'the module folder, but won\'t show up in the list of disabled modules.'
                 )
-            )
+            ]
         );
 
         $backends = array_keys(ResourceFactory::getResourceConfigs()->toArray());
@@ -90,7 +90,7 @@ class ApplicationConfigForm extends Form
         $this->addElement(
             'select',
             'global_config_resource',
-            array(
+            [
                 'required'      => true,
                 'multiOptions'  => array_merge(
                     ['' => sprintf(' - %s - ', $this->translate('Please choose'))],
@@ -99,7 +99,7 @@ class ApplicationConfigForm extends Form
                 'disable'       => [''],
                 'value'         => '',
                 'label'         => $this->translate('Configuration Database')
-            )
+            ]
         );
 
         return $this;

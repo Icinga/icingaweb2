@@ -55,12 +55,12 @@ class UserController extends AuthBackendController
         $this->view->backendSelection->addElement(
             'select',
             'backend',
-            array(
+            [
                 'autosubmit'    => true,
                 'label'         => $this->translate('User Backend'),
                 'multiOptions'  => array_combine($backendNames, $backendNames),
                 'value'         => $this->params->get('backend')
-            )
+            ]
         );
 
         $backend = $this->getUserBackend($this->params->get('backend'));
@@ -69,7 +69,7 @@ class UserController extends AuthBackendController
             return;
         }
 
-        $query = $backend->select(array('user_name'));
+        $query = $backend->select(['user_name']);
 
         $this->view->users = $query;
         $this->view->backend = $backend;
@@ -78,12 +78,12 @@ class UserController extends AuthBackendController
         $this->setupFilterControl($query);
         $this->setupLimitControl();
         $this->setupSortControl(
-            array(
+            [
                 'user_name'     => $this->translate('Username'),
                 'is_active'     => $this->translate('Active'),
                 'created_at'    => $this->translate('Created at'),
                 'last_modified' => $this->translate('Last modified')
-            ),
+            ],
             $query
         );
     }
@@ -97,12 +97,12 @@ class UserController extends AuthBackendController
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'));
 
-        $user = $backend->select(array(
+        $user = $backend->select([
             'user_name',
             'is_active',
             'created_at',
             'last_modified'
-        ))->where('user_name', $userName)->fetchRow();
+        ])->where('user_name', $userName)->fetchRow();
         if ($user === false) {
             $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
         }
@@ -116,16 +116,16 @@ class UserController extends AuthBackendController
 
         $this->setupFilterControl(
             $memberships,
-            array('group_name' => t('User Group')),
-            array('group'),
-            array('user')
+            ['group_name' => t('User Group')],
+            ['group'],
+            ['user']
         );
         $this->setupPaginationControl($memberships);
         $this->setupLimitControl();
         $this->setupSortControl(
-            array(
+            [
                 'group_name' => $this->translate('Group')
-            ),
+            ],
             $memberships
         );
 
@@ -145,27 +145,27 @@ class UserController extends AuthBackendController
             $removeForm = new Form();
             $removeForm->setUidDisabled();
             $removeForm->setAttrib('class', 'inline');
-            $removeForm->addElement('hidden', 'user_name', array(
+            $removeForm->addElement('hidden', 'user_name', [
                 'isArray'       => true,
                 'value'         => $userName,
-                'decorators'    => array('ViewHelper')
-            ));
-            $removeForm->addElement('hidden', 'redirect', array(
-                'value'         => Url::fromPath('user/show', array(
+                'decorators'    => ['ViewHelper']
+            ]);
+            $removeForm->addElement('hidden', 'redirect', [
+                'value'         => Url::fromPath('user/show', [
                     'backend'   => $backend->getName(),
                     'user'      => $userName
-                )),
-                'decorators'    => array('ViewHelper')
-            ));
-            $removeForm->addElement('button', 'btn_submit', array(
+                ]),
+                'decorators'    => ['ViewHelper']
+            ]);
+            $removeForm->addElement('button', 'btn_submit', [
                 'escape'        => false,
                 'type'          => 'submit',
                 'class'         => 'link-button spinner',
                 'value'         => 'btn_submit',
-                'decorators'    => array('ViewHelper'),
+                'decorators'    => ['ViewHelper'],
                 'label'         => $this->view->icon('cancel'),
                 'title'         => $this->translate('Cancel this membership')
-            ));
+            ]);
             $this->view->removeForm = $removeForm;
         }
 
@@ -183,7 +183,7 @@ class UserController extends AuthBackendController
         $this->assertPermission('config/access-control/users');
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
         $form = new UserForm();
-        $form->setRedirectUrl(Url::fromPath('user/list', array('backend' => $backend->getName())));
+        $form->setRedirectUrl(Url::fromPath('user/list', ['backend' => $backend->getName()]));
         $form->setRepository($backend);
         $form->add()->handleRequest();
 
@@ -200,7 +200,7 @@ class UserController extends AuthBackendController
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
 
         $form = new UserForm();
-        $form->setRedirectUrl(Url::fromPath('user/show', array('backend' => $backend->getName(), 'user' => $userName)));
+        $form->setRedirectUrl(Url::fromPath('user/show', ['backend' => $backend->getName(), 'user' => $userName]));
         $form->setRepository($backend);
 
         try {
@@ -222,7 +222,7 @@ class UserController extends AuthBackendController
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
 
         $form = new UserForm();
-        $form->setRedirectUrl(Url::fromPath('user/list', array('backend' => $backend->getName())));
+        $form->setRedirectUrl(Url::fromPath('user/list', ['backend' => $backend->getName()]));
         $form->setRepository($backend);
 
         try {
@@ -257,7 +257,7 @@ class UserController extends AuthBackendController
         $form = new CreateMembershipForm();
         $form->setBackends($backends)
             ->setUsername($userName)
-            ->setRedirectUrl(Url::fromPath('user/show', array('backend' => $backend->getName(), 'user' => $userName)))
+            ->setRedirectUrl(Url::fromPath('user/show', ['backend' => $backend->getName(), 'user' => $userName]))
             ->handleRequest();
 
         $this->renderForm($form, $this->translate('Create New Membership'));
@@ -272,7 +272,7 @@ class UserController extends AuthBackendController
      */
     protected function loadMemberships(User $user)
     {
-        $groups = $alreadySeen = array();
+        $groups = $alreadySeen = [];
         foreach ($this->loadUserGroupBackends() as $backend) {
             try {
                 foreach ($backend->getMemberships($user) as $groupName) {
@@ -281,11 +281,11 @@ class UserController extends AuthBackendController
                     }
 
                     $alreadySeen[$groupName] = null;
-                    $groups[] = (object) array(
+                    $groups[] = (object) [
                         'group_name'    => $groupName,
                         'group'         => $groupName,
                         'backend'       => $backend
-                    );
+                    ];
                 }
             } catch (Exception $e) {
                 Logger::error($e);
@@ -310,11 +310,11 @@ class UserController extends AuthBackendController
         $tabs = $this->getTabs();
         $tabs->add(
             'user/show',
-            array(
+            [
                 'title'     => sprintf($this->translate('Show user %s'), $userName),
                 'label'     => $this->translate('User'),
-                'url'       => Url::fromPath('user/show', array('backend' => $backendName, 'user' => $userName))
-            )
+                'url'       => Url::fromPath('user/show', ['backend' => $backendName, 'user' => $userName])
+            ]
         );
 
         return $tabs;
@@ -330,14 +330,14 @@ class UserController extends AuthBackendController
         if ($this->hasPermission('config/access-control/roles')) {
             $tabs->add(
                 'role/list',
-                array(
+                [
                     'baseTarget'    => '_main',
                     'label'         => $this->translate('Roles'),
                     'title'         => $this->translate(
                         'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
                     ),
                     'url'           => 'role/list'
-                )
+                ]
             );
 
             $tabs->add(
@@ -353,21 +353,21 @@ class UserController extends AuthBackendController
 
         $tabs->add(
             'user/list',
-            array(
+            [
                 'title'     => $this->translate('List users of authentication backends'),
                 'label'     => $this->translate('Users'),
                 'url'       => 'user/list'
-            )
+            ]
         );
 
         if ($this->hasPermission('config/access-control/groups')) {
             $tabs->add(
                 'group/list',
-                array(
+                [
                     'title'     => $this->translate('List groups of user group backends'),
                     'label'     => $this->translate('User Groups'),
                     'url'       => 'group/list'
-                )
+                ]
             );
         }
 

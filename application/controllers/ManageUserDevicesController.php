@@ -32,12 +32,12 @@ class ManageUserDevicesController extends CompatController
         $this->getTabs()
             ->add(
                 'manage-user-devices',
-                array(
+                [
                     'title'             => $this->translate('List of users who stay logged in'),
                     'label'             => $this->translate('Users'),
                     'url'               => 'manage-user-devices',
                     'data-base-target'  => '_self'
-                )
+                ]
             )->activate('manage-user-devices');
 
         $usersList = (new RememberMeUserList())
@@ -58,11 +58,11 @@ class ManageUserDevicesController extends CompatController
         $this->getTabs()
             ->add(
                 'manage-devices',
-                array(
+                [
                     'title' => $this->translate('List of devices'),
                     'label' => $this->translate('Devices'),
                     'url'   => 'manage-user-devices/devices'
-                )
+                ]
             )->activate('manage-devices');
 
         $name = $this->params->getRequired('name');

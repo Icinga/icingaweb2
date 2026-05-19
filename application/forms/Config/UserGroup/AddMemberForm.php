@@ -91,37 +91,37 @@ class AddMemberForm extends Form
         // not work currently as our ldap protocol stuff is unable to handle our filter implementation..
         $members = $this->backend
             ->select()
-            ->from('group_membership', array('user_name'))
+            ->from('group_membership', ['user_name'])
             ->where('group_name', $this->groupName)
             ->fetchColumn();
         $filter = empty($members) ? Filter::matchAll() : Filter::not(Filter::where('user_name', $members));
 
-        $users = $this->ds->select()->from('user', array('user_name'))->applyFilter($filter)->fetchColumn();
+        $users = $this->ds->select()->from('user', ['user_name'])->applyFilter($filter)->fetchColumn();
         if (! empty($users)) {
             $this->addElement(
                 'multiselect',
                 'user_name',
-                array(
+                [
                     'multiOptions'  => array_combine($users, $users),
                     'label'         => $this->translate('Backend Users'),
                     'description'   => $this->translate(
                         'Select one or more users (fetched from your user backends) to add as group member'
                     ),
                     'class'         => 'grant-permissions'
-                )
+                ]
             );
         }
 
         $this->addElement(
             'textarea',
             'users',
-            array(
+            [
                 'required'      => empty($users),
                 'label'         => $this->translate('Users'),
                 'description'   => $this->translate(
                     'Provide one or more usernames separated by comma to add as group member'
                 )
-            )
+            ]
         );
 
         $this->setTitle(sprintf($this->translate('Add members for group %s'), $this->groupName));
@@ -135,7 +135,7 @@ class AddMemberForm extends Form
      */
     public function onSuccess()
     {
-        $userNames = $this->getValue('user_name') ?: array();
+        $userNames = $this->getValue('user_name') ?: [];
         if (($users = $this->getValue('users'))) {
             $userNames = array_merge($userNames, array_map('trim', explode(',', $users)));
         }
@@ -154,10 +154,10 @@ class AddMemberForm extends Form
             try {
                 $this->backend->insert(
                     'group_membership',
-                    array(
+                    [
                         'group_name'    => $this->groupName,
                         'user_name'     => $userName
-                    )
+                    ]
                 );
             } catch (NotFoundError $e) {
                 throw $e; // Trigger 404, the group name is initially accessed as GET parameter

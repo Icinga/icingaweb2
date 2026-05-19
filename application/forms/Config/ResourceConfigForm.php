@@ -244,12 +244,12 @@ class ResourceConfigForm extends ConfigForm
         return $this->createElement(
             'checkbox',
             'force_creation',
-            array(
+            [
                 'order'         => 0,
                 'ignore'        => true,
                 'label'         => $this->translate('Force Changes'),
                 'description'   => $this->translate('Check this box to enforce changes without connectivity validation')
-            )
+            ]
         );
     }
 
@@ -260,10 +260,10 @@ class ResourceConfigForm extends ConfigForm
     {
         $resourceType = isset($formData['type']) ? $formData['type'] : 'db';
 
-        $resourceTypes = array(
+        $resourceTypes = [
             'file'          => $this->translate('File'),
             'ssh'           => $this->translate('SSH Identity'),
-        );
+        ];
         if ($resourceType === 'ldap' || Platform::hasLdapSupport()) {
             $resourceTypes['ldap'] = 'LDAP';
         }
@@ -274,14 +274,14 @@ class ResourceConfigForm extends ConfigForm
         $this->addElement(
             'select',
             'type',
-            array(
+            [
                 'required'          => true,
                 'autosubmit'        => true,
                 'label'             => $this->translate('Resource Type'),
                 'description'       => $this->translate('The type of resource'),
                 'multiOptions'      => $resourceTypes,
                 'value'             => $resourceType
-            )
+            ]
         );
 
         if (isset($formData['force_creation']) && $formData['force_creation']) {
@@ -329,15 +329,15 @@ class ResourceConfigForm extends ConfigForm
                 $this->addElement(
                     'note',
                     'inspection_output',
-                    array(
+                    [
                         'order'         => 0,
                         'value'         => '<strong>' . $this->translate('Validation Log') . "</strong>\n\n"
                             . join("\n", array_map($join, $inspection->toArray())),
-                        'decorators'    => array(
+                        'decorators'    => [
                             'ViewHelper',
-                            array('HtmlTag', array('tag' => 'pre', 'class' => 'log-output')),
-                        )
-                    )
+                            ['HtmlTag', ['tag' => 'pre', 'class' => 'log-output']],
+                        ]
+                    ]
                 );
 
                 if ($inspection->hasError()) {
@@ -366,40 +366,40 @@ class ResourceConfigForm extends ConfigForm
     {
         parent::addSubmitButton()
             ->getElement('btn_submit')
-            ->setDecorators(array('ViewHelper'));
+            ->setDecorators(['ViewHelper']);
 
         $this->addElement(
             'submit',
             'resource_validation',
-            array(
+            [
                 'ignore'                => true,
                 'label'                 => $this->translate('Validate Configuration'),
                 'data-progress-label'   => $this->translate('Validation In Progress'),
-                'decorators'            => array('ViewHelper')
-            )
+                'decorators'            => ['ViewHelper']
+            ]
         );
 
         $this->setAttrib('data-progress-element', 'resource-progress');
         $this->addElement(
             'note',
             'resource-progress',
-            array(
-                'decorators'    => array(
+            [
+                'decorators'    => [
                     'ViewHelper',
-                    array('Spinner', array('id' => 'resource-progress'))
-                )
-            )
+                    ['Spinner', ['id' => 'resource-progress']]
+                ]
+            ]
         );
 
         $this->addDisplayGroup(
-            array('btn_submit', 'resource_validation', 'resource-progress'),
+            ['btn_submit', 'resource_validation', 'resource-progress'],
             'submit_validation',
-            array(
-                'decorators' => array(
+            [
+                'decorators' => [
                     'FormElements',
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
-                )
-            )
+                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
+                ]
+            ]
         );
 
         return $this;

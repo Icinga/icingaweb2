@@ -38,40 +38,40 @@ class AnnouncementForm extends RepositoryForm
         $this->addElement(
             'text',
             'author',
-            array(
+            [
                 'disabled'  => ! $this->getRequest()->isApiRequest(),
                 'required'  => true,
                 'value'     => Auth::getInstance()->getUser()->getUsername()
-            )
+            ]
         );
         $this->addElement(
             'textarea',
             'message',
-            array(
+            [
                 'description'   => $this->translate('The message to display to users'),
                 'label'         => $this->translate('Message'),
                 'required'      => true
-            )
+            ]
         );
         $this->addElement(
             'dateTimePicker',
             'start',
-            array(
+            [
                 'description'   => $this->translate('The time to display the announcement from'),
                 'label'         => $this->translate('Start'),
                 'placeholder'   => new DateTime('tomorrow'),
                 'required'      => true
-            )
+            ]
         );
         $this->addElement(
             'dateTimePicker',
             'end',
-            array(
+            [
                 'description'   => $this->translate('The time to display the announcement until'),
                 'label'         => $this->translate('End'),
                 'placeholder'   => new DateTime('tomorrow +1day'),
                 'required'      => true
-            )
+            ]
         );
 
         $this->setTitle($this->translate('Create a new announcement'));

@@ -62,7 +62,7 @@ class RoleForm extends RepositoryForm
         return parent::filterName($value, $allowBrackets) . '_element';
     }
 
-    public function createInsertElements(array $formData = array())
+    public function createInsertElements(array $formData = [])
     {
         $this->addElement(
             'text',

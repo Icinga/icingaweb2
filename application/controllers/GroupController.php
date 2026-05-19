@@ -55,12 +55,12 @@ class GroupController extends AuthBackendController
         $this->view->backendSelection->addElement(
             'select',
             'backend',
-            array(
+            [
                 'autosubmit'    => true,
                 'label'         => $this->translate('User Group Backend'),
                 'multiOptions'  => array_combine($backendNames, $backendNames),
                 'value'         => $this->params->get('backend')
-            )
+            ]
         );
 
         $backend = $this->getUserGroupBackend($this->params->get('backend'));
@@ -69,7 +69,7 @@ class GroupController extends AuthBackendController
             return;
         }
 
-        $query = $backend->select(array('group_name'));
+        $query = $backend->select(['group_name']);
 
         $this->view->groups = $query;
         $this->view->backend = $backend;
@@ -78,11 +78,11 @@ class GroupController extends AuthBackendController
         $this->setupFilterControl($query);
         $this->setupLimitControl();
         $this->setupSortControl(
-            array(
+            [
                 'group_name'    => $this->translate('User Group'),
                 'created_at'    => $this->translate('Created at'),
                 'last_modified' => $this->translate('Last modified')
-            ),
+            ],
             $query
         );
     }
@@ -96,29 +96,29 @@ class GroupController extends AuthBackendController
         $groupName = $this->params->getRequired('group');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'));
 
-        $group = $backend->select(array(
+        $group = $backend->select([
             'group_name',
             'created_at',
             'last_modified'
-        ))->where('group_name', $groupName)->fetchRow();
+        ])->where('group_name', $groupName)->fetchRow();
         if ($group === false) {
             $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
         }
 
         $members = $backend
             ->select()
-            ->from('group_membership', array('user_name'))
+            ->from('group_membership', ['user_name'])
             ->where('group_name', $groupName);
 
-        $this->setupFilterControl($members, null, array('user'), array('group'));
+        $this->setupFilterControl($members, null, ['user'], ['group']);
         $this->setupPaginationControl($members);
         $this->setupLimitControl();
         $this->setupSortControl(
-            array(
+            [
                 'user_name'     => $this->translate('Username'),
                 'created_at'    => $this->translate('Created at'),
                 'last_modified' => $this->translate('Last modified')
-            ),
+            ],
             $members
         );
 
@@ -132,28 +132,28 @@ class GroupController extends AuthBackendController
             $removeForm->setUidDisabled();
             $removeForm->setAttrib('class', 'inline');
             $removeForm->setAction(
-                Url::fromPath('group/removemember', array('backend' => $backend->getName(), 'group' => $groupName))
+                Url::fromPath('group/removemember', ['backend' => $backend->getName(), 'group' => $groupName])
             );
-            $removeForm->addElement('hidden', 'user_name', array(
+            $removeForm->addElement('hidden', 'user_name', [
                 'isArray'       => true,
-                'decorators'    => array('ViewHelper')
-            ));
-            $removeForm->addElement('hidden', 'redirect', array(
-                'value'         => Url::fromPath('group/show', array(
+                'decorators'    => ['ViewHelper']
+            ]);
+            $removeForm->addElement('hidden', 'redirect', [
+                'value'         => Url::fromPath('group/show', [
                     'backend'   => $backend->getName(),
                     'group'     => $groupName
-                )),
-                'decorators'    => array('ViewHelper')
-            ));
-            $removeForm->addElement('button', 'btn_submit', array(
+                ]),
+                'decorators'    => ['ViewHelper']
+            ]);
+            $removeForm->addElement('button', 'btn_submit', [
                 'escape'        => false,
                 'type'          => 'submit',
                 'class'         => 'link-button spinner',
                 'value'         => 'btn_submit',
-                'decorators'    => array('ViewHelper'),
+                'decorators'    => ['ViewHelper'],
                 'label'         => $this->view->icon('cancel'),
                 'title'         => $this->translate('Remove this member')
-            ));
+            ]);
             $this->view->removeForm = $removeForm;
         }
     }
@@ -166,7 +166,7 @@ class GroupController extends AuthBackendController
         $this->assertPermission('config/access-control/groups');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
         $form = new UserGroupForm();
-        $form->setRedirectUrl(Url::fromPath('group/list', array('backend' => $backend->getName())));
+        $form->setRedirectUrl(Url::fromPath('group/list', ['backend' => $backend->getName()]));
         $form->setRepository($backend);
         $form->add()->handleRequest();
 
@@ -184,7 +184,7 @@ class GroupController extends AuthBackendController
 
         $form = new UserGroupForm();
         $form->setRedirectUrl(
-            Url::fromPath('group/show', array('backend' => $backend->getName(), 'group' => $groupName))
+            Url::fromPath('group/show', ['backend' => $backend->getName(), 'group' => $groupName])
         );
         $form->setRepository($backend);
 
@@ -207,7 +207,7 @@ class GroupController extends AuthBackendController
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
 
         $form = new UserGroupForm();
-        $form->setRedirectUrl(Url::fromPath('group/list', array('backend' => $backend->getName())));
+        $form->setRedirectUrl(Url::fromPath('group/list', ['backend' => $backend->getName()]));
         $form->setRepository($backend);
 
         try {
@@ -233,7 +233,7 @@ class GroupController extends AuthBackendController
             ->setBackend($backend)
             ->setGroupName($groupName)
             ->setRedirectUrl(
-                Url::fromPath('group/show', array('backend' => $backend->getName(), 'group' => $groupName))
+                Url::fromPath('group/show', ['backend' => $backend->getName(), 'group' => $groupName])
             )
             ->setUidDisabled();
 
@@ -256,7 +256,7 @@ class GroupController extends AuthBackendController
         $groupName = $this->params->getRequired('group');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
 
-        $form = new Form(array(
+        $form = new Form([
             'onSuccess' => function ($form) use ($groupName, $backend) {
                 foreach ($form->getValue('user_name') as $userName) {
                     try {
@@ -286,10 +286,10 @@ class GroupController extends AuthBackendController
 
                 return true;
             }
-        ));
+        ]);
         $form->setUidDisabled();
         $form->setSubmitLabel('btn_submit'); // Required to ensure that isSubmitted() is called
-        $form->addElement('hidden', 'user_name', array('required' => true, 'isArray' => true));
+        $form->addElement('hidden', 'user_name', ['required' => true, 'isArray' => true]);
         $form->addElement('hidden', 'redirect');
 
         try {
@@ -306,7 +306,7 @@ class GroupController extends AuthBackendController
      */
     protected function fetchUsers()
     {
-        $users = array();
+        $users = [];
         foreach ($this->loadUserBackends('Icinga\Data\Selectable') as $backend) {
             try {
                 if ($backend instanceof DomainAwareInterface) {
@@ -314,7 +314,7 @@ class GroupController extends AuthBackendController
                 } else {
                     $domain = null;
                 }
-                foreach ($backend->select(array('user_name')) as $user) {
+                foreach ($backend->select(['user_name']) as $user) {
                     $userObj = new User($user->user_name);
                     if ($domain !== null) {
                         if ($userObj->hasDomain() && $userObj->getDomain() !== $domain) {
@@ -354,11 +354,11 @@ class GroupController extends AuthBackendController
         $tabs = $this->getTabs();
         $tabs->add(
             'group/show',
-            array(
+            [
                 'title'     => sprintf($this->translate('Show group %s'), $groupName),
                 'label'     => $this->translate('Group'),
-                'url'       => Url::fromPath('group/show', array('backend' => $backendName, 'group' => $groupName))
-            )
+                'url'       => Url::fromPath('group/show', ['backend' => $backendName, 'group' => $groupName])
+            ]
         );
 
         return $tabs;
@@ -374,14 +374,14 @@ class GroupController extends AuthBackendController
         if ($this->hasPermission('config/access-control/roles')) {
             $tabs->add(
                 'role/list',
-                array(
+                [
                     'baseTarget'    => '_main',
                     'label'         => $this->translate('Roles'),
                     'title'         => $this->translate(
                         'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
                     ),
                     'url'           => 'role/list'
-                )
+                ]
             );
 
             $tabs->add(
@@ -398,21 +398,21 @@ class GroupController extends AuthBackendController
         if ($this->hasPermission('config/access-control/users')) {
             $tabs->add(
                 'user/list',
-                array(
+                [
                     'title'     => $this->translate('List users of authentication backends'),
                     'label'     => $this->translate('Users'),
                     'url'       => 'user/list'
-                )
+                ]
             );
         }
 
         $tabs->add(
             'group/list',
-            array(
+            [
                 'title'     => $this->translate('List groups of user group backends'),
                 'label'     => $this->translate('User Groups'),
                 'url'       => 'group/list'
-            )
+            ]
         );
 
         return $tabs;

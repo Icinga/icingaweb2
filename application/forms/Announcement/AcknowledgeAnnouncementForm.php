@@ -31,18 +31,18 @@ class AcknowledgeAnnouncementForm extends Form
         $this->addElement(
             'button',
             'btn_submit',
-            array(
+            [
                 'class'         => 'link-button spinner',
-                'decorators'    => array(
+                'decorators'    => [
                     'ViewHelper',
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
-                ),
+                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
+                ],
                 'escape'        => false,
                 'ignore'        => true,
                 'label'         => $this->getView()->icon('cancel'),
                 'title'         => $this->translate('Acknowledge this announcement'),
                 'type'          => 'submit'
-            )
+            ]
         );
         return $this;
     }
@@ -50,20 +50,20 @@ class AcknowledgeAnnouncementForm extends Form
     /**
      * {@inheritdoc}
      */
-    public function createElements(array $formData = array())
+    public function createElements(array $formData = [])
     {
         $this->addElements(
-            array(
-                array(
+            [
+                [
                     'hidden',
                     'hash',
-                    array(
+                    [
                         'required' => true,
-                        'validators' => array('NotEmpty'),
-                        'decorators' => array('ViewHelper')
-                    )
-                )
-            )
+                        'validators' => ['NotEmpty'],
+                        'decorators' => ['ViewHelper']
+                    ]
+                ]
+            ]
         );
 
         return $this;
@@ -77,12 +77,12 @@ class AcknowledgeAnnouncementForm extends Form
         $cookie = new AnnouncementCookie();
         $repo = new AnnouncementIniRepository();
         $query = $repo->findActive();
-        $filter = array();
+        $filter = [];
         foreach ($cookie->getAcknowledged() as $hash) {
             $filter[] = Filter::expression('hash', '=', $hash);
         }
         $query->addFilter(Filter::matchAny($filter));
-        $acknowledged = array();
+        $acknowledged = [];
         foreach ($query as $row) {
             $acknowledged[] = $row->hash;
         }

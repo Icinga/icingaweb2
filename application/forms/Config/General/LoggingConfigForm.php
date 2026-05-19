@@ -37,44 +37,44 @@ class LoggingConfigForm extends Form
         $this->addElement(
             'select',
             'logging_log',
-            array(
+            [
                 'required'      => true,
                 'autosubmit'    => true,
                 'label'         => $this->translate('Logging Type'),
                 'description'   => $this->translate('The type of logging to utilize.'),
                 'value'         => $defaultType,
-                'multiOptions'  => array(
+                'multiOptions'  => [
                     'syslog'    => 'Syslog',
                     'php'       => $this->translate('Webserver Log', 'app.config.logging.type'),
                     'file'      => $this->translate('File', 'app.config.logging.type'),
                     'none'      => $this->translate('None', 'app.config.logging.type')
-                )
-            )
+                ]
+            ]
         );
 
         if (! isset($formData['logging_log']) || $formData['logging_log'] !== 'none') {
             $this->addElement(
                 'select',
                 'logging_level',
-                array(
+                [
                     'required'      => true,
                     'label'         => $this->translate('Logging Level'),
                     'description'   => $this->translate('The maximum logging level to emit.'),
-                    'multiOptions'  => array(
+                    'multiOptions'  => [
                         Logger::$levels[Logger::ERROR]   => $this->translate('Error', 'app.config.logging.level'),
                         Logger::$levels[Logger::WARNING] => $this->translate('Warning', 'app.config.logging.level'),
                         Logger::$levels[Logger::INFO]    => $this->translate('Information', 'app.config.logging.level'),
                         Logger::$levels[Logger::DEBUG]   => $this->translate('Debug', 'app.config.logging.level')
-                    )
-                )
+                    ]
+                ]
             );
         }
 
-        if (! isset($formData['logging_log']) || in_array($formData['logging_log'], array('syslog', 'php'))) {
+        if (! isset($formData['logging_log']) || in_array($formData['logging_log'], ['syslog', 'php'])) {
             $this->addElement(
                 'text',
                 'logging_application',
-                array(
+                [
                     'required'      => true,
                     'label'         => $this->translate('Application Prefix'),
                     'description'   => $this->translate(
@@ -82,21 +82,21 @@ class LoggingConfigForm extends Form
                     ),
                     'requirement'   => $this->translate('The application prefix must not contain whitespace.'),
                     'value'         => 'icingaweb2',
-                    'validators'    => array(
-                        array(
+                    'validators'    => [
+                        [
                             'Regex',
                             false,
-                            array(
+                            [
                                 'pattern'  => '/^\S+$/',
-                                'messages' => array(
+                                'messages' => [
                                     'regexNotMatch' => $this->translate(
                                         'The application prefix must not contain whitespace.'
                                     )
-                                )
-                            )
-                        )
-                    )
-                )
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
             );
 
             if ((isset($formData['logging_log']) ? $formData['logging_log'] : $defaultType) === 'syslog') {
@@ -105,23 +105,23 @@ class LoggingConfigForm extends Form
                     $this->addElement(
                         'hidden',
                         'logging_facility',
-                        array(
+                        [
                             'value' => 'user',
                             'disabled' => true
-                        )
+                        ]
                     );
                 } else {
                     $facilities = array_keys(SyslogWriter::$facilities);
                     $this->addElement(
                         'select',
                         'logging_facility',
-                        array(
+                        [
                             'required' => true,
                             'label' => $this->translate('Facility'),
                             'description' => $this->translate('The syslog facility to utilize.'),
                             'value' => 'user',
                             'multiOptions' => array_combine($facilities, $facilities)
-                        )
+                        ]
                     );
                 }
             }
@@ -129,13 +129,13 @@ class LoggingConfigForm extends Form
             $this->addElement(
                 'text',
                 'logging_file',
-                array(
+                [
                     'required'      => true,
                     'label'         => $this->translate('File path'),
                     'description'   => $this->translate('The full path to the log file to write messages to.'),
                     'value'         => '/var/log/icingaweb2/icingaweb2.log',
-                    'validators'    => array('WritablePathValidator')
-                )
+                    'validators'    => ['WritablePathValidator']
+                ]
             );
         }
 

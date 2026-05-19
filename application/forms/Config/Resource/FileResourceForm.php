@@ -29,21 +29,21 @@ class FileResourceForm extends Form
         $this->addElement(
             'text',
             'name',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Resource Name'),
                 'description'   => $this->translate('The unique name of this resource')
-            )
+            ]
         );
         $this->addElement(
             'text',
             'filename',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Filepath'),
                 'description'   => $this->translate('The filename to fetch information from'),
-                'validators'    => array('ReadablePathValidator')
-            )
+                'validators'    => ['ReadablePathValidator']
+            ]
         );
         $callbackValidator = new Zend_Validate_Callback(function ($value) {
             return @preg_match($value, '') !== false;
@@ -55,13 +55,13 @@ class FileResourceForm extends Form
         $this->addElement(
             'text',
             'fields',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Pattern'),
                 'description'   => $this->translate('The pattern by which to identify columns.'),
                 'requirement'   => $this->translate('The column pattern must be a valid regular expression.'),
-                'validators'    => array($callbackValidator)
-            )
+                'validators'    => [$callbackValidator]
+            ]
         );
 
         return $this;

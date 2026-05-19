@@ -40,11 +40,11 @@ class DashboardController extends ActionController
     public function newDashletAction()
     {
         $form = new DashletForm();
-        $this->getTabs()->add('new-dashlet', array(
+        $this->getTabs()->add('new-dashlet', [
             'active'    => true,
             'label'     => $this->translate('New Dashlet'),
             'url'       => Url::fromRequest()
-        ));
+        ]);
         $dashboard = $this->dashboard;
         $form->setDashboard($dashboard);
         if ($this->_request->getParam('url')) {
@@ -84,11 +84,11 @@ class DashboardController extends ActionController
 
     public function updateDashletAction()
     {
-        $this->getTabs()->add('update-dashlet', array(
+        $this->getTabs()->add('update-dashlet', [
             'active'    => true,
             'label'     => $this->translate('Update Dashlet'),
             'url'       => Url::fromRequest()
-        ));
+        ]);
         $dashboard = $this->dashboard;
         $form = new DashletForm();
         $form->setDashboard($dashboard);
@@ -149,11 +149,11 @@ class DashboardController extends ActionController
     public function removeDashletAction()
     {
         $form = new ConfirmRemovalForm();
-        $this->getTabs()->add('remove-dashlet', array(
+        $this->getTabs()->add('remove-dashlet', [
             'active'    => true,
             'label'     => $this->translate('Remove Dashlet'),
             'url'       => Url::fromRequest()
-        ));
+        ]);
         $dashboard = $this->dashboard;
         if (! $this->_request->getParam('pane')) {
             throw new Zend_Controller_Action_Exception(
@@ -205,23 +205,23 @@ class DashboardController extends ActionController
         $form->addElement(
             'text',
             'name',
-            array(
+            [
                 'required'  => true,
                 'label'     => $this->translate('Name')
-            )
+            ]
         );
         $form->addElement(
             'text',
             'title',
-            array(
+            [
                 'required'  => true,
                 'label'     => $this->translate('Title')
-            )
+            ]
         );
-        $form->setDefaults(array(
+        $form->setDefaults([
             'name'  => $paneName,
             'title' => $this->dashboard->getPane($paneName)->getTitle()
-        ));
+        ]);
         $form->setOnSuccess(function ($form) use ($paneName) {
             $newName = $form->getValue('name');
             $newTitle = $form->getValue('title');
@@ -241,10 +241,10 @@ class DashboardController extends ActionController
         $this->view->form = $form;
         $this->getTabs()->add(
             'update-pane',
-            array(
+            [
                 'title' => $this->translate('Update Pane'),
                 'url'   => $this->getRequest()->getUrl()
-            )
+            ]
         )->activate('update-pane');
     }
 
@@ -306,11 +306,11 @@ class DashboardController extends ActionController
             );
             if (empty($panes)) {
                 $this->view->title = 'Dashboard';
-                $this->getTabs()->add('dashboard', array(
+                $this->getTabs()->add('dashboard', [
                     'active'    => true,
                     'title'     => $this->translate('Dashboard'),
                     'url'       => Url::fromRequest()
-                ));
+                ]);
             } else {
                 if ($this->_getParam('pane')) {
                     $pane = $this->_getParam('pane');

@@ -32,7 +32,7 @@ class DefaultAuthenticationDomainConfigForm extends Form
         $this->addElement(
             'text',
             'authentication_default_domain',
-            array(
+            [
                 'label'         => $this->translate('Default Login Domain'),
                 'description'   => $this->translate(
                     'If a user logs in without specifying any domain (e.g. "jdoe" instead of "jdoe@example.com"),'
@@ -40,7 +40,7 @@ class DefaultAuthenticationDomainConfigForm extends Form
                     . ' backends are configured to be responsible for this domain or if none of your authentication'
                     . ' backends holds usernames with the domain part, users will not be able to login.'
                 )
-            )
+            ]
         );
 
         return $this;

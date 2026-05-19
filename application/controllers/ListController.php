@@ -27,10 +27,10 @@ class ListController extends Controller
      */
     protected function addTitleTab($action)
     {
-        $this->getTabs()->add($action, array(
+        $this->getTabs()->add($action, [
             'label' => ucfirst($action),
             'url'   => Url::fromPath('list/' . str_replace(' ', '', $action))
-        ))->extend(new OutputFormat())->extend(new DashboardAction())->extend(new MenuAction())->activate($action);
+        ])->extend(new OutputFormat())->extend(new DashboardAction())->extend(new MenuAction())->activate($action);
     }
 
     /**
@@ -46,12 +46,12 @@ class ListController extends Controller
 
         $this->addTitleTab('application log');
 
-        $resource = new FileReader(new ConfigObject(array(
+        $resource = new FileReader(new ConfigObject([
             'filename'  => Config::app()->get('logging', 'file'),
             'fields'    => '/(?<!.)(?<datetime>[0-9]{4}(?:-[0-9]{2}){2}'    // date
                 . 'T[0-9]{2}(?::[0-9]{2}){2}(?:[\+\-][0-9]{2}:[0-9]{2})?)'  // time
                 . ' - (?<loglevel>[A-Za-z]+) - (?<message>.*)(?!.)/msS'     // loglevel, message
-        )));
+        ]));
         $this->view->logData = $resource->select()->order('DESC');
 
         $this->setupLimitControl();

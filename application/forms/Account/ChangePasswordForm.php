@@ -39,29 +39,29 @@ class ChangePasswordForm extends Form
         $this->addElement(
             'password',
             'old_password',
-            array(
+            [
                 'label'         => $this->translate('Old Password'),
                 'required'      => true
-            )
+            ]
         );
         $this->addElement(
             'password',
             'new_password',
-            array(
+            [
                 'label'         => $this->translate('New Password'),
                 'required'      => true
-            )
+            ]
         );
         $this->addElement(
             'password',
             'new_password_confirmation',
-            array(
+            [
                 'label'         => $this->translate('Confirm New Password'),
                 'required'      => true,
-                'validators'        => array(
-                    array('identical', false, array('new_password'))
-                )
-            )
+                'validators'        => [
+                    ['identical', false, ['new_password']]
+                ]
+            ]
         );
     }
 
@@ -73,7 +73,7 @@ class ChangePasswordForm extends Form
         $backend = $this->getBackend();
         $backend->update(
             $backend->getBaseTable(),
-            array('password' => $this->getElement('new_password')->getValue()),
+            ['password' => $this->getElement('new_password')->getValue()],
             Filter::where('user_name', $this->Auth()->getUser()->getUsername())
         );
         Notification::success($this->translate('Account updated'));

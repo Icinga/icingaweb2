@@ -68,9 +68,9 @@ class UserBackendConfigForm extends ConfigForm
      */
     public function setResourceConfig(Config $resourceConfig)
     {
-        $resources = array();
+        $resources = [];
         foreach ($resourceConfig as $name => $resource) {
-            if (in_array($resource->type, array('db', 'ldap'))) {
+            if (in_array($resource->type, ['db', 'ldap'])) {
                 $resources[$resource->type][] = $name;
             }
         }
@@ -113,12 +113,12 @@ class UserBackendConfigForm extends ConfigForm
         switch ($type) {
             case 'db':
                 $form = new DbBackendForm();
-                $form->setResources(isset($this->resources['db']) ? $this->resources['db'] : array());
+                $form->setResources(isset($this->resources['db']) ? $this->resources['db'] : []);
                 break;
             case 'ldap':
             case 'msldap':
                 $form = new LdapBackendForm();
-                $form->setResources(isset($this->resources['ldap']) ? $this->resources['ldap'] : array());
+                $form->setResources(isset($this->resources['ldap']) ? $this->resources['ldap'] : []);
                 break;
             case 'external':
                 $form = new ExternalBackendForm();
@@ -250,7 +250,7 @@ class UserBackendConfigForm extends ConfigForm
         array_splice($backendOrder, array_search($name, $backendOrder), 1);
         array_splice($backendOrder, $position, 0, $name);
 
-        $newConfig = array();
+        $newConfig = [];
         foreach ($backendOrder as $backendName) {
             $newConfig[$backendName] = $this->config->getSection($backendName);
         }
@@ -267,7 +267,7 @@ class UserBackendConfigForm extends ConfigForm
      */
     public function createElements(array $formData)
     {
-        $backendTypes = array();
+        $backendTypes = [];
         $backendType = isset($formData['type']) ? $formData['type'] : null;
 
         if (isset($this->resources['db'])) {
@@ -298,7 +298,7 @@ class UserBackendConfigForm extends ConfigForm
         $this->addElement(
             'select',
             'type',
-            array(
+            [
                 'ignore'            => true,
                 'required'          => true,
                 'autosubmit'        => true,
@@ -307,7 +307,7 @@ class UserBackendConfigForm extends ConfigForm
                     'The type of the resource to use for this authenticaton provider'
                 ),
                 'multiOptions'      => $backendTypes
-            )
+            ]
         );
 
         if (isset($formData['skip_validation']) && $formData['skip_validation']) {
@@ -384,14 +384,14 @@ class UserBackendConfigForm extends ConfigForm
         $this->addElement(
             'checkbox',
             'skip_validation',
-            array(
+            [
                 'order'         => 0,
                 'ignore'        => true,
                 'label'         => $this->translate('Skip Validation'),
                 'description'   => $this->translate(
                     'Check this box to enforce changes without validating that authentication is possible.'
                 )
-            )
+            ]
         );
     }
 
@@ -419,15 +419,15 @@ class UserBackendConfigForm extends ConfigForm
                 $this->addElement(
                     'note',
                     'inspection_output',
-                    array(
+                    [
                         'order'         => 0,
                         'value'         => '<strong>' . $this->translate('Validation Log') . "</strong>\n\n"
                             . join("\n", array_map($join, $inspection->toArray())),
-                        'decorators'    => array(
+                        'decorators'    => [
                             'ViewHelper',
-                            array('HtmlTag', array('tag' => 'pre', 'class' => 'log-output')),
-                        )
-                    )
+                            ['HtmlTag', ['tag' => 'pre', 'class' => 'log-output']],
+                        ]
+                    ]
                 );
 
                 if ($inspection->hasError()) {
@@ -456,27 +456,27 @@ class UserBackendConfigForm extends ConfigForm
     {
         parent::addSubmitButton()
             ->getElement('btn_submit')
-            ->setDecorators(array('ViewHelper'));
+            ->setDecorators(['ViewHelper']);
 
         $this->addElement(
             'submit',
             'backend_validation',
-            array(
+            [
                 'ignore'                => true,
                 'label'                 => $this->translate('Validate Configuration'),
                 'data-progress-label'   => $this->translate('Validation In Progress'),
-                'decorators'            => array('ViewHelper')
-            )
+                'decorators'            => ['ViewHelper']
+            ]
         );
         $this->addDisplayGroup(
-            array('btn_submit', 'backend_validation'),
+            ['btn_submit', 'backend_validation'],
             'submit_validation',
-            array(
-                'decorators' => array(
+            [
+                'decorators' => [
                     'FormElements',
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
-                )
-            )
+                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
+                ]
+            ]
         );
 
         return $this;
