@@ -10,21 +10,21 @@
         $this->translate('Login to Icinga Web 2'),
         'authentication/login',
         null,
-        array(
+        [
             'class' => 'button-link login',
             'data-no-icinga-ajax' => true,
             'title' => $this->translate('Show the login page of Icinga Web 2')
-        )
+        ]
     ); ?>
   <?php else: ?>
     <?= $this->qlink(
         $this->translate('Back'),
         null,
         null,
-        array(
+        [
             'class' => 'button-link',
             'title' => $this->translate('Show previous wizard-page')
-        )
+        ]
     ); ?>
   <?php endif ?>
   </div>

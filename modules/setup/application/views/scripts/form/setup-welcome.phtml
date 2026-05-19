@@ -14,13 +14,13 @@ $groupadd = null;
 $docker = getenv('ICINGAWEB_OFFICIAL_DOCKER_IMAGE');
 
 if (! (false === ($distro = Platform::getLinuxDistro(1)) || $distro === 'linux')) {
-    foreach (array(
-        'groupadd -r icingaweb2' => array(
+    foreach ([
+        'groupadd -r icingaweb2' => [
             'redhat', 'rhel', 'centos', 'fedora',
             'suse', 'sles', 'sled', 'opensuse'
-        ),
-        'addgroup --system icingaweb2' => array('debian', 'ubuntu')
-    ) as $groupadd_ => $distros) {
+        ],
+        'addgroup --system icingaweb2' => ['debian', 'ubuntu']
+    ] as $groupadd_ => $distros) {
         if (in_array($distro, $distros)) {
             $groupadd = $groupadd_;
             break;
