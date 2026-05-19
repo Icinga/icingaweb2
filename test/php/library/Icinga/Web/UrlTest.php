@@ -210,12 +210,12 @@ class UrlTest extends BaseTestCase
         /*
         // Temporarily disabled, no [] support right now
         $this->assertEquals(
-            array('1', '2', '3'),
+            ['1', '2', '3'],
             $url->getParam('param3'),
             'Url::fromPath does not properly reassemble query parameter values as sequenced values'
         );
         $this->assertEquals(
-            array('key1' => 'val1', 'key2' => 'val2'),
+            ['key1' => 'val1', 'key2' => 'val2'],
             $url->getParam('param4'),
             'Url::fromPath does not properly reassemble query parameters as associative arrays'
         );

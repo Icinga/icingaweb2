@@ -321,7 +321,7 @@ class LdapCapabilities
             'supportedSaslMechanisms',
             'dnsHostName',
             'schemaNamingContext',
-            'supportedLDAPVersion', // => array(3, 2)
+            'supportedLDAPVersion', // => [3, 2]
             'supportedCapabilities',
             'supportedControl',
             'supportedExtension',

@@ -452,10 +452,10 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
                 'label'     => t('Menu Entry'),
                 'config'    => 'menu'
             ]/*, // Disabled, until it is able to fully replace the old implementation
-            'dashlet'   => array(
+            'dashlet'   => [
                 'label'     => 'Dashlet',
                 'config'    => 'dashboard'
-            )*/
+            ]*/
         ];
 
         $moduleItemTypes = [];

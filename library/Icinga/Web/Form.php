@@ -1350,7 +1350,7 @@ class Form extends Zend_Form
                     ->addDecorator('FormErrors', ['onlyCustomFormErrors' => true])
                     ->addDecorator('FormElements')
                     ->addDecorator('FormHints')
-                    //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
+                    //->addDecorator('HtmlTag', ['tag' => 'dl', 'class' => 'zend_form'])
                     ->addDecorator('Form');
             }
         }
