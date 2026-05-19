@@ -49,11 +49,11 @@ class Number extends FormElement
     public function init()
     {
         if ($this->min !== null || $this->max !== null) {
-            $this->addValidator('Between', true, array(
+            $this->addValidator('Between', true, [
                 'min'       => $this->min === null ? -INF : $this->min,
                 'max'       => $this->max === null ? INF : $this->max,
                 'inclusive' => true
-            ));
+            ]);
         }
     }
 

@@ -65,7 +65,7 @@ class LayoutBox
      *
      * @var array
      */
-    private $padding = array(0, 0, 0, 0);
+    private $padding = [0, 0, 0, 0];
 
     /**
      * Create this layout box
@@ -92,7 +92,7 @@ class LayoutBox
      */
     public function setUniformPadding($padding)
     {
-        $this->padding = array($padding, $padding, $padding, $padding);
+        $this->padding = [$padding, $padding, $padding, $padding];
     }
 
     /**
@@ -105,7 +105,7 @@ class LayoutBox
      */
     public function setPadding($top, $right, $bottom, $left)
     {
-        $this->padding = array($top, $right, $bottom, $left);
+        $this->padding = [$top, $right, $bottom, $left];
     }
 
     /**

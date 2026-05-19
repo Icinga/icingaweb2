@@ -61,16 +61,16 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
      */
     private $tablePrefix = '';
 
-    private static $genericAdapterOptions = array(
+    private static $genericAdapterOptions = [
         Zend_Db::AUTO_QUOTE_IDENTIFIERS => false,
         Zend_Db::CASE_FOLDING           => Zend_Db::CASE_LOWER
-    );
+    ];
 
-    private static $driverOptions = array(
+    private static $driverOptions = [
         PDO::ATTR_TIMEOUT    => 10,
         PDO::ATTR_CASE       => PDO::CASE_LOWER,
         PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION
-    );
+    ];
 
     /**
      * Create a new connection object
@@ -142,7 +142,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     {
         $genericAdapterOptions  = self::$genericAdapterOptions;
         $driverOptions          = self::$driverOptions;
-        $adapterParamaters      = array(
+        $adapterParamaters      = [
             'host'              => $this->config->host,
             'username'          => $this->config->username,
             'password'          => $this->config->password,
@@ -150,7 +150,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             'charset'           => $this->config->charset ?: null,
             'options'           => & $genericAdapterOptions,
             'driver_options'    => & $driverOptions
-        );
+        ];
         $this->dbType = strtolower($this->config->get('db', 'mysql'));
         switch ($this->dbType) {
             case 'mssql':
@@ -227,9 +227,9 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 $adapter = 'Oracle';
                 unset($adapterParamaters['options']);
                 unset($adapterParamaters['driver_options']);
-                $adapterParamaters['driver_options'] = array(
+                $adapterParamaters['driver_options'] = [
                     'lob_as_string' => true
-                );
+                ];
                 $defaultPort = 1521;
                 break;
             case 'oracle':
@@ -397,9 +397,9 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
      *
      * @return  int             The number of affected rows
      */
-    public function insert($table, array $bind, array $types = array())
+    public function insert($table, array $bind, array $types = [])
     {
-        $columns = $values = array();
+        $columns = $values = [];
         foreach ($bind as $column => $value) {
             $columns[] = $column;
             if ($value instanceof Zend_Db_Expr) {
@@ -438,9 +438,9 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
      *
      * @return int The number of affected rows
      */
-    public function update($table, array $bind, ?Filter $filter = null, array $types = array())
+    public function update($table, array $bind, ?Filter $filter = null, array $types = [])
     {
-        $set = array();
+        $set = [];
         foreach ($bind as $column => $value) {
             if ($value instanceof Zend_Db_Expr) {
                 $set[] = $column . ' = ' . $value;
@@ -501,7 +501,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             }
 
             if (! $filter->isEmpty()) {
-                $parts = array();
+                $parts = [];
                 foreach ($filter->filters() as $filterPart) {
                     $part = $this->renderFilter($filterPart, $level + 1);
                     if ($part) {

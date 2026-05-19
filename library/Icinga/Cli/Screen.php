@@ -63,7 +63,7 @@ class Screen
             $current = setlocale(LC_ALL, 0);
 
             $parts = preg_split('/;/', $current);
-            $lc_parts = array();
+            $lc_parts = [];
             foreach ($parts as $part) {
                 if (strpos($part, '=') === false) {
                     continue;

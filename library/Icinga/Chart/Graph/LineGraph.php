@@ -76,7 +76,7 @@ class LineGraph extends Styleable implements Drawable
         $order,
         ?array $tooltips = null
     ) {
-        usort($dataset, array($this, 'sortByX'));
+        usort($dataset, [$this, 'sortByX']);
         $this->dataset = $dataset;
         $this->graphs = $graphs;
 
@@ -161,8 +161,8 @@ class LineGraph extends Styleable implements Drawable
         if ($this->fill !== 'none') {
             $firstX = $this->dataset[0][0];
             $lastX = $this->dataset[count($this->dataset)-1][0];
-            $path->prepend(array($firstX, 100))
-                ->append(array($lastX, 100));
+            $path->prepend([$firstX, 100])
+                ->append([$lastX, 100]);
             $path->setFill($this->fill);
         }
 
@@ -182,12 +182,12 @@ class LineGraph extends Styleable implements Drawable
                 $invisible = new Circle($point[0], $point[1], 20);
                 $invisible->setFill($this->strokeColor);
                 $invisible->setAdditionalStyle(['opacity' => '0.0']);
-                $data = array(
+                $data = [
                     'label' => isset($this->graphs[$this->order]['label']) ?
                             strtolower($this->graphs[$this->order]['label']) : '',
                     'color' => isset($this->graphs[$this->order]['color']) ?
                             strtolower($this->graphs[$this->order]['color']) : '#fff'
-                );
+                ];
                 $format = isset($this->graphs[$this->order]['tooltip'])
                     ? $this->graphs[$this->order]['tooltip'] : null;
                 $title = $ctx->getDocument()->createElement('title');

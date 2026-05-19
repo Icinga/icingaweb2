@@ -15,7 +15,7 @@ use Icinga\Exception\QueryException;
  */
 abstract class FilterChain extends Filter
 {
-    protected $filters = array();
+    protected $filters = [];
 
     protected $operatorName;
 
@@ -62,7 +62,7 @@ abstract class FilterChain extends Filter
     public function removeId($id)
     {
         if ($id === $this->getId()) {
-            $this->filters = array();
+            $this->filters = [];
             return $this;
         }
         $remove = null;
@@ -150,7 +150,7 @@ abstract class FilterChain extends Filter
      *
      * @return  array
      */
-    public function listFilteredColumns(array $columns = array())
+    public function listFilteredColumns(array $columns = [])
     {
         foreach ($this->filters as $filter) {
             if ($filter instanceof FilterExpression) {
@@ -168,7 +168,7 @@ abstract class FilterChain extends Filter
 
     public function toQueryString()
     {
-        $parts = array();
+        $parts = [];
         if (empty($this->filters)) {
             return '';
         }
@@ -198,7 +198,7 @@ abstract class FilterChain extends Filter
         if (empty($this->filters)) {
             return '';
         }
-        $parts = array();
+        $parts = [];
         foreach ($this->filters as $filter) {
             if ($filter instanceof FilterChain) {
                 $parts[] = '(' . $filter . ')';
@@ -210,7 +210,7 @@ abstract class FilterChain extends Filter
         return implode($op, $parts);
     }
 
-    public function __construct($filters = array())
+    public function __construct($filters = [])
     {
         foreach ($filters as $filter) {
             $this->addFilter($filter);

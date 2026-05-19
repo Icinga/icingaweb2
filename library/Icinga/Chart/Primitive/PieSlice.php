@@ -159,10 +159,10 @@ class PieSlice extends Animatable implements Drawable
         $midY = $y - intval(($offsetY + $r)/2 * cos($midRadius));
 
         // Draw the handle
-        $path = new Path(array($midX, $midY));
+        $path = new Path([$midX, $midY]);
 
         $midX += ($addOffset + $r/3) * ($midRadius > M_PI ? -1 : 1);
-        $path->append(array($midX, $midY))->toAbsolute();
+        $path->append([$midX, $midY])->toAbsolute();
 
         $midX += intval($r/2 * sin(M_PI/9)) * ($midRadius > M_PI ? -1 : 1);
         $midY -= intval($r/2 * cos(M_PI/3)) * ($midRadius < M_PI*1.4 && $midRadius > M_PI/3 ? -1 : 1);
@@ -173,7 +173,7 @@ class PieSlice extends Animatable implements Drawable
             $midY = $ctx->yToAbsolute($ctx->yToRelative(100+$midY));
         }
 
-        $path->append(array($midX , $midY));
+        $path->append([$midX , $midY]);
         $rel = $ctx->toRelative($midX, $midY);
 
         // Draw the text box

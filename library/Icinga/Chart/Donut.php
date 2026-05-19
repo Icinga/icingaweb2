@@ -68,7 +68,7 @@ class Donut
      *
      * @var array
      */
-    protected $slices = array();
+    protected $slices = [];
 
     /**
      * The total amount of data units
@@ -85,9 +85,9 @@ class Donut
      *
      * @return  $this
      */
-    public function addSlice($data, $attributes = array())
+    public function addSlice($data, $attributes = [])
     {
-        $this->slices[] = array($data, $attributes);
+        $this->slices[] = [$data, $attributes];
 
         $this->count += $data;
 
@@ -269,31 +269,31 @@ class Donut
     protected function assemble()
     {
         // svg tag containing the ring
-        $svg = array(
+        $svg = [
             'tag'        => 'svg',
-            'attributes' => array(
+            'attributes' => [
                 'xmlns'         => 'http://www.w3.org/2000/svg',
                 'viewbox'       => '0 0 40 40',
                 'class'         => 'donut-graph'
-            ),
-            'content' => array()
-        );
+            ],
+            'content' => []
+        ];
 
         // Donut hole
-        $svg['content'][] = array(
+        $svg['content'][] = [
             'tag'        => 'circle',
-            'attributes' => array(
+            'attributes' => [
                 'cx'   => 20,
                 'cy'   => 20,
                 'r'    => sprintf('%F', $this->radius),
                 'fill' => $this->getCenterColor()
-            )
-        );
+            ]
+        ];
 
         // When there is no data show gray circle
-        $svg['content'][] = array(
+        $svg['content'][] = [
             'tag'        => 'circle',
-            'attributes' => array(
+            'attributes' => [
                 'aria-hidden' => true,
                 'cx'           => 20,
                 'cy'           => 20,
@@ -301,8 +301,8 @@ class Donut
                 'fill'         => $this->getCenterColor(),
                 'stroke-width' => $this->getThickness(),
                 'class'        => 'slice-state-not-checked'
-            )
-        );
+            ]
+        ];
 
         $slices = $this->slices;
 
@@ -316,9 +316,9 @@ class Donut
         $offset = 25;
 
         foreach ($slices as $slice) {
-            $svg['content'][] = array(
+            $svg['content'][] = [
                 'tag'        => 'circle',
-                'attributes' => $slice[1] + array(
+                'attributes' => $slice[1] + [
                     'cx'                => 20,
                     'cy'                => 20,
                     'r'                 => sprintf('%F', $this->radius),
@@ -328,54 +328,54 @@ class Donut
                         . ' '
                         . sprintf('%F', (99.9 - $slice[0])), // 99.9 prevents gaps (slight overlap)
                     'stroke-dashoffset' => sprintf('%F', $offset)
-                )
-            );
+                ]
+            ];
             // negative values shift in the clockwise direction
             $offset -= $slice[0];
         }
 
-        $result = array(
+        $result = [
             'tag'     => 'div',
-            'content' => array($svg)
-        );
+            'content' => [$svg]
+        ];
 
         $labelBig = (string) $this->getLabelBig();
         $labelSmall = (string) $this->getLabelSmall();
 
         if ($labelBig !== '' || $labelSmall !== '') {
-            $labels = array(
+            $labels = [
                 'tag' => 'div',
-                'attributes' => array(
+                'attributes' => [
                     'class' => 'donut-label'
-                ),
-                'content' => array()
-            );
+                ],
+                'content' => []
+            ];
 
             if ($labelBig !== '') {
                 $labels['content'][] =
-                    array(
+                    [
                         'tag' => 'a',
-                        'attributes' => array(
+                        'attributes' => [
                             'aria-label' => $labelBig . ' ' . $labelSmall,
                             'href' => $this->getLabelBigUrl() ? $this->getLabelBigUrl()->getAbsoluteUrl() : null,
                             'class' => $this->labelBigState === null
                                 ? 'donut-label-big'
                                 : 'donut-label-big state-' . $this->labelBigState
-                        ),
+                        ],
                         'content' => $this->shortenLabel($labelBig)
-                    );
+                    ];
             }
 
             if ($labelSmall !== '') {
-                $labels['content'][] = array(
+                $labels['content'][] = [
                     'tag' => 'p',
-                    'attributes' => array(
+                    'attributes' => [
                         'class' => 'donut-label-small',
                         'x' => '50%',
                         'y' => '50%'
-                    ),
+                    ],
                     'content' => $labelSmall
-                );
+                ];
             }
 
             $result['content'][] = $labels;
@@ -409,7 +409,7 @@ class Donut
 
     protected function renderAttributes(array $attributes)
     {
-        $html = array();
+        $html = [];
 
         foreach ($attributes as $name => $value) {
             if ($value === null) {
@@ -434,14 +434,14 @@ class Donut
     protected function renderContent(array $element)
     {
         $tag = $element['tag'];
-        $attributes = isset($element['attributes']) ? $element['attributes'] : array();
+        $attributes = isset($element['attributes']) ? $element['attributes'] : [];
         $content = isset($element['content']) ? $element['content'] : null;
 
-        $html = array(
+        $html = [
             // rtrim because attributes may be empty
             rtrim("<$tag " . $this->renderAttributes($attributes))
             . ">"
-        );
+        ];
 
         if ($content !== null) {
             if (is_array($content)) {

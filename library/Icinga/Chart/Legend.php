@@ -35,7 +35,7 @@ class Legend implements Drawable
      *
      * @var array
      */
-    private $dataset = array();
+    private $dataset = [];
 
 
     /**

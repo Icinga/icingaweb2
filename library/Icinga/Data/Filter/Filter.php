@@ -76,13 +76,13 @@ abstract class Filter
     public function applyChanges($changes)
     {
         $filter = $this;
-        $pairs = array();
+        $pairs = [];
         foreach ($changes as $k => $v) {
             if (preg_match('/^(column|value|sign|operator)_([\d-]+)$/', $k, $m)) {
                 $pairs[$m[2]][$m[1]] = $v;
             }
         }
-        $operators = array();
+        $operators = [];
         foreach ($pairs as $id => $fs) {
             if (array_key_exists('operator', $fs)) {
                 $operators[$id] = $fs['operator'];
@@ -221,13 +221,13 @@ abstract class Filter
             }
         }
         if (count($args) > 1) {
-            return new FilterNot(array(new FilterAnd($args)));
+            return new FilterNot([new FilterAnd($args)]);
         } else {
             return new FilterNot($args);
         }
     }
 
-    public static function chain($operator, $filters = array())
+    public static function chain($operator, $filters = [])
     {
         switch ($operator) {
             case 'AND':

@@ -37,7 +37,7 @@ class MenuItemContainer extends NavigationItemContainer
      */
     public function getChildren()
     {
-        return $this->children ?: array();
+        return $this->children ?: [];
     }
 
     /**
@@ -48,7 +48,7 @@ class MenuItemContainer extends NavigationItemContainer
      *
      * @return  MenuItemContainer   The newly added sub menu
      */
-    public function add($name, array $properties = array())
+    public function add($name, array $properties = [])
     {
         $child = new MenuItemContainer($name, $properties);
         $this->children[] = $child;

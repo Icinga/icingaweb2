@@ -37,7 +37,7 @@ class DashboardContainer extends NavigationItemContainer
      */
     public function getDashlets()
     {
-        return $this->dashlets ?: array();
+        return $this->dashlets ?: [];
     }
 
     /**

@@ -187,7 +187,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     protected function initializeTableAliases()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -213,7 +213,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     protected function initializeJoinProbabilities()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -352,11 +352,11 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
         if (! is_array($table)) {
             $tableAliases = $this->getTableAliases();
             if ($virtualTable !== null && isset($tableAliases[$virtualTable])) {
-                return array($tableAliases[$virtualTable] => $table);
+                return [$tableAliases[$virtualTable] => $table];
             }
 
             if (isset($tableAliases[($nonPrefixedTable = $this->removeTablePrefix($table))])) {
-                return array($tableAliases[$nonPrefixedTable] => $table);
+                return [$tableAliases[$nonPrefixedTable] => $table];
             }
         }
 
@@ -398,7 +398,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      *
      * @return  int             The number of affected rows
      */
-    public function insert($table, array $bind, array $types = array())
+    public function insert($table, array $bind, array $types = [])
     {
         $realTable = $this->clearTableAlias($this->requireTable($table));
 
@@ -424,7 +424,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      *
      * @return int The number of affected rows
      */
-    public function update($table, array $bind, ?Filter $filter = null, array $types = array())
+    public function update($table, array $bind, ?Filter $filter = null, array $types = [])
     {
         $realTable = $this->clearTableAlias($this->requireTable($table));
 
@@ -482,7 +482,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     protected function initializeStatementColumns()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -546,10 +546,10 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     protected function initializeStatementMaps()
     {
-        $this->statementAliasTableMap = array();
-        $this->statementAliasColumnMap = array();
-        $this->statementColumnTableMap = array();
-        $this->statementColumnAliasMap = array();
+        $this->statementAliasTableMap = [];
+        $this->statementAliasColumnMap = [];
+        $this->statementColumnTableMap = [];
+        $this->statementColumnAliasMap = [];
         foreach ($this->getStatementColumns() as $table => $columns) {
             foreach ($columns as $alias => $column) {
                 $key = is_string($alias) ? $alias : $column;

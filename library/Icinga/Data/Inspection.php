@@ -16,7 +16,7 @@ class Inspection
     /**
      * @var array
      */
-    protected $log = array();
+    protected $log = [];
 
     /**
      * @var string

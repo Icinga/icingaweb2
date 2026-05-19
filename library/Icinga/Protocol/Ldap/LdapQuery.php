@@ -62,11 +62,11 @@ class LdapQuery extends SimpleQuery
      *
      * @var array
      */
-    public static $scopes = array(
+    public static $scopes = [
         LdapQuery::SCOPE_BASE,
         LdapQuery::SCOPE_ONE,
         LdapQuery::SCOPE_SUB
-    );
+    ];
 
     /**
      * LDAP search scope (default: SCOPE_SUB)
@@ -263,7 +263,7 @@ class LdapQuery extends SimpleQuery
     public function fetchTree()
     {
         $result = $this->fetchAll();
-        $sorted = array();
+        $sorted = [];
         $quotedDn = preg_quote($this->ds->getDn(), '/');
         foreach ($result as $key => & $item) {
             $new_key = LdapUtils::implodeDN(

@@ -111,10 +111,10 @@ class StringHelper
     public static function findSimilar($string, array $possibilities, $similarity = 0.33)
     {
         if (empty($string)) {
-            return array();
+            return [];
         }
 
-        $matches = array();
+        $matches = [];
         foreach ($possibilities as $possibility) {
             $distance = levenshtein($string, $possibility);
             if ($distance / strlen($string) <= $similarity) {
@@ -168,7 +168,7 @@ class StringHelper
             if (! isset($product)) {
                 $product = $set;
             } else {
-                $newProduct = array();
+                $newProduct = [];
                 foreach ($product as $strA) {
                     foreach ($set as $strB) {
                         if ($strB === null) {

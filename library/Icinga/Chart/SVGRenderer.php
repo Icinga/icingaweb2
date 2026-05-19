@@ -207,7 +207,7 @@ class SVGRenderer
             $svg->appendChild($desc);
         }
 
-        $svg->setAttribute('aria-labelledby', join(' ', array($titleId, $descId)));
+        $svg->setAttribute('aria-labelledby', join(' ', [$titleId, $descId]));
     }
 
     /**

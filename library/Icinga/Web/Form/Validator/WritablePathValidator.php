@@ -22,10 +22,10 @@ class WritablePathValidator extends Zend_Validate_Abstract
      *
      * @see Zend_Validate_Abstract::$_messageTemplates‚
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::NOT_WRITABLE      => 'Path is not writable',
         self::DOES_NOT_EXIST    => 'Path does not exist'
-    );
+    ];
 
     /**
      * When true, the file or directory must exist

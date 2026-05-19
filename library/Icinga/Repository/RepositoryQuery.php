@@ -155,11 +155,11 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      */
     protected function prepareQueryColumns($target, ?array $desiredColumns = null)
     {
-        $this->customAliases = array();
+        $this->customAliases = [];
         if (empty($desiredColumns)) {
             $columns = $this->repository->requireAllQueryColumns($target);
         } else {
-            $columns = array();
+            $columns = [];
             foreach ($desiredColumns as $customAlias => $columnAlias) {
                 $resolvedColumn = $this->repository->requireQueryColumn($target, $columnAlias, $this);
                 if ($resolvedColumn !== $columnAlias) {
@@ -323,7 +323,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
 
             $sortColumns = reset($sortRules);
             if (! array_key_exists('columns', $sortColumns)) {
-                $sortColumns['columns'] = array(key($sortRules));
+                $sortColumns['columns'] = [key($sortRules)];
             }
             if ($direction !== null || !array_key_exists('order', $sortColumns)) {
                 $sortColumns['order'] = $direction ?: static::SORT_ASC;
@@ -333,16 +333,16 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
             if (! $ignoreDefault && array_key_exists($alias, $sortRules)) {
                 $sortColumns = $sortRules[$alias];
                 if (! array_key_exists('columns', $sortColumns)) {
-                    $sortColumns['columns'] = array($alias);
+                    $sortColumns['columns'] = [$alias];
                 }
                 if ($direction !== null || !array_key_exists('order', $sortColumns)) {
                     $sortColumns['order'] = $direction ?: static::SORT_ASC;
                 }
             } else {
-                $sortColumns = array(
-                    'columns'   => array($alias),
+                $sortColumns = [
+                    'columns'   => [$alias],
                     'order'     => $direction
-                );
+                ];
             }
         }
 
@@ -398,7 +398,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
                 : static::SORT_ASC;
         }
 
-        return array($column, $direction);
+        return [$column, $direction];
     }
 
     /**
@@ -613,7 +613,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
             if ($this->repository->providesValueConversion($this->target, $colOne)
                 || $this->repository->providesValueConversion($this->target, $colTwo)
             ) {
-                $newResults = array();
+                $newResults = [];
                 foreach ($results as $colOneValue => $colTwoValue) {
                     $colOneValue = $this->repository->retrieveColumn($this->target, $colOne, $colOneValue, $this);
                     $newResults[$colOneValue] = $this->repository->retrieveColumn(
@@ -661,7 +661,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
                     );
                 }
 
-                foreach (($this->getOrder() ?: array()) as $rule) {
+                foreach (($this->getOrder() ?: []) as $rule) {
                     $nativeAlias = $this->getNativeAlias($rule[0]);
                     if (! array_key_exists($rule[0], $flippedColumns) && property_exists($row, $rule[0])) {
                         if ($this->repository->providesValueConversion($this->target, $nativeAlias)) {
@@ -682,7 +682,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
             }
 
             if ($updateOrder) {
-                uasort($results, array($this->query, 'compare'));
+                uasort($results, [$this->query, 'compare']);
             }
         }
 

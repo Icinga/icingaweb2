@@ -104,7 +104,7 @@ class FilterExpression extends Filter
 
     public function listFilteredColumns()
     {
-        return array($this->getColumn());
+        return [$this->getColumn()];
     }
 
     public function __toString()
@@ -161,7 +161,7 @@ class FilterExpression extends Filter
             return strtolower($var);
         }
         if (is_array($var)) {
-            return array_map(array($this, 'strtolowerRecursive'), $var);
+            return array_map([$this, 'strtolowerRecursive'], $var);
         }
         return $var;
     }
@@ -195,7 +195,7 @@ class FilterExpression extends Filter
             return (string) $rowValue === $expression;
         }
 
-        $parts = array();
+        $parts = [];
         foreach (preg_split('~\*~', $expression) as $part) {
             $parts[] = preg_quote($part, '/');
         }

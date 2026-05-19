@@ -150,7 +150,7 @@ class SortBox extends AbstractWidget
             $column = key($this->sortFields);
         }
 
-        return array($column, $direction);
+        return [$column, $direction];
     }
 
     /**
@@ -193,15 +193,15 @@ class SortBox extends AbstractWidget
         $columnForm->addElement(
             'select',
             'sort',
-            array(
+            [
                 'autosubmit'    => true,
                 'label'         => $this->view()->translate('Sort by'),
                 'multiOptions'  => $this->sortFields,
-                'decorators'    => array(
-                    array('ViewHelper'),
-                    array('Label')
-                )
-            )
+                'decorators'    => [
+                    ['ViewHelper'],
+                    ['Label']
+                ]
+            ]
         );
 
         $column = null;
@@ -226,7 +226,7 @@ class SortBox extends AbstractWidget
         }
 
         // TODO(el): ToggleButton :)
-        $toggle = array('asc' => 'sort-name-down', 'desc' => 'sort-name-up');
+        $toggle = ['asc' => 'sort-name-down', 'desc' => 'sort-name-up'];
         unset($toggle[isset($direction) ? strtolower($direction) : 'asc']);
         $newDirection = key($toggle);
         $icon = current($toggle);
@@ -242,21 +242,21 @@ class SortBox extends AbstractWidget
         $orderForm->addElement(
             'button',
             'btn_submit',
-            array(
+            [
                 'ignore'        => true,
                 'type'          => 'submit',
                 'label'         => $this->view()->icon($icon),
-                'decorators'    => array('ViewHelper'),
+                'decorators'    => ['ViewHelper'],
                 'escape'        => false,
                 'class'         => 'link-button spinner',
                 'value'         => 'submit',
                 'title'         => t('Change sort direction'),
-            )
+            ]
         );
 
 
-        $columnForm->populate(array('sort' => $column));
-        $orderForm->populate(array('dir' => $newDirection));
+        $columnForm->populate(['sort' => $column]);
+        $orderForm->populate(['dir' => $newDirection]);
         return '<div class="sort-control">' . $columnForm . $orderForm . '</div>';
     }
 }

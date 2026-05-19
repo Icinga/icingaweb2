@@ -338,7 +338,7 @@ class NavigationItem implements IteratorAggregate
      */
     public function getAttributes()
     {
-        return $this->attributes ?: array();
+        return $this->attributes ?: [];
     }
 
     /**
@@ -587,7 +587,7 @@ class NavigationItem implements IteratorAggregate
     public function getUrl()
     {
         if ($this->url === null && $this->hasChildren()) {
-            $this->setUrl(Url::fromPath('navigation/dashboard', array('name' => strtolower($this->getName()))));
+            $this->setUrl(Url::fromPath('navigation/dashboard', ['name' => strtolower($this->getName())]));
         }
 
         return $this->url;
@@ -652,7 +652,7 @@ class NavigationItem implements IteratorAggregate
      */
     public function getUrlParameters()
     {
-        return $this->urlParameters ?: array();
+        return $this->urlParameters ?: [];
     }
 
     /**
@@ -778,7 +778,7 @@ class NavigationItem implements IteratorAggregate
             $options = array_splice($name, 1);
             $name = $name[0];
         } else {
-            $options = array();
+            $options = [];
         }
 
         $renderer = null;

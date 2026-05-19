@@ -24,7 +24,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @param   array   $data   The data to initialize the new config with
      */
-    public function __construct(array $data = array())
+    public function __construct(array $data = [])
     {
         // Convert all embedded arrays to ConfigObjects as well
         foreach ($data as & $value) {
@@ -41,7 +41,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      */
     public function __clone()
     {
-        $array = array();
+        $array = [];
         foreach ($this->data as $key => $value) {
             if ($value instanceof self) {
                 $array[$key] = clone $value;
@@ -249,7 +249,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      */
     public function toArray()
     {
-        $array = array();
+        $array = [];
         foreach ($this->data as $key => $value) {
             if ($value instanceof self) {
                 $array[$key] = $value->toArray();

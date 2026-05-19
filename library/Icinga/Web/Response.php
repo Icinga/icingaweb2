@@ -181,7 +181,7 @@ class Response extends Zend_Controller_Response_Http
      */
     public function getHeader($name, $lastOnly = false)
     {
-        $result = ($lastOnly ? null : array());
+        $result = ($lastOnly ? null : []);
         $headers = $this->getHeaders();
         foreach ($headers as $header) {
             if ($header['name'] === $name) {
@@ -372,7 +372,7 @@ class Response extends Zend_Controller_Response_Http
 
             $notifications = Notification::getInstance();
             if ($notifications->hasMessages()) {
-                $notificationList = array();
+                $notificationList = [];
                 foreach ($notifications->popMessages() as $m) {
                     $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
                 }

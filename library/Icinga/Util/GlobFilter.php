@@ -42,10 +42,10 @@ class GlobFilter
      */
     public function __construct($filters)
     {
-        $patterns = array(array(''));
+        $patterns = [['']];
         $lastIndex1 = $lastIndex2 = 0;
 
-        foreach ((is_string($filters) ? array($filters) : $filters) as $rawPatterns) {
+        foreach ((is_string($filters) ? [$filters] : $filters) as $rawPatterns) {
             $escape = false;
 
             foreach (str_split($rawPatterns) as $c) {
@@ -58,7 +58,7 @@ class GlobFilter
                             $escape = true;
                             break;
                         case ',':
-                            $patterns[] = array('');
+                            $patterns[] = [''];
                             ++$lastIndex1;
                             $lastIndex2 = 0;
                             break;
@@ -80,7 +80,7 @@ class GlobFilter
             }
         }
 
-        $this->filters = array();
+        $this->filters = [];
 
         foreach ($patterns as $pattern) {
             foreach ($pattern as $i => $subPattern) {

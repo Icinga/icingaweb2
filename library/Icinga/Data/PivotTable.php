@@ -38,7 +38,7 @@ class PivotTable implements Sortable
      *
      * @var array
      */
-    protected $order = array();
+    protected $order = [];
 
     /**
      * The filter being applied on the query for the x-axis
@@ -230,7 +230,7 @@ class PivotTable implements Sortable
             $this->xAxisQuery = clone $this->baseQuery;
             $this->xAxisQuery->clearGroupingRules();
             $xAxisHeader = $this->getXAxisHeader();
-            $columns = array($this->xAxisColumn, $xAxisHeader);
+            $columns = [$this->xAxisColumn, $xAxisHeader];
             $this->xAxisQuery->group(array_unique($columns)); // xAxisColumn and header may be the same column
             $this->xAxisQuery->columns($columns);
 
@@ -258,7 +258,7 @@ class PivotTable implements Sortable
             $this->yAxisQuery = clone $this->baseQuery;
             $this->yAxisQuery->clearGroupingRules();
             $yAxisHeader = $this->getYAxisHeader();
-            $columns = array($this->yAxisColumn, $yAxisHeader);
+            $columns = [$this->yAxisColumn, $yAxisHeader];
             $this->yAxisQuery->group(array_unique($columns)); // yAxisColumn and header may be the same column
             $this->yAxisQuery->columns($columns);
 
@@ -363,11 +363,11 @@ class PivotTable implements Sortable
                 $xAxisKeys = array_keys($xAxis);
             }
         }
-        $pivotData = array();
-        $pivotHeader = array(
+        $pivotData = [];
+        $pivotHeader = [
             'cols'  => $xAxis,
             'rows'  => $yAxis
-        );
+        ];
         if (! empty($xAxis) && ! empty($yAxis)) {
             $this->baseQuery
                 ->where($this->xAxisColumn, array_map(
@@ -393,6 +393,6 @@ class PivotTable implements Sortable
                 $pivotData[$row->{$this->yAxisColumn}][$row->{$this->xAxisColumn}] = $row;
             }
         }
-        return array($pivotData, $pivotHeader);
+        return [$pivotData, $pivotHeader];
     }
 }

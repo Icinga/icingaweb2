@@ -160,21 +160,21 @@ class Module
      *
      * @var array
      */
-    private $permissionList = array();
+    private $permissionList = [];
 
     /**
      * Provided restrictions
      *
      * @var array
      */
-    private $restrictionList = array();
+    private $restrictionList = [];
 
     /**
      * Provided config tabs
      *
      * @var array
      */
-    private $configTabs = array();
+    private $configTabs = [];
 
     /**
      * Provided setup wizard
@@ -195,14 +195,14 @@ class Module
      *
      * @var array
      */
-    protected $cssFiles = array();
+    protected $cssFiles = [];
 
     /**
      * The Javascript files this module provides
      *
      * @var array
      */
-    protected $jsFiles = array();
+    protected $jsFiles = [];
 
     /**
      * Routes to add to the route chain
@@ -211,49 +211,49 @@ class Module
      *
      * @see addRoute()
      */
-    protected $routes = array();
+    protected $routes = [];
 
     /**
      * A set of menu elements
      *
      * @var MenuItemContainer[]
      */
-    protected $menuItems = array();
+    protected $menuItems = [];
 
     /**
      * A set of Pane elements
      *
      * @var array
      */
-    protected $paneItems = array();
+    protected $paneItems = [];
 
     /**
      * A set of objects representing a searchUrl configuration
      *
      * @var array
      */
-    protected $searchUrls = array();
+    protected $searchUrls = [];
 
     /**
      * This module's user backends providing several authentication mechanisms
      *
      * @var array
      */
-    protected $userBackends = array();
+    protected $userBackends = [];
 
     /**
      * This module's user group backends
      *
      * @var array
      */
-    protected $userGroupBackends = array();
+    protected $userGroupBackends = [];
 
     /**
      * This module's configurable navigation items
      *
      * @var array
      */
-    protected $navigationItems = array();
+    protected $navigationItems = [];
 
     /**
      * Create a new module object
@@ -293,11 +293,11 @@ class Module
      */
     public function provideSearchUrl($title, $url, $priority = 0)
     {
-        $this->searchUrls[] = (object) array(
+        $this->searchUrls[] = (object) [
             'title'     => (string) $title,
             'url'       => (string) $url,
             'priority'  => (int) $priority
-        );
+        ];
 
         return $this;
     }
@@ -349,11 +349,11 @@ class Module
                 $pane->getName(),
                 array_merge(
                     $pane->getProperties(),
-                    array(
+                    [
                         'label'     => $this->translate($pane->getName()),
                         'type'      => 'dashboard-pane',
                         'children'  => $dashlets
-                    )
+                    ]
                 )
             );
         }
@@ -369,7 +369,7 @@ class Module
      *
      * @return  DashboardContainer
      */
-    protected function dashboard($name, array $properties = array())
+    protected function dashboard($name, array $properties = [])
     {
         if (array_key_exists($name, $this->paneItems)) {
             $this->paneItems[$name]->setProperties($properties);
@@ -400,7 +400,7 @@ class Module
      */
     private function createMenu(array $items)
     {
-        $navigation = array();
+        $navigation = [];
         foreach ($items as $item) {
             /** @var MenuItemContainer $item */
             $properties = $item->getProperties();
@@ -423,7 +423,7 @@ class Module
      *
      * @return  MenuItemContainer
      */
-    protected function menuSection($name, array $properties = array())
+    protected function menuSection($name, array $properties = [])
     {
         if (array_key_exists($name, $this->menuItems)) {
             $this->menuItems[$name]->setProperties($properties);
@@ -1037,11 +1037,11 @@ class Module
         $this->launchConfigScript();
         $tabs = Widget::create('tabs');
         /** @var \Icinga\Web\Widget\Tabs $tabs */
-        $tabs->add('info', array(
+        $tabs->add('info', [
             'url'       => 'config/module',
-            'urlParams' => array('name' => $this->getName()),
+            'urlParams' => ['name' => $this->getName()],
             'label'     => 'Module: ' . $this->getName()
-        ));
+        ]);
 
         if ($this->app->getModuleManager()->hasEnabled($this->name)) {
             foreach ($this->configTabs as $name => $config) {
@@ -1157,10 +1157,10 @@ class Module
                 $name
             );
         }
-        $this->permissionList[$name] = (object) array(
+        $this->permissionList[$name] = (object) [
             'name'        => $name,
             'description' => $description
-        );
+        ];
     }
 
     /**
@@ -1179,10 +1179,10 @@ class Module
                 $name
             );
         }
-        $this->restrictionList[$name] = (object) array(
+        $this->restrictionList[$name] = (object) [
             'name'        => $name,
             'description' => $description
-        );
+        ];
     }
 
     /**
@@ -1194,7 +1194,7 @@ class Module
      * @return  $this
      * @throws  ProgrammingError    If $config lacks the key 'url'
      */
-    protected function provideConfigTab($name, $config = array())
+    protected function provideConfigTab($name, $config = [])
     {
         if (! array_key_exists('url', $config)) {
             throw new ProgrammingError('A module config tab MUST provide a "url"');
@@ -1286,10 +1286,10 @@ class Module
      */
     protected function provideNavigationItem($type, $label = null, $config = null)
     {
-        $this->navigationItems[$type] = array(
+        $this->navigationItems[$type] = [
             'label'     => $label,
             'config'    => $config
-        );
+        ];
 
         return $this;
     }
@@ -1347,7 +1347,7 @@ class Module
      */
     public function listLocales()
     {
-        $locales = array();
+        $locales = [];
         if (! $this->hasLocales()) {
             return $locales;
         }
@@ -1405,15 +1405,15 @@ class Module
             $this->name . '_img',
             new Zend_Controller_Router_Route_Regex(
                 'img/' . $this->name . '/(.+)',
-                array(
+                [
                     'action'        => 'img',
                     'controller'    => 'static',
                     'module'        => 'default',
                     'module_name'   => $this->name
-                ),
-                array(
+                ],
+                [
                     1 => 'file'
-                )
+                ]
             )
         );
         return $this;

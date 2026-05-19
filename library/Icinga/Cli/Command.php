@@ -181,7 +181,7 @@ abstract class Command
 
     public function listActions()
     {
-        $actions = array();
+        $actions = [];
         foreach (get_class_methods($this) as $method) {
             if (preg_match('~^([A-Za-z0-9]+)Action$~', $method, $m)) {
                 $actions[] = $m[1];

@@ -56,7 +56,7 @@ class GridChart extends Chart
      *
      * @var array
      */
-    private $graphs = array();
+    private $graphs = [];
 
     /**
      * An associative array containing all axis of this Chart in the  "name" => Axis() form.
@@ -65,7 +65,7 @@ class GridChart extends Chart
      *
      * @var array
      */
-    private $axis = array();
+    private $axis = [];
 
     /**
      * An associative array containing all StackedGraph objects used for cumulative graphs
@@ -74,7 +74,7 @@ class GridChart extends Chart
      *
      * @var array
      */
-    private $stacks = array();
+    private $stacks = [];
 
     /**
      * An associative array containing all Tooltips used to render the titles
@@ -84,7 +84,7 @@ class GridChart extends Chart
      *
      * @var Tooltip
      */
-    private $tooltips = array();
+    private $tooltips = [];
 
     public function __construct()
     {
@@ -198,10 +198,10 @@ class GridChart extends Chart
             foreach ($graph['data'] as $x => $point) {
                 if (!array_key_exists($x, $this->tooltips)) {
                     $this->tooltips[$x] = new Tooltip(
-                        array(
+                        [
                             'color' => $graph['color'],
 
-                        )
+                        ]
                     );
                 }
                 $this->tooltips[$x]->addDataPoint($point);
@@ -281,7 +281,7 @@ class GridChart extends Chart
      */
     public function setAxis(Axis $axis, $name = 'default')
     {
-        $this->axis = array($name => $axis);
+        $this->axis = [$name => $axis];
         return $this;
     }
 
@@ -345,7 +345,7 @@ class GridChart extends Chart
         $outerBox = new Canvas('outerGraph', new LayoutBox(0, 0, 100, 100));
         $innerBox = new Canvas('graph', new LayoutBox(0, 0, 95, 90));
 
-        $maxPadding = array(0,0,0,0);
+        $maxPadding = [0,0,0,0];
         foreach ($this->axis as $axis) {
             $padding = $axis->getRequiredPadding();
             for ($i=0; $i < count($padding); $i++) {

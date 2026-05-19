@@ -29,7 +29,7 @@ class Color
         $r = (float)intval(substr($color, 1, 2), 16);
         $g = (float)intval(substr($color, 3, 2), 16);
         $b = (float)intval(substr($color, 5, 2), 16);
-        return array($r, $g, $b);
+        return [$r, $g, $b];
     }
 
     /**

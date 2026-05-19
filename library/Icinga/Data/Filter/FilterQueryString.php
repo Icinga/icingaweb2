@@ -11,7 +11,7 @@ class FilterQueryString
 
     protected $pos;
 
-    protected $debug = array();
+    protected $debug = [];
 
     protected $reportDebug = false;
 
@@ -61,7 +61,7 @@ class FilterQueryString
                 $this->parseError(null, 'Expected ")"');
             }
         } else {
-            $var = rawurldecode($this->readUnless(array(')', '&', '|', '>', '<')));
+            $var = rawurldecode($this->readUnless([')', '&', '|', '>', '<']));
         }
         return $var;
     }
@@ -72,7 +72,7 @@ class FilterQueryString
             return false;
         }
 
-        foreach (array('<', '>') as $sign) {
+        foreach (['<', '>'] as $sign) {
             if (false !== ($pos = strpos($key, $sign))) {
                 if ($this->nextChar() === '=') {
                     break;
@@ -87,7 +87,7 @@ class FilterQueryString
                 return Filter::expression($key, $sign, $var);
             }
         }
-        if (in_array($this->nextChar(), array('=', '>', '<', '!'))) {
+        if (in_array($this->nextChar(), ['=', '>', '<', '!'])) {
             $sign = $this->readChar();
         } else {
             $sign = false;
@@ -145,7 +145,7 @@ class FilterQueryString
 
     protected function readFilters($nestingLevel = 0, $op = null)
     {
-        $filters = array();
+        $filters = [];
         while ($this->pos < $this->length) {
             if ($op === '!' && count($filters) === 1) {
                 break;
@@ -159,7 +159,7 @@ class FilterQueryString
                 if ($next === '!') {
                     $not = $this->readFilters($nestingLevel + 1, '!');
                     $filters[] = $not;
-                    if (in_array($this->nextChar(), array('|', '&', ')'))) {
+                    if (in_array($this->nextChar(), ['|', '&', ')'])) {
                         $next = $this->readChar();
                         $this->debug('Got NOT, next is now: ' . $next, $nestingLevel, $op);
                     } else {
@@ -220,7 +220,7 @@ class FilterQueryString
                     }
                     $this->parseError($next);
                 }
-                if ($op === null && in_array($next, array('&', '|'))) {
+                if ($op === null && in_array($next, ['&', '|'])) {
                     $this->debug('Setting op to ' . $next, $nestingLevel, $op);
                     $op = $next;
                     continue;
@@ -296,12 +296,12 @@ class FilterQueryString
 
     protected function readUnlessSpecialChar()
     {
-        return $this->readUnless(array('=', '(', ')', '&', '|', '>', '<', '!'));
+        return $this->readUnless(['=', '(', ')', '&', '|', '>', '<', '!']);
     }
 
     protected function readExpressionOperator()
     {
-        return $this->readUnless(array('=', '>', '<', '!'));
+        return $this->readUnless(['=', '>', '<', '!']);
     }
 
     protected function readChar()

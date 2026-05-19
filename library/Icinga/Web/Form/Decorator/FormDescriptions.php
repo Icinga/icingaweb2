@@ -68,7 +68,7 @@ class FormDescriptions extends Zend_Form_Decorator_Abstract
      */
     protected function recurseForm(Form $form)
     {
-        $descriptions = array($form->getDescriptions());
+        $descriptions = [$form->getDescriptions()];
         foreach ($form->getSubForms() as $subForm) {
             $descriptions[] = $this->recurseForm($subForm);
         }

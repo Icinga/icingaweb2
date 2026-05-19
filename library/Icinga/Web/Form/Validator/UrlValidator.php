@@ -17,9 +17,9 @@ class UrlValidator extends Zend_Validate_Abstract
      */
     public function __construct()
     {
-        $this->_messageTemplates = array('HAS_QUOTES' => t(
+        $this->_messageTemplates = ['HAS_QUOTES' => t(
             'The url must not contain raw double quotes. If you really need double quotes, use %22 instead.'
-        ));
+        )];
     }
 
     /**

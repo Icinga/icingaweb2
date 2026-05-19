@@ -28,7 +28,7 @@ class Loader
 
     protected $modules;
 
-    protected $moduleCommands = array();
+    protected $moduleCommands = [];
 
     protected $coreAppDir;
 
@@ -43,28 +43,28 @@ class Loader
     /**
      * [$command] = $class;
      */
-    protected $commandClassMap = array();
+    protected $commandClassMap = [];
 
     /**
      * [$command] = $file;
      */
-    protected $commandFileMap = array();
+    protected $commandFileMap = [];
 
     /**
      * [$module][$command] = $class;
      */
-    protected $moduleClassMap = array();
+    protected $moduleClassMap = [];
 
     /**
      * [$module][$command] = $file;
      */
-    protected $moduleFileMap = array();
+    protected $moduleFileMap = [];
 
-    protected $commandInstances = array();
+    protected $commandInstances = [];
 
-    protected $moduleInstances = array();
+    protected $moduleInstances = [];
 
-    protected $lastSuggestions = array();
+    protected $lastSuggestions = [];
 
     public function __construct(App $app)
     {
@@ -358,7 +358,7 @@ class Loader
 
     protected function formatTrace($trace)
     {
-        $output = array();
+        $output = [];
         foreach ($trace as $i => $step) {
             $object = '';
             if (isset($step['object']) && is_object($step['object'])) {
@@ -386,7 +386,7 @@ class Loader
                     }
                 }
             } else {
-                $step['args'] = array();
+                $step['args'] = [];
             }
             $args = $step['args'];
             foreach ($args as & $v) {
@@ -431,7 +431,7 @@ class Loader
     public function listModules()
     {
         if ($this->modules === null) {
-            $this->modules = array();
+            $this->modules = [];
             try {
                 $this->modules = array_unique(array_merge(
                     $this->app->getModuleManager()->listEnabledModules(),
@@ -446,7 +446,7 @@ class Loader
 
     protected function retrieveCommandsFromDir($dirname)
     {
-        $commands = array();
+        $commands = [];
         if (! @file_exists($dirname) || ! is_readable($dirname)) {
             return $commands;
         }
@@ -472,7 +472,7 @@ class Loader
     public function listCommands()
     {
         if ($this->commands === null) {
-            $this->commands = array();
+            $this->commands = [];
             $ns = 'Icinga\\Clicommands\\';
             $this->commands = $this->retrieveCommandsFromDir($this->coreAppDir);
             foreach ($this->commands as $cmd) {
@@ -492,7 +492,7 @@ class Loader
             $manager->loadModule($module);
             $dir = $manager->getModuleDir($module) . '/application/clicommands';
             $this->moduleCommands[$module] = $this->retrieveCommandsFromDir($dir);
-            $this->moduleInstances[$module] = array();
+            $this->moduleInstances[$module] = [];
             foreach ($this->moduleCommands[$module] as $cmd) {
                 $this->moduleClassMap[$module][$cmd] = $ns . ucfirst($cmd) . 'Command';
                 $this->moduleFileMap[$module][$cmd] = $dir . '/' . ucfirst($cmd) . 'Command.php';

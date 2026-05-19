@@ -86,7 +86,7 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
         $this->skipOuterElement = $skipOuterElement;
         $this->iterator = $navigation->getIterator();
         $this->navigation = $navigation;
-        $this->content = array();
+        $this->content = [];
     }
 
     /**
@@ -217,7 +217,7 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
      */
     public function beginMarkup()
     {
-        $content = array();
+        $content = [];
         $content[] = sprintf(
             '<%s%s role="navigation">',
             $this->getElementTag(),
@@ -241,7 +241,7 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
      */
     public function endMarkup()
     {
-        $content = array();
+        $content = [];
         $content[] = $this->endChildrenMarkup();
         $content[] = '</' . $this->getElementTag() . '>';
         return join("\n", $content);
@@ -256,7 +256,7 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
      */
     public function beginChildrenMarkup($level = 1)
     {
-        $cssClass = array(static::CSS_CLASS_NAV);
+        $cssClass = [static::CSS_CLASS_NAV];
         if ($this->navigation->getLayout() === Navigation::LAYOUT_TABS) {
             $cssClass[] = static::CSS_CLASS_NAV_TABS;
         } elseif ($this->navigation->getLayout() === Navigation::LAYOUT_DROPDOWN) {
@@ -287,7 +287,7 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
      */
     public function beginItemMarkup(NavigationItem $item)
     {
-        $cssClasses = array(static::CSS_CLASS_ITEM);
+        $cssClasses = [static::CSS_CLASS_ITEM];
 
         if ($item->hasChildren() && $item->getChildren()->getLayout() === Navigation::LAYOUT_DROPDOWN) {
             $cssClasses[] = static::CSS_CLASS_DROPDOWN;

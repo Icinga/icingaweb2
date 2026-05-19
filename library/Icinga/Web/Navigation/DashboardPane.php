@@ -44,7 +44,7 @@ class DashboardPane extends NavigationItem
     public function getDashlets($ordered = true)
     {
         if ($this->dashlets === null) {
-            return array();
+            return [];
         }
 
         if ($ordered) {
@@ -61,7 +61,7 @@ class DashboardPane extends NavigationItem
      */
     public function init()
     {
-        $this->setUrl(Url::fromPath('dashboard', array('pane' => $this->getName())));
+        $this->setUrl(Url::fromPath('dashboard', ['pane' => $this->getName()]));
     }
 
     /**

@@ -25,7 +25,7 @@ class Paginator extends AbstractWidget
      *
      * @var string|array
      */
-    protected $viewScript = array('mixedPagination.phtml', 'default');
+    protected $viewScript = ['mixedPagination.phtml', 'default'];
 
     /**
      * Set the query to create the paginator widget for
@@ -71,7 +71,7 @@ class Paginator extends AbstractWidget
         $pageCount = (int) ceil($totalItemCount / $itemCountPerPage);
         $currentPage = $this->query->hasOffset() ? ($this->query->getOffset() / $itemCountPerPage) + 1 : 1;
         $pagesInRange = $this->getPages($pageCount, $currentPage);
-        $variables = array(
+        $variables = [
             'totalItemCount'    => $totalItemCount,
             'pageCount'         => $pageCount,
             'itemCountPerPage'  => $itemCountPerPage,
@@ -81,7 +81,7 @@ class Paginator extends AbstractWidget
             'pagesInRange'      => $pagesInRange,
             'firstPageInRange'  => min($pagesInRange),
             'lastPageInRange'   => max($pagesInRange)
-        );
+        ];
 
         if ($currentPage > 1) {
             $variables['previous'] = $currentPage - 1;
@@ -109,7 +109,7 @@ class Paginator extends AbstractWidget
      */
     protected function getPages($pageCount, $currentPage)
     {
-        $range = array();
+        $range = [];
 
         if ($pageCount < 10) {
             // Show all pages if we have less than 10
@@ -122,7 +122,7 @@ class Paginator extends AbstractWidget
             }
         } else {
             // More than 10 pages:
-            foreach (array(1, 2) as $i) {
+            foreach ([1, 2] as $i) {
                 $range[$i] = $i;
             }
 
@@ -155,7 +155,7 @@ class Paginator extends AbstractWidget
                 $range[] = '...';
             }
 
-            foreach (array($pageCount - 1, $pageCount) as $i) {
+            foreach ([$pageCount - 1, $pageCount] as $i) {
                 $range[$i] = $i;
             }
         }

@@ -28,7 +28,7 @@ class TreeNode implements Identifiable
      *
      * @var array
      */
-    protected $children = array();
+    protected $children = [];
 
     /**
      * Set the node's ID

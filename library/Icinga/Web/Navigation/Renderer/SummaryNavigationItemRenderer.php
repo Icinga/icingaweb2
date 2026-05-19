@@ -22,26 +22,26 @@ class SummaryNavigationItemRenderer extends BadgeNavigationItemRenderer
      *
      * @var array
      */
-    protected static $stateSeverityMap = array(
+    protected static $stateSeverityMap = [
         self::STATE_OK          => 0,
         self::STATE_PENDING     => 1,
         self::STATE_UNKNOWN     => 2,
         self::STATE_WARNING     => 3,
         self::STATE_CRITICAL    => 4,
-    );
+    ];
 
     /**
      * Severity to state map
      *
      * @var array
      */
-    protected static $severityStateMap = array(
+    protected static $severityStateMap = [
         self::STATE_OK,
         self::STATE_PENDING,
         self::STATE_UNKNOWN,
         self::STATE_WARNING,
         self::STATE_CRITICAL
-    );
+    ];
 
     /**
      * {@inheritdoc}
@@ -51,7 +51,7 @@ class SummaryNavigationItemRenderer extends BadgeNavigationItemRenderer
         if ($this->count === null) {
             $countMap = array_fill(0, 5, 0);
             $maxSeverity = 0;
-            $titles = array();
+            $titles = [];
             foreach ($this->getItem()->getChildren() as $child) {
                 $renderer = $child->getRenderer();
                 if ($renderer instanceof BadgeNavigationItemRenderer) {

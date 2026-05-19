@@ -12,7 +12,7 @@ use Icinga\Exception\IcingaException;
 
 class AnsiScreen extends Screen
 {
-    protected $fgColors = array(
+    protected $fgColors = [
         'black'       => '30',
         'darkgray'    => '1;30',
         'red'         => '31',
@@ -29,9 +29,9 @@ class AnsiScreen extends Screen
         'lightcyan'   => '1;36',
         'lightgray'   => '37',
         'white'       => '1;37',
-    );
+    ];
 
-    protected $bgColors = array(
+    protected $bgColors = [
         'black'     => '40',
         'red'       => '41',
         'green'     => '42',
@@ -40,7 +40,7 @@ class AnsiScreen extends Screen
         'purple'    => '45',
         'cyan'      => '46',
         'lightgray' => '47',
-    );
+    ];
 
     public function strlen($string)
     {
@@ -98,7 +98,7 @@ class AnsiScreen extends Screen
     protected function startColor($fgColor = null, $bgColor = null)
     {
         $escape = "ESC[";
-        $parts = array();
+        $parts = [];
         if ($fgColor !== null
             && $bgColor !== null
             && ! array_key_exists($bgColor, $this->bgColors)

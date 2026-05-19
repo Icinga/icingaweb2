@@ -7,7 +7,7 @@ namespace Icinga\Chart\Unit;
 
 class StaticAxis implements AxisUnit
 {
-    private $items = array();
+    private $items = [];
 
     /**
      * Add a dataset to this AxisUnit, required for dynamic min and max values
@@ -19,7 +19,7 @@ class StaticAxis implements AxisUnit
      */
     public function addValues(array $dataset, $idx = 0)
     {
-        $datapoints = array();
+        $datapoints = [];
         foreach ($dataset['data'] as $points) {
             $this->items[] = $points[$idx];
         }

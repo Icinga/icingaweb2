@@ -12,7 +12,7 @@ class Document
      *
      * @var Section[]
      */
-    protected $sections = array();
+    protected $sections = [];
 
     /**
      * The comemnts at file end that belong to no particular section
@@ -105,7 +105,7 @@ class Document
      */
     public function render()
     {
-        $sections = array();
+        $sections = [];
         foreach ($this->sections as $section) {
             $sections []=  $section->render();
         }
@@ -125,7 +125,7 @@ class Document
      */
     public function toArray()
     {
-        $a = array();
+        $a = [];
         foreach ($this->sections as $section) {
             $a[$section->getName()] = $section->toArray();
         }

@@ -24,7 +24,7 @@ class Icinga_Web_Paginator_ScrollingStyle_SlidingWithBorder implements Zend_Pagi
 
         $pageNumber = $paginator->getCurrentPageNumber();
         $pageCount = count($paginator);
-        $range = array();
+        $range = [];
 
         if ($pageCount < 10) {
             // Show all pages if we have less than 10.
@@ -38,7 +38,7 @@ class Icinga_Web_Paginator_ScrollingStyle_SlidingWithBorder implements Zend_Pagi
         } else {
             // More than 10 pages:
 
-            foreach (array(1, 2) as $i) {
+            foreach ([1, 2] as $i) {
                 $range[$i] = $i;
             }
             if ($pageNumber < 6) {
@@ -68,7 +68,7 @@ class Icinga_Web_Paginator_ScrollingStyle_SlidingWithBorder implements Zend_Pagi
                 $range[] = '...';
             }
 
-            foreach (array($pageCount - 1, $pageCount) as $i) {
+            foreach ([$pageCount - 1, $pageCount] as $i) {
                 $range[$i] = $i;
             }
         }

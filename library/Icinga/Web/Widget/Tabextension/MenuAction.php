@@ -24,14 +24,14 @@ class MenuAction implements Tabextension
     {
         $tabs->addAsDropdown(
             'menu-entry',
-            array(
+            [
                 'icon'      => 'menu',
                 'label'     => t('Add To Menu'),
                 'url'       => Url::fromPath('navigation/add'),
-                'urlParams' => array(
+                'urlParams' => [
                     'url' => rawurlencode(Url::fromRequest()->getRelativeUrl())
-                )
-            )
+                ]
+            ]
         );
     }
 }

@@ -13,19 +13,19 @@ class Format
     const STANDARD_SI  = 1;
     protected static $instance;
 
-    protected static $bitPrefix = array(
-        array('bit', 'Kibit', 'Mibit', 'Gibit', 'Tibit', 'Pibit', 'Eibit', 'Zibit', 'Yibit'),
-        array('bit', 'kbit', 'Mbit', 'Gbit', 'Tbit', 'Pbit', 'Ebit', 'Zbit', 'Ybit'),
-    );
-    protected static $bitBase = array(1024, 1000);
+    protected static $bitPrefix = [
+        ['bit', 'Kibit', 'Mibit', 'Gibit', 'Tibit', 'Pibit', 'Eibit', 'Zibit', 'Yibit'],
+        ['bit', 'kbit', 'Mbit', 'Gbit', 'Tbit', 'Pbit', 'Ebit', 'Zbit', 'Ybit'],
+    ];
+    protected static $bitBase = [1024, 1000];
 
-    protected static $bytePrefix = array(
-        array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'),
-        array('B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'),
-    );
-    protected static $byteBase = array(1024, 1000);
+    protected static $bytePrefix = [
+        ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'],
+        ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+    ];
+    protected static $byteBase = [1024, 1000];
 
-    protected static $secondPrefix = array('s', 'ms', 'µs', 'ns', 'ps', 'fs', 'as');
+    protected static $secondPrefix = ['s', 'ms', 'µs', 'ns', 'ps', 'fs', 'as'];
     protected static $secondBase = 1000;
 
     public static function getInstance()

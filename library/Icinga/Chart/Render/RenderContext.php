@@ -21,7 +21,7 @@ class RenderContext
      *
      * @var array
      */
-    private $viewBoxSize = array(1000, 1000);
+    private $viewBoxSize = [1000, 1000];
 
 
     /**
@@ -137,7 +137,7 @@ class RenderContext
      */
     public function toAbsolute($x, $y)
     {
-        return array($this->xToAbsolute($x), $this->yToAbsolute($y));
+        return [$this->xToAbsolute($x), $this->yToAbsolute($y)];
     }
 
     /**
@@ -153,7 +153,7 @@ class RenderContext
      */
     public function toRelative($x, $y)
     {
-        return array($this->xToRelative($x), $this->yToRelative($y));
+        return [$this->xToRelative($x), $this->yToRelative($y)];
     }
 
     /**
@@ -170,10 +170,10 @@ class RenderContext
             $padding[LayoutBox::PADDING_TOP] + $padding[LayoutBox::PADDING_BOTTOM]
         );
 
-        return array(
+        return [
             ($this->getNrOfUnitsX() - $horizontalPadding) / $this->getNrOfUnitsX(),
             ($this->getNrOfUnitsY() - $verticalPadding) / $this->getNrOfUnitsY()
-        );
+        ];
     }
 
     /**

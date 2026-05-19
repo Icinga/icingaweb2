@@ -33,13 +33,13 @@ class Note extends FormElement
     public function init()
     {
         if (count($this->getDecorators()) === 0) {
-            $this->setDecorators(array(
+            $this->setDecorators([
                 'ViewHelper',
-                array(
+                [
                     'HtmlTag',
-                    array('tag' => 'p')
-                )
-            ));
+                    ['tag' => 'p']
+                ]
+            ]);
         }
     }
 

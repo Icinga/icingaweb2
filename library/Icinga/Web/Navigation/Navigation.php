@@ -60,7 +60,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      *
      * @var NavigationItem[]
      */
-    protected $items = array();
+    protected $items = [];
 
     /**
      * This navigation's layout
@@ -178,7 +178,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      *
      * @throws  InvalidArgumentException            In case $name is neither a string nor an instance of NavigationItem
      */
-    public function addItem($name, array $properties = array())
+    public function addItem($name, array $properties = [])
     {
         if (is_string($name)) {
             if (isset($properties['permission'])) {
@@ -316,7 +316,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      */
     public function order()
     {
-        uasort($this->items, array($this, 'compareItems'));
+        uasort($this->items, [$this, 'compareItems']);
         foreach ($this->items as $item) {
             if ($item->hasChildren()) {
                 $item->getChildren()->order();
@@ -447,18 +447,18 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      */
     public static function getItemTypeConfiguration()
     {
-        $defaultItemTypes = array(
-            'menu-item' => array(
+        $defaultItemTypes = [
+            'menu-item' => [
                 'label'     => t('Menu Entry'),
                 'config'    => 'menu'
-            )/*, // Disabled, until it is able to fully replace the old implementation
+            ]/*, // Disabled, until it is able to fully replace the old implementation
             'dashlet'   => array(
                 'label'     => 'Dashlet',
                 'config'    => 'dashboard'
             )*/
-        );
+        ];
 
-        $moduleItemTypes = array();
+        $moduleItemTypes = [];
         $moduleManager = Icinga::app()->getModuleManager();
         foreach ($moduleManager->getLoadedModules() as $module) {
             if (Auth::getInstance()->hasPermission($moduleManager::MODULE_PERMISSION_NS . $module->getName())) {
@@ -492,7 +492,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
             throw new InvalidArgumentException('Argument $config must be an array or a instance of Traversable');
         }
 
-        $flattened = $orphans = $topLevel = array();
+        $flattened = $orphans = $topLevel = [];
         foreach ($config as $sectionName => $sectionConfig) {
             $parentName = $sectionConfig->parent;
             unset($sectionConfig->parent);

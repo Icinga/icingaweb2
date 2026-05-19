@@ -21,14 +21,14 @@ class DateFormatValidator extends Zend_Validate_Abstract
      * @see http://www.php.net/manual/en/function.date.php
      */
     private $validChars =
-        array('d', 'D', 'j', 'l', 'N', 'S', 'w', 'z', 'W', 'F', 'm', 'M', 'n', 't', 'L', 'o', 'Y', 'y');
+        ['d', 'D', 'j', 'l', 'N', 'S', 'w', 'z', 'W', 'F', 'm', 'M', 'n', 't', 'L', 'o', 'Y', 'y'];
 
     /**
      * List of sensible time separators
      *
      * @var array
      */
-    private $validSeparators = array(' ', ':', '-', '/', ';', ',', '.');
+    private $validSeparators = [' ', ':', '-', '/', ';', ',', '.'];
 
     /**
      * Error templates
@@ -37,9 +37,9 @@ class DateFormatValidator extends Zend_Validate_Abstract
      *
      * @see Zend_Validate_Abstract::$_messageTemplates
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         'INVALID_CHARACTERS' => 'Invalid date format'
-    );
+    ];
 
     /**
      * Validate the input value

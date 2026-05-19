@@ -31,12 +31,12 @@ class Root
     /**
      * @var array
      */
-    protected $children = array();
+    protected $children = [];
 
     /**
      * @var array
      */
-    protected $props = array();
+    protected $props = [];
 
     /**
      * @param LdapConnection $connection
@@ -69,7 +69,7 @@ class Root
      * @param array $props
      * @return Node
      */
-    public function createChildByDN($dn, $props = array())
+    public function createChildByDN($dn, $props = [])
     {
         $dn = $this->stripMyDN($dn);
         $parts = array_reverse(LdapUtils::explodeDN($dn));

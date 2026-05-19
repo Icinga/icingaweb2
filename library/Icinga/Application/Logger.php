@@ -43,12 +43,12 @@ class Logger
      *
      * @var array
      */
-    public static $levels = array(
+    public static $levels = [
         Logger::DEBUG   => 'DEBUG',
         Logger::INFO    => 'INFO',
         Logger::WARNING => 'WARNING',
         Logger::ERROR   => 'ERROR'
-    );
+    ];
 
     /**
      * This logger's instance
@@ -76,7 +76,7 @@ class Logger
      *
      * @var array
      */
-    protected $configErrors = array();
+    protected $configErrors = [];
 
     /**
      * Create a new logger object
@@ -237,7 +237,7 @@ class Logger
             $message = $arguments[0];
 
             if ($message instanceof Throwable) {
-                $messages = array();
+                $messages = [];
                 $error = $message;
                 do {
                     $messages[] = IcingaException::describe($error);

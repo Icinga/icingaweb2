@@ -125,7 +125,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      */
     protected function initializeConfigs()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -151,7 +151,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      */
     protected function initializeTriggers()
     {
-        return array();
+        return [];
     }
 
     /**

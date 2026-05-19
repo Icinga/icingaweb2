@@ -122,7 +122,7 @@ class Directive
     {
         $str = '';
         if (! empty($this->commentsPre)) {
-            $comments = array();
+            $comments = [];
             foreach ($this->commentsPre as $comment) {
                 $comments[] = $comment->render();
             }

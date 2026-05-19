@@ -57,7 +57,7 @@ class NavigationItemRenderer
             $this->setOptions($options);
         }
 
-        $this->internalLinkTargets = array('_main', '_self', '_next');
+        $this->internalLinkTargets = ['_main', '_self', '_next'];
         $this->init();
     }
 
@@ -197,7 +197,7 @@ class NavigationItemRenderer
                     'sha256',
                     $url->getAbsoluteUrl() . Session::getSession()->getId()
                 ));
-                $url = Url::fromPath('iframe', array('url' => $url));
+                $url = Url::fromPath('iframe', ['url' => $url]);
             }
 
             $content = sprintf(

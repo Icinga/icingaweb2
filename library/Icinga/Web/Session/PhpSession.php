@@ -60,12 +60,12 @@ class PhpSession extends Session
      */
     public function __construct(?array $options = null)
     {
-        $defaultCookieOptions = array(
+        $defaultCookieOptions = [
             'use_trans_sid'     => false,
             'use_cookies'       => true,
             'cookie_httponly'   => true,
             'use_only_cookies'  => true
-        );
+        ];
 
         if (version_compare(PHP_VERSION, '7.1.0') < 0) {
             $defaultCookieOptions['hash_function'] = true;
@@ -191,7 +191,7 @@ class PhpSession extends Session
     public function purge()
     {
         $this->open();
-        $_SESSION = array();
+        $_SESSION = [];
         $this->clear();
         session_destroy();
         $this->clearCookies();

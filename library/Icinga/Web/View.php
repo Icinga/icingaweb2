@@ -215,7 +215,7 @@ class View extends Zend_View_Abstract
     /**
      * Registered helper functions
      */
-    private $helperFunctions = array();
+    private $helperFunctions = [];
 
     /**
      * Authentication manager
@@ -230,7 +230,7 @@ class View extends Zend_View_Abstract
      * @param array $config
      * @see Zend_View_Abstract::__construct
      */
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         $config['helperPath']['Icinga\\Web\\View\\Helper\\'] = Icinga::app()->getLibraryDir('Icinga/Web/View/Helper');
 

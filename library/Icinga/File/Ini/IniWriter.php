@@ -56,7 +56,7 @@ class IniWriter
      *
      * @link http://framework.zend.com/apidoc/1.12/files/Config.Writer.html#\Zend_Config_Writer
      */
-    public function __construct(Config $config, $filename, $filemode = 0660, $options = array())
+    public function __construct(Config $config, $filename, $filemode = 0660, $options = [])
     {
         $this->config = $config;
         $this->filename = $filename;
@@ -75,7 +75,7 @@ class IniWriter
             $oldconfig = Config::fromIni($this->filename);
             $content = trim(file_get_contents($this->filename));
         } else {
-            $oldconfig = Config::fromArray(array());
+            $oldconfig = Config::fromArray([]);
             $content = '';
         }
         $doc = IniParser::parseIni($content);

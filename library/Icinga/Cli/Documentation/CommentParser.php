@@ -13,7 +13,7 @@ class CommentParser
     protected $plain;
     protected $title;
     /** @var array $paragraphs */
-    protected $paragraphs = array();
+    protected $paragraphs = [];
 
     public function __construct($raw)
     {

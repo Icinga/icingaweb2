@@ -224,10 +224,10 @@ abstract class Repository implements Selectable
     public function __construct(?Selectable $ds = null)
     {
         $this->ds = $ds;
-        $this->aliasTableMap = array();
-        $this->aliasColumnMap = array();
-        $this->columnTableMap = array();
-        $this->columnAliasMap = array();
+        $this->aliasTableMap = [];
+        $this->aliasColumnMap = [];
+        $this->columnTableMap = [];
+        $this->columnAliasMap = [];
 
         $this->init();
     }
@@ -332,7 +332,7 @@ abstract class Repository implements Selectable
      */
     protected function initializeVirtualTables()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -358,7 +358,7 @@ abstract class Repository implements Selectable
      */
     protected function initializeQueryColumns()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -405,7 +405,7 @@ abstract class Repository implements Selectable
     protected function initializeBlacklistedQueryColumns()
     {
         // $table is not part of the signature due to PHP strict standards
-        return array();
+        return [];
     }
 
     /**
@@ -454,7 +454,7 @@ abstract class Repository implements Selectable
     protected function initializeFilterColumns()
     {
         // $table is not part of the signature due to PHP strict standards
-        return array();
+        return [];
     }
 
     /**
@@ -501,7 +501,7 @@ abstract class Repository implements Selectable
     protected function initializeSearchColumns()
     {
         // $table is not part of the signature due to PHP strict standards
-        return array();
+        return [];
     }
 
     /**
@@ -550,7 +550,7 @@ abstract class Repository implements Selectable
     protected function initializeSortRules()
     {
         // $table is not part of the signature due to PHP strict standards
-        return array();
+        return [];
     }
 
     /**
@@ -576,7 +576,7 @@ abstract class Repository implements Selectable
      */
     protected function initializeConversionRules()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -1022,7 +1022,7 @@ abstract class Repository implements Selectable
         }
 
         $blacklist = $this->getBlacklistedQueryColumns($table);
-        $columns = array();
+        $columns = [];
         foreach ($queryColumns[$table] as $alias => $column) {
             $name = is_string($alias) ? $alias : $column;
             if (! in_array($name, $blacklist)) {
@@ -1253,7 +1253,7 @@ abstract class Repository implements Selectable
      */
     public function requireStatementColumns($table, array $data)
     {
-        $resolved = array();
+        $resolved = [];
         foreach ($data as $alias => $value) {
             $resolved[$this->requireStatementColumn($table, $alias)] = $this->persistColumn($table, $alias, $value);
         }

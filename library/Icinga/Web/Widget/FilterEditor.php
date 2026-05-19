@@ -42,13 +42,13 @@ class FilterEditor extends AbstractWidget
 
     protected $cachedColumnSelect;
 
-    protected $preserveParams = array();
+    protected $preserveParams = [];
 
-    protected $preservedParams = array();
+    protected $preservedParams = [];
 
     protected $preservedUrl;
 
-    protected $ignoreParams = array();
+    protected $ignoreParams = [];
 
     protected $searchColumns;
 
@@ -236,7 +236,7 @@ class FilterEditor extends AbstractWidget
         $this->setUrl($request->getUrl()->without($this->ignoreParams));
         $params = $this->url()->getParams();
 
-        $preserve = array();
+        $preserve = [];
         foreach ($this->preserveParams as $key) {
             if (null !== ($value = $params->shift($key))) {
                 $preserve[$key] = $value;
@@ -275,7 +275,7 @@ class FilterEditor extends AbstractWidget
                     if (! $this->resetSearchColumns($filter)) {
                         $filter = Filter::matchAll();
                     }
-                    $filters = array();
+                    $filters = [];
                     $search = trim($search);
                     foreach ($this->searchColumns as $searchColumn) {
                         $filters[] = Filter::expression($searchColumn, '=', "*$search*");
@@ -420,10 +420,10 @@ class FilterEditor extends AbstractWidget
             '',
             $this->preservedUrl()->with('stripFilter', $filter->getId()),
             null,
-            array(
+            [
                 'icon'  => 'minus',
                 'title' => t('Strip this filter')
-            )
+            ]
         );
     }
 
@@ -433,10 +433,10 @@ class FilterEditor extends AbstractWidget
             '',
             $this->preservedUrl()->without('addFilter'),
             null,
-            array(
+            [
                 'icon'  => 'cancel',
                 'title' => t('Cancel this operation')
-            )
+            ]
         );
     }
 
@@ -467,7 +467,7 @@ class FilterEditor extends AbstractWidget
             return $html;
         }
 
-        $parts = array();
+        $parts = [];
         foreach ($filter->filters() as $f) {
             $parts[] = '<li>' . $this->renderFilter($f, $level + 1) . '</li>';
         }
@@ -538,7 +538,7 @@ class FilterEditor extends AbstractWidget
 
     protected function arrayForSelect($array, $flip = false)
     {
-        $res = array();
+        $res = [];
         foreach ($array as $k => $v) {
             if (is_int($k)) {
                 $res[$v] = ucwords(str_replace('_', ' ', $v));
@@ -563,11 +563,11 @@ class FilterEditor extends AbstractWidget
 
     protected function selectOperator(?Filter $filter = null)
     {
-        $ops = array(
+        $ops = [
             'AND' => 'AND',
             'OR'  => 'OR',
             'NOT' => 'NOT'
-        );
+        ];
 
         return $this->select(
             $this->elementId('operator', $filter),
@@ -579,14 +579,14 @@ class FilterEditor extends AbstractWidget
 
     protected function selectSign(?Filter $filter = null)
     {
-        $signs = array(
+        $signs = [
             '='  => '=',
             '!=' => '!=',
             '>'  => '>',
             '<'  => '<',
             '>=' => '>=',
             '<=' => '<=',
-        );
+        ];
 
         return $this->select(
             $this->elementId('sign', $filter),
@@ -632,9 +632,9 @@ class FilterEditor extends AbstractWidget
     protected function applyChanges($changes)
     {
         $filter = $this->filter;
-        $pairs = array();
+        $pairs = [];
         $addTo = null;
-        $add = array();
+        $add = [];
         foreach ($changes as $k => $v) {
             if (preg_match('/^(column|value|sign|operator)((?:_new)?)_([\d-]+)$/', $k, $m)) {
                 if ($m[2] === '_new') {
@@ -649,7 +649,7 @@ class FilterEditor extends AbstractWidget
             }
         }
 
-        $operators = array();
+        $operators = [];
         foreach ($pairs as $id => $fs) {
             if (array_key_exists('operator', $fs)) {
                 $operators[$id] = $fs['operator'];

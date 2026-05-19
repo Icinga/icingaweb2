@@ -63,7 +63,7 @@ class Tab extends AbstractWidget
      *
      * @var array
      */
-    private $urlParams = array();
+    private $urlParams = [];
 
     /**
      * The icon image to use for this tab or null if none
@@ -231,7 +231,7 @@ class Tab extends AbstractWidget
      *
      * @param array $properties     An array of properties
      */
-    public function __construct(array $properties = array())
+    public function __construct(array $properties = [])
     {
         foreach ($properties as $name => $value) {
             $setter = 'set' . ucfirst($name);
@@ -263,7 +263,7 @@ class Tab extends AbstractWidget
     public function render()
     {
         $view = $this->view();
-        $classes = array();
+        $classes = [];
         if ($this->active) {
             $classes[] = 'active';
         }
@@ -281,10 +281,10 @@ class Tab extends AbstractWidget
                 $tagParams['title'] = $this->title;
                 $tagParams['aria-label'] = $this->title;
             } else {
-                $tagParams = array(
+                $tagParams = [
                     'title'         => $this->title,
                     'aria-label'    => $this->title
-                );
+                ];
             }
         }
 
@@ -296,7 +296,7 @@ class Tab extends AbstractWidget
             if (strpos($this->icon, '.') === false) {
                 $caption = $view->icon($this->icon) . $caption;
             } else {
-                $caption = $view->img($this->icon, null, array('class' => 'icon')) . $caption;
+                $caption = $view->img($this->icon, null, ['class' => 'icon']) . $caption;
             }
         }
 

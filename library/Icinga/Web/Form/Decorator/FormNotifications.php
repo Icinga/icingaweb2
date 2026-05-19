@@ -40,7 +40,7 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
         }
 
         $html = '<ul class="form-notification-list">';
-        foreach (array(Form::NOTIFICATION_ERROR, Form::NOTIFICATION_WARNING, Form::NOTIFICATION_INFO) as $type) {
+        foreach ([Form::NOTIFICATION_ERROR, Form::NOTIFICATION_WARNING, Form::NOTIFICATION_INFO] as $type) {
             if (isset($notifications[$type])) {
                 $html .= '<li><ul class="notification-' . $this->getNotificationTypeName($type) . '">';
                 foreach ($notifications[$type] as $message) {

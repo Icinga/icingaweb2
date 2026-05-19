@@ -12,7 +12,7 @@ class FileCache
      *
      * @var array
      */
-    protected static $instances = array();
+    protected static $instances = [];
 
     /**
      * Cache instance base directory
@@ -248,11 +248,11 @@ class FileCache
     public static function etagForFiles($files)
     {
         if (is_string($files)) {
-            $files = array($files);
+            $files = [$files];
         }
 
-        $sizes  = array();
-        $mtimes = array();
+        $sizes  = [];
+        $mtimes = [];
 
         foreach ($files as $file) {
             $file = realpath($file);

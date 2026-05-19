@@ -55,7 +55,7 @@ class Path extends Styleable implements Drawable
      *
      * @var array
      */
-    protected $points = array();
+    protected $points = [];
 
     /**
      * True to draw the path discrete, i.e. make hard steps between points
@@ -87,7 +87,7 @@ class Path extends Styleable implements Drawable
             return $this;
         }
         if (!is_array($points[0])) {
-            $points = array($points);
+            $points = [$points];
         }
         $this->points = array_merge($this->points, $points);
         return $this;
@@ -106,7 +106,7 @@ class Path extends Styleable implements Drawable
             return $this;
         }
         if (!is_array($points[0])) {
-            $points = array($points);
+            $points = [$points];
         }
         $this->points = array_merge($points, $this->points);
         return $this;

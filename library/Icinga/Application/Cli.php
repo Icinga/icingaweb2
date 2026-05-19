@@ -61,9 +61,9 @@ class Cli extends ApplicationBootstrap
     {
         Logger::create(
             new ConfigObject(
-                array(
+                [
                     'log' => 'stderr'
-                )
+                ]
             )
         );
 

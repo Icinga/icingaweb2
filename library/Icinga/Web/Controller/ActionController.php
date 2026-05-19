@@ -135,7 +135,7 @@ class ActionController extends Zend_Controller_Action
     public function __construct(
         Zend_Controller_Request_Abstract $request,
         Zend_Controller_Response_Abstract $response,
-        array $invokeArgs = array()
+        array $invokeArgs = []
     ) {
         /** @var \Icinga\Web\Request $request */
         /** @var \Icinga\Web\Response $response */
@@ -614,7 +614,7 @@ class ActionController extends Zend_Controller_Action
         $deprecatedMethod = '_' . $name;
 
         if (method_exists($this, $deprecatedMethod)) {
-            return call_user_func_array(array($this, $deprecatedMethod), $params);
+            return call_user_func_array([$this, $deprecatedMethod], $params);
         }
 
         parent::__call($name, $params);

@@ -17,14 +17,14 @@ abstract class Session extends SessionNamespace
      *
      * @var array
      */
-    protected $namespaces = array();
+    protected $namespaces = [];
 
     /**
      * The identifiers of all namespaces removed from this session
      *
      * @var array
      */
-    protected $removedNamespaces = array();
+    protected $removedNamespaces = [];
 
     /**
      * Read all values from the underlying session implementation
@@ -122,7 +122,7 @@ abstract class Session extends SessionNamespace
     public function clear()
     {
         parent::clear();
-        $this->namespaces = array();
-        $this->removedNamespaces = array();
+        $this->namespaces = [];
+        $this->removedNamespaces = [];
     }
 }

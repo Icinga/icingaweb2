@@ -61,7 +61,7 @@ class User
      *
      * @var array
      */
-    protected $additionalInformation = array();
+    protected $additionalInformation = [];
 
     /**
      * Information if the user is externally authenticated
@@ -73,7 +73,7 @@ class User
      *
      * @var array
      */
-    protected $externalUserInformation = array();
+    protected $externalUserInformation = [];
 
     /**
      * Whether restrictions should not apply to this user
@@ -87,28 +87,28 @@ class User
      *
      * @var array
      */
-    protected $permissions = array();
+    protected $permissions = [];
 
     /**
      * Set of restrictions
      *
      * @var array
      */
-    protected $restrictions = array();
+    protected $restrictions = [];
 
     /**
      * Groups for this user
      *
      * @var array
      */
-    protected $groups = array();
+    protected $groups = [];
 
     /**
      * Roles of this user
      *
      * @var Role[]
      */
-    protected $roles = array();
+    protected $roles = [];
 
     /**
      * Preferences object
@@ -274,7 +274,7 @@ class User
             return $this->restrictions[$name];
         }
 
-        return array();
+        return [];
     }
 
     /**
@@ -535,7 +535,7 @@ class User
      */
     public function setExternalUserInformation($username, $field)
     {
-        $this->externalUserInformation = array($username, $field);
+        $this->externalUserInformation = [$username, $field];
         return $this;
     }
 
@@ -626,7 +626,7 @@ class User
         $config = Config::navigation($type === 'dashboard-pane' ? 'dashlet' : $type, $this->getUsername());
 
         if ($type === 'dashboard-pane') {
-            $panes = array();
+            $panes = [];
             foreach ($config as $dashletName => $dashletConfig) {
                 // TODO: Throw ConfigurationError if pane or url is missing
                 $panes[$dashletConfig->pane][$dashletName] = $dashletConfig->url;
@@ -636,10 +636,10 @@ class User
             foreach ($panes as $paneName => $dashlets) {
                 $navigation->addItem(
                     $paneName,
-                    array(
+                    [
                         'type'      => 'dashboard-pane',
                         'dashlets'  => $dashlets
-                    )
+                    ]
                 );
             }
         } else {

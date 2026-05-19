@@ -17,9 +17,9 @@ class PieChart extends Inline
         $pie = new PieChartRenderer();
         $pie->alignTopLeft();
         $pie->disableLegend();
-        $pie->drawPie(array(
+        $pie->drawPie([
             'data' => $this->data, 'colors' => $this->colors, 'labels' => $this->labels
-        ));
+        ]);
         return $pie;
     }
 

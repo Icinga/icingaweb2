@@ -34,7 +34,7 @@ class Pane extends UserWidget
      *
      * @var array
      */
-    private $dashlets = array();
+    private $dashlets = [];
 
     /**
      * Disabled flag of a pane
@@ -169,7 +169,7 @@ class Pane extends UserWidget
     public function removeDashlets(?array $dashlets = null)
     {
         if ($dashlets === null) {
-            $this->dashlets = array();
+            $this->dashlets = [];
         } else {
             foreach ($dashlets as $dashlet) {
                 $this->removeDashlet($dashlet);
@@ -287,9 +287,9 @@ class Pane extends UserWidget
      */
     public function toArray()
     {
-        $pane =  array(
+        $pane =  [
             'title'     => $this->getTitle(),
-        );
+        ];
 
         if ($this->getDisabled() === true) {
             $pane['disabled'] = 1;

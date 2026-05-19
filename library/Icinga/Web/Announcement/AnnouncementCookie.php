@@ -18,7 +18,7 @@ class AnnouncementCookie extends Cookie
      *
      * @var string[]
      */
-    protected $acknowledged = array();
+    protected $acknowledged = [];
 
     /**
      * ETag of the last known announcements.ini
@@ -131,10 +131,10 @@ class AnnouncementCookie extends Cookie
      */
     public function getValue()
     {
-        return Json::encode(array(
+        return Json::encode([
             'acknowledged'  => $this->getAcknowledged(),
             'etag'          => $this->getEtag(),
             'next'          => $this->getNextActive()
-        ));
+        ]);
     }
 }

@@ -106,7 +106,7 @@ class ArrayDatasource implements Selectable
      */
     public function fetchColumn(SimpleQuery $query)
     {
-        $result = array();
+        $result = [];
         foreach ($this->getResult($query) as $row) {
             $arr = (array) $row;
             $result[] = array_shift($arr);
@@ -124,7 +124,7 @@ class ArrayDatasource implements Selectable
      */
     public function fetchPairs(SimpleQuery $query)
     {
-        $result = array();
+        $result = [];
         $keys = null;
         foreach ($this->getResult($query) as $row) {
             if ($keys === null) {
@@ -226,7 +226,7 @@ class ArrayDatasource implements Selectable
 
             // Get only desired columns if asked so
             if (! empty($columns)) {
-                $filteredRow = (object) array();
+                $filteredRow = (object) [];
                 foreach ($columns as $alias => $name) {
                     if (! is_string($alias)) {
                         $alias = $name;

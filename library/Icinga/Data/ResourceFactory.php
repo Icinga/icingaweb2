@@ -69,7 +69,7 @@ class ResourceFactory implements ConfigAwareFactory
         if ($type === null) {
             return self::$resources;
         }
-        $resources = array();
+        $resources = [];
         foreach (self::$resources as $name => $resource) {
             if ($resource->get('type') === $type) {
                 $resources[$name] = $resource;

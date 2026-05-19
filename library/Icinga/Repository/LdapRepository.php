@@ -29,7 +29,7 @@ abstract class LdapRepository extends Repository
      *
      * @var array
      */
-    protected $normedAttributes = array(
+    protected $normedAttributes = [
         'uid'                   => 'uid',
         'gid'                   => 'gid',
         'user'                  => 'user',
@@ -42,7 +42,7 @@ abstract class LdapRepository extends Repository
         'inetorgperson'         => 'inetOrgPerson',
         'samaccountname'        => 'sAMAccountName',
         'groupofuniquenames'    => 'groupOfUniqueNames'
-    );
+    ];
 
     /**
      * Create a new LDAP repository object

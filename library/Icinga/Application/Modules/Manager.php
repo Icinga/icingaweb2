@@ -39,21 +39,21 @@ class Manager
      *
      * @var array
      */
-    private $installedBaseDirs = array();
+    private $installedBaseDirs = [];
 
     /**
      * Array of all enabled modules base dirs
      *
      * @var array
      */
-    private $enabledDirs       = array();
+    private $enabledDirs       = [];
 
     /**
      * Array of all module names that have been loaded
      *
      * @var array
      */
-    private $loadedModules     = array();
+    private $loadedModules     = [];
 
     /**
      * Reference to Icinga::app
@@ -74,7 +74,7 @@ class Manager
      *
      * @var array
      */
-    private $modulePaths        = array();
+    private $modulePaths        = [];
 
     /**
      * Whether we loaded all enabled modules
@@ -145,7 +145,7 @@ class Manager
         }
         if (($dh = opendir($this->enableDir)) !== false) {
             $isPhar = substr($this->enableDir, 0, 8) === 'phar:///';
-            $this->enabledDirs = array();
+            $this->enabledDirs = [];
             while (($file = readdir($dh)) !== false) {
                 if ($file[0] === '.' || $file === 'README') {
                     continue;
@@ -546,28 +546,28 @@ class Manager
      */
     public function getModuleInfo()
     {
-        $info = array();
+        $info = [];
 
         $installed = $this->listInstalledModules();
         foreach ($installed as $name) {
-            $info[$name] = (object) array(
+            $info[$name] = (object) [
                 'name'      => $name,
                 'path'      => $this->installedBaseDirs[$name],
                 'installed' => true,
                 'enabled'   => $this->hasEnabled($name),
                 'loaded'    => $this->hasLoaded($name)
-            );
+            ];
         }
 
         $enabled = $this->listEnabledModules();
         foreach ($enabled as $name) {
-            $info[$name] = (object) array(
+            $info[$name] = (object) [
                 'name'      => $name,
                 'path'      => $this->enabledDirs[$name],
                 'installed' => $this->enabledDirs[$name] !== null,
                 'enabled'   => true,
                 'loaded'    => $this->hasLoaded($name)
-            );
+            ];
         }
 
         return $info;
@@ -657,7 +657,7 @@ class Manager
             return array_keys($this->installedBaseDirs);
         }
 
-        return array();
+        return [];
     }
 
     /**

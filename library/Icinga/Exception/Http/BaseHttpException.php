@@ -70,6 +70,6 @@ class BaseHttpException extends IcingaException implements HttpExceptionInterfac
      */
     public function getHeaders()
     {
-        return $this->headers ?: array();
+        return $this->headers ?: [];
     }
 }

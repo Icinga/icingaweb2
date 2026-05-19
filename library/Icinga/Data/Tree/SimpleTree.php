@@ -26,7 +26,7 @@ class SimpleTree implements IteratorAggregate
      *
      * @var array
      */
-    protected $nodes = array();
+    protected $nodes = [];
 
     /**
      * Create a new simple tree

@@ -101,11 +101,11 @@ class Controller extends ModuleActionController
      */
     public function renderForm(Form $form, $tab)
     {
-        $this->getTabs()->add(uniqid(), array(
+        $this->getTabs()->add(uniqid(), [
             'active'    => true,
             'label'     => $tab,
             'url'       => Url::fromRequest()
-        ));
+        ]);
         $this->view->form = $form;
         $this->render('simple-form', null, true);
     }
@@ -236,20 +236,20 @@ class Controller extends ModuleActionController
         ?array $searchColumns = null,
         ?array $preserveParams = null
     ) {
-        $defaultPreservedParams = array(
+        $defaultPreservedParams = [
             'limit', // setupPaginationControl()
             'sort', // setupSortControl()
             'dir', // setupSortControl()
             'backend', // Framework
             'showCompact', // Framework
             '_dev' // Framework
-        );
+        ];
 
         $editor = Widget::create('filterEditor');
         /** @var \Icinga\Web\Widget\FilterEditor $editor */
         call_user_func_array(
-            array($editor, 'preserveParams'),
-            array_merge($defaultPreservedParams, $preserveParams ?: array())
+            [$editor, 'preserveParams'],
+            array_merge($defaultPreservedParams, $preserveParams ?: [])
         );
 
         $editor

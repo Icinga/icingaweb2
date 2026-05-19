@@ -86,7 +86,7 @@ class Platform
             return false;
         }
 
-        foreach (array('/etc/os-release', '/usr/lib/os-release') as $osReleaseFile) {
+        foreach (['/etc/os-release', '/usr/lib/os-release'] as $osReleaseFile) {
             if (false === ($osRelease = @file(
                 $osReleaseFile,
                 FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
@@ -102,7 +102,7 @@ class Platform
                     continue;
                 }
 
-                $matches = array();
+                $matches = [];
                 if (false === ($res = @preg_match(
                     '/(?<!.)[ \t]*ID[ \t]*=[ \t]*(\'|"|)(.*?)(?:\1)[ \t]*(?!.)/msi',
                     $osInfo,
@@ -120,10 +120,10 @@ class Platform
             return 'linux';
         }
 
-        foreach (array(
+        foreach ([
             'fedora' => '/etc/fedora-release',
             'centos' => '/etc/centos-release'
-        ) as $distro => $releaseFile) {
+        ] as $distro => $releaseFile) {
             if (! (false === (
                 $release = @file_get_contents($releaseFile)
             ) || false === strpos(strtolower($release), $distro))) {
@@ -136,7 +136,7 @@ class Platform
             if (false !== strpos($release, 'red hat enterprise linux')) {
                 return 'rhel';
             }
-            foreach (array('fedora', 'centos') as $distro) {
+            foreach (['fedora', 'centos'] as $distro) {
                 if (false !== strpos($release, $distro)) {
                     return $distro;
                 }
@@ -146,11 +146,11 @@ class Platform
 
         if (false !== ($release = @file_get_contents('/etc/SuSE-release'))) {
             $release = strtolower($release);
-            foreach (array(
+            foreach ([
                 'opensuse'  => 'opensuse',
                 'sles'      => 'suse linux enterprise server',
                 'sled'      => 'suse linux enterprise desktop'
-            ) as $distro => $name) {
+            ] as $distro => $name) {
                 if (false !== strpos($release, $name)) {
                     return $distro;
                 }
@@ -163,12 +163,12 @@ class Platform
                 return false;
             }
             $procVersion = strtolower($procVersion);
-            foreach (array(
+            foreach ([
                 'redhat'    => 'red hat',
                 'suse'      => 'suse linux',
                 'ubuntu'    => 'ubuntu',
                 'debian'    => 'debian'
-            ) as $distro => $name) {
+            ] as $distro => $name) {
                 if (false !== strpos($procVersion, $name)) {
                     return $distro;
                 }

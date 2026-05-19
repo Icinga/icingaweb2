@@ -32,7 +32,7 @@ abstract class NavigationItemContainer
      * @param   string  $name
      * @param   array   $properties
      */
-    public function __construct($name, array $properties = array())
+    public function __construct($name, array $properties = [])
     {
         $this->name = $name;
         $this->properties = $properties;
@@ -81,7 +81,7 @@ abstract class NavigationItemContainer
      */
     public function getProperties()
     {
-        return $this->properties ?: array();
+        return $this->properties ?: [];
     }
 
     /**
@@ -97,7 +97,7 @@ abstract class NavigationItemContainer
     public function __call($name, $arguments)
     {
         if (method_exists($this, $name)) {
-            return call_user_func(array($this, $name), $this, $arguments);
+            return call_user_func([$this, $name], $this, $arguments);
         }
 
         $type = substr($name, 0, 3);

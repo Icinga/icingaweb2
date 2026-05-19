@@ -73,7 +73,7 @@ class Notification
      *
      * @var array
      */
-    protected $messages = array();
+    protected $messages = [];
 
     /**
      * Session
@@ -177,10 +177,10 @@ class Notification
                     break;
             }
         } else {
-            $this->messages[] = (object) array(
+            $this->messages[] = (object) [
                 'type'    => $type,
                 'message' => $message,
-            );
+            ];
         }
     }
 
@@ -192,7 +192,7 @@ class Notification
     public function popMessages()
     {
         $messages = $this->messages;
-        $this->messages = array();
+        $this->messages = [];
         return $messages;
     }
 

@@ -19,14 +19,14 @@ class TimeFormatValidator extends Zend_Validate_Abstract
      * @var array
      * @see http://www.php.net/manual/en/function.date.php
      */
-    private $validChars = array('a', 'A', 'B', 'g', 'G', 'h', 'H', 'i', 's', 'u');
+    private $validChars = ['a', 'A', 'B', 'g', 'G', 'h', 'H', 'i', 's', 'u'];
 
     /**
      * List of sensible time separators
      *
      * @var array
      */
-    private $validSeparators = array(' ', ':', '-', '/', ';', ',', '.');
+    private $validSeparators = [' ', ':', '-', '/', ';', ',', '.'];
 
     /**
      * Error templates
@@ -34,9 +34,9 @@ class TimeFormatValidator extends Zend_Validate_Abstract
      * @var array
      * @see Zend_Validate_Abstract::$_messageTemplates
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         'INVALID_CHARACTERS' => 'Invalid time format'
-    );
+    ];
 
     /**
      * Validate the input value

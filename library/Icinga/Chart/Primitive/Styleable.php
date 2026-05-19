@@ -55,7 +55,7 @@ class Styleable
      *
      * @var array
      */
-    public $attributes = array();
+    public $attributes = [];
 
     /**
      * Set the stroke width for this drawable

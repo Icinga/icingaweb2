@@ -37,21 +37,21 @@ class Config implements Countable, Iterator, Selectable
      *
      * @var array
      */
-    protected static $app = array();
+    protected static $app = [];
 
     /**
      * Module config instances per file
      *
      * @var array
      */
-    protected static $modules = array();
+    protected static $modules = [];
 
     /**
      * Navigation config instances per type
      *
      * @var array
      */
-    protected static $navigation = array();
+    protected static $navigation = [];
 
     /**
      * The internal ConfigObject
@@ -416,7 +416,7 @@ class Config implements Countable, Iterator, Selectable
     public static function module($modulename, $configname = 'config', $fromDisk = false)
     {
         if (! isset(self::$modules[$modulename])) {
-            self::$modules[$modulename] = array();
+            self::$modules[$modulename] = [];
         }
 
         if (! isset(self::$modules[$modulename][$configname]) || $fromDisk) {
@@ -439,7 +439,7 @@ class Config implements Countable, Iterator, Selectable
     public static function navigation($type, $username = null, $fromDisk = false)
     {
         if (! isset(self::$navigation[$type])) {
-            self::$navigation[$type] = array();
+            self::$navigation[$type] = [];
         }
 
         $branch = $username ?: 'shared';
@@ -475,11 +475,11 @@ class Config implements Countable, Iterator, Selectable
         }
 
         if ($username) {
-            $path = static::resolvePath(implode(DIRECTORY_SEPARATOR, array('preferences', $username, $filename)));
+            $path = static::resolvePath(implode(DIRECTORY_SEPARATOR, ['preferences', $username, $filename]));
             if (realpath($path) === false) {
                 $path = static::resolvePath(implode(
                     DIRECTORY_SEPARATOR,
-                    array('preferences', strtolower($username), $filename)
+                    ['preferences', strtolower($username), $filename]
                 ));
             }
         } else {

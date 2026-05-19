@@ -206,9 +206,9 @@ class JsonResponse extends Response
      */
     public function outputBody()
     {
-        $body = array(
+        $body = [
             'status' => $this->status
-        );
+        ];
         switch ($this->status) {
             /** @noinspection PhpMissingBreakStatementInspection */
             case static::STATUS_ERROR:

@@ -34,14 +34,14 @@ class Preferences implements Countable
      *
      * @var array
      */
-    protected $preferences = array();
+    protected $preferences = [];
 
     /**
      * Constructor
      *
      * @param   array   $preferences    Preferences key-value array
      */
-    public function __construct(array $preferences = array())
+    public function __construct(array $preferences = [])
     {
         $this->preferences = $preferences;
     }

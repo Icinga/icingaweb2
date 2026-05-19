@@ -79,7 +79,7 @@ EOT;
      *
      * @var array<string, Tab>
      */
-    private $tabs = array();
+    private $tabs = [];
 
     /**
      * The name of the currently activated tab
@@ -93,7 +93,7 @@ EOT;
      *
      * @var array
      */
-    private $dropdownTabs = array();
+    private $dropdownTabs = [];
 
     /**
      * Whether only the close-button should by rendered for this tab
@@ -244,7 +244,7 @@ EOT;
         if ($tab instanceof Tab) {
             $this->tabs[$name] = $tab;
         } else {
-            $this->tabs[$name] = new Tab($tab + array('name' => $name));
+            $this->tabs[$name] = new Tab($tab + ['name' => $name]);
         }
         return $this;
     }
@@ -299,7 +299,7 @@ EOT;
             }
             $tabs .= $tab;
         }
-        return str_replace(array('{TABS}', '{TITLE}'), array($tabs, t('Dropdown menu')), $this->dropdownTpl);
+        return str_replace(['{TABS}', '{TITLE}'], [$tabs, t('Dropdown menu')], $this->dropdownTpl);
     }
 
     /**
@@ -346,16 +346,16 @@ EOT;
         $title = $label;
 
         $tpl = str_replace(
-            array(
+            [
                 '{URL}',
                 '{TITLE}',
                 '{LABEL}'
-            ),
-            array(
+            ],
+            [
                 $this->view()->escape($url->getAbsoluteUrl()),
                 $title,
                 $label
-            ),
+            ],
             $this->refreshTpl
         );
 
@@ -380,18 +380,18 @@ EOT;
         $refresh = $this->renderRefreshTab();
 
         return str_replace(
-            array(
+            [
                 '{TABS}',
                 '{DROPDOWN}',
                 '{REFRESH}',
                 '{CLOSE}'
-            ),
-            array(
+            ],
+            [
                 $tabs,
                 $drop,
                 $refresh,
                 $close
-            ),
+            ],
             $this->baseTpl
         );
     }

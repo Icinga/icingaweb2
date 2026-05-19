@@ -42,7 +42,7 @@ class AuthBackendController extends CompatController
      */
     protected function loadUserBackends($interface = null)
     {
-        $backends = array();
+        $backends = [];
         foreach (Config::app('authentication') as $backendName => $backendConfig) {
             $candidate = UserBackend::create($backendName, $backendConfig);
             if (! $interface || $candidate instanceof $interface) {
@@ -101,7 +101,7 @@ class AuthBackendController extends CompatController
      */
     protected function loadUserGroupBackends($interface = null)
     {
-        $backends = array();
+        $backends = [];
         foreach (Config::app('groups') as $backendName => $backendConfig) {
             $candidate = UserGroupBackend::create($backendName, $backendConfig);
             if (! $interface || $candidate instanceof $interface) {

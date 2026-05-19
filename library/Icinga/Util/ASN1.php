@@ -50,7 +50,7 @@ class ASN1
 \z/x
 EOD;
 
-        $matches = array();
+        $matches = [];
 
         if (preg_match($generalizedTimePattern, $value, $matches)) {
             $dateTimeRaw = $matches['YmdH'];

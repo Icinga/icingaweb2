@@ -221,14 +221,14 @@ class Form extends Zend_Form
      *
      * @var array
      */
-    public static $defaultElementDecorators = array(
-        array('Label', array('tag'=>'span', 'separator' => '', 'class' => 'control-label')),
-        array(array('labelWrap' => 'HtmlTag'), array('tag' => 'div', 'class' => 'control-label-group')),
-        array('ViewHelper', array('separator' => '')),
-        array('Help', array()),
-        array('Errors', array('separator' => '')),
-        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
-    );
+    public static $defaultElementDecorators = [
+        ['Label', ['tag'=>'span', 'separator' => '', 'class' => 'control-label']],
+        [['labelWrap' => 'HtmlTag'], ['tag' => 'div', 'class' => 'control-label-group']],
+        ['ViewHelper', ['separator' => '']],
+        ['Help', []],
+        ['Errors', ['separator' => '']],
+        ['HtmlTag', ['tag' => 'div', 'class' => 'control-group']]
+    ];
 
     /**
      * (non-PHPDoc)
@@ -238,18 +238,18 @@ class Form extends Zend_Form
     {
         // Zend's plugin loader reverses the order of added prefix paths thus trying our paths first before trying
         // Zend paths
-        $this->addPrefixPaths(array(
-            array(
+        $this->addPrefixPaths([
+            [
                 'prefix'    => 'Icinga\\Web\\Form\\Element\\',
                 'path'      => Icinga::app()->getLibraryDir('Icinga/Web/Form/Element'),
                 'type'      => static::ELEMENT
-            ),
-            array(
+            ],
+            [
                 'prefix'    => 'Icinga\\Web\\Form\\Decorator\\',
                 'path'      => Icinga::app()->getLibraryDir('Icinga/Web/Form/Decorator'),
                 'type'      => static::DECORATOR
-            )
-        ));
+            ]
+        ]);
 
         if (! isset($options['attribs']['class'])) {
             $options['attribs']['class'] = static::DEFAULT_CLASSES;
@@ -359,7 +359,7 @@ class Form extends Zend_Form
     public function setRedirectUrl($url)
     {
         if (is_string($url)) {
-            $url = Url::fromPath($url, array(), $this->getRequest());
+            $url = Url::fromPath($url, [], $this->getRequest());
         } elseif (! $url instanceof Url) {
             throw new ProgrammingError('$url must be a string or instance of Icinga\Web\Url');
         }
@@ -617,7 +617,7 @@ class Form extends Zend_Form
     public function getDescriptions()
     {
         if ($this->descriptions === null) {
-            return array();
+            return [];
         }
 
         return $this->descriptions;
@@ -661,7 +661,7 @@ class Form extends Zend_Form
     public function getNotifications()
     {
         if ($this->notifications === null) {
-            return array();
+            return [];
         }
 
         return $this->notifications;
@@ -704,7 +704,7 @@ class Form extends Zend_Form
     public function getHints()
     {
         if ($this->hints === null) {
-            return array();
+            return [];
         }
 
         return $this->hints;
@@ -772,7 +772,7 @@ class Form extends Zend_Form
      *
      * @return  $this
      */
-    public function create(array $formData = array())
+    public function create(array $formData = [])
     {
         if (! $this->created) {
             $this->createElements($formData);
@@ -850,17 +850,17 @@ class Form extends Zend_Form
             $this->addElement(
                 'submit',
                 'btn_submit',
-                array(
+                [
                     'class'                 => 'btn-primary',
                     'ignore'                => true,
                     'label'                 => $submitLabel,
                     'data-progress-label'   => $this->getProgressLabel(),
-                    'decorators'            => array(
+                    'decorators'            => [
                         'ViewHelper',
-                        array('Spinner', array('separator' => '')),
-                        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
-                    )
-                )
+                        ['Spinner', ['separator' => '']],
+                        ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
+                    ]
+                ]
             );
         }
 
@@ -879,7 +879,7 @@ class Form extends Zend_Form
     public function addSubForm(Zend_Form $form, $name = null, $order = null)
     {
         if ($form instanceof self) {
-            $form->setDecorators(array('FormElements')); // TODO: Makes it difficult to customise subform decorators..
+            $form->setDecorators(['FormElements']); // TODO: Makes it difficult to customise subform decorators..
             $form->setSubmitLabel('');
             $form->setTokenDisabled();
             $form->setUidDisabled();
@@ -921,30 +921,30 @@ class Form extends Zend_Form
                 if (! isset($options['data-progress-label']) && ($type === 'submit'
                     || ($type === 'button' && isset($options['type']) && $options['type'] === 'submit'))
                 ) {
-                    array_splice($options['decorators'], 1, 0, array(array('Spinner', array('separator' => ''))));
+                    array_splice($options['decorators'], 1, 0, [['Spinner', ['separator' => '']]]);
                 } elseif ($type === 'hidden') {
-                    $options['decorators'] = array('ViewHelper');
+                    $options['decorators'] = ['ViewHelper'];
                 }
             }
         } else {
-            $options = array('decorators' => static::$defaultElementDecorators);
+            $options = ['decorators' => static::$defaultElementDecorators];
             if ($type === 'submit') {
-                array_splice($options['decorators'], 1, 0, array(array('Spinner', array('separator' => ''))));
+                array_splice($options['decorators'], 1, 0, [['Spinner', ['separator' => '']]]);
             } elseif ($type === 'hidden') {
-                $options['decorators'] = array('ViewHelper');
+                $options['decorators'] = ['ViewHelper'];
             }
         }
 
         $el = parent::createElement($type, $name, $options);
-        $el->setTranslator(new ErrorLabeller(array('element' => $el)));
+        $el->setTranslator(new ErrorLabeller(['element' => $el]));
 
-        $el->addPrefixPaths(array(
-            array(
+        $el->addPrefixPaths([
+            [
                 'prefix'    => 'Icinga\\Web\\Form\\Validator\\',
                 'path'      => Icinga::app()->getLibraryDir('Icinga/Web/Form/Validator'),
                 'type'      => $el::VALIDATE
-            )
-        ));
+            ]
+        ]);
 
         if ($this->protectIds) {
             $el->setAttrib('id', $this->getRequest()->protectId($this->getId(false) . '_' . $el->getId()));
@@ -956,12 +956,12 @@ class Form extends Zend_Form
                 $warningText = $this->getView()->escape($this->translate(
                     'This page will be automatically updated upon change of the value'
                 ));
-                $autosubmitDecorator = $this->_getDecorator('Callback', array(
+                $autosubmitDecorator = $this->_getDecorator('Callback', [
                     'placement' => 'PREPEND',
                     'callback'  => function ($content) use ($warningId, $warningText) {
                         return '<span class="sr-only" id="' . $warningId . '">' . $warningText . '</span>';
                     }
-                ));
+                ]);
             } else {
                 $autosubmitDecorator = new Autosubmit();
                 $autosubmitDecorator->setAccessible();
@@ -972,7 +972,7 @@ class Form extends Zend_Form
             $pos = array_search('Zend_Form_Decorator_ViewHelper', array_keys($decorators), true) + 1;
             $el->setDecorators(
                 array_slice($decorators, 0, $pos, true)
-                + array('autosubmit' => $autosubmitDecorator)
+                + ['autosubmit' => $autosubmitDecorator]
                 + array_slice($decorators, $pos, count($decorators) - $pos, true)
             );
 
@@ -997,15 +997,15 @@ class Form extends Zend_Form
 
         if ($el->getAttrib('preserveDefault')) {
             $el->addDecorator(
-                array('preserveDefault' => 'HtmlTag'),
-                array(
+                ['preserveDefault' => 'HtmlTag'],
+                [
                     'tag'   => 'input',
                     'type'  => 'hidden',
                     'name'  => $name . static::DEFAULT_SUFFIX,
                     'value' => $el instanceof DateTimePicker
                         ? $el->getValue()->format($el->getFormat())
                         : $el->getValue()
-                )
+                ]
             );
 
             unset($el->preserveDefault);
@@ -1061,11 +1061,11 @@ class Form extends Zend_Form
             $this->addElement(
                 'hidden',
                 $this->uidElementName,
-                array(
+                [
                     'ignore'        => true,
                     'value'         => $this->getName(),
-                    'decorators'    => array('ViewHelper')
-                )
+                    'decorators'    => ['ViewHelper']
+                ]
             );
         }
 
@@ -1189,7 +1189,7 @@ class Form extends Zend_Form
                             }
                         }
                         $this->getResponse()->json()
-                            ->setSuccessData($message !== null ? array('message' => $message) : null)
+                            ->setSuccessData($message !== null ? ['message' => $message] : null)
                             ->sendResponse();
                     } else {
                         $this->getResponse()->redirectAndExit($this->getRedirectUrl());
@@ -1327,27 +1327,27 @@ class Form extends Zend_Form
         $decorators = $this->getDecorators();
         if (empty($decorators)) {
             if ($this->viewScript) {
-                $this->addDecorator('ViewScript', array(
+                $this->addDecorator('ViewScript', [
                     'viewScript'    => $this->viewScript,
                     'form'          => $this
-                ));
+                ]);
             } else {
-                $this->addDecorator('Description', array('tag' => 'h1'));
+                $this->addDecorator('Description', ['tag' => 'h1']);
                 if ($this->getUseFormAutosubmit()) {
                     $this->getDecorator('Description')->setEscape(false);
                     $this->addDecorator(
                         'HtmlTag',
-                        array(
+                        [
                             'tag'   => 'div',
                             'class' => 'header',
                             'id'    => 'header-' . $this->getId()
-                        )
+                        ]
                     );
                 }
 
                 $this->addDecorator('FormDescriptions')
                     ->addDecorator('FormNotifications')
-                    ->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
+                    ->addDecorator('FormErrors', ['onlyCustomFormErrors' => true])
                     ->addDecorator('FormElements')
                     ->addDecorator('FormHints')
                     //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
@@ -1400,7 +1400,7 @@ class Form extends Zend_Form
     {
         $description = parent::getDescription();
         if ($description && $this->getUseFormAutosubmit()) {
-            $autosubmit = $this->_getDecorator('Autosubmit', array('accessible' => true));
+            $autosubmit = $this->_getDecorator('Autosubmit', ['accessible' => true]);
             $autosubmit->setElement($this);
             $description = $autosubmit->render($this->getView()->escape($description));
         }
@@ -1491,7 +1491,7 @@ class Form extends Zend_Form
             return $this->request->{'get' . ($this->request->isPost() ? 'Post' : 'Query')}();
         }
 
-        return array();
+        return [];
     }
 
     /**
