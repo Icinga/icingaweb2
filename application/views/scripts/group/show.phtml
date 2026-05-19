@@ -10,15 +10,15 @@ if ($this->hasPermission('config/access-control/groups') && $backend instanceof 
     $editLink = $this->qlink(
         null,
         'group/edit',
-        array(
+        [
             'backend'   => $backend->getName(),
             'group'     => $group->group_name
-        ),
-        array(
+        ],
+        [
             'title' => sprintf($this->translate('Edit group %s'), $group->group_name),
             'class' => 'group-edit',
             'icon'  => 'edit'
-        )
+        ]
     );
 }
 
@@ -53,14 +53,14 @@ if ($this->hasPermission('config/access-control/groups') && $backend instanceof 
     <?= $this->qlink(
         $this->translate('Add New Member'),
         'group/addmember',
-        array(
+        [
             'backend'   => $backend->getName(),
             'group'     => $group->group_name
-        ),
-        array(
+        ],
+        [
             'icon'  => 'plus',
             'class' => 'button-link'
-        )
+        ]
     ) ?>
 <?php endif ?>
 
@@ -86,12 +86,12 @@ if ($this->hasPermission('config/access-control/groups') && $backend instanceof 
                     $this->hasPermission('config/access-control/users')
                     && ($userBackend = $backend->getUserBackendName($member->user_name)) !== null
                 ): ?>
-                    <?= $this->qlink($member->user_name, 'user/show', array(
+                    <?= $this->qlink($member->user_name, 'user/show', [
                         'backend' => $userBackend,
                         'user'    => $member->user_name
-                    ), array(
+                    ], [
                         'title'   => sprintf($this->translate('Show detailed information about %s'), $member->user_name)
-                    )); ?>
+                    ]); ?>
                 <?php else: ?>
                     <?= $this->escape($member->user_name); ?>
                 <?php endif ?>

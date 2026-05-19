@@ -25,8 +25,8 @@
                         <?= $this->qlink(
                             $pane->getName(),
                             'dashboard/rename-pane',
-                            array('pane' => $pane->getName()),
-                            array('title' => sprintf($this->translate('Edit pane %s'), $pane->getName()))
+                            ['pane' => $pane->getName()],
+                            ['title' => sprintf($this->translate('Edit pane %s'), $pane->getName())]
                         ) ?>
                     <?php else: ?>
                         <?= $this->escape($pane->getName()) ?>
@@ -36,12 +36,12 @@
                         <?= $this->qlink(
                             '',
                             'dashboard/remove-pane',
-                            array('pane' => $pane->getName()),
-                            array(
+                            ['pane' => $pane->getName()],
+                            [
                                 'icon'  => 'cancel',
                                 'class' => 'action-link',
                                 'title' => sprintf($this->translate('Remove pane %s'), $pane->getName())
-                            )
+                            ]
                         ); ?>
                     </th>
                 </tr>
@@ -60,8 +60,8 @@
                                 <?= $this->qlink(
                                     $dashlet->getTitle(),
                                     'dashboard/update-dashlet',
-                                    array('pane' => $pane->getName(), 'dashlet' => $dashlet->getName()),
-                                    array('title' => sprintf($this->translate('Edit dashlet %s'), $dashlet->getTitle()))
+                                    ['pane' => $pane->getName(), 'dashlet' => $dashlet->getName()],
+                                    ['title' => sprintf($this->translate('Edit dashlet %s'), $dashlet->getTitle())]
                                 ); ?>
                             </td>
                             <td>
@@ -69,19 +69,19 @@
                                     $dashlet->getUrl()->getRelativeUrl(),
                                     $dashlet->getUrl()->getRelativeUrl(),
                                     null,
-                                    array('title' => sprintf($this->translate('Show dashlet %s'), $dashlet->getTitle()))
+                                    ['title' => sprintf($this->translate('Show dashlet %s'), $dashlet->getTitle())]
                                 ); ?>
                             </td>
                             <td>
                                 <?= $this->qlink(
                                     '',
                                     'dashboard/remove-dashlet',
-                                    array('pane' => $pane->getName(), 'dashlet' => $dashlet->getName()),
-                                    array(
+                                    ['pane' => $pane->getName(), 'dashlet' => $dashlet->getName()],
+                                    [
                                         'icon'  => 'cancel',
                                         'class' => 'action-link',
                                         'title' => sprintf($this->translate('Remove dashlet %s from pane %s'), $dashlet->getTitle(), $pane->getTitle())
-                                    )
+                                    ]
                                 ); ?>
                             </td>
                         </tr>

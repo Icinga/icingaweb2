@@ -12,12 +12,12 @@
         $this->translate('Create a New Navigation Item') ,
         'navigation/add',
         null,
-        array(
+        [
             'class'             => 'button-link',
             'data-base-target'  => '_next',
             'icon'              => 'plus',
             'title'             => $this->translate('Create a new navigation item')
-        )
+        ]
     ) ?>
 <?php if (count($items) === 0): ?>
     <p><?= $this->translate('You did not create any navigation item yet.') ?></p>
@@ -39,13 +39,13 @@
             <?= $this->qlink(
                 $item->name,
                 'navigation/edit',
-                array(
+                [
                     'name'  => $item->name,
                     'type'  => $item->type
-                ),
-                array(
+                ],
+                [
                     'title' => sprintf($this->translate('Edit navigation item %s'), $item->name)
-                )
+                ]
             ) ?>
         </td>
         <td>
@@ -60,15 +60,15 @@
             <?= $this->qlink(
                 '',
                 'navigation/remove',
-                array(
+                [
                     'name'  => $item->name,
                     'type'  => $item->type
-                ),
-                array(
+                ],
+                [
                     'class' => 'action-link',
                     'icon'  => 'cancel',
                     'title' => sprintf($this->translate('Remove navigation item %s'), $item->name)
-                )
+                ]
             ) ?>
         </td>
     </tr>

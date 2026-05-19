@@ -6,12 +6,12 @@
         $this->translate('Create a New Resource') ,
         'config/createresource',
         null,
-        array(
+        [
             'class'             => 'button-link',
             'data-base-target'  => '_next',
             'icon'              => 'plus',
             'title'             => $this->translate('Create a new resource')
-        )
+        ]
     ) ?>
     <table class="table-row-selectable common-table" data-base-target="_next">
     <thead>
@@ -47,23 +47,23 @@
             <?= $this->qlink(
                 $name,
                 'config/editresource',
-                array('resource' => $name),
-                array(
+                ['resource' => $name],
+                [
                     'icon'  => $icon,
                     'title' => sprintf($this->translate('Edit resource %s'), $name)
-                )
+                ]
             ) ?>
         </td>
         <td class="icon-col text-right">
             <?= $this->qlink(
                 '',
                 'config/removeresource',
-                array('resource' => $name),
-                array(
+                ['resource' => $name],
+                [
                     'class'   => 'action-link',
                     'icon'    => 'cancel',
                     'title'   => sprintf($this->translate('Remove resource %s'), $name)
-                )
+                ]
             ) ?>
         </td>
     </tr>

@@ -15,12 +15,12 @@
         $this->translate('Create a New Announcement') ,
         'announcements/new',
         null,
-        array(
+        [
             'class'             => 'button-link',
             'data-base-target'  => '_next',
             'icon'              => 'plus',
             'title'             => $this->translate('Create a new announcement')
-        )
+        ]
     );
 } ?>
 <?php if (empty($this->announcements)): ?>
@@ -43,7 +43,7 @@
             <td><?= $this->escape($announcement->author) ?></td>
         <?php if ($this->hasPermission('application/announcements')): ?>
             <td>
-                <a href="<?= $this->href('announcements/update', array('id' => $announcement->id)) ?>">
+                <a href="<?= $this->href('announcements/update', ['id' => $announcement->id]) ?>">
                     <?= $this->ellipsis($this->escape($announcement->message), 100) ?>
                 </a>
             </td>
@@ -56,12 +56,12 @@
             <td class="icon-col"><?= $this->qlink(
                 null,
                 'announcements/remove',
-                array('id' => $announcement->id),
-                array(
+                ['id' => $announcement->id],
+                [
                     'class' => 'action-link',
                     'icon'  => 'cancel',
                     'title' => $this->translate('Remove this announcement')
-                )
+                ]
             ) ?></td>
         <?php endif ?>
         </tr>

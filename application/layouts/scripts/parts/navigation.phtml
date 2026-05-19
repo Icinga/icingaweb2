@@ -24,9 +24,9 @@ if (! $this->auth()->isAuthenticated()) {
     <?= $this->partial(
         'layout/menu.phtml',
         'default',
-        array(
+        [
             'menuRenderer' => (new Menu())->getRenderer()->setUseStandardItemRenderer()
-        )
+        ]
     ) ?>
 </div>
 <button id="toggle-sidebar" title="<?= $this->translate('Toggle Menu') ?>">

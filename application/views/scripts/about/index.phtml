@@ -12,7 +12,7 @@ use ipl\Web\Widget\StateBadge;
 </div>
 <div id="about" class="content">
 
-    <?= $this->img('img/icinga-logo-big.svg', null, array('class' => 'icinga-logo', 'width' => 194)) ?>
+    <?= $this->img('img/icinga-logo-big.svg', null, ['class' => 'icinga-logo', 'width' => 194]) ?>
 
     <section>
         <table class="name-value-table">
@@ -159,8 +159,8 @@ use ipl\Web\Widget\StateBadge;
                     <?= $this->qlink(
                         $this->translate('Configure'),
                         'config/module/',
-                        array('name' => $module->getName()),
-                        array('title' => sprintf($this->translate('Show the overview of the %s module'), $module->getName()))
+                        ['name' => $module->getName()],
+                        ['title' => sprintf($this->translate('Show the overview of the %s module'), $module->getName())]
                     ) ?>
                 <?php endif ?>
                 </td>
@@ -177,9 +177,9 @@ use ipl\Web\Widget\StateBadge;
                 'Icinga GmbH',
                 'https://icinga.com',
                 null,
-                array(
+                [
                     'target' => '_blank'
-                )
+                ]
             ) ?>
         </div>
         <div class="about-social">
@@ -187,11 +187,11 @@ use ipl\Web\Widget\StateBadge;
                 null,
                 'https://www.facebook.com/icinga',
                 null,
-                array(
+                [
                     'target'    => '_blank',
                     'icon'      => 'facebook-squared',
                     'title'     => $this->translate('Icinga on Facebook')
-                )
+                ]
             ) ?>
         </div>
     </footer>

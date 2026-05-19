@@ -22,7 +22,7 @@ $yAxisPages = $yAxisPaginator->getPages('all');
                 <td<?= $xAxisPage === $xAxisPages->current && $yAxisPage === $yAxisPages->current ? ' class="active"' : ''; ?>>
 <?php if ($xAxisPage !== $xAxisPages->current || $yAxisPage !== $yAxisPages->current): ?>
                     <a href="<?= Url::fromRequest()->overwriteParams(
-                        array('page' => $xAxisPage . ',' . $yAxisPage)
+                        ['page' => $xAxisPage . ',' . $yAxisPage]
                     )->getAbsoluteUrl(); ?>" title="<?= sprintf(
                         $fromTo,
                         t('Hosts'),

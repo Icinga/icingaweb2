@@ -38,11 +38,11 @@ if ($this->layout()->inlineLayout) {
                 '',
                 Auth::getInstance()->isAuthenticated() ? 'dashboard' : '',
                 null,
-                array(
+                [
                     'aria-hidden'       => 'true',
                     'data-base-target'  => '_main',
                     'id'                => 'header-logo'
-                )
+                ]
             ); ?>
             <div id="mobile-menu-toggle">
                 <button type="button"><?= $this->icon('menu') ?><?= $this->icon('cancel') ?></button>
