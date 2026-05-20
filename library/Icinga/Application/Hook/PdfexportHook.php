@@ -54,4 +54,13 @@ abstract class PdfexportHook
      * @param   string  $filename   The filename for the generated PDF
      */
     abstract public function streamPdfFromHtml($html, $filename);
+
+    /**
+     * Render the specified HTML to PDF and return the PDF document as a string
+     *
+     * @param ValidHtml $html The HTML to render to PDF
+     *
+     * @return string
+     */
+    abstract public function htmlToPdf($html);
 }
