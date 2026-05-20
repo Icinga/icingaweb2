@@ -5,7 +5,6 @@
 
 namespace Icinga\Controllers;
 
-use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\ClassLoader;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Hook\LoginButtonHook;
@@ -16,17 +15,20 @@ use Icinga\Authentication\LoginButtonForm;
 use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Forms\Authentication\LoginForm;
-use Icinga\Web\Controller;
 use Icinga\Web\Helper\CookieHelper;
 use Icinga\Web\RememberMe;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\LoginPage;
+use ipl\Html\Contract\Form;
+use ipl\Web\Compat\CompatController;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Throwable;
 
 /**
  * Application wide controller for authentication
  */
-class AuthenticationController extends Controller
+class AuthenticationController extends CompatController
 {
     use Database;
 
@@ -49,7 +51,17 @@ class AuthenticationController extends Controller
         if (($requiresSetup = $icinga->requiresSetup()) && $icinga->setupTokenExists()) {
             $this->redirectNow(Url::fromPath('setup'));
         }
-        $form = new LoginForm();
+
+        $form = (new LoginForm())
+            ->setAction(Url::fromRequest()->getAbsoluteUrl())
+            ->on(Form::ON_SUBMIT, function (LoginForm $form) {
+                if ($redirectUrl = $form->getRedirectUrl()) {
+                    $this->redirectNow($redirectUrl);
+                }
+            })
+            ->on(Form::ON_REQUEST, function (ServerRequestInterface $_, LoginForm $form) {
+                $form->onRequest();
+            });
 
         if (RememberMe::hasCookie() && $this->hasDb()) {
             $authenticated = false;
@@ -81,14 +93,16 @@ class AuthenticationController extends Controller
             if ($redirect) {
                 $redirectUrl = Url::fromPath($redirect, [], $this->getRequest());
                 if ($redirectUrl->isExternal()) {
-                    $this->httpBadRequest('nope');
+                    $this->httpBadRequest('Redirect to an external host is not allowed');
                 }
             } else {
-                $redirectUrl = $form->getRedirectUrl();
+                $redirectUrl = $form->createRedirectUrl();
             }
 
             $this->redirectNow($redirectUrl);
         }
+
+        $request = $this->getServerRequest();
         if (! $requiresSetup) {
             $cookies = new CookieHelper($this->getRequest());
             if (! $cookies->isSupported()) {
@@ -99,11 +113,10 @@ class AuthenticationController extends Controller
                     ->sendResponse();
                 exit;
             }
-            $form->handleRequest();
+            $form->handleRequest($request);
         }
 
         $loginButtons = [];
-        $request = ServerRequest::fromGlobals();
 
         foreach (LoginButtonHook::all() as $class => $hook) {
             try {
@@ -115,7 +128,7 @@ class AuthenticationController extends Controller
                         $button,
                         ClassLoader::classBelongsToModule($class) ? ClassLoader::extractModuleName($class) : null
                     ))
-                        ->on(LoginButtonForm::ON_SUCCESS, function () use ($button): void {
+                        ->on(Form::ON_SUBMIT, function () use ($button): void {
                             ($button->onClick)();
                         })
                         ->handleRequest($request);
@@ -126,10 +139,10 @@ class AuthenticationController extends Controller
             }
         }
 
-        $this->view->form = $form;
-        $this->view->loginButtons = $loginButtons;
-        $this->view->defaultTitle = $this->translate('Icinga Web 2 Login');
-        $this->view->requiresSetup = $requiresSetup;
+        // Suppress the rendering of controls bar
+        $this->view->compact = true;
+        $this->setTitle($this->translate('Icinga Web 2 Login'));
+        $this->addContent(new LoginPage($form, $loginButtons, $requiresSetup));
     }
 
     /**
