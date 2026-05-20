@@ -18,12 +18,15 @@ class ConfigForm extends CompatForm
     /** @var string Name of the submit button element */
     protected const SUBMIT_BUTTON_NAME = 'store';
 
+    /** @var string Delimiter used to separate the section and key in the element name */
+    protected string $sectionKeyDelimiter = '__';
+
     /**
      * A list of elements that should not be saved to the configuration
      *
      * @var string[]
      */
-    protected array $ignoredElements = [self::SUBMIT_BUTTON_NAME];
+    protected array $ignoredElements = [];
 
     public function __construct(
         protected Config $config,
@@ -71,7 +74,7 @@ class ConfigForm extends CompatForm
      */
     protected function getIniKeyFromName(string $name): ?array
     {
-        $parts = explode('__', $name, 2);
+        $parts = explode($this->sectionKeyDelimiter, $name, 2);
 
         return count($parts) === 2 ? $parts : null;
     }
