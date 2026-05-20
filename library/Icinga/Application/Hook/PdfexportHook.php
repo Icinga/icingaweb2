@@ -7,6 +7,7 @@ namespace Icinga\Application\Hook;
 
 use Icinga\Application\Hook;
 use Icinga\Application\Logger;
+use ipl\Html\ValidHtml;
 use RuntimeException;
 use Throwable;
 
@@ -44,15 +45,17 @@ abstract class PdfexportHook
     /**
      * Get whether PDF export is supported
      *
-     * @return  bool
+     * @return bool
      */
     abstract public function isSupported();
 
     /**
      * Render the specified HTML to PDF and stream it to the client
      *
-     * @param   string  $html       The HTML to render to PDF
-     * @param   string  $filename   The filename for the generated PDF
+     * @param ValidHtml $html The HTML to render to PDF
+     * @param string $filename The filename for the generated PDF
+     *
+     * @return never
      */
     abstract public function streamPdfFromHtml($html, $filename);
 
