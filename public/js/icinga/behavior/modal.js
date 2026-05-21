@@ -208,7 +208,7 @@
      * @param event {KeyboardEvent} The `keydown` event triggered by pushing a key
      */
     Modal.prototype.onEscapeKey = function(event) {
-        if (event.key !== 'Escape') {
+        if (event.isDefaultPrevented() || event.key !== 'Escape') {
             return;
         }
 
@@ -220,7 +220,7 @@
 
         if (_this.hasChanges) {
             _this.wobble($modal);
-        } else if (! event.isDefaultPrevented()) {
+        } else {
             _this.hide($modal);
         }
     };
