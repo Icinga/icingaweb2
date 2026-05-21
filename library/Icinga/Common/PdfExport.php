@@ -5,7 +5,6 @@
 
 namespace Icinga\Common;
 
-use Icinga\Application\Hook;
 use Icinga\Application\Hook\PdfexportHook;
 use Icinga\Application\Icinga;
 use Icinga\Date\DateFormatter;
