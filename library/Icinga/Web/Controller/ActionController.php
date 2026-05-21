@@ -7,8 +7,8 @@ namespace Icinga\Web\Controller;
 
 use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
+use Icinga\Application\Hook;
 use Icinga\Application\Hook\RequestHook;
-use Icinga\Application\Modules\Module;
 use Icinga\Authentication\Auth;
 use Icinga\Common\PdfExport;
 use Icinga\Exception\Http\HttpMethodNotAllowedException;
@@ -569,7 +569,7 @@ class ActionController extends Zend_Controller_Action
 
     protected function sendAsPdf()
     {
-        if (Module::exists('pdfexport')) {
+        if (Hook::has('Pdfexport')) {
             $this->newSendAsPdf();
         } else {
             $pdf = new Pdf();

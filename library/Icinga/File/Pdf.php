@@ -12,7 +12,7 @@ use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Util\Environment;
 use Icinga\Web\FileCache;
-use Icinga\Web\Hook;
+use Icinga\Application\Hook;
 use Icinga\Web\Url;
 
 class Pdf

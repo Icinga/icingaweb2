@@ -33,8 +33,8 @@ trait PdfExport
      */
     protected function sendAsPdf()
     {
-        if (! Icinga::app()->getModuleManager()->has('pdfexport')) {
-            throw new ConfigurationError('The pdfexport module is required for exports to PDF');
+        if (Hook::has('Pdfexport')) {
+            throw new ConfigurationError('A module implementing the pdfexport hook is required for exports to PDF');
         }
 
         putenv('ICINGAWEB_EXPORT_FORMAT=pdf');
