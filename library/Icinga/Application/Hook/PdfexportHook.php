@@ -29,11 +29,9 @@ abstract class PdfexportHook
 
         foreach (Hook::all('Pdfexport') as $exporter) {
             try {
-                if (! $exporter->isSupported()) {
-                    continue;
+                if ($exporter->isSupported()) {
+                    return $exporter;
                 }
-
-                return $exporter;
             } catch (Throwable $e) {
                 Logger::error('PDF exporter reported an error during support check: %s', $e);
             }
