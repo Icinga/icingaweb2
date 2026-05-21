@@ -7,6 +7,7 @@ namespace Icinga\Application\Hook;
 
 use Icinga\Application\Hook;
 use Icinga\Application\Logger;
+use Icinga\Exception\IcingaException;
 use ipl\Html\ValidHtml;
 use RuntimeException;
 use Throwable;
@@ -23,21 +24,18 @@ abstract class PdfexportHook
      */
     public static function first()
     {
-        if (! Hook::has('Pdfexport')) {
-            throw new RuntimeException('No PDF exporter available');
-        }
-
         foreach (Hook::all('Pdfexport') as $exporter) {
             try {
                 if ($exporter->isSupported()) {
                     return $exporter;
                 }
             } catch (Throwable $e) {
-                Logger::error('PDF exporter reported an error during support check: %s', $e);
+                Logger::error('PDF exporter reported an error during support check: %s', $e->getMessage());
+                Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
             }
         }
 
-        throw new RuntimeException('Not supported PDF exporter available');
+        throw new RuntimeException('No supported PDF exporter available');
     }
 
     /**
