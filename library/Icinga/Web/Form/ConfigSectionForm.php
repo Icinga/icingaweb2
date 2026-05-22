@@ -269,7 +269,7 @@ class ConfigSectionForm extends ConfigForm
         }
 
         $uniqueValidator = new CallbackValidator(function ($value, CallbackValidator $validator) {
-            if (empty($value)) {
+            if ((string) $value === '') {
                 return true;
             }
 
@@ -307,7 +307,7 @@ class ConfigSectionForm extends ConfigForm
         if ($this->isCreateForm()) {
             $this->section = $this->getValue(static::NAME_ELEMENT_NAME);
 
-            if (empty($this->section)) {
+            if ($this->section === '') {
                 throw new ProgrammingError('Section must be set before saving a new configuration section.');
             }
         }
