@@ -7,10 +7,10 @@ namespace Icinga\Web\Form;
 
 use Exception;
 use Icinga\Application\Config;
-use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\ShowConfiguration;
 use ipl\Html\Contract\FormSubmitElement;
 use ipl\Validator\CallbackValidator;
+use LogicException;
 
 /**
  * Base class for configuration forms that manage a single INI section
@@ -206,12 +206,12 @@ class ConfigSectionForm extends ConfigForm
      *
      * @return void
      *
-     * @throws ProgrammingError
+     * @throws LogicException
      */
     protected function handleRename(): void
     {
         if ($this->section === null) {
-            throw new ProgrammingError('Section must be set before renaming a configuration section.');
+            throw new LogicException('Section must be set before renaming a configuration section.');
         }
 
         $newName = $this->getPopulatedValue(static::NAME_ELEMENT_NAME);
@@ -308,7 +308,7 @@ class ConfigSectionForm extends ConfigForm
             $this->section = $this->getValue(static::NAME_ELEMENT_NAME);
 
             if ($this->section === '') {
-                throw new ProgrammingError('Section must be set before saving a new configuration section.');
+                throw new LogicException('Section must be set before saving a new configuration section.');
             }
         }
 
