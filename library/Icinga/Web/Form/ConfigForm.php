@@ -70,7 +70,7 @@ class ConfigForm extends CompatForm
      *
      * @param string $name The element name
      *
-     * @return array{string, string}|null
+     * @return ?array<string, string>
      */
     protected function getIniKeyFromName(string $name): ?array
     {
