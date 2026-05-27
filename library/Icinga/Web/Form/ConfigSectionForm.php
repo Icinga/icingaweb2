@@ -119,12 +119,20 @@ class ConfigSectionForm extends ConfigForm
      * @param bool $allowDeletion
      *
      * @return static
+     *
+     * @throws LogicException If the form has already been assembled or if the form is a creation form
      */
     public function setAllowDeletion(bool $allowDeletion = true): static
     {
-        if (! $this->hasBeenAssembled) {
-            $this->allowDeletion = $allowDeletion;
+        if ($this->isCreateForm()) {
+            throw new LogicException('Can never delete a new configuration section.');
         }
+
+        if ($this->hasBeenAssembled) {
+            throw new LogicException('Form has already been assembled.');
+        }
+
+        $this->allowDeletion = $allowDeletion;
 
         return $this;
     }
@@ -151,12 +159,20 @@ class ConfigSectionForm extends ConfigForm
      * @param bool $allowRename Whether the form is allowed to rename the configuration section
      *
      * @return $this
+     *
+     * @throws LogicException If the form has already been assembled or if the form is a creation form
      */
     public function setAllowRename(bool $allowRename = true): static
     {
-        if (! $this->hasBeenAssembled) {
-            $this->allowRename = $allowRename;
+        if ($this->isCreateForm()) {
+            throw new LogicException('Can never rename a new configuration section.');
         }
+
+        if ($this->hasBeenAssembled) {
+            throw new LogicException('Form has already been assembled.');
+        }
+
+        $this->allowRename = $allowRename;
 
         return $this;
     }
