@@ -8,6 +8,7 @@ namespace Tests\Icinga\Web\Form;
 use Icinga\Application\Config;
 use Icinga\Test\BaseTestCase;
 use Icinga\Web\Form\ConfigSectionForm;
+use LogicException;
 
 class MockConfigSectionForm extends ConfigSectionForm
 {
@@ -66,6 +67,23 @@ class ConfigSectionFormTest extends BaseTestCase
         $this->assertSame($form, $form->setAllowDeletion(false));
     }
 
+    public function testSetAllowDeletionThrowsOnCreateForm(): void
+    {
+        $this->expectException(LogicException::class);
+
+        $form = $this->makeCreateForm();
+        $form->setAllowDeletion(false);
+    }
+
+    public function testSetAllowDeletionThrowsAfterAssembled(): void
+    {
+        $this->expectException(LogicException::class);
+
+        $form = $this->makeEditForm();
+        $form->ensureAssembled();
+        $form->setAllowDeletion(false);
+    }
+
     public function testAllowRenameIsTrueByDefaultForEditForm(): void
     {
         $form = $this->makeEditForm();
@@ -83,6 +101,23 @@ class ConfigSectionFormTest extends BaseTestCase
     {
         $form = $this->makeEditForm();
         $this->assertSame($form, $form->setAllowRename(false));
+    }
+
+    public function testSetAllowRenameThrowsOnCreateForm(): void
+    {
+        $this->expectException(LogicException::class);
+
+        $form = $this->makeCreateForm();
+        $form->setAllowRename(false);
+    }
+
+    public function testSetAllowRenameThrowsAfterAssembled(): void
+    {
+        $this->expectException(LogicException::class);
+
+        $form = $this->makeEditForm();
+        $form->ensureAssembled();
+        $form->setAllowRename(false);
     }
 
     public function testGetIniKeyFromNameReturnsSectionAndKeyForEditForm(): void
