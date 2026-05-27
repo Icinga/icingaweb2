@@ -72,12 +72,20 @@ class ConfigSectionForm extends ConfigForm
 
         $this->isCreateForm = $section === null;
 
-        $this->on(static::ON_SENT, function () {
-            if ($this->shouldDelete()) {
-                $this->handleDelete();
-                $this->emit(static::ON_DELETE, [$this]);
-            }
-        });
+        $this->on(static::ON_SENT, $this->onSent(...));
+    }
+
+    /**
+     * Handle the form data that has been sent
+     *
+     * @return void
+     */
+    protected function onSent(): void
+    {
+        if ($this->shouldDelete()) {
+            $this->handleDelete();
+            $this->emit(static::ON_DELETE, [$this]);
+        }
     }
 
     protected function populateFromConfig(): void
@@ -100,11 +108,6 @@ class ConfigSectionForm extends ConfigForm
         return parent::isValidEvent($event);
     }
 
-    /**
-     * Is the form used for creating a new configuration section?
-     *
-     * @return bool
-     */
     public function isCreateForm(): bool
     {
         return $this->isCreateForm;
@@ -119,7 +122,9 @@ class ConfigSectionForm extends ConfigForm
      */
     public function setAllowDeletion(bool $allowDeletion = true): static
     {
-        $this->allowDeletion = $allowDeletion;
+        if (! $this->hasBeenAssembled) {
+            $this->allowDeletion = $allowDeletion;
+        }
 
         return $this;
     }
@@ -149,7 +154,9 @@ class ConfigSectionForm extends ConfigForm
      */
     public function setAllowRename(bool $allowRename = true): static
     {
-        $this->allowRename = $allowRename;
+        if (! $this->hasBeenAssembled) {
+            $this->allowRename = $allowRename;
+        }
 
         return $this;
     }
@@ -215,9 +222,8 @@ class ConfigSectionForm extends ConfigForm
         }
 
         $newName = $this->getPopulatedValue(static::NAME_ELEMENT_NAME);
-        $section = $this->config->getSection($this->section);
         $this->config->removeSection($this->section);
-        $this->config->setSection($newName, $section);
+        $this->config->setSection($newName, $this->config->getSection($this->section));
         $this->section = $newName;
     }
 
@@ -263,12 +269,8 @@ class ConfigSectionForm extends ConfigForm
         }
 
         $params['required'] = true;
-
-        if (! isset($params['label'])) {
-            $params['label'] = $this->translate('Name');
-        }
-
-        $uniqueValidator = new CallbackValidator(function ($value, CallbackValidator $validator) {
+        $params['label'] ??= $this->translate('Name');
+        $params['validators'][] = new CallbackValidator(function ($value, CallbackValidator $validator) {
             if ((string) $value === '') {
                 return true;
             }
@@ -284,11 +286,6 @@ class ConfigSectionForm extends ConfigForm
 
             return true;
         });
-
-        if (! isset($params['validators'])) {
-            $params['validators'] = [];
-        }
-        $params['validators'][] = $uniqueValidator;
 
         $this->addElement('text', static::NAME_ELEMENT_NAME, $params);
     }
