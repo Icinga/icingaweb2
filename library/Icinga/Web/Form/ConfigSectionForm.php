@@ -222,8 +222,8 @@ class ConfigSectionForm extends ConfigForm
         }
 
         $newName = $this->getPopulatedValue(static::NAME_ELEMENT_NAME);
-        $this->config->removeSection($this->section);
         $this->config->setSection($newName, $this->config->getSection($this->section));
+        $this->config->removeSection($this->section);
         $this->section = $newName;
     }
 
