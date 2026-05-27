@@ -25,6 +25,11 @@ class MockConfigForm extends ConfigForm
     {
         $this->sectionKeyDelimiter = $delimiter;
     }
+
+    public function exposeGetConfigValue(string $key, $default = null): mixed
+    {
+        return $this->getConfigValue($key, $default);
+    }
 }
 
 class ConfigFormTest extends BaseTestCase
@@ -75,39 +80,39 @@ class ConfigFormTest extends BaseTestCase
     public function testGetConfigValueReturnsValueFromConfig(): void
     {
         $form = $this->makeForm(['section' => ['key' => 'value']]);
-        $this->assertSame('value', $form->getConfigValue('section__key'));
+        $this->assertSame('value', $form->exposeGetConfigValue('section__key'));
     }
 
     public function testGetConfigValueReturnsNullByDefault(): void
     {
         $form = $this->makeForm(['section' => []]);
-        $this->assertNull($form->getConfigValue('section__missing'));
+        $this->assertNull($form->exposeGetConfigValue('section__missing'));
     }
 
     public function testGetConfigValueReturnsProvidedDefault(): void
     {
         $form = $this->makeForm(['section' => []]);
-        $this->assertSame('fallback', $form->getConfigValue('section__missing', 'fallback'));
+        $this->assertSame('fallback', $form->exposeGetConfigValue('section__missing', 'fallback'));
     }
 
     public function testGetConfigValueReturnsDefaultWhenNameHasNoDelimiter(): void
     {
         $form = $this->makeForm();
-        $this->assertSame('default', $form->getConfigValue('nodelimiter', 'default'));
+        $this->assertSame('default', $form->exposeGetConfigValue('nodelimiter', 'default'));
     }
 
     public function testGetConfigValueReturnsDefaultForMissingSection(): void
     {
         $form = $this->makeForm();
-        $this->assertSame('default', $form->getConfigValue('missing__key', 'default'));
+        $this->assertSame('default', $form->exposeGetConfigValue('missing__key', 'default'));
     }
 
     public function testGetConfigValueUsesCustomDelimiter(): void
     {
         $form = $this->makeForm(['section' => ['key' => 'value']]);
         $form->exposeSetSectionKeyDelimiter('|');
-        $this->assertSame('value', $form->getConfigValue('section|key'));
-        $this->assertNull($form->getConfigValue('section__key'));
+        $this->assertSame('value', $form->exposeGetConfigValue('section|key'));
+        $this->assertNull($form->exposeGetConfigValue('section__key'));
     }
 
     public function testSubmitButtonIsAddedAfterAssembly(): void

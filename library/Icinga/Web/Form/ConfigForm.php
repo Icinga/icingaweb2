@@ -87,7 +87,7 @@ class ConfigForm extends CompatForm
      *
      * @return mixed The value of the configuration key or the default value
      */
-    public function getConfigValue(string $name, mixed $default = null): mixed
+    protected function getConfigValue(string $name, mixed $default = null): mixed
     {
         if (($parts = $this->getIniKeyFromName($name)) === null) {
             return $default;
