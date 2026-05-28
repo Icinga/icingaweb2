@@ -63,23 +63,7 @@ class ConfigSectionForm extends ConfigForm
         protected ?string $section = null,
     ) {
         parent::__construct($config);
-
         $this->isCreateForm = $section === null;
-
-        $this->on(static::ON_SENT, $this->onSent(...));
-    }
-
-    /**
-     * Handle the form data that has been sent
-     *
-     * @return void
-     */
-    protected function onSent(): void
-    {
-        if ($this->shouldDelete()) {
-            $this->handleDelete();
-            $this->emit(static::ON_DELETE, [$this]);
-        }
     }
 
     protected function populateFromConfig(): void
@@ -100,6 +84,15 @@ class ConfigSectionForm extends ConfigForm
         }
 
         return parent::isValidEvent($event);
+    }
+
+    public function isValid(): bool
+    {
+        if ($this->hasBeenSubmitted() && $this->shouldDelete()) {
+            return true;
+        }
+
+        return parent::isValid();
     }
 
     public function isCreateForm(): bool
@@ -230,11 +223,17 @@ class ConfigSectionForm extends ConfigForm
         if ($this->section === null) {
             throw new LogicException('Section must be set before renaming a configuration section.');
         }
-
+        $oldName = $this->section;
         $newName = $this->getPopulatedValue(static::NAME_ELEMENT_NAME);
-        $this->config->setSection($newName, $this->config->getSection($this->section));
-        $this->config->removeSection($this->section);
+        $this->config->setSection($newName, $this->config->getSection($oldName));
+        $this->config->removeSection($oldName);
         $this->section = $newName;
+        parent::onSuccess();
+        $this->emit(static::ON_RENAME, [
+            $this,
+            $oldName,
+            $this->section,
+        ]);
     }
 
     /**
@@ -322,23 +321,13 @@ class ConfigSectionForm extends ConfigForm
             if ($this->section === '') {
                 throw new LogicException('Section must be set before saving a new configuration section.');
             }
-        }
-
-        $oldSection = $this->section;
-        $isRename = $this->shouldRename();
-
-        if ($isRename) {
+            parent::onSuccess();
+        } elseif ($this->shouldDelete()) {
+            $this->handleDelete();
+        } elseif ($this->shouldRename()) {
             $this->handleRename();
-        }
-
-        parent::onSuccess();
-
-        if ($isRename) {
-            $this->emit(static::ON_RENAME, [
-                $this,
-                $oldSection,
-                $this->section,
-            ]);
+        } else {
+            parent::onSuccess();
         }
     }
 
@@ -379,14 +368,27 @@ class ConfigSectionForm extends ConfigForm
         }
     }
 
+    public function hasBeenSubmitted()
+    {
+        if (! $this->hasBeenSent()) {
+            return false;
+        }
+
+        if ($this->shouldDelete()) {
+            return true;
+        }
+
+        return parent::hasBeenSubmitted();
+    }
+
     /**
      * Check if the form should rename the section for this request
      *
      * @return bool
      */
-    private function shouldRename(): bool
+    protected function shouldRename(): bool
     {
-        if (! $this->allowRename() || ! $this->hasBeenSubmitted() || ! $this->isValid()) {
+        if (! $this->allowRename()) {
             return false;
         }
 
