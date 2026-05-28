@@ -9,6 +9,7 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Web\Widget\ShowConfiguration;
 use ipl\Html\Contract\FormSubmitElement;
+use ipl\Stdlib\Str;
 use ipl\Validator\CallbackValidator;
 use LogicException;
 
@@ -287,7 +288,7 @@ class ConfigSectionForm extends ConfigForm
         $params['required'] = true;
         $params['label'] ??= $this->translate('Name');
         $params['validators'][] = new CallbackValidator(function ($value, CallbackValidator $validator) {
-            if ((string) $value === '') {
+            if (Str::isEmpty($value)) {
                 return true;
             }
 

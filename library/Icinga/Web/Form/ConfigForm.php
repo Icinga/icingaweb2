@@ -8,6 +8,7 @@ namespace Icinga\Web\Form;
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Web\Widget\ShowConfiguration;
+use ipl\Stdlib\Str;
 use ipl\Web\Compat\CompatForm;
 
 /**
@@ -116,7 +117,7 @@ class ConfigForm extends CompatForm
 
             $value = $this->getPopulatedValue($element->getName());
             $configSection = $this->config->getSection($section);
-            if ((string) $value === '') {
+            if (Str::isEmpty($value)) {
                 unset($configSection[$key]);
             } else {
                 $configSection->$key = $value;
