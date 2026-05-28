@@ -8,6 +8,7 @@ namespace Tests\Icinga\Web\Form;
 use Icinga\Application\Config;
 use Icinga\Test\BaseTestCase;
 use Icinga\Web\Form\ConfigSectionForm;
+use Icinga\Web\Session;
 use LogicException;
 
 class MockConfigSectionForm extends ConfigSectionForm
@@ -27,12 +28,14 @@ class ConfigSectionFormTest extends BaseTestCase
 {
     private function makeCreateForm(array $configData = []): MockConfigSectionForm
     {
-        return new MockConfigSectionForm(Config::fromArray($configData));
+        return (new MockConfigSectionForm(Config::fromArray($configData)))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId());
     }
 
     private function makeEditForm(string $section = 'mysection', array $configData = []): MockConfigSectionForm
     {
-        return new MockConfigSectionForm(Config::fromArray($configData), $section);
+        return (new MockConfigSectionForm(Config::fromArray($configData), $section))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId());
     }
 
     public function testIsCreateFormWhenSectionIsNull(): void
@@ -202,7 +205,7 @@ class ConfigSectionFormTest extends BaseTestCase
         $form = $this->makeEditForm();
         $form->ensureAssembled();
         $content = $form->getContent();
-        $this->assertTrue(count($content) > 1);
+        $this->assertEquals(3, count($content));
         $this->assertEquals('name', $content[0]->getName());
     }
 
@@ -212,6 +215,6 @@ class ConfigSectionFormTest extends BaseTestCase
         $form->exposeAddSectionNameElement();
         $form->ensureAssembled();
         $content = $form->getContent();
-        $this->assertEquals(2, count($content));
+        $this->assertEquals(3, count($content));
     }
 }

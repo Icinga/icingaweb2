@@ -8,6 +8,7 @@ namespace Tests\Icinga\Web\Form;
 use Icinga\Application\Config;
 use Icinga\Test\BaseTestCase;
 use Icinga\Web\Form\ConfigForm;
+use Icinga\Web\Session;
 
 class MockConfigForm extends ConfigForm
 {
@@ -31,7 +32,8 @@ class ConfigFormTest extends BaseTestCase
 {
     private function makeForm(array $configData = []): MockConfigForm
     {
-        return new MockConfigForm(Config::fromArray($configData));
+        return (new MockConfigForm(Config::fromArray($configData)))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId());
     }
 
     public function testGetIniKeyFromNameSplitsOnDoubleUnderscore(): void

@@ -9,6 +9,7 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Web\Widget\ShowConfiguration;
 use ipl\Stdlib\Str;
+use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Compat\CompatForm;
 
 /**
@@ -16,6 +17,8 @@ use ipl\Web\Compat\CompatForm;
  */
 class ConfigForm extends CompatForm
 {
+    use CsrfCounterMeasure;
+
     /** @var string Name of the submit button element */
     protected const SUBMIT_BUTTON_NAME = 'store';
 
@@ -143,6 +146,8 @@ class ConfigForm extends CompatForm
 
     protected function addRequiredElements(): void
     {
+        $this->addCsrfCounterMeasure();
+
         $this->addElement('submit', static::SUBMIT_BUTTON_NAME, [
             'label' => $this->translate('Store'),
             'ignore' => true,

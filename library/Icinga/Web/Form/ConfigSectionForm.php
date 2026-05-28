@@ -89,7 +89,12 @@ class ConfigSectionForm extends ConfigForm
     public function isValid(): bool
     {
         if ($this->hasBeenSubmitted() && $this->shouldDelete()) {
-            return true;
+            if (! $this->hasElement('CSRFToken')) {
+                return true;
+            }
+            $csrf = $this->getElement('CSRFToken');
+
+            return $csrf->isValid();
         }
 
         return parent::isValid();
