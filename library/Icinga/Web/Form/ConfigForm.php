@@ -22,13 +22,6 @@ class ConfigForm extends CompatForm
     /** @var string Delimiter used to separate the section and key in the element name */
     protected string $sectionKeyDelimiter = '__';
 
-    /**
-     * A list of elements that should not be saved to the configuration
-     *
-     * @var string[]
-     */
-    protected array $ignoredElements = [];
-
     public function __construct(
         protected Config $config,
     ) {
@@ -107,16 +100,12 @@ class ConfigForm extends CompatForm
      */
     protected function save(): void
     {
-        foreach ($this->getElements() as $element) {
-            if (in_array($element->getName(), $this->ignoredElements)) {
-                continue;
-            }
-            if (($parts = $this->getIniKeyFromName($element->getName())) === null) {
+        foreach ($this->getValues() as $element => $value) {
+            if (($parts = $this->getIniKeyFromName($element)) === null) {
                 continue;
             }
             [$section, $key] = $parts;
 
-            $value = $this->getPopulatedValue($element->getName());
             $configSection = $this->config->getSection($section);
             if (Str::isEmpty($value)) {
                 unset($configSection[$key]);
@@ -156,6 +145,7 @@ class ConfigForm extends CompatForm
     {
         $this->addElement('submit', static::SUBMIT_BUTTON_NAME, [
             'label' => $this->translate('Store'),
+            'ignore' => true,
         ]);
     }
 }

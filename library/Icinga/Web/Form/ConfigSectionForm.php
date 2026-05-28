@@ -38,13 +38,6 @@ class ConfigSectionForm extends ConfigForm
     public const ON_RENAME = 'rename';
 
     /**
-     * A list of elements that should not be saved to the configuration
-     *
-     * @var string[]
-     */
-    protected array $ignoredElements = [self::SUBMIT_BUTTON_NAME, self::DELETE_BUTTON_NAME, self::NAME_ELEMENT_NAME];
-
-    /**
      * Whether the form is used for creating a new configuration section
      *
      * @var bool
@@ -290,6 +283,7 @@ class ConfigSectionForm extends ConfigForm
         }
 
         $params['required'] = true;
+        $params['ignore'] = true;
         $params['label'] ??= $this->translate('Name');
         $params['validators'][] = new CallbackValidator(function ($value, CallbackValidator $validator) {
             if (Str::isEmpty($value)) {
@@ -359,6 +353,7 @@ class ConfigSectionForm extends ConfigForm
                 [
                     'label' => $this->translate('Delete'),
                     'formnovalidate' => true,
+                    'ignore' => true,
                 ],
             );
             $this->registerElement($deleteButton);
