@@ -38,6 +38,7 @@ class ConfigForm extends CompatForm
     {
         if (! $this->hasBeenAssembled) {
             parent::ensureAssembled();
+            $this->addRequiredElements();
             $this->populateFromConfig();
         }
 
@@ -151,12 +152,7 @@ class ConfigForm extends CompatForm
         }
     }
 
-    /**
-     * Add the store button to the form
-     *
-     * @return void
-     */
-    protected function addButtonElements(): void
+    protected function addRequiredElements(): void
     {
         $this->addElement('submit', static::SUBMIT_BUTTON_NAME, [
             'label' => $this->translate('Store'),

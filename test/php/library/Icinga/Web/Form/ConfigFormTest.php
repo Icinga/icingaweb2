@@ -11,11 +11,6 @@ use Icinga\Web\Form\ConfigForm;
 
 class MockConfigForm extends ConfigForm
 {
-    protected function assemble(): void
-    {
-        $this->addButtonElements();
-    }
-
     public function exposeGetIniKeyFromName(string $name): ?array
     {
         return $this->getIniKeyFromName($name);

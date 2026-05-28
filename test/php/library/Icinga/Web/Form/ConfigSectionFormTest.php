@@ -12,15 +12,14 @@ use LogicException;
 
 class MockConfigSectionForm extends ConfigSectionForm
 {
-    protected function assemble(): void
-    {
-        $this->addSectionNameElement();
-        $this->addButtonElements();
-    }
-
     public function exposeGetIniKeyFromName(string $name): ?array
     {
         return $this->getIniKeyFromName($name);
+    }
+
+    public function exposeAddSectionNameElement(array $params = []): void
+    {
+        $this->addSectionNameElement($params);
     }
 }
 
@@ -196,5 +195,23 @@ class ConfigSectionFormTest extends BaseTestCase
         $form->setAllowRename(false);
         $form->ensureAssembled();
         $this->assertFalse($form->hasElement('name'));
+    }
+
+    public function testAutomaticNameElementIsAddedInFirstPlace(): void
+    {
+        $form = $this->makeEditForm();
+        $form->ensureAssembled();
+        $content = $form->getContent();
+        $this->assertTrue(count($content) > 1);
+        $this->assertEquals('name', $content[0]->getName());
+    }
+
+    public function testNameElementIsNotAddedTwice(): void
+    {
+        $form = $this->makeEditForm();
+        $form->exposeAddSectionNameElement();
+        $form->ensureAssembled();
+        $content = $form->getContent();
+        $this->assertEquals(2, count($content));
     }
 }

@@ -285,6 +285,10 @@ class ConfigSectionForm extends ConfigForm
             return;
         }
 
+        if ($this->hasElement(static::NAME_ELEMENT_NAME)) {
+            return;
+        }
+
         $params['required'] = true;
         $params['label'] ??= $this->translate('Name');
         $params['validators'][] = new CallbackValidator(function ($value, CallbackValidator $validator) {
@@ -344,26 +348,40 @@ class ConfigSectionForm extends ConfigForm
         }
     }
 
-    protected function addButtonElements(): void
+    protected function addRequiredElements(): void
     {
-        parent::addButtonElements();
+        parent::addRequiredElements();
 
-        if (! $this->allowDeletion()) {
-            return;
+        if ($this->allowDeletion()) {
+            $deleteButton = $this->createElement(
+                'submit',
+                static::DELETE_BUTTON_NAME,
+                [
+                    'label' => $this->translate('Delete'),
+                    'formnovalidate' => true,
+                ],
+            );
+            $this->registerElement($deleteButton);
+            $this->getElement(static::SUBMIT_BUTTON_NAME)
+                ->getWrapper()
+                ->prepend($deleteButton);
         }
 
-        $deleteButton = $this->createElement(
-            'submit',
-            static::DELETE_BUTTON_NAME,
-            [
-                'label' => $this->translate('Delete'),
-                'formnovalidate' => true,
-            ],
-        );
-        $this->registerElement($deleteButton);
-        $this->getElement(static::SUBMIT_BUTTON_NAME)
-            ->getWrapper()
-            ->prepend($deleteButton);
+        if (($this->isCreateForm() || $this->allowRename()) && ! $this->hasElement(static::NAME_ELEMENT_NAME)) {
+            $this->addSectionNameElement();
+
+            $content = $this->getContent();
+            $index = array_find_key($content, function ($element) {
+                return $element->getName() === static::NAME_ELEMENT_NAME;
+            });
+            if ($index === false) {
+                throw new LogicException('Could not find section name element');
+            }
+            $element = $content[$index];
+            unset($content[$index]);
+            array_unshift($content, $element);
+            $this->setContent($content);
+        }
     }
 
     /**
