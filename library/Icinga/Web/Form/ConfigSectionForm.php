@@ -1,0 +1,402 @@
+<?php
+
+// SPDX-FileCopyrightText: 2026 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+namespace Icinga\Web\Form;
+
+use Exception;
+use Icinga\Application\Config;
+use Icinga\Web\Widget\ShowConfiguration;
+use ipl\Html\Contract\FormSubmitElement;
+use ipl\Stdlib\Str;
+use ipl\Validator\CallbackValidator;
+use LogicException;
+
+/**
+ * Base class for configuration forms that manage a single INI section
+ *
+ * Extends {@see ConfigForm} with support for creating, renaming, and deleting
+ * named sections. Element names map directly to keys within the section rather
+ * than encoding the section via the {@see ConfigForm} double-underscore convention.
+ *
+ * Emits {@see self::ON_DELETE} after a section is deleted and {@see self::ON_RENAME}
+ * after a section is renamed.
+ */
+class ConfigSectionForm extends ConfigForm
+{
+    /** @var string Name of the delete button element */
+    protected const DELETE_BUTTON_NAME = 'delete';
+
+    /** @var string Name of the element containing the section name */
+    protected const NAME_ELEMENT_NAME = 'name';
+
+    /** @var string Event emitted when the form has successfully deleted a configuration section */
+    public const ON_DELETE = 'delete';
+
+    /** @var string Event emitted when the form has successfully renamed a configuration section */
+    public const ON_RENAME = 'rename';
+
+    /**
+     * Whether the form is used for creating a new configuration section
+     *
+     * @var bool
+     */
+    protected bool $isCreateForm = false;
+
+    /**
+     * Whether the form allows deletion of the configuration section
+     *
+     * @var bool
+     */
+    protected bool $allowDeletion = true;
+
+    /**
+     * Whether the form allows renaming of the configuration section
+     *
+     * @var bool
+     */
+    protected bool $allowRename = true;
+
+    public function __construct(
+        Config $config,
+        protected ?string $section = null,
+    ) {
+        parent::__construct($config);
+        $this->isCreateForm = $section === null;
+    }
+
+    protected function populateFromConfig(): void
+    {
+        if ($this->allowRename()) {
+            $this->populate([
+                static::NAME_ELEMENT_NAME => $this->getPopulatedValue(static::NAME_ELEMENT_NAME, $this->section),
+            ]);
+        }
+
+        parent::populateFromConfig();
+    }
+
+    public function isValidEvent($event): bool
+    {
+        if ($event === static::ON_DELETE || $event === static::ON_RENAME) {
+            return true;
+        }
+
+        return parent::isValidEvent($event);
+    }
+
+    public function isValid(): bool
+    {
+        if ($this->hasBeenSubmitted() && $this->shouldDelete()) {
+            if (! $this->hasElement('CSRFToken')) {
+                return true;
+            }
+            $csrf = $this->getElement('CSRFToken');
+
+            return $csrf->isValid();
+        }
+
+        return parent::isValid();
+    }
+
+    public function isCreateForm(): bool
+    {
+        return $this->isCreateForm;
+    }
+
+    /**
+     * Set whether the form allows deletion of the configuration section
+     *
+     * @param bool $allowDeletion
+     *
+     * @return static
+     *
+     * @throws LogicException If the form has already been assembled or if the form is a creation form
+     */
+    public function setAllowDeletion(bool $allowDeletion = true): static
+    {
+        if ($this->isCreateForm()) {
+            throw new LogicException('Can never delete a new configuration section.');
+        }
+
+        if ($this->hasBeenAssembled) {
+            throw new LogicException('Form has already been assembled.');
+        }
+
+        $this->allowDeletion = $allowDeletion;
+
+        return $this;
+    }
+
+    /**
+     * Whether the form is allowed to delete the configuration section
+     *
+     * Note: Creation forms are never allowed to be deleted.
+     *
+     * @return bool
+     */
+    public function allowDeletion(): bool
+    {
+        if ($this->isCreateForm()) {
+            return false;
+        }
+
+        return $this->allowDeletion;
+    }
+
+    /**
+     * Set the ability to rename the configuration section
+     *
+     * @param bool $allowRename Whether the form is allowed to rename the configuration section
+     *
+     * @return $this
+     *
+     * @throws LogicException If the form has already been assembled or if the form is a creation form
+     */
+    public function setAllowRename(bool $allowRename = true): static
+    {
+        if ($this->isCreateForm()) {
+            throw new LogicException('Can never rename a new configuration section.');
+        }
+
+        if ($this->hasBeenAssembled) {
+            throw new LogicException('Form has already been assembled.');
+        }
+
+        $this->allowRename = $allowRename;
+
+        return $this;
+    }
+
+    /**
+     * Whether the form is allowed to rename the configuration section
+     *
+     * Note: Creation forms are never allowed to be rename forms.
+     *
+     * @return bool
+     */
+    public function allowRename(): bool
+    {
+        if ($this->isCreateForm()) {
+            return false;
+        }
+
+        return $this->allowRename;
+    }
+
+    /**
+     * Handle the deletion of the configuration section
+     *
+     * This method is called when the delete button is pressed.
+     * It deletes the underlying section regardless of whether form validation passed.
+     * This is done to allow for deletion of sections that contain invalid configuration.
+     *
+     * @return void
+     */
+    protected function handleDelete(): void
+    {
+        try {
+            $this->config->removeSection($this->section);
+            $this->config->saveIni();
+        } catch (Exception $e) {
+            $content = $this->getContent();
+            array_unshift(
+                $content,
+                new ShowConfiguration(
+                    $e,
+                    $this->config,
+                )
+            );
+            $this->setContent($content);
+            throw $e;
+        }
+    }
+
+    /**
+     * Handle the renaming of the configuration section
+     *
+     * This method is called when the rename button is pressed.
+     * It renames the underlying section and updates the section name in the form.
+     *
+     * @return void
+     *
+     * @throws LogicException
+     */
+    protected function handleRename(): void
+    {
+        if ($this->section === null) {
+            throw new LogicException('Section must be set before renaming a configuration section.');
+        }
+        $oldName = $this->section;
+        $newName = $this->getPopulatedValue(static::NAME_ELEMENT_NAME);
+        $this->config->setSection($newName, $this->config->getSection($oldName));
+        $this->config->removeSection($oldName);
+        $this->section = $newName;
+        parent::onSuccess();
+        $this->emit(static::ON_RENAME, [
+            $this,
+            $oldName,
+            $this->section,
+        ]);
+    }
+
+    /**
+     * Check if the delete button has been pressed and the section should be deleted
+     *
+     * @return bool
+     */
+    public function shouldDelete(): bool
+    {
+        if (! $this->hasDeleteButton()) {
+            return false;
+        }
+
+        $deleteButton = $this->getElement(static::DELETE_BUTTON_NAME);
+        if (! ($deleteButton instanceof FormSubmitElement)) {
+            return false;
+        }
+
+        return $deleteButton->hasBeenPressed();
+    }
+
+    public function hasDeleteButton(): bool
+    {
+        return $this->hasElement(static::DELETE_BUTTON_NAME);
+    }
+
+    /**
+     * Add the section name element to the form
+     *
+     * This element is used to create a new configuration section with the given
+     * name. The added element automatically validates that the name is unique
+     * within the configuration.
+     *
+     * @param array $params Additional parameters to pass to the element constructor
+     *
+     * @return void
+     */
+    protected function addSectionNameElement(array $params = []): void
+    {
+        if (! $this->isCreateForm() && ! $this->allowRename()) {
+            return;
+        }
+
+        if ($this->hasElement(static::NAME_ELEMENT_NAME)) {
+            return;
+        }
+
+        $params['required'] = true;
+        $params['ignore'] = true;
+        $params['label'] ??= $this->translate('Name');
+        $params['validators'][] = new CallbackValidator(function ($value, CallbackValidator $validator) {
+            if (Str::isEmpty($value)) {
+                return true;
+            }
+
+            if ($value === $this->section) {
+                return true;
+            }
+
+            if ($this->config->hasSection($value)) {
+                $validator->addMessage($this->translate('An entry with this name already exists.'));
+                return false;
+            }
+
+            return true;
+        });
+
+        $this->addElement('text', static::NAME_ELEMENT_NAME, $params);
+    }
+
+    protected function getIniKeyFromName(string $name): ?array
+    {
+        if ($this->section === null) {
+            return null;
+        }
+
+        return [$this->section, $name];
+    }
+
+    protected function onSuccess(): void
+    {
+        if ($this->isCreateForm()) {
+            $this->section = $this->getValue(static::NAME_ELEMENT_NAME);
+
+            if ($this->section === '') {
+                throw new LogicException('Section must be set before saving a new configuration section.');
+            }
+            parent::onSuccess();
+        } elseif ($this->shouldDelete()) {
+            $this->handleDelete();
+        } elseif ($this->shouldRename()) {
+            $this->handleRename();
+        } else {
+            parent::onSuccess();
+        }
+    }
+
+    protected function addRequiredElements(): void
+    {
+        parent::addRequiredElements();
+
+        if ($this->allowDeletion()) {
+            $deleteButton = $this->createElement(
+                'submit',
+                static::DELETE_BUTTON_NAME,
+                [
+                    'label' => $this->translate('Delete'),
+                    'formnovalidate' => true,
+                    'ignore' => true,
+                ],
+            );
+            $this->registerElement($deleteButton);
+            $this->getElement(static::SUBMIT_BUTTON_NAME)
+                ->getWrapper()
+                ->prepend($deleteButton);
+        }
+
+        if (($this->isCreateForm() || $this->allowRename()) && ! $this->hasElement(static::NAME_ELEMENT_NAME)) {
+            $this->addSectionNameElement();
+
+            $content = $this->getContent();
+            $index = array_find_key($content, function ($element) {
+                return $element->getName() === static::NAME_ELEMENT_NAME;
+            });
+            if ($index === false) {
+                throw new LogicException('Could not find section name element');
+            }
+            $element = $content[$index];
+            unset($content[$index]);
+            array_unshift($content, $element);
+            $this->setContent($content);
+        }
+    }
+
+    public function hasBeenSubmitted()
+    {
+        if (! $this->hasBeenSent()) {
+            return false;
+        }
+
+        if ($this->shouldDelete()) {
+            return true;
+        }
+
+        return parent::hasBeenSubmitted();
+    }
+
+    /**
+     * Check if the form should rename the section for this request
+     *
+     * @return bool
+     */
+    protected function shouldRename(): bool
+    {
+        if (! $this->allowRename()) {
+            return false;
+        }
+
+        return $this->section !== $this->getPopulatedValue(static::NAME_ELEMENT_NAME);
+    }
+}
