@@ -776,7 +776,7 @@ EOD;
 
                 $dbAndTableQuery = $this->query(
                     sprintf($queryString, join(',', array_map(array($this, 'quote'), $dbPrivileges))),
-                    array(':grantee' => $grantee, ':dbname' => $this->escapeTableWildcards($this->config['dbname']))
+                    array(':grantee' => $grantee, ':dbname' => $this->config['dbname'])
                 );
                 $grantedDbAndTablePrivileges = (int) $dbAndTableQuery->fetchObject()->matches;
                 if ($grantedDbAndTablePrivileges === count($dbPrivileges)) {
@@ -793,7 +793,7 @@ EOD;
                             sprintf($queryString, join(',', array_map(array($this, 'quote'), $dbExclusivePrivileges))),
                             array(
                                 ':grantee'  => $grantee,
-                                ':dbname'   => $this->escapeTableWildcards($this->config['dbname'])
+                                ':dbname'   => $this->config['dbname']
                             )
                         );
                         $dbPrivilegesGranted = (int) $dbExclusiveQuery->fetchObject()->matches === count(
