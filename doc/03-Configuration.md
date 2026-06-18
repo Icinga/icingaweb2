@@ -27,7 +27,7 @@ This configuration is stored in the `config.ini` file in `/etc/icingaweb2`.
 
 Option                   | Description
 -------------------------|-----------------------------------------------
-show\_stacktraces        | **Optional.** Whether to show debug stacktraces. Defaults to `0`.
+show\_stacktraces        | **Optional.** Set to `1` to show debug stacktraces. Defaults to `1`.
 module\_path             | **Optional.** Specifies the directories where modules can be installed. Multiple directories must be separated with colons.
 config\_resource         | **Required.** Specify a defined [resource](04-Resources.md#resources-configuration-database) name.
 
@@ -36,7 +36,7 @@ Example for storing the user preferences in the database resource `icingaweb_db`
 
 ```
 [global]
-show_stacktraces = "0"
+show_stacktraces = "1"
 config_resource = "icingaweb_db"
 module_path = "/usr/share/icingaweb2/modules"
 ```
