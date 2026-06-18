@@ -77,6 +77,19 @@ disabled = "1"
 default = "high-contrast"
 ```
 
+### Authentication Configuration <a id="configuration-general-authentication"></a>
+
+Option                   | Description
+-------------------------|-----------------------------------------------
+default\_domain          | **Optional.** Domain assumed when users log in without specifying a domain. The value must match the domain of a configured authentication backend, e.g. `icinga.com`.
+
+Example:
+
+```
+[authentication]
+default_domain = "icinga.com"
+```
+
 ## Security Configuration <a id="configuration-security"></a>
 
 Navigate into **Configuration > Application > Security**.
