@@ -79,6 +79,19 @@ default = "Icinga"
 default_mode = "light"
 ```
 
+### Authentication Configuration <a id="configuration-general-authentication"></a>
+
+Option                   | Description
+-------------------------|-----------------------------------------------
+default\_domain          | **Optional.** Domain assumed when users log in without specifying a domain. It must match an LDAP backend's configured domain or the domain suffix stored in another backend's usernames, e.g. `icinga.com`.
+
+Example:
+
+```
+[authentication]
+default_domain = "icinga.com"
+```
+
 ## Security Configuration <a id="configuration-security"></a>
 
 Navigate into **Configuration > Application > Security**.
