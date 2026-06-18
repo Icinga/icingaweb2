@@ -92,6 +92,23 @@ Example:
 default_domain = "icinga.com"
 ```
 
+### Cookie Configuration <a id="configuration-general-cookie"></a>
+
+Option                   | Description
+-------------------------|-----------------------------------------------
+domain                   | **Optional.** Domain attribute for cookies, e.g. `.example.com`.
+path                     | **Optional.** Path attribute for cookies, e.g. `/icingaweb2/`. Defaults to the Icinga Web base URL.
+secure                   | **Optional.** Set to `1` to send cookies only over HTTPS. Defaults to the current request scheme.
+
+Example:
+
+```
+[cookie]
+domain = ".example.com"
+path = "/icingaweb2/"
+secure = "1"
+```
+
 ## Security Configuration <a id="configuration-security"></a>
 
 Navigate into **Configuration > Application > Security**.
