@@ -127,7 +127,8 @@ the Icinga Web modules. Icinga Web and all its components listed below, on the o
 that's not the case, please submit an issue on GitHub in the respective repositories.
 
 To enable the strict content security policy, navigate to **Configuration > Application > Security** and toggle
-"Send CSP header", or set `use_strict_csp` in the `config.ini`.
+"Send CSP header", or set `use_strict_csp` in
+[config.ini](03-Configuration.md#configuration-security-csp).
 
 Icinga does its best to support user-defined content like navigation items and dashboard dashlets. If that behavior is
 not desired, you can disable both by disabling the corresponding feature in the **Security page** at
