@@ -29,7 +29,7 @@ Option                             | Description
 -----------------------------------|-----------------------------------------------
 show\_stacktraces                  | **Optional.** Set to `1` to show debug stacktraces. Defaults to `1`.
 show\_application\_state\_messages | **Optional.** Set to `1` to show application state messages. Defaults to `1`.
-module\_path                       | **Optional.** Specifies the directories where modules can be installed. Multiple directories must be separated with colons.
+module\_path                       | **Optional.** Specifies the directories where modules can be installed. Multiple directories must be separated with the platform path separator (`:` on Unix-like systems, `;` on Windows).
 config\_resource                   | **Required.** Specify a defined [resource](04-Resources.md#resources-configuration-database) name.
 
 
