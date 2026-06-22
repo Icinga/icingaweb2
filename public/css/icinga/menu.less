@@ -611,3 +611,20 @@ html.no-js  #toggle-sidebar {
     }
   }
 }
+
+#menu .nav-level-1 > .nav-item.module-notifications.initial-setup-required {
+  &.selected i.initial-setup-icon {
+    display: none;
+  }
+
+  i.initial-setup-icon {
+    font-size: 1.5em;
+    color: @color-warning;
+
+    float: right;
+
+    &:focus {
+      display: none;
+    }
+  }
+}
