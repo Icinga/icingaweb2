@@ -145,6 +145,10 @@
 
             if (req.getResponseHeader('X-Icinga-Redirect')) {
                 _this.hide($modal);
+            } else {
+                // Validation error, structural changes or whatever, the form is presented again
+                // so we can assume the user should not accidentally close the modal
+                _this.hasChanges = true;
             }
         }).always(function () {
             delete $modal[0].dataset.noIcingaAjax;
