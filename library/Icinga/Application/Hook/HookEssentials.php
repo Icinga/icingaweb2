@@ -5,7 +5,10 @@
 
 namespace Icinga\Application\Hook;
 
+use Icinga\Application\ClassLoader;
 use Icinga\Application\Hook;
+use Icinga\Application\Icinga;
+use Icinga\Application\Modules\Module;
 
 /**
  * Provides the mechanism for hook registration and retrieval
@@ -47,6 +50,24 @@ trait HookEssentials
     public static function first(): ?static
     {
         return Hook::first(static::getHookName());
+    }
+
+    /**
+     * Get the module this hook belongs to, if any
+     *
+     * Returns null when the hook class is not part of a module namespace.
+     *
+     * @return ?Module
+     */
+    public function getModule(): ?Module
+    {
+        if (! ClassLoader::classBelongsToModule(static::class)) {
+            return null;
+        }
+
+        $moduleName = ClassLoader::extractModuleName(static::class);
+
+        return Icinga::app()->getModuleManager()->getModule($moduleName);
     }
 
     /**
