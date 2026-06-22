@@ -52,10 +52,26 @@ trait HookEssentials
     /**
      * Register the hook
      *
-     * @param bool $alwaysRun Whether to always run the hook, without permission check
+     * @param ?bool $alwaysRun Whether to always run the hook without permission check.
+     *   Defaults to {@see isAlwaysRun()}.
      */
-    public static function register(bool $alwaysRun = false): void
+    public static function register(?bool $alwaysRun = null): void
     {
-        Hook::register(static::getHookName(), static::class, static::class, $alwaysRun);
+        Hook::register(
+            static::getHookName(),
+            static::class,
+            static::class,
+            $alwaysRun ?? static::isAlwaysRun()
+        );
+    }
+
+    /**
+     * Get whether the hook always runs without a permission check
+     *
+     * Override this in a hook base class to change the default.
+     */
+    protected static function isAlwaysRun(): bool
+    {
+        return false;
     }
 }

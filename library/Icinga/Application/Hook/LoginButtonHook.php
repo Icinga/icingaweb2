@@ -16,8 +16,19 @@ use Icinga\Authentication\LoginButton;
  */
 abstract class LoginButtonHook
 {
-    use HookEssentials {
-        register as protected parentRegister;
+    use HookEssentials;
+
+    /**
+     * Always runs without a permission check
+     *
+     * Login button hooks are intended to render on the login page, where
+     * permissions are not applicable.
+     *
+     * @return bool
+     */
+    protected static function isAlwaysRun(): bool
+    {
+        return true;
     }
 
     final protected static function getHookName(): string
@@ -34,14 +45,4 @@ abstract class LoginButtonHook
      * @return LoginButton[]
      */
     abstract public function getButtons(): array;
-
-    /**
-     * Register a hook provider
-     *
-     * Always runs the hook, without permission check. Latter makes no sense on the login page.
-     */
-    public static function register(): void
-    {
-        static::parentRegister(true);
-    }
 }
