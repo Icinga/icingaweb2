@@ -1,8 +1,10 @@
 <?php
 
+use Icinga\Application\Config;
 use Icinga\Application\MigrationManager;
 use Icinga\Web\Navigation\Renderer\BadgeNavigationItemRenderer;
 use ipl\Html\HtmlElement;
+use ipl\Web\Widget\EmptyState;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\StateBadge;
 
@@ -93,8 +95,6 @@ use ipl\Web\Widget\StateBadge;
                     ]
                 );
             ?>
-            </div>
-        </div>
 
         <?php
             $mm = MigrationManager::instance();
@@ -104,10 +104,36 @@ use ipl\Web\Widget\StateBadge;
             } catch (Throwable $e) {
                 // suppress
             }
-        if ($hasPending): ?>
-            <div class="pending-migrations clearfix">
-                <h2><?= $this->translate('Pending Migrations') ?></h2>
-                <table class="name-value-table migrations">
+        ?>
+            </div>
+        </div>
+        <?php $config = Config::app()->getSection('global') ?>
+        <div class="pending-migrations clearfix">
+            <?php if($mm->getPendingMigrations() || (!isset($config->config_resource))) : ?>
+            <h2><?= $this->translate('Pending Migrations') ?></h2>
+            <?php endif ?>
+            <table >
+                <tr>
+                    <th>
+                  <?php  if (!isset($config->config_resource)) : ?>
+                      <?=  new EmptyState(
+                              $this->translate('No Configuration Database selected. To establish a valid database connection set: ')
+                    )
+                  ?><td>
+                  <?= $this->qlink(
+                      $this->translate('Configuration Database'),
+                      'config/general/',
+                      [],
+                      ['title' => sprintf($this->translate('Go to Application/General')), 'Configuration Database']
+                  ) ?>
+                    </td>
+                  <?php endif ?>
+                    </th>
+                </tr>
+            </table>
+
+          <?php if ($hasPending): ?>
+            <table class="name-value-table migrations">
                 <?php foreach ($mm->getPendingMigrations() as $migration): ?>
                     <tr>
                         <th><?= $this->escape($migration->getName()) ?></th>
