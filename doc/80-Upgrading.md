@@ -3,6 +3,17 @@
 Specific version upgrades are described below. Please note that upgrades are incremental. An upgrade from
 v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
+## Upgrading to Icinga Web x.xx
+
+**Framework changes affecting third-party code**
+
+* Our JavaScript framework does not trigger the `rendered` event for content that didn't update anymore. In case
+  `beforerender` triggers, it is still guaranteed that `rendered` will be triggered. But listeners should still
+  be inspected to ensure compatibility.
+* The JavaScript framework triggers the `rendered` event on content now that changes due to a multipart update.
+  Previously, the event was only triggered on the related main container. Any listener that guards itself with
+  `event.currentTarget === event.target` in order to ignore bubbled events will still behave as expected.
+
 ## Upgrading to Icinga Web 2.14
 
 **Framework changes affecting third-party code**
