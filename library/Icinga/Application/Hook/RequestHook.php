@@ -5,13 +5,32 @@
 
 namespace Icinga\Application\Hook;
 
-use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 use Icinga\Web\Request;
 use Throwable;
 
 abstract class RequestHook
 {
+    use HookEssentials;
+
+    /**
+     * Always runs without a permission check
+     *
+     * Request hooks are system-level concerns that fire on every request as
+     * part of the framework dispatch cycle, independent of user permissions.
+     *
+     * @return bool
+     */
+    protected static function isAlwaysRun(): bool
+    {
+        return true;
+    }
+
+    final protected static function getHookName(): string
+    {
+        return 'RequestHook';
+    }
+
     /**
      * Triggered after a request has been dispatched
      *
@@ -37,25 +56,5 @@ abstract class RequestHook
                 Logger::error('Failed to execute hook on request: %s', $e);
             }
         }
-    }
-
-    /**
-     * Get all registered implementations
-     *
-     * @return static[]
-     */
-    public static function all(): array
-    {
-        return Hook::all('RequestHook');
-    }
-
-    /**
-     * Register the class as a RequestHook implementation
-     *
-     * Call this method on your implementation during module initialization to make Icinga Web aware of your hook.
-     */
-    public static function register(): void
-    {
-        Hook::register('RequestHook', static::class, static::class, true);
     }
 }

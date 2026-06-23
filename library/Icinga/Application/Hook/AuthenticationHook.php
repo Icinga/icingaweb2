@@ -6,7 +6,6 @@
 namespace Icinga\Application\Hook;
 
 use Icinga\User;
-use Icinga\Web\Hook;
 use Icinga\Application\Logger;
 use Throwable;
 
@@ -18,10 +17,17 @@ use Throwable;
  */
 abstract class AuthenticationHook
 {
+    use HookEssentials;
+
     /**
      * Name of the hook
      */
     const NAME = 'authentication';
+
+    final protected static function getHookName(): string
+    {
+        return static::NAME;
+    }
 
     /**
      * Triggered after login in Icinga Web and when calling login action
@@ -57,8 +63,7 @@ abstract class AuthenticationHook
      */
     public static function triggerAuthFromSession(User $user): void
     {
-        /** @var static $hook */
-        foreach (Hook::all(self::NAME) as $hook) {
+        foreach (static::all() as $hook) {
             try {
                 $hook->onAuthFromSession($user);
             } catch (Throwable $e) {
@@ -75,8 +80,7 @@ abstract class AuthenticationHook
      */
     public static function triggerLogin(User $user)
     {
-        /** @var AuthenticationHook $hook */
-        foreach (Hook::all(self::NAME) as $hook) {
+        foreach (static::all() as $hook) {
             try {
                 $hook->onLogin($user);
             } catch (\Exception $e) {
@@ -93,8 +97,7 @@ abstract class AuthenticationHook
      */
     public static function triggerLogout(User $user)
     {
-        /** @var AuthenticationHook $hook */
-        foreach (Hook::all(self::NAME) as $hook) {
+        foreach (static::all() as $hook) {
             try {
                 $hook->onLogout($user);
             } catch (\Exception $e) {

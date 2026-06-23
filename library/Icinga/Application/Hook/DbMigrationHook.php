@@ -35,6 +35,7 @@ use stdClass;
  */
 abstract class DbMigrationHook implements Countable
 {
+    use HookEssentials;
     use Translation;
 
     public const MYSQL_UPGRADE_DIR = 'schema/mysql-upgrades';
@@ -54,6 +55,11 @@ abstract class DbMigrationHook implements Countable
 
     /** @var ?string The current version of this hook */
     protected $version;
+
+    final protected static function getHookName(): string
+    {
+        return 'DbMigration';
+    }
 
     /**
      * Get whether the specified table exists in the given database
