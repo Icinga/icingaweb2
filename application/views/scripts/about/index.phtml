@@ -25,7 +25,7 @@ use ipl\Web\Widget\StateBadge;
         <?php if (isset($version['gitCommitID'])): ?>
             <tr>
                 <th><?= $this->translate('Git commit') ?></th>
-                <td><?= $this->escape($version['gitCommitID']) ?></td>
+                <td class="col-commit-id"><?= $this->escape($version['gitCommitID']) ?></td>
             </tr>
         <?php endif ?>
             <tr>
@@ -133,12 +133,8 @@ use ipl\Web\Widget\StateBadge;
         <table class="name-value-table" data-base-target="_next">
         <?php foreach ($libraries as $library): ?>
             <tr>
-                <th>
-                    <?= $this->escape($library->getName()) ?>
-                </th>
-                <td>
-                    <?= $this->escape($library->getVersion()) ?: '-' ?>
-                </td>
+                <th><?= $this->escape($library->getName()) ?></th>
+                <td><?= $this->escape($library->getVersion()) ?: '-' ?></td>
             </tr>
         <?php endforeach ?>
         </table>
@@ -147,23 +143,16 @@ use ipl\Web\Widget\StateBadge;
         <table class="name-value-table" data-base-target="_next">
         <?php foreach ($modules as $module): ?>
             <tr>
-                <th>
-                    <?= $this->escape($module->getName()) ?>
-                </th>
-                <td>
-                <td>
-                    <?= $this->escape($module->getVersion()) ?>
-                </td>
-                <td>
-                <?php if ($this->hasPermission('config/modules')): ?>
+                <th><?= $this->escape($module->getName()) ?></th>
+                <td><?= $this->escape($module->getVersion()) ?></td>
+                <td><?php if ($this->hasPermission('config/modules')): ?>
                     <?= $this->qlink(
                         $this->translate('Configure'),
                         'config/module/',
                         array('name' => $module->getName()),
                         array('title' => sprintf($this->translate('Show the overview of the %s module'), $module->getName()))
                     ) ?>
-                <?php endif ?>
-                </td>
+                <?php endif ?></td>
             </tr>
         <?php endforeach ?>
         </table>
