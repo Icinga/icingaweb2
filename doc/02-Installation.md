@@ -161,6 +161,15 @@ yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.r
 ```
 <!-- {% endif %} -->
 
+<!-- {% if fedora %} -->
+### Fedora Repository <a id="fedora-repository"></a>
+
+```bash
+rpm --import https://packages.icinga.com/icinga.key
+dnf config-manager --add-repo https://packages.icinga.com/fedora/$(. /etc/os-release; echo "$VERSION_ID")/release
+```
+<!-- {% endif %} -->
+
 <!-- {% if sles %} -->
 ### SLES Repository <a id="rhel-repository"></a>
 
@@ -265,6 +274,15 @@ dnf install icingaweb2 icingacli
 #### RHEL 7
 ```bash
 yum install icingaweb2 icingacli
+```
+<!-- {% endif %} -->
+
+<!-- {% if fedora %} -->
+<!-- {% if not icingaDocs %} -->
+#### Fedora
+<!-- {% endif %} -->
+```bash
+dnf install icingaweb2 icingacli
 ```
 <!-- {% endif %} -->
 
