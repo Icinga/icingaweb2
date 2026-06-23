@@ -7,7 +7,9 @@ namespace Icinga\Exception;
 
 /**
  * Class ProgrammingError
+ *
  * @package Icinga\Exception
+ * @deprecated Use {@see \LogicException} instead
  */
 class ProgrammingError extends IcingaException
 {
