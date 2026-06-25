@@ -5,6 +5,12 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
 ## Upgrading to Icinga Web 2.14
 
+**Deprecations**
+
+* Providing a custom user or group backend inside a module's configuration.php is deprecated and won't work as of v2.15.
+  * It continues to work under the same circumstances as before and remains broken where it was already broken.
+  * To keep it working as of v2.15 or make it work now, provide the custom backend inside the module's run.php instead.
+
 **Framework changes affecting third-party code**
 
 * Our JavaScript implementation to update relative times in the UI has been removed from Icinga Web, and an updated
