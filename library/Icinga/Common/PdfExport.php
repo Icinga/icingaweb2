@@ -5,6 +5,7 @@
 
 namespace Icinga\Common;
 
+use Icinga\Application\Hook\PdfexportHook;
 use Icinga\Application\Icinga;
 use Icinga\Date\DateFormatter;
 use Icinga\Exception\ConfigurationError;
@@ -26,7 +27,8 @@ trait PdfExport
      * Export the requested action to PDF and send it
      *
      * @return never
-     * @throws ConfigurationError If the pdfexport module is not available
+     *
+     * @throws ConfigurationError If no pdfexport module is available
      */
     protected function sendAsPdf()
     {
@@ -71,7 +73,7 @@ trait PdfExport
             $doc->getAttributes()->add('class', 'icinga-module module-' . $moduleName);
         }
 
-        \Icinga\Module\Pdfexport\ProvidedHook\Pdfexport::first()->streamPdfFromHtml($doc, sprintf(
+        PdfexportHook::first()->streamPdfFromHtml($doc, sprintf(
             '%s-%s',
             $this->view->title ?: $this->getRequest()->getActionName(),
             $time
