@@ -1,0 +1,133 @@
+// SPDX-FileCopyrightText: 2026 Icinga GmbH <https://icinga.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+// Layout
+.csp-config-table {
+  display: block;
+  padding-bottom: 1em;
+  overflow-x: auto;
+
+  h3 {
+    margin-top: 0;
+
+    &:not(:first-child) {
+      margin-top: 1em;
+    }
+  }
+
+  th {
+    min-width: 6em;
+  }
+
+  th:first-child,
+  td:first-child {
+    padding-left: 0;
+  }
+
+  th:last-child,
+  td:last-child {
+    width: 100%;
+    padding-right: 0;
+  }
+
+  .csp-expression-info {
+    margin-left: .5em;
+    opacity: .7;
+  }
+}
+
+// Style
+.csp-config-table {
+  text-align: left;
+
+  tr:not(:last-child) {
+    border-bottom: 1px solid @gray-lighter;
+  }
+
+  td {
+    .text-ellipsis();
+  }
+
+  th {
+    font-size: .857em;
+    font-weight: normal;
+    letter-spacing: .05em;
+  }
+
+  th:last-child,
+  td:last-child {
+    text-align: right;
+  }
+
+  .csp-self {
+    opacity: 0.5;
+  }
+
+  .csp-warning {
+    color: @color-warning;
+  }
+
+  .csp-wildcard,
+  .csp-critical {
+    color: @color-critical;
+  }
+
+  a {
+    font-weight: bold;
+
+    &:hover {
+      color: @icinga-blue;
+      text-decoration: none;
+    }
+  }
+}
+
+// Form layout
+.csp-config-form {
+  &:has(.csp-expressions .icon) {
+    .csp-expressions:not(:has(.icon)) {
+      padding-right: 2em;
+    }
+    th:last-child {
+      padding-right: 2em;
+    }
+  }
+
+  .csp-disabled,
+  .control-group:has(.csp-disabled) {
+    opacity: 0.5;
+  }
+
+  p.csp-form-hint {
+    opacity: 0.5;
+  }
+
+  .control-group:has(.csp-form-content-aligned) .control-label-group {
+    margin-left: 14em;
+    width: auto;
+
+    label {
+      text-align: left;
+    }
+  }
+}
+
+// Form style
+.csp-config-form {
+  .control-group:has(.csp-label-header-h3, .csp-label-header-h4) {
+    margin: 0;
+  }
+
+  .control-group.csp-control-group {
+    margin: 0;
+  }
+
+  .control-group:has(.csp-label-header-h3) .control-label-group label {
+    font-size: 1.167em;
+    font-weight: bold;
+  }
+
+  .control-group:has(.csp-label-header-h4) .control-label-group label {
+    font-weight: bold;
+  }
+}
