@@ -5,27 +5,28 @@
 
 namespace Icinga\Util;
 
-use Icinga\Application\Hook;
-use Icinga\Application\Hook\CspDirectiveHook;
+use Exception;
+use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
-use Icinga\Data\ConfigObject;
+use Icinga\Security\Csp\AttributedCsp;
+use Icinga\Security\Csp\Loader\DashboardCspLoader;
+use Icinga\Security\Csp\Loader\ModuleCspLoader;
+use Icinga\Security\Csp\Loader\NavigationCspLoader;
+use Icinga\Security\Csp\Loader\ArrayCspLoader;
 use Icinga\User;
 use Icinga\Web\Response;
 use Icinga\Web\Window;
-use Icinga\Application\Config;
+use ipl\Stdlib\Str;
+use ipl\Web\Common\Csp as CspInstance;
 use RuntimeException;
-use Icinga\Web\Navigation\Navigation;
-use Icinga\Web\Widget\Dashboard;
-
-use function ipl\Stdlib\get_php_type;
 
 /**
- * Helper to enable strict content security policy (CSP)
+ * Helper to manage the content security policy (CSP)
  *
- * {@see static::addHeader()} adds a strict Content-Security-Policy header with a nonce to still support dynamic CSS
- * securely.
+ * {@see static::addHeader()} adds a Content-Security-Policy header with a nonce
+ * to still support dynamic CSS securely.
  * Note that {@see static::createNonce()} must be called first.
  * Use {@see static::getStyleNonce()} to access the nonce for dynamic CSS.
  *
@@ -34,11 +35,14 @@ use function ipl\Stdlib\get_php_type;
  */
 class Csp
 {
-    /** @var static */
-    protected static $instance;
+    /** @var string The session namespace for CSP */
+    public const SESSION_NAMESPACE = 'csp';
 
-    /** @var ?string */
-    protected $styleNonce;
+    /** @var string The session key for the nonce for dynamic CSS */
+    public const SESSION_STYLE_NONCE = 'style_nonce';
+
+    /** @var ?CspInstance */
+    protected static ?CspInstance $csp = null;
 
     /** Singleton */
     private function __construct()
@@ -46,118 +50,232 @@ class Csp
     }
 
     /**
-     * Add Content-Security-Policy header with a nonce for dynamic CSS
+     * Add a Content-Security-Policy header with a nonce for dynamic CSS
      *
      * Note that {@see static::createNonce()} must be called beforehand.
      *
      * @param Response $response
      *
+     * @return void
+     *
      * @throws RuntimeException If no nonce set for CSS
      */
     public static function addHeader(Response $response): void
     {
-        $header = static::getContentSecurityPolicy();
-        $response->setHeader('Content-Security-Policy', $header, true);
+        $header = static::getHeader();
+        if (! Str::isEmpty($header)) {
+            $response->setHeader('Content-Security-Policy', $header, true);
+        }
     }
 
     /**
-     * Get the Content-Security-Policy for a specific user.
+     * Whether sending the CSP header is enabled
      *
-     * @throws RuntimeException If no nonce set for CSS
-     *
-     * @return string Returns the generated header value.
+     * @return bool
      */
-    public static function getContentSecurityPolicy(): string
+    public static function isEnabled(): bool
     {
-        $csp = static::getInstance();
+        return (bool) Config::app()->get('security', 'use_strict_csp', '0');
+    }
 
-        if (empty($csp->styleNonce)) {
+    /**
+     * Whether a custom, user-defined CSP header should be used
+     *
+     * @return bool
+     */
+    public static function isCustomEnabled(): bool
+    {
+        return (bool) Config::app()->get('security', 'use_custom_csp', '0');
+    }
+
+    /**
+     * Whether the CSP header should be automatically generated
+     *
+     * This is currently always the opposite of {@see static::isCustomEnabled()}
+     * as the CSP header is only generated if the custom CSP is not used. But this
+     * might change in the future.
+     *
+     * @return bool
+     */
+    public static function isAutogenerationEnabled(): bool
+    {
+        return ! static::isCustomEnabled();
+    }
+
+    /**
+     * Whether the CSP header should be generated for dashboards
+     *
+     * @return bool
+     */
+    public static function isDashboardEnabled(): bool
+    {
+        if (! static::isAutogenerationEnabled()) {
+            return false;
+        }
+
+        return (bool) Config::app()->get('security', 'csp_enable_dashboards', '0');
+    }
+
+    /**
+     * Whether the CSP header should be generated for modules. See {@see CspHook}
+     *
+     * @return bool
+     */
+    public static function isModuleEnabled(): bool
+    {
+        if (! static::isAutogenerationEnabled()) {
+            return false;
+        }
+
+        return (bool) Config::app()->get('security', 'csp_enable_modules', '0');
+    }
+
+    /**
+     * Whether the CSP header should be generated for the navigation
+     *
+     * @return bool
+     */
+    public static function isNavigationEnabled(): bool
+    {
+        if (! static::isAutogenerationEnabled()) {
+            return false;
+        }
+
+        return (bool) Config::app()->get('security', 'csp_enable_navigation', '0');
+    }
+
+    /**
+     * Get the default CSP for icingaweb
+     *
+     * @return AttributedCsp
+     */
+    public static function getSystemCsp(): AttributedCsp
+    {
+        $nonce = static::getStyleNonce();
+        if ($nonce === null) {
             throw new RuntimeException('No nonce set for CSS');
         }
 
-        // These are the default directives that should always be enforced. 'self' is valid for all
-        // directives and will therefor not be listed here.
-        $cspDirectives = [
-            'style-src' => ["'nonce-{$csp->styleNonce}'"],
-            'font-src' => ["data:"],
-            'img-src' => ["data:"],
-            'frame-src' => []
-        ];
-
-        // Whitelist the hosts in the custom NavigationItems configured for the user,
-        // so that the iframes can be rendered properly.
-        /** @var ConfigObject[] $navigationItems */
-        $navigationItems = self::fetchDashletNavigationItemConfigs();
-        foreach ($navigationItems as $navigationItem) {
-            $errorSource = sprintf("Navigation item %s", $navigationItem['name']);
-
-            $host = parse_url($navigationItem["url"], PHP_URL_HOST);
-            // Make sure $url is actually valid;
-            if (filter_var($navigationItem["url"], FILTER_VALIDATE_URL) === false) {
-                Logger::debug("$errorSource: Skipping invalid url: $host");
-                continue;
-            }
-
-            $scheme = parse_url($navigationItem["url"], PHP_URL_SCHEME);
-
-
-            if ($host === null) {
-                continue;
-            }
-
-            $policy = $host;
-            if ($scheme !== null) {
-                $policy = "$scheme://$host";
-            }
-
-            $cspDirectives['frame-src'][] = $policy;
-        }
-        // Allow modules to add their own csp directives in a limited fashion.
-        /** @var CspDirectiveHook $hook */
-        foreach (Hook::all('CspDirective') as $hook) {
-            foreach ($hook->getCspDirectives() as $directive => $policies) {
-                // policy names contain only lowercase letters and '-'. Reject anything else.
-                if (!preg_match('|^[a-z\-]+$|', $directive)) {
-                    $errorSource = get_class($hook);
-                    Logger::debug("$errorSource: Invalid CSP directive found: $directive");
-                    continue;
-                }
-
-                // The default-src can only ever be 'self'. Disallow any updates to it.
-                if ($directive === "default-src") {
-                    $errorSource = get_class($hook);
-                    Logger::debug("$errorSource: Changing default-src is forbidden.");
-                    continue;
-                }
-
-                $cspDirectives[$directive] = $cspDirectives[$directive] ?? [];
-                foreach ($policies as $policy) {
-                    $cspDirectives[$directive][] = $policy;
-                }
-            }
-        }
-
-        $header = "default-src 'self'; ";
-        foreach ($cspDirectives as $directive => $policies) {
-            if (!empty($policies)) {
-                $header .= ' ' . implode(' ', array_merge([$directive, "'self'"], array_unique($policies))) . ';';
-            }
-        }
-        
-        return $header;
+        return (new ArrayCspLoader('system', [
+            'default-src' => ["'self'"],
+            'style-src'   => ["'self'", "'nonce-$nonce'"],
+            'font-src'    => ["'self'", 'data:'],
+            'img-src'     => ["'self'", 'data:'],
+            'frame-src'   => ["'self'"],
+        ]))->loadForAllUsers()[0];
     }
+
     /**
-     * Set/recreate nonce for dynamic CSS
+     * Get the Content-Security-Policy header
      *
-     * Should always be called upon initial page loads or page reloads,
-     * as it sets/recreates a nonce for CSS and writes it to a window-aware session.
+     * @return string The CSP header for this request
+     */
+    public static function getHeader(): string
+    {
+        if (static::$csp !== null) {
+            return static::$csp->getHeader();
+        }
+
+        if (static::isCustomEnabled()) {
+            try {
+                static::$csp = self::getCustomHeader();
+            } catch (Exception $e) {
+                Logger::warning('Parsing custom CSP header failed: %s, falling back to system CSP', $e->getMessage());
+                static::$csp = self::getSystemCsp()->csp;
+            }
+        } else {
+            $auth = Auth::getInstance();
+            $user = $auth->getUser();
+            static::$csp = $user === null
+                ? self::getSystemCsp()->csp
+                : self::getAutomaticHeader($user);
+        }
+
+        return static::$csp->getHeader();
+    }
+
+    /**
+     * Get the custom Content-Security-Policy set in the config
+     *
+     * This method automatically replaces new-lines and the {style_nonce} placeholder with the generated nonce.
+     *
+     * @return CspInstance The custom CSP header.
+     */
+    protected static function getCustomHeader(): CspInstance
+    {
+        $nonce = static::getStyleNonce();
+        if (empty($nonce)) {
+            throw new RuntimeException('No nonce set for CSS');
+        }
+
+        $config = Config::app();
+        $customCsp = $config->get('security', 'custom_csp', '');
+        $customCsp = str_replace('{style_nonce}', "'nonce-$nonce'", $customCsp);
+
+        return CspInstance::fromString($customCsp);
+    }
+
+    /**
+     * Get the automatically generated Content-Security-Policy
+     *
+     * @param User $user The user to generate the CSP for
+     *
+     * @return CspInstance The generated header value.
+     */
+    protected static function getAutomaticHeader(User $user): CspInstance
+    {
+        $attributedCsps = [static::getSystemCsp()];
+
+        try {
+            if (Csp::isModuleEnabled()) {
+                $attributedCsps = array_merge($attributedCsps, (new ModuleCspLoader())->loadForUser($user));
+            }
+        } catch (Exception $e) {
+            Logger::warning('Module CSP loader failed: %s', $e->getMessage());
+        }
+
+        try {
+            if (Csp::isDashboardEnabled()) {
+                $attributedCsps = array_merge($attributedCsps, (new DashboardCspLoader())->loadForUser($user));
+            }
+        } catch (Exception $e) {
+            Logger::warning('Dashboard CSP loader failed: %s', $e->getMessage());
+        }
+
+        try {
+            if (Csp::isNavigationEnabled()) {
+                $attributedCsps = array_merge($attributedCsps, (new NavigationCspLoader())->loadForUser($user));
+            }
+        } catch (Exception $e) {
+            Logger::warning('Navigation CSP loader failed: %s', $e->getMessage());
+        }
+
+        $csps = array_map(fn (AttributedCsp $csp) => $csp->csp, $attributedCsps);
+        $result = new CspInstance();
+
+        return $result->merge(...$csps);
+    }
+
+    /**
+     * Ensure a nonce for dynamic CSS exists for the current window
+     *
+     * Does nothing if a nonce has already been created for this window's session,
+     * otherwise generates one and persists it in thet session. Should be called
+     * on every page load or reload, before {@see static::addHeader()} or
+     * {@see static::getStyleNonce()} are used.
+     *
+     * @return void
      */
     public static function createNonce(): void
     {
-        $csp = static::getInstance();
-        if ($csp->styleNonce === null) {
-            $csp->styleNonce = base64_encode(random_bytes(16));
-            Window::getInstance()->getSessionNamespace('csp')->set('style_nonce', $csp->styleNonce);
+        if (Window::getInstance()
+                ->getSessionNamespace(static::SESSION_NAMESPACE)
+                ->get(static::SESSION_STYLE_NONCE) === null
+        ) {
+            $nonce = base64_encode(random_bytes(16));
+            Window::getInstance()
+                ->getSessionNamespace(static::SESSION_NAMESPACE)
+                ->set(static::SESSION_STYLE_NONCE, $nonce);
         }
     }
 
@@ -168,136 +286,10 @@ class Csp
      */
     public static function getStyleNonce(): ?string
     {
-        if (Icinga::app()->isWeb()) {
-            return static::getInstance()->styleNonce;
-        }
-        return null;
-    }
-
-    /**
-     * Get the CSP instance
-     *
-     * @return self
-     */
-    protected static function getInstance(): self
-    {
-        if (static::$instance === null) {
-            $csp = new static();
-            $nonce = Window::getInstance()->getSessionNamespace('csp')->get('style_nonce');
-            if ($nonce !== null && ! is_string($nonce)) {
-                throw new RuntimeException(
-                    sprintf(
-                        'Nonce value is expected to be string, got %s instead',
-                        get_php_type($nonce)
-                    )
-                );
-            }
-
-            $csp->styleNonce = $nonce;
-
-            static::$instance = $csp;
+        if (Icinga::app()->isWeb() && static::$csp !== null) {
+            return static::$csp->getNonce();
         }
 
-        return static::$instance;
+        return Window::getInstance()->getSessionNamespace(static::SESSION_NAMESPACE)->get(static::SESSION_STYLE_NONCE);
     }
-    
-
-    /**
-     * Fetches and merges configurations for navigation menu items and dashlets.
-     *
-     * @return array An array containing both navigation items and dashlet configurations.
-     * // returns [['name' => 'Item Name', 'url' => 'https://example.com'], ...]
-     */
-    protected static function fetchDashletNavigationItemConfigs()
-    {
-        return array_merge(
-            self::fetchNavigationItems(),
-            self::fetchDashletsItems()
-        );
-    }
-
-    /**
-     * Fetches navigation items for the current user.
-     *
-     * Iterates through all registered navigation types, loads both user-specific
-     * and shared configurations, and returns a list of menu items.
-     *
-     * @return array Each item is an associative array with 'name' and 'url' keys.
-     * Example: [ ['name' => 'Home', 'url' => '/'], ['name' => 'Profile', 'url' => '/profile'] ]
-     */
-    protected static function fetchNavigationItems()
-    {
-        $user = Auth::getInstance()->getUser();
-        $menuItems = [];
-        if ($user === null) {
-            return $menuItems;
-        }
-        $navigationType = Navigation::getItemTypeConfiguration();
-        foreach ($navigationType as $type => $_) {
-            $config = Config::navigation($type, $user->getUsername());
-            $config->getConfigObject()->setKeyColumn('name');
-            foreach ($config->select() as $itemConfig) {
-                if ($itemConfig->get("target", "") !== "_blank") {
-                    $menuItems[] = ["name" => $itemConfig->get('name'), "url" => $itemConfig->get('url')];
-                }
-            }
-            $configShared = Config::navigation($type);
-            $configShared->getConfigObject()->setKeyColumn('name');
-            foreach ($configShared->select() as $itemConfig) {
-                if (Icinga::app()->hasAccessToSharedNavigationItem($itemConfig, $config) && $itemConfig->get("target", "") !== "_blank") {
-                    $menuItems[] = ["name" => $itemConfig->get('name'), "url" => $itemConfig->get('url')];
-                }
-            }
-        }
-        return $menuItems;
-    }
-
-    /**
-     * Fetches all dashlets for the current user that have an external URL.
-     *
-     * @return array A list of dashlets with their names and absolute URLs.
-     * // returns [['name' => 'Dashlet Name', 'url' => 'https://external.dashlet.com'], ...]
-     */
-    protected static function fetchDashletsItems()
-    {
-       $user = Auth::getInstance()->getUser();
-       $dashlets = [];
-       if ($user === null) {
-          return $dashlets;
-       }
-
-       $dashboard = new Dashboard();
-       $dashboard->setUser($user);
-       $dashboard->load();
-
-       foreach ($dashboard->getPanes() as $pane) {
-          foreach ($pane->getDashlets() as $dashlet) {
-             $url = $dashlet->getUrl();
-             if ($url === null) {
-                continue;
-             }
-
-             $externalUrl = $url->getParam("url");
-             if ($externalUrl !== null && filter_var($externalUrl, FILTER_VALIDATE_URL) !== false) {
-                $dashlets[] = [
-                    "name" => $dashlet->getName(),
-                    "url" => $externalUrl
-                ];
-                continue;
-             }
-
-             if ($url->isExternal()) {
-                $absoluteUrl = $url->getAbsoluteUrl();
-                if (filter_var($absoluteUrl, FILTER_VALIDATE_URL) !== false) {
-                    $dashlets[] = [
-                       "name" => $dashlet->getName(),
-                       "url" => $absoluteUrl
-                    ];
-                }
-             }
-          }
-       }
-       return $dashlets;
-    }
-
 }
