@@ -164,6 +164,8 @@ class LoginForm extends CompatForm
                     }
                 }
 
+                Session::getSession()->refreshId();
+
                 $redirectUrl = Url::fromPath('authentication/twofactor');
                 if ($redirect = Url::fromRequest()->getParam('redirect')) {
                     $redirectUrl->setParam('redirect', $redirect);
