@@ -66,7 +66,7 @@ class CookieHelper
     {
         setcookie(self::CHECK_COOKIE, '1');
 
-        $requestUri = $this->request->getUrl()->addParams(array('_checkCookie' => 1));
+        $requestUri = $this->request->getUrl()->addParams(['_checkCookie' => 1]);
         $this->request->getResponse()->redirectAndExit($requestUri);
     }
 

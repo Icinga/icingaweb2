@@ -93,7 +93,7 @@ class LdapUtils
     {
         return self::quoteChars(
             $str,
-            array(
+            [
                 ',',
                 '=',
                 '+',
@@ -103,7 +103,7 @@ class LdapUtils
                 '\\',
                 '"',
                 '#'
-            )
+            ]
         );
     }
 
@@ -119,9 +119,9 @@ class LdapUtils
     public static function quoteForSearch($str, $allow_wildcard = false)
     {
         if ($allow_wildcard) {
-            return self::quoteChars($str, array('(', ')', '\\', chr(0)));
+            return self::quoteChars($str, ['(', ')', '\\', chr(0)]);
         }
-        return self::quoteChars($str, array('*', '(', ')', '\\', chr(0)));
+        return self::quoteChars($str, ['*', '(', ')', '\\', chr(0)]);
     }
 
     /**
@@ -136,7 +136,7 @@ class LdapUtils
      */
     protected static function quoteChars($str, $chars)
     {
-        $quotedChars = array();
+        $quotedChars = [];
         foreach ($chars as $k => $v) {
             // Temporarily prefixing with illegal '('
             $quotedChars[$k] = '(' . str_pad(dechex(ord($v)), 2, '0');

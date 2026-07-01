@@ -41,8 +41,8 @@ class DashletForm extends Form
      */
     public function createElements(array $formData)
     {
-        $groupElements  = array();
-        $panes          = array();
+        $groupElements  = [];
+        $panes          = [];
 
         if ($this->dashboard) {
             $panes = $this->dashboard->getPaneKeyTitleArray();
@@ -62,81 +62,81 @@ class DashletForm extends Form
         $this->addElement(
             'hidden',
             'org_pane',
-            array(
+            [
                 'required' => false
-            )
+            ]
         );
 
         $this->addElement(
             'hidden',
             'org_dashlet',
-            array(
+            [
                 'required' => false
-            )
+            ]
         );
 
         $this->addElement(
             'textarea',
             'url',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Url'),
                 'description'   => $this->translate(
                     'Enter url to be loaded in the dashlet. You can paste the full URL, including filters.'
                 ),
-                'validators'    => array(new UrlValidator(), new InternalUrlValidator())
-            )
+                'validators'    => [new UrlValidator(), new InternalUrlValidator()]
+            ]
         );
         $this->addElement(
             'text',
             'dashlet',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Dashlet Title'),
                 'description'   => $this->translate('Enter a title for the dashlet.'),
                 'validators'    => [$sectionNameValidator]
-            )
+            ]
         );
         $this->addElement(
             'note',
             'note',
-            array(
-                'decorators' => array(
-                    array('HtmlTag', array('tag' => 'hr'))
-                )
-            )
+            [
+                'decorators' => [
+                    ['HtmlTag', ['tag' => 'hr']]
+                ]
+            ]
         );
         $this->addElement(
             'checkbox',
             'create_new_pane',
-            array(
+            [
                 'autosubmit'    => true,
                 'required'      => false,
                 'label'         => $this->translate('New dashboard'),
                 'description'   => $this->translate('Check this box if you want to add the dashlet to a new dashboard')
-            )
+            ]
         );
         if (empty($panes) || ((isset($formData['create_new_pane']) && $formData['create_new_pane'] != false))) {
             $this->addElement(
                 'text',
                 'pane',
-                array(
+                [
                     'required'      => true,
                     'label'         => $this->translate('New Dashboard Title'),
                     'description'   => $this->translate('Enter a title for the new dashboard'),
                     'validators'    => [$sectionNameValidator]
-                )
+                ]
             );
         } else {
             $this->addElement(
                 'select',
                 'pane',
-                array(
+                [
                     'required'      => true,
                     'label'         => $this->translate('Dashboard'),
                     'multiOptions'  => $panes,
                     'description'   => $this->translate('Select a dashboard you want to add the dashlet to')
-                )
+                ]
             );
         }
     }
@@ -162,12 +162,12 @@ class DashletForm extends Form
      */
     public function load(Dashlet $dashlet)
     {
-        $this->populate(array(
+        $this->populate([
             'pane'          => $dashlet->getPane()->getTitle(),
             'org_pane'      => $dashlet->getPane()->getName(),
             'dashlet'       => $dashlet->getTitle(),
             'org_dashlet'   => $dashlet->getName(),
             'url'           => $dashlet->getUrl()->getRelativeUrl()
-        ));
+        ]);
     }
 }

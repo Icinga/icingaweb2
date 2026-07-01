@@ -64,7 +64,7 @@ $this->addHelperFunction(
     }
 );
 
-$this->addHelperFunction('img', function ($url, $params = null, array $properties = array()) use ($view) {
+$this->addHelperFunction('img', function ($url, $params = null, array $properties = []) use ($view) {
     if (! array_key_exists('alt', $properties)) {
         $properties['alt'] = '';
     }
@@ -85,7 +85,7 @@ $this->addHelperFunction('img', function ($url, $params = null, array $propertie
     );
 });
 
-$this->addHelperFunction('icon', function ($img, $title = null, array $properties = array()) use ($view) {
+$this->addHelperFunction('icon', function ($img, $title = null, array $properties = []) use ($view) {
     if (strpos($img, '.') !== false) {
         if (array_key_exists('class', $properties)) {
             $properties['class'] .= ' icon';
@@ -130,14 +130,14 @@ $this->addHelperFunction('propertiesToString', function ($properties) use ($view
     if (empty($properties)) {
         return '';
     }
-    $attributes = array();
+    $attributes = [];
 
     foreach ($properties as $key => $val) {
         if ($key === 'style' && is_array($val)) {
             if (empty($val)) {
                 continue;
             }
-            $parts = array();
+            $parts = [];
             foreach ($val as $k => $v) {
                 $parts[] = "$k: $v";
             }

@@ -60,7 +60,7 @@ class FileIterator extends EnumeratingFilterIterator
      */
     public function accept(): bool
     {
-        $data = array();
+        $data = [];
         $matched = preg_match(
             $this->fields,
             $this->getInnerIterator()->current(),

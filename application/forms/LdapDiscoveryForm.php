@@ -25,10 +25,10 @@ class LdapDiscoveryForm extends Form
         $this->addElement(
             'text',
             'domain',
-            array(
+            [
                 'label'         => $this->translate('Search Domain'),
                 'description'   => $this->translate('Search this domain for records of available servers.'),
-            )
+            ]
         );
 
         return $this;

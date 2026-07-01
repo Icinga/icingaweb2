@@ -71,7 +71,7 @@ class LogarithmicUnit implements AxisUnit
      */
     public function addValues(array $dataset, $idx = 0)
     {
-        $datapoints = array();
+        $datapoints = [];
 
         foreach ($dataset['data'] as $points) {
             $datapoints[] = $points[$idx];

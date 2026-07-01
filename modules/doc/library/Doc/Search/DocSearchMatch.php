@@ -61,7 +61,7 @@ class DocSearchMatch
      *
      * @var array
      */
-    protected $matches = array();
+    protected $matches = [];
 
     /**
      * View

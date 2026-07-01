@@ -19,7 +19,7 @@ class CookieSet implements IteratorAggregate
      *
      * @var Cookie[]
      */
-    protected $cookies = array();
+    protected $cookies = [];
 
     /**
      * Get an iterator for traversing the cookies in this set

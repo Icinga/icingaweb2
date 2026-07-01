@@ -72,7 +72,7 @@ class ConfigForm extends Form
 
     public function onSuccess()
     {
-        $sections = array();
+        $sections = [];
         foreach (static::transformEmptyValuesToNull($this->getValues()) as $sectionAndPropertyName => $value) {
             list($section, $property) = explode('_', $sectionAndPropertyName, 2);
             $sections[$section][$property] = $value;
@@ -102,7 +102,7 @@ class ConfigForm extends Form
 
     public function onRequest()
     {
-        $values = array();
+        $values = [];
         foreach ($this->config as $section => $properties) {
             foreach ($properties as $name => $value) {
                 $values[$section . '_' . $name] = $value;
@@ -128,14 +128,14 @@ class ConfigForm extends Form
 
             return false;
         } catch (Exception $e) {
-            $this->addDecorator('ViewScript', array(
+            $this->addDecorator('ViewScript', [
                 'viewModule'    => 'default',
                 'viewScript'    => 'showConfiguration.phtml',
                 'errorMessage'  => $e->getMessage(),
                 'configString'  => $this->config,
                 'filePath'      => $this->config->getConfigFile(),
                 'placement'     => Zend_Form_Decorator_Abstract::PREPEND
-            ));
+            ]);
             return false;
         }
 
@@ -184,7 +184,7 @@ class ConfigForm extends Form
     public static function transformEmptyValuesToNull(array $values)
     {
         array_walk($values, function (&$v) {
-            if ($v === '' || $v === false || $v === array()) {
+            if ($v === '' || $v === false || $v === []) {
                 $v = null;
             }
         });

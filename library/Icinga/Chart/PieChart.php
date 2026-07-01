@@ -36,7 +36,7 @@ class PieChart extends Chart
      *
      * @var array
      */
-    private $pies = array();
+    private $pies = [];
 
     /**
      * The composition type currently used

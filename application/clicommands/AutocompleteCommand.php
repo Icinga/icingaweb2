@@ -55,7 +55,7 @@ class AutocompleteCommand extends Command
         $search_word = $bare_params[$cword];
         if ($search_word === '--') {
             // TODO: Unfinished, completion missing
-            return $this->suggest(array('--verbose', '--help', '--debug'));
+            return $this->suggest(['--verbose', '--help', '--debug']);
         }
 
         $search = $params->shift();
@@ -68,7 +68,7 @@ class AutocompleteCommand extends Command
         if ($found) {
             // Do not return suggestions if we are already on the next word:
             if ($bare_params[$cword] === $search) {
-                return $this->suggest(array($found));
+                return $this->suggest([$found]);
             }
         } else {
             return $this->suggest($loader->getLastSuggestions());
@@ -90,7 +90,7 @@ class AutocompleteCommand extends Command
             if ($command) {
                 // Do not return suggestions if we are already on the next word:
                 if ($bare_params[$cword] === $search) {
-                    return $this->suggest(array($command));
+                    return $this->suggest([$command]);
                 }
                 $obj = $loader->getModuleCommandInstance(
                     $module,
@@ -112,7 +112,7 @@ class AutocompleteCommand extends Command
             );
             if ($action) {
                 if ($bare_params[$cword] === $search) {
-                    return $this->suggest(array($action));
+                    return $this->suggest([$action]);
                 }
             } else {
                 return $this->suggest($loader->getLastSuggestions());

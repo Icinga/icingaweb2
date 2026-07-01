@@ -24,7 +24,7 @@ class ResourceStep extends Step
 
     public function apply()
     {
-        $resourceConfig = array();
+        $resourceConfig = [];
         if (isset($this->data['dbResourceConfig'])) {
             $dbConfig = $this->data['dbResourceConfig'];
             $resourceName = $dbConfig['name'];
@@ -187,18 +187,18 @@ class ResourceStep extends Step
     public function getReport()
     {
         if ($this->error === false) {
-            return array(sprintf(
+            return [sprintf(
                 mt('setup', 'Resource configuration has been successfully written to: %s'),
                 Config::resolvePath('resources.ini')
-            ));
+            )];
         } elseif ($this->error !== null) {
-            return array(
+            return [
                 sprintf(
                     mt('setup', 'Resource configuration could not be written to: %s. An error occured:'),
                     Config::resolvePath('resources.ini')
                 ),
                 sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->error))
-            );
+            ];
         }
     }
 }

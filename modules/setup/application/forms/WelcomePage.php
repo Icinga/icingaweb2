@@ -32,7 +32,7 @@ class WelcomePage extends Form
         $this->addElement(
             'text',
             'token',
-            array(
+            [
                 'autofocus'     => '',
                 'required'      => true,
                 'label'         => $this->translate('Setup Token'),
@@ -40,8 +40,8 @@ class WelcomePage extends Form
                     'For security reasons we need to ensure that you are permitted to run this wizard.'
                     . ' Please provide a token by following the instructions below.'
                 ),
-                'validators'    => array(new TokenValidator(Icinga::app()->getConfigDir() . '/setup.token'))
-            )
+                'validators'    => [new TokenValidator(Icinga::app()->getConfigDir() . '/setup.token')]
+            ]
         );
     }
 }

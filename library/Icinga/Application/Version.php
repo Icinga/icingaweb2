@@ -19,12 +19,12 @@ class Version
      */
     public static function get()
     {
-        $version = array('appVersion' => self::VERSION);
+        $version = ['appVersion' => self::VERSION];
         preg_match('/2.(\d+)\./', self::VERSION, $matches);
         $version['docVersion'] = isset($matches[1]) ? '2.' . $matches[1] : null;
 
         if (false !== ($appVersion = @file_get_contents(Icinga::app()->getApplicationDir('VERSION')))) {
-            $matches = array();
+            $matches = [];
             if (@preg_match('/^(?P<gitCommitID>\w+) (?P<gitCommitDate>\S+)/', $appVersion, $matches)) {
                 return array_merge($version, $matches);
             }

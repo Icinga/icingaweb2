@@ -28,14 +28,14 @@ class FormHints extends Zend_Form_Decorator_Abstract
     public function __construct($options = null)
     {
         parent::__construct($options);
-        $this->blacklist = array(
+        $this->blacklist = [
             'Zend_Form_Element_Hidden',
             'Zend_Form_Element_Submit',
             'Zend_Form_Element_Button',
             'Icinga\Web\Form\Element\Note',
             'Icinga\Web\Form\Element\Button',
             'Icinga\Web\Form\Element\CsrfCounterMeasure'
-        );
+        ];
     }
 
     /**
@@ -99,7 +99,7 @@ class FormHints extends Zend_Form_Decorator_Abstract
      */
     protected function recurseForm(Form $form, &$entirelyRequired = null, $elementsPassed = false)
     {
-        $requiredLabels = array();
+        $requiredLabels = [];
         if ($form->getRequiredCue() !== null) {
             $partiallyRequired = $partiallyOptional = false;
             foreach ($form->getElements() as $element) {
@@ -128,7 +128,7 @@ class FormHints extends Zend_Form_Decorator_Abstract
             }
         }
 
-        $hints = array($form->getHints());
+        $hints = [$form->getHints()];
         foreach ($form->getSubForms() as $subForm) {
             $hints[] = $this->recurseForm($subForm, $entirelyRequired, $elementsPassed);
         }

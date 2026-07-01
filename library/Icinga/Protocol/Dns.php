@@ -22,7 +22,7 @@ class Dns
     public static function getSrvRecords($domain, $service, $protocol = 'tcp')
     {
         $records = dns_get_record('_' . $service . '._' . $protocol . '.' . $domain, DNS_SRV);
-        return $records === false ? array() : $records;
+        return $records === false ? [] : $records;
     }
 
     /**

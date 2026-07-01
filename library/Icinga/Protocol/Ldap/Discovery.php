@@ -31,11 +31,11 @@ class Discovery
      */
     public function suggestResourceSettings()
     {
-        return array(
+        return [
             'hostname' => $this->connection->getHostname(),
             'port' => $this->connection->getPort(),
             'root_dn' => $this->connection->getCapabilities()->getDefaultNamingContext()
-        );
+        ];
     }
 
     /**
@@ -47,19 +47,19 @@ class Discovery
     public function suggestBackendSettings()
     {
         if ($this->isAd()) {
-            return array(
+            return [
                 'backend' => 'msldap',
                 'base_dn' => $this->connection->getCapabilities()->getDefaultNamingContext(),
                 'user_class' => 'user',
                 'user_name_attribute' => 'sAMAccountName'
-            );
+            ];
         } else {
-            return array(
+            return [
                 'backend' => 'ldap',
                 'base_dn' => $this->connection->getCapabilities()->getDefaultNamingContext(),
                 'user_class' => 'inetOrgPerson',
                 'user_name_attribute' => 'uid'
-            );
+            ];
         }
     }
 
@@ -136,10 +136,10 @@ class Discovery
      */
     public static function discover($host, $port)
     {
-        $conn = new LdapConnection(new ConfigObject(array(
+        $conn = new LdapConnection(new ConfigObject([
             'hostname' => $host,
             'port'     => $port
-        )));
+        ]));
         return new Discovery($conn);
     }
 }

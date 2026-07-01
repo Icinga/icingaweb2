@@ -29,7 +29,7 @@ class LdapBackendForm extends Form
      *
      * @var string[]
      */
-    protected $suggestions = array();
+    protected $suggestions = [];
 
     /**
      * Cache for {@link getLdapCapabilities()}
@@ -71,19 +71,19 @@ class LdapBackendForm extends Form
         $this->addElement(
             'text',
             'name',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Backend Name'),
                 'description'   => $this->translate(
                     'The name of this authentication provider that is used to differentiate it from others.'
                 ),
                 'value'         => $this->getSuggestion('name')
-            )
+            ]
         );
         $this->addElement(
             'select',
             'resource',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('LDAP Connection'),
                 'description'   => $this->translate(
@@ -91,16 +91,16 @@ class LdapBackendForm extends Form
                 ),
                 'multiOptions'  => !empty($this->resources)
                     ? array_combine($this->resources, $this->resources)
-                    : array(),
+                    : [],
                 'value'         => $this->getSuggestion('resource')
-            )
+            ]
         );
 
         if (! $isAd && !empty($this->resources)) {
             $this->addElement(
                 'button',
                 'discovery_btn',
-                array(
+                [
                     'class'             => 'control-button',
                     'type'              => 'submit',
                     'value'             => 'discovery_btn',
@@ -108,13 +108,13 @@ class LdapBackendForm extends Form
                     'title'             => $this->translate(
                         'Push to fill in the chosen connection\'s default settings.'
                     ),
-                    'decorators'        => array(
-                        array('ViewHelper', array('separator' => '')),
-                        array('Spinner'),
-                        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
-                    ),
+                    'decorators'        => [
+                        ['ViewHelper', ['separator' => '']],
+                        ['Spinner'],
+                        ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
+                    ],
                     'formnovalidate'    => 'formnovalidate'
-                )
+                ]
             );
         }
 
@@ -133,7 +133,7 @@ class LdapBackendForm extends Form
         $this->addElement(
             'text',
             'user_class',
-            array(
+            [
                 'preserveDefault'   => true,
                 'required'          => ! $isAd,
                 'ignore'            => $isAd,
@@ -141,12 +141,12 @@ class LdapBackendForm extends Form
                 'label'             => $this->translate('LDAP User Object Class'),
                 'description'       => $this->translate('The object class used for storing users on the LDAP server.'),
                 'value'             => $this->getSuggestion('user_class', $userClass)
-            )
+            ]
         );
         $this->addElement(
             'text',
             'filter',
-            array(
+            [
                 'preserveDefault'   => true,
                 'allowEmpty'        => true,
                 'value'             => $this->getSuggestion('filter', $filter),
@@ -159,11 +159,11 @@ class LdapBackendForm extends Form
                     'The filter needs to be expressed as standard LDAP expression.'
                     . ' (e.g. &(foo=bar)(bar=foo) or foo=bar)'
                 ),
-                'validators'        => array(
-                    array(
+                'validators'        => [
+                    [
                         'Callback',
                         false,
-                        array(
+                        [
                             'callback'  => function ($v) {
                                 // This is not meant to be a full syntax check. It will just
                                 // ensure that we can safely strip unnecessary parentheses.
@@ -172,18 +172,18 @@ class LdapBackendForm extends Form
                                     strpos($v, ')(') !== false ? substr($v, -2) === '))' : substr($v, -1) === ')'
                                 );
                             },
-                            'messages'  => array(
+                            'messages'  => [
                                 'callbackValue' => $this->translate('The filter is invalid. Please check your syntax.')
-                            )
-                        )
-                    )
-                )
-            )
+                            ]
+                        ]
+                    ]
+                ]
+            ]
         );
         $this->addElement(
             'text',
             'user_name_attribute',
-            array(
+            [
                 'preserveDefault'   => true,
                 'required'          => ! $isAd,
                 'ignore'            => $isAd,
@@ -193,20 +193,20 @@ class LdapBackendForm extends Form
                     'The attribute name used for storing the user name on the LDAP server.'
                 ),
                 'value'             => $this->getSuggestion('user_name_attribute', $userNameAttribute)
-            )
+            ]
         );
         $this->addElement(
             'hidden',
             'backend',
-            array(
+            [
                 'disabled'  => true,
                 'value'     => $this->getSuggestion('backend', $isAd ? 'msldap' : 'ldap')
-            )
+            ]
         );
         $this->addElement(
             'text',
             'base_dn',
-            array(
+            [
                 'preserveDefault'   => true,
                 'required'          => false,
                 'label'             => $this->translate('LDAP Base DN'),
@@ -215,13 +215,13 @@ class LdapBackendForm extends Form
                     'empty to select all users available using the specified connection.'
                 ),
                 'value'             => $this->getSuggestion('base_dn')
-            )
+            ]
         );
 
         $this->addElement(
             'text',
             'domain',
-            array(
+            [
                 'label'         => $this->translate('Domain'),
                 'description'   => $this->translate(
                     'The domain the LDAP server is responsible for upon authentication.'
@@ -234,13 +234,13 @@ class LdapBackendForm extends Form
                 ),
                 'preserveDefault' => true,
                 'value'         => $this->getSuggestion('domain')
-            )
+            ]
         );
 
         $this->addElement(
             'button',
             'btn_discover_domain',
-            array(
+            [
                 'class'             => 'control-button',
                 'type'              => 'submit',
                 'value'             => 'discovery_btn',
@@ -248,13 +248,13 @@ class LdapBackendForm extends Form
                 'title'             => $this->translate(
                     'Push to disover and fill in the domain of the LDAP server.'
                 ),
-                'decorators'        => array(
-                    array('ViewHelper', array('separator' => '')),
-                    array('Spinner'),
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
-                ),
+                'decorators'        => [
+                    ['ViewHelper', ['separator' => '']],
+                    ['Spinner'],
+                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
+                ],
                 'formnovalidate'    => 'formnovalidate'
-            )
+            ]
         );
     }
 
@@ -368,9 +368,9 @@ class LdapBackendForm extends Form
     {
         $defaultNamingContext = $cap->getDefaultNamingContext();
         if ($defaultNamingContext !== null) {
-            $validationMatches = array();
+            $validationMatches = [];
             if (preg_match('/\bdc=[^,]+(?:,dc=[^,]+)*$/', strtolower($defaultNamingContext), $validationMatches)) {
-                $splitMatches = array();
+                $splitMatches = [];
                 preg_match_all('/dc=([^,]+)/', $validationMatches[0], $splitMatches);
                 return implode('.', $splitMatches[1]);
             }

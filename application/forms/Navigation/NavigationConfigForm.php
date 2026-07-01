@@ -198,7 +198,7 @@ class NavigationConfigForm extends ConfigForm
      */
     public function getItemTypes()
     {
-        return $this->itemTypes ?: array();
+        return $this->itemTypes ?: [];
     }
 
     /**
@@ -211,9 +211,9 @@ class NavigationConfigForm extends ConfigForm
      */
     public function listAvailableParents($type, $owner = null)
     {
-        $children = $this->itemToLoad ? $this->getFlattenedChildren($this->itemToLoad) : array();
+        $children = $this->itemToLoad ? $this->getFlattenedChildren($this->itemToLoad) : [];
 
-        $names = array();
+        $names = [];
         foreach ($this->getShareConfig($type) as $sectionName => $sectionConfig) {
             if ((string) $sectionName !== $this->itemToLoad
                 && $sectionConfig->owner === ($owner ?: $this->getUser()->getUsername())
@@ -245,10 +245,10 @@ class NavigationConfigForm extends ConfigForm
     {
         $config = $this->getConfigForItem($name);
         if ($config === null) {
-            return array();
+            return [];
         }
 
-        $children = array();
+        $children = [];
         foreach ($config->toArray() as $sectionName => $sectionConfig) {
             if (isset($sectionConfig['parent']) && $sectionConfig['parent'] === $name) {
                 $children[] = $sectionName;
@@ -572,13 +572,13 @@ class NavigationConfigForm extends ConfigForm
         $this->addElement(
             'text',
             'name',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Name'),
                 'description'   => $this->translate(
                     'The name of this navigation item that is used to differentiate it from others'
                 )
-            )
+            ]
         );
 
         if ((! $itemForm->requiresParentSelection() || ! isset($formData['parent']) || ! $formData['parent'])
@@ -589,13 +589,13 @@ class NavigationConfigForm extends ConfigForm
             $this->addElement(
                 'checkbox',
                 'shared',
-                array(
+                [
                     'autosubmit'    => true,
                     'ignore'        => true,
                     'value'         => $checked,
                     'label'         => $this->translate('Shared'),
                     'description'   => $this->translate('Tick this box to share this item with others')
-                )
+                ]
             );
 
             if ($checked || (isset($formData['shared']) && $formData['shared'])) {
@@ -603,22 +603,22 @@ class NavigationConfigForm extends ConfigForm
                 $this->addElement(
                     'textarea',
                     'users',
-                    array(
+                    [
                         'label'         => $this->translate('Users'),
                         'description'   => $this->translate(
                             'Comma separated list of usernames to share this item with'
                         )
-                    )
+                    ]
                 );
                 $this->addElement(
                     'textarea',
                     'groups',
-                    array(
+                    [
                         'label'         => $this->translate('Groups'),
                         'description'   => $this->translate(
                             'Comma separated list of group names to share this item with'
                         )
-                    )
+                    ]
                 );
             }
         }
@@ -627,21 +627,21 @@ class NavigationConfigForm extends ConfigForm
             $this->addElement(
                 'hidden',
                 'type',
-                array(
+                [
                     'value' => $itemType
-                )
+                ]
             );
         } else {
             $this->addElement(
                 'select',
                 'type',
-                array(
+                [
                     'required'      => true,
                     'autosubmit'    => true,
                     'label'         => $this->translate('Type'),
                     'description'   => $this->translate('The type of this navigation item'),
                     'multiOptions'  => $itemTypes
-                )
+                ]
             );
         }
 
@@ -656,7 +656,7 @@ class NavigationConfigForm extends ConfigForm
             $this->addElement(
                 'select',
                 'parent',
-                array(
+                [
                     'allowEmpty'    => true,
                     'autosubmit'    => true,
                     'label'         => $this->translate('Parent'),
@@ -666,7 +666,7 @@ class NavigationConfigForm extends ConfigForm
                     ),
                     'multiOptions'  => ['' => $this->translate('None', 'No parent for a navigation item')]
                         + (empty($availableParents) ? [] : array_combine($availableParents, $availableParents))
-                )
+                ]
             );
         } else {
             $this->addElement('hidden', 'parent', ['disabled'  => true]);
@@ -694,7 +694,7 @@ class NavigationConfigForm extends ConfigForm
             $data['name'] = $this->itemToLoad;
             $this->populate($data);
         } elseif ($this->defaultUrl !== null) {
-            $this->populate(array('url' => $this->defaultUrl));
+            $this->populate(['url' => $this->defaultUrl]);
         }
     }
 
@@ -709,7 +709,7 @@ class NavigationConfigForm extends ConfigForm
 
         $valid = true;
         if (isset($formData['users']) && $formData['users']) {
-            $parsedUserRestrictions = array();
+            $parsedUserRestrictions = [];
             foreach (Auth::getInstance()->getRestrictions('application/share/users') as $userRestriction) {
                 $parsedUserRestrictions[] = array_map('trim', explode(',', $userRestriction));
             }
@@ -733,7 +733,7 @@ class NavigationConfigForm extends ConfigForm
         }
 
         if (isset($formData['groups']) && $formData['groups']) {
-            $parsedGroupRestrictions = array();
+            $parsedGroupRestrictions = [];
             foreach (Auth::getInstance()->getRestrictions('application/share/groups') as $groupRestriction) {
                 $parsedGroupRestrictions[] = array_map('trim', explode(',', $groupRestriction));
             }

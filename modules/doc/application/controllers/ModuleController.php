@@ -50,7 +50,7 @@ class ModuleController extends DocController
     public function indexAction()
     {
         $moduleManager = Icinga::app()->getModuleManager();
-        $modules = array();
+        $modules = [];
         foreach ($moduleManager->listInstalledModules() as $module) {
             $path = $this->getPath($module, $moduleManager->getModuleDir($module, '/doc'), true);
             if ($path !== null) {
@@ -58,11 +58,11 @@ class ModuleController extends DocController
             }
         }
         $this->view->modules = $modules;
-        $this->getTabs()->add('module-documentation', array(
+        $this->getTabs()->add('module-documentation', [
             'active'    => true,
             'title'     => $this->translate('Module Documentation', 'Tab title'),
             'url'       => Url::fromRequest()
-        ));
+        ]);
     }
 
     /**
@@ -98,7 +98,7 @@ class ModuleController extends DocController
                 $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc')),
                 $name,
                 'doc/module/chapter',
-                array('moduleName' => $module)
+                ['moduleName' => $module]
             );
         } catch (DocException $e) {
             $this->httpNotFound($e->getMessage());
@@ -125,7 +125,7 @@ class ModuleController extends DocController
                 $chapter,
                 'doc/module/chapter',
                 'doc/module/img',
-                array('moduleName' => $module)
+                ['moduleName' => $module]
             );
         } catch (DocException $e) {
             $this->httpNotFound($e->getMessage());
@@ -202,7 +202,7 @@ class ModuleController extends DocController
             $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc')),
             $module,
             'doc/module/chapter',
-            array('moduleName' => $module)
+            ['moduleName' => $module]
         );
     }
 }

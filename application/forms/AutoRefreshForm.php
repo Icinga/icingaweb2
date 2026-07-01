@@ -67,19 +67,19 @@ class AutoRefreshForm extends Form
             $value = $this->translate('Disable auto refresh');
         }
 
-        $this->addElements(array(
-            array(
+        $this->addElements([
+            [
                 'button',
                 'btn_submit',
-                array(
+                [
                     'ignore'        => true,
                     'type'          => 'submit',
                     'value'         => $value,
-                    'decorators'    => array('ViewHelper'),
+                    'decorators'    => ['ViewHelper'],
                     'escape'        => false,
                     'class'         => 'link-like'
-                )
-            )
-        ));
+                ]
+            ]
+        ]);
     }
 }

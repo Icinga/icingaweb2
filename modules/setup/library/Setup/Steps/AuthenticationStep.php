@@ -41,7 +41,7 @@ class AuthenticationStep extends Step
 
     protected function createAuthenticationIni()
     {
-        $config = array();
+        $config = [];
         $backendConfig = $this->data['backendConfig'];
         $backendName = $backendConfig['name'];
         unset($backendConfig['name']);
@@ -66,23 +66,23 @@ class AuthenticationStep extends Step
     protected function createRolesIni()
     {
         if (isset($this->data['adminAccountData']['username'])) {
-            $config = array(
+            $config = [
                 'users'         => $this->data['adminAccountData']['username'],
                 'permissions'   => '*'
-            );
+            ];
 
             if ($this->data['backendConfig']['backend'] === 'db') {
                 $config['groups'] = mt('setup', 'Administrators', 'setup.role.name');
             }
         } else { // isset($this->data['adminAccountData']['groupname'])
-            $config = array(
+            $config = [
                 'groups'        => $this->data['adminAccountData']['groupname'],
                 'permissions'   => '*'
-            );
+            ];
         }
 
         try {
-            Config::fromArray(array(mt('setup', 'Administrators', 'setup.role.name') => $config))
+            Config::fromArray([mt('setup', 'Administrators', 'setup.role.name') => $config])
                 ->setConfigFile(Config::resolvePath('roles.ini'))
                 ->saveIni();
         } catch (Exception $e) {
@@ -102,11 +102,11 @@ class AuthenticationStep extends Step
             );
 
             if ($backend->select()->where('user_name', $this->data['adminAccountData']['username'])->count() === 0) {
-                $backend->insert('user', array(
+                $backend->insert('user', [
                     'user_name' => $this->data['adminAccountData']['username'],
                     'password'  => $this->data['adminAccountData']['password'],
                     'is_active' => true
-                ));
+                ]);
                 $this->dbError = false;
             }
         } catch (Exception $e) {
@@ -185,7 +185,7 @@ class AuthenticationStep extends Step
 
     public function getReport()
     {
-        $report = array();
+        $report = [];
 
         if ($this->authIniError === false) {
             $report[] = sprintf(

@@ -50,18 +50,18 @@ class DbBackendForm extends Form
         $this->addElement(
             'text',
             'name',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Backend Name'),
                 'description'   => $this->translate(
                     'The name of this authentication provider that is used to differentiate it from others'
                 )
-            )
+            ]
         );
         $this->addElement(
             'select',
             'resource',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Database Connection'),
                 'description'   => $this->translate(
@@ -69,16 +69,16 @@ class DbBackendForm extends Form
                 ),
                 'multiOptions'  => !empty($this->resources)
                     ? array_combine($this->resources, $this->resources)
-                    : array()
-            )
+                    : []
+            ]
         );
         $this->addElement(
             'hidden',
             'backend',
-            array(
+            [
                 'disabled'  => true,
                 'value'     => 'db'
-            )
+            ]
         );
     }
 }

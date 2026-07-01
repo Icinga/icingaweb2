@@ -84,7 +84,7 @@ class ConfigCommand extends Command
             $source = trim(file_get_contents($mapFile));
             $source = StringHelper::trimSplit($source, "\n");
 
-            $map = array();
+            $map = [];
 
             array_walk($source, function ($item) use ($separator, &$map) {
                 list($from, $to) = StringHelper::trimSplit($item, $separator, 2);
@@ -112,7 +112,7 @@ class ConfigCommand extends Command
                 $migrated = clone $user;
                 $migrated->setDomain($toDomain);
 
-                $migration = UserDomainMigration::fromMap(array($user->getUsername() => $migrated->getUsername()));
+                $migration = UserDomainMigration::fromMap([$user->getUsername() => $migrated->getUsername()]);
             }
         }
 

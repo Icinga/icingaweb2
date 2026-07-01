@@ -79,10 +79,10 @@ abstract class Requirement
      *
      * @throws  LogicException  In case there exists no setter for an option's key
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $this->optional = false;
-        $this->descriptions = array();
+        $this->descriptions = [];
 
         foreach ($options as $key => $value) {
             $setMethod = 'set' . ucfirst($key);

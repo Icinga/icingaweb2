@@ -30,10 +30,10 @@ class Php72Session extends PhpSession
             true
         );
 
-        session_start(array(
+        session_start([
             'use_cookies'       => true,
             'use_only_cookies'  => true,
             'use_trans_sid'     => false
-        ));
+        ]);
     }
 }

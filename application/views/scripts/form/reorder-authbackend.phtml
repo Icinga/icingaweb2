@@ -27,25 +27,25 @@ $this->escape($form->getAction())
           <?= $this->qlink(
             $backendNames[$i],
             'config/edituserbackend',
-            array('backend' => $backendNames[$i]),
-            array(
+            ['backend' => $backendNames[$i]],
+            [
                 'icon'  => $type === 'external' ?
                     'magic' : ($type === 'ldap' || $type === 'msldap' ? 'sitemap' : 'database'),
                 'class' => 'rowaction',
                 'title' => sprintf($this->translate('Edit user backend %s'), $backendNames[$i])
-            )
+            ]
           ) ?>
         </td>
         <td class="icon-col text-right">
           <?= $this->qlink(
             '',
             'config/removeuserbackend',
-            array('backend' => $backendNames[$i]),
-            array(
+            ['backend' => $backendNames[$i]],
+            [
                 'class' => 'action-link',
                 'icon'  => 'cancel',
                 'title' => sprintf($this->translate('Remove user backend %s'), $backendNames[$i])
-            )
+            ]
           ) ?>
         </td>
         <td class="icon-col text-right" data-base-target="_self">

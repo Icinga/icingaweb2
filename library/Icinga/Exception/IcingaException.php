@@ -79,7 +79,7 @@ class IcingaException extends Exception
      */
     public static function getConfidentialTraceAsString(Throwable $exception)
     {
-        $trace = array();
+        $trace = [];
 
         $index = 0;
         foreach ($exception->getTrace() as $index => $frame) {
@@ -98,7 +98,7 @@ class IcingaException extends Exception
             $trace[] = "{$frame['function']}(";
 
             if (isset($frame['args'])) {
-                $args = array();
+                $args = [];
                 foreach ($frame['args'] as $arg) {
                     $type = gettype($arg);
                     $args[] = $type === 'object' ? 'Object(' . get_class($arg) . ')' : ucfirst($type);

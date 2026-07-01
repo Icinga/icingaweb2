@@ -38,30 +38,30 @@ class ConfigController extends Controller
     {
         $tabs = $this->getTabs();
         if ($this->hasPermission('config/general')) {
-            $tabs->add('general', array(
+            $tabs->add('general', [
                 'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
                 'label' => $this->translate('General'),
                 'url'   => 'config/general',
                 'baseTarget' => '_main'
-            ));
+            ]);
         }
         if ($this->hasPermission('config/resources')) {
-            $tabs->add('resource', array(
+            $tabs->add('resource', [
                 'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
                 'label' => $this->translate('Resources'),
                 'url'   => 'config/resource',
                 'baseTarget' => '_main'
-            ));
+            ]);
         }
         if ($this->hasPermission('config/access-control/users')
             || $this->hasPermission('config/access-control/groups')
         ) {
-            $tabs->add('authentication', array(
+            $tabs->add('authentication', [
                 'title' => $this->translate('Configure the user and group backends'),
                 'label' => $this->translate('Access Control Backends'),
                 'url'   => 'config/userbackend',
                 'baseTarget' => '_main'
-            ));
+            ]);
         }
 
         return $tabs;
@@ -125,11 +125,11 @@ class ConfigController extends Controller
         // Overwrite tabs created in init
         // @TODO(el): This seems not natural to me. Module configuration should have its own controller.
         $this->view->tabs = Widget::create('tabs')
-            ->add('modules', array(
+            ->add('modules', [
                 'label' => $this->translate('Modules'),
                 'title' => $this->translate('List intalled modules'),
                 'url'   => 'config/modules'
-            ))
+            ])
             ->activate('modules');
         $this->view->modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')
@@ -418,10 +418,10 @@ class ConfigController extends Controller
     public function createresourceAction()
     {
         $this->assertPermission('config/resources');
-        $this->getTabs()->add('resources/new', array(
+        $this->getTabs()->add('resources/new', [
             'label' => $this->translate('New Resource'),
             'url'   => Url::fromRequest()
-        ))->activate('resources/new');
+        ])->activate('resources/new');
         $form = new ResourceConfigForm();
         $form->addDescription($this->translate('Resources are entities that provide data to Icinga Web 2.'));
         $form->setIniConfig(Config::app('resources'));
@@ -439,10 +439,10 @@ class ConfigController extends Controller
     public function editresourceAction()
     {
         $this->assertPermission('config/resources');
-        $this->getTabs()->add('resources/update', array(
+        $this->getTabs()->add('resources/update', [
             'label' => $this->translate('Update Resource'),
             'url'   => Url::fromRequest()
-        ))->activate('resources/update');
+        ])->activate('resources/update');
         $form = new ResourceConfigForm();
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
@@ -459,11 +459,11 @@ class ConfigController extends Controller
     public function removeresourceAction()
     {
         $this->assertPermission('config/resources');
-        $this->getTabs()->add('resources/remove', array(
+        $this->getTabs()->add('resources/remove', [
             'label' => $this->translate('Remove Resource'),
             'url'   => Url::fromRequest()
-        ))->activate('resources/remove');
-        $form = new ConfirmRemovalForm(array(
+        ])->activate('resources/remove');
+        $form = new ConfirmRemovalForm([
             'onSuccess' => function ($form) {
                 $configForm = new ResourceConfigForm();
                 $configForm->setIniConfig(Config::app('resources'));
@@ -482,7 +482,7 @@ class ConfigController extends Controller
                     return false;
                 }
             }
-        ));
+        ]);
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
 

@@ -26,14 +26,14 @@ class Params
      *
      * @var array
      */
-    protected $standalone = array();
+    protected $standalone = [];
 
     /**
      * The options
      *
      * @var array
      */
-    protected $params = array();
+    protected $params = [];
 
     /**
      * Parse the given commandline and create a new Params object
@@ -49,7 +49,7 @@ class Params
                 $noOptionFlag = true;
             } elseif (!$noOptionFlag && substr($argv[$i], 0, 2) === '--') {
                 $key = substr($argv[$i], 2);
-                $matches = array();
+                $matches = [];
                 if (1 === preg_match(
                     '/(?<!.)([^=]+)=(.*)(?!.)/ms',
                     $key,
@@ -60,7 +60,7 @@ class Params
                     $this->params[$key] = true;
                 } elseif (array_key_exists($key, $this->params)) {
                     if (!is_array($this->params[$key])) {
-                        $this->params[$key] = array($this->params[$key]);
+                        $this->params[$key] = [$this->params[$key]];
                     }
                     $this->params[$key][] = $argv[++$i];
                 } else {
@@ -210,10 +210,10 @@ class Params
      *
      * @return  $this
      */
-    public function remove($keys = array())
+    public function remove($keys = [])
     {
         if (! is_array($keys)) {
-            $keys = array($keys);
+            $keys = [$keys];
         }
         foreach ($keys as $key) {
             if (array_key_exists($key, $this->params)) {
@@ -230,7 +230,7 @@ class Params
      *
      * @return  Params
      */
-    public function without($keys = array())
+    public function without($keys = [])
     {
         $params = clone($this);
         return $params->remove($keys);

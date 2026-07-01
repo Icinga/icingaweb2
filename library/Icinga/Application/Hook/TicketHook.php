@@ -101,7 +101,7 @@ abstract class TicketHook
             }
 
             // Remove preg_offset from match for the ticket pattern
-            $carry = array();
+            $carry = [];
             array_walk($match, function ($value, $key) use (&$carry) {
                 $carry[$key] = $value[0];
             }, $carry);
@@ -202,7 +202,7 @@ abstract class TicketHook
             try {
                 $text = preg_replace_callback(
                     $pattern,
-                    array($this, 'createLink'),
+                    [$this, 'createLink'],
                     $text
                 );
             } catch (ErrorException $e) {

@@ -25,10 +25,10 @@ class DateTimeValidator extends Zend_Validate_Abstract
      *
      * @see Zend_Validate_Abstract::$_messageTemplates‚
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::INVALID_DATETIME_TYPE     => 'Invalid type given. Instance of DateTime or date/time string expected',
         self::INVALID_DATETIME_FORMAT   => 'Date/time string not in the expected format: %value%'
-    );
+    ];
 
     protected $local;
 

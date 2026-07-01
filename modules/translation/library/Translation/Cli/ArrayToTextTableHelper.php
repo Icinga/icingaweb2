@@ -23,17 +23,17 @@ class ArrayToTextTableHelper
     /**
      * @var int The column width settings
      */
-    protected $cs = array();
+    protected $cs = [];
 
     /**
      * @var int The Row lines settings
      */
-    protected $rs = array();
+    protected $rs = [];
 
     /**
      * @var int The Column index of keys
      */
-    protected $keys = array();
+    protected $keys = [];
 
     /**
      * @var int Max Column Height (returns)
@@ -59,8 +59,8 @@ class ArrayToTextTableHelper
     public function __construct($rows)
     {
         $this->rows =& $rows;
-        $this->cs = array();
-        $this->rs = array();
+        $this->cs = [];
+        $this->rs = [];
 
         if (! $xc = count($this->rows)) {
             return false;
@@ -143,7 +143,7 @@ class ArrayToTextTableHelper
 
     protected function setHeading()
     {
-        $data = array();
+        $data = [];
         foreach ($this->keys as $colKey => $value) {
             $this->setMax(false, $colKey, $value);
             $data[$colKey] = strtoupper($value);

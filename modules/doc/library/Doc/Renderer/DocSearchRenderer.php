@@ -19,7 +19,7 @@ class DocSearchRenderer extends DocRenderer
      *
      * @var array
      */
-    protected $content = array();
+    protected $content = [];
 
     /**
      * Create a new renderer for doc searches
@@ -62,7 +62,7 @@ class DocSearchRenderer extends DocRenderer
                 continue;
             }
             $title = $this->getView()->escape($section->getTitle());
-            $contentMatches = array();
+            $contentMatches = [];
             foreach ($matches as $match) {
                 if ($match->getMatchType() === DocSearchMatch::MATCH_HEADER) {
                     $title = $match->highlight();
@@ -76,9 +76,9 @@ class DocSearchRenderer extends DocRenderer
             $path = $this->getView()->getHelper('Url')->url(
                 array_merge(
                     $this->getUrlParams(),
-                    array(
+                    [
                         'chapter' => $this->encodeUrlParam($section->getChapter()->getId())
-                    )
+                    ]
                 ),
                 $this->url,
                 false,
@@ -86,11 +86,11 @@ class DocSearchRenderer extends DocRenderer
             );
             $url = $this->getView()->url(
                 $path,
-                array('highlight-search' => $this->getInnerIterator()->getSearch()->getInput())
+                ['highlight-search' => $this->getInnerIterator()->getSearch()->getInput()]
             );
             /** @var \Icinga\Web\Url $url */
             $url->setAnchor($this->encodeAnchor($section->getId()));
-            $urlAttributes = array(
+            $urlAttributes = [
                 'data-base-target'  => '_next',
                 'title'             => $section->getId() === $section->getChapter()->getId()
                     ? sprintf(
@@ -110,7 +110,7 @@ class DocSearchRenderer extends DocRenderer
                         $section->getTitle(),
                         $section->getChapter()->getTitle()
                     )
-            );
+            ];
             if ($section->getNoFollow()) {
                 $urlAttributes['rel'] = 'nofollow';
             }

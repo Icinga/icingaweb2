@@ -32,9 +32,9 @@ class DocSearch
     public function __construct($search)
     {
         $this->input = $search = (string) $search;
-        $criteria = array();
+        $criteria = [];
         if (preg_match_all('/"(?P<search>[^"]*)"/', $search, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
-            $unquoted = array();
+            $unquoted = [];
             $offset = 0;
             foreach ($matches as $match) {
                 $fullMatch = $match[0];

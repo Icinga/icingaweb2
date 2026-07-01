@@ -78,8 +78,8 @@ namespace Icinga\Test {
          *
          * @var array
          */
-        protected static $dbConfiguration = array(
-            'mysql' => array(
+        protected static $dbConfiguration = [
+            'mysql' => [
                 'type'      => 'db',
                 'db'        => 'mysql',
                 'host'      => '127.0.0.1',
@@ -87,8 +87,8 @@ namespace Icinga\Test {
                 'dbname'    => 'icinga_unittest',
                 'username'  => 'icinga_unittest',
                 'password'  => 'icinga_unittest'
-            ),
-            'pgsql' => array(
+            ],
+            'pgsql' => [
                 'type'      => 'db',
                 'db'        => 'pgsql',
                 'host'      => '127.0.0.1',
@@ -96,8 +96,8 @@ namespace Icinga\Test {
                 'dbname'    => 'icinga_unittest',
                 'username'  => 'icinga_unittest',
                 'password'  => 'icinga_unittest'
-            ),
-        );
+            ],
+        ];
 
         /** @var Request */
         private $requestMock;
@@ -124,7 +124,7 @@ namespace Icinga\Test {
             $this->requestMock = Mockery::mock('Icinga\Web\Request')->shouldDeferMissing();
             $this->requestMock->shouldReceive('getPathInfo')->andReturn('')->byDefault()
                 ->shouldReceive('getBaseUrl')->andReturn('/')->byDefault()
-                ->shouldReceive('getQuery')->andReturn(array())->byDefault()
+                ->shouldReceive('getQuery')->andReturn([])->byDefault()
                 ->shouldReceive('getParam')->with(Mockery::type('string'), Mockery::type('string'))
                 ->andReturnUsing(function ($name, $default) {
                     return $default;
@@ -203,9 +203,9 @@ namespace Icinga\Test {
                 $conn = $e->getMessage();
             }
 
-            return array(
-                array($conn)
-            );
+            return [
+                [$conn]
+            ];
         }
 
         /**

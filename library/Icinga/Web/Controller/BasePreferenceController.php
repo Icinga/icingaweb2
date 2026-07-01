@@ -25,7 +25,7 @@ class BasePreferenceController extends ActionController
      */
     public static function createProvidedTabs()
     {
-        return array();
+        return [];
     }
 
     /**

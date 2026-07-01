@@ -120,7 +120,7 @@ class DocParser
             $id = null;
         }
         /** @noinspection PhpUndefinedVariableInspection */
-        return array($header, $id, $level, $headerStyle);
+        return [$header, $id, $level, $headerStyle];
     }
 
     /**
@@ -182,7 +182,7 @@ class DocParser
                         $stack->pop();
                     }
                     if ($id === null) {
-                        $path = array();
+                        $path = [];
                         foreach ($stack as $section) {
                             /** @var $section DocSection */
                             $path[] = $section->getTitle();

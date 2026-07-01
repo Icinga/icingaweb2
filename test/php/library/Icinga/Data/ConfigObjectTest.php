@@ -12,18 +12,18 @@ class ConfigObjectTest extends BaseTestCase
 {
     public function testWhetherInitializingAConfigWithAssociativeArraysCreatesHierarchicalConfigObjects()
     {
-        $config = new ConfigObject(array(
+        $config = new ConfigObject([
             'a' => 'b',
             'c' => 'd',
-            'e' => array(
+            'e' => [
                 'f' => 'g',
                 'h' => 'i',
-                'j' => array(
+                'j' => [
                     'k' => 'l',
                     'm' => 'n'
-                )
-            )
-        ));
+                ]
+            ]
+        ]);
 
         $this->assertInstanceOf(
             get_class($config),
@@ -42,12 +42,12 @@ class ConfigObjectTest extends BaseTestCase
      */
     public function testWhetherItIsPossibleToCloneConfigObjects()
     {
-        $config = new ConfigObject(array(
+        $config = new ConfigObject([
             'a' => 'b',
-            'c' => array(
+            'c' => [
                 'd' => 'e'
-            )
-        ));
+            ]
+        ]);
         $newConfig = clone $config;
 
         $this->assertNotSame(
@@ -64,18 +64,18 @@ class ConfigObjectTest extends BaseTestCase
 
     public function testWhetherConfigObjectsAreTraversable()
     {
-        $config = new ConfigObject(array('a' => 'b', 'c' => 'd'));
+        $config = new ConfigObject(['a' => 'b', 'c' => 'd']);
         $config->e = 'f';
 
         $this->assertInstanceOf('Iterator', $config, 'ConfigObject objects do not implement interface `Iterator\'');
 
-        $actual = array();
+        $actual = [];
         foreach ($config as $key => $value) {
             $actual[$key] = $value;
         }
 
         $this->assertEquals(
-            array('a' => 'b', 'c' => 'd', 'e' => 'f'),
+            ['a' => 'b', 'c' => 'd', 'e' => 'f'],
             $actual,
             'ConfigObject objects do not iterate properly in the order their values were inserted'
         );
@@ -83,7 +83,7 @@ class ConfigObjectTest extends BaseTestCase
 
     public function testWhetherOneCanCheckWhetherConfigObjectsHaveACertainPropertyOrSection()
     {
-        $config = new ConfigObject(array('a' => 'b', 'c' => array('d' => 'e')));
+        $config = new ConfigObject(['a' => 'b', 'c' => ['d' => 'e']]);
 
         $this->assertTrue(isset($config->a), 'ConfigObjects do not seem to implement __isset() properly');
         $this->assertTrue(isset($config->c->d), 'ConfigObjects do not seem to implement __isset() properly');
@@ -95,7 +95,7 @@ class ConfigObjectTest extends BaseTestCase
 
     public function testWhetherItIsPossibleToAccessProperties()
     {
-        $config = new ConfigObject(array('a' => 'b', 'c' => null));
+        $config = new ConfigObject(['a' => 'b', 'c' => null]);
 
         $this->assertEquals('b', $config->a, 'ConfigObjects do not allow property access');
         $this->assertNull($config['c'], 'ConfigObjects do not allow offset access');
@@ -106,7 +106,7 @@ class ConfigObjectTest extends BaseTestCase
     {
         $config = new ConfigObject();
         $config->a = 'b';
-        $config['c'] = array('d' => 'e');
+        $config['c'] = ['d' => 'e'];
 
         $this->assertTrue(isset($config->a), 'ConfigObjects do not allow to set properties');
         $this->assertTrue(isset($config->c), 'ConfigObjects do not allow to set offsets');
@@ -127,7 +127,7 @@ class ConfigObjectTest extends BaseTestCase
 
     public function testWhetherItIsPossibleToUnsetPropertiesAndSections()
     {
-        $config = new ConfigObject(array('a' => 'b', 'c' => array('d' => 'e')));
+        $config = new ConfigObject(['a' => 'b', 'c' => ['d' => 'e']]);
         unset($config->a);
         unset($config['c']);
 
@@ -149,7 +149,7 @@ class ConfigObjectTest extends BaseTestCase
      */
     public function testWhetherItIsPossibleToRetrieveDefaultValuesForNonExistentPropertiesOrSections()
     {
-        $config = new ConfigObject(array('a' => 'b'));
+        $config = new ConfigObject(['a' => 'b']);
 
         $this->assertEquals(
             'b',
@@ -169,10 +169,10 @@ class ConfigObjectTest extends BaseTestCase
 
     public function testWhetherItIsPossibleToRetrieveAllPropertyAndSectionNames()
     {
-        $config = new ConfigObject(array('a' => 'b', 'c' => array('d' => 'e')));
+        $config = new ConfigObject(['a' => 'b', 'c' => ['d' => 'e']]);
 
         $this->assertEquals(
-            array('a', 'c'),
+            ['a', 'c'],
             $config->keys(),
             'ConfigObjects do not list property and section names correctly'
         );
@@ -180,10 +180,10 @@ class ConfigObjectTest extends BaseTestCase
 
     public function testWhetherConfigObjectsCanBeConvertedToArrays()
     {
-        $config = new ConfigObject(array('a' => 'b', 'c' => array('d' => 'e')));
+        $config = new ConfigObject(['a' => 'b', 'c' => ['d' => 'e']]);
 
         $this->assertEquals(
-            array('a' => 'b', 'c' => array('d' => 'e')),
+            ['a' => 'b', 'c' => ['d' => 'e']],
             $config->toArray(),
             'ConfigObjects cannot be correctly converted to arrays'
         );
@@ -194,18 +194,18 @@ class ConfigObjectTest extends BaseTestCase
      */
     public function testWhetherItIsPossibleToMergeConfigObjects()
     {
-        $config = new ConfigObject(array('a' => 'b'));
+        $config = new ConfigObject(['a' => 'b']);
 
-        $config->merge(array('a' => 'bb', 'c' => 'd', 'e' => array('f' => 'g')));
+        $config->merge(['a' => 'bb', 'c' => 'd', 'e' => ['f' => 'g']]);
         $this->assertEquals(
-            array('a' => 'bb', 'c' => 'd', 'e' => array('f' => 'g')),
+            ['a' => 'bb', 'c' => 'd', 'e' => ['f' => 'g']],
             $config->toArray(),
             'ConfigObjects cannot be extended with arrays'
         );
 
-        $config->merge(new ConfigObject(array('c' => array('d' => 'ee'), 'e' => array('h' => 'i'))));
+        $config->merge(new ConfigObject(['c' => ['d' => 'ee'], 'e' => ['h' => 'i']]));
         $this->assertEquals(
-            array('a' => 'bb', 'c' => array('d' => 'ee'), 'e' => array('f' => 'g', 'h' => 'i')),
+            ['a' => 'bb', 'c' => ['d' => 'ee'], 'e' => ['f' => 'g', 'h' => 'i']],
             $config->toArray(),
             'ConfigObjects cannot be extended with other ConfigObjects'
         );

@@ -59,7 +59,7 @@ class NavigationController extends Controller
      */
     protected function listItemTypes()
     {
-        $types = array();
+        $types = [];
         foreach ($this->itemTypeConfig as $type => $options) {
             $types[$type] = isset($options['label']) ? $options['label'] : $type;
         }
@@ -76,7 +76,7 @@ class NavigationController extends Controller
      */
     protected function fetchSharedNavigationItemConfigs($owner = null)
     {
-        $configs = array();
+        $configs = [];
         foreach ($this->itemTypeConfig as $type => $_) {
             $config = Config::navigation($type);
             $config->getConfigObject()->setKeyColumn('name');
@@ -102,7 +102,7 @@ class NavigationController extends Controller
      */
     protected function fetchUserNavigationItemConfigs($username)
     {
-        $configs = array();
+        $configs = [];
         foreach ($this->itemTypeConfig as $type => $_) {
             $config = Config::navigation($type, $username);
             $config->getConfigObject()->setKeyColumn('name');
@@ -133,35 +133,35 @@ class NavigationController extends Controller
         $this->getTabs()
         ->add(
             'account',
-            array(
+            [
                 'title' => $this->translate('Update your account'),
                 'label' => $this->translate('My Account'),
                 'url'   => 'account'
-            )
+            ]
         )
         ->add(
             'navigation',
-            array(
+            [
                 'active'    => true,
                 'title'     => $this->translate('List and configure your own navigation items'),
                 'label'     => $this->translate('Navigation'),
                 'url'       => 'navigation'
-            )
+            ]
         )
         ->add(
             'devices',
-            array(
+            [
                 'title' => $this->translate('List of devices you are logged in'),
                 'label' => $this->translate('My Devices'),
                 'url'   => 'my-devices'
-            )
+            ]
         );
         $this->setupSortControl(
-            array(
+            [
                 'type'  => $this->translate('Type'),
                 'owner' => $this->translate('Shared'),
                 'name'  => $this->translate('Navigation')
-            ),
+            ],
             $query
         );
     }
@@ -178,22 +178,22 @@ class NavigationController extends Controller
         $removeForm = new Form();
         $removeForm->setUidDisabled();
         $removeForm->setAttrib('class', 'inline');
-        $removeForm->addElement('hidden', 'name', array(
-            'decorators'    => array('ViewHelper')
-        ));
-        $removeForm->addElement('hidden', 'redirect', array(
+        $removeForm->addElement('hidden', 'name', [
+            'decorators'    => ['ViewHelper']
+        ]);
+        $removeForm->addElement('hidden', 'redirect', [
             'value'         => Url::fromPath('navigation/shared'),
-            'decorators'    => array('ViewHelper')
-        ));
-        $removeForm->addElement('button', 'btn_submit', array(
+            'decorators'    => ['ViewHelper']
+        ]);
+        $removeForm->addElement('button', 'btn_submit', [
             'escape'        => false,
             'type'          => 'submit',
             'class'         => 'link-button spinner',
             'value'         => 'btn_submit',
-            'decorators'    => array('ViewHelper'),
+            'decorators'    => ['ViewHelper'],
             'label'         => $this->view->icon('cancel'),
             'title'         => $this->translate('Unshare this navigation item')
-        ));
+        ]);
 
         $this->view->removeForm = $removeForm;
         $this->view->types = $this->listItemTypes();
@@ -202,18 +202,18 @@ class NavigationController extends Controller
         $this->view->title = $this->translate('Shared Navigation');
         $this->getTabs()->add(
             'navigation/shared',
-            array(
+            [
                 'title'     => $this->translate('List and configure shared navigation items'),
                 'label'     => $this->translate('Shared Navigation'),
                 'url'       => 'navigation/shared'
-            )
+            ]
         )->activate('navigation/shared');
         $this->setupSortControl(
-            array(
+            [
                 'type'  => $this->translate('Type'),
                 'owner' => $this->translate('Owner'),
                 'name'  => $this->translate('Shared Navigation')
-            ),
+            ],
             $query
         );
     }
@@ -376,7 +376,7 @@ class NavigationController extends Controller
         $navigationConfigForm->setShareConfig(Config::navigation($itemType));
         $navigationConfigForm->setUserConfig(Config::navigation($itemType, $itemOwner));
 
-        $form = new Form(array(
+        $form = new Form([
             'onSuccess' => function ($form) use ($navigationConfigForm) {
                 $itemName = $form->getValue('name');
 
@@ -412,10 +412,10 @@ class NavigationController extends Controller
 
                 return true;
             }
-        ));
+        ]);
         $form->setUidDisabled();
         $form->setSubmitLabel('btn_submit'); // Required to ensure that isSubmitted() is called
-        $form->addElement('hidden', 'name', array('required' => true));
+        $form->addElement('hidden', 'name', ['required' => true]);
         $form->addElement('hidden', 'redirect');
 
         try {
@@ -429,11 +429,11 @@ class NavigationController extends Controller
     {
         $name = $this->params->getRequired('name');
 
-        $this->getTabs()->add('dashboard', array(
+        $this->getTabs()->add('dashboard', [
             'active'    => true,
             'label'     => ucwords($name),
             'url'       => Url::fromRequest()
-        ));
+        ]);
 
         $menu = new Menu();
 

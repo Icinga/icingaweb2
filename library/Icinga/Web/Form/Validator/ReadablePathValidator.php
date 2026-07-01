@@ -25,10 +25,10 @@ class ReadablePathValidator extends Zend_Validate_Abstract
      *
      * @see Zend_Validate_Abstract::$_messageTemplates‚
      */
-    protected $_messageTemplates = array(
+    protected $_messageTemplates = [
         self::NOT_READABLE      => 'Path is not readable',
         self::DOES_NOT_EXIST    => 'Path does not exist'
-    );
+    ];
 
     /**
      * Check whether the given value is a readable filepath

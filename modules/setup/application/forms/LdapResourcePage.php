@@ -36,10 +36,10 @@ class LdapResourcePage extends Form
         $this->addElement(
             'hidden',
             'type',
-            array(
+            [
                 'required'  => true,
                 'value'     => 'ldap'
-            )
+            ]
         );
 
         if (isset($formData['skip_validation']) && $formData['skip_validation']) {
@@ -48,10 +48,10 @@ class LdapResourcePage extends Form
             $this->addElement(
                 'hidden',
                 'skip_validation',
-                array(
+                [
                     'required'  => true,
                     'value'     => 0
-                )
+                ]
             );
         }
 
@@ -105,15 +105,15 @@ class LdapResourcePage extends Form
                 $this->addElement(
                     'note',
                     'inspection_output',
-                    array(
+                    [
                         'order'         => 0,
                         'value'         => '<strong>' . $this->translate('Validation Log') . "</strong>\n\n"
                             . join("\n", array_map($join, $inspection->toArray())),
-                        'decorators'    => array(
+                        'decorators'    => [
                             'ViewHelper',
-                            array('HtmlTag', array('tag' => 'pre', 'class' => 'log-output')),
-                        )
-                    )
+                            ['HtmlTag', ['tag' => 'pre', 'class' => 'log-output']],
+                        ]
+                    ]
                 );
 
                 if ($inspection->hasError()) {
@@ -142,13 +142,13 @@ class LdapResourcePage extends Form
         $this->addElement(
             'checkbox',
             'skip_validation',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Skip Validation'),
                 'description'   => $this->translate(
                     'Check this to not to validate connectivity with the given directory service'
                 )
-            )
+            ]
         );
     }
 }

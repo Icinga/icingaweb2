@@ -104,7 +104,7 @@ class Url
      *
      * @return  static
      */
-    public static function fromRequest($params = array(), $request = null)
+    public static function fromRequest($params = [], $request = null)
     {
         if ($request === null) {
             $request = static::getRequest();
@@ -160,7 +160,7 @@ class Url
      *
      * @return  static
      */
-    public static function fromPath($url, array $params = array(), $request = null)
+    public static function fromPath($url, array $params = [], $request = null)
     {
         if ($request === null) {
             $request = static::getRequest();

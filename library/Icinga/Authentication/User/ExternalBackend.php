@@ -19,7 +19,7 @@ class ExternalBackend implements UserBackendInterface
      *
      * @var string[]
      */
-    public static $remoteUserEnvvars = array('REMOTE_USER', 'REDIRECT_REMOTE_USER');
+    public static $remoteUserEnvvars = ['REMOTE_USER', 'REDIRECT_REMOTE_USER'];
 
     /**
      * The name of this backend
@@ -91,11 +91,11 @@ class ExternalBackend implements UserBackendInterface
         foreach (static::$remoteUserEnvvars as $envVar) {
             $username = static::getRemoteUser($envVar);
             if ($username !== null) {
-                return array($username, $envVar);
+                return [$username, $envVar];
             }
         }
 
-        return array(null, null);
+        return [null, null];
     }
 
     /**

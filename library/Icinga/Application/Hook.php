@@ -27,14 +27,14 @@ class Hook
      *
      * @var array
      */
-    protected static $hooks = array();
+    protected static $hooks = [];
 
     /**
      * Hooks that have already been instantiated
      *
      * @var array
      */
-    protected static $instances = array();
+    protected static $instances = [];
 
     /**
      * Namespace prefix
@@ -57,8 +57,8 @@ class Hook
      */
     public static function clean()
     {
-        self::$hooks = array();
-        self::$instances = array();
+        self::$hooks = [];
+        self::$instances = [];
         self::$BASE_NS = 'Icinga\\Application\\Hook\\';
     }
 
@@ -157,12 +157,12 @@ class Hook
     {
         $sep = '\\';
         if (false === $module = strpos($name, $sep)) {
-            return array(null, $name);
+            return [null, $name];
         }
-        return array(
+        return [
             substr($name, 0, $module),
             substr($name, $module + 1)
-        );
+        ];
     }
 
     /**
@@ -328,7 +328,7 @@ class Hook
         $name = self::normalizeHookName($name);
 
         if (!isset(self::$hooks[$name])) {
-            self::$hooks[$name] = array();
+            self::$hooks[$name] = [];
         }
 
         $class = ltrim($class, ClassLoader::NAMESPACE_SEPARATOR);

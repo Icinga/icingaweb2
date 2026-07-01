@@ -27,7 +27,7 @@ class Benchmark
 
     protected static $instance;
     protected $start;
-    protected $measures = array();
+    protected $measures = [];
 
     /**
      * Add a measurement to your benchmark
@@ -39,12 +39,12 @@ class Benchmark
      */
     public static function measure($message)
     {
-        self::getInstance()->measures[] = (object) array(
+        self::getInstance()->measures[] = (object) [
             'timestamp'   => microtime(true),
             'memory_real' => memory_get_usage(true),
             'memory'      => memory_get_usage(),
             'message'     => $message
-        );
+        ];
     }
 
     /**
@@ -188,56 +188,56 @@ class Benchmark
             $what = self::TIME | self::MEMORY;
         }
 
-        $columns = array(
-            (object) array(
+        $columns = [
+            (object) [
                 'title'  => 'Time',
                 'align'  => 'left',
                 'maxlen' => 4
-            ),
-            (object) array(
+            ],
+            (object) [
                 'title'  => 'Description',
                 'align'  => 'left',
                 'maxlen' => 11
-            )
-        );
+            ]
+        ];
         if ($what & self::TIME) {
-            $columns[] = (object) array(
+            $columns[] = (object) [
                 'title'  => 'Off (ms)',
                 'align'  => 'right',
                 'maxlen' => 11
-            );
-            $columns[] = (object) array(
+            ];
+            $columns[] = (object) [
                 'title'  => 'Dur (ms)',
                 'align'  => 'right',
                 'maxlen' => 13
-            );
+            ];
         }
         if ($what & self::MEMORY) {
-            $columns[] = (object) array(
+            $columns[] = (object) [
                 'title'  => 'Mem (diff)',
                 'align'  => 'right',
                 'maxlen' => 10
-            );
-            $columns[] = (object) array(
+            ];
+            $columns[] = (object) [
                 'title'  => 'Mem (total)',
                 'align'  => 'right',
                 'maxlen' => 11
-            );
+            ];
         }
 
         $bench = self::getInstance();
         $last = $bench->start;
-        $rows = array();
+        $rows = [];
         $lastmem = 0;
         foreach ($bench->measures as $m) {
             $micro = sprintf(
                 '%03d',
                 round(($m->timestamp - floor($m->timestamp)) * 1000)
             );
-            $vals = array(
+            $vals = [
                 date('H:i:s', (int) $m->timestamp) . '.' . $micro,
                 $m->message
-            );
+            ];
 
             if ($what & self::TIME) {
                 $m->relative = $m->timestamp - $bench->start;
@@ -264,10 +264,10 @@ class Benchmark
             }
         }
 
-        return (object) array(
+        return (object) [
             'columns' => $columns,
             'rows' => $rows
-        );
+        ];
     }
 
     /**

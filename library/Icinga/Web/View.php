@@ -33,13 +33,13 @@ use Icinga\Exception\ProgrammingError;
  *  @param  bool            $escape
  * }
  *
- * @method string img($url, $params = null, array $properties = array()) {
+ * @method string img($url, $params = null, array $properties = []) {
  *  @param  Url|string|null $url
  *  @param  string[]|null   $params
  *  @param  string[]        $properties
  * }
  *
- * @method string icon($img, $title = null, array $properties = array()) {
+ * @method string icon($img, $title = null, array $properties = []) {
  *  @param  string      $img
  *  @param  string|null $title
  *  @param  string[]    $properties
@@ -215,7 +215,7 @@ class View extends Zend_View_Abstract
     /**
      * Registered helper functions
      */
-    private $helperFunctions = array();
+    private $helperFunctions = [];
 
     /**
      * Authentication manager
@@ -230,7 +230,7 @@ class View extends Zend_View_Abstract
      * @param array $config
      * @see Zend_View_Abstract::__construct
      */
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         $config['helperPath']['Icinga\\Web\\View\\Helper\\'] = Icinga::app()->getLibraryDir('Icinga/Web/View/Helper');
 

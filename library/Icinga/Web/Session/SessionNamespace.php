@@ -21,14 +21,14 @@ class SessionNamespace implements IteratorAggregate
      *
      * @var array
      */
-    protected $values = array();
+    protected $values = [];
 
     /**
      * The names of all values removed from this container
      *
      * @var array
      */
-    protected $removed = array();
+    protected $removed = [];
 
     /**
      * Return an iterator for all values in this namespace
@@ -197,7 +197,7 @@ class SessionNamespace implements IteratorAggregate
      */
     public function clear()
     {
-        $this->values = array();
-        $this->removed = array();
+        $this->values = [];
+        $this->removed = [];
     }
 }

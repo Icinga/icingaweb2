@@ -188,11 +188,11 @@ class UserGroupBackendForm extends ConfigForm
      */
     public function createElements(array $formData)
     {
-        $backendTypes = array(
+        $backendTypes = [
             'db'        => $this->translate('Database'),
             'ldap'      => 'LDAP',
             'msldap'    => 'ActiveDirectory'
-        );
+        ];
 
         $customBackendTypes = array_keys($this->customBackends);
         $backendTypes += array_combine($customBackendTypes, $customBackendTypes);
@@ -205,14 +205,14 @@ class UserGroupBackendForm extends ConfigForm
         $this->addElement(
             'select',
             'type',
-            array(
+            [
                 'ignore'            => true,
                 'required'          => true,
                 'autosubmit'        => true,
                 'label'             => $this->translate('Backend Type'),
                 'description'       => $this->translate('The type of this user group backend'),
                 'multiOptions'      => $backendTypes
-            )
+            ]
         );
 
         $this->addSubForm($this->getBackendForm($backendType)->create($formData), 'backend_form');
@@ -251,15 +251,15 @@ class UserGroupBackendForm extends ConfigForm
                 $this->addElement(
                     'note',
                     'inspection_output',
-                    array(
+                    [
                         'order'         => 0,
                         'value'         => '<strong>' . $this->translate('Validation Log') . "</strong>\n\n"
                             . join("\n", array_map($join, $inspection->toArray())),
-                        'decorators'    => array(
+                        'decorators'    => [
                             'ViewHelper',
-                            array('HtmlTag', array('tag' => 'pre', 'class' => 'log-output')),
-                        )
-                    )
+                            ['HtmlTag', ['tag' => 'pre', 'class' => 'log-output']],
+                        ]
+                    ]
                 );
 
                 if ($inspection->hasError()) {
@@ -288,27 +288,27 @@ class UserGroupBackendForm extends ConfigForm
     {
         parent::addSubmitButton()
             ->getElement('btn_submit')
-            ->setDecorators(array('ViewHelper'));
+            ->setDecorators(['ViewHelper']);
 
         $this->addElement(
             'submit',
             'backend_validation',
-            array(
+            [
                 'ignore'                => true,
                 'label'                 => $this->translate('Validate Configuration'),
                 'data-progress-label'   => $this->translate('Validation In Progress'),
-                'decorators'            => array('ViewHelper')
-            )
+                'decorators'            => ['ViewHelper']
+            ]
         );
         $this->addDisplayGroup(
-            array('btn_submit', 'backend_validation'),
+            ['btn_submit', 'backend_validation'],
             'submit_validation',
-            array(
-                'decorators' => array(
+            [
+                'decorators' => [
                     'FormElements',
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
-                )
-            )
+                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group form-controls']]
+                ]
+            ]
         );
 
         return $this;

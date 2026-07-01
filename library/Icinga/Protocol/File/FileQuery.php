@@ -29,7 +29,7 @@ class FileQuery extends SimpleQuery
      *
      * @var array
      */
-    private $filters = array();
+    private $filters = [];
 
     /**
      * Nothing to do here

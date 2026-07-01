@@ -34,7 +34,7 @@ class Widget
      *
      * @return AbstractWidget
      */
-    public static function create($name, $options = array(), $module_name = null)
+    public static function create($name, $options = [], $module_name = null)
     {
         $class = 'Icinga\\Web\\Widget\\' . ucfirst($name);
 

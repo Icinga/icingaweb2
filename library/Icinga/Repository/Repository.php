@@ -72,13 +72,13 @@ abstract class Repository implements Selectable
      *
      * This must be initialized by concrete repository implementations, in the following format
      * <code>
-     *  array(
-     *      'baseTable' => array(
+     *  [
+     *      'baseTable' => [
      *          'column1',
      *          'alias1' => 'column2',
      *          'alias2' => 'column3'
-     *      )
-     *  )
+     *      ]
+     *  ]
      * </code>
      *
      * @var array
@@ -106,10 +106,10 @@ abstract class Repository implements Selectable
      *
      * This may be intialized by concrete repository implementations, in the following format
      * <code>
-     *  array(
+     *  [
      *      'alias_or_column_name',
      *      'label_to_show_in_the_filter_editor' => 'alias_or_column_name'
-     *  )
+     *  ]
      * </code>
      *
      * @var array
@@ -142,22 +142,22 @@ abstract class Repository implements Selectable
      *
      * This may be initialized by concrete repository implementations, in the following format
      * <code>
-     *  array(
-     *      'alias_or_column_name' => array(
+     *  [
+     *      'alias_or_column_name' => [
      *          'order'     => 'asc'
-     *      ),
-     *      'alias_or_column_name' => array(
-     *          'columns'   => array(
+     *      ],
+     *      'alias_or_column_name' => [
+     *          'columns'   => [
      *              'once_more_the_alias_or_column_name_as_in_the_parent_key',
      *              'an_additional_alias_or_column_name_with_a_specific_direction asc'
-     *          ),
+     *          ],
      *          'order'     => 'desc'
-     *      ),
-     *      'alias_or_column_name' => array(
-     *          'columns'   => array('a_different_alias_or_column_name_designated_to_act_as_the_only_sort_column')
+     *      ],
+     *      'alias_or_column_name' => [
+     *          'columns'   => ['a_different_alias_or_column_name_designated_to_act_as_the_only_sort_column']
      *          // Ascendant sort by default
-     *      )
-     *  )
+     *      ]
+     *  ]
      * </code>
      * Note that it's mandatory to supply the alias name in case there is one.
      *
@@ -224,10 +224,10 @@ abstract class Repository implements Selectable
     public function __construct(?Selectable $ds = null)
     {
         $this->ds = $ds;
-        $this->aliasTableMap = array();
-        $this->aliasColumnMap = array();
-        $this->columnTableMap = array();
-        $this->columnAliasMap = array();
+        $this->aliasTableMap = [];
+        $this->aliasColumnMap = [];
+        $this->columnTableMap = [];
+        $this->columnAliasMap = [];
 
         $this->init();
     }
@@ -332,7 +332,7 @@ abstract class Repository implements Selectable
      */
     protected function initializeVirtualTables()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -358,7 +358,7 @@ abstract class Repository implements Selectable
      */
     protected function initializeQueryColumns()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -405,7 +405,7 @@ abstract class Repository implements Selectable
     protected function initializeBlacklistedQueryColumns()
     {
         // $table is not part of the signature due to PHP strict standards
-        return array();
+        return [];
     }
 
     /**
@@ -454,7 +454,7 @@ abstract class Repository implements Selectable
     protected function initializeFilterColumns()
     {
         // $table is not part of the signature due to PHP strict standards
-        return array();
+        return [];
     }
 
     /**
@@ -501,7 +501,7 @@ abstract class Repository implements Selectable
     protected function initializeSearchColumns()
     {
         // $table is not part of the signature due to PHP strict standards
-        return array();
+        return [];
     }
 
     /**
@@ -550,7 +550,7 @@ abstract class Repository implements Selectable
     protected function initializeSortRules()
     {
         // $table is not part of the signature due to PHP strict standards
-        return array();
+        return [];
     }
 
     /**
@@ -576,7 +576,7 @@ abstract class Repository implements Selectable
      */
     protected function initializeConversionRules()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -1022,7 +1022,7 @@ abstract class Repository implements Selectable
         }
 
         $blacklist = $this->getBlacklistedQueryColumns($table);
-        $columns = array();
+        $columns = [];
         foreach ($queryColumns[$table] as $alias => $column) {
             $name = is_string($alias) ? $alias : $column;
             if (! in_array($name, $blacklist)) {
@@ -1253,7 +1253,7 @@ abstract class Repository implements Selectable
      */
     public function requireStatementColumns($table, array $data)
     {
-        $resolved = array();
+        $resolved = [];
         foreach ($data as $alias => $value) {
             $resolved[$this->requireStatementColumn($table, $alias)] = $this->persistColumn($table, $alias, $value);
         }

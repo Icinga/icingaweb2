@@ -32,10 +32,10 @@ class DbResourcePage extends Form
         $this->addElement(
             'hidden',
             'type',
-            array(
+            [
                 'required'  => true,
                 'value'     => 'db'
-            )
+            ]
         );
 
         if (isset($formData['skip_validation']) && $formData['skip_validation']) {
@@ -44,10 +44,10 @@ class DbResourcePage extends Form
             $this->addElement(
                 'hidden',
                 'skip_validation',
-                array(
+                [
                     'required'  => true,
                     'value'     => 0
-                )
+                ]
             );
         }
 
@@ -181,11 +181,11 @@ class DbResourcePage extends Form
         $this->addElement(
             'checkbox',
             'skip_validation',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Skip Validation'),
                 'description'   => $this->translate('Check this to not to validate the configuration')
-            )
+            ]
         );
     }
 }

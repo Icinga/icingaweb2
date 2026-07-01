@@ -27,17 +27,17 @@ class StyleController extends Controller
     {
         return Widget::create('tabs')->add(
             'guide',
-            array(
+            [
                 'label' => $this->translate('Style Guide'),
                 'url'   => 'doc/style/guide'
-            )
+            ]
         )->add(
             'font',
-            array(
+            [
                 'label' => $this->translate('Icons'),
                 'title' => $this->translate('List all available icons'),
                 'url'   => 'doc/style/font'
-            )
+            ]
         );
     }
 }

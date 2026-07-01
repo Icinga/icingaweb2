@@ -31,14 +31,14 @@ class InlinePie extends AbstractWidget
     const NUMBER_FORMAT_BYTES = 'bytes';
     const NUMBER_FORMAT_RATIO = 'ratio';
 
-    public static $colorsHostStates = array(
+    public static $colorsHostStates = [
         '#44bb77', // up
         '#ff99aa', // down
         '#cc77ff', // unreachable
         '#77aaff'  // pending
-    );
+    ];
 
-    public static $colorsHostStatesHandledUnhandled = array(
+    public static $colorsHostStatesHandledUnhandled = [
         '#44bb77', // up
         '#44bb77',
         '#ff99aa', // down
@@ -47,17 +47,17 @@ class InlinePie extends AbstractWidget
         '#aa44ff',
         '#77aaff', // pending
         '#77aaff'
-    );
+    ];
 
-    public static $colorsServiceStates = array(
+    public static $colorsServiceStates = [
         '#44bb77', // Ok
         '#ffaa44', // Warning
         '#ff99aa', // Critical
         '#aa44ff', // Unknown
         '#77aaff'  // Pending
-    );
+    ];
 
-    public static $colorsServiceStatesHandleUnhandled = array(
+    public static $colorsServiceStatesHandleUnhandled = [
         '#44bb77', // Ok
         '#44bb77',
         '#ffaa44', // Warning
@@ -68,7 +68,7 @@ class InlinePie extends AbstractWidget
         '#aa44ff',
         '#77aaff', // Pending
         '#77aaff'
-    );
+    ];
 
     /**
      * The template string used for rendering this widget
@@ -82,7 +82,7 @@ class InlinePie extends AbstractWidget
      *
      * @var array
      */
-    private $colors = array('#049BAF', '#ffaa44', '#ff5566', '#ddccdd');
+    private $colors = ['#049BAF', '#ffaa44', '#ff5566', '#ddccdd'];
 
     /**
      * The title of the chart

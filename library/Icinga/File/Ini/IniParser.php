@@ -55,7 +55,7 @@ class IniParser
         $doc = new Document();
         $sec = null;
         $dir = null;
-        $coms = array();
+        $coms = [];
         $state = self::LINE_START;
         $escaping = null;
         $token = '';
@@ -101,7 +101,7 @@ class IniParser
                         $sec->setCommentsPre($coms);
                         $doc->addSection($sec);
                         $dir = null;
-                        $coms = array();
+                        $coms = [];
 
                         $state = self::LINE_END;
                         $token = '';
@@ -124,7 +124,7 @@ class IniParser
                             ));
                         }
 
-                        $coms = array();
+                        $coms = [];
                         $state = self::DIRECTIVE_VALUE_START;
                         $token = '';
                     }
@@ -269,7 +269,7 @@ class IniParser
             throw new ConfigurationError('Couldn\'t parse the INI file `%s\'', $path, $e);
         }
 
-        $unescaped = array();
+        $unescaped = [];
         foreach ($configArray as $section => $options) {
             $unescaped[self::unescapeSectionName($section)] = array_map([__CLASS__, 'unescapeOptionValue'], $options);
         }

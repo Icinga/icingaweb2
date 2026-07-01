@@ -21,11 +21,11 @@ class UserGroupBackend
      *
      * @var array
      */
-    protected static $defaultBackends = array(
+    protected static $defaultBackends = [
         'db',
         'ldap',
         'msldap'
-    );
+    ];
 
     /**
      * The registered custom user group backends with their identifier as key and class name as value
@@ -43,8 +43,8 @@ class UserGroupBackend
             return;
         }
 
-        static::$customBackends = array();
-        $providedBy = array();
+        static::$customBackends = [];
+        $providedBy = [];
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
             foreach ($module->getUserGroupBackends() as $identifier => $className) {
                 if (array_key_exists($identifier, $providedBy)) {

@@ -34,16 +34,16 @@ class LdapResourceForm extends Form
         $this->addElement(
             'text',
             'name',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Resource Name'),
                 'description'   => $this->translate('The unique name of this resource')
-            )
+            ]
         );
         $this->addElement(
             'text',
             'hostname',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Host'),
                 'description'   => $this->translate(
@@ -51,23 +51,23 @@ class LdapResourceForm extends Form
                     . ' You can also provide multiple hosts separated by a space'
                 ),
                 'value'         => 'localhost'
-            )
+            ]
         );
         $this->addElement(
             'number',
             'port',
-            array(
+            [
                 'required'          => true,
                 'preserveDefault'   => true,
                 'label'             => $this->translate('Port'),
                 'description'       => $this->translate('The port of the LDAP server to use for authentication'),
                 'value'             => $defaultPort
-            )
+            ]
         );
         $this->addElement(
             'select',
             'encryption',
-            array(
+            [
                 'required'      => true,
                 'autosubmit'    => true,
                 'label'         => $this->translate('Encryption'),
@@ -75,55 +75,55 @@ class LdapResourceForm extends Form
                     'Whether to encrypt communication. Choose STARTTLS or LDAPS for encrypted communication or'
                     . ' none for unencrypted communication'
                 ),
-                'multiOptions'  => array(
+                'multiOptions'  => [
                     'none'                      => $this->translate('None', 'resource.ldap.encryption'),
                     LdapConnection::STARTTLS    => 'STARTTLS',
                     LdapConnection::LDAPS       => 'LDAPS'
-                )
-            )
+                ]
+            ]
         );
 
         $this->addElement(
             'text',
             'root_dn',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Root DN'),
                 'description'   => $this->translate(
                     'Only the root and its child nodes will be accessible on this resource.'
                 )
-            )
+            ]
         );
         $this->addElement(
             'text',
             'bind_dn',
-            array(
+            [
                 'label'         => $this->translate('Bind DN'),
                 'description'   => $this->translate(
                     'The user dn to use for querying the ldap server. Leave the dn and password empty for attempting'
                     . ' an anonymous bind'
                 )
-            )
+            ]
         );
         $this->addElement(
             'password',
             'bind_pw',
-            array(
+            [
                 'renderPassword'    => true,
                 'label'             => $this->translate('Bind Password'),
                 'description'       => $this->translate('The password to use for querying the ldap server')
-            )
+            ]
         );
 
         $this->addElement(
             'number',
             'timeout',
-            array(
+            [
                 'preserveDefault'   => true,
                 'label'             => $this->translate('Timeout'),
                 'description'       => $this->translate('Connection timeout for every LDAP connection'),
                 'value'             => 5 // see LdapConnection::__construct()
-            )
+            ]
         );
 
         return $this;

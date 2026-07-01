@@ -45,12 +45,12 @@ if (strpos($ruri, '?') === false) {
     list($path, $params) = preg_split('/\?/', $ruri, 2);
 }
 
-$special = array(
+$special = [
     'css/icinga.css',
     'css/icinga.min.css',
     'js/icinga.dev.js',
     'js/icinga.min.js'
-);
+];
 
 if (in_array($path, $special)) {
     include_once __DIR__ . '/EmbeddedWeb.php';

@@ -65,10 +65,10 @@ class DashboardTest extends BaseTestCase
         $dashboard->createPane('test1');
         $dashboard->createPane('test2');
 
-        $panes = array(
+        $panes = [
             new Pane('test1a'),
             new Pane('test2a')
-        );
+        ];
 
         $dashboard->mergePanes($panes);
 
@@ -84,10 +84,10 @@ class DashboardTest extends BaseTestCase
         $dashboard->createPane('test1');
         $dashboard->createPane('test2');
 
-        $panes = array(
+        $panes = [
             new Pane('test1'),
             new Pane('test3')
-        );
+        ];
 
         $dashboard->mergePanes($panes);
 
@@ -192,10 +192,10 @@ class DashboardTest extends BaseTestCase
 
         $result = $dashboard->getPaneKeyTitleArray();
 
-        $expected = array(
+        $expected = [
             'test1' => 'Test1',
             'test2' => 'Test2'
-        );
+        ];
 
         $this->assertEquals(
             $expected,

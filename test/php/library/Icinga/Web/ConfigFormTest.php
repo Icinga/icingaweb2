@@ -12,11 +12,11 @@ class ConfigFormTest extends BaseTestCase
 {
     public function testWhetherTransformEmptyValuesToNullHandlesValuesCorrectly()
     {
-        $values = array(
+        $values = [
             'empty_string'      => '',
             'example_string'    => 'this is a test',
-            'empty_array'       => array(),
-            'example_array'     => array('test1', 'test2'),
+            'empty_array'       => [],
+            'example_array'     => ['test1', 'test2'],
             'zero_as_int'       => 0,
             'one_as_int'        => 1,
             'zero_as_string'    => '0',
@@ -24,7 +24,7 @@ class ConfigFormTest extends BaseTestCase
             'bool_true'         => true,
             'bool_false'        => false,
             'null'              => null
-        );
+        ];
 
         $values = ConfigForm::transformEmptyValuesToNull($values);
 

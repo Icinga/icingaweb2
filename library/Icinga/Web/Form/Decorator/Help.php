@@ -98,10 +98,10 @@ class Help extends Zend_Form_Decorator_Abstract
             $helpContent = $this->getView()->icon(
                 'info-circled',
                 $description . ($description && $requirement ? ' ' : '') . $requirement,
-                array(
+                [
                     'class'         => 'control-info',
                     'aria-hidden'   => $this->accessible ? 'true' : 'false'
-                )
+                ]
             ) . $helpContent;
         }
 

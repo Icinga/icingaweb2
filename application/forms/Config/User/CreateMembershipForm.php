@@ -65,9 +65,9 @@ class CreateMembershipForm extends Form
      */
     public function createElements(array $formData)
     {
-        $query = $this->createDataSource()->select()->from('group', array('group_name', 'backend_name'));
+        $query = $this->createDataSource()->select()->from('group', ['group_name', 'backend_name']);
 
-        $options = array();
+        $options = [];
         foreach ($query as $row) {
             $options[$row->backend_name . ';' . $row->group_name] = $row->group_name . ' (' . $row->backend_name . ')';
         }
@@ -75,7 +75,7 @@ class CreateMembershipForm extends Form
         $this->addElement(
             'multiselect',
             'groups',
-            array(
+            [
                 'required'      => true,
                 'multiOptions'  => $options,
                 'label'         => $this->translate('Groups'),
@@ -84,7 +84,7 @@ class CreateMembershipForm extends Form
                     $this->userName
                 ),
                 'class'         => 'grant-permissions'
-            )
+            ]
         );
 
         $this->setTitle(sprintf($this->translate('Create memberships for %s'), $this->userName));
@@ -109,7 +109,7 @@ class CreateMembershipForm extends Form
      */
     public function onSuccess()
     {
-        $backendMap = array();
+        $backendMap = [];
         foreach ($this->backends as $backend) {
             $backendMap[$backend->getName()] = $backend;
         }
@@ -121,10 +121,10 @@ class CreateMembershipForm extends Form
             try {
                 $backendMap[$backendName]->insert(
                     'group_membership',
-                    array(
+                    [
                         'group_name'    => $groupName,
                         'user_name'     => $this->userName
-                    )
+                    ]
                 );
             } catch (Exception $e) {
                 Notification::error(sprintf(
@@ -157,22 +157,22 @@ class CreateMembershipForm extends Form
      */
     protected function createDataSource()
     {
-        $groups = $failures = array();
+        $groups = $failures = [];
         foreach ($this->backends as $backend) {
             try {
                 $memberships = $backend
                     ->select()
-                    ->from('group_membership', array('group_name'))
+                    ->from('group_membership', ['group_name'])
                     ->where('user_name', $this->userName)
                     ->fetchColumn();
-                foreach ($backend->select(array('group_name')) as $row) {
+                foreach ($backend->select(['group_name']) as $row) {
                     if (! in_array($row->group_name, $memberships)) { // TODO(jom): Apply this as native query filter
                         $row->backend_name = $backend->getName();
                         $groups[] = $row;
                     }
                 }
             } catch (Exception $e) {
-                $failures[] = array($backend->getName(), $e);
+                $failures[] = [$backend->getName(), $e];
             }
         }
 

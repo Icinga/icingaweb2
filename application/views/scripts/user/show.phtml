@@ -15,15 +15,15 @@ use Icinga\Data\Selectable;
         echo $this->qlink(
             $this->translate('Edit User'),
             'user/edit',
-            array(
+            [
                 'backend'   => $backend->getName(),
                 'user'      => $user->user_name
-            ),
-            array(
+            ],
+            [
                 'class' => 'button-link',
                 'icon'  => 'edit',
                 'title' => sprintf($this->translate('Edit user %s'), $user->user_name)
-            )
+            ]
         );
     }
     ?>
@@ -83,14 +83,14 @@ use Icinga\Data\Selectable;
     <?= $this->qlink(
         $this->translate('Create New Membership'),
         'user/createmembership',
-        array(
+        [
             'backend'   => $backend->getName(),
             'user'      => $user->user_name
-        ),
-        array(
+        ],
+        [
             'icon'  => 'plus',
             'class' => 'button-link'
-        )
+        ]
     ) ?>
 <?php endif ?>
 
@@ -111,22 +111,22 @@ use Icinga\Data\Selectable;
             <tr>
                 <td>
                 <?php if ($this->hasPermission('config/access-control/groups') && $membership->backend instanceof Selectable): ?>
-                    <?= $this->qlink($membership->group_name, 'group/show', array(
+                    <?= $this->qlink($membership->group_name, 'group/show', [
                         'backend' => $membership->backend->getName(),
                         'group'   => $membership->group_name
-                    ), array(
+                    ], [
                         'title'   => sprintf($this->translate('Show detailed information for group %s'), $membership->group_name)
-                    )); ?>
+                    ]); ?>
                 <?php else: ?>
                     <?= $this->escape($membership->group_name); ?>
                 <?php endif ?>
                 </td>
                 <td class="icon-col" data-base-target="_self">
                 <?php if (isset($removeForm) && $membership->backend instanceof Reducible): ?>
-                    <?= $removeForm->setAction($this->url('group/removemember', array(
+                    <?= $removeForm->setAction($this->url('group/removemember', [
                         'backend'   => $membership->backend->getName(),
                         'group'     => $membership->group_name
-                    ))); ?>
+                    ])); ?>
                 <?php else: ?>
                     -
                 <?php endif ?>

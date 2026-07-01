@@ -55,7 +55,7 @@ class ControllerTabCollector
     {
         $moduleManager = Icinga::app()->getModuleManager();
         $modules = $moduleManager->listEnabledModules();
-        $tabs = array();
+        $tabs = [];
         foreach ($modules as $module) {
             $tabs += self::createModuleConfigurationTabs($controller, $moduleManager->getModule($module));
         }
@@ -86,14 +86,14 @@ class ControllerTabCollector
         if (is_readable($controllerDir)) {
             require_once(realpath($controllerDir));
             if (! method_exists($controllerName, 'createProvidedTabs')) {
-                return array();
+                return [];
             }
             $tab = $controllerName::createProvidedTabs();
             if (! is_array($tab)) {
-                $tab = array($name => $tab);
+                $tab = [$name => $tab];
             }
             return $tab;
         }
-        return array();
+        return [];
     }
 }

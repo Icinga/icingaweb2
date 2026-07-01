@@ -28,11 +28,11 @@
                 echo $this->qlink(
                     $module->name,
                     'config/module',
-                    array('name' => $module->name),
-                    array(
+                    ['name' => $module->name],
+                    [
                         'class' => 'rowaction',
                         'title' => sprintf($this->translate('Show the overview of the %s module'), $module->name)
-                    )
+                    ]
                 ); ?>
             </td>
         </tr>

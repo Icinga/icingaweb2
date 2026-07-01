@@ -35,12 +35,12 @@ class Palette
      *
      * @var array
      */
-    public $colorSets = array(
-        self::OK      => array('#00FF00'),
-        self::PROBLEM => array('#FF0000'),
-        self::WARNING => array('#FFFF00'),
-        self::NEUTRAL => array('#f3f3f3')
-    );
+    public $colorSets = [
+        self::OK      => ['#00FF00'],
+        self::PROBLEM => ['#FF0000'],
+        self::WARNING => ['#FFFF00'],
+        self::NEUTRAL => ['#f3f3f3']
+    ];
 
     /**
      * Return the next available color as an hex string for the given type

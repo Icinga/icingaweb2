@@ -21,83 +21,83 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
      *
      * @var array
      */
-    protected $queryColumns = array(
-        'group' => array(
+    protected $queryColumns = [
+        'group' => [
             'group_id'      => 'g.id',
             'group'         => 'g.name COLLATE utf8mb4_general_ci',
             'group_name'    => 'g.name',
             'parent'        => 'g.parent',
             'created_at'    => 'UNIX_TIMESTAMP(g.ctime)',
             'last_modified' => 'UNIX_TIMESTAMP(g.mtime)'
-        ),
-        'group_membership' => array(
+        ],
+        'group_membership' => [
             'group_id'      => 'gm.group_id',
             'user'          => 'gm.username COLLATE utf8mb4_general_ci',
             'user_name'     => 'gm.username',
             'created_at'    => 'UNIX_TIMESTAMP(gm.ctime)',
             'last_modified' => 'UNIX_TIMESTAMP(gm.mtime)'
-        )
-    );
+        ]
+    ];
 
     /**
      * The table aliases being applied
      *
      * @var array
      */
-    protected $tableAliases = array(
+    protected $tableAliases = [
         'group'             => 'g',
         'group_membership'  => 'gm'
-    );
+    ];
 
     /**
      * The statement columns being provided
      *
      * @var array
      */
-    protected $statementColumns = array(
-        'group' => array(
+    protected $statementColumns = [
+        'group' => [
             'group_id'      => 'id',
             'group_name'    => 'name',
             'parent'        => 'parent',
             'created_at'    => 'ctime',
             'last_modified' => 'mtime'
-        ),
-        'group_membership' => array(
+        ],
+        'group_membership' => [
             'group_id'      => 'group_id',
             'group_name'    => 'group_id',
             'user_name'     => 'username',
             'created_at'    => 'ctime',
             'last_modified' => 'mtime'
-        )
-    );
+        ]
+    ];
 
     /**
      * The columns which are not permitted to be queried
      *
      * @var array
      */
-    protected $blacklistedQueryColumns = array('group', 'user');
+    protected $blacklistedQueryColumns = ['group', 'user'];
 
     /**
      * The search columns being provided
      *
      * @var array
      */
-    protected $searchColumns = array('group', 'user');
+    protected $searchColumns = ['group', 'user'];
 
     /**
      * The value conversion rules to apply on a query or statement
      *
      * @var array
      */
-    protected $conversionRules = array(
-        'group'             => array(
+    protected $conversionRules = [
+        'group'             => [
             'parent'        => 'group_id'
-        ),
-        'group_membership'  => array(
+        ],
+        'group_membership'  => [
             'group_name'    => 'group_id'
-        )
-    );
+        ]
+    ];
 
     /**
      * Initialize this database user group backend
@@ -118,7 +118,7 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
     {
         $userLabel = t('Username') . ' ' . t('(Case insensitive)');
         $groupLabel = t('User Group') . ' ' . t('(Case insensitive)');
-        return array(
+        return [
             $userLabel          => 'user',
             t('Username')       => 'user_name',
             $groupLabel         => 'group',
@@ -126,7 +126,7 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
             t('Parent')         => 'parent',
             t('Created At')     => 'created_at',
             t('Last modified')  => 'last_modified'
-        );
+        ];
     }
 
     /**
@@ -135,7 +135,7 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
      * @param   string  $table
      * @param   array   $bind
      */
-    public function insert($table, array $bind, array $types = array())
+    public function insert($table, array $bind, array $types = [])
     {
         $bind['created_at'] = date('Y-m-d H:i:s');
         parent::insert($table, $bind);
@@ -148,7 +148,7 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
      * @param array $bind
      * @param ?Filter $filter
      */
-    public function update($table, array $bind, ?Filter $filter = null, array $types = array())
+    public function update($table, array $bind, ?Filter $filter = null, array $types = [])
     {
         $bind['last_modified'] = date('Y-m-d H:i:s');
         parent::update($table, $bind, $filter);
@@ -164,12 +164,12 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
     {
         if ($table === 'group') {
             parent::delete('group_membership', $filter);
-            $idQuery = $this->select(array('group_id'));
+            $idQuery = $this->select(['group_id']);
             if ($filter !== null) {
                 $idQuery->applyFilter($filter);
             }
 
-            $this->update('group', array('parent' => null), Filter::where('parent', $idQuery->fetchColumn()));
+            $this->update('group', ['parent' => null], Filter::where('parent', $idQuery->fetchColumn()));
         }
 
         parent::delete($table, $filter);
@@ -187,28 +187,28 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
         $groupQuery = $this->ds
             ->select()
             ->from(
-                array('g' => $this->prependTablePrefix('group')),
-                array(
+                ['g' => $this->prependTablePrefix('group')],
+                [
                     'group_name'    => 'g.name',
                     'parent_name'   => 'gg.name'
-                )
+                ]
             )->joinLeft(
-                array('gg' => $this->prependTablePrefix('group')),
+                ['gg' => $this->prependTablePrefix('group')],
                 'g.parent = gg.id',
-                array()
+                []
             );
 
-        $groups = array();
+        $groups = [];
         foreach ($groupQuery as $group) {
             $groups[$group->group_name] = $group->parent_name;
         }
 
         $membershipQuery = $this
             ->select()
-            ->from('group_membership', array('group_name'))
+            ->from('group_membership', ['group_name'])
             ->where('user', $user->getUsername());
 
-        $memberships = array();
+        $memberships = [];
         foreach ($membershipQuery as $membership) {
             $memberships[] = $membership->group_name;
             $parent = $groups[$membership->group_name];
@@ -244,7 +244,7 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
         $query->getQuery()->join(
             $this->requireTable('group'),
             'gm.group_id = g.id',
-            array()
+            []
         );
     }
 
@@ -258,7 +258,7 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
         $query->getQuery()->joinLeft(
             $this->requireTable('group_membership'),
             'g.id = gm.group_id',
-            array()
+            []
         )->group('g.id');
     }
 
@@ -284,7 +284,7 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
 
             $groupIds = $this->ds
                 ->select()
-                ->from($this->prependTablePrefix('group'), array('id'))
+                ->from($this->prependTablePrefix('group'), ['id'])
                 ->where('name', $groupName)
                 ->fetchColumn();
             if (empty($groupIds)) {
@@ -296,7 +296,7 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
 
         $groupId = $this->ds
             ->select()
-            ->from($this->prependTablePrefix('group'), array('id'))
+            ->from($this->prependTablePrefix('group'), ['id'])
             ->where('name', $groupName)
             ->fetchOne();
         if ($groupId === false) {

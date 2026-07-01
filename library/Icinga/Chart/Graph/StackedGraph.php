@@ -19,14 +19,14 @@ class StackedGraph implements Drawable
      *
      * @var array
      */
-    private $stack = array();
+    private $stack = [];
 
     /**
      * An associative array containing x points as the key and an array of y values as the value
      *
      * @var array
      */
-    private $points = array();
+    private $points = [];
 
     /**
      * Add a graph to this stack and aggregate the values on the fly

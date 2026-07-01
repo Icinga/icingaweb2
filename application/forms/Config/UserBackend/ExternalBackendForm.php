@@ -29,13 +29,13 @@ class ExternalBackendForm extends Form
         $this->addElement(
             'text',
             'name',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Backend Name'),
                 'description'   => $this->translate(
                     'The name of this authentication provider that is used to differentiate it from others'
                 )
-            )
+            ]
         );
         $callbackValidator = new Zend_Validate_Callback(function ($value) {
             return @preg_match($value, '') !== false;
@@ -47,23 +47,23 @@ class ExternalBackendForm extends Form
         $this->addElement(
             'text',
             'strip_username_regexp',
-            array(
+            [
                 'label'         => $this->translate('Filter Pattern'),
                 'description'   => $this->translate(
                     'The filter to use to strip specific parts off from usernames.'
                     . ' Leave empty if you do not want to strip off anything.'
                 ),
                 'requirement'   => $this->translate('The filter pattern must be a valid regular expression.'),
-                'validators'    => array($callbackValidator)
-            )
+                'validators'    => [$callbackValidator]
+            ]
         );
         $this->addElement(
             'hidden',
             'backend',
-            array(
+            [
                 'disabled'  => true,
                 'value'     => 'external'
-            )
+            ]
         );
 
         return $this;

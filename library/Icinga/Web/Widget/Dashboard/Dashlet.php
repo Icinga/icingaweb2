@@ -208,10 +208,10 @@ EOD;
      */
     public function toArray()
     {
-        $array = array(
+        $array = [
             'url'   => $this->getUrl()->getRelativeUrl(),
             'title' => $this->getTitle()
-        );
+        ];
         if ($this->getDisabled() === true) {
             $array['disabled'] = 1;
         }
@@ -230,19 +230,19 @@ EOD;
         $view = $this->view();
 
         if (! $this->url) {
-            $searchTokens = array(
+            $searchTokens = [
                 '{TOOLTIP}',
                 '{TITLE}',
                 '{ERROR_MESSAGE}'
-            );
+            ];
 
-            $replaceTokens = array(
+            $replaceTokens = [
                 sprintf($view->translate('Show %s', 'dashboard.dashlet.tooltip'), $view->escape($this->getTitle())),
                 $view->escape($this->getTitle()),
                 $view->escape(
                     sprintf($view->translate('Cannot create dashboard dashlet "%s" without valid URL'), $this->title)
                 )
-            );
+            ];
 
             return str_replace($searchTokens, $replaceTokens, $this->errorTemplate);
         }
@@ -260,7 +260,7 @@ EOD;
                 . Session::getSession()->getId());
         }
 
-        $searchTokens = array(
+        $searchTokens = [
             '{URL}',
             '{URL_HASH}',
             '{FULL_URL}',
@@ -269,9 +269,9 @@ EOD;
             '{TITLE}',
             '{TITLE_PREFIX}',
             '{PROGRESS_LABEL}'
-        );
+        ];
 
-        $replaceTokens = array(
+        $replaceTokens = [
             $url,
             $urlHash,
             $fullUrl,
@@ -280,7 +280,7 @@ EOD;
             $view->escape($this->getTitle()),
             $view->translate('Dashlet') . ': ',
             $this->getProgressLabe()
-        );
+        ];
 
         return str_replace($searchTokens, $replaceTokens, $this->template);
     }

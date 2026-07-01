@@ -24,7 +24,7 @@ class DocSection extends TreeNode
      *
      * @var array
      */
-    protected $content = array();
+    protected $content = [];
 
     /**
      * Header level

@@ -17,7 +17,7 @@ class ModuleActionController extends ActionController
 {
     protected $config;
 
-    protected $configs = array();
+    protected $configs = [];
 
     protected $module;
 

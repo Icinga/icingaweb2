@@ -40,7 +40,7 @@ class ModuleCommand extends Command
     public function listAction()
     {
         if ($type = $this->params->shift()) {
-            if (! in_array($type, array('enabled', 'installed'))) {
+            if (! in_array($type, ['enabled', 'installed'])) {
                 return $this->showUsage();
             }
         } else {

@@ -18,19 +18,19 @@ use Icinga\Web\Announcement;
  */
 class AnnouncementIniRepository extends IniRepository
 {
-    protected $queryColumns = array('announcement' => array('id', 'author', 'message', 'hash', 'start', 'end'));
+    protected $queryColumns = ['announcement' => ['id', 'author', 'message', 'hash', 'start', 'end']];
 
-    protected $triggers = array('announcement');
+    protected $triggers = ['announcement'];
 
-    protected $configs = array('announcement' => array(
+    protected $configs = ['announcement' => [
         'name'      => 'announcements',
         'keyColumn' => 'id'
-    ));
+    ]];
 
-    protected $conversionRules = array('announcement' => array(
+    protected $conversionRules = ['announcement' => [
         'start' => 'timestamp',
         'end'   => 'timestamp'
-    ));
+    ]];
 
     /**
      * Get a DateTime's timestamp
@@ -112,11 +112,11 @@ class AnnouncementIniRepository extends IniRepository
         $now = new DateTime();
 
         $query = $this
-            ->select(array('hash', 'message', 'start'))
-            ->setFilter(new FilterAnd(array(
+            ->select(['hash', 'message', 'start'])
+            ->setFilter(new FilterAnd([
                 Filter::expression('start', '<=', $now),
                 Filter::expression('end', '>=', $now)
-            )))
+            ]))
             ->order('start');
 
         return $query;
@@ -132,10 +132,10 @@ class AnnouncementIniRepository extends IniRepository
         $now = new DateTime();
 
         $query = $this
-            ->select(array('start', 'end'))
-            ->setFilter(Filter::matchAny(array(
+            ->select(['start', 'end'])
+            ->setFilter(Filter::matchAny([
                 Filter::expression('start', '>', $now), Filter::expression('end', '>', $now)
-            )));
+            ]));
 
         $refresh = null;
 

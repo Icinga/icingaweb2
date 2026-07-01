@@ -41,7 +41,7 @@ class RecursiveNavigationRenderer extends RecursiveIteratorIterator implements N
      */
     public function __construct(Navigation $navigation)
     {
-        $this->content = array();
+        $this->content = [];
         parent::__construct(
             new NavigationRenderer($navigation, true),
             RecursiveIteratorIterator::SELF_FIRST

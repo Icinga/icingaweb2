@@ -8,12 +8,12 @@
         $this->translate('Create a New User Backend') ,
         'config/createuserbackend',
         null,
-        array(
+        [
             'class'             => 'button-link',
             'data-base-target'  => '_next',
             'icon'              => 'plus',
             'title'             => $this->translate('Create a new user backend')
-        )
+        ]
     ) ?>
     <?= $form ?>
   <?php endif ?>
@@ -24,12 +24,12 @@
         $this->translate('Create a New User Group Backend') ,
         'usergroupbackend/create',
         null,
-        array(
+        [
             'class'             => 'button-link',
             'data-base-target'  => '_next',
             'icon'              => 'plus',
             'title'             => $this->translate('Create a new user group backend')
-        )
+        ]
     ) ?>
 <?php if (! count($backendNames)) { return; } ?>
     <table class="table-row-selectable common-table" data-base-target="_next">
@@ -48,23 +48,23 @@
             <?= $this->qlink(
                 $backendName,
                 'usergroupbackend/edit',
-                array('backend' => $backendName),
-                array(
+                ['backend' => $backendName],
+                [
                     'icon'  => $type === 'external' ? 'magic' : ($type === 'ldap' || $type === 'msldap' ? 'sitemap' : 'database'),
                     'title' => sprintf($this->translate('Edit user group backend %s'), $backendName)
-                )
+                ]
             ); ?>
         </td>
         <td class="icon-col text-right">
             <?= $this->qlink(
                 null,
                 'usergroupbackend/remove',
-                array('backend' => $backendName),
-                array(
+                ['backend' => $backendName],
+                [
                     'class' => 'action-link',
                     'icon'  => 'cancel',
                     'title' => sprintf($this->translate('Remove user group backend %s'), $backendName)
-                )
+                ]
             ) ?>
         </td>
     </tr>

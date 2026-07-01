@@ -24,7 +24,7 @@ class GeneralConfigStep extends Step
 
     public function apply()
     {
-        $config = array();
+        $config = [];
         foreach ($this->data['generalConfig'] as $sectionAndPropertyName => $value) {
             list($section, $property) = explode('_', $sectionAndPropertyName, 2);
             $config[$section][$property] = $value;
@@ -118,18 +118,18 @@ class GeneralConfigStep extends Step
     public function getReport()
     {
         if ($this->error === false) {
-            return array(sprintf(
+            return [sprintf(
                 mt('setup', 'General configuration has been successfully written to: %s'),
                 Config::resolvePath('config.ini')
-            ));
+            )];
         } elseif ($this->error !== null) {
-            return array(
+            return [
                 sprintf(
                     mt('setup', 'General configuration could not be written to: %s. An error occured:'),
                     Config::resolvePath('config.ini')
                 ),
                 sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->error))
-            );
+            ];
         }
     }
 }

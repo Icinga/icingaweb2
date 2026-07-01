@@ -45,7 +45,7 @@ class FileReader implements Selectable, Countable
      */
     public function __construct(ConfigObject $config)
     {
-        foreach (array('filename', 'fields') as $key) {
+        foreach (['filename', 'fields'] as $key) {
             if (isset($config->{$key})) {
                 $this->{$key} = $config->{$key};
             } else {
@@ -108,7 +108,7 @@ class FileReader implements Selectable, Countable
      */
     public function fetchAll(FileQuery $query)
     {
-        $all = array();
+        $all = [];
         foreach ($this->fetchPairs($query) as $index => $value) {
             $all[$index] = (object) $value;
         }
@@ -129,7 +129,7 @@ class FileReader implements Selectable, Countable
         if ($skip === null) {
             $skip = 0;
         }
-        $lines = array();
+        $lines = [];
         if ($query->sortDesc()) {
             $count = $this->count();
             if ($count <= $skip) {
@@ -180,7 +180,7 @@ class FileReader implements Selectable, Countable
      */
     public function fetchColumn(FileQuery $query)
     {
-        $column = array();
+        $column = [];
         foreach ($this->fetchPairs($query) as $pair) {
             foreach ($pair as $value) {
                 $column[] = $value;

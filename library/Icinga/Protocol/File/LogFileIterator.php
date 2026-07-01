@@ -101,7 +101,7 @@ class LogFileIterator implements Iterator
 
     protected function nextMessage()
     {
-        $message = $this->next === null ? array() : array($this->next);
+        $message = $this->next === null ? [] : [$this->next];
         $this->valid = null;
         while ($this->file->valid()) {
             if (false === ($res = preg_match(
@@ -131,7 +131,7 @@ class LogFileIterator implements Iterator
 
         if ($this->valid) {
             while (! empty($message)) {
-                $matches = array();
+                $matches = [];
                 if (false === ($res = preg_match(
                     $this->fields,
                     implode(PHP_EOL, $message),

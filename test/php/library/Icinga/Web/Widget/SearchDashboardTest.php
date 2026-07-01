@@ -28,7 +28,7 @@ class SearchDashboardTest extends BaseTestCase
         $this->expectException(\Zend_Controller_Action_Exception::class);
 
         $user = new User('test');
-        $user->setPermissions(array('*' => '*'));
+        $user->setPermissions(['*' => '*']);
         $dashboard = new SearchDashboard();
         $dashboard->setUser($user);
         $dashboard = $dashboard->search('pending');

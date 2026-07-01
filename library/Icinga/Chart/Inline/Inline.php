@@ -31,19 +31,19 @@ class Inline
      *
      * @var array
      */
-    protected $colors = array(
+    protected $colors = [
         '#00FF00', // OK
         '#FFFF00', // Warning
         '#FF0000', // Critical
         '#E066FF'  // Unreachable
-    );
+    ];
 
     /**
      * The labels displayed on this chart
      *
      * @var array
      */
-    protected $labels = array();
+    protected $labels = [];
 
     /**
      * The height in percent
@@ -61,7 +61,7 @@ class Inline
 
     protected function sanitizeStringArray(array $arr)
     {
-        $sanitized = array();
+        $sanitized = [];
         foreach ($arr as $key => $value) {
             $sanitized[$key] = htmlspecialchars($value);
         }

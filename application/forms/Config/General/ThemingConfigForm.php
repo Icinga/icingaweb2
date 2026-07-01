@@ -38,26 +38,26 @@ class ThemingConfigForm extends Form
         $this->addElement(
             'select',
             'themes_default',
-            array(
+            [
                 'description'   => $this->translate('The default theme', 'Form element description'),
                 'disabled'      => count($themes) < 2 ? 'disabled' : null,
                 'label'         => $this->translate('Default Theme', 'Form element label'),
                 'multiOptions'  => $themes,
                 'value'         => StyleSheet::DEFAULT_THEME
-            )
+            ]
         );
 
         $this->addElement(
             'checkbox',
             'themes_disabled',
-            array(
+            [
                 'description'   => $this->translate(
                     'Check this box for disallowing users to change the theme. If a default theme is set, it will be'
                     . ' used nonetheless',
                     'Form element description'
                 ),
                 'label'         => $this->translate('Users Can\'t Change Theme', 'Form element label')
-            )
+            ]
         );
 
         return $this;

@@ -110,23 +110,23 @@ class DatabaseCreationPage extends Form
         $this->addElement(
             'text',
             'username',
-            array(
+            [
                 'required'      => false === $skipValidation,
                 'label'         => $this->translate('Username'),
                 'description'   => $this->translate(
                     'A user which is able to create databases and/or touch the database schema'
                 )
-            )
+            ]
         );
         $this->addElement(
             'password',
             'password',
-            array(
+            [
                 'renderPassword'    => true,
                 'label'             => $this->translate('Password'),
                 'description'       => $this->translate('The password for the database user defined above'),
                 'autocomplete'      => 'new-password'
-            )
+            ]
         );
 
         if ($skipValidation) {
@@ -135,10 +135,10 @@ class DatabaseCreationPage extends Form
             $this->addElement(
                 'hidden',
                 'skip_validation',
-                array(
+                [
                     'required'  => true,
                     'value'     => 0
-                )
+                ]
             );
         }
     }
@@ -211,14 +211,14 @@ class DatabaseCreationPage extends Form
         $this->addElement(
             'checkbox',
             'skip_validation',
-            array(
+            [
                 'order'         => 0,
                 'required'      => true,
                 'label'         => $this->translate('Skip Validation'),
                 'description'   => $this->translate(
                     'Check this to not to validate the ability to login and required privileges'
                 )
-            )
+            ]
         );
     }
 }

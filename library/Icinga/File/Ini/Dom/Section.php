@@ -24,7 +24,7 @@ class Section
      *
      * @var Directive[]
      */
-    protected $directives = array();
+    protected $directives = [];
 
     /**
      * Comments added one line before this section
@@ -183,7 +183,7 @@ class Section
      */
     public function toArray()
     {
-        $a = array();
+        $a = [];
         foreach ($this->directives as $directive) {
             $a[$directive->getKey()] = $directive->getValue();
         }

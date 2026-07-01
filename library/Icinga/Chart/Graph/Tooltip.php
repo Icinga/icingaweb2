@@ -39,16 +39,16 @@ class Tooltip
      *
      * @var array
      */
-    private $points = array();
+    private $points = [];
 
     /**
      * Contains all static replacements
      *
      * @var array
      */
-    private $data = array(
+    private $data = [
         'sum' => 0
-    );
+    ];
 
     /**
      * Used to format the displayed tooltip.
@@ -67,7 +67,7 @@ class Tooltip
      * @param string    $format The default format string
      */
     public function __construct(
-        $data = array(),
+        $data = [],
         $format = '<b>{title}</b>: {value} {label}'
     ) {
         $this->data = array_merge($this->data, $data);
@@ -112,7 +112,7 @@ class Tooltip
      *
      * @return mixed|string The tooltip value
      */
-    public function render($order, $data = array(), $format = null)
+    public function render($order, $data = [], $format = null)
     {
         if (isset($format)) {
             $str = $format;

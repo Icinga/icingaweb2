@@ -115,9 +115,9 @@ class LdapCapabilities
     protected function setAttributes($attributes)
     {
         $this->attributes = $attributes;
-        $this->oids = array();
+        $this->oids = [];
 
-        $keys = array('supportedControl', 'supportedExtension', 'supportedFeatures', 'supportedCapabilities');
+        $keys = ['supportedControl', 'supportedExtension', 'supportedFeatures', 'supportedCapabilities'];
         foreach ($keys as $key) {
             if (isset($attributes->$key)) {
                 if (is_array($attributes->$key)) {
@@ -251,10 +251,10 @@ class LdapCapabilities
     public function namingContexts()
     {
         if (!isset($this->attributes->namingContexts)) {
-            return array();
+            return [];
         }
         if (!is_array($this->attributes->namingContexts)) {
-            return array($this->attributes->namingContexts);
+            return [$this->attributes->namingContexts];
         }
         return$this->attributes->namingContexts;
     }
@@ -312,7 +312,7 @@ class LdapCapabilities
     {
         $ds = $connection->getConnection();
 
-        $fields = array(
+        $fields = [
             'configurationNamingContext',
             'defaultNamingContext',
             'namingContexts',
@@ -321,13 +321,13 @@ class LdapCapabilities
             'supportedSaslMechanisms',
             'dnsHostName',
             'schemaNamingContext',
-            'supportedLDAPVersion', // => array(3, 2)
+            'supportedLDAPVersion', // => [3, 2]
             'supportedCapabilities',
             'supportedControl',
             'supportedExtension',
             'objectVersion',
             '+'
-        );
+        ];
 
         $result = @ldap_read($ds, '', (string) $connection->select()->from('*', $fields), $fields);
         if (! $result) {
@@ -380,7 +380,7 @@ class LdapCapabilities
             $defaultNamingContext = $this->getDefaultNamingContext();
             if (!($configurationNamingContext === null || $defaultNamingContext === null)) {
                 $ds = $connection->bind()->getConnection();
-                $adFields = array('nETBIOSName');
+                $adFields = ['nETBIOSName'];
                 $partitions = 'CN=Partitions,' . $configurationNamingContext;
 
                 $result = @ldap_list(

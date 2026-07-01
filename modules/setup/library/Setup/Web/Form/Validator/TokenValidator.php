@@ -29,7 +29,7 @@ class TokenValidator extends Zend_Validate_Abstract
     public function __construct($tokenPath)
     {
         $this->tokenPath = $tokenPath;
-        $this->_messageTemplates = array(
+        $this->_messageTemplates = [
             'TOKEN_FILE_ERROR'  => sprintf(
                 mt('setup', 'Cannot validate token: %s (%s)'),
                 $tokenPath,
@@ -40,7 +40,7 @@ class TokenValidator extends Zend_Validate_Abstract
                 $tokenPath
             ),
             'TOKEN_INVALID'     => mt('setup', 'Invalid token supplied.')
-        );
+        ];
     }
 
     /**

@@ -33,23 +33,23 @@ class SshResourceForm extends Form
         $this->addElement(
             'text',
             'name',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Resource Name'),
                 'description'   => $this->translate('The unique name of this resource')
-            )
+            ]
         );
         $this->addElement(
             'text',
             'user',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('User'),
                 'description'   => $this->translate(
                     'User to log in as on the remote Icinga instance. Please note that key-based SSH login must be'
                     . ' possible for this user'
                 )
-            )
+            ]
         );
 
         if ($this->getRequest()->getActionName() != 'editresource') {
@@ -70,31 +70,31 @@ class SshResourceForm extends Form
             $this->addElement(
                 'textarea',
                 'private_key',
-                array(
+                [
                     'required'      => true,
                     'label'         => $this->translate('Private Key'),
                     'description'   => $this->translate('The private key which will be used for the SSH connections'),
                     'class'         => 'resource ssh-identity',
-                    'validators'    => array($callbackValidator)
-                )
+                    'validators'    => [$callbackValidator]
+                ]
             );
         } else {
             $resourceName = $formData['name'];
             $this->addElement(
                 'note',
                 'private_key_note',
-                array(
+                [
                     'escape'        => false,
                     'label'         => $this->translate('Private Key'),
                     'value'         => sprintf(
                         '<a href="%1$s" data-base-target="_next" title="%2$s" aria-label="%2$s">%3$s</a>',
-                        $this->getView()->url('config/removeresource', array('resource' => $resourceName)),
+                        $this->getView()->url('config/removeresource', ['resource' => $resourceName]),
                         $this->getView()->escape(sprintf($this->translate(
                             'Remove the %s resource'
                         ), $resourceName)),
                         $this->translate('To modify the private key you must recreate this resource.')
                     )
-                )
+                ]
             );
         }
 

@@ -33,7 +33,7 @@ class Dashboard extends AbstractWidget
      *
      * @var array
      */
-    private $panes = array();
+    private $panes = [];
 
     /**
      * The @see Icinga\Web\Widget\Tabs object for displaying displayable panes
@@ -75,7 +75,7 @@ class Dashboard extends AbstractWidget
         $navigation = new Navigation();
         $navigation->load('dashboard-pane');
 
-        $panes = array();
+        $panes = [];
         foreach ($navigation as $dashboardPane) {
             /** @var DashboardPane $dashboardPane */
             $pane = new Pane($dashboardPane->getLabel());
@@ -98,7 +98,7 @@ class Dashboard extends AbstractWidget
      */
     public function getConfig()
     {
-        $output = array();
+        $output = [];
         foreach ($this->panes as $pane) {
             if ($pane->isUserWidget()) {
                 $output[$pane->getName()] = $pane->toArray();
@@ -141,8 +141,8 @@ class Dashboard extends AbstractWidget
         if (! count($config)) {
             return false;
         }
-        $panes = array();
-        $dashlets = array();
+        $panes = [];
+        $dashlets = [];
         foreach ($config as $key => $part) {
             if (strpos($key, '.') === false) {
                 $dashboardPane = $dashboardNavigation->getItem($key);
@@ -246,15 +246,15 @@ class Dashboard extends AbstractWidget
                 }
                 $this->tabs->add(
                     $key,
-                    array(
+                    [
                         'title'       => sprintf(
                             t('Show %s', 'dashboard.pane.tooltip'),
                             $pane->getTitle()
                         ),
                         'label'     => $pane->getTitle(),
                         'url'       => clone($url),
-                        'urlParams' => array($this->tabParam => $key)
-                    )
+                        'urlParams' => [$this->tabParam => $key]
+                    ]
                 );
             }
         }
@@ -363,7 +363,7 @@ class Dashboard extends AbstractWidget
      */
     public function getPaneKeyTitleArray()
     {
-        $list = array();
+        $list = [];
         foreach ($this->panes as $name => $pane) {
             $list[$name] = $pane->getTitle();
         }

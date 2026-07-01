@@ -8,11 +8,11 @@
         <li><?= $this->qlink(
             $module->getTitle(),
             'doc/module/toc',
-            array('moduleName' => $module->getName()),
-            array('title' => sprintf(
+            ['moduleName' => $module->getName()],
+            ['title' => sprintf(
                 $this->translate('Show the documentation\'s table of contents for the %s'),
                 $module->getTitle()
-            ))
+            )]
         ) ?></li>
     <?php endforeach ?>
     </ul>

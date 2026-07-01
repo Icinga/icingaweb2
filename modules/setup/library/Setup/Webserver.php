@@ -90,20 +90,20 @@ abstract class Webserver
         $template = $this->getTemplate();
         $fpmUri = $this->createFpmUri();
 
-        $searchTokens = array(
+        $searchTokens = [
             '{urlPath}',
             '{documentRoot}',
             '{aliasDocumentRoot}',
             '{configDir}',
             '{fpmUri}'
-        );
-        $replaceTokens = array(
+        ];
+        $replaceTokens = [
             $this->getUrlPath(),
             $this->getDocumentRoot(),
             preg_match('~/$~', $this->getUrlPath()) ? $this->getDocumentRoot() . '/' : $this->getDocumentRoot(),
             $this->getConfigDir(),
             $fpmUri
-        );
+        ];
         $template = str_replace($searchTokens, $replaceTokens, $template);
         return $template;
     }

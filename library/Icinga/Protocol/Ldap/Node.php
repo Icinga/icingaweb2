@@ -45,7 +45,7 @@ class Node extends Root
      * @param array $props
      * @return Node
      */
-    public static function createWithRDN($parent, $rdn, $props = array())
+    public static function createWithRDN($parent, $rdn, $props = [])
     {
         $node = new Node($parent);
         $node->rdn = $rdn;

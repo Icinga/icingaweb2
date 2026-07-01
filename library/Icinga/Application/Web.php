@@ -97,7 +97,7 @@ class Web extends EmbeddedWeb
      */
     public function getThemes()
     {
-        $themes = array(StyleSheet::DEFAULT_THEME);
+        $themes = [StyleSheet::DEFAULT_THEME];
         $applicationThemePath = $this->getBaseDir('public/css/themes');
         if (DirectoryIterator::isReadable($applicationThemePath)) {
             foreach (new DirectoryIterator($applicationThemePath, 'less') as $name => $theme) {
@@ -206,7 +206,7 @@ class Web extends EmbeddedWeb
         $config = Config::navigation($type === 'dashboard-pane' ? 'dashlet' : $type);
 
         if ($type === 'dashboard-pane') {
-            $panes = array();
+            $panes = [];
             foreach ($config as $dashletName => $dashletConfig) {
                 if ($this->hasAccessToSharedNavigationItem($dashletConfig, $config)) {
                     // TODO: Throw ConfigurationError if pane or url is missing
@@ -218,14 +218,14 @@ class Web extends EmbeddedWeb
             foreach ($panes as $paneName => $dashlets) {
                 $navigation->addItem(
                     $paneName,
-                    array(
+                    [
                         'type'      => 'dashboard-pane',
                         'dashlets'  => $dashlets
-                    )
+                    ]
                 );
             }
         } else {
-            $items = array();
+            $items = [];
             foreach ($config as $name => $typeConfig) {
                 if (isset($this->accessibleMenuItems[$name])) {
                     if ($this->accessibleMenuItems[$name]) {
@@ -263,10 +263,10 @@ class Web extends EmbeddedWeb
     private function setupZendMvc()
     {
         Zend_Layout::startMvc(
-            array(
+            [
                 'layout'     => 'layout',
                 'layoutPath' => $this->getApplicationDir('/layouts/scripts')
-            )
+            ]
         );
 
         $this->setupFrontController();
@@ -322,9 +322,9 @@ class Web extends EmbeddedWeb
         $displayExceptions = $this->config->get('global', 'show_stacktraces', true);
 
         $this->frontController->setParams(
-            array(
+            [
                 'displayExceptions' => $displayExceptions
-            )
+            ]
         );
         return $this;
     }
@@ -367,7 +367,7 @@ class Web extends EmbeddedWeb
 
         Zend_Paginator::setDefaultScrollingStyle('SlidingWithBorder');
         Zend_View_Helper_PaginationControl::setDefaultViewPartial(
-            array('mixedPagination.phtml', 'default')
+            ['mixedPagination.phtml', 'default']
         );
         return $this;
     }

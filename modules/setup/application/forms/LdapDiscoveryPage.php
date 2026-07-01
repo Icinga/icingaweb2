@@ -48,10 +48,10 @@ class LdapDiscoveryPage extends Form
         $this->addElement(
             'checkbox',
             'skip_validation',
-            array(
+            [
                 'label'         => $this->translate('Skip'),
                 'description'   => $this->translate('Do not discover LDAP servers and enter all settings manually.')
-            )
+            ]
         );
     }
 
@@ -87,7 +87,7 @@ class LdapDiscoveryPage extends Form
                 ));
             }
         } else {
-            $labeller = new ErrorLabeller(array('element' => $this->getElement('domain')));
+            $labeller = new ErrorLabeller(['element' => $this->getElement('domain')]);
             $this->getElement('domain')->addError($labeller->translate(Zend_Validate_NotEmpty::IS_EMPTY));
         }
 
@@ -107,11 +107,11 @@ class LdapDiscoveryPage extends Form
             return [];
         }
         $disc = $this->discovery;
-        return array(
+        return [
             'domain' => $this->getValue('domain'),
             'type' => $disc->isAd() ? LdapDiscoveryConfirmPage::TYPE_AD : LdapDiscoveryConfirmPage::TYPE_MISC,
             'resource' => $disc->suggestResourceSettings(),
             'backend' => $disc->suggestBackendSettings()
-        );
+        ];
     }
 }

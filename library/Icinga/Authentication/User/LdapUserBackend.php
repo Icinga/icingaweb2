@@ -60,28 +60,28 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
      *
      * @var array
      */
-    protected $blacklistedQueryColumns = array('user');
+    protected $blacklistedQueryColumns = ['user'];
 
     /**
      * The search columns being provided
      *
      * @var array
      */
-    protected $searchColumns = array('user');
+    protected $searchColumns = ['user'];
 
     /**
      * The default sort rules to be applied on a query
      *
      * @var array
      */
-    protected $sortRules = array(
-        'user_name' => array(
-            'columns'   => array(
+    protected $sortRules = [
+        'user_name' => [
+            'columns'   => [
                 'is_active desc',
                 'user_name'
-            )
-        )
-    );
+            ]
+        ]
+    ];
 
     /**
      * Set the base DN to use for a query
@@ -219,9 +219,9 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
             throw new ProgrammingError('It is required to set the object class where to find users first');
         }
 
-        return array(
+        return [
             'user' => $this->userClass
-        );
+        ];
     }
 
     /**
@@ -249,15 +249,15 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
             $lastModifiedAttribute = 'modifyTimestamp';
         }
 
-        return array(
-            'user' => array(
+        return [
+            'user' => [
                 'user'          => $this->userNameAttribute,
                 'user_name'     => $this->userNameAttribute,
                 'is_active'     => $isActiveAttribute,
                 'created_at'    => $createdAtAttribute,
                 'last_modified' => $lastModifiedAttribute
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -267,12 +267,12 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
      */
     protected function initializeFilterColumns()
     {
-        return array(
+        return [
             t('Username')       => 'user_name',
             t('Active')         => 'is_active',
             t('Created At')     => 'created_at',
             t('Last modified')  => 'last_modified'
-        );
+        ];
     }
 
     /**
@@ -288,13 +288,13 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
             $stateConverter = 'shadow_expire';
         }
 
-        return array(
-            'user' => array(
+        return [
+            'user' => [
                 'is_active'     => $stateConverter,
                 'created_at'    => 'generalized_time',
                 'last_modified' => 'generalized_time'
-            )
-        );
+            ]
+        ];
     }
 
     /**

@@ -15,7 +15,7 @@ use ipl\Web\Widget\Icon;
             if (Str::startsWith($item->getIcon(), 'fa-') || substr($item->getUrl()->getPath(), 0, 9) === 'icingadb/') {
                 echo new Icon($item->getIcon() ?: 'share', [ 'aria-hidden' => 1]);
             } else {
-                echo $this->icon($item->getIcon() ?: 'forward', null, array('aria-hidden' => true));
+                echo $this->icon($item->getIcon() ?: 'forward', null, ['aria-hidden' => true]);
             }
         ?>
         </div>

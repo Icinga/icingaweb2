@@ -149,7 +149,7 @@ class Axis implements Drawable
      */
     public function getRequiredPadding()
     {
-        return array(10, 5, 15, 10);
+        return [10, 5, 15, 10];
     }
 
     /**
@@ -409,12 +409,12 @@ class Axis implements Drawable
      */
     public function transform(array &$dataSet)
     {
-        $result = array();
+        $result = [];
         foreach ($dataSet as &$points) {
-            $result[] = array(
+            $result[] = [
                 $this->xUnit->transform($points[0]),
                 100 - $this->yUnit->transform($points[1])
-            );
+            ];
         }
         return $result;
     }

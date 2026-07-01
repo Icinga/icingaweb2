@@ -31,12 +31,12 @@ if (! isset($backend)) {
     <?= $this->qlink(
         $this->translate('Add a New User Group'),
         'group/add',
-        array('backend' => $backend->getName()),
-        array(
+        ['backend' => $backend->getName()],
+        [
             'class'             => 'button-link',
             'data-base-target'  => '_next',
             'icon'              => 'plus'
-        )
+        ]
     ) ?>
 <?php endif ?>
 
@@ -60,16 +60,16 @@ if (! isset($backend)) {
                     <?= $this->qlink(
                         $group->group_name,
                         'group/show',
-                        array(
+                        [
                             'backend'   => $backend->getName(),
                             'group'     => $group->group_name
-                        ),
-                        array(
+                        ],
+                        [
                             'title'     => sprintf(
                                 $this->translate('Show detailed information for user group %s'),
                                 $group->group_name
                             )
-                        )
+                        ]
                     ); ?>
                 </td>
             <?php if ($reducible): ?>
@@ -77,15 +77,15 @@ if (! isset($backend)) {
                     <?= $this->qlink(
                         null,
                         'group/remove',
-                        array(
+                        [
                             'backend'   => $backend->getName(),
                             'group'     => $group->group_name
-                        ),
-                        array(
+                        ],
+                        [
                             'class'     => 'action-link',
                             'title'     => sprintf($this->translate('Remove user group %s'), $group->group_name),
                             'icon'      => 'cancel'
-                        )
+                        ]
                     ); ?>
                 </td>
             <?php endif ?>

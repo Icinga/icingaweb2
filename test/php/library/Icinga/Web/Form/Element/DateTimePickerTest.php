@@ -31,9 +31,9 @@ class DateTimePickerTest extends BaseTestCase
     {
         $dateTime = new DateTimePicker(
             'name',
-            array(
+            [
                 'local' => false
-            )
+            ]
         );
         $now = new DateTime();
         $this->assertTrue(

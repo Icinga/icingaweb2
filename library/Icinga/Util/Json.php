@@ -109,7 +109,7 @@ class Json
                 return static::sanitizeUtf8String($value);
 
             case 'array':
-                $sanitized = array();
+                $sanitized = [];
 
                 foreach ($value as $key => $val) {
                     if (is_string($key)) {
@@ -122,7 +122,7 @@ class Json
                 return $sanitized;
 
             case 'object':
-                $sanitized = array();
+                $sanitized = [];
 
                 foreach ($value as $key => $val) {
                     if (is_string($key)) {

@@ -22,67 +22,67 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
      *
      * @var array
      */
-    protected $queryColumns = array(
-        'user' => array(
+    protected $queryColumns = [
+        'user' => [
             'user'          => 'name COLLATE utf8mb4_general_ci',
             'user_name'     => 'name',
             'is_active'     => 'active',
             'created_at'    => 'UNIX_TIMESTAMP(ctime)',
             'last_modified' => 'UNIX_TIMESTAMP(mtime)'
-        )
-    );
+        ]
+    ];
 
     /**
      * The statement columns being provided
      *
      * @var array
      */
-    protected $statementColumns = array(
-        'user' => array(
+    protected $statementColumns = [
+        'user' => [
             'password'      => 'password_hash',
             'created_at'    => 'ctime',
             'last_modified' => 'mtime'
-        )
-    );
+        ]
+    ];
 
     /**
      * The columns which are not permitted to be queried
      *
      * @var array
      */
-    protected $blacklistedQueryColumns = array('user');
+    protected $blacklistedQueryColumns = ['user'];
 
     /**
      * The search columns being provided
      *
      * @var array
      */
-    protected $searchColumns = array('user');
+    protected $searchColumns = ['user'];
 
     /**
      * The default sort rules to be applied on a query
      *
      * @var array
      */
-    protected $sortRules = array(
-        'user_name' => array(
-            'columns'   => array(
+    protected $sortRules = [
+        'user_name' => [
+            'columns'   => [
                 'is_active desc',
                 'user_name'
-            )
-        )
-    );
+            ]
+        ]
+    ];
 
     /**
      * The value conversion rules to apply on a query or statement
      *
      * @var array
      */
-    protected $conversionRules = array(
-        'user' => array(
+    protected $conversionRules = [
+        'user' => [
             'password'
-        )
-    );
+        ]
+    ];
 
     /**
      * Initialize this database user backend
@@ -102,13 +102,13 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
     protected function initializeFilterColumns()
     {
         $userLabel = t('Username') . ' ' . t('(Case insensitive)');
-        return array(
+        return [
             $userLabel          => 'user',
             t('Username')       => 'user_name',
             t('Active')         => 'is_active',
             t('Created at')     => 'created_at',
             t('Last modified')  => 'last_modified'
-        );
+        ];
     }
 
     /**
@@ -119,17 +119,17 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
      *
      * @return void
      */
-    public function insert($table, array $bind, array $types = array())
+    public function insert($table, array $bind, array $types = [])
     {
         $this->requireTable($table);
         $bind['created_at'] = date('Y-m-d H:i:s');
         $this->ds->insert(
             $this->prependTablePrefix($table),
             $this->requireStatementColumns($table, $bind),
-            array(
+            [
                 'active'        => PDO::PARAM_INT,
                 'password_hash' => PDO::PARAM_LOB
-            )
+            ]
         );
     }
 
@@ -140,7 +140,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
      * @param array $bind
      * @param ?Filter $filter
      */
-    public function update($table, array $bind, ?Filter $filter = null, array $types = array())
+    public function update($table, array $bind, ?Filter $filter = null, array $types = [])
     {
         $this->requireTable($table);
         $bind['last_modified'] = date('Y-m-d H:i:s');
@@ -152,10 +152,10 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
             $this->prependTablePrefix($table),
             $this->requireStatementColumns($table, $bind),
             $filter,
-            array(
+            [
                 'active'        => PDO::PARAM_INT,
                 'password_hash' => PDO::PARAM_LOB
-            )
+            ]
         );
     }
 

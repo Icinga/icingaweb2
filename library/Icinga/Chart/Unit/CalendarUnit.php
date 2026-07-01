@@ -39,7 +39,7 @@ class CalendarUnit extends LinearUnit
      *
      * @var array
      */
-    private $labels = array();
+    private $labels = [];
 
     /**
      * The date format to use
@@ -60,7 +60,7 @@ class CalendarUnit extends LinearUnit
      */
     private function createLabels()
     {
-        $this->labels = array();
+        $this->labels = [];
         $duration = $this->getMax() - $this->getMin();
 
         if ($duration <= self::HOUR) {

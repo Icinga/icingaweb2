@@ -66,7 +66,7 @@ class Wizard
      *
      * @var array
      */
-    protected $pages = array();
+    protected $pages = [];
 
     /**
      * Initialize a new wizard
@@ -117,7 +117,7 @@ class Wizard
      */
     public function getPages()
     {
-        $pages = array();
+        $pages = [];
         foreach ($this->pages as $page) {
             if ($page instanceof self) {
                 $pages = array_merge($pages, $page->getPages());
@@ -329,7 +329,7 @@ class Wizard
      */
     protected function getWizards()
     {
-        $wizards = array();
+        $wizards = [];
         foreach ($this->pages as $pageOrWizard) {
             if ($pageOrWizard instanceof self) {
                 $wizards[] = $pageOrWizard;
@@ -353,7 +353,7 @@ class Wizard
             return $request->{'get' . ($request->isPost() ? 'Post' : 'Query')}();
         }
 
-        return array();
+        return [];
     }
 
     /**
@@ -545,7 +545,7 @@ class Wizard
         $session = $this->getSession();
 
         if (false === isset($session->page_data)) {
-            $session->page_data = array();
+            $session->page_data = [];
         }
 
         $pageData = & $session->getByRef('page_data');
@@ -608,61 +608,61 @@ class Wizard
             $page->addElement(
                 'button',
                 static::BTN_NEXT,
-                array(
+                [
                     'class'         => 'control-button btn-primary',
                     'type'          => 'submit',
                     'value'         => $pages[1]->getName(),
                     'label'         => t('Next'),
-                    'decorators'    => array('ViewHelper', 'Spinner')
-                )
+                    'decorators'    => ['ViewHelper', 'Spinner']
+                ]
             );
         } elseif ($index < count($pages) - 1) {
             $page->addElement(
                 'button',
                 static::BTN_PREV,
-                array(
+                [
                     'class'             => 'control-button',
                     'type'              => 'submit',
                     'value'             => $pages[$index - 1]->getName(),
                     'label'             => t('Back'),
-                    'decorators'        => array('ViewHelper'),
+                    'decorators'        => ['ViewHelper'],
                     'formnovalidate'    => 'formnovalidate'
-                )
+                ]
             );
             $page->addElement(
                 'button',
                 static::BTN_NEXT,
-                array(
+                [
                     'class'         => 'control-button btn-primary',
                     'type'          => 'submit',
                     'value'         => $pages[$index + 1]->getName(),
                     'label'         => t('Next'),
-                    'decorators'    => array('ViewHelper')
-                )
+                    'decorators'    => ['ViewHelper']
+                ]
             );
         } else {
             $page->addElement(
                 'button',
                 static::BTN_PREV,
-                array(
+                [
                     'class'             => 'control-button',
                     'type'              => 'submit',
                     'value'             => $pages[$index - 1]->getName(),
                     'label'             => t('Back'),
-                    'decorators'        => array('ViewHelper'),
+                    'decorators'        => ['ViewHelper'],
                     'formnovalidate'    => 'formnovalidate'
-                )
+                ]
             );
             $page->addElement(
                 'button',
                 static::BTN_NEXT,
-                array(
+                [
                     'class'         => 'control-button btn-primary',
                     'type'          => 'submit',
                     'value'         => $page->getName(),
                     'label'         => t('Finish'),
-                    'decorators'    => array('ViewHelper')
-                )
+                    'decorators'    => ['ViewHelper']
+                ]
             );
         }
 
@@ -670,30 +670,30 @@ class Wizard
         $page->addElement(
             'note',
             static::PROGRESS_ELEMENT,
-            array(
+            [
                 'order'         => 99, // Ensures that it's shown on the right even if a sub-class adds another button
-                'decorators'    => array(
+                'decorators'    => [
                     'ViewHelper',
-                    array('Spinner', array('id' => static::PROGRESS_ELEMENT))
-                )
-            )
+                    ['Spinner', ['id' => static::PROGRESS_ELEMENT]]
+                ]
+            ]
         );
 
         $page->addDisplayGroup(
-            array(static::BTN_PREV, static::BTN_NEXT, static::PROGRESS_ELEMENT),
+            [static::BTN_PREV, static::BTN_NEXT, static::PROGRESS_ELEMENT],
             'buttons',
-            array(
-                'decorators' => array(
+            [
+                'decorators' => [
                     'FormElements',
-                    new ElementDoubler(array(
+                    new ElementDoubler([
                         'double'        => static::BTN_NEXT,
                         'condition'     => static::BTN_PREV,
                         'placement'     => ElementDoubler::PREPEND,
-                        'attributes'    => array('tabindex' => -1, 'class' => 'double')
-                    )),
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'buttons'))
-                )
-            )
+                        'attributes'    => ['tabindex' => -1, 'class' => 'double']
+                    ]),
+                    ['HtmlTag', ['tag' => 'div', 'class' => 'buttons']]
+                ]
+            ]
         );
     }
 

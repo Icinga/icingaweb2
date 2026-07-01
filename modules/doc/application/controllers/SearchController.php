@@ -29,12 +29,12 @@ class SearchController extends DocController
         );
         $search->setUrl('doc/icingaweb/chapter');
         if (strlen($this->params->get('q')) < 3) {
-            $this->view->searches = array();
+            $this->view->searches = [];
             return;
         }
-        $searches = array(
+        $searches = [
             'Icinga Web 2' => $search
-        );
+        ];
         foreach (Icinga::app()->getModuleManager()->listEnabledModules() as $module) {
             if (($path = $this->getModulePath($module)) !== null) {
                 try {
@@ -50,7 +50,7 @@ class SearchController extends DocController
                 }
                 $search
                     ->setUrl('doc/module/chapter')
-                    ->setUrlParams(array('moduleName' => $module));
+                    ->setUrlParams(['moduleName' => $module]);
                 $searches[$module] = $search;
             }
         }

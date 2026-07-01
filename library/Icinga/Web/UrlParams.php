@@ -11,9 +11,9 @@ class UrlParams
 {
     protected $separator = '&';
 
-    protected $params = array();
+    protected $params = [];
 
-    protected $index = array();
+    protected $index = [];
 
     public function isEmpty()
     {
@@ -80,13 +80,13 @@ class UrlParams
      *
      * @return mixed
      */
-    public function getValues($param, $default = array())
+    public function getValues($param, $default = [])
     {
         if (! $this->has($param)) {
             return $default;
         }
 
-        $ret = array();
+        $ret = [];
         foreach ($this->index[$param] as $key) {
             $ret[] = rawurldecode($this->params[$key][1]);
         }
@@ -166,7 +166,7 @@ class UrlParams
 
     public function addEncoded($param, $value = true)
     {
-        $this->params[] = array($param, $this->cleanupValue($value));
+        $this->params[] = [$param, $this->cleanupValue($value)];
         $this->indexLastOne();
         return $this;
     }
@@ -220,8 +220,8 @@ class UrlParams
 
     protected function clearValues()
     {
-        $this->params = array();
-        $this->index = array();
+        $this->params = [];
+        $this->index = [];
     }
 
     public function mergeValues($param, $values = null)
@@ -232,7 +232,7 @@ class UrlParams
             }
         } else {
             if (! is_array($values)) {
-                $values = array($values);
+                $values = [$values];
             }
             foreach ($values as $value) {
                 $this->set($param, $value);
@@ -261,7 +261,7 @@ class UrlParams
      */
     public function unshift($param, $value)
     {
-        array_unshift($this->params, array($this->urlEncode($param), $this->urlEncode($value)));
+        array_unshift($this->params, [$this->urlEncode($param), $this->urlEncode($value)]);
         $this->reIndexAll();
         return $this;
     }
@@ -287,10 +287,10 @@ class UrlParams
             unset($this->params[$remove]);
         }
 
-        $this->params[$this->index[$param][0]] = array(
+        $this->params[$this->index[$param][0]] = [
             $this->urlEncode($param),
             $this->urlEncode($this->cleanupValue($value))
-        );
+        ];
         $this->reIndexAll();
 
         return $this;
@@ -301,7 +301,7 @@ class UrlParams
         $changed = false;
 
         if (! is_array($param)) {
-            $param = array($param);
+            $param = [$param];
         }
 
         foreach ($param as $p) {
@@ -339,14 +339,14 @@ class UrlParams
     protected function addParamToIndex($param, $key)
     {
         if (! $this->has($param)) {
-            $this->index[$param] = array();
+            $this->index[$param] = [];
         }
         $this->index[$param][] = $key;
     }
 
     protected function reIndexAll()
     {
-        $this->index = array();
+        $this->index = [];
         $this->params = array_values($this->params);
         foreach ($this->params as $key => & $param) {
             $this->addParamToIndex($param[0], $key);
@@ -389,7 +389,7 @@ class UrlParams
             return $this->params;
         }
 
-        $params = array();
+        $params = [];
         foreach ($this->params as $param) {
             if ($param[1] === true) {
                 $params[] = $param[0];
@@ -406,7 +406,7 @@ class UrlParams
         if ($separator === null) {
             $separator = $this->separator;
         }
-        $parts = array();
+        $parts = [];
         foreach ($this->params as $p) {
             if ($p[1] === true) {
                 $parts[] = $p[0];

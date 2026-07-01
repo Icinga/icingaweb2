@@ -27,7 +27,7 @@ class HtmlPurifier
     {
         $purifierConfig = \HTMLPurifier_Config::createDefault();
         $purifierConfig->set('Core.EscapeNonASCIICharacters', true);
-        $purifierConfig->set('Attr.AllowedFrameTargets', array('_blank'));
+        $purifierConfig->set('Attr.AllowedFrameTargets', ['_blank']);
 
         if (($cachePath = FileCache::instance()->directory('htmlpurifier.cache')) !== false) {
             $purifierConfig->set('Cache.SerializerPath', $cachePath);

@@ -23,27 +23,27 @@ class GlobFilterTest extends BaseTestCase
     {
         $this->assertGlobFilterRemovesMatching(
             'host.vars.cmdb_name',
-            array(
-                'host' => array(
-                    'vars' => array(
+            [
+                'host' => [
+                    'vars' => [
                         'cmdb_name' => '',
                         'cmdb_id' => '',
-                        'legacy' => array(
+                        'legacy' => [
                             'cmdb_name' => ''
-                        )
-                    )
-                )
-            ),
-            array(
-                'host' => array(
-                    'vars' => array(
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'host' => [
+                    'vars' => [
                         'cmdb_id' => '',
-                        'legacy' => array(
+                        'legacy' => [
                             'cmdb_name' => ''
-                        )
-                    )
-                )
-            )
+                        ]
+                    ]
+                ]
+            ]
         );
     }
 
@@ -51,29 +51,29 @@ class GlobFilterTest extends BaseTestCase
     {
         $this->assertGlobFilterRemovesMatching(
             'host.vars.cmdb_*',
-            array(
-                'host' => array(
-                    'vars' => array(
+            [
+                'host' => [
+                    'vars' => [
                         'cmdb_name' => '',
                         'cmdb_id' => '',
                         'cmdb_location' => '',
                         'wiki_id' => '',
-                        'legacy' => array(
+                        'legacy' => [
                             'cmdb_name' => ''
-                        )
-                    )
-                )
-            ),
-            array(
-                'host' => array(
-                    'vars' => array(
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'host' => [
+                    'vars' => [
                         'wiki_id' => '',
-                        'legacy' => array(
+                        'legacy' => [
                             'cmdb_name' => ''
-                        )
-                    )
-                )
-            )
+                        ]
+                    ]
+                ]
+            ]
         );
     }
 
@@ -81,28 +81,28 @@ class GlobFilterTest extends BaseTestCase
     {
         $this->assertGlobFilterRemovesMatching(
             'host.vars.*id',
-            array(
-                'host' => array(
-                    'vars' => array(
+            [
+                'host' => [
+                    'vars' => [
                         'cmdb_name' => '',
                         'cmdb_id' => '',
                         'wiki_id' => '',
-                        'legacy' => array(
+                        'legacy' => [
                             'wiki_id' => ''
-                        )
-                    )
-                )
-            ),
-            array(
-                'host' => array(
-                    'vars' => array(
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'host' => [
+                    'vars' => [
                         'cmdb_name' => '',
-                        'legacy' => array(
+                        'legacy' => [
                             'wiki_id' => ''
-                        )
-                    )
-                )
-            )
+                        ]
+                    ]
+                ]
+            ]
         );
     }
 
@@ -110,41 +110,41 @@ class GlobFilterTest extends BaseTestCase
     {
         $this->assertGlobFilterRemovesMatching(
             'host.vars.*.mysql_password',
-            array(
-                'host' => array(
-                    'vars' => array(
+            [
+                'host' => [
+                    'vars' => [
                         'cmdb_name' => '',
-                        'passwords' => array(
+                        'passwords' => [
                             'mysql_password' => '',
                             'ldap_password' => ''
-                        ),
-                        'legacy' => array(
+                        ],
+                        'legacy' => [
                             'mysql_password' => ''
-                        ),
-                        'backup' => array(
-                            'passwords' => array(
+                        ],
+                        'backup' => [
+                            'passwords' => [
                                 'mysql_password' => ''
-                            )
-                        )
-                    )
-                )
-            ),
-            array(
-                'host' => array(
-                    'vars' => array(
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'host' => [
+                    'vars' => [
                         'cmdb_name' => '',
-                        'passwords' => array(
+                        'passwords' => [
                             'ldap_password' => ''
-                        ),
-                        'legacy' => array(),
-                        'backup' => array(
-                            'passwords' => array(
+                        ],
+                        'legacy' => [],
+                        'backup' => [
+                            'passwords' => [
                                 'mysql_password' => ''
-                            )
-                        )
-                    )
-                )
-            )
+                            ]
+                        ]
+                    ]
+                ]
+            ]
         );
     }
 
@@ -152,45 +152,45 @@ class GlobFilterTest extends BaseTestCase
     {
         $this->assertGlobFilterRemovesMatching(
             'host.vars.*.*password',
-            array(
-                'host' => array(
-                    'vars' => array(
+            [
+                'host' => [
+                    'vars' => [
                         'cmdb_name' => '',
-                        'passwords' => array(
+                        'passwords' => [
                             'mysql_password' => '',
                             'ldap_password' => '',
                             'mongodb_password' => ''
-                        ),
-                        'legacy' => array(
+                        ],
+                        'legacy' => [
                             'cmdb_name' => '',
                             'mysql_password' => ''
-                        ),
-                        'backup' => array(
-                            'passwords' => array(
+                        ],
+                        'backup' => [
+                            'passwords' => [
                                 'mysql_password' => '',
                                 'ldap_password' => ''
-                            )
-                        )
-                    )
-                )
-            ),
-            array(
-                'host' => array(
-                    'vars' => array(
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'host' => [
+                    'vars' => [
                         'cmdb_name' => '',
-                        'passwords' => array(),
-                        'legacy' => array(
+                        'passwords' => [],
+                        'legacy' => [
                             'cmdb_name' => ''
-                        ),
-                        'backup' => array(
-                            'passwords' => array(
+                        ],
+                        'backup' => [
+                            'passwords' => [
                                 'mysql_password' => '',
                                 'ldap_password' => ''
-                            )
-                        )
-                    )
-                )
-            )
+                            ]
+                        ]
+                    ]
+                ]
+            ]
         );
     }
 
@@ -198,44 +198,44 @@ class GlobFilterTest extends BaseTestCase
     {
         $this->assertGlobFilterRemovesMatching(
             'host.vars.*.mysql_password,host.vars.*.ldap_password',
-            array(
-                'host' => array(
-                    'vars' => array(
+            [
+                'host' => [
+                    'vars' => [
                         'cmdb_name' => '',
-                        'passwords' => array(
+                        'passwords' => [
                             'mysql_password' => '',
                             'ldap_password' => '',
                             'mongodb_password' => ''
-                        ),
-                        'legacy' => array(
+                        ],
+                        'legacy' => [
                             'mysql_password' => ''
-                        ),
-                        'backup' => array(
-                            'passwords' => array(
+                        ],
+                        'backup' => [
+                            'passwords' => [
                                 'mysql_password' => '',
                                 'ldap_password' => ''
-                            )
-                        )
-                    )
-                )
-            ),
-            array(
-                'host' => array(
-                    'vars' => array(
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'host' => [
+                    'vars' => [
                         'cmdb_name' => '',
-                        'passwords' => array(
+                        'passwords' => [
                             'mongodb_password' => ''
-                        ),
-                        'legacy' => array(),
-                        'backup' => array(
-                            'passwords' => array(
+                        ],
+                        'legacy' => [],
+                        'backup' => [
+                            'passwords' => [
                                 'mysql_password' => '',
                                 'ldap_password' => ''
-                            )
-                        )
-                    )
-                )
-            )
+                            ]
+                        ]
+                    ]
+                ]
+            ]
         );
     }
 
@@ -243,39 +243,39 @@ class GlobFilterTest extends BaseTestCase
     {
         $this->assertGlobFilterRemovesMatching(
             'host.vars.**.*password',
-            array(
-                'host' => array(
-                    'vars' => array(
+            [
+                'host' => [
+                    'vars' => [
                         'cmdb_location' => '',
-                        'passwords' => array(
+                        'passwords' => [
                             'mysql_password' => '',
                             'ldap_password' => '',
                             'mongodb_password' => ''
-                        ),
-                        'legacy' => array(
+                        ],
+                        'legacy' => [
                             'mysql_password' => '',
-                        ),
-                        'backup' => array(
-                            'passwords' => array(
+                        ],
+                        'backup' => [
+                            'passwords' => [
                                 'mysql_password' => '',
                                 'ldap_password' => ''
-                            )
-                        )
-                    )
-                )
-            ),
-            array(
-                'host' => array(
-                    'vars' => array(
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'host' => [
+                    'vars' => [
                         'cmdb_location' => '',
-                        'passwords' => array(),
-                        'legacy' => array(),
-                        'backup' => array(
-                            'passwords' => array()
-                        )
-                    )
-                )
-            )
+                        'passwords' => [],
+                        'legacy' => [],
+                        'backup' => [
+                            'passwords' => []
+                        ]
+                    ]
+                ]
+            ]
         );
     }
 
@@ -283,45 +283,45 @@ class GlobFilterTest extends BaseTestCase
     {
         $this->assertGlobFilterRemovesMatching(
             'host.vars.**.\*password',
-            array(
-                'host' => array(
-                    'vars' => array(
+            [
+                'host' => [
+                    'vars' => [
                         'wiki_id' => '',
-                        'passwords' => array(
+                        'passwords' => [
                             'mongodb_password' => '',
                             '*password' => ''
-                        ),
-                        'legacy' => array(
+                        ],
+                        'legacy' => [
                             'mysql_password' => '',
                             '*password' => ''
-                        ),
-                        'backup' => array(
-                            'passwords' => array(
+                        ],
+                        'backup' => [
+                            'passwords' => [
                                 '*password' => '',
                                 'ldap_password' => ''
-                            )
-                        )
-                    )
-                )
-            ),
-            array(
-                'host' => array(
-                    'vars' => array(
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'host' => [
+                    'vars' => [
                         'wiki_id' => '',
-                        'passwords' => array(
+                        'passwords' => [
                             'mongodb_password' => ''
-                        ),
-                        'legacy' => array(
+                        ],
+                        'legacy' => [
                             'mysql_password' => ''
-                        ),
-                        'backup' => array(
-                            'passwords' => array(
+                        ],
+                        'backup' => [
+                            'passwords' => [
                                 'ldap_password' => ''
-                            )
-                        )
-                    )
-                )
-            )
+                            ]
+                        ]
+                    ]
+                ]
+            ]
         );
     }
 }

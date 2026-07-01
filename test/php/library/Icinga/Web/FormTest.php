@@ -67,7 +67,7 @@ class FormTest extends BaseTestCase
         $form = new Form();
         $form->setTokenDisabled();
         $form->setSubmitLabel('test');
-        $form->populate(array('btn_submit' => true));
+        $form->populate(['btn_submit' => true]);
         $form->setRequest(new PostRequest());
 
         $this->assertTrue(
@@ -181,9 +181,9 @@ class FormTest extends BaseTestCase
 
         $this->assertTrue(
             $form->wasSent(
-                array(
+                [
                     $form->getUidElementName() => $form->getElement($form->getUidElementName())->getValue()
-                )
+                ]
             ),
             'Form::wasSent() does not return true in case a the form identification value is being sent'
         );
@@ -200,7 +200,7 @@ class FormTest extends BaseTestCase
         $form->create();
 
         $this->assertFalse(
-            $form->wasSent(array()),
+            $form->wasSent([]),
             'Form::wasSent() does not return false in case no form identification element was added'
         );
     }
@@ -255,7 +255,7 @@ class FormTest extends BaseTestCase
     {
         $this->expectException(\Icinga\Exception\ProgrammingError::class);
 
-        new Form(array('onSuccess' => '_invalid_'));
+        new Form(['onSuccess' => '_invalid_']);
     }
 
     /**
@@ -266,12 +266,12 @@ class FormTest extends BaseTestCase
     public function testWhetherAClosureCanBePassedAsOnSuccessCallback()
     {
         $request = new Request();
-        $form = new Form(array(
+        $form = new Form([
             'onSuccess' => function ($form) {
                 $form->getRequest()->setParam('test', 'tset');
                 return false;
             }
-        ));
+        ]);
         $form->setTokenDisabled();
         $form->setUidDisabled();
         $form->handleRequest($request);

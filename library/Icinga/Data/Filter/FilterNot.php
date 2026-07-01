@@ -35,7 +35,7 @@ class FilterNot extends FilterChain
 
     public function toQueryString()
     {
-        $parts = array();
+        $parts = [];
         if (empty($this->filters)) {
             return '';
         }

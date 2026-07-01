@@ -32,7 +32,7 @@ class DocTocRenderer extends DocRenderer
      *
      * @var array
      */
-    protected $content = array();
+    protected $content = [];
 
     /**
      * Create a new toc renderer
@@ -75,9 +75,9 @@ class DocTocRenderer extends DocRenderer
             $path = $zendUrlHelper->url(
                 array_merge(
                     $this->urlParams,
-                    array(
+                    [
                         'chapter' => $this->encodeUrlParam($section->getChapter()->getId())
-                    )
+                    ]
                 ),
                 $this->url,
                 false,
@@ -88,7 +88,7 @@ class DocTocRenderer extends DocRenderer
             if ($this->getDepth() > 0) {
                 $url->setAnchor($this->encodeAnchor($section->getId()));
             }
-            $urlAttributes = array(
+            $urlAttributes = [
                 'data-base-target'  => '_next',
                 'title'             => $section->getId() === $section->getChapter()->getId()
                     ? sprintf(
@@ -100,7 +100,7 @@ class DocTocRenderer extends DocRenderer
                         $section->getTitle(),
                         $section->getChapter()->getTitle()
                     )
-            );
+            ];
             if ($section->getNoFollow()) {
                 $urlAttributes['rel'] = 'nofollow';
             }

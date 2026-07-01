@@ -23,12 +23,12 @@ class UserBackend implements ConfigAwareFactory
      *
      * @var array
      */
-    protected static $defaultBackends = array(
+    protected static $defaultBackends = [
         'external',
         'db',
         'ldap',
         'msldap'
-    );
+    ];
 
     /**
      * The registered custom user backends with their identifier as key and class name as value
@@ -88,8 +88,8 @@ class UserBackend implements ConfigAwareFactory
             return;
         }
 
-        static::$customBackends = array();
-        $providedBy = array();
+        static::$customBackends = [];
+        $providedBy = [];
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
             foreach ($module->getUserBackends() as $identifier => $className) {
                 if (array_key_exists($identifier, $providedBy)) {

@@ -30,7 +30,7 @@ class Announcements extends AbstractWidget
             $cookie->setNextActive($repo->findNextActive());
             Icinga::app()->getResponse()->setCookie($cookie);
         }
-        $acked = array();
+        $acked = [];
         foreach ($cookie->getAcknowledged() as $hash) {
             $acked[] = Filter::expression('hash', '!=', $hash);
         }
@@ -41,7 +41,7 @@ class Announcements extends AbstractWidget
             $html = '<ul role="alert">';
             foreach ($announcements as $announcement) {
                 $ackForm = new AcknowledgeAnnouncementForm();
-                $ackForm->populate(array('hash' => $announcement->hash));
+                $ackForm->populate(['hash' => $announcement->hash]);
                 $html .= '<li><div class="message">'
                     . Markdown::text($announcement->message)
                     . '</div>'

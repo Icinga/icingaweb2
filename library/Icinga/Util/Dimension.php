@@ -116,7 +116,7 @@ class Dimension
      */
     public static function fromString($string)
     {
-        $matches = array();
+        $matches = [];
         if (!preg_match_all('/^ *([0-9]+)(px|pt|em|\%) */i', $string, $matches)) {
             return new Dimension(0);
         }

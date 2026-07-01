@@ -13,7 +13,7 @@ class StringHelperTest extends BaseTestCase
     public function testWhetherTrimSplitReturnsACorrectValue()
     {
         $this->assertEquals(
-            array('one', 'two', 'three'),
+            ['one', 'two', 'three'],
             StringHelper::trimSplit(' one ,two  , three'),
             'String::trimSplit does not properly split a string and/or trim its elements'
         );
@@ -22,7 +22,7 @@ class StringHelperTest extends BaseTestCase
     public function testWhetherTrimSplitSplitsByTheGivenDelimiter()
     {
         $this->assertEquals(
-            array('one', 'two', 'three'),
+            ['one', 'two', 'three'],
             StringHelper::trimSplit('one.two.three', '.'),
             'String::trimSplit does not split a string by the given delimiter'
         );

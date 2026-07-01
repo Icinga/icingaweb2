@@ -68,7 +68,7 @@ class RequirementSet implements RecursiveIterator
     public function __construct($optional = false, $mode = null)
     {
         $this->optional = $optional;
-        $this->requirements = array();
+        $this->requirements = [];
         $this->setMode($mode ?: static::MODE_AND);
     }
 

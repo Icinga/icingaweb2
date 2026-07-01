@@ -115,20 +115,20 @@ class UserGroupBackendPage extends Form
         $backendForm->addElement(
             'hidden',
             'resource',
-            array(
+            [
                 'required'      => true,
                 'value'         => $this->resourceConfig['name'],
-                'decorators'    => array('ViewHelper')
-            )
+                'decorators'    => ['ViewHelper']
+            ]
         );
         $backendForm->addElement(
             'hidden',
             'user_backend',
-            array(
+            [
                 'required'      => true,
                 'value'         => $this->backendConfig['name'],
-                'decorators'    => array('ViewHelper')
-            )
+                'decorators'    => ['ViewHelper']
+            ]
         );
     }
 

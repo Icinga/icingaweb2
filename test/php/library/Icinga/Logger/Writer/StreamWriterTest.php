@@ -28,7 +28,7 @@ class StreamWriterTest extends BaseTestCase
 
     public function testWhetherStreamWriterCreatesMissingFiles()
     {
-        new FileWriter(new ConfigObject(array('file' => $this->target)));
+        new FileWriter(new ConfigObject(['file' => $this->target]));
         $this->assertFileExists($this->target, 'StreamWriter does not create missing files on initialization');
     }
 
@@ -37,7 +37,7 @@ class StreamWriterTest extends BaseTestCase
      */
     public function testWhetherStreamWriterWritesMessages()
     {
-        $writer = new FileWriter(new ConfigObject(array('file' => $this->target)));
+        $writer = new FileWriter(new ConfigObject(['file' => $this->target]));
         $writer->log(Logger::ERROR, 'This is a test error');
         $log = file_get_contents($this->target);
         $this->assertStringContainsString('This is a test error', $log, 'StreamWriter does not write log messages');

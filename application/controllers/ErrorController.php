@@ -65,7 +65,7 @@ class ErrorController extends ActionController
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION:
                 $this->getResponse()->setHttpResponseCode(404);
-                $this->view->messages = array($this->translate('Page not found.'));
+                $this->view->messages = [$this->translate('Page not found.')];
                 if ($isAuthenticated) {
                     if ($modules->hasInstalled($moduleName) && ! $modules->hasEnabled($moduleName)) {
                         $this->view->messages[0] .= ' ' . sprintf(
@@ -136,10 +136,10 @@ class ErrorController extends ActionController
                     }
                 }
 
-                $this->view->messages = array();
+                $this->view->messages = [];
 
                 if ($this->getInvokeArg('displayExceptions')) {
-                    $this->view->stackTraces = array();
+                    $this->view->stackTraces = [];
 
                     do {
                         $this->view->messages[] = $exception->getMessage();
@@ -168,11 +168,11 @@ class ErrorController extends ActionController
             $this->view->hideControls = true;
         } else {
             $this->view->hideControls = false;
-            $this->getTabs()->add('error', array(
+            $this->getTabs()->add('error', [
                 'active'    => true,
                 'label'     => $this->translate('Error'),
                 'url'       => Url::fromRequest()
-            ));
+            ]);
         }
     }
 }

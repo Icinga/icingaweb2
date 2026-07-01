@@ -5,22 +5,22 @@
 
 /** @var $this \Icinga\Application\Modules\Module */
 
-$section = $this->menuSection(N_('Documentation'), array(
+$section = $this->menuSection(N_('Documentation'), [
     'title'    => 'Documentation',
     'icon'     => 'book',
     'url'      => 'doc',
     'priority' => 700
-));
+]);
 
-$section->add('Icinga Web 2', array(
+$section->add('Icinga Web 2', [
     'url' => 'doc/icingaweb/toc',
-));
-$section->add('Module documentations', array(
+]);
+$section->add('Module documentations', [
     'url' => 'doc/module',
-));
-$section->add(N_('Developer - Style'), array(
+]);
+$section->add(N_('Developer - Style'), [
     'url' => 'doc/style/guide',
     'priority' => 790
-));
+]);
 
 $this->provideSearchUrl($this->translate('Doc'), 'doc/search', -10);

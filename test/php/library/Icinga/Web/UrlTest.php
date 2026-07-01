@@ -92,7 +92,7 @@ class UrlTest extends BaseTestCase
     {
         $this->getRequestMock()->shouldReceive('getBaseUrl')->andReturn('/path/to')
             ->shouldReceive('getPathInfo')->andReturn('my/test/url.html')
-            ->shouldReceive('getQuery')->andReturn(array('param1' => 'value1', 'param2' => 'value2'));
+            ->shouldReceive('getQuery')->andReturn(['param1' => 'value1', 'param2' => 'value2']);
 
         $url = Url::fromRequest();
         $this->assertEquals(
@@ -107,9 +107,9 @@ class UrlTest extends BaseTestCase
         $request = Mockery::mock('Icinga\Web\Request');
         $request->shouldReceive('getPathInfo')->andReturn('my/test/url.html')
             ->shouldReceive('getBaseUrl')->andReturn('/path/to')
-            ->shouldReceive('getQuery')->andReturn(array());
+            ->shouldReceive('getQuery')->andReturn([]);
 
-        $url = Url::fromRequest(array(), $request);
+        $url = Url::fromRequest([], $request);
         $this->assertEquals(
             '/path/to/my/test/url.html',
             $url->getAbsoluteUrl(),
@@ -122,9 +122,9 @@ class UrlTest extends BaseTestCase
         $request = Mockery::mock('Icinga\Web\Request');
         $request->shouldReceive('getPathInfo')->andReturn('')
             ->shouldReceive('getBaseUrl')->andReturn('/')
-            ->shouldReceive('getQuery')->andReturn(array('key1' => 'val1'));
+            ->shouldReceive('getQuery')->andReturn(['key1' => 'val1']);
 
-        $url = Url::fromRequest(array('key1' => 'newval1', 'key2' => 'val2'), $request);
+        $url = Url::fromRequest(['key1' => 'newval1', 'key2' => 'val2'], $request);
         $this->assertEquals(
             'val2',
             $url->getParam('key2', 'wrongval'),
@@ -146,7 +146,7 @@ class UrlTest extends BaseTestCase
 
     public function testWhetherFromPathAcceptsAdditionalParameters()
     {
-        $url = Url::fromPath('/my/test/url.html', array('key' => 'value'));
+        $url = Url::fromPath('/my/test/url.html', ['key' => 'value']);
 
         $this->assertEquals(
             'value',
@@ -178,8 +178,8 @@ class UrlTest extends BaseTestCase
     {
         $url = Url::fromPath(
             '/path/to/my/test/url.html',
-            array(),
-            Mockery::mock(array('getBaseUrl' => '/path/to'))
+            [],
+            Mockery::mock(['getBaseUrl' => '/path/to'])
         );
 
         $this->assertEquals(
@@ -210,12 +210,12 @@ class UrlTest extends BaseTestCase
         /*
         // Temporarily disabled, no [] support right now
         $this->assertEquals(
-            array('1', '2', '3'),
+            ['1', '2', '3'],
             $url->getParam('param3'),
             'Url::fromPath does not properly reassemble query parameter values as sequenced values'
         );
         $this->assertEquals(
-            array('key1' => 'val1', 'key2' => 'val2'),
+            ['key1' => 'val1', 'key2' => 'val2'],
             $url->getParam('param4'),
             'Url::fromPath does not properly reassemble query parameters as associative arrays'
         );
@@ -297,7 +297,7 @@ class UrlTest extends BaseTestCase
     public function testWhetherRemoveRemovesAGivenSetOfParameters()
     {
         $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3');
-        $url->remove(array('param', 'param2'));
+        $url->remove(['param', 'param2']);
 
         $this->assertEquals(
             'val3',
@@ -322,11 +322,11 @@ class UrlTest extends BaseTestCase
     public function testWhetherGetUrlWithoutReturnsACopyOfTheUrlWithoutAGivenSetOfParameters()
     {
         $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3');
-        $url2 = $url->getUrlWithout(array('param', 'param2'));
+        $url2 = $url->getUrlWithout(['param', 'param2']);
 
         $this->assertNotSame($url, $url2, 'Url::getUrlWithout does not return a new copy of the url');
         $this->assertEquals(
-            array(array('param3', 'val3')),
+            [['param3', 'val3']],
             $url2->getParams()->toArray(),
             'Url::getUrlWithout does not remove a given set of parameters from the url'
         );
@@ -338,7 +338,7 @@ class UrlTest extends BaseTestCase
     public function testWhetherAddParamsDoesNotOverwriteExistingParameters()
     {
         $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3');
-        $url->addParams(array('param4' => 'val4', 'param3' => 'newval3'));
+        $url->addParams(['param4' => 'val4', 'param3' => 'newval3']);
 
         $this->assertEquals(
             'val4',
@@ -351,7 +351,7 @@ class UrlTest extends BaseTestCase
             'Url::addParams does not overwrite existing existing parameters'
         );
         $this->assertEquals(
-            array('val3', 'newval3'),
+            ['val3', 'newval3'],
             $url->getParams()->getValues('param3'),
             'Url::addParams does not overwrite existing existing parameters'
         );
@@ -363,7 +363,7 @@ class UrlTest extends BaseTestCase
     public function testWhetherOverwriteParamsOverwritesExistingParameters()
     {
         $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3');
-        $url->overwriteParams(array('param4' => 'val4', 'param3' => 'newval3'));
+        $url->overwriteParams(['param4' => 'val4', 'param3' => 'newval3']);
 
         $this->assertEquals(
             'val4',
@@ -380,7 +380,7 @@ class UrlTest extends BaseTestCase
     public function testWhetherEqualUrlMaches()
     {
         $url1 = '/whatever/is/here?a=b&c=d';
-        $url2 = Url::fromPath('whatever/is/here', array('a' => 'b', 'c' => 'd'));
+        $url2 = Url::fromPath('whatever/is/here', ['a' => 'b', 'c' => 'd']);
         $this->assertEquals(
             true,
             $url2->matches($url1)
@@ -390,7 +390,7 @@ class UrlTest extends BaseTestCase
     public function testWhetherDifferentUrlDoesNotMatch()
     {
         $url1 = '/whatever/is/here?a=b&d=d';
-        $url2 = Url::fromPath('whatever/is/here', array('a' => 'b', 'c' => 'd'));
+        $url2 = Url::fromPath('whatever/is/here', ['a' => 'b', 'c' => 'd']);
         $this->assertEquals(
             false,
             $url2->matches($url1)

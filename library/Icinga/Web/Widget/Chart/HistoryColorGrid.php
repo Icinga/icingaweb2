@@ -32,7 +32,7 @@ class HistoryColorGrid extends AbstractWidget
 
     private $start = null;
     private $end = null;
-    private $data = array();
+    private $data = [];
     private $color;
     public $opacity = 1.0;
 
@@ -257,10 +257,10 @@ class HistoryColorGrid extends AbstractWidget
      */
     private function createGrid()
     {
-        $weeks   = array(array());
+        $weeks   = [[]];
         $week    = 0;
-        $months  = array();
-        $years   = array();
+        $months  = [];
+        $years   = [];
         $start   = strtotime($this->start);
         $year    = intval(date('Y', $start));
         $month   = intval(date('n', $start));
@@ -280,7 +280,7 @@ class HistoryColorGrid extends AbstractWidget
             $weekday++;
             if ($weekday > 6) {
                 $weekday = 0;
-                $weeks[] = array();
+                $weeks[] = [];
                 // PRESENT => The last day of week determines the month
                 if ($this->weekFlow === self::CAL_GROW_INTO_PRESENT) {
                     $months[$week] = $month;
@@ -309,17 +309,17 @@ class HistoryColorGrid extends AbstractWidget
         $years[$week] = $year;
         $months[$week] = $month;
         if ($this->weekFlow == self::CAL_GROW_INTO_PAST) {
-            return array(
+            return [
                 'weeks'  => array_reverse($weeks),
                 'months' => array_reverse($months),
                 'years'  => array_reverse($years)
-            );
+            ];
         }
-        return array(
+        return [
             'weeks'  => $weeks,
             'months' => $months,
             'years'  => $years
-        );
+        ];
     }
 
     /**

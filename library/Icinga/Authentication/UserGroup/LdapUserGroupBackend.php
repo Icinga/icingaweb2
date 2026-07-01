@@ -120,25 +120,25 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
      *
      * @var array
      */
-    protected $blacklistedQueryColumns = array('group', 'user');
+    protected $blacklistedQueryColumns = ['group', 'user'];
 
     /**
      * The search columns being provided
      *
      * @var array
      */
-    protected $searchColumns = array('group', 'user');
+    protected $searchColumns = ['group', 'user'];
 
     /**
      * The default sort rules to be applied on a query
      *
      * @var array
      */
-    protected $sortRules = array(
-        'group_name' => array(
+    protected $sortRules = [
+        'group_name' => [
             'order' => 'asc'
-        )
-    );
+        ]
+    ];
 
     /**
      * Set the user backend to be associated with this user group backend
@@ -469,7 +469,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
 
             $sampleValues = $this->ds
                 ->select()
-                ->from($this->groupClass, array($this->groupMemberAttribute))
+                ->from($this->groupClass, [$this->groupMemberAttribute])
                 ->where($this->groupMemberAttribute, '*')
                 ->limit(Logger::getInstance()->getLevel() === Logger::DEBUG ? 3 : 1)
                 ->setUnfoldAttribute($this->groupMemberAttribute)
@@ -520,10 +520,10 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
             throw new ProgrammingError('It is required to set the object class where to find groups first');
         }
 
-        return array(
+        return [
             'group'             => $this->groupClass,
             'group_membership'  => $this->groupClass
-        );
+        ];
     }
 
     /**
@@ -551,15 +551,15 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
             $lastModifiedAttribute = 'modifyTimestamp';
         }
 
-        $columns = array(
+        $columns = [
             'group'         => $this->groupNameAttribute,
             'group_name'    => $this->groupNameAttribute,
             'user'          => $this->groupMemberAttribute,
             'user_name'     => $this->groupMemberAttribute,
             'created_at'    => $createdAtAttribute,
             'last_modified' => $lastModifiedAttribute
-        );
-        return array('group' => $columns, 'group_membership' => $columns);
+        ];
+        return ['group' => $columns, 'group_membership' => $columns];
     }
 
     /**
@@ -569,12 +569,12 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
      */
     protected function initializeFilterColumns()
     {
-        return array(
+        return [
             t('Username')       => 'user_name',
             t('User Group')     => 'group_name',
             t('Created At')     => 'created_at',
             t('Last modified')  => 'last_modified'
-        );
+        ];
     }
 
     /**
@@ -584,16 +584,16 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
      */
     protected function initializeConversionRules()
     {
-        $rules = array(
-            'group' => array(
+        $rules = [
+            'group' => [
                 'created_at'    => 'generalized_time',
                 'last_modified' => 'generalized_time'
-            ),
-            'group_membership' => array(
+            ],
+            'group_membership' => [
                 'created_at'    => 'generalized_time',
                 'last_modified' => 'generalized_time'
-            )
-        );
+            ]
+        ];
         if (! $this->isMemberAttributeAmbiguous()) {
             $rules['group_membership']['user_name'] = 'user_name';
             $rules['group_membership']['user'] = 'user_name';
@@ -616,7 +616,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
         try {
             $userDn = $this->ds
                 ->select()
-                ->from($this->userClass, array())
+                ->from($this->userClass, [])
                 ->where($this->userNameAttribute, $name)
                 ->setBase($this->userBaseDn)
                 ->setUsePagedResults(false)
@@ -627,7 +627,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
 
             $groupDn = $this->ds
                 ->select()
-                ->from($this->groupClass, array())
+                ->from($this->groupClass, [])
                 ->where($this->groupNameAttribute, $name)
                 ->setBase($this->groupBaseDn)
                 ->setUsePagedResults(false)
@@ -654,7 +654,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
     {
         return $this->ds
             ->select()
-            ->from('*', array($this->userNameAttribute))
+            ->from('*', [$this->userNameAttribute])
             ->setUnfoldAttribute($this->userNameAttribute)
             ->setBase($dn)
             ->fetchOne();
@@ -716,7 +716,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
 
         if ($domain !== null) {
             if (! $user->hasDomain() || strtolower($user->getDomain()) !== strtolower($domain)) {
-                return array();
+                return [];
             }
 
             $username = $user->getLocalUsername();
@@ -738,7 +738,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
             }
 
             if (($queryValue = $userQuery->fetchDn()) === null) {
-                return array();
+                return [];
             }
         }
 
@@ -750,7 +750,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
 
         $groupQuery = $this->ds
             ->select()
-            ->from($this->groupClass, array($this->groupNameAttribute))
+            ->from($this->groupClass, [$this->groupNameAttribute])
             ->setUnfoldAttribute($this->groupNameAttribute)
             ->where($groupMemberAttribute, $queryValue)
             ->setBase($this->groupBaseDn);
@@ -758,7 +758,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
             $groupQuery->setNativeFilter($this->groupFilter);
         }
 
-        $groups = array();
+        $groups = [];
         foreach ($groupQuery as $row) {
             $groups[] = $row->{$this->groupNameAttribute};
             if ($domain !== null) {
@@ -820,13 +820,13 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
             }
 
             $this->setUserBackend($userBackend);
-            $defaults->merge(array(
+            $defaults->merge([
                 'user_base_dn'          => $userBackend->getBaseDn(),
                 'user_class'            => $userBackend->getUserClass(),
                 'user_name_attribute'   => $userBackend->getUserNameAttribute(),
                 'user_filter'           => $userBackend->getFilter(),
                 'domain'                => $userBackend->getDomain()
-            ));
+            ]);
         }
 
         return $this
@@ -850,14 +850,14 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
      */
     public function getOpenLdapDefaults()
     {
-        return new ConfigObject(array(
+        return new ConfigObject([
             'group_class'               => 'group',
             'user_class'                => 'inetOrgPerson',
             'group_name_attribute'      => 'gid',
             'user_name_attribute'       => 'uid',
             'group_member_attribute'    => 'member',
             'nested_group_search'       => '0'
-        ));
+        ]);
     }
 
     /**
@@ -867,14 +867,14 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
      */
     public function getActiveDirectoryDefaults()
     {
-        return new ConfigObject(array(
+        return new ConfigObject([
             'group_class'               => 'group',
             'user_class'                => 'user',
             'group_name_attribute'      => 'sAMAccountName',
             'user_name_attribute'       => 'sAMAccountName',
             'group_member_attribute'    => 'member',
             'nested_group_search'       => '0'
-        ));
+        ]);
     }
 
     /**
@@ -900,7 +900,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
             try {
                 $groupQuery = $this->ds
                     ->select()
-                    ->from($this->groupClass, array($this->groupNameAttribute))
+                    ->from($this->groupClass, [$this->groupNameAttribute])
                     ->setBase($this->groupBaseDn);
 
                 if ($this->groupFilter) {

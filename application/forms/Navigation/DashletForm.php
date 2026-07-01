@@ -15,23 +15,23 @@ class DashletForm extends NavigationItemForm
         $this->addElement(
             'text',
             'pane',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Pane'),
                 'description'   => $this->translate('The name of the dashboard pane in which to display this dashlet')
-            )
+            ]
         );
         $this->addElement(
             'text',
             'url',
-            array(
+            [
                 'required'      => true,
                 'label'         => $this->translate('Url'),
                 'description'   => $this->translate(
                     'The url to load in the dashlet. For external urls, make sure to prepend'
                     . ' an appropriate protocol identifier (e.g. http://example.tld)'
                 )
-            )
+            ]
         );
     }
 }

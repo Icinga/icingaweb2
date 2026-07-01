@@ -19,11 +19,11 @@ class AboutController extends Controller
         $this->view->title = $this->translate('About');
         $this->view->tabs = $this->getTabs()->add(
             'about',
-            array(
+            [
                 'label' => $this->translate('About'),
                 'title' => $this->translate('About Icinga Web 2'),
                 'url'   => 'about'
-            )
+            ]
         )->activate('about');
     }
 }

@@ -34,7 +34,7 @@ class SyslogWriter extends LogWriter
      *
      * @var array
      */
-    public static $facilities = array(
+    public static $facilities = [
         'user'      => LOG_USER,
         'local0'    => LOG_LOCAL0,
         'local1'    => LOG_LOCAL1,
@@ -44,19 +44,19 @@ class SyslogWriter extends LogWriter
         'local5'    => LOG_LOCAL5,
         'local6'    => LOG_LOCAL6,
         'local7'    => LOG_LOCAL7
-    );
+    ];
 
     /**
      * Log level to syslog severity map
      *
      * @var array
      */
-    public static $severityMap = array(
+    public static $severityMap = [
         Logger::ERROR   => LOG_ERR,
         Logger::WARNING => LOG_WARNING,
         Logger::INFO    => LOG_INFO,
         Logger::DEBUG   => LOG_DEBUG
-    );
+    ];
 
     /**
      * Create a new syslog log writer

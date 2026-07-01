@@ -28,7 +28,7 @@ class Canvas implements Drawable
      *
      * @var array
      */
-    private $children = array();
+    private $children = [];
 
     /**
      * When true, this canvas is encapsulated in a clipPath tag and not drawn

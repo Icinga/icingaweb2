@@ -22,27 +22,27 @@ class UserForm extends RepositoryForm
         $this->addElement(
             'checkbox',
             'is_active',
-            array(
+            [
                 'value'         => true,
                 'label'         => $this->translate('Active'),
                 'description'   => $this->translate('Prevents the user from logging in if unchecked')
-            )
+            ]
         );
         $this->addElement(
             'text',
             'user_name',
-            array(
+            [
                 'required'  => true,
                 'label'     => $this->translate('Username')
-            )
+            ]
         );
         $this->addElement(
             'password',
             'password',
-            array(
+            [
                 'required'  => true,
                 'label'     => $this->translate('Password')
-            )
+            ]
         );
 
         $this->setTitle($this->translate('Add a new user'));
@@ -61,10 +61,10 @@ class UserForm extends RepositoryForm
         $this->addElement(
             'password',
             'password',
-            array(
+            [
                 'description'   => $this->translate('Leave empty for not updating the user\'s password'),
                 'label'         => $this->translate('Password'),
-            )
+            ]
         );
 
         $this->setTitle(sprintf($this->translate('Edit user %s'), $this->getIdentifier()));

@@ -106,7 +106,7 @@ class DbQuery extends SimpleQuery
     public function from($target, ?array $fields = null)
     {
         parent::from($target, $fields);
-        $this->select->from($this->target, array());
+        $this->select->from($this->target, []);
         return $this;
     }
 
@@ -206,7 +206,7 @@ class DbQuery extends SimpleQuery
     {
         // bindParam? bindValue?
         if (is_array($value)) {
-            $ret = array();
+            $ret = [];
             foreach ($value as $val) {
                 $ret[] = $this->escapeForSql($val);
             }
@@ -310,11 +310,11 @@ class DbQuery extends SimpleQuery
             if ($group) {
                 $count->group($group);
             }
-            $columns = array('cnt' => 'COUNT(*)');
+            $columns = ['cnt' => 'COUNT(*)'];
             return $this->db->select()->from($count, $columns);
         }
 
-        $count->columns(array('cnt' => 'COUNT(*)'));
+        $count->columns(['cnt' => 'COUNT(*)']);
         return $count;
     }
 
@@ -559,7 +559,7 @@ class DbQuery extends SimpleQuery
      *
      * @return  $this
      */
-    public function union($select = array(), $type = Zend_Db_Select::SQL_UNION)
+    public function union($select = [], $type = Zend_Db_Select::SQL_UNION)
     {
         $this->select->union($select, $type);
         return $this;

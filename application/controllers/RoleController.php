@@ -345,14 +345,14 @@ class RoleController extends AuthBackendController
         $tabs = $this->getTabs();
         $tabs->add(
             'role/list',
-            array(
+            [
                 'baseTarget'    => '_main',
                 'label'         => $this->translate('Roles'),
                 'title'         => $this->translate(
                     'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
                 ),
                 'url'           => 'role/list'
-            )
+            ]
         );
 
         $tabs->add(
@@ -368,22 +368,22 @@ class RoleController extends AuthBackendController
         if ($this->hasPermission('config/access-control/users')) {
             $tabs->add(
                 'user/list',
-                array(
+                [
                     'title'     => $this->translate('List users of authentication backends'),
                     'label'     => $this->translate('Users'),
                     'url'       => 'user/list'
-                )
+                ]
             );
         }
 
         if ($this->hasPermission('config/access-control/groups')) {
             $tabs->add(
                 'group/list',
-                array(
+                [
                     'title'     => $this->translate('List groups of user group backends'),
                     'label'     => $this->translate('User Groups'),
                     'url'       => 'group/list'
-                )
+                ]
             );
         }
 

@@ -20,7 +20,7 @@ class TicketPattern implements ArrayAccess
      *
      * @var array
      */
-    protected $match = array();
+    protected $match = [];
 
     /**
      * The name of the TTS integration

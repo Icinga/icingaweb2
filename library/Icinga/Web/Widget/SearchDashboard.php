@@ -30,11 +30,11 @@ class SearchDashboard extends Dashboard
             $this->tabs = new Tabs();
             $this->tabs->add(
                 'search',
-                array(
+                [
                     'title' => t('Show Search', 'dashboard.pane.tooltip'),
                     'label' => t('Search'),
                     'url'   => Url::fromRequest()
-                )
+                ]
             );
         }
         return $this->tabs;
@@ -53,7 +53,7 @@ class SearchDashboard extends Dashboard
         $this->activate(self::SEARCH_PANE);
 
         $manager = Icinga::app()->getModuleManager();
-        $searchUrls = array();
+        $searchUrls = [];
 
         foreach ($manager->getLoadedModules() as $module) {
             if ($this->getUser()->can($manager::MODULE_PERMISSION_NS . $module->getName())) {
@@ -68,12 +68,12 @@ class SearchDashboard extends Dashboard
             }
         }
 
-        usort($searchUrls, array($this, 'compareSearchUrls'));
+        usort($searchUrls, [$this, 'compareSearchUrls']);
 
         foreach (array_reverse($searchUrls) as $searchUrl) {
             $pane->createDashlet(
                 $searchUrl->title . ': ' . $searchString,
-                Url::fromPath($searchUrl->url, array('q' => $searchString))
+                Url::fromPath($searchUrl->url, ['q' => $searchString])
             )->setProgressLabel(t('Searching'));
         }
 

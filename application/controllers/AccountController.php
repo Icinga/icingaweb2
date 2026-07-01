@@ -25,23 +25,23 @@ class AccountController extends Controller
     public function init()
     {
         $this->getTabs()
-            ->add('account', array(
+            ->add('account', [
                 'title' => $this->translate('Update your account'),
                 'label' => $this->translate('My Account'),
                 'url'   => 'account'
-            ))
-            ->add('navigation', array(
+            ])
+            ->add('navigation', [
                 'title' => $this->translate('List and configure your own navigation items'),
                 'label' => $this->translate('Navigation'),
                 'url'   => 'navigation'
-            ))
+            ])
             ->add(
                 'devices',
-                array(
+                [
                     'title' => $this->translate('List of devices you are logged in'),
                     'label' => $this->translate('My Devices'),
                     'url'   => 'my-devices'
-                )
+                ]
             );
     }
 
@@ -72,9 +72,9 @@ class AccountController extends Controller
         $form = new PreferenceForm();
         $form->setPreferences($user->getPreferences());
         if (isset($config->config_resource)) {
-            $form->setStore(PreferencesStore::create(new ConfigObject(array(
-                'resource'  => $config->config_resource
-            )), $user));
+            $form->setStore(PreferencesStore::create(new ConfigObject([
+                'resource' => $config->config_resource
+            ]), $user));
         }
         $form->handleRequest();
 

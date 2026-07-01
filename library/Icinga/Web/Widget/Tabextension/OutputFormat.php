@@ -36,7 +36,7 @@ class OutputFormat implements Tabextension
      *
      * @var array
      */
-    private $tabs = array();
+    private $tabs = [];
 
     /**
      * Create a new OutputFormat extender
@@ -46,7 +46,7 @@ class OutputFormat implements Tabextension
      *
      * @param array $disabled An array of output types to <b>not</b> show.
      */
-    public function __construct(array $disabled = array())
+    public function __construct(array $disabled = [])
     {
         foreach ($this->getSupportedTypes() as $type => $tabConfig) {
             if (!in_array($type, $disabled)) {
@@ -82,33 +82,33 @@ class OutputFormat implements Tabextension
      */
     public function getSupportedTypes()
     {
-        $supportedTypes = array();
+        $supportedTypes = [];
 
         $pdfexport = Hook::has('Pdfexport');
 
         if ($pdfexport || Platform::extensionLoaded('gd')) {
-            $supportedTypes[self::TYPE_PDF] = array(
+            $supportedTypes[self::TYPE_PDF] = [
                 'name'      => 'pdf',
                 'label'     => 'PDF',
                 'icon'      => 'file-pdf',
-                'urlParams' => array('format' => 'pdf'),
-            );
+                'urlParams' => ['format' => 'pdf'],
+            ];
         }
 
-        $supportedTypes[self::TYPE_CSV] = array(
+        $supportedTypes[self::TYPE_CSV] = [
             'name'      => 'csv',
             'label'     => 'CSV',
             'icon'      => 'file-excel',
-            'urlParams' => array('format' => 'csv')
-        );
+            'urlParams' => ['format' => 'csv']
+        ];
 
         if (Platform::extensionLoaded('json')) {
-            $supportedTypes[self::TYPE_JSON] = array(
+            $supportedTypes[self::TYPE_JSON] = [
                 'name'      => 'json',
                 'label'     => 'JSON',
                 'icon'      => 'doc-text',
-                'urlParams' => array('format' => 'json')
-            );
+                'urlParams' => ['format' => 'json']
+            ];
         }
 
         return $supportedTypes;

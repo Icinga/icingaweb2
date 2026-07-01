@@ -18,7 +18,7 @@ use ipl\I18n\StaticTranslator;
  */
 class TestCommand extends TranslationCommand
 {
-    protected $locales = array();
+    protected $locales = [];
 
     /**
      * Get translation examples for DateFormatter
@@ -41,8 +41,8 @@ class TestCommand extends TranslationCommand
         /** @uses DateFormatter::timeAgo */
         $this->printTable($this->getMultiTranslated(
             'Time Ago',
-            array('Icinga\Date\DateFormatter', 'timeAgo'),
-            array(
+            ['Icinga\Date\DateFormatter', 'timeAgo'],
+            [
                 "15 sec" => $time - 15,
                 "62 sec" => $time - 62,
                 "10 min" => $time - 600,
@@ -50,13 +50,13 @@ class TestCommand extends TranslationCommand
                 "3h"     => $time - 3 * 3600,
                 "25h"    => $time - 25 * 3600,
                 "31d"    => $time - 31 * 24 * 3600,
-            )
+            ]
         ));
 
         $this->printTable($this->getMultiTranslated(
             'Time Since',
-            array('Icinga\Date\DateFormatter', 'timeSince'),
-            array(
+            ['Icinga\Date\DateFormatter', 'timeSince'],
+            [
                 "15 sec" => $time - 15,
                 "62 sec" => $time - 62,
                 "10 min" => $time - 600,
@@ -64,13 +64,13 @@ class TestCommand extends TranslationCommand
                 "3h"     => $time - 3 * 3600,
                 "25h"    => $time - 25 * 3600,
                 "31d"    => $time - 31 * 24 * 3600,
-            )
+            ]
         ));
 
         $this->printTable($this->getMultiTranslated(
             'Time Until',
-            array('Icinga\Date\DateFormatter', 'timeUntil'),
-            array(
+            ['Icinga\Date\DateFormatter', 'timeUntil'],
+            [
                 "15 sec" => $time + 15,
                 "62 sec" => $time + 62,
                 "10 min" => $time + 600,
@@ -78,7 +78,7 @@ class TestCommand extends TranslationCommand
                 "3h"     => $time + 3 * 3600,
                 "25h"    => $time + 25 * 3600,
                 "31d"    => $time + 31 * 24 * 3600,
-            )
+            ]
         ));
     }
 
@@ -115,13 +115,13 @@ class TestCommand extends TranslationCommand
         }
         array_unshift($locales, 'C');
 
-        $rows = array();
+        $rows = [];
 
         foreach ($arguments as $k => $args) {
-            $row = array($name => $k);
+            $row = [$name => $k];
 
             if (! is_array($args)) {
-                $args = array($args);
+                $args = [$args];
             }
             foreach ($locales as $locale) {
                 $row[$locale] = $this->callTranslated($callback, $args, $locale);

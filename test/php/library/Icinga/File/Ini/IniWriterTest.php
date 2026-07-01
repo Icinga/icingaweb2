@@ -34,14 +34,14 @@ class IniWriterTest extends BaseTestCase
     {
         $writer = new IniWriter(
             Config::fromArray(
-                array(
-                    'section' => array(
+                [
+                    'section' => [
                         'foo.bar' => 1337
-                    ),
-                    'section.with.multiple.dots' => array(
+                    ],
+                    'section.with.multiple.dots' => [
                         'some more.nested stuff' => 'With more values'
-                    )
-                )
+                    ]
+                ]
             ),
             $this->tempFile
         );
@@ -53,7 +53,7 @@ class IniWriterTest extends BaseTestCase
     public function testWhetherNestedPropertiesAreInserted()
     {
         $target = $this->writeConfigToTemporaryFile('');
-        $config = Config::fromArray(array('a' => array('b' => 'c')));
+        $config = Config::fromArray(['a' => ['b' => 'c']]);
         $writer = new IniWriter($config, $target);
         $writer->write();
 
@@ -102,20 +102,20 @@ EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
             Config::fromArray(
-                array(
-                    'three' => array(
+                [
+                    'three' => [
                         'foo.bar' => 'raboof',
                         'key' => 'value'
-                    ),
-                    'two' => array(
+                    ],
+                    'two' => [
                         'd.e' => 'f',
                         'a.b' => 'c'
-                    ),
-                    'one' => array(
+                    ],
+                    'one' => [
                         'key2' => '2',
                         'key1' => '1'
-                    )
-                )
+                    ]
+                ]
             ),
             $target
         );
@@ -147,10 +147,10 @@ EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
             Config::fromArray(
-                array(
-                    'two' => array(),
-                    'one' => array()
-                )
+                [
+                    'two' => [],
+                    'one' => []
+                ]
             ),
             $target
         );
@@ -174,7 +174,7 @@ key = "value"
 ; boring comment
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
-        $writer = new IniWriter(Config::fromArray(array('blarg' => array('key' => 'value'))), $target);
+        $writer = new IniWriter(Config::fromArray(['blarg' => ['key' => 'value']]), $target);
 
         $this->assertEquals(
             trim($config),
@@ -195,12 +195,12 @@ EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
             Config::fromArray(
-                array('blarg' => array(
+                ['blarg' => [
                     'foo' => 1337,
                     'bar' => 7331,
                     'key' => 'value',
                     'xxl' => 'very loooooooooooooooooooooong'
-                ))
+                ]]
             ),
             $target
         );
@@ -219,7 +219,7 @@ EOD;
 key = "value"
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
-        $writer = new IniWriter(Config::fromArray(array('section' => array('key' => 'value'))), $target);
+        $writer = new IniWriter(Config::fromArray(['section' => ['key' => 'value']]), $target);
 
         $this->assertEquals(
             trim($config),
@@ -240,14 +240,14 @@ EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
             Config::fromArray(
-                array(
-                    'section' => array(
+                [
+                    'section' => [
                         'foo' => 1337,
                         'bar' => 7331,
                         'key' => 'value',
                         'xxl' => 'very loooooooooooooooooooooong'
-                    )
-                )
+                    ]
+                ]
             ),
             $target
         );
@@ -264,14 +264,14 @@ EOD;
         $target = $this->writeConfigToTemporaryFile('');
         $writer = new IniWriter(
             Config::fromArray(
-                array(
-                    'section' => array(
+                [
+                    'section' => [
                         'foo' => 'linebreak
 in line',
                         'linebreak
 inkey' => 'blarg'
-                    )
-                )
+                    ]
+                ]
             ),
             $target
         );
@@ -307,12 +307,12 @@ EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
             Config::fromArray(
-                array(
-                    'section ;comment' => array('foo' => 'bar'),
-                    'section "quotes"' => array('foo' => 'bar'),
-                    'section with \\' => array('foo' => 'bar'),
-                    'section with' . PHP_EOL . 'newline' => array('foo' => 'bar')
-                )
+                [
+                    'section ;comment' => ['foo' => 'bar'],
+                    'section "quotes"' => ['foo' => 'bar'],
+                    'section with \\' => ['foo' => 'bar'],
+                    'section with' . PHP_EOL . 'newline' => ['foo' => 'bar']
+                ]
             ),
             $target
         );
@@ -343,12 +343,12 @@ EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
             Config::fromArray(
-                array(
-                    'section' => array(
+                [
+                    'section' => [
                         'key1' => 'value with "quotes"',
                         'key2' => 'value with \\'
-                    )
-                )
+                    ]
+                ]
             ),
             $target
         );
@@ -385,10 +385,10 @@ EOD;
 
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
-            Config::fromArray(array(
-                'section 1' => array('guarg' => 1),
-                'section 3' => array('guard' => 2)
-            )),
+            Config::fromArray([
+                'section 1' => ['guarg' => 1],
+                'section 3' => ['guard' => 2]
+            ]),
             $target
         );
 
@@ -414,7 +414,7 @@ EOD;
 
     public function testWhetherNullValuesGetPersisted()
     {
-        $config = Config::fromArray(array());
+        $config = Config::fromArray([]);
         $section = $config->getSection('garbage');
         $section->foobar = null;
         $config->setSection('garbage', $section);
@@ -429,7 +429,7 @@ EOD;
 
     public function testWhetherEmptyValuesGetPersisted()
     {
-        $config = Config::fromArray(array());
+        $config = Config::fromArray([]);
         $section = $config->getSection('garbage');
         $section->foobar = '';
         $config->setSection('garbage', $section);
@@ -445,7 +445,7 @@ EOD;
     public function testExplicitRemove()
     {
         $filename = tempnam(sys_get_temp_dir(), 'iw2');
-        $config = Config::fromArray(array('garbage' => array('foobar' => 'lolcat')));
+        $config = Config::fromArray(['garbage' => ['foobar' => 'lolcat']]);
         $iniWriter = new IniWriter($config, $filename);
         $iniWriter->write();
 

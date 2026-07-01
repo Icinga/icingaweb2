@@ -56,7 +56,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      *
      * @var array
      */
-    protected $desiredColumns = array();
+    protected $desiredColumns = [];
 
     /**
      * The columns you are interested in
@@ -65,7 +65,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      *
      * @var array
      */
-    protected $columns = array();
+    protected $columns = [];
 
     /**
      * The columns and their aliases flipped in order to handle aliased sort columns
@@ -81,7 +81,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      *
      * @var array
      */
-    protected $order = array();
+    protected $order = [];
 
     /**
      * Number of rows to return
@@ -316,7 +316,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
             $direction = (strtoupper(trim($fieldAndDirection[1])) === 'DESC') ?
                 Sortable::SORT_DESC : Sortable::SORT_ASC;
         }
-        return array($field, $direction);
+        return [$field, $direction];
     }
 
     /**
@@ -349,7 +349,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
                     break;
             }
         }
-        $this->order[] = array($field, $direction);
+        $this->order[] = [$field, $direction];
         return $this;
     }
 
@@ -397,7 +397,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      */
     public function clearOrder()
     {
-        $this->order = array();
+        $this->order = [];
         return $this;
     }
 

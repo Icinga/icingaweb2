@@ -31,13 +31,13 @@ class LimiterControlForm extends Form
      *
      * @var int[]
      */
-    public static $limits = array(
+    public static $limits = [
         10  => '10',
         25  => '25',
         50  => '50',
         100 => '100',
         500 => '500'
-    );
+    ];
 
     public static $defaultElementDecorators = [
         ['Label', ['tag' => 'span', 'separator' => '']],
@@ -114,13 +114,13 @@ class LimiterControlForm extends Form
         $this->addElement(
             'select',
             'limit',
-            array(
+            [
                 'autosubmit'    => true,
                 'escape'        => false,
                 'label'         => '#',
                 'multiOptions'  => $options,
                 'value'         => $pageSize
-            )
+            ]
         );
     }
 

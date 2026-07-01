@@ -162,7 +162,7 @@ class DirectoryIterator implements RecursiveIterator
 
                     if (is_dir($path)) {
                         if ($this->flags & static::FILES_FIRST === static::FILES_FIRST) {
-                            $this->queue[] = array($path, $file);
+                            $this->queue[] = [$path, $file];
                             $skip = true;
                         }
                         break;
@@ -210,7 +210,7 @@ class DirectoryIterator implements RecursiveIterator
             $this->files = new ArrayIterator($files);
         }
         $this->files->rewind();
-        $this->queue = array();
+        $this->queue = [];
         $this->next();
     }
 }

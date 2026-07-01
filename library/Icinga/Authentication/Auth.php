@@ -213,7 +213,7 @@ class Auth
     public function getRestrictions($restriction)
     {
         if (! $this->isAuthenticated()) {
-            return array();
+            return [];
         }
         return $this->user->getRestrictions($restriction);
     }

@@ -18,7 +18,7 @@ use Countable;
  *
  * $preferences = new Preferences(); // Start with empty preferences
  *
- * $preferences = new Preferences(array('aPreference' => 'value')); // Start with initial preferences
+ * $preferences = new Preferences(['aPreference' => 'value']); // Start with initial preferences
  *
  * $preferences->aNewPreference = 'value'; // Set a preference
  *
@@ -34,14 +34,14 @@ class Preferences implements Countable
      *
      * @var array
      */
-    protected $preferences = array();
+    protected $preferences = [];
 
     /**
      * Constructor
      *
      * @param   array   $preferences    Preferences key-value array
      */
-    public function __construct(array $preferences = array())
+    public function __construct(array $preferences = [])
     {
         $this->preferences = $preferences;
     }

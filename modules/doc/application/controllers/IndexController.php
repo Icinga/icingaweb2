@@ -20,10 +20,10 @@ class IndexController extends DocController
      */
     public function indexAction()
     {
-        $this->getTabs()->add('documentation', array(
+        $this->getTabs()->add('documentation', [
             'active'    => true,
             'title'     => $this->translate('Documentation', 'Tab title'),
             'url'       => Url::fromRequest()
-        ));
+        ]);
     }
 }

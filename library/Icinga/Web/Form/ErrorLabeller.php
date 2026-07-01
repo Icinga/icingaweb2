@@ -17,7 +17,7 @@ class ErrorLabeller extends Zend_Translate_Adapter
 {
     protected $messages;
 
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         if (! isset($options['element'])) {
             throw new BadMethodCallException('Option "element" is missing');
@@ -45,7 +45,7 @@ class ErrorLabeller extends Zend_Translate_Adapter
     {
         $label = $element->getLabel() ?: $element->getName();
 
-        return array(
+        return [
             Zend_Validate_NotEmpty::IS_EMPTY            => sprintf(t('%s is required and must not be empty'), $label),
             Zend_Validate_File_MimeType::FALSE_TYPE     => sprintf(
                 t('%s (%%value%%) has a false MIME type of "%%type%%"'),
@@ -59,10 +59,10 @@ class ErrorLabeller extends Zend_Translate_Adapter
                 t('%s not in the expected format: %%value%%'),
                 $label
             )
-        );
+        ];
     }
 
-    protected function _loadTranslationData($data, $locale, array $options = array())
+    protected function _loadTranslationData($data, $locale, array $options = [])
     {
         // nonsense, required as being abstract otherwise...
     }

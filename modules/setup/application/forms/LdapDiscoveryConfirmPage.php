@@ -88,24 +88,24 @@ EOT;
         $this->addElement(
             'note',
             'suggestion',
-            array(
+            [
                 'value'         => $html,
-                'decorators'    => array(
+                'decorators'    => [
                     'ViewHelper',
-                    array(
-                        'HtmlTag', array('tag' => 'div')
-                    )
-                )
-            )
+                    [
+                        'HtmlTag', ['tag' => 'div']
+                    ]
+                ]
+            ]
         );
 
         $this->addElement(
             'checkbox',
             'confirm',
-            array(
+            [
                 'value' => '1',
                 'label' => $this->translate('Use this configuration?')
-            )
+            ]
         );
     }
 

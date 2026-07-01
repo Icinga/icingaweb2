@@ -536,9 +536,9 @@ abstract class ApplicationBootstrap
     {
         Logger::create(
             new ConfigObject(
-                array(
+                [
                     'log' => 'syslog'
-                )
+                ]
             )
         );
         return $this;

@@ -28,12 +28,12 @@ class AnnouncementsController extends Controller
     {
         $this->getTabs()->add(
             'announcements',
-            array(
+            [
                 'active'    => true,
                 'label'     => $this->translate('Announcements'),
                 'title'     => $this->translate('List All Announcements'),
                 'url'       => Url::fromPath('announcements')
-            )
+            ]
         );
 
         $announcements = (new AnnouncementIniRepository())

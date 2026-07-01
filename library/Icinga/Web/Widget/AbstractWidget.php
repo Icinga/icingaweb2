@@ -36,7 +36,7 @@ abstract class AbstractWidget
     protected static $view;
 
     // TODO: Should we kick this?
-    protected $properties = array();
+    protected $properties = [];
 
     /**
      * Getter for widget properties

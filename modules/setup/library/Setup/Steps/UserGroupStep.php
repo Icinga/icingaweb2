@@ -43,17 +43,17 @@ class UserGroupStep extends Step
 
     protected function createGroupsIni()
     {
-        $config = array();
+        $config = [];
         if (isset($this->data['groupConfig'])) {
             $backendConfig = $this->data['groupConfig'];
             $backendName = $backendConfig['name'];
             unset($backendConfig['name']);
             $config[$backendName] = $backendConfig;
         } else {
-            $backendConfig = array(
+            $backendConfig = [
                 'backend'   => $this->data['backendConfig']['backend'], // "db" or "msldap"
                 'resource'  => $this->data['resourceName']
-            );
+            ];
 
             if ($backendConfig['backend'] === 'msldap') {
                 $backendConfig['user_backend'] = $this->data['backendConfig']['name'];
@@ -84,9 +84,9 @@ class UserGroupStep extends Step
 
             $groupName = mt('setup', 'Administrators', 'setup.role.name');
             if ($backend->select()->where('group_name', $groupName)->count() === 0) {
-                $backend->insert('group', array(
+                $backend->insert('group', [
                     'group_name'    => $groupName
-                ));
+                ]);
                 $this->groupError = false;
             }
         } catch (Exception $e) {
@@ -113,10 +113,10 @@ class UserGroupStep extends Step
                 ->where('user_name', $userName)
                 ->count() === 0
             ) {
-                $backend->insert('group_membership', array(
+                $backend->insert('group_membership', [
                     'group_name'    => $groupName,
                     'user_name'     => $userName
-                ));
+                ]);
                 $this->memberError = false;
             }
         } catch (Exception $e) {
@@ -167,7 +167,7 @@ class UserGroupStep extends Step
 
     public function getReport()
     {
-        $report = array();
+        $report = [];
 
         if ($this->groupIniError === false) {
             $report[] = sprintf(

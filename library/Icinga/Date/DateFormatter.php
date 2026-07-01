@@ -84,7 +84,7 @@ class DateFormatter
                 }
             }
         }
-        return array($type, $formatted, $invert);
+        return [$type, $formatted, $invert];
     }
 
     /**

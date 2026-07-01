@@ -13,9 +13,9 @@ use Icinga\Test\BaseTestCase;
 
 class DatabaseMock
 {
-    public $insertions = array();
-    public $deletions = array();
-    public $updates = array();
+    public $insertions = [];
+    public $deletions = [];
+    public $updates = [];
 
     public function quoteIdentifier($ident)
     {
@@ -76,7 +76,7 @@ class PreferencesStoreTest extends BaseTestCase
         $store->save(
             Mockery::mock(
                 'Icinga\User\Preferences',
-                array('toArray' => array('testsection' => array('key' => 'value')))
+                ['toArray' => ['testsection' => ['key' => 'value']]]
             )
         );
 
@@ -93,7 +93,7 @@ class PreferencesStoreTest extends BaseTestCase
         $store->save(
             Mockery::mock(
                 'Icinga\User\Preferences',
-                array('toArray' => array('testsection' => array('key' => 'value')))
+                ['toArray' => ['testsection' => ['key' => 'value']]]
             )
         );
     }
@@ -102,11 +102,11 @@ class PreferencesStoreTest extends BaseTestCase
     {
         $dbMock = new DatabaseMock();
         $store = $this->getStore($dbMock);
-        $store->setPreferences(array('testsection' => array('key' => 'value')));
+        $store->setPreferences(['testsection' => ['key' => 'value']]);
         $store->save(
             Mockery::mock(
                 'Icinga\User\Preferences',
-                array('toArray' => array('testsection' => array('key' => 'eulav')))
+                ['toArray' => ['testsection' => ['key' => 'eulav']]]
             )
         );
 
@@ -120,11 +120,11 @@ class PreferencesStoreTest extends BaseTestCase
         $this->expectException(\Icinga\Exception\NotWritableError::class);
 
         $store = $this->getStore(new FaultyDatabaseMock());
-        $store->setPreferences(array('testsection' => array('key' => 'value')));
+        $store->setPreferences(['testsection' => ['key' => 'value']]);
         $store->save(
             Mockery::mock(
                 'Icinga\User\Preferences',
-                array('toArray' => array('testsection' => array('key' => 'eulav')))
+                ['toArray' => ['testsection' => ['key' => 'eulav']]]
             )
         );
     }
@@ -133,11 +133,11 @@ class PreferencesStoreTest extends BaseTestCase
     {
         $dbMock = new DatabaseMock();
         $store = $this->getStore($dbMock);
-        $store->setPreferences(array('testsection' => array('key' => 'value')));
+        $store->setPreferences(['testsection' => ['key' => 'value']]);
         $store->save(
             Mockery::mock(
                 'Icinga\User\Preferences',
-                array('toArray' => array('testsection' => array()))
+                ['toArray' => ['testsection' => []]]
             )
         );
 
@@ -151,11 +151,11 @@ class PreferencesStoreTest extends BaseTestCase
         $this->expectException(\Icinga\Exception\NotWritableError::class);
 
         $store = $this->getStore(new FaultyDatabaseMock());
-        $store->setPreferences(array('testsection' => array('key' => 'value')));
+        $store->setPreferences(['testsection' => ['key' => 'value']]);
         $store->save(
             Mockery::mock(
                 'Icinga\User\Preferences',
-                array('toArray' => array('testsection' => array('key' => 'foo')))
+                ['toArray' => ['testsection' => ['key' => 'foo']]]
             )
         );
     }
@@ -164,11 +164,11 @@ class PreferencesStoreTest extends BaseTestCase
     {
         return new PreferencesStoreWithSetPreferences(
             new ConfigObject(
-                array(
-                    'connection' => Mockery::mock(array('getDbAdapter' => $dbMock))
-                )
+                [
+                    'connection' => Mockery::mock(['getDbAdapter' => $dbMock])
+                ]
             ),
-            Mockery::mock('Icinga\User', array('getUsername' => 'unittest'))
+            Mockery::mock('Icinga\User', ['getUsername' => 'unittest'])
         );
     }
 }
