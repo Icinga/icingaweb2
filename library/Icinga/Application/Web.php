@@ -137,7 +137,7 @@ class Web extends EmbeddedWeb
         return $this->viewRenderer;
     }
 
-    private function hasAccessToSharedNavigationItem(&$config, Config $navConfig)
+    public function hasAccessToSharedNavigationItem(&$config, Config $navConfig)
     {
         // TODO: Provide a more sophisticated solution
 
