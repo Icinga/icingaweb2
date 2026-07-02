@@ -4,6 +4,131 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.14.0
+
+You can find all issues related to this release on our
+[Roadmap](https://github.com/Icinga/icingaweb2/milestone/88?closed=1).
+
+#### Streamlined Authentication
+
+The authentication process has been reworked to be more reliable. Custom user
+backends now load at the right time, which fixes a long-standing issue where
+they'd get initialized too late to take part in the auth chain. The login
+page got a refresh too, the password field now gets focus after you enter
+your username.
+
+* Streamline authentication process [#5387](https://github.com/Icinga/icingaweb2/pull/5387)
+* Modernize login [#5500](https://github.com/Icinga/icingaweb2/pull/5500)
+* Fix focus on login password [#5504](https://github.com/Icinga/icingaweb2/pull/5504)
+
+#### Two-Factor Authentication
+
+We have added a proper two-factor authentication extension point to Icinga Web.
+Modules can now register a two-factor method, and once a user enrolls in
+one, they get redirected to a token challenge page after password
+authentication before the session is established. Enrollment and
+unenrollment are handled through a new Two-Factor Auth tab in account
+settings.
+
+* Add two-factor authentication extension point [#5514](https://github.com/Icinga/icingaweb2/pull/5514)
+
+#### Configurable Content Security Policy
+
+The Content Security Policy header is no longer a hardcoded string. It is
+now assembled from multiple sources, system directives, dashlet frame-src
+entries, navigation item frame-src entries, and any directives contributed
+by installed modules. Administrators who need full control can opt out of
+automatic generation and supply a raw CSP string instead. A style nonce
+placeholder in that string is replaced with the per-request nonce at
+runtime.
+
+A new configuration page under Application settings shows the current
+effective CSP as a table grouped by source, with a basic security analysis
+flagging risky keywords and schemes. Forms that create dashlets or
+navigation items now show an info callout when CSP is active but the
+corresponding loader is disabled, so users know why an external URL might
+be blocked.
+
+* Allow custom CSP header [#5477](https://github.com/Icinga/icingaweb2/pull/5477)
+
+#### INI-backed Config Forms for Developers
+
+Developers can now build INI-based configuration forms with less
+boilerplate. The form reads the existing config file, populates the form
+fields automatically, and writes the results back on submit. If writing to
+the file fails, the form shows an error with the full file contents so the
+admin can copy and paste it manually.
+
+* Add an INI-backed configuration form [#5480](https://github.com/Icinga/icingaweb2/pull/5480)
+
+#### Hook Essentials
+
+We reduced the boilerplate that every hook implementation had to carry on
+its own. We also extended the PDF export hook with methods for retrieving
+the first registered implementation and converting HTML to PDF, and updated
+all callers to use the new interface.
+
+* Reduce hook implementation boilerplate [#5474](https://github.com/Icinga/icingaweb2/pull/5474)
+* Add missing methods to the PDF export hook [#5491](https://github.com/Icinga/icingaweb2/pull/5491)
+* Update PDF export hook callers to use the new interface [#5526](https://github.com/Icinga/icingaweb2/pull/5526)
+
+#### JavaScript Asset Management
+
+Module and library JavaScript bundles are now optimized more aggressively.
+The optimizer now handles multiple module definitions in the same file,
+dependency resolution is more efficient, and library assets can be served
+directly via static URLs, so no more workarounds needed for that. The
+relative-time behavior has also moved into ipl-web so all components share
+one implementation.
+
+* Enhance JavaScript dependency optimization [#5276](https://github.com/Icinga/icingaweb2/pull/5276)
+* Take multiple module definitions in the same file into account [#5255](https://github.com/Icinga/icingaweb2/pull/5255)
+* Allow access to a library's JS and CSS assets via static URLs [#5274](https://github.com/Icinga/icingaweb2/pull/5274)
+* Move relative time behavior to ipl-web [#5461](https://github.com/Icinga/icingaweb2/pull/5461)
+
+#### Less Compilation Migrated to ipl-web
+
+We moved Less compilation to the ipl-web library. Nothing changes for end
+users, but if you're a module author relying on the Less pipeline, the
+compiler now lives in a different place.
+
+* Migrate Less compilation to ipl-web [#5492](https://github.com/Icinga/icingaweb2/pull/5492)
+
+#### Modal Improvements
+
+Modals got a few fixes around closing behavior. Pressing Escape will no
+longer close a modal if the key event was already handled by something
+else, and a modal with an unsaved form will now stay open instead of
+closing unexpectedly. We also fixed the Escape key handler causing the
+modal overlay to wobble.
+
+* Prevent unintentional modal closing [#5501](https://github.com/Icinga/icingaweb2/pull/5501)
+* Do not wobble if Escape has been handled otherwise [#5512](https://github.com/Icinga/icingaweb2/pull/5512)
+* Consider forms changed that don't close the modal [#5525](https://github.com/Icinga/icingaweb2/pull/5525)
+
+#### UI & CSS Fixes
+
+A few visual fixes this release. Line height is a bit more generous now,
+collapsible elements collapse on the y-axis only, the navigation caret
+picks up the background color of its parent item, and file input elements
+from ipl-web now have proper styling. The long-obsolete action link and
+button link CSS classes are also gone.
+
+* Increase line height [#5413](https://github.com/Icinga/icingaweb2/pull/5413)
+* Only collapse the y-axis for collapsible elements [#5456](https://github.com/Icinga/icingaweb2/pull/5456)
+* Apply the same background color to the caret in the navigation item header [#5375](https://github.com/Icinga/icingaweb2/pull/5375)
+* Add styling for file input elements [#4990](https://github.com/Icinga/icingaweb2/pull/4990)
+* Remove obsolete action link and button link CSS classes [#5370](https://github.com/Icinga/icingaweb2/pull/5370)
+
+#### Deprecations
+
+The custom programming error exception class is now deprecated. PHP's
+built-in logic exception covers the same use case and should be used
+instead. Existing code still works, but please start migrating your throw
+sites when you get the chance.
+
+* Deprecate the custom programming error exception [#5511](https://github.com/Icinga/icingaweb2/pull/5511)
+
 ### What's New in Version 2.13.1
 
 #### Security Fixes
@@ -278,9 +403,9 @@ You can find all issues related to this release on our [Roadmap](https://github.
 #### PHP 8.2 Support
 
 This release finally adds support for the latest version of PHP, 8.2. This means that installations on Debian Bookworm,
-Ubuntu 23.10 and Fedora 38+ can now install Icinga Web without worrying about PHP related incompatibilities. Some of our
+Ubuntu 23.10, and Fedora 38+ can now install Icinga Web without worrying about PHP related incompatibilities. Some of our
 other modules still require an update, which they will receive in the coming weeks. Next week Icinga DB Web will follow.
-Icinga Certificate Monitoring, Icinga Business Process Modeling and Icinga Reporting the weeks after.
+Icinga Certificate Monitoring, Icinga Business Process Modeling, and Icinga Reporting the weeks after.
 
 * Support for PHP 8.2 [#4918](https://github.com/Icinga/icingaweb2/issues/4918)
 
@@ -485,7 +610,7 @@ by modules. A new hook that enables modules to influence the rendering of custom
 #### Surprising Beauty in Exported Places
 
 Anyone who already attempted to export a list of services to PDF has seen the degradation of details in recent years.
-Be it images, icons, colors or the general layout. We simply reached a technical limit with the builtin PDF export.
+Be it images, icons, colors, or the general layout. We simply reached a technical limit with the builtin PDF export.
 That is why we made [Icinga PDF Export](https://github.com/Icinga/icingaweb2-module-pdfexport). Icinga Web 2 has now
 a much enhanced compatibility with it. Exporting a list of services while Icinga PDF Export is set up, will now lead
 to a much better looking result.
@@ -588,7 +713,7 @@ This release is accompanied by the minor releases v2.7.6 and v2.8.4 which includ
 
 #### Pancakes everywhere
 
-One of the security fixes included in v2.7.5, v2.8.3 and v2.9.0 went rampant and let you see similarities between custom
+One of the security fixes included in v2.7.5, v2.8.3, and v2.9.0 went rampant and let you see similarities between custom
 variables and pancakes. These are gone now. Also, the login allowed some users to bake pancakes on their CPUs. However,
 we'd still recommend not to. What we do recommend, is to use graphical details to ease recognition. A pancake 🥞 in
 performance data labels for example.
@@ -600,7 +725,7 @@ performance data labels for example.
 #### Staying remembered too difficult
 
 We all have sometimes difficulties remembering people we rarely meet. Especially obvious is this on those that slip
-through because they don't do the same things we do. With v2.9.0 this has happened for PostgreSQL, PHP v5.6-v7.0 and
+through because they don't do the same things we do. With v2.9.0 this has happened for PostgreSQL, PHP v5.6-v7.0, and
 setup wizard users. Now they get their deserved attention, and Icinga Web 2 will remember them just like all others.
 
 * RememberMe not working with only PostgreSQL [#4441](https://github.com/Icinga/icingaweb2/issues/4441)
@@ -678,7 +803,7 @@ might not necessarily use it that often once you've configured new custom defaul
 
 * Add datetime picker widget [#4354](https://github.com/Icinga/icingaweb2/pull/4354)
 * Expire Option for Comments [#3447](https://github.com/Icinga/icingaweb2/issues/3447)
-* Custom defaults for downtime end, comment and duration [#4364](https://github.com/Icinga/icingaweb2/issues/4364)
+* Custom defaults for downtime end, comment, and duration [#4364](https://github.com/Icinga/icingaweb2/issues/4364)
 
 ### What's New in Version 2.8.2
 
@@ -868,7 +993,7 @@ broke with the next update. (All other admins with non-english users, please hav
 #### Modules - Bonus Functionality Unleashed
 
 With this release module developers got additional ways to customize Icinga Web 2. Whether you ever wanted to hook into
-a configuration form's handling, to perform your very own Ajax requests or enhance our multi-select views with fancy
+a configuration form's handling, to perform your very own Ajax requests, or enhance our multi-select views with fancy
 graphs. All is possible now.
 
 * Allow to hook into a configuration form's handling [#3862](https://github.com/Icinga/icingaweb2/pull/3862)
@@ -895,13 +1020,13 @@ keep that way across browser restarts. The same is also true for the sidebar. (T
 * Collapsible plugin output [#3870](https://github.com/Icinga/icingaweb2/pull/3870)
 * Collapsed sidebar should stay collapsed [#3682](https://github.com/Icinga/icingaweb2/issues/3628)
 
-#### Markdown - Tables, Lists and Emphasized Text The Easy Way
+#### Markdown - Tables, Lists, and Emphasized Text The Easy Way
 
 Since we now have the possibility to collapse large content dynamically, we allow you to add entire wiki pages to hosts
 and services. Though, if you prefer to use a real wiki to maintain those (what we'd strongly suggest) it's now easier
 than ever before to link to it. Copy url, paste url, submit comment, Done.
 
-* Make notes, comments and announcements markdown aware [#3814](https://github.com/Icinga/icingaweb2/pull/3814)
+* Make notes, comments, and announcements markdown aware [#3814](https://github.com/Icinga/icingaweb2/pull/3814)
 * Transform any URL in a Comment to a clickable Link [#3441](https://github.com/Icinga/icingaweb2/issues/3441)
 * Support relative links in plugin output [#2916](https://github.com/Icinga/icingaweb2/issues/2916)
 
@@ -1362,7 +1487,7 @@ Our public repositories and issue tracker have been migrated to GitHub.
 
 * Feature 8487: Number headings in the documentation module
 * Feature 8963: Feature commands in the multi select views
-* Feature 10654: Render links in acknowledgements, comments and downtimes
+* Feature 10654: Render links in acknowledgements, comments, and downtimes
 * Feature 11062: Allow style classes in plugin output
 * Feature 11238: Puppet/Vagrant: Install mod_ssl and forward port 443
 
@@ -1434,7 +1559,7 @@ Our public repositories and issue tracker have been migrated to GitHub.
 * Bug 10166: library/vendor/HTMLPurifier tree is incorrectly unpacked
 * Bug 10170: Link to service downtimes from multiple selected services includes host downtimes aswell
 * Bug 10338: Debian: Failed to open stream HTMLPurifier/HTMLPurifier.php
-* Bug 10603: Line breaks are not respected in acknowledgements, comments and downtimes
+* Bug 10603: Line breaks are not respected in acknowledgements, comments, and downtimes
 * Bug 10658: SUSE packages have the wrong dependencies
 * Bug 10659: LDAP group members are shown with their DN and membership registration does not work
 * Bug 10670: State not highlighted in plugin output
@@ -1531,7 +1656,7 @@ The location of a user's preferences has been changed from config-dir/preference
 * Feature 9030: Service grid: Add limit control
 * Feature 9247: Show Icinga Web 2's version in the frontend
 * Feature 9364: Apply sort rules for ldap queries on the server's side
-* Feature 9381: List installed modules, versions and state in the about page
+* Feature 9381: List installed modules, versions, and state in the about page
 * Feature 9453: Vagrant: Upgrade to CentOS 7
 * Feature 9460: IDO resource configuration: Ensure that the user is running PostgreSQL 9.1+
 * Feature 9524: Improve setup wizard
@@ -1553,7 +1678,7 @@ The location of a user's preferences has been changed from config-dir/preference
 * Feature 9826: Allow to select text in the host and service detail area header via double click
 * Feature 9830: Monitoring: Support the wildcard restriction for "administrative" roles
 * Feature 9888: Display a host's and service's check timeperiod as well as notification timeperiod in the detail view
-* Feature 9908: Use better icons for resources, backends and module state
+* Feature 9908: Use better icons for resources, backends, and module state
 * Feature 9942: Add a warning to the navigition if the last IDO update is older than 5 minutes
 * Feature 9943: Offer instance_name as query column
 * Feature 9945: Show instance_name in a host's and service's detail view
