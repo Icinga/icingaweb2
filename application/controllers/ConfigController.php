@@ -6,6 +6,7 @@
 namespace Icinga\Controllers;
 
 use Exception;
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Version;
 use InvalidArgumentException;
 use Icinga\Application\Config;
@@ -17,6 +18,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ActionForm;
 use Icinga\Forms\Config\GeneralConfigForm;
 use Icinga\Forms\Config\ResourceConfigForm;
+use Icinga\Forms\Config\Security\CspConfigForm;
 use Icinga\Forms\Config\UserBackendConfigForm;
 use Icinga\Forms\Config\UserBackendReorderForm;
 use Icinga\Forms\ConfirmRemovalForm;
@@ -25,6 +27,7 @@ use Icinga\Web\Controller;
 use Icinga\Web\Notification;
 use Icinga\Web\Url;
 use Icinga\Web\Widget;
+use ipl\Html\Contract\Form as ContractForm;
 
 /**
  * Application and module configuration
@@ -39,17 +42,25 @@ class ConfigController extends Controller
         $tabs = $this->getTabs();
         if ($this->hasPermission('config/general')) {
             $tabs->add('general', [
-                'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
-                'label' => $this->translate('General'),
-                'url'   => 'config/general',
+                'title'      => $this->translate('Adjust the general configuration of Icinga Web 2'),
+                'label'      => $this->translate('General'),
+                'url'        => 'config/general',
                 'baseTarget' => '_main'
             ]);
         }
+        if ($this->hasPermission('config/security')) {
+            $tabs->add('security', array(
+                'title'      => $this->translate('Adjust the security configuration of Icinga Web 2'),
+                'label'      => $this->translate('Security'),
+                'url'        => 'config/security',
+                'baseTarget' => '_main',
+            ));
+        }
         if ($this->hasPermission('config/resources')) {
             $tabs->add('resource', [
-                'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
-                'label' => $this->translate('Resources'),
-                'url'   => 'config/resource',
+                'title'      => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
+                'label'      => $this->translate('Resources'),
+                'url'        => 'config/resource',
                 'baseTarget' => '_main'
             ]);
         }
@@ -57,9 +68,9 @@ class ConfigController extends Controller
             || $this->hasPermission('config/access-control/groups')
         ) {
             $tabs->add('authentication', [
-                'title' => $this->translate('Configure the user and group backends'),
-                'label' => $this->translate('Access Control Backends'),
-                'url'   => 'config/userbackend',
+                'title'      => $this->translate('Configure the user and group backends'),
+                'label'      => $this->translate('Access Control Backends'),
+                'url'        => 'config/userbackend',
                 'baseTarget' => '_main'
             ]);
         }
@@ -79,6 +90,8 @@ class ConfigController extends Controller
     {
         if ($this->hasPermission('config/general')) {
             $this->redirectNow('config/general');
+        } elseif ($this->hasPermission('config/security')) {
+            $this->redirectNow('config/security');
         } elseif ($this->hasPermission('config/resources')) {
             $this->redirectNow('config/resource');
         } elseif ($this->hasPermission('config/access-control/*')) {
@@ -96,24 +109,49 @@ class ConfigController extends Controller
     public function generalAction()
     {
         $this->assertPermission('config/general');
+
+        $this->view->title = $this->translate('General');
+
         $form = new GeneralConfigForm();
         $form->setIniConfig(Config::app());
-        $form->setOnSuccess(function (GeneralConfigForm $form) {
-            $config = Config::app();
-            $useStrictCsp = (bool) $config->get('security', 'use_strict_csp', false);
-            if ($form->onSuccess() === false) {
-                return false;
-            }
-
-            $appConfigForm = $form->getSubForm('form_config_general_application');
-            if ($appConfigForm && (bool) $appConfigForm->getValue('security_use_strict_csp') !== $useStrictCsp) {
-                $this->getResponse()->setReloadWindow(true);
-            }
-        })->handleRequest();
+        $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->title = $this->translate('General');
+
         $this->createApplicationTabs()->activate('general');
+    }
+
+    /**
+     * Security configuration
+     *
+     * @return void
+     */
+    public function securityAction(): void
+    {
+        $this->assertPermission('config/security');
+
+        $this->view->title = $this->translate('Security');
+
+        $config = Config::app();
+        $cspForm = new CspConfigForm($config);
+        // Keep the auto-generation options off by default for installations that already
+        // had CSP enabled, so their existing behavior isn't changed. For installations
+        // enabling CSP for the first time, default them on as the recommended setting.
+        $defaultValue = $cspForm->isCspEnabled() ? '0' : '1';
+        $cspForm->populate([
+            'security__csp_enable_modules'    => $config->get('security', 'csp_enable_modules', $defaultValue),
+            'security__csp_enable_dashboards' => $config->get('security', 'csp_enable_dashboards', $defaultValue),
+            'security__csp_enable_navigation' => $config->get('security', 'csp_enable_navigation', $defaultValue),
+        ]);
+
+        $cspForm->on(ContractForm::ON_SUBMIT, function (CspConfigForm $form) {
+            if ($form->hasConfigChanged()) {
+                $this->getResponse()->setReloadWindow(true);
+            }
+        });
+        $cspForm->handleRequest(ServerRequest::fromGlobals());
+        $this->view->cspForm = $cspForm;
+        $this->createApplicationTabs()->activate('security');
     }
 
     /**
