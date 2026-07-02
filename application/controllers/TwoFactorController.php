@@ -75,7 +75,7 @@ class TwoFactorController extends CompatController
         $user = Auth::getInstance()->getUser();
 
         try {
-            $enrolledMethodName = TwoFactorHook::loadEnrolled($user)?->getName();
+            $enrolledMethodIdentifier = TwoFactorHook::loadEnrolled($user)?->getCanonicalName();
         } catch (Throwable $e) {
             Logger::error("%s\n%s", $e->getMessage(), IcingaException::getConfidentialTraceAsString($e));
             $this->addContent(new Callout(CalloutType::Error, sprintf(
@@ -86,7 +86,7 @@ class TwoFactorController extends CompatController
             return;
         }
 
-        $enrollmentForm = (new TwoFactorEnrollmentForm($user, $enrolledMethodName))
+        $enrollmentForm = (new TwoFactorEnrollmentForm($user, $enrolledMethodIdentifier))
             ->setCsrfCounterMeasureId(Session::getSession()->getId())
             ->on(Form::ON_SUBMIT, function (TwoFactorEnrollmentForm $form) {
                 if ($redirectUrl = $form->getRedirectUrl()) {
