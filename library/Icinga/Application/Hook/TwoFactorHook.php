@@ -66,13 +66,13 @@ abstract class TwoFactorHook implements TwoFactor
      * @param string $canonicalName The globally unique identifier of the desired implementation,
      *   as returned by {@see getCanonicalName()}
      *
-     * @return static The matching implementation
+     * @return TwoFactorHook The matching implementation
      *
      * @throws RuntimeException If no such implementation is registered
      */
-    final public static function fromCanonicalName(string $canonicalName): static
+    final public static function fromCanonicalName(string $canonicalName): self
     {
-        foreach (static::all() as $method) {
+        foreach (self::all() as $method) {
             if ($method->getCanonicalName() === $canonicalName) {
                 return $method;
             }
