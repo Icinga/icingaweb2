@@ -10,13 +10,10 @@ use Icinga\Application\Logger;
 use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Form;
-use ipl\I18n\Translation;
 use LogicException;
 
 class PasswordPolicyHelper
 {
-    use Translation;
-
     /** @var class-string<PasswordPolicy> Default password policy class */
     public const DEFAULT_PASSWORD_POLICY = AnyPasswordPolicy::class;
 
@@ -47,7 +44,7 @@ class PasswordPolicyHelper
     ) {
         if ($oldPasswordElementName !== null && $form->getElement($oldPasswordElementName) === null) {
             throw new LogicException(sprintf(
-                $this->translate('Form element "%s" was specified but does not exist in the form'),
+                t('Form element "%s" was specified but does not exist in the form'),
                 $oldPasswordElementName
             ));
         }
@@ -85,7 +82,7 @@ class PasswordPolicyHelper
                         ],
                         [['HtmlTag#div' => 'HtmlTag'], ['tag' => 'div', 'class' => 'form-notifications error']],
                     ],
-                    'value' => $this->translate(
+                    'value' => t(
                         'There was a problem loading the configured password policy. '
                         . 'Please contact your administrator.'
                     ),
@@ -111,7 +108,7 @@ class PasswordPolicyHelper
 
         if (! class_exists($passwordPolicyClass)) {
             throw new ConfigurationError(
-                $this->translate('Password policy class %s does not exist'),
+                t('Password policy class %s does not exist'),
                 $passwordPolicyClass
             );
         }
