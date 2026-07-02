@@ -48,10 +48,10 @@ class ChangePasswordForm extends Form
         $this->addElement(
             'password',
             'new_password',
-            array(
+            [
                 'label'     => $this->translate('New Password'),
                 'required'  => true
-            )
+            ]
         );
         PasswordPolicyHelper::applyPasswordPolicy($this, 'new_password', 'old_password');
 
