@@ -54,8 +54,8 @@ class PasswordPolicyHelper
 
         try {
             $passwordPolicyClass = Config::app()->get(
-                'global',
-                'password_policy',
+                static::CONFIG_SECTION,
+                static::CONFIG_KEY,
                 static::DEFAULT_PASSWORD_POLICY
             );
 
