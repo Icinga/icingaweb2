@@ -18,13 +18,13 @@ class PasswordPolicyHelper
     use Translation;
 
     /** @var class-string<PasswordPolicy> Default password policy class */
-    const DEFAULT_PASSWORD_POLICY = AnyPasswordPolicy::class;
+    public const DEFAULT_PASSWORD_POLICY = AnyPasswordPolicy::class;
 
     /** @var string INI configuration section for password policy */
-    const CONFIG_SECTION = 'global';
+    public const CONFIG_SECTION = 'global';
 
     /** @var string INI configuration key for password policy */
-    const CONFIG_KEY = 'password_policy';
+    public const CONFIG_KEY = 'password_policy';
 
     /**
      * Load the configured password policy, fall back to a warning if the policy configuration is invalid.
