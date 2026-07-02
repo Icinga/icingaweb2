@@ -4,6 +4,15 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.13.1
+
+#### Security Fixes
+
+This release fixes a low-risk open redirect vulnerability that could redirect
+users with a non-default locale to attacker-controlled URLs after authentication.
+
+* Prevent open redirects during login [GHSA-w7c2-xjv9-q8fv](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-w7c2-xjv9-q8fv)
+
 ### What's New in Version 2.13.0
 
 You can find all issues related to this release on our
