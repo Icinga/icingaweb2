@@ -32,19 +32,32 @@ class PasswordPolicyConfigForm extends Form
             $options[$policy->getName()] = $policy->getDisplayName();
         }
 
+        $elementName = sprintf('%s_%s', PasswordPolicyHelper::CONFIG_SECTION, PasswordPolicyHelper::CONFIG_KEY);
         $this->addElement(
             'select',
-            sprintf('%s_%s', PasswordPolicyHelper::CONFIG_SECTION, PasswordPolicyHelper::CONFIG_KEY),
+            $elementName,
             [
                 'description'  => $this->translate('Enforce password requirements for new passwords'),
                 'label'        => $this->translate('Password Policy'),
                 'value'        => PasswordPolicyHelper::DEFAULT_PASSWORD_POLICY,
                 'multiOptions' => $options,
+                'autosubmit'   => true,
             ]
         );
 
+        // FIXME: All this selectedPolicy thing does is to mimic getPopulatedValue
+        $selectedPolicyName = $this->getRequestData()[$elementName] ?? null;
+        $selectedPolicy = null;
+        if ($selectedPolicyName !== null) {
+            $selectedPolicy = PasswordPolicyHook::fromCanonicalName($selectedPolicyName);
+        }
+
         try {
-            PasswordPolicyHelper::create();
+            // FIXME: This creates an instance just to throw it away, to see if we can
+            $currentPolicy = PasswordPolicyHelper::create();
+            if ($selectedPolicy === null) {
+                $selectedPolicy = $currentPolicy;
+            }
         } catch (Exception $e) {
             $this->addElement(
                 'note',
@@ -57,6 +70,10 @@ class PasswordPolicyConfigForm extends Form
                     )))->render(),
                 ]
             );
+        }
+
+        if ($selectedPolicy !== null) {
+            PasswordPolicyHelper::addDescription($this, $selectedPolicy);
         }
 
         return $this;

@@ -12,10 +12,12 @@ use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\IcingaException;
 use Icinga\Web\Form;
+use ipl\Stdlib\Str;
 use ipl\Web\Common\CalloutType;
 use ipl\Web\Compat\DisplayFormElement;
 use ipl\Web\Widget\Callout;
 use LogicException;
+use Throwable;
 
 class PasswordPolicyHelper
 {
@@ -67,20 +69,16 @@ class PasswordPolicyHelper
                 IcingaException::getConfidentialTraceAsString($e),
             );
 
-            $form->addElement(
-                'note',
-                'bogus',
-                [
-                    'decorators' => ['ViewHelper'],
-                    'value' => (new DisplayFormElement(new Callout(
-                        CalloutType::Error,
-                        t(
-                            'There was a problem loading the configured password policy. '
-                            . 'Please contact your administrator.'
-                        ),
-                    )))->render(),
-                ]
-            );
+            $form->addElement('note', 'bogus', [
+                'decorators' => ['ViewHelper'],
+                'value' => (new DisplayFormElement(new Callout(
+                    CalloutType::Error,
+                    t(
+                        'There was a problem loading the configured password policy. '
+                        . 'Please contact your administrator.'
+                    ),
+                )))->render(),
+            ]);
         }
     }
 
@@ -105,10 +103,25 @@ class PasswordPolicyHelper
      */
     public static function addDescription(Form $form, PasswordPolicy $passwordPolicy): void
     {
-        $description = $passwordPolicy->getDescription();
+        try {
+            $description = $passwordPolicy->getDescription();
+        } catch (Throwable $e) {
+            Logger::error(
+                "Failed to get password policy description: %s\n%s",
+                $e,
+                IcingaException::getConfidentialTraceAsString($e),
+            );
 
-        if ($description !== null) {
-            $form->addDescription($description);
+            return;
         }
+
+        if (Str::isEmpty($description)) {
+            return;
+        }
+
+        $form->addElement('note', 'bogus', [
+            'decorators' => ['ViewHelper'],
+            'value' => (new DisplayFormElement(new Callout(CalloutType::Info, $description)))->render(),
+        ]);
     }
 }
