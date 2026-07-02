@@ -8,12 +8,14 @@ namespace Icinga\Forms\Authentication;
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\AuthenticationHook;
+use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
+use Icinga\Authentication\TwoFactorState;
 use Icinga\Authentication\User\ExternalBackend;
-use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\User;
+use Icinga\Web\Form\Element\LoginRedirect;
 use Icinga\Web\RememberMe;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
@@ -26,6 +28,7 @@ use ipl\Web\Common\FormUid;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Compat\FormDecorator\CheckboxDecorator;
 use ipl\Web\Compat\FormDecorator\DescriptionDecorator;
+use Throwable;
 
 /**
  * Form for user authentication
@@ -44,6 +47,9 @@ class LoginForm extends CompatForm
     public function __construct()
     {
         $this->setAttribute('name', 'form_login');
+        // Use a unique id so loader.js doesn't restore focus to the submit button
+        // of a subsequently rendered form that would match the same selector.
+        $this->setAttribute('id', 'login-form');
     }
 
     protected function assemble(): void
@@ -99,43 +105,21 @@ class LoginForm extends CompatForm
             'label'               => $this->translate('Login')
         ]);
 
-        $this->addElement('hidden', 'redirect', ['value' => Url::fromRequest()->getParam('redirect')]);
-    }
-
-    /**
-     * Compute the post-login redirect URL
-     *
-     * @return Url
-     *
-     * @throws HttpBadRequestException If the redirect url is external
-     */
-    public function createRedirectUrl(): Url
-    {
-        $redirect = null;
-        if ($this->hasBeenAssembled) {
-            $redirect = $this->getElement('redirect')->getValue();
-        }
-
-        if (empty($redirect) || str_contains($redirect, 'authentication/logout')) {
-            $redirect = static::REDIRECT_URL;
-        }
-
-        $redirectUrl = Url::fromPath($redirect);
-        if ($redirectUrl->isExternal()) {
-            throw new HttpBadRequestException('Redirect to an external host is not allowed');
-        }
-
-        return $redirectUrl;
+        $this->addElement(new LoginRedirect('redirect', ['value' => Url::fromRequest()->getParam('redirect')]));
     }
 
     /**
      * Authenticate the user and redirect on success, or display an error message on failure
      *
      * Skips external backends and applies the configured default domain when the
-     * username contains no domain. On success, persists the RememberMe cookie when
-     * requested, triggers registered {@see AuthenticationHook}s, and redirects to
-     * the URL returned by {@see createRedirectUrl()}. On failure, adds an
-     * appropriate error message to the form and calls {@see onError()}.
+     * username contains no domain. If the user is enrolled in a two-factor method,
+     * stores the challenge in the session and redirects to the two-factor challenge
+     * page instead of completing login immediately; optionally persists the
+     * RememberMe record at this point so it can be issued after the challenge
+     * succeeds. On full success, persists the RememberMe cookie when requested,
+     * triggers registered {@see AuthenticationHook}s, and redirects to the URL
+     * returned by {@see LoginRedirect::getUrl()}. On failure, adds an appropriate
+     * error message to the form and calls {@see onError()}.
      *
      * @return void
      */
@@ -151,13 +135,54 @@ class LoginForm extends CompatForm
         $password = $this->getElement('password')->getValue();
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
+            try {
+                $twoFactor = TwoFactorHook::loadEnrolled($user);
+            } catch (Throwable $e) {
+                $this->logAndShowError($e, $this->translate(
+                    'Two-factor authentication is currently unavailable: {error}. Contact your administrator.',
+                ));
+
+                return;
+            }
+
+            if ($twoFactor !== null) {
+                $twoFactorState = new TwoFactorState(Session::getSession());
+                $twoFactorState->challenge($user);
+                Logger::info(
+                    'User "%s" has been challenged for two-factor verification using method "%s"',
+                    $user->getUsername(),
+                    $twoFactor->getCanonicalName(),
+                );
+
+                if ($this->getElement('rememberme')->isChecked()) {
+                    try {
+                        $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
+                        $rememberMe->persist();
+                        $twoFactorState->setRememberMeCookieData($rememberMe->getCookie()->getValue());
+                    } catch (Throwable $e) {
+                        Logger::error('Failed to let user "%s" stay logged in: %s', $user->getUsername(), $e);
+                    }
+                }
+
+                Session::getSession()->refreshId();
+
+                $redirectUrl = Url::fromPath('authentication/twofactor');
+                if ($redirect = Url::fromRequest()->getParam('redirect')) {
+                    $redirectUrl->setParam('redirect', $redirect);
+                }
+
+                $this->setRedirectUrl($redirectUrl);
+
+                return;
+            }
+
             $auth->setAuthenticated($user);
             $response = Icinga::app()->getResponse();
             if ($this->getElement('rememberme')->isChecked()) {
                 try {
                     $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
-                    $response->setCookie($rememberMe->getCookie());
                     $rememberMe->persist();
+                    $response->setCookie($rememberMe->getCookie());
                 } catch (Exception $e) {
                     Logger::error('Failed to let user "%s" stay logged in: %s', $user->getUsername(), $e);
                 }
@@ -167,7 +192,9 @@ class LoginForm extends CompatForm
             AuthenticationHook::triggerLogin($user);
 
             $response->setRerenderLayout();
-            $this->setRedirectUrl($this->createRedirectUrl());
+            /** @var LoginRedirect $redirectElement */
+            $redirectElement = $this->getElement('redirect');
+            $this->setRedirectUrl($redirectElement->getUrl());
 
             return;
         }

@@ -98,9 +98,21 @@ class RememberMe
      *
      * @return static
      */
-    public static function fromCookie()
+    public static function fromCookie(): static
     {
-        $data = explode('|', $_COOKIE[static::COOKIE]);
+        return static::fromCookieData($_COOKIE[static::COOKIE]);
+    }
+
+    /**
+     * Create the remember me component from cookie data
+     *
+     * @param string $data The cookie data
+     *
+     * @return static
+     */
+    public static function fromCookieData(string $data): static
+    {
+        $data = explode('|', $data);
         $iv = base64_decode(array_pop($data));
 
         $select = (new Select())
@@ -135,6 +147,7 @@ class RememberMe
 
         $rememberMe->username = $rs->username;
         $rememberMe->encryptedPassword = $data[0];
+        $rememberMe->expiresAt = strtotime($rs->expires_at);
 
         return $rememberMe;
     }
@@ -296,6 +309,23 @@ class RememberMe
         ]);
 
         return $this;
+    }
+
+    /**
+     * Remove all remember me entries for the given user from the database
+     *
+     * @param string $username
+     *
+     * @return void
+     */
+    public static function removeAllByUsername(string $username): void
+    {
+        $rememberMe = new static();
+        if (! $rememberMe->hasDb()) {
+            return;
+        }
+
+        $rememberMe->getDb()->delete(static::TABLE, ['username = ?' => $username]);
     }
 
     /**
