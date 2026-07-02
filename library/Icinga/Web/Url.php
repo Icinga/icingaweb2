@@ -6,8 +6,10 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Icinga;
-use Icinga\Exception\ProgrammingError;
 use Icinga\Data\Filter\Filter;
+use Icinga\Exception\ProgrammingError;
+use InvalidArgumentException;
+use ipl\Stdlib\Str;
 
 /**
  * Url class that provides convenient access to parameters, allows to modify query parameters and
@@ -180,10 +182,11 @@ class Url
             return $urlObject;
         }
 
-        $urlParts = parse_url($url);
+        $urlParts = self::parseUrl($url, $request);
         if ((isset($urlParts['scheme']) && $urlParts['scheme'] !== $request->getScheme())
             || (isset($urlParts['host']) && $urlParts['host'] !== $request->getServer('SERVER_NAME'))
             || (isset($urlParts['port']) && $urlParts['port'] != $request->getServer('SERVER_PORT'))
+            || (isset($urlParts['default_port']) && $urlParts['default_port'] != $request->getServer('SERVER_PORT'))
         ) {
             $urlObject->setIsExternal();
         }
@@ -788,6 +791,75 @@ class Url
         }
 
         return $url;
+    }
+
+    /**
+     * Parse url using {@see parse_url} in a safe manner
+     *
+     * - Backslashes are normalized to forward slashes to mitigate bypass of protocol relative detection.
+     * - Colons in paths lead to false positive port detection in various PHP versions which is why the
+     *   given $url is always parsed with a scheme and host.
+     * - A default_port component will be set according to the request's scheme if a port component isn't
+     *   present but a host component is.
+     *
+     * @param string $url
+     * @param Request $request
+     *
+     * @return array{
+     *     scheme?: string,
+     *     host?: string,
+     *     port?: int,
+     *     user?: string,
+     *     pass?: string,
+     *     path?: string,
+     *     query?: string,
+     *     fragment?: string,
+     *     default_port?: int
+     * }
+     *
+     * @throws InvalidArgumentException In case the request's scheme is not http or https
+     */
+    private static function parseUrl(string $url, Request $request): array
+    {
+        // Normalize backslashes to forward slashes as a browser would do,
+        // otherwise the checks below might fail
+        $url = strtr($url, '\\', '/');
+
+        // Collapse runs of leading slashes so a browser-style protocol-relative
+        // URL like `///evil.host/p` is recognized as pointing to a host
+        // (and thus flagged external) rather than rejected by parse_url
+        $url = preg_replace('#^/{2,}#', '//', $url);
+
+        $partsToRemove = [];
+        if (Str::startsWith($url, '//')) {
+            $partsToRemove['scheme'] = true;
+            $url = 'scheme:' . $url;
+        } elseif (Str::startsWith($url, '/')) {
+            $partsToRemove['scheme'] = true;
+            $partsToRemove['host'] = true;
+            $url = 'scheme://host' . $url;
+        }
+
+        $parts = parse_url($url);
+        if ($parts === false) {
+            return [];
+        }
+
+        $parts = array_diff_key($parts, $partsToRemove);
+        if (isset($parts['host']) && ! isset($parts['port'])) {
+            switch ($request->getScheme()) {
+                case 'https':
+                    $parts['default_port'] = 443;
+                    break;
+                case 'http':
+                    $parts['default_port'] = 80;
+                    break;
+                default:
+                    throw new InvalidArgumentException('Unsupported scheme: ' . $request->getScheme());
+            }
+        }
+
+        return $parts;
     }
 
     public function __clone()
