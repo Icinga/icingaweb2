@@ -1,4 +1,0 @@
-<h2><?= $this->translate('Plugin Output') ?></h2>
-<div id="check-output-<?= $this->escape(str_replace(' ', '-', $object->check_command)) ?>" class="collapsible" data-visible-height="100">
-    <?= $this->pluginOutput($object->output . "\n" . $object->long_output, false, $object->check_command) ?>
-</div>
