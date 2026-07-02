@@ -79,17 +79,17 @@ class TwoFactorEnrollmentForm extends CompatForm
             return;
         }
 
-        $method = $this->getPopulatedValue(static::METHOD);
+        $methodIdentifier = $this->getPopulatedValue(static::METHOD);
 
         // getPopulatedValue() returns the raw "Please choose" value before
         // the select element normalizes an empty string to null.
-        if ($method === null || $method === '' || ! array_key_exists($method, $methods)) {
+        if ($methodIdentifier === null || $methodIdentifier === '' || ! array_key_exists($methodIdentifier, $methods)) {
             return;
         }
 
-        $twoFactor = TwoFactorHook::fromName($method);
+        $twoFactor = TwoFactorHook::fromCanonicalName($methodIdentifier);
 
-        $configFieldset = new FieldsetElement($twoFactor->getName());
+        $configFieldset = new FieldsetElement($methodIdentifier);
         $this->addElement($configFieldset);
 
         try {
@@ -98,18 +98,18 @@ class TwoFactorEnrollmentForm extends CompatForm
             $this->logAndShowError(
                 $e,
                 $this->translate('Two-factor method "%s" failed to assemble enrollment form elements: {error}'),
-                $twoFactor->getName(),
+                $methodIdentifier,
             );
 
             return;
         }
 
-        if ($configFieldset->getName() !== $twoFactor->getName()) {
+        if ($configFieldset->getName() !== $methodIdentifier) {
             throw new LogicException(sprintf(
                 '%s::assembleEnrollmentFormElements() must not rename the fieldset. The name "%s" is used'
                 . ' as the element key in onSuccess() to retrieve the fieldset, but it was changed to "%s".',
                 $twoFactor::class,
-                $twoFactor->getName(),
+                $methodIdentifier,
                 $configFieldset->getName(),
             ));
         }
@@ -126,12 +126,13 @@ class TwoFactorEnrollmentForm extends CompatForm
 
     protected function onSuccess(): void
     {
-        $twoFactor = TwoFactorHook::fromName($this->getValue(static::METHOD));
+        $methodIdentifier = $this->getValue(static::METHOD);
+        $twoFactor = TwoFactorHook::fromCanonicalName($methodIdentifier);
 
         switch ($this->getPressedSubmitElement()?->getName()) {
             case static::SUBMIT_ENROLL:
                 /** @var FieldsetElement $configFieldset */
-                $configFieldset = $this->getElement($twoFactor->getName());
+                $configFieldset = $this->getElement($methodIdentifier);
                 try {
                     if (! $twoFactor->enroll($this->user, $configFieldset)) {
                         $this->onError();
@@ -143,7 +144,7 @@ class TwoFactorEnrollmentForm extends CompatForm
                     $this->logAndShowError(
                         $e,
                         $this->translate('Could not enroll in two-factor method "%s": {error}'),
-                        $twoFactor->getName(),
+                        $methodIdentifier,
                     );
 
                     return;
@@ -157,7 +158,7 @@ class TwoFactorEnrollmentForm extends CompatForm
                     $this->logAndShowError(
                         $e,
                         $this->translate('Could not unenroll from two-factor method "%s": {error}'),
-                        $twoFactor->getName(),
+                        $methodIdentifier,
                     );
 
                     return;

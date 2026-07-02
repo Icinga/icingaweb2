@@ -156,7 +156,7 @@ class TwoFactorChallengeForm extends CompatForm
             Logger::info(
                 'User "%s" passed two-factor verification using method "%s"',
                 $user->getUsername(),
-                $twoFactor->getName(),
+                $twoFactor->getCanonicalName(),
             );
             Auth::getInstance()->setAuthenticated($user);
 
@@ -187,7 +187,7 @@ class TwoFactorChallengeForm extends CompatForm
         Logger::warning(
             'Two-factor verification failed for user "%s" using method "%s"',
             $user->getUsername(),
-            $twoFactor->getName(),
+            $twoFactor->getCanonicalName(),
         );
         $this->getElement(static::TOKEN)->addMessage($this->translate('Token is invalid!'));
     }

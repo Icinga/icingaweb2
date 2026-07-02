@@ -61,24 +61,24 @@ abstract class TwoFactorHook implements TwoFactor
     }
 
     /**
-     * Get the implementation with the given name
+     * Get the implementation with the given canonical name
      *
-     * @param string $name The machine-readable name of the desired implementation,
-     *   as returned by {@see TwoFactor::getName()}
+     * @param string $canonicalName The globally unique identifier of the desired implementation,
+     *   as returned by {@see getCanonicalName()}
      *
      * @return static The matching implementation
      *
      * @throws RuntimeException If no such implementation is registered
      */
-    public static function fromName(string $name): static
+    public static function fromCanonicalName(string $canonicalName): static
     {
         foreach (static::all() as $method) {
-            if ($method->getName() === $name) {
+            if ($method->getCanonicalName() === $canonicalName) {
                 return $method;
             }
         }
 
-        throw new RuntimeException(sprintf('No two-factor method found with name "%s"', $name));
+        throw new RuntimeException(sprintf('No two-factor method found with name "%s"', $canonicalName));
     }
 
     /**
@@ -117,14 +117,33 @@ abstract class TwoFactorHook implements TwoFactor
     }
 
     /**
-     * Yield display names indexed by machine-readable method name
+     * Yield display names indexed by the globally unique method identifier
      *
      * @return Generator<string, string>
      */
     public static function yieldMethods(): Generator
     {
         foreach (static::all() as $method) {
-            yield $method->getName() => $method->getDisplayName();
+            yield $method->getCanonicalName() => $method->getDisplayName();
         }
+    }
+
+    /**
+     * Get the globally unique identifier for this 2FA method
+     *
+     * Combines the providing module's name with {@see getName()}, e.g. 'mymodule/totp',
+     * so that two modules may register a method using the same {@see getName()} without
+     * colliding. Falls back to the plain {@see getName()} for hook classes that are not
+     * part of a module namespace.
+     *
+     * @return string
+     */
+    final public function getCanonicalName(): string
+    {
+        if ($module = $this->getModule()?->getName()) {
+            return sprintf('%s/%s', $module, $this->getName());
+        }
+
+        return $this->getName();
     }
 }

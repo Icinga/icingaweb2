@@ -151,7 +151,7 @@ class LoginForm extends CompatForm
                 Logger::info(
                     'User "%s" has been challenged for two-factor verification using method "%s"',
                     $user->getUsername(),
-                    $twoFactor->getName(),
+                    $twoFactor->getCanonicalName(),
                 );
 
                 if ($this->getElement('rememberme')->isChecked()) {

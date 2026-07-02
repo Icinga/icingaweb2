@@ -16,15 +16,15 @@ use ipl\Html\FormElement\FieldsetElement;
 interface TwoFactor
 {
     /**
-     * Get the unique machine-readable identifier for this 2FA method
+     * Get the machine-readable identifier for this 2FA method
      *
-     * Used as a stable key to look up the implementation by name, e.g. via
-     * {@see TwoFactorHook::fromName()}.
+     * Combined with the providing module's name to form the globally unique identifier
+     * returned by {@see TwoFactorHook::getCanonicalName()}.
      *
-     * @return string Lowercase identifier for this method, e.g. 'totp'. Must be globally
-     *   unique across all registered implementations. A duplicate logs a warning and
-     *   overwrites the earlier registration. Must be a valid HTML `name` attribute value,
-     *   because it's used as the fieldset name in the enrollment form.
+     * @return string Lowercase identifier for this method, e.g. 'totp'. Must only be
+     *   unique among the methods registered by the same module. Must be a valid HTML
+     *   `name` attribute value, because it is part of the fieldset name in
+     *   {@see TwoFactorEnrollmentForm} via {@see TwoFactorHook::getCanonicalName()}.
      */
     public function getName(): string;
 
@@ -94,8 +94,9 @@ interface TwoFactor
      *
      * @param User $user The user being enrolled
      * @param FieldsetElement $fieldset The method-specific fieldset to add elements to.
-     *   Implementations must not rename this element. Its name must equal {@see getName()}
-     *   or a {@see LogicException} is thrown by {@see TwoFactorEnrollmentForm}.
+     *   Implementations must not rename this element. Its name must equal
+     *   {@see TwoFactorHook::getCanonicalName()} or a {@see LogicException} is thrown by
+     *   {@see TwoFactorEnrollmentForm}.
      *
      * @return void
      */
