@@ -11,17 +11,24 @@ use Icinga\Authentication\PasswordPolicy;
  */
 abstract class PasswordPolicyHook implements PasswordPolicy
 {
-    /** @var string Hook name *(
-    protected const HOOK_NAME = 'PasswordPolicy';
+    use HookEssentials {
+        HookEssentials::all as private hookEssentialsAll;
+    }
+
+    protected static function getHookName(): string
+    {
+        return 'PasswordPolicy';
+    }
 
     /**
-     * Register password policy
+     * Get whether the hook always runs without a permission check
      *
-     * @return void
+     * Password policies are a system hook and should always run for every user
+     * regardless of the user's permission to access the module.
      */
-    public static function register(): void
+    protected static function isAlwaysRun(): bool
     {
-        Hook::register(self::HOOK_NAME, static::class, static::class);
+        return true;
     }
 
     /**
@@ -31,10 +38,7 @@ abstract class PasswordPolicyHook implements PasswordPolicy
      */
     public static function all(): array
     {
-        $passwordPolicies = [];
-        foreach (Hook::all('PasswordPolicy') as $class => $policy) {
-            $passwordPolicies[$class] = $policy->getName();
-        }
+        $passwordPolicies = array_map(fn ($policy) => $policy->getName(), static::hookEssentialsAll());
         asort($passwordPolicies);
 
         return $passwordPolicies;
