@@ -35,7 +35,7 @@ abstract class TwoFactorHook implements TwoFactor
     /**
      * Get all registered implementations sorted alphabetically by their display name
      *
-     * @return list<static>
+     * @return list<TwoFactorHook>
      */
     final public static function all(): array
     {
@@ -92,14 +92,14 @@ abstract class TwoFactorHook implements TwoFactor
      *
      * @param User $user The user to check for
      *
-     * @return ?static The enrolled implementation, or null if the user is not enrolled in
+     * @return ?TwoFactorHook The enrolled implementation, or null if the user is not enrolled in
      *   any registered method
      *
      * @throws Throwable If any registered implementation's {@see TwoFactor::isEnrolled()} throws
      */
-    final public static function loadEnrolled(User $user): ?static
+    final public static function loadEnrolled(User $user): ?self
     {
-        foreach (static::all() as $method) {
+        foreach (self::all() as $method) {
             try {
                 $enrolled = $method->isEnrolled($user);
             } catch (Throwable $e) {
@@ -123,7 +123,7 @@ abstract class TwoFactorHook implements TwoFactor
      */
     final public static function yieldMethods(): Generator
     {
-        foreach (static::all() as $method) {
+        foreach (self::all() as $method) {
             yield $method->getCanonicalName() => $method->getDisplayName();
         }
     }
