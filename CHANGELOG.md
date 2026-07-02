@@ -67,6 +67,33 @@ to trace permission and access issues.
 * Fix browser timezone information being lost [#5357](https://github.com/Icinga/icingaweb2/pull/5357)
 * Log user roles [#5311](https://github.com/Icinga/icingaweb2/pull/5311)
 
+### What's New in Version 2.12.7
+
+You can find all issues related to this release on our
+[Roadmap](https://github.com/Icinga/icingaweb2/milestone/87?closed=1).
+
+#### Security Fixes
+
+This release fixes a low-risk open redirect vulnerability that could redirect
+users with a non-default locale to attacker-controlled URLs after authentication.
+
+* Prevent open redirects during login [GHSA-w7c2-xjv9-q8fv](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-w7c2-xjv9-q8fv)
+
+#### Monitoring Module Moves On
+
+The monitoring module has been moved out of the Icinga Web core repository
+and is now maintained separately at
+[icinga/icingaweb2-module-monitoring](https://github.com/Icinga/icingaweb2-module-monitoring).
+It enters maintenance mode and will only receive security fixes going forward.
+The recommended successor is [Icinga DB Web](https://github.com/Icinga/icingaweb2-module-icingadb).
+
+For package-based installations, the monitoring module is not removed
+outright: it is shipped as a separate package `icingaweb2-module-monitoring`,
+which the `icingaweb2` package depends on, so existing installations will
+continue to work after an upgrade without manual intervention.
+
+* Remove monitoring module [#5458](https://github.com/Icinga/icingaweb2/pull/5487)
+
 ### What's New in Version 2.12.6
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/86?closed=1).
