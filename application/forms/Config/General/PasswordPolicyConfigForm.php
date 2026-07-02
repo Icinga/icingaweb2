@@ -5,9 +5,13 @@
 
 namespace Icinga\Forms\Config\General;
 
+use Exception;
 use Icinga\Application\Hook\PasswordPolicyHook;
 use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Web\Form;
+use ipl\Web\Common\CalloutType;
+use ipl\Web\Compat\DisplayFormElement;
+use ipl\Web\Widget\Callout;
 
 /**
  * Configuration form for password policy selection
@@ -38,6 +42,22 @@ class PasswordPolicyConfigForm extends Form
                 'multiOptions' => $options,
             ]
         );
+
+        try {
+            PasswordPolicyHelper::create();
+        } catch (Exception $e) {
+            $this->addElement(
+                'note',
+                'bogus',
+                [
+                    'decorators' => ['ViewHelper'],
+                    'value' => (new DisplayFormElement(new Callout(
+                        CalloutType::Error,
+                        t('There was a problem loading the configured password policy.'),
+                    )))->render(),
+                ]
+            );
+        }
 
         return $this;
     }

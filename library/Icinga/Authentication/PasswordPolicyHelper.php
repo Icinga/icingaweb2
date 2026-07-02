@@ -12,6 +12,9 @@ use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\IcingaException;
 use Icinga\Web\Form;
+use ipl\Web\Common\CalloutType;
+use ipl\Web\Compat\DisplayFormElement;
+use ipl\Web\Widget\Callout;
 use LogicException;
 
 class PasswordPolicyHelper
@@ -49,10 +52,7 @@ class PasswordPolicyHelper
         }
 
         try {
-            $canonicalName = Config::app()
-                ->get(static::CONFIG_SECTION, static::CONFIG_KEY, static::DEFAULT_PASSWORD_POLICY);
-
-            $passwordPolicy = PasswordPolicyHook::fromCanonicalName($canonicalName);
+            $passwordPolicy = static::create();
 
             // getElement() may return null if the element does not exist, causing this call to fail.
             $form->getElement($newPasswordElementName)->addValidator(
@@ -70,26 +70,29 @@ class PasswordPolicyHelper
                 'note',
                 'bogus',
                 [
-                    'decorators' => [
-                        'ViewHelper',
-                        [['HtmlTag#text' => 'HtmlTag'], ['tag' => 'div']],
-                        [
-                            ['HtmlTag#i' => 'HtmlTag'],
-                            [
-                                'tag'       => 'i',
-                                'class'     => 'form-notification-icon icon fa fa-circle-exclamation',
-                                'placement' => 'prepend',
-                            ],
-                        ],
-                        [['HtmlTag#div' => 'HtmlTag'], ['tag' => 'div', 'class' => 'form-notifications error']],
-                    ],
-                    'value' => t(
-                        'There was a problem loading the configured password policy. '
-                        . 'Please contact your administrator.'
-                    ),
+                    'decorators' => ['ViewHelper'],
+                    'value' => (new DisplayFormElement(new Callout(
+                        CalloutType::Error,
+                        t(
+                            'There was a problem loading the configured password policy. '
+                            . 'Please contact your administrator.'
+                        ),
+                    )))->render(),
                 ]
             );
         }
+    }
+
+    /**
+     * Create an instance of the currently configured {@link PasswordPolicy}
+     *
+     * @return PasswordPolicy
+     */
+    public static function create(): PasswordPolicy
+    {
+        $canonicalName = Config::app()
+            ->get(static::CONFIG_SECTION, static::CONFIG_KEY, static::DEFAULT_PASSWORD_POLICY);
+        return PasswordPolicyHook::fromCanonicalName($canonicalName);
     }
 
     /**
