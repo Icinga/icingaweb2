@@ -75,7 +75,82 @@ class UrlTest extends BaseTestCase
 
     public function testWhetherProtocolRelativeUrlsAreDetectedAsBeingExternal()
     {
+        $this->getRequestMock()->shouldReceive('getServer')->with("SERVER_NAME")->andReturn('localhost')
+            ->shouldReceive('getServer')->with("SERVER_PORT")->andReturn('8080');
+
         $this->assertTrue(Url::fromPath('//testhost/path/to/my/url.html')->isExternal());
+        $this->assertTrue(Url::fromPath('\\/testhost/path/to/my/url.html')->isExternal());
+        $this->assertTrue(Url::fromPath('\\\\testhost/path/to/my/url.html')->isExternal());
+        $this->assertTrue(Url::fromPath('/\\testhost/path/to/my/url.html')->isExternal());
+        $this->assertTrue(Url::fromPath('//testhost.com/path')->isExternal());
+        $this->assertTrue(Url::fromPath('\\/testhost.com/path')->isExternal());
+        $this->assertTrue(Url::fromPath('\\\\testhost.com/path')->isExternal());
+        $this->assertTrue(Url::fromPath('/\\testhost.com/path')->isExternal());
+        $this->assertTrue(Url::fromPath('//testhost')->isExternal());
+        $this->assertTrue(Url::fromPath('\\/testhost')->isExternal());
+        $this->assertTrue(Url::fromPath('\\\\testhost')->isExternal());
+        $this->assertTrue(Url::fromPath('/\\testhost')->isExternal());
+    }
+
+    public function testWhetherFromPathIsAffectedByFalsePositivePortDetection()
+    {
+        $this->getRequestMock()->shouldReceive('getServer')->with("SERVER_NAME")->andReturn('localhost')
+            ->shouldReceive('getServer')->with("SERVER_PORT")->andReturn('8080');
+
+        $this->assertTrue(Url::fromPath('//localhost/path:8080')->isExternal());
+    }
+
+    public function testWhetherUrlsImplyingTheDefaultPortAreExternalOnNonStandardServerPort()
+    {
+        $this->getRequestMock()->shouldReceive('getServer')->with("SERVER_NAME")->andReturn('localhost')
+            ->shouldReceive('getServer')->with("SERVER_PORT")->andReturn('8080');
+
+        $this->assertTrue(Url::fromPath('//localhost/path')->isExternal());
+    }
+
+    public function testWhetherInternalPathsAreNotExternalOnNonStandardServerPort()
+    {
+        $this->getRequestMock()->shouldReceive('getServer')->with("SERVER_NAME")->andReturn('localhost')
+            ->shouldReceive('getServer')->with("SERVER_PORT")->andReturn('8080');
+
+        $this->assertNotTrue(Url::fromPath('/path/to/url.html')->isExternal());
+    }
+
+    public function testWhetherInternalUrlsAreNotExternalOnTheStandardHttpsPort()
+    {
+        $this->getRequestMock()->shouldReceive('getServer')->with("SERVER_NAME")->andReturn('localhost')
+            ->shouldReceive('getServer')->with("SERVER_PORT")->andReturn('443')
+            ->shouldReceive('getScheme')->andReturn('https');
+
+        $this->assertNotTrue(Url::fromPath('/path/to/url.html')->isExternal());
+        $this->assertNotTrue(Url::fromPath('https://localhost/path/to/url.html')->isExternal());
+    }
+
+    public function testWhetherUrlsWithMultipleAtSymbolsCannotForgeTheHost()
+    {
+        $this->getRequestMock()->shouldReceive('getServer')->with("SERVER_NAME")->andReturn('localhost')
+            ->shouldReceive('getServer')->with("SERVER_PORT")->andReturn('80');
+
+        // parse_url binds the final `@` as user/host separator, so the
+        // effective host is the trailing label (evil.host), not localhost.
+        $this->assertTrue(Url::fromPath('//localhost@evil.host/path')->isExternal());
+        $this->assertTrue(Url::fromPath('//user@trusted.host@evil.host/path')->isExternal());
+        $this->assertSame('evil.host', Url::fromPath('//user@trusted.host@evil.host/path')->getHost());
+    }
+
+    public function testWhetherUrlsWithExtraLeadingSlashesAreRecognizedAsExternal()
+    {
+        $this->getRequestMock()->shouldReceive('getServer')->with("SERVER_NAME")->andReturn('localhost')
+            ->shouldReceive('getServer')->with("SERVER_PORT")->andReturn('80');
+
+        // Browsers collapse leading slashes and navigate to the host,
+        // so Url::fromPath must agree and flag these as external rather
+        // than (silently) drop the host because parse_url rejects the input
+        foreach (['///evil.host/path', '////evil.host/path', '/////evil.host/path'] as $input) {
+            $url = Url::fromPath($input);
+            $this->assertTrue($url->isExternal(), $input . ' should be external');
+            $this->assertSame('evil.host', $url->getHost(), $input . ' host should be evil.host');
+        }
     }
 
     public function testWhetherGetAbsoluteUrlReturnsTheGivenUsernameAndPassword()
@@ -176,11 +251,9 @@ class UrlTest extends BaseTestCase
      */
     public function testWhetherFromPathProperlyRecognizesTheBaseUrl()
     {
-        $url = Url::fromPath(
-            '/path/to/my/test/url.html',
-            array(),
-            Mockery::mock(array('getBaseUrl' => '/path/to'))
-        );
+        $this->getRequestMock()->shouldReceive('getBaseUrl')->andReturn('/path/to');
+
+        $url = Url::fromPath('/path/to/my/test/url.html');
 
         $this->assertEquals(
             '/path/to/my/test/url.html',
