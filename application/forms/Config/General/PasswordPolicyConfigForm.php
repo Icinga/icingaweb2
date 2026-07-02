@@ -12,7 +12,7 @@ use Icinga\Web\Form;
 /**
  * Configuration form for password policy selection
  *
- * This form is not used directly but as subform for the {@link GeneralConfigForm}.
+ * This form is not used directly but as subform for the {@see GeneralConfigForm}.
  */
 class PasswordPolicyConfigForm extends Form
 {

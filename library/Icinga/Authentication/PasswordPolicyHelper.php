@@ -95,13 +95,13 @@ class PasswordPolicyHelper
     }
 
     /**
-     * Create a {@link PasswordPolicy} instance from the given class name.
+     * Create a {@see PasswordPolicy} instance from the given class name.
      *
      * @param class-string<PasswordPolicy> $passwordPolicyClass
      *
      * @return PasswordPolicy
      *
-     * @throws ConfigurationError If class does not exist or does not implement {@link PasswordPolicy}
+     * @throws ConfigurationError If class does not exist or does not implement {@see PasswordPolicy}
      */
     public static function createPolicy(string $passwordPolicyClass): PasswordPolicy
     {
