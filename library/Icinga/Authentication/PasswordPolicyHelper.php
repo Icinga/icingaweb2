@@ -38,8 +38,7 @@ class PasswordPolicyHelper
      * @throws LogicException If the old password element is specified but does not exist in the form
      * @throws ConfigurationError If the password policy class is misconfigured
      */
-    public static function apply(
-        Form $form,
+    public static function apply(Form $form,
         string $newPasswordElementName,
         ?string $oldPasswordElementName = null
     ): void {
@@ -51,11 +50,8 @@ class PasswordPolicyHelper
         }
 
         try {
-            $passwordPolicyClass = Config::app()->get(
-                static::CONFIG_SECTION,
-                static::CONFIG_KEY,
-                static::DEFAULT_PASSWORD_POLICY,
-            );
+            $passwordPolicyClass = Config::app()
+                ->get(static::CONFIG_SECTION, static::CONFIG_KEY, static::DEFAULT_PASSWORD_POLICY);
 
             $passwordPolicy = static::create($passwordPolicyClass);
             // getElement() may return null if the element does not exist, causing this call to fail.
