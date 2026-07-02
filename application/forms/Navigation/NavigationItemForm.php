@@ -5,8 +5,12 @@
 
 namespace Icinga\Forms\Navigation;
 
+use Icinga\Util\Csp;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
+use ipl\Web\Common\CalloutType;
+use ipl\Web\Compat\DisplayFormElement;
+use ipl\Web\Widget\Callout;
 
 class NavigationItemForm extends Form
 {
@@ -47,6 +51,24 @@ class NavigationItemForm extends Form
                 ]
             ]
         );
+
+        if (Csp::isEnabled() && ! Csp::isNavigationEnabled()) {
+            $this->addElement(
+                'note',
+                'csp_warning',
+                [
+                    'decorators' => ['ViewHelper'],
+                    'value' => (new DisplayFormElement(new Callout(
+                        CalloutType::Info,
+                        $this->translate(
+                            'Any external url is not guaranteed to work as expected. '
+                            . 'Please make sure to check the Content-Security-Policy configuration.',
+                        ),
+                        $this->translate('Navigation items are not enabled in the CSP configuration'),
+                    )))->render(),
+                ]
+            );
+        }
 
         $this->addElement(
             'textarea',
