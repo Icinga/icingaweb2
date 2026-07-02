@@ -32,7 +32,7 @@ class PasswordPolicyHelper
      * Load the configured password policy, fall back to a warning if the policy configuration is invalid.
      * On success, attaches the policy validator to the given new-password form element.
      *
-     * @param Form $form
+     * @param Form $form The form containing the elements and to attach the elements to
      * @param string $newPasswordElementName
      * @param string|null $oldPasswordElementName Optional name of the old password form element for comparison
      *
@@ -40,7 +40,8 @@ class PasswordPolicyHelper
      *
      * @throws LogicException If the old password element is specified but does not exist in the form
      */
-    public static function apply(Form $form,
+    public static function apply(
+        Form $form,
         string $newPasswordElementName,
         ?string $oldPasswordElementName = null
     ): void {
