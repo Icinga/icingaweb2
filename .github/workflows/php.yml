@@ -7,8 +7,6 @@ on:
       - support/*
       - release/*
   pull_request:
-    branches:
-      - main
 
 jobs:
   lint:
@@ -23,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout code base
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -104,7 +102,7 @@ jobs:
 
       - name: Setup dependencies
         run: |
-          composer init -n --require mockery/mockery:* --require ipl/i18n:v0.2.2 --require ipl/web:v0.10.2
+          composer init -n --require 'mockery/mockery:*' --require 'ipl/i18n:^0.2.2' --require 'ipl/web:^0.10.2'
           composer config platform.php 7.2.9
           composer install -n --no-progress
           git clone --depth 1 --branch ${{ matrix.php-thirdparty-version || env.php-thirdparty-version }} https://github.com/Icinga/icinga-php-thirdparty.git vendor/icinga-php-thirdparty
