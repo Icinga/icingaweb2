@@ -33,17 +33,13 @@ class PasswordPolicyConfigForm extends Form
         }
 
         $elementName = sprintf('%s_%s', PasswordPolicyHelper::CONFIG_SECTION, PasswordPolicyHelper::CONFIG_KEY);
-        $this->addElement(
-            'select',
-            $elementName,
-            [
-                'description'  => $this->translate('Enforce password requirements for new passwords'),
-                'label'        => $this->translate('Password Policy'),
-                'value'        => PasswordPolicyHelper::DEFAULT_PASSWORD_POLICY,
-                'multiOptions' => $options,
-                'autosubmit'   => true,
-            ]
-        );
+        $this->addElement('select', $elementName, [
+            'description'  => $this->translate('Enforce password requirements for new passwords'),
+            'label'        => $this->translate('Password Policy'),
+            'value'        => PasswordPolicyHelper::DEFAULT_PASSWORD_POLICY,
+            'multiOptions' => $options,
+            'autosubmit'   => true,
+        ]);
 
         // FIXME: All this selectedPolicy thing does is to mimic getPopulatedValue
         $selectedPolicyName = $this->getRequestData()[$elementName] ?? null;
@@ -59,17 +55,13 @@ class PasswordPolicyConfigForm extends Form
                 $selectedPolicy = $currentPolicy;
             }
         } catch (Exception $e) {
-            $this->addElement(
-                'note',
-                'bogus',
-                [
-                    'decorators' => ['ViewHelper'],
-                    'value' => (new DisplayFormElement(new Callout(
-                        CalloutType::Error,
-                        t('There was a problem loading the configured password policy.'),
-                    )))->render(),
-                ]
-            );
+            $this->addElement('note', 'bogus', [
+                'decorators' => ['ViewHelper'],
+                'value' => (new DisplayFormElement(new Callout(
+                    CalloutType::Error,
+                    t('There was a problem loading the configured password policy.'),
+                )))->render(),
+            ]);
         }
 
         if ($selectedPolicy !== null) {
