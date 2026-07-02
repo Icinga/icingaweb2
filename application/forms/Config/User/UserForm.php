@@ -48,7 +48,7 @@ class UserForm extends RepositoryForm
                 'label'     => $this->translate('Password')
             )
         );
-        PasswordPolicyHelper::applyPasswordPolicy($this, 'password');
+        PasswordPolicyHelper::apply($this, 'password');
 
         $this->setTitle($this->translate('Add a new user'));
         $this->setSubmitLabel($this->translate('Add'));

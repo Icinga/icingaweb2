@@ -36,12 +36,11 @@ class PasswordPolicyHelper
      * @throws LogicException If the old password element is specified but does not exist in the form
      * @throws ConfigurationError If the password policy class is misconfigured
      */
- 
-    public static function applyPasswordPolicy(
+    public static function apply(
         Form $form,
         string $newPasswordElementName,
         ?string $oldPasswordElementName = null
-    ) {
+    ): void {
         if ($oldPasswordElementName !== null && $form->getElement($oldPasswordElementName) === null) {
             throw new LogicException(sprintf(
                 t('Form element "%s" was specified but does not exist in the form'),
@@ -56,12 +55,12 @@ class PasswordPolicyHelper
                 static::DEFAULT_PASSWORD_POLICY
             );
 
-            $passwordPolicy = static::createPolicy($passwordPolicyClass);
+            $passwordPolicy = static::create($passwordPolicyClass);
             // getElement() may return null if the element does not exist, causing this call to fail.
             $form->getElement($newPasswordElementName)->addValidator(
                 new PasswordPolicyValidator($passwordPolicy, $oldPasswordElementName)
             );
-            static::addPasswordPolicyDescription($form, $passwordPolicy);
+            static::addDescription($form, $passwordPolicy);
         } catch (ConfigurationError $e) {
             Logger::error($e);
 
@@ -100,12 +99,8 @@ class PasswordPolicyHelper
      *
      * @throws ConfigurationError If class does not exist or does not implement {@see PasswordPolicy}
      */
-    public static function createPolicy(string $passwordPolicyClass): PasswordPolicy
+    public static function create(string $passwordPolicyClass): PasswordPolicy
     {
-        if ($passwordPolicyClass === static::DEFAULT_PASSWORD_POLICY) {
-            return new $passwordPolicyClass;
-        }
-
         if (! class_exists($passwordPolicyClass)) {
             throw new ConfigurationError(
                 t('Password policy class %s does not exist'),
@@ -114,10 +109,9 @@ class PasswordPolicyHelper
         }
 
         $passwordPolicy = new $passwordPolicyClass();
-
         if (! $passwordPolicy instanceof PasswordPolicy) {
             throw new ConfigurationError(
-                $this->translate('Password policy %s is not an instance of %s'),
+                t('Password policy %s is not an instance of %s'),
                 $passwordPolicyClass,
                 PasswordPolicy::class
             );
@@ -133,7 +127,7 @@ class PasswordPolicyHelper
      * @param PasswordPolicy $passwordPolicy
      * @return void
      */
-    public static function addPasswordPolicyDescription(Form $form, PasswordPolicy $passwordPolicy): void
+    public static function addDescription(Form $form, PasswordPolicy $passwordPolicy): void
     {
         $description = $passwordPolicy->getDescription();
 

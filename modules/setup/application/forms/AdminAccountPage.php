@@ -231,7 +231,7 @@ class AdminAccountPage extends Form
                     'autocomplete'      => 'new-password'
                 ]
             );
-            PasswordPolicyHelper::applyPasswordPolicy($this, 'new_user_password');
+            PasswordPolicyHelper::apply($this, 'new_user_password');
 
             $this->addElement(
                 'password',
