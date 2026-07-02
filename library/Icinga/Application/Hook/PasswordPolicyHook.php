@@ -34,6 +34,13 @@ abstract class PasswordPolicyHook implements PasswordPolicy
         return true;
     }
 
+    /**
+     * Get all registered password policies
+     *
+     * Password policies are sorted by their display name
+     *
+     * @return PasswordPolicyHook[]
+     */
     final public static function all(): array
     {
         $policies = [];

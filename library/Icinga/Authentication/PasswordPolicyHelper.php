@@ -9,7 +9,6 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\PasswordPolicyHook;
 use Icinga\Application\Logger;
-use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\IcingaException;
 use Icinga\Web\Form;
 use ipl\Stdlib\Str;
@@ -19,6 +18,14 @@ use ipl\Web\Widget\Callout;
 use LogicException;
 use Throwable;
 
+/**
+ * Helper class for password policy configuration
+ *
+ * Allows for loading and applying the configured password policy.
+ * The password policy is loaded from the application configuration and attached
+ * to the given form element. The description of the policy is also added to the
+ * form. In case of an error, a warning is displayed to the user.
+ */
 class PasswordPolicyHelper
 {
     /** @var string Default password policy class */
@@ -31,8 +38,11 @@ class PasswordPolicyHelper
     public const CONFIG_KEY = 'password_policy';
 
     /**
-     * Load the configured password policy, fall back to a warning if the policy configuration is invalid.
-     * On success, attaches the policy validator to the given new-password form element.
+     * Apply the configured password policy to the given form element
+     *
+     * Load the configured password policy, fall back to a warning if the policy configuration
+     * is invalid. The description of the policy is also added to the form. On success,
+     * attaches the policy validator to the given new-password form element.
      *
      * @param Form $form The form containing the elements and to attach the elements to
      * @param string $newPasswordElementName
@@ -95,7 +105,8 @@ class PasswordPolicyHelper
     }
 
     /**
-     * Retrieve the description from the given password policy and add it to the form for display to the user.
+     * Retrieve the description from the given password policy and add it to the
+     * form for display to the user.
      *
      * @param Form $form
      * @param PasswordPolicy $passwordPolicy
