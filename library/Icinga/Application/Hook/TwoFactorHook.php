@@ -22,12 +22,12 @@ abstract class TwoFactorHook implements TwoFactor
         all as private essentialsAll;
     }
 
-    protected static function getHookName(): string
+    final protected static function getHookName(): string
     {
         return 'TwoFactor';
     }
 
-    protected static function isAlwaysRun(): bool
+    final protected static function isAlwaysRun(): bool
     {
         return true;
     }
@@ -37,7 +37,7 @@ abstract class TwoFactorHook implements TwoFactor
      *
      * @return list<TwoFactorHook>
      */
-    public static function all(): array
+    final public static function all(): array
     {
         $methods = [];
         foreach (self::essentialsAll() as $method) {
@@ -70,7 +70,7 @@ abstract class TwoFactorHook implements TwoFactor
      *
      * @throws RuntimeException If no such implementation is registered
      */
-    public static function fromCanonicalName(string $canonicalName): self
+    final public static function fromCanonicalName(string $canonicalName): self
     {
         foreach (self::all() as $method) {
             if ($method->getCanonicalName() === $canonicalName) {
@@ -97,7 +97,7 @@ abstract class TwoFactorHook implements TwoFactor
      *
      * @throws Throwable If any registered implementation's {@see TwoFactor::isEnrolled()} throws
      */
-    public static function loadEnrolled(User $user): ?self
+    final public static function loadEnrolled(User $user): ?self
     {
         foreach (self::all() as $method) {
             try {
@@ -121,7 +121,7 @@ abstract class TwoFactorHook implements TwoFactor
      *
      * @return Generator<string, string>
      */
-    public static function yieldMethods(): Generator
+    final public static function yieldMethods(): Generator
     {
         foreach (self::all() as $method) {
             yield $method->getCanonicalName() => $method->getDisplayName();
