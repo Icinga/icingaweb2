@@ -5,6 +5,7 @@
 
 namespace Icinga\Forms\Account;
 
+use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Data\Filter\Filter;
 use Icinga\User;
@@ -40,25 +41,27 @@ class ChangePasswordForm extends Form
             'password',
             'old_password',
             [
-                'label'         => $this->translate('Old Password'),
-                'required'      => true
+                'label'    => $this->translate('Old Password'),
+                'required' => true
             ]
         );
         $this->addElement(
             'password',
             'new_password',
             [
-                'label'         => $this->translate('New Password'),
-                'required'      => true
+                'label'     => $this->translate('New Password'),
+                'required'  => true
             ]
         );
+        PasswordPolicyHelper::apply($this, 'new_password', 'old_password');
+
         $this->addElement(
             'password',
             'new_password_confirmation',
             [
-                'label'         => $this->translate('Confirm New Password'),
-                'required'      => true,
-                'validators'        => [
+                'label'      => $this->translate('Confirm New Password'),
+                'required'   => true,
+                'validators' => [
                     ['identical', false, ['new_password']]
                 ]
             ]
