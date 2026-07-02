@@ -18,7 +18,7 @@ abstract class PasswordPolicyHook implements PasswordPolicy
         all as private essentialsAll;
     }
 
-    protected static function getHookName(): string
+    final protected static function getHookName(): string
     {
         return 'PasswordPolicy';
     }
@@ -29,12 +29,12 @@ abstract class PasswordPolicyHook implements PasswordPolicy
      * Password policies are a system hook and should always run for every user
      * regardless of the user's permission to access the module.
      */
-    protected static function isAlwaysRun(): bool
+    final protected static function isAlwaysRun(): bool
     {
         return true;
     }
 
-    public static function all(): array
+    final public static function all(): array
     {
         $policies = [];
         foreach (static::essentialsAll() as $policy) {
