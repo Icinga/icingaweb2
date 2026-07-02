@@ -5,6 +5,7 @@
 
 namespace Icinga\Authentication;
 
+use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\PasswordPolicyHook;
 use Icinga\Application\Logger;
@@ -12,7 +13,6 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\IcingaException;
 use Icinga\Web\Form;
 use LogicException;
-use RuntimeException;
 
 class PasswordPolicyHelper
 {
@@ -36,7 +36,6 @@ class PasswordPolicyHelper
      * @return void
      *
      * @throws LogicException If the old password element is specified but does not exist in the form
-     * @throws ConfigurationError If the password policy class is misconfigured
      */
     public static function apply(Form $form,
         string $newPasswordElementName,
@@ -50,17 +49,22 @@ class PasswordPolicyHelper
         }
 
         try {
-            $passwordPolicyClass = Config::app()
+            $canonicalName = Config::app()
                 ->get(static::CONFIG_SECTION, static::CONFIG_KEY, static::DEFAULT_PASSWORD_POLICY);
 
-            $passwordPolicy = static::create($passwordPolicyClass);
+            $passwordPolicy = PasswordPolicyHook::fromCanonicalName($canonicalName);
+
             // getElement() may return null if the element does not exist, causing this call to fail.
             $form->getElement($newPasswordElementName)->addValidator(
                 new PasswordPolicyValidator($passwordPolicy, $oldPasswordElementName)
             );
             static::addDescription($form, $passwordPolicy);
-        } catch (ConfigurationError $e) {
-            Logger::error($e);
+        } catch (Exception $e) {
+            Logger::error(
+                "Failed to instantiate configured password policy: %s\n%s",
+                $e,
+                IcingaException::getConfidentialTraceAsString($e),
+            );
 
             $form->addElement(
                 'note',
@@ -86,30 +90,6 @@ class PasswordPolicyHelper
                 ]
             );
         }
-    }
-
-    /**
-     * Create a {@see PasswordPolicy} instance from the given a canonical name
-     *
-     * @param class-string<PasswordPolicy> $canonicalName
-     *
-     * @return PasswordPolicy
-     */
-    public static function create(string $canonicalName): PasswordPolicy
-    {
-        try {
-            $passwordPolicy = PasswordPolicyHook::fromCanonicalName($canonicalName);
-        } catch (RuntimeException $e) {
-            Logger::error(
-                "Failed to get configured password policy: %s\n%s",
-                $e,
-                IcingaException::getConfidentialTraceAsString($e),
-            );
-
-            return static::create(static::DEFAULT_PASSWORD_POLICY);
-        }
-
-        return $passwordPolicy;
     }
 
     /**
