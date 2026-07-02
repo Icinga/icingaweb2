@@ -12,11 +12,14 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\LoginButton;
 use Icinga\Authentication\LoginButtonForm;
+use Icinga\Authentication\TwoFactorState;
 use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Forms\Authentication\LoginForm;
+use Icinga\Forms\Authentication\TwoFactorChallengeForm;
 use Icinga\Web\Helper\CookieHelper;
 use Icinga\Web\RememberMe;
+use Icinga\Web\Session;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\LoginPage;
 use ipl\Html\Contract\Form;
@@ -47,6 +50,10 @@ class AuthenticationController extends CompatController
      */
     public function loginAction()
     {
+        if ((new TwoFactorState(Session::getSession()))->isChallenged()) {
+            $this->redirectNow($this->withRedirect('authentication/twofactor'));
+        }
+
         $icinga = Icinga::app();
         if (($requiresSetup = $icinga->requiresSetup()) && $icinga->setupTokenExists()) {
             $this->redirectNow(Url::fromPath('setup'));
@@ -96,7 +103,7 @@ class AuthenticationController extends CompatController
                     $this->httpBadRequest('Redirect to an external host is not allowed');
                 }
             } else {
-                $redirectUrl = $form->createRedirectUrl();
+                $redirectUrl = Url::fromPath(LoginForm::REDIRECT_URL);
             }
 
             $this->redirectNow($redirectUrl);
@@ -139,7 +146,7 @@ class AuthenticationController extends CompatController
             }
         }
 
-        // Suppress the rendering of controls bar
+        // Suppress the rendering of controls bar.
         $this->view->compact = true;
         $this->setTitle($this->translate('Icinga Web 2 Login'));
         $this->addContent(new LoginPage($form, $loginButtons, $requiresSetup));
@@ -170,5 +177,77 @@ class AuthenticationController extends CompatController
 
             $this->redirectToLogin();
         }
+    }
+
+    /**
+     * Render the two-factor authentication challenge page
+     *
+     * @return void
+     */
+    public function twofactorAction(): void
+    {
+        $session = Session::getSession();
+        $twoFactorState = new TwoFactorState($session);
+        if (! $twoFactorState->isChallenged()) {
+            $this->redirectToLogin();
+        }
+
+        $form = (new TwoFactorChallengeForm())
+            ->setCsrfCounterMeasureId($session->getId())
+            ->setAction(Url::fromRequest()->getAbsoluteUrl())
+            ->on(Form::ON_SUBMIT, function (TwoFactorChallengeForm $form) {
+                if ($redirectUrl = $form->getRedirectUrl()) {
+                    $this->redirectNow($redirectUrl);
+                }
+            })
+            ->on(Form::ON_SENT, function (TwoFactorChallengeForm $form) use ($session, $twoFactorState) {
+                // ON_SENT because cancel is not the primary submit button and never
+                // triggers ON_SUBMIT. CSRF is checked manually. Without it a forged
+                // request could destroy the session and drop the 2FA challenge.
+                $csrfValid = $form->getElement('CSRFToken')->isValid();
+                $cancelPressed =
+                    $form->getPressedSubmitElement()?->getName() === TwoFactorChallengeForm::SUBMIT_CANCEL;
+
+                if ($csrfValid && $cancelPressed) {
+                    // The login flow may have persisted a remember-me record before
+                    // issuing the challenge. Remove it now since the challenge was
+                    // canceled and the cookie was never delivered to the browser.
+                    if ($cookieData = $twoFactorState->getRememberMeCookieData()) {
+                        $data = explode('|', $cookieData);
+                        $iv = base64_decode(array_pop($data));
+                        (new RememberMe())->remove(bin2hex($iv));
+                    }
+
+                    $session->purge();
+                    $this->redirectNow($this->withRedirect('authentication/login'));
+                }
+            })
+            ->handleRequest($this->getServerRequest());
+
+        $this->setTitle($this->translate('Icinga Web 2 Two-Factor Auth'));
+
+        // Suppress the rendering of controls bar.
+        $this->view->compact = true;
+        $this->addContent(new LoginPage($form));
+    }
+
+    /**
+     * Build a URL for the given path that carries forward the redirect destination
+     *
+     * Copies the `redirect` query parameter from the current request, if present, so the
+     * post-authentication destination is not lost during multi-step authentication transitions.
+     *
+     * @param string $path Path to build the URL from
+     *
+     * @return Url
+     */
+    protected function withRedirect(string $path): Url
+    {
+        $url = Url::fromPath($path);
+        if ($redirect = $this->params->get('redirect')) {
+            $url->setParam('redirect', $redirect);
+        }
+
+        return $url;
     }
 }
