@@ -41,19 +41,6 @@ config_resource = "icingaweb_db"
 module_path = "/usr/share/icingaweb2/modules"
 ```
 
-### Security Configuration <a id="configuration-general-security"></a>
-
-| Option           | Description                                                                                                                           |
-|------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| use\_strict\_csp | **Optional.** Set this to `1` to enable strict [Content Security Policy](20-Advanced-Topics.md#advanced-topics-csp). Defaults to `0`. |
-
-Example:
-
-```
-[security]
-use_strict_csp = "1"
-```
-
 ### Logging Configuration <a id="configuration-general-logging"></a>
 
 Option                   | Description
@@ -86,4 +73,33 @@ Example:
 [themes]
 disabled = "1"
 default = "high-contrast"
+```
+
+## Security Configuration <a id="configuration-security"></a>
+
+Navigate into **Configuration > Application > Security**.
+
+This configuration is stored in the `config.ini` file in `/etc/icingaweb2`.
+
+### Content Security Policy Configuration <a id="configuration-security-csp"></a>
+
+| Option                  | Description                                                                                                                                               |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| use\_strict\_csp        | **Optional.** Set this to `1` to enable strict [Content Security Policy](20-Advanced-Topics.md#advanced-topics-csp). Defaults to `0`.                     |
+| use\_custom\_csp        | **Optional.** Set this to `1` to enable the use of the user defined Content Security Policy. Defaults to `0`.                                             |
+| custom\_csp             | **Optional.** Specifies the user defined Content Security Policy. Overrides the automatically generated one. Only used if `use_custom_csp` is set to `1`. |
+| csp\_enable\_modules    | **Optional.** Specifies if modules should be included in the generated Content Security Policy. Defaults to `1`.                                          |
+| csp\_enable\_dashboards | **Optional.** Specifies if dashboards should be included in the generated Content Security Policy. Defaults to `1`.                                       |
+| csp\_enable\_navigation | **Optional.** Specifies if navigation menu items should be included in the generated Content Security Policy. Defaults to `1`.                            |
+
+Example:
+
+```
+[security]
+use_strict_csp = "1"
+use_custom_csp = "0"
+custom_csp = "frame-src https://example.com"
+csp_enable_modules = "1"
+csp_enable_dashboards = "1"
+csp_enable_navigation = "1"
 ```

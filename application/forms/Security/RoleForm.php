@@ -548,6 +548,9 @@ class RoleForm extends RepositoryForm
             'config/general' => [
                 'description' => t('Allow to adjust the general configuration')
             ],
+            'config/security' => [
+                'description' => t('Allow to adjust the security configuration')
+            ],
             'config/modules' => [
                 'description' => t('Allow to enable/disable and configure modules')
             ],

@@ -117,24 +117,35 @@ systemctl reload httpd
 
 Elevate your security standards to an even higher level by enabling the [Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) for Icinga Web.
 Enabling strict CSP can prevent your Icinga Web environment from becoming a potential target of [Cross-Site Scripting (XSS)](https://developer.mozilla.org/en-US/docs/Glossary/Cross-site_scripting)
-and data injection attacks. After enabling this feature Icinga Web defines all the required CSP headers. Subsequently,
+and data injection attacks. After enabling this feature, Icinga Web defines all the required CSP headers. Subsequently,
 only content coming from Icinga Web's own origin is accepted, inline JS is prohibited, and inline CSS is accepted only
 if it contains the nonce set in the response header. 
 
 We decided against enabling this by default as we cannot guarantee that all the modules out there will function correctly.
 Therefore, you have to manually enable this policy explicitly and accept the risks that this might break some of
-the Icinga Web modules. Icinga Web and all it's components listed below, on the other hand, fully support strict CSP. If
+the Icinga Web modules. Icinga Web and all its components listed below, on the other hand, fully support strict CSP. If
 that's not the case, please submit an issue on GitHub in the respective repositories.
 
-To enable the strict content security policy navigate to **Configuration > Application** and toggle "Enable strict content security policy",
-or set the `use_strict_csp` in the `config.ini`.
+To enable the strict content security policy, navigate to **Configuration > Application > Security** and toggle
+"Send CSP header", or set `use_strict_csp` in the `config.ini`.
 
-```
-vim /etc/icingaweb2/config.ini
+Icinga does its best to support user-defined content like navigation items and dashboard dashlets. If that behavior is
+not desired, you can disable both by disabling the corresponding feature in the **Security page** at
+**Configuration > Application > Security** or by setting `csp_enable_navigation` or `csp_enable_dashboards` in the
+`config.ini`. Note that while you can see all navigation items and dashboards, the actual CSP is generated per user
+and does not include the full set of directives shown.
 
-[security]
-use_strict_csp = "1"
-```
+If it is necessary to add extra entries to the CSP header, you can do so by using the `CspHook` hook,
+read more about it [here](60-Hooks.md#hooks-csp). This is the preferred way to extend the CSP header
+because it is an additive and modular approach.
+
+Alternatively you can define your own CSP header by setting the `custom_csp` in the `config.ini` or by configuring the
+`Custom CSP` section at **Configuration > Application > Security** which will completely overwrite the generated
+CSP header.
+Therefore, you are responsible for ensuring that the CSP header is valid, does not contain insecure directives,
+is kept up to date with updates or changes to the icingaweb application or its components, and works for every user.
+When creating your own CSP header, you can use the placeholder `{style_nonce}` in place of the
+automatically generated nonce. This will be replaced with the actual nonce when a user loads icingaweb.
 
 Here is a list of all Icinga Web components that are capable of strict CSP.
 
@@ -155,6 +166,17 @@ Here is a list of all Icinga Web components that are capable of strict CSP.
 | Icinga Web AWS Integration        | [v1.1.0](https://github.com/Icinga/icingaweb2-module-aws/releases/tag/v1.1.0)             |
 | Icinga Web vSphere Integration    | [v1.8.0](https://github.com/Icinga/icingaweb2-module-vspheredb/releases/tag/v1.8.0)       |
 
+```
+vim /etc/icingaweb2/config.ini
+
+[security]
+use_strict_csp = "1"
+csp_enable_modules = "1"
+csp_enable_dashboards = "1"
+csp_enable_navigation = "1"
+use_custom_csp = "0"
+custom_csp = ""
+```
 
 ## Advanced Authentication Tips <a id="advanced-topics-authentication-tips"></a>
 
@@ -318,7 +340,7 @@ which may help you already:
 
 If you are automating the installation of Icinga Web 2, you may want to skip the wizard and do things yourself.
 These are the steps you'd need to take assuming you are using MySQL/MariaDB. If you are using PostgreSQL please adapt
-accordingly. Note you need to have successfully completed the Icinga 2 installation, installed the Icinga Web 2 packages
+accordingly. Note you need to have successfully completed the Icinga 2 installation, installed the Icinga Web 2 packages,
 and all the other steps described above first.
 
 1. Install PHP dependencies: `php`, `php-intl`, `php-imagick`, `php-gd`, `php-mysql`, `php-curl`, `php-mbstring` used
