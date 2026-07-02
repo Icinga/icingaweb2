@@ -15,10 +15,15 @@ class AnyPasswordPolicy extends PasswordPolicyHook
 {
     use Translation;
 
-    public function getName(): string
+    public function getDisplayName(): string
     {
         // Policy is named 'None' to indicate that no password policy is enforced and any password is accepted.
         return $this->translate('None');
+    }
+
+    public function getName(): string
+    {
+        return 'any';
     }
 
     public function getDescription(): ?string

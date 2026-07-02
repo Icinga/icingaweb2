@@ -22,9 +22,14 @@ class CommonPasswordPolicy extends PasswordPolicyHook
 {
     use Translation;
 
-    public function getName(): string
+    final public function getDisplayName(): string
     {
         return $this->translate('Common');
+    }
+
+    final public function getName(): string
+    {
+        return 'common';
     }
 
     public function getDescription(): ?string

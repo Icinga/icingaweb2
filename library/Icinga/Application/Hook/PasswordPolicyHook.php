@@ -3,8 +3,9 @@
 
 namespace Icinga\Application\Hook;
 
-use Icinga\Application\Hook;
+use Icinga\Application\Logger;
 use Icinga\Authentication\PasswordPolicy;
+use RuntimeException;
 
 /**
  * Base class for hookable password policies
@@ -12,7 +13,7 @@ use Icinga\Authentication\PasswordPolicy;
 abstract class PasswordPolicyHook implements PasswordPolicy
 {
     use HookEssentials {
-        HookEssentials::all as private hookEssentialsAll;
+        all as private essentialsAll;
     }
 
     protected static function getHookName(): string
@@ -31,16 +32,58 @@ abstract class PasswordPolicyHook implements PasswordPolicy
         return true;
     }
 
-    /**
-     * Return all registered password policies sorted by name
-     *
-     * @return array<string, string>
-     */
     public static function all(): array
     {
-        $passwordPolicies = array_map(fn ($policy) => $policy->getName(), static::hookEssentialsAll());
-        asort($passwordPolicies);
+        $policies = [];
+        foreach (static::essentialsAll() as $policy) {
+            if (! ($policy instanceof PasswordPolicy)) {
+                Logger::warning(sprintf('Password policy %s is not an instance of PasswordPolicy', get_class($policy)));
 
-        return $passwordPolicies;
+                continue;
+            }
+
+            $policies[] = $policy;
+        }
+
+        usort($policies, fn (PasswordPolicy $a, PasswordPolicy $b) => $a->getDisplayName() <=> $b->getDisplayName());
+
+        return $policies;
+    }
+
+    /**
+     * Get the globally unique identifier for this password policy
+     *
+     * Combines the providing module's name with {@see getDisplayName()}, e.g. 'mymodule/password-policy',
+     * so that two modules may register a method using the same {@see getDisplayName()} without
+     * colliding. Falls back to the plain {@see getDisplayName()} for hook classes that are not
+     * part of a module namespace.
+     *
+     * @return string
+     */
+    final public function getCanonicalName(): string
+    {
+        if ($module = $this->getModule()?->getName()) {
+            return sprintf('%s/%s', $module, $this->getName());
+        }
+
+        return $this->getName();
+    }
+
+    /**
+     * Get a password policy instance by its canonical name
+     *
+     * @param string $canonicalName The canonical name of the password policy
+     *
+     * @return static
+     */
+    final public static function fromCanonicalName(string $canonicalName): static
+    {
+        foreach (static::all() as $policy) {
+            if ($policy->getCanonicalName() === $canonicalName) {
+                return $policy;
+            }
+        }
+
+        throw new RuntimeException("No password policy found for canonical name '$canonicalName'");
     }
 }

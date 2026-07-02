@@ -23,6 +23,11 @@ class PasswordPolicyConfigForm extends Form
 
     public function createElements(array $formData): static
     {
+        $options = [];
+        foreach (PasswordPolicyHook::all() as $policy) {
+            $options[$policy->getName()] = $policy->getDisplayName();
+        }
+
         $this->addElement(
             'select',
             sprintf('%s_%s', PasswordPolicyHelper::CONFIG_SECTION, PasswordPolicyHelper::CONFIG_KEY),
@@ -30,7 +35,7 @@ class PasswordPolicyConfigForm extends Form
                 'description'  => $this->translate('Enforce password requirements for new passwords'),
                 'label'        => $this->translate('Password Policy'),
                 'value'        => PasswordPolicyHelper::DEFAULT_PASSWORD_POLICY,
-                'multiOptions' => PasswordPolicyHook::all()
+                'multiOptions' => $options,
             ]
         );
 

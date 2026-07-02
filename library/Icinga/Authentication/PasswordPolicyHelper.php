@@ -6,19 +6,21 @@
 namespace Icinga\Authentication;
 
 use Icinga\Application\Config;
+use Icinga\Application\Hook\PasswordPolicyHook;
 use Icinga\Application\Logger;
-use Icinga\Application\ProvidedHook\AnyPasswordPolicy;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\IcingaException;
 use Icinga\Web\Form;
 use LogicException;
+use RuntimeException;
 
 class PasswordPolicyHelper
 {
-    /** @var class-string<PasswordPolicy> Default password policy class */
-    public const DEFAULT_PASSWORD_POLICY = AnyPasswordPolicy::class;
+    /** @var string Default password policy class */
+    public const DEFAULT_PASSWORD_POLICY = 'any';
 
     /** @var string INI configuration section for password policy */
-    public const CONFIG_SECTION = 'global';
+    public const CONFIG_SECTION = 'security';
 
     /** @var string INI configuration key for password policy */
     public const CONFIG_KEY = 'password_policy';
@@ -52,7 +54,7 @@ class PasswordPolicyHelper
             $passwordPolicyClass = Config::app()->get(
                 static::CONFIG_SECTION,
                 static::CONFIG_KEY,
-                static::DEFAULT_PASSWORD_POLICY
+                static::DEFAULT_PASSWORD_POLICY,
             );
 
             $passwordPolicy = static::create($passwordPolicyClass);
@@ -91,30 +93,24 @@ class PasswordPolicyHelper
     }
 
     /**
-     * Create a {@see PasswordPolicy} instance from the given class name.
+     * Create a {@see PasswordPolicy} instance from the given a canonical name
      *
-     * @param class-string<PasswordPolicy> $passwordPolicyClass
+     * @param class-string<PasswordPolicy> $canonicalName
      *
      * @return PasswordPolicy
-     *
-     * @throws ConfigurationError If class does not exist or does not implement {@see PasswordPolicy}
      */
-    public static function create(string $passwordPolicyClass): PasswordPolicy
+    public static function create(string $canonicalName): PasswordPolicy
     {
-        if (! class_exists($passwordPolicyClass)) {
-            throw new ConfigurationError(
-                t('Password policy class %s does not exist'),
-                $passwordPolicyClass
+        try {
+            $passwordPolicy = PasswordPolicyHook::fromCanonicalName($canonicalName);
+        } catch (RuntimeException $e) {
+            Logger::error(
+                "Failed to get configured password policy: %s\n%s",
+                $e,
+                IcingaException::getConfidentialTraceAsString($e),
             );
-        }
 
-        $passwordPolicy = new $passwordPolicyClass();
-        if (! $passwordPolicy instanceof PasswordPolicy) {
-            throw new ConfigurationError(
-                t('Password policy %s is not an instance of %s'),
-                $passwordPolicyClass,
-                PasswordPolicy::class
-            );
+            return static::create(static::DEFAULT_PASSWORD_POLICY);
         }
 
         return $passwordPolicy;

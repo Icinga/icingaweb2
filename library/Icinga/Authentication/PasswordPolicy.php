@@ -8,9 +8,19 @@ namespace Icinga\Authentication;
 interface PasswordPolicy
 {
     /**
-     * Get the name of the password policy
+     * Get the displayname of the password policy
      *
      * Displayed when configuring a password policy.
+     *
+     * @return string
+     */
+    public function getDisplayName(): string;
+
+    /**
+     * Get the name of the password policy
+     *
+     * Used to identify the policy in the configuration. This should be unique across
+     * all policies in a module.
      *
      * @return string
      */
