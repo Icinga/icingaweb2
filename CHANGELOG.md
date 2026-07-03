@@ -4,6 +4,155 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.14.0
+
+You can find all issues related to this release on our
+[Roadmap](https://github.com/Icinga/icingaweb2/milestone/88?closed=1).
+
+#### Streamlined Authentication
+
+The authentication process has been reworked to be more reliable. Custom user
+backends now load at the right time, which fixes a long-standing issue where
+they'd get initialized too late to take part in the auth chain. The login
+page got a refresh too, the password field now gets focus after you enter
+your username.
+
+* Streamline authentication process [#5387](https://github.com/Icinga/icingaweb2/pull/5387)
+* Modernize login [#5500](https://github.com/Icinga/icingaweb2/pull/5500)
+* Fix focus on login password [#5504](https://github.com/Icinga/icingaweb2/pull/5504)
+
+#### Two-Factor Authentication
+
+We have added a proper two-factor authentication extension point to Icinga Web.
+Modules can now register a two-factor method, and once a user enrolls in
+one, they get redirected to a token challenge page after password
+authentication before the session is established. Enrollment and
+unenrollment are handled through a new Two-Factor Auth tab in account
+settings.
+
+* Add two-factor authentication extension point [#5514](https://github.com/Icinga/icingaweb2/pull/5514)
+
+#### Password Policies
+
+Administrators can now enforce password policies for database-backed user accounts. Under
+Configuration > Application > General, an administrator can select a policy that applies to
+every form that sets or resets a password, including the account change-password form, the admin
+user create and edit form, and the setup wizard's admin account page.
+
+Two built-in policies ship with this release. None (the default) accepts any password without
+validation. Common requires a minimum of 12 characters with at least one digit, one special
+character, one lowercase letter, and one uppercase letter. The active policy's requirements are
+shown below the password field so users know what to enter before submitting. Third-party
+modules can add their own policies by implementing `PasswordPolicyHook`.
+
+* Implement password policy with hook [#5419](https://github.com/Icinga/icingaweb2/pull/5419)
+
+#### Configurable Content Security Policy
+
+The Content Security Policy header is no longer a hardcoded string. It is
+now assembled from multiple sources, system directives, dashlet frame-src
+entries, navigation item frame-src entries, and any directives contributed
+by installed modules. Administrators who need full control can opt out of
+automatic generation and supply a raw CSP string instead. A style nonce
+placeholder in that string is replaced with the per-request nonce at
+runtime.
+
+A new configuration page under Application settings shows the current
+effective CSP as a table grouped by source, with a basic security analysis
+flagging risky keywords and schemes. Forms that create dashlets or
+navigation items now show an info callout when CSP is active but the
+corresponding loader is disabled, so users know why an external URL might
+be blocked.
+
+* Allow custom CSP header [#5477](https://github.com/Icinga/icingaweb2/pull/5477)
+
+#### INI-backed Config Forms for Developers
+
+Developers can now build INI-based configuration forms with less
+boilerplate. The form reads the existing config file, populates the form
+fields automatically, and writes the results back on submit. If writing to
+the file fails, the form shows an error with the full file contents so the
+admin can copy and paste it manually.
+
+* Add an INI-backed configuration form [#5480](https://github.com/Icinga/icingaweb2/pull/5480)
+
+#### Hook Essentials
+
+We reduced the boilerplate that every hook implementation had to carry on
+its own. We also extended the PDF export hook with methods for retrieving
+the first registered implementation and converting HTML to PDF, and updated
+all callers to use the new interface.
+
+* Reduce hook implementation boilerplate [#5474](https://github.com/Icinga/icingaweb2/pull/5474)
+* Add missing methods to the PDF export hook [#5491](https://github.com/Icinga/icingaweb2/pull/5491)
+* Update PDF export hook callers to use the new interface [#5526](https://github.com/Icinga/icingaweb2/pull/5526)
+
+#### JavaScript Asset Management
+
+Module and library JavaScript bundles are now optimized more aggressively.
+The optimizer now handles multiple module definitions in the same file,
+dependency resolution is more efficient, and library assets can be served
+directly via static URLs, so no more workarounds needed for that. The
+relative-time behavior has also moved into ipl-web so all components share
+one implementation.
+
+* Enhance JavaScript dependency optimization [#5276](https://github.com/Icinga/icingaweb2/pull/5276)
+* Take multiple module definitions in the same file into account [#5255](https://github.com/Icinga/icingaweb2/pull/5255)
+* Allow access to a library's JS and CSS assets via static URLs [#5274](https://github.com/Icinga/icingaweb2/pull/5274)
+* Move relative time behavior to ipl-web [#5461](https://github.com/Icinga/icingaweb2/pull/5461)
+
+#### Less Compilation Migrated to ipl-web
+
+We moved Less compilation to the ipl-web library. Nothing changes for end
+users, but if you're a module author relying on the Less pipeline, the
+compiler now lives in a different place.
+
+* Migrate Less compilation to ipl-web [#5492](https://github.com/Icinga/icingaweb2/pull/5492)
+
+#### Modal Improvements
+
+Modals got a few fixes around closing behavior. Pressing Escape will no
+longer close a modal if the key event was already handled by something
+else, and a modal with an unsaved form will now stay open instead of
+closing unexpectedly. We also fixed the Escape key handler causing the
+modal overlay to wobble.
+
+* Prevent unintentional modal closing [#5501](https://github.com/Icinga/icingaweb2/pull/5501)
+* Do not wobble if Escape has been handled otherwise [#5512](https://github.com/Icinga/icingaweb2/pull/5512)
+* Consider forms changed that don't close the modal [#5525](https://github.com/Icinga/icingaweb2/pull/5525)
+
+#### UI & CSS Fixes
+
+A few visual fixes this release. Line height is a bit more generous now,
+collapsible elements collapse on the y-axis only, the navigation caret
+picks up the background color of its parent item, and file input elements
+from ipl-web now have proper styling. The long-obsolete action link and
+button link CSS classes are also gone.
+
+* Increase line height [#5413](https://github.com/Icinga/icingaweb2/pull/5413)
+* Only collapse the y-axis for collapsible elements [#5456](https://github.com/Icinga/icingaweb2/pull/5456)
+* Apply the same background color to the caret in the navigation item header [#5375](https://github.com/Icinga/icingaweb2/pull/5375)
+* Add styling for file input elements [#4990](https://github.com/Icinga/icingaweb2/pull/4990)
+* Remove obsolete action link and button link CSS classes [#5370](https://github.com/Icinga/icingaweb2/pull/5370)
+
+#### Deprecations
+
+The custom programming error exception class is now deprecated. PHP's
+built-in logic exception covers the same use case and should be used
+instead. Existing code still works, but please start migrating your throw
+sites when you get the chance.
+
+* Deprecate the custom programming error exception [#5511](https://github.com/Icinga/icingaweb2/pull/5511)
+
+### What's New in Version 2.13.1
+
+#### Security Fixes
+
+This release fixes a low-risk open redirect vulnerability that could redirect
+users with a non-default locale to attacker-controlled URLs after authentication.
+
+* Prevent open redirects during login [GHSA-w7c2-xjv9-q8fv](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-w7c2-xjv9-q8fv)
+
 ### What's New in Version 2.13.0
 
 You can find all issues related to this release on our
@@ -66,6 +215,33 @@ to trace permission and access issues.
 
 * Fix browser timezone information being lost [#5357](https://github.com/Icinga/icingaweb2/pull/5357)
 * Log user roles [#5311](https://github.com/Icinga/icingaweb2/pull/5311)
+
+### What's New in Version 2.12.7
+
+You can find all issues related to this release on our
+[Roadmap](https://github.com/Icinga/icingaweb2/milestone/87?closed=1).
+
+#### Security Fixes
+
+This release fixes a low-risk open redirect vulnerability that could redirect
+users with a non-default locale to attacker-controlled URLs after authentication.
+
+* Prevent open redirects during login [GHSA-w7c2-xjv9-q8fv](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-w7c2-xjv9-q8fv)
+
+#### Monitoring Module Moves On
+
+The monitoring module has been moved out of the Icinga Web core repository
+and is now maintained separately at
+[icinga/icingaweb2-module-monitoring](https://github.com/Icinga/icingaweb2-module-monitoring).
+It enters maintenance mode and will only receive security fixes going forward.
+The recommended successor is [Icinga DB Web](https://github.com/Icinga/icingaweb2-module-icingadb).
+
+For package-based installations, the monitoring module is not removed
+outright: it is shipped as a separate package `icingaweb2-module-monitoring`,
+which the `icingaweb2` package depends on, so existing installations will
+continue to work after an upgrade without manual intervention.
+
+* Remove monitoring module [#5458](https://github.com/Icinga/icingaweb2/pull/5487)
 
 ### What's New in Version 2.12.6
 
