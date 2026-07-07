@@ -58,6 +58,15 @@ traces and error reports. Implementations of the contract should mark their own
 
 * Mark TwoFactor::verify() token parameter as sensitive [#5559](https://github.com/Icinga/icingaweb2/pull/5559)
 
+#### ConfigFormEventsHook Deprecation
+
+`Icinga\Application\Hook\ConfigFormEventsHook` is deprecated and will be removed
+in version 2.15. The hook never evolved into a proper implementation, so there
+will be no replacement. Its documentation has been dropped to keep new code from
+depending on it.
+
+* Modernize password policy [#5537](https://github.com/Icinga/icingaweb2/pull/5537)
+
 ### What's New in Version 2.14.0
 
 You can find all issues related to this release on our
