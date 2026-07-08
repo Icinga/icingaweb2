@@ -6,20 +6,25 @@
 namespace Icinga\Controllers;
 
 use Exception;
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Logger;
 use Icinga\Authentication\AdmissionLoader;
+use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Authentication\User\DomainAwareInterface;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Config\User\CreateMembershipForm;
 use Icinga\Forms\Config\User\UserForm;
+use Icinga\Repository\RepositoryMode;
 use Icinga\User;
 use Icinga\Web\Controller\AuthBackendController;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
-use Icinga\Web\Url;
-use Icinga\Web\Widget;
+use Icinga\Web\Session;
+use ipl\Html\Contract\Form as IplForm;
+use ipl\Web\Url;
+use Throwable;
 
 class UserController extends AuthBackendController
 {
@@ -178,60 +183,100 @@ class UserController extends AuthBackendController
     /**
      * Add a user
      */
-    public function addAction()
+    public function addAction(): void
     {
         $this->assertPermission('config/access-control/users');
-        $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
-        $form = new UserForm();
-        $form->setRedirectUrl(Url::fromPath('user/list', ['backend' => $backend->getName()]));
-        $form->setRepository($backend);
-        $form->add()->handleRequest();
 
-        $this->renderForm($form, $this->translate('New User'));
+        /** @var DbUserBackend $backend */
+        $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
+
+        $form = (new UserForm($backend, RepositoryMode::Insert))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->setRedirectUrl(Url::fromPath('user/list', ['backend' => $backend->getName()]))
+            ->on(IplForm::ON_SUBMIT, function (UserForm $form): void {
+                Notification::success($this->translate('User created'));
+                $this->redirectNow($form->getRedirectUrl());
+            })
+            ->on(IplForm::ON_ERROR, function (Throwable $_, UserForm $_form): void {
+                Notification::error($this->translate('User creation failed'));
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
+
+        $this->addTitleTab($this->translate('New User'));
+        $this->addContent($form);
     }
 
     /**
      * Edit a user
      */
-    public function editAction()
+    public function editAction(): void
     {
         $this->assertPermission('config/access-control/users');
-        $userName = $this->params->getRequired('user');
-        $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
 
-        $form = new UserForm();
-        $form->setRedirectUrl(Url::fromPath('user/show', ['backend' => $backend->getName(), 'user' => $userName]));
-        $form->setRepository($backend);
+        /** @var DbUserBackend $backend */
+        $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
+        $userName = $this->params->getRequired('user');
+
+        $form = (new UserForm($backend, RepositoryMode::Update, $userName))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->setRedirectUrl(Url::fromPath('user/show', ['backend' => $backend->getName(), 'user' => $userName]))
+            ->on(IplForm::ON_SUBMIT, function (UserForm $form): void {
+                Notification::success(sprintf($this->translate('User "%s" has been updated'), $form->getIdentifier()));
+
+                /** @var Url $redirect */
+                $redirect = $form->getRedirectUrl();
+                $newName = $form->getValue('user_name');
+                if ($newName !== $form->getIdentifier()) {
+                    $redirect->setParam('user', $newName);
+                }
+
+                $this->sendExtraUpdates(['#col1']);
+                $this->redirectNow($redirect);
+            })
+            ->on(IplForm::ON_ERROR, function (Throwable $_, UserForm $form): void {
+                Notification::error(sprintf($this->translate('Failed to update user "%s"'), $form->getIdentifier()));
+            });
 
         try {
-            $form->edit($userName)->handleRequest();
-        } catch (NotFoundError $_) {
+            $form->handleRequest(ServerRequest::fromGlobals());
+        } catch (NotFoundError) {
             $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
         }
 
-        $this->renderForm($form, $this->translate('Update User'));
+        $this->addTitleTab($this->translate('Update User'));
+        $this->addContent($form);
     }
 
     /**
      * Remove a user
      */
-    public function removeAction()
+    public function removeAction(): void
     {
         $this->assertPermission('config/access-control/users');
-        $userName = $this->params->getRequired('user');
-        $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
 
-        $form = new UserForm();
-        $form->setRedirectUrl(Url::fromPath('user/list', ['backend' => $backend->getName()]));
-        $form->setRepository($backend);
+        /** @var DbUserBackend $backend */
+        $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
+        $userName = $this->params->getRequired('user');
+
+        $form = (new UserForm($backend, RepositoryMode::Delete, $userName))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->setRedirectUrl(Url::fromPath('user/list', ['backend' => $backend->getName()]))
+            ->on(IplForm::ON_SUBMIT, function (UserForm $form): void {
+                Notification::success(sprintf($this->translate('User "%s" has been removed'), $form->getIdentifier()));
+                $this->redirectNow($form->getRedirectUrl());
+            })
+            ->on(IplForm::ON_ERROR, function (Throwable $_, UserForm $form): void {
+                Notification::error(sprintf($this->translate('Failed to remove user "%s"'), $form->getIdentifier()));
+            });
 
         try {
-            $form->remove($userName)->handleRequest();
-        } catch (NotFoundError $_) {
+            $form->handleRequest(ServerRequest::fromGlobals());
+        } catch (NotFoundError) {
             $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
         }
 
-        $this->renderForm($form, $this->translate('Remove User'));
+        $this->addTitleTab($this->translate('Remove User'));
+        $this->addContent($form);
     }
 
     /**
