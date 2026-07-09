@@ -115,6 +115,8 @@ Name                         | Permits
 \*                           | allow everything, including module-specific permissions
 application/announcements    | allow to manage announcements
 application/log              | allow to view the application log
+application/migrations       | allow to apply pending application migrations
+application/sessions         | allow to manage user sessions
 config/\*                    | allow full config access
 config/access-control/\*     | allow to fully manage access control
 config/access-control/groups | allow to manage groups
@@ -124,6 +126,7 @@ config/general               | allow to adjust the general configuration
 config/modules               | allow to enable/disable and configure modules
 config/navigation            | allow to view and adjust shared navigation items
 config/resources             | allow to manage resources
+config/security              | allow to adjust the security configuration
 user/\*                      | allow all account related functionalities
 user/application/stacktraces | allow to adjust in the preferences whether to show stacktraces
 user/password-change         | allow password changes in the account preferences
