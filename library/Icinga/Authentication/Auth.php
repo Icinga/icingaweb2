@@ -22,7 +22,6 @@ use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Session;
-use Icinga\Web\StyleSheet;
 use LogicException;
 use Throwable;
 
@@ -135,28 +134,7 @@ class Auth
     {
         $this->setupUser($user);
 
-        // Reload CSS if the theme changed
-        $themingConfig = Icinga::app()->getConfig()->getSection('themes');
-        $userTheme = $user->getPreferences()->getValue('icingaweb', 'theme');
-        if (! (bool) $themingConfig->get('disabled', false) && $userTheme !== null) {
-            $defaultTheme = $themingConfig->get('default', StyleSheet::DEFAULT_THEME);
-            if ($userTheme !== $defaultTheme) {
-                $this->getResponse()->setReloadCss(true);
-            }
-        }
-
-        // Also reload CSS if the theme mode changed
-        $themeMode = $user->getPreferences()->getValue('icingaweb', 'theme_mode');
-        if ($themeMode && $themeMode !== StyleSheet::DEFAULT_MODE) {
-            $this->getResponse()->setReloadCss(true);
-        }
-
-        // Reload entire layout if the locale changed
-        if (($locale = $user->getPreferences()->getValue('icingaweb', 'language')) !== null) {
-            if (setlocale(LC_ALL, 0) !== $locale && $this->getRequest()->isXmlHttpRequest()) {
-                $this->getResponse()->setHeader('X-Icinga-Redirect-Http', 'yes');
-            }
-        }
+        $this->getResponse()->setHeader('X-Icinga-Redirect-Http', 'yes', true);
 
         $this->setUser($user);
         if ($persist) {
