@@ -1,5 +1,22 @@
 # Hooks
 
+Modules provide hook implementations by extending one of the base classes in
+`Icinga\Application\Hook\`. The class goes in the module's `ProvidedHook` namespace:
+
+```
+library/<ModuleName>/ProvidedHook/<HookName>.php
+```
+
+For Icinga Web to call a hook, it needs to be registered. This happens in the module's `run.php`:
+
+```php
+<?php
+
+use Icinga\Module\Acme\ProvidedHook\MyHook;
+
+MyHook::register();
+```
+
 ## ConfigFormEventsHook
 
 The `ConfigFormEventsHook` allows developers to hook into the handling of configuration forms. It provides three methods:
