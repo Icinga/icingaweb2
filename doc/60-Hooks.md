@@ -17,6 +17,58 @@ use Icinga\Module\Acme\ProvidedHook\MyHook;
 MyHook::register();
 ```
 
+## Writing a Hook <a id="hooks-writing-hook"></a>
+
+Modules can define their own hook types for other modules to implement. The abstract base class goes in
+`library/<ModuleName>/Hook/<HookName>.php`. Use the `HookEssentials` trait and implement `getHookName()`,
+which returns a string that uniquely identifies the hook type:
+
+```php
+<?php
+
+namespace Icinga\Module\Acme\Hook;
+
+use Icinga\Application\Hook\HookEssentials;
+
+abstract class TicketHook
+{
+    use HookEssentials;
+
+    protected static function getHookName(): string
+    {
+        return 'Acme/Ticket';
+    }
+
+    abstract public function createTicket(string $title): string;
+}
+```
+
+The trait provides `all()` and `first()` for retrieving registered implementations,
+`isRegistered()` to check if a hook of this type is already registered, and `register()`
+for implementors to register themselves.
+
+By default, an implementation is skipped for users without the `module/<module-name>` permission of the
+providing module. Override `isAlwaysRun()` to return `true` if the hook should run regardless:
+
+```php
+protected static function isAlwaysRun(): bool
+{
+    return true;
+}
+```
+
+### Implement the new Hook <a id="hooks-implement-new-hook"></a>
+
+Other modules can now provide implementations of the hook. Registration works
+as described earlier, but the class goes in a subnamespace of the implementing
+module's `ProvidedHook` namespace:
+
+```
+library/<ModuleName>/ProvidedHook/Acme/<HookName>.php
+```
+
+Don't forget to register the hook in the `run.php`.
+
 ## ConfigFormEventsHook
 
 The `ConfigFormEventsHook` allows developers to hook into the handling of configuration forms. It provides three methods:
