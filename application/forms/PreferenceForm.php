@@ -98,7 +98,7 @@ class PreferenceForm extends Form
         $currentPreferences = $this->Auth()->getUser()->getPreferences();
         $oldTheme = $currentPreferences->getValue('icingaweb', 'theme');
         $oldMode = $currentPreferences->getValue('icingaweb', 'theme_mode');
-        $oldLocale = $currentPreferences->getValue('icingaweb', 'language');
+        $oldLocale = $currentPreferences->getValue('icingaweb', 'language', 'autodetect');
         $oldTimezone = $currentPreferences->getValue('icingaweb', 'timezone', 'autodetect');
         $defaultTheme = Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME);
 
@@ -129,14 +129,9 @@ class PreferenceForm extends Form
             $this->getResponse()->setReloadCss(true);
         }
 
-        if (($locale = $this->getElement('language')) !== null
-            && $locale->getValue() !== 'autodetect'
-            && $locale->getValue() !== $oldLocale
+        if ((($locale = $this->getElement('language')) !== null && $locale->getValue() !== $oldLocale)
+            || (($timezone = $this->getElement('timezone')) !== null && $timezone->getValue() !== $oldTimezone)
         ) {
-            $this->getResponse()->setHeader('X-Icinga-Redirect-Http', 'yes');
-        }
-
-        if (($timezone = $this->getElement('timezone')) !== null && $timezone->getValue() !== $oldTimezone) {
             $this->getResponse()->setHeader('X-Icinga-Redirect-Http', 'yes', true);
         }
 
