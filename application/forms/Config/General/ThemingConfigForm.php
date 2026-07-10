@@ -60,6 +60,21 @@ class ThemingConfigForm extends Form
             ]
         );
 
+        $this->addElement(
+            'select',
+            'themes_default_mode',
+            [
+                'description'  => $this->translate('The default theme mode', 'Form element description'),
+                'label'        => $this->translate('Default Theme Mode', 'Form element label'),
+                'value'        => StyleSheet::DEFAULT_MODE,
+                'multiOptions' => [
+                    'system' => $this->translate('System'),
+                    'none'   => $this->translate('Dark'),
+                    'light'  => $this->translate('Light'),
+                ],
+            ]
+        );
+
         return $this;
     }
 
@@ -71,6 +86,9 @@ class ThemingConfigForm extends Form
         $values = parent::getValues($suppressArrayNotation);
         if ($values['themes_default'] === '' || $values['themes_default'] === StyleSheet::DEFAULT_THEME) {
             $values['themes_default'] = null;
+        }
+        if ($values['themes_default_mode'] === '' || $values['themes_default_mode'] === StyleSheet::DEFAULT_MODE) {
+            $values['themes_default_mode'] = null;
         }
         if (! $values['themes_disabled']) {
             $values['themes_disabled'] = null;

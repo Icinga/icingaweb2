@@ -189,9 +189,10 @@ class StyleSheet
 
         $mode = 'none';
         if ($auth->isAuthenticated()) {
+            $mode = $themingConfig->get('default_mode', static::DEFAULT_MODE);
             $file = $themePath !== null ? @file_get_contents($themePath) : false;
             if (! $file || strpos($file, self::LIGHT_MODE_IDENTIFIER) !== false) {
-                $mode = $auth->getUser()->getPreferences()->getValue('icingaweb', 'theme_mode', self::DEFAULT_MODE);
+                $mode = $auth->getUser()->getPreferences()->getValue('icingaweb', 'theme_mode', $mode);
             }
         }
 
