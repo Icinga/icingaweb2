@@ -17,6 +17,7 @@ use ipl\Web\Compat\CompatForm;
 use ipl\Web\Compat\DisplayFormElement;
 use ipl\Web\Widget\Callout;
 use LogicException;
+use SensitiveParameter;
 use Throwable;
 
 /**
@@ -70,7 +71,7 @@ class PasswordPolicyHelper
         $newPasswordElement = $form->getElement($newPasswordElementName);
         $newPasswordElement->addValidators([
             new CallbackValidator(function (
-                mixed $value,
+                #[SensitiveParameter] mixed $value,
                 CallbackValidator $validator,
             ) use (
                 $passwordPolicy,
