@@ -208,6 +208,7 @@ use Icinga\Application\Hook\PasswordPolicyHook;
 use ipl\Html\Text;
 use ipl\Html\ValidHtml;
 use ipl\I18n\Translation;
+use SensitiveParameter;
 
 class MyPasswordPolicy extends PasswordPolicyHook
 {
@@ -230,8 +231,10 @@ class MyPasswordPolicy extends PasswordPolicyHook
         );
     }
 
-    public function validate(string $newPassword, ?string $oldPassword = null): array
-    {
+    public function validate(
+        #[SensitiveParameter] string $newPassword,
+        #[SensitiveParameter] ?string $oldPassword = null,
+    ): array {
         $violations = [];
 
         if (strlen($newPassword) < 8) {
