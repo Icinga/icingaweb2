@@ -6,6 +6,13 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ### What's New in Version 2.14.1
 
+#### Password Policy Password Parameters Marked as Sensitive
+
+Password arguments are marked as `#[SensitiveParameter]` to keep them out of
+stack traces.
+
+* Modernize password policy [#5537](https://github.com/Icinga/icingaweb2/pull/5537)
+
 #### Password Policy Moved to the Security Configuration
 
 The password policy setting moved from Configuration > Application > General to

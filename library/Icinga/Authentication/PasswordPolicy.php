@@ -6,6 +6,7 @@
 namespace Icinga\Authentication;
 
 use ipl\Html\ValidHtml;
+use SensitiveParameter;
 
 /**
  * Contract for password policy implementations
@@ -53,5 +54,8 @@ interface PasswordPolicy
      * @return list<string> Empty list if valid. One message per violation describing why
      *   the password was rejected
      */
-    public function validate(string $newPassword, ?string $oldPassword = null): array;
+    public function validate(
+        #[SensitiveParameter] string $newPassword,
+        #[SensitiveParameter] ?string $oldPassword = null,
+    ): array;
 }
