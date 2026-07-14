@@ -35,11 +35,20 @@ class PasswordPolicyConfigForm extends ConfigForm
 
         $defaultPolicy = PasswordPolicyHook::DEFAULT_PASSWORD_POLICY;
         $elementName = sprintf('%s__%s', PasswordPolicyHook::CONFIG_SECTION, PasswordPolicyHook::CONFIG_KEY);
+
+        try {
+            $policies = iterator_to_array(PasswordPolicyHook::yieldPolicies());
+        } catch (Throwable $e) {
+            $this->logAndShowError($e, $this->translate('Could not load password policies: {error}'));
+
+            return;
+        }
+
         $this->addElement('select', $elementName, [
             'class'        => 'autosubmit',
             'description'  => $this->translate('Enforce password requirements for new passwords'),
             'label'        => $this->translate('Password Policy'),
-            'multiOptions' => iterator_to_array(PasswordPolicyHook::yieldPolicies()),
+            'multiOptions' => $policies,
             'value'        => $defaultPolicy,
         ]);
 
