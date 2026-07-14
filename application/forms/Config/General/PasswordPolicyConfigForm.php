@@ -11,6 +11,7 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Exception\IcingaException;
 use Icinga\Web\Form\ConfigForm;
+use ipl\Html\Contract\Form;
 use ipl\Web\Common\FormUid;
 use Throwable;
 
@@ -20,6 +21,8 @@ use Throwable;
 class PasswordPolicyConfigForm extends ConfigForm
 {
     use FormUid;
+
+    protected bool $policiesLoadable = true;
 
     public function __construct(Config $config)
     {
@@ -34,11 +37,27 @@ class PasswordPolicyConfigForm extends ConfigForm
 
         $defaultPolicy = PasswordPolicyHook::DEFAULT_PASSWORD_POLICY;
         $elementName = sprintf('%s__%s', PasswordPolicyHook::CONFIG_SECTION, PasswordPolicyHook::CONFIG_KEY);
+
+        try {
+            $policies = iterator_to_array(PasswordPolicyHook::yieldPolicies());
+        } catch (Throwable $e) {
+            $this->logAndShowError($e, $this->translate('Could not load password policies: {error}'));
+            $this->policiesLoadable = false;
+            // Nothing that could fail validation was added before assembly stopped, so the
+            // form would validate and store, reporting success while nothing was configured.
+            // ON_VALIDATE is emitted after the elements have been validated, making it the
+            // last point that can reject the submit. Disabling the button only prevents to
+            // submit the form via the browser.
+            $this->on(Form::ON_VALIDATE, fn() => $this->isValid = false);
+
+            return;
+        }
+
         $this->addElement('select', $elementName, [
             'class'        => 'autosubmit',
             'description'  => $this->translate('Enforce password requirements for new passwords'),
             'label'        => $this->translate('Password Policy'),
-            'multiOptions' => iterator_to_array(PasswordPolicyHook::yieldPolicies()),
+            'multiOptions' => $policies,
             'value'        => $defaultPolicy,
         ]);
 
@@ -60,5 +79,14 @@ class PasswordPolicyConfigForm extends ConfigForm
         } catch (Throwable) {
             PasswordPolicyHelper::addError($this, true);
         }
+    }
+
+    protected function addRequiredElements(): void
+    {
+        if (! $this->policiesLoadable) {
+            return;
+        }
+
+        parent::addRequiredElements();
     }
 }
