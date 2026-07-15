@@ -60,7 +60,14 @@ class TwoFactorEnrollmentForm extends CompatForm
         $this->addCsrfCounterMeasure();
         $this->addElement($this->createUidElement());
 
-        $methods = iterator_to_array(TwoFactorHook::yieldMethods());
+        try {
+            $methods = iterator_to_array(TwoFactorHook::yieldMethods());
+        } catch (Throwable $e) {
+            $this->logAndShowError($e, $this->translate('Could not load two-factor methods: {error}'));
+
+            return;
+        }
+
         $this->addElement('select', static::METHOD, [
             'label'        => $this->translate('2FA Method'),
             'class'        => 'autosubmit',
