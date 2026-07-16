@@ -5,11 +5,15 @@
 
 namespace Icinga\Controllers;
 
+use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Icinga\Common\Database;
-use Icinga\Web\Notification;
 use Icinga\Web\RememberMe;
 use Icinga\Web\RememberMeUserDevicesList;
+use ipl\Web\Common\CalloutType;
 use ipl\Web\Compat\CompatController;
+use ipl\Web\Widget\Callout;
+use Throwable;
 
 /**
  * MyDevicesController
@@ -49,6 +53,35 @@ class MyDevicesController extends CompatController
     public function indexAction()
     {
         $name = $this->auth->getUser()->getUsername();
+        if (! Config::app()->get('global', 'config_resource')) {
+            if ($this->hasPermission('config/general')) {
+                $errorMessage = $this->translate(
+                    'To establish a valid database connection set the configuration'
+                    . ' Database field in the Application Settings.'
+                );
+            } else {
+                $errorMessage = $this->translate(
+                    'You do not have permission to change this setting. Please contact an administrator.'
+                );
+            }
+
+            if ($this->getRequest()->isApiRequest() || $this->params->get('format') === 'json') {
+                $this->getResponse()->setHttpResponseCode(500);
+                $this->getResponse()->json()
+                    ->setErrorMessage($errorMessage)
+                    ->sendResponse();
+            }
+
+            $this->addContent(new Callout(
+                CalloutType::Error,
+                $errorMessage,
+                $this->translate('The configuration database has not been configured'),
+            ));
+
+            return;
+        }
+
+        $name = $this->auth->getUser()->getUsername();
 
         $data = (new RememberMeUserDevicesList())
             ->setDevicesList(RememberMe::getAllByUsername($name))
@@ -56,12 +89,6 @@ class MyDevicesController extends CompatController
             ->setUrl('my-devices/delete');
 
         $this->addContent($data);
-
-        if (! $this->hasDb()) {
-            Notification::warning(
-                $this->translate("Users can't stay logged in without a database configuration backend")
-            );
-        }
     }
 
     public function deleteAction()
