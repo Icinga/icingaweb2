@@ -188,6 +188,23 @@ class PreferenceForm extends Form
             );
         }
 
+        if (! Config::app()->get('global', 'config_resource')) {
+            if ($this->hasPermission('config/general')) {
+                $warningMessage = $this->translate(
+                    'The configuration database has not been configured.'
+                    . ' To establish a valid database connection set the configuration'
+                    . ' Database field in the Application Settings.'
+                );
+            } else {
+                $warningMessage = $this->translate(
+                    'The configuration database has not been configured.'
+                    . ' You do not have permission to change this setting. Please contact an administrator.'
+                );
+            }
+
+            $this->warning($warningMessage, false);
+        }
+
         $themeFile = StyleSheet::getThemeFile(Config::app()->get('themes', 'default'));
         if (! (bool) Config::app()->get('themes', 'disabled', false)) {
             $themes = Icinga::app()->getThemes();
