@@ -5,12 +5,18 @@
 
 namespace Icinga\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Announcement\AcknowledgeAnnouncementForm;
 use Icinga\Forms\Announcement\AnnouncementForm;
+use Icinga\Repository\RepositoryMode;
 use Icinga\Web\Announcement\AnnouncementIniRepository;
 use Icinga\Web\Controller;
-use Icinga\Web\Url;
+use Icinga\Web\Notification;
+use Icinga\Web\Session;
+use ipl\Web\Url;
+use ipl\Html\Contract\Form;
+use Throwable;
 
 class AnnouncementsController extends Controller
 {
@@ -61,45 +67,106 @@ class AnnouncementsController extends Controller
     /**
      * Create an announcement
      */
-    public function newAction()
+    public function newAction(): void
     {
         $this->assertPermission('application/announcements');
 
-        $form = $this->prepareForm()->add();
-        $form->handleRequest();
-        $this->renderForm($form, $this->translate('New Announcement'));
+        $this->getTabs()->add('new-announcement', [
+            'active' => true,
+            'label'  => $this->translate('New Announcement'),
+            'title'  => $this->translate('Add a new announcement'),
+            'url'    => Url::fromRequest(),
+        ]);
+
+        $form = (new AnnouncementForm(new AnnouncementIniRepository(), RepositoryMode::Insert))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->setRedirectUrl(Url::fromPath('announcements'))
+            ->on(Form::ON_SUBMIT, function (AnnouncementForm $form): void {
+                Notification::success($this->translate('Announcement created'));
+                $this->redirectNow($form->getRedirectUrl());
+            })
+            ->on(Form::ON_ERROR, function (Throwable $_, AnnouncementForm $_form): void {
+                Notification::error($this->translate('Failed to create announcement'));
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
+
+        $this->view->form = $form;
     }
 
     /**
      * Update an announcement
      */
-    public function updateAction()
+    public function updateAction(): void
     {
         $this->assertPermission('application/announcements');
 
-        $form = $this->prepareForm()->edit($this->params->getRequired('id'));
+        $this->getTabs()->add('update-announcement', [
+            'active' => true,
+            'label'  => $this->translate('Update Announcement'),
+            'title'  => $this->translate('Update an announcement'),
+            'url'    => Url::fromRequest(),
+        ]);
+
+        $form = (new AnnouncementForm(
+            new AnnouncementIniRepository(),
+            RepositoryMode::Update,
+            $this->params->getRequired('id')
+        ))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->setRedirectUrl(Url::fromPath('announcements'))
+            ->on(Form::ON_SUBMIT, function (AnnouncementForm $form): void {
+                Notification::success($this->translate('Announcement updated'));
+                $this->redirectNow($form->getRedirectUrl());
+            })
+            ->on(Form::ON_ERROR, function (Throwable $_, AnnouncementForm $_form): void {
+                Notification::error($this->translate('Failed to update announcement'));
+            });
+
         try {
-            $form->handleRequest();
-        } catch (NotFoundError $_) {
+            $form->handleRequest(ServerRequest::fromGlobals());
+        } catch (NotFoundError) {
             $this->httpNotFound($this->translate('Announcement not found'));
         }
-        $this->renderForm($form, $this->translate('Update Announcement'));
+
+        $this->view->form = $form;
     }
 
     /**
      * Remove an announcement
      */
-    public function removeAction()
+    public function removeAction(): void
     {
         $this->assertPermission('application/announcements');
 
-        $form = $this->prepareForm()->remove($this->params->getRequired('id'));
+        $this->getTabs()->add('remove-announcement', [
+            'active' => true,
+            'label'  => $this->translate('Remove Announcement'),
+            'title'  => $this->translate('Remove an announcement'),
+            'url'    => Url::fromRequest(),
+        ]);
+
+        $form = (new AnnouncementForm(
+            new AnnouncementIniRepository(),
+            RepositoryMode::Delete,
+            $this->params->getRequired('id')
+        ))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->setRedirectUrl(Url::fromPath('announcements'))
+            ->on(Form::ON_SUBMIT, function (AnnouncementForm $form): void {
+                Notification::success($this->translate('Announcement removed'));
+                $this->redirectNow($form->getRedirectUrl());
+            })
+            ->on(Form::ON_ERROR, function (Throwable $_, AnnouncementForm $_form): void {
+                Notification::error($this->translate('Failed to remove announcement'));
+            });
+
         try {
-            $form->handleRequest();
-        } catch (NotFoundError $_) {
+            $form->handleRequest(ServerRequest::fromGlobals());
+        } catch (NotFoundError) {
             $this->httpNotFound($this->translate('Announcement not found'));
         }
-        $this->renderForm($form, $this->translate('Remove Announcement'));
+
+        $this->view->form = $form;
     }
 
     public function acknowledgeAction()
@@ -108,18 +175,5 @@ class AnnouncementsController extends Controller
         $this->getResponse()->setHeader('X-Icinga-Container', 'ignore', true);
         $form = new AcknowledgeAnnouncementForm();
         $form->handleRequest();
-    }
-
-    /**
-     * Assert permission admin and return a prepared RepositoryForm
-     *
-     * @return AnnouncementForm
-     */
-    protected function prepareForm()
-    {
-        $form = new AnnouncementForm();
-        return $form
-            ->setRepository(new AnnouncementIniRepository())
-            ->setRedirectUrl(Url::fromPath('announcements'));
     }
 }
