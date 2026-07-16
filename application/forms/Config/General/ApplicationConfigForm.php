@@ -5,6 +5,7 @@
 
 namespace Icinga\Forms\Config\General;
 
+use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
 use Icinga\Web\Form;
@@ -89,6 +90,16 @@ class ApplicationConfigForm extends Form
                 'label'         => $this->translate('Configuration Database')
             ]
         );
+
+        if (! isset(Config::app()->getSection('global')->config_resource)) {
+            $this->warning(
+                $this->translate(
+                    'The configuration database has not been configured.'
+                    . ' Please set the required field to establish a valid database connection.'
+                ),
+                false,
+            );
+        }
 
         return $this;
     }
