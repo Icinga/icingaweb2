@@ -19,6 +19,7 @@ use Icinga\Web\Notification;
 use Icinga\Web\Session;
 use Icinga\Web\StyleSheet;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\Locale;
 use ipl\I18n\StaticTranslator;
@@ -186,6 +187,24 @@ class PreferenceForm extends Form
                 ),
                 false
             );
+        }
+
+        $config = Config::app()->getSection('global');
+        if (! isset($config->config_resource)) {
+            if ($this->hasPermission('config/*')) {
+                $warningMessage = $this->translate(
+                    'The configuration database has not been configured.'
+                    . ' To establish a valid database connection set the Configuration'
+                    . ' Database field in the Application Settings.'
+                );
+            } else {
+                $warningMessage = $this->translate(
+                    'The configuration database has not been configured. '
+                    . ' You don`t have permission to change this setting. Please contact an administrator.'
+                );
+            }
+
+            $this->warning($warningMessage, false);
         }
 
         $themeFile = StyleSheet::getThemeFile(Config::app()->get('themes', 'default'));
