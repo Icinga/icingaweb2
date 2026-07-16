@@ -7,8 +7,10 @@ namespace Icinga\Controllers;
 
 use Icinga\Application\Hook\DbMigrationHook;
 use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
 use Icinga\Application\MigrationManager;
 use Icinga\Common\Database;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\MissingParameterException;
 use Icinga\Forms\MigrationForm;
 use Icinga\Web\Notification;
@@ -18,8 +20,11 @@ use ipl\Html\Attributes;
 use ipl\Html\FormElement\SubmitButtonElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Web\Common\CalloutType;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\Callout;
+use Throwable;
 
 class MigrationsController extends CompatController
 {
@@ -56,7 +61,20 @@ class MigrationsController extends CompatController
 
         $migrateListForm = new MigrationForm();
         $migrateListForm->setAttribute('id', $this->getRequest()->protectId('migration-form'));
-        $migrateListForm->setRenderDatabaseUserChange(! $mm->validateDatabasePrivileges());
+        try {
+            $hasPrivileges = $mm->validateDatabasePrivileges();
+        } catch (Throwable $e) {
+            Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
+            $this->addContent(new Callout(
+                CalloutType::Error,
+                sprintf($this->translate('Please check the log for details: %s'), $e->getMessage()),
+                $this->translate('Failed to load pending migrations'),
+            ));
+
+            return;
+        }
+
+        $migrateListForm->setRenderDatabaseUserChange(! $hasPrivileges);
 
         if ($canApply && $mm->hasPendingMigrations()) {
             $migrateAllButton = new SubmitButtonElement(sprintf('migrate-%s', DbMigrationHook::ALL_MIGRATIONS), [
