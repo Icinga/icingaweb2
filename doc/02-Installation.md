@@ -94,11 +94,6 @@ from `192.0.2.43`:
 host  icingaweb icingaweb 192.0.2.43/32 scram-sha-256
 ```
 
-The example below uses the `en_US.UTF-8` locale. This locale must be available
-on the PostgreSQL server. Use `locale -a` to list available locale names and
-replace `en_US.UTF-8` with the exact UTF-8 locale name on your system, such as
-`en_US.utf8`.
-
 To apply all these changes, restart PostgreSQL.
 
 ```bash
@@ -106,6 +101,11 @@ systemctl restart postgresql
 ```
 
 Now proceed with actually creating both user and database.
+
+The example below uses the `en_US.UTF-8` locale. This locale must be available
+on the PostgreSQL server. Use `locale -a` to list available locale names and
+replace `en_US.UTF-8` with the exact UTF-8 locale name on your system, such as
+`en_US.utf8`.
 
 ```bash
 # su -l postgres
