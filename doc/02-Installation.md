@@ -68,7 +68,7 @@ Allow authenticated local sessions for the `icingaweb` database user by modifyin
 the `pg_hba.conf` file.
 The location of this file is operating system specific, but can be queried.
 
-```
+```bash
 su postgres -c "psql -c 'show hba_file;'"
 ```
 
@@ -101,13 +101,13 @@ replace `en_US.UTF-8` with the exact UTF-8 locale name on your system, such as
 
 To apply all these changes, restart PostgreSQL.
 
-```
+```bash
 systemctl restart postgresql
 ```
 
 Now proceed with actually creating both user and database.
 
-```
+```bash
 # su -l postgres
 
 createuser -P icingaweb
