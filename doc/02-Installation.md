@@ -54,6 +54,12 @@ CREATE USER 'icingaweb'@'localhost' IDENTIFIED BY 'CHANGEME';
 GRANT ALL ON icingaweb.* TO 'icingaweb'@'localhost';
 ```
 
+Import the schema:
+
+```bash
+mysql -u icingaweb -p icingaweb < /usr/share/icingaweb2/schema/mysql.schema.sql
+```
+
 ### Setting up a PostgreSQL Database
 
 This section walks you through configuring PostgreSQL to work with Icinga Web.
@@ -62,7 +68,7 @@ Allow authenticated local sessions for the `icingaweb` database user by modifyin
 the `pg_hba.conf` file.
 The location of this file is operating system specific, but can be queried.
 
-```
+```bash
 su postgres -c "psql -c 'show hba_file;'"
 ```
 
@@ -88,20 +94,20 @@ from `192.0.2.43`:
 host  icingaweb icingaweb 192.0.2.43/32 scram-sha-256
 ```
 
-The example below uses the `en_US.UTF-8` locale. This locale must be available
-on the PostgreSQL server. Use `locale -a` to list available locale names and
-replace `en_US.UTF-8` with the exact UTF-8 locale name on your system, such as
-`en_US.utf8`.
-
 To apply all these changes, restart PostgreSQL.
 
-```
+```bash
 systemctl restart postgresql
 ```
 
 Now proceed with actually creating both user and database.
 
-```
+The example below uses the `en_US.UTF-8` locale. This locale must be available
+on the PostgreSQL server. Use `locale -a` to list available locale names and
+replace `en_US.UTF-8` with the exact UTF-8 locale name on your system, such as
+`en_US.utf8`.
+
+```bash
 # su -l postgres
 
 createuser -P icingaweb
@@ -109,6 +115,12 @@ createdb -E UTF8 --locale en_US.UTF-8 -T template0 -O icingaweb icingaweb
 ```
 
 You may also create a separate administrative account with all privileges instead.
+
+Import the schema:
+
+```bash
+psql -U icingaweb icingaweb < /usr/share/icingaweb2/schema/pgsql.schema.sql
+```
 
 ## Configuring the Web Server <a id="install-the-web-server"></a>
 
