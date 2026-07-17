@@ -54,6 +54,12 @@ CREATE USER 'icingaweb'@'localhost' IDENTIFIED BY 'CHANGEME';
 GRANT ALL ON icingaweb.* TO 'icingaweb'@'localhost';
 ```
 
+Import the schema:
+
+```bash
+mysql -u icingaweb -p icingaweb < /usr/share/icingaweb2/schema/mysql.schema.sql
+```
+
 ### Setting up a PostgreSQL Database
 
 This section walks you through configuring PostgreSQL to work with Icinga Web.
@@ -109,6 +115,12 @@ createdb -E UTF8 --locale en_US.UTF-8 -T template0 -O icingaweb icingaweb
 ```
 
 You may also create a separate administrative account with all privileges instead.
+
+Import the schema:
+
+```bash
+psql -U icingaweb icingaweb < /usr/share/icingaweb2/schema/pgsql.schema.sql
+```
 
 ## Configuring the Web Server <a id="install-the-web-server"></a>
 
