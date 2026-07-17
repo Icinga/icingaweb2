@@ -15,15 +15,20 @@ use Icinga\Data\Selectable;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Security\RoleForm;
 use Icinga\Repository\Repository;
+use Icinga\Repository\RepositoryMode;
 use Icinga\Security\SecurityException;
 use Icinga\User;
 use Icinga\Web\Controller\AuthBackendController;
+use Icinga\Web\Notification;
+use Icinga\Web\Session;
 use Icinga\Web\View\PrivilegeAudit;
 use Icinga\Web\Widget\SingleValueSearchControl;
+use ipl\Html\Contract\Form;
 use ipl\Html\Html;
 use ipl\Html\HtmlString;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
+use Throwable;
 
 /**
  * Manage user permissions and restrictions based on roles
@@ -81,58 +86,78 @@ class RoleController extends AuthBackendController
     /**
      * Create a new role
      */
-    public function addAction()
+    public function addAction(): void
     {
-        $role = new RoleForm();
-        $role->setRedirectUrl('__CLOSE__');
-        $role->setRepository(new RolesConfig());
-        $role->setSubmitLabel($this->translate('Create Role'));
-        $role->add()->handleRequest();
+        $form = (new RoleForm(new RolesConfig(), RepositoryMode::Insert))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->setRedirectUrl(Url::fromPath('role/list'))
+            ->on(Form::ON_SUBMIT, function (RoleForm $form): void {
+                Notification::success($this->translate('Role created'));
+                $this->redirectNow($form->getRedirectUrl());
+            })
+            ->on(Form::ON_ERROR, function (Throwable $_, RoleForm $_form): void {
+                Notification::error($this->translate('Role creation failed'));
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
 
-        $this->renderForm($role, $this->translate('New Role'));
+        $this->addTitleTab($this->translate('New Role'));
+        $this->addContent($form);
     }
 
     /**
      * Update a role
      */
-    public function editAction()
+    public function editAction(): void
     {
-        $name = $this->params->getRequired('role');
-        $role = new RoleForm();
-        $role->setRedirectUrl('__CLOSE__');
-        $role->setRepository(new RolesConfig());
-        $role->setSubmitLabel($this->translate('Update Role'));
-        $role->edit($name);
+        $roleName = $this->params->getRequired('role');
+
+        $form = (new RoleForm(new RolesConfig(), RepositoryMode::Update, $roleName))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->setRedirectUrl(Url::fromPath('role/list'))
+            ->on(Form::ON_SUBMIT, function (RoleForm $form): void {
+                Notification::success(sprintf($this->translate('Role "%s" has been updated'), $form->getIdentifier()));
+                $this->redirectNow($form->getRedirectUrl());
+            })
+            ->on(Form::ON_ERROR, function (Throwable $_, RoleForm $form): void {
+                Notification::error(sprintf($this->translate('Failed to update role "%s"'), $form->getIdentifier()));
+            });
 
         try {
-            $role->handleRequest();
-        } catch (NotFoundError $e) {
-            $this->httpNotFound($this->translate('Role not found'));
+            $form->handleRequest(ServerRequest::fromGlobals());
+        } catch (NotFoundError) {
+            $this->httpNotFound(sprintf($this->translate('Role "%s" not found'), $roleName));
         }
 
-        $this->renderForm($role, $this->translate('Update Role'));
+        $this->addTitleTab($this->translate('Update Role'));
+        $this->addContent($form);
     }
 
     /**
      * Remove a role
      */
-    public function removeAction()
+    public function removeAction(): void
     {
-        $name = $this->params->getRequired('role');
-        $role = new RoleForm();
-        $role->setAttrib('class', 'icinga-controls');
-        $role->setRedirectUrl('__CLOSE__');
-        $role->setRepository(new RolesConfig());
-        $role->setSubmitLabel($this->translate('Confirm Removal'));
-        $role->remove($name);
+        $roleName = $this->params->getRequired('role');
+
+        $form = (new RoleForm(new RolesConfig(), RepositoryMode::Delete, $roleName))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->setRedirectUrl(Url::fromPath('role/list'))
+            ->on(Form::ON_SUBMIT, function (RoleForm $form): void {
+                Notification::success(sprintf($this->translate('Role "%s" has been removed'), $form->getIdentifier()));
+                $this->redirectNow($form->getRedirectUrl());
+            })
+            ->on(Form::ON_ERROR, function (Throwable $_, RoleForm $form): void {
+                Notification::error(sprintf($this->translate('Failed to remove role "%s"'), $form->getIdentifier()));
+            });
 
         try {
-            $role->handleRequest();
-        } catch (NotFoundError $e) {
-            $this->httpNotFound($this->translate('Role not found'));
+            $form->handleRequest(ServerRequest::fromGlobals());
+        } catch (NotFoundError) {
+            $this->httpNotFound(sprintf($this->translate('Role "%s" not found'), $roleName));
         }
 
-        $this->renderForm($role, $this->translate('Remove Role'));
+        $this->addTitleTab($this->translate('Remove Role'));
+        $this->addContent($form);
     }
 
     public function auditAction()
