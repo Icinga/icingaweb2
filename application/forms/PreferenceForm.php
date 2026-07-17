@@ -441,7 +441,7 @@ class PreferenceForm extends Form
 
     public function isSubmitted()
     {
-        if (parent::isSubmitted()) {
+        if ($this->store !== null && parent::isSubmitted()) {
             return true;
         }
 
