@@ -66,6 +66,7 @@ Option                   | Description
 -------------------------|-----------------------------------------------
 default                  | **Optional.** Choose the default theme. Can be set to `Icinga`, `high-contrast`, `Winter`, 'colorblind' or your own installed theme. Defaults to `Icinga`. Note that this setting is case-sensitive because it refers to the filename of the theme.
 disabled                 | **Optional.** Set this to `1` if users should not be allowed to change their theme. Defaults to `0`.
+default_mode             | **Optional.** Choose the default theme mode. Can be set to `system`, `light` or `none` for the dark theme mode. Defaults to `none`.
 
 Example:
 
@@ -73,6 +74,7 @@ Example:
 [themes]
 disabled = "1"
 default = "high-contrast"
+default_mode = "light"
 ```
 
 ## Security Configuration <a id="configuration-security"></a>
