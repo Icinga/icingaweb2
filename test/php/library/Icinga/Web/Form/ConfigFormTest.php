@@ -16,12 +16,16 @@ class ConfigFormTest extends BaseTestCase
 {
     private function makeForm(array $configData = [])
     {
-        return new class(Config::fromArray($configData)) extends ConfigForm {
+        $form = new class(Config::fromArray($configData)) extends ConfigForm {
             public function exposeSetSectionKeyDelimiter(string $delimiter): void
             {
                 $this->sectionKeyDelimiter = $delimiter;
             }
         };
+
+        $form->disableCsrfCounterMeasure();
+
+        return $form;
     }
 
     public function testSubmitButtonIsAddedAfterAssembly(): void
@@ -29,6 +33,14 @@ class ConfigFormTest extends BaseTestCase
         $form = $this->makeForm();
         $form->ensureAssembled();
         $this->assertTrue($form->hasElement('store'));
+    }
+
+    public function testCsrfElementIsAddedAfterAssembly(): void
+    {
+        $form = new class(Config::fromArray([])) extends ConfigForm {};
+        $form->setCsrfCounterMeasureId('bogus');
+        $form->ensureAssembled();
+        $this->assertTrue($form->hasElement('CSRFToken'));
     }
 
     public function testSaveThrowsForArrayElementValue(): void
@@ -53,6 +65,7 @@ class ConfigFormTest extends BaseTestCase
                 $this->save();
             }
         };
+        $form->disableCsrfCounterMeasure();
         $form->ensureAssembled();
         $form->populate(['mysection__key' => ['a', 'b']]);
         $form->exposeSave();
@@ -75,6 +88,7 @@ class ConfigFormTest extends BaseTestCase
                 $this->save();
             }
         };
+        $form->disableCsrfCounterMeasure();
         $form->populate(['mysection__password' => PasswordElement::DUMMYPASSWORD]);
         $form->ensureAssembled();
         $form->exposeSave();
@@ -99,6 +113,7 @@ class ConfigFormTest extends BaseTestCase
                 $this->save();
             }
         };
+        $form->disableCsrfCounterMeasure();
         $form->ensureAssembled();
         $form->populate(['mysection__key' => '']);
         $form->exposeSave();

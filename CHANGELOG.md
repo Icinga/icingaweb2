@@ -6,6 +6,12 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ### What's New in Version 2.14.1
 
+#### CSRF Protection for Config Forms
+
+`Icinga\Web\Form\ConfigForm` callers must now set a session-stable ID with
+`setCsrfCounterMeasureId()` before assembly or explicitly disable protection
+with `disableCsrfCounterMeasure()`.
+
 #### CompatForm-based Repository Form
 
 `Icinga\Web\Form\RepositoryForm` is a new `CompatForm`-based base class for

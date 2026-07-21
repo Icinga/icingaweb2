@@ -12,6 +12,7 @@ use ipl\Html\Contract\ValueCandidates;
 use ipl\Html\HtmlElement;
 use ipl\Html\ValidHtml;
 use ipl\Stdlib\Str;
+use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Compat\DisplayFormElement;
 use ipl\Web\Widget\CopyToClipboard;
@@ -20,14 +21,20 @@ use LogicException;
 /**
  * Form base-class providing standard functionality for configuration forms
  *
- *  Element names follow a `section__key` convention: the part before the
- *  {@see $sectionKeyDelimiter} (default: `__`) is the INI section name and the
- *  part after is the configuration key within that section. Subclasses add
- *  elements whose names match this pattern; `populateFromConfig` and `save`
- *  use it to map form values to and from the INI file automatically.
+ * Element names follow a `section__key` convention: the part before the
+ * {@see $sectionKeyDelimiter} (default: `__`) is the INI section name and the
+ * part after is the configuration key within that section. Subclasses add
+ * elements whose names match this pattern; `populateFromConfig` and `save`
+ * use it to map form values to and from the INI file automatically.
+ *
+ * Before assembly, callers must either set a session-stable ID with
+ * {@see setCsrfCounterMeasureId()} or explicitly disable the countermeasure
+ * with {@see disableCsrfCounterMeasure()}.
  */
 class ConfigForm extends CompatForm
 {
+    use CsrfCounterMeasure;
+
     /** @var string Name of the submit button element */
     protected const SUBMIT_BUTTON_NAME = 'store';
 
@@ -78,21 +85,10 @@ class ConfigForm extends CompatForm
                 $element->setValueCandidates(array_merge($candidates, [$configValue]));
             }
         });
-    }
 
-    /**
-     * Ensure that all required form elements are present
-     *
-     * @return $this
-     */
-    public function ensureAssembled(): static
-    {
-        if (! $this->hasBeenAssembled) {
-            parent::ensureAssembled();
-            $this->addRequiredElements();
-        }
-
-        return $this;
+        $this->on(static::ON_ASSEMBLED, function (ConfigForm $form) {
+            $form->addRequiredElements();
+        });
     }
 
     /**
@@ -200,7 +196,7 @@ class ConfigForm extends CompatForm
     }
 
     /**
-     * Add the submit button to the form
+     * Add the submit button and CSRF counter-measure element to the form
      *
      * Called automatically during assembly. Subclasses may override this to add
      * additional required elements but must call the parent implementation.
@@ -213,5 +209,7 @@ class ConfigForm extends CompatForm
             'label' => $this->translate('Store'),
             'ignore' => true,
         ]);
+
+        $this->addCsrfCounterMeasure();
     }
 }

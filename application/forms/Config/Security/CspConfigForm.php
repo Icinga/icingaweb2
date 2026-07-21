@@ -17,7 +17,6 @@ use Icinga\Security\Csp\Reason\NavigationCspReason;
 use Icinga\Security\Csp\Reason\StaticCspReason;
 use Icinga\Util\Csp;
 use Icinga\Web\Form\ConfigForm;
-use Icinga\Web\Session;
 use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
@@ -26,7 +25,6 @@ use ipl\Html\Text;
 use ipl\Validator\CallbackValidator;
 use ipl\Web\Common\CalloutType;
 use ipl\Web\Common\Csp as CspInstance;
-use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Common\FormUid;
 use ipl\Web\Compat\DisplayFormElement;
 use ipl\Web\Widget\Callout;
@@ -43,7 +41,6 @@ use ipl\Web\Widget\Link;
 class CspConfigForm extends ConfigForm
 {
     use FormUid;
-    use CsrfCounterMeasure;
 
     /**
      * @var string[] List of all keywords that are considered secure. {@link https://centralcsp.com/docs/csp-keywords}
@@ -129,8 +126,6 @@ class CspConfigForm extends ConfigForm
         Csp::createNonce();
 
         $this->addElement($this->createUidElement());
-
-        $this->addCsrfCounterMeasure(Session::getSession()->getId());
 
         $this->addElement('checkbox', 'security__use_strict_csp', [
             'label'          => $this->translate('Send CSP header'),
