@@ -163,186 +163,188 @@ class CspConfigForm extends ConfigForm
             $this->addElement('hidden', 'security__csp_enable_modules');
             $this->addElement('hidden', 'security__csp_enable_dashboards');
             $this->addElement('hidden', 'security__csp_enable_navigation');
-        } else {
-            $this->addHtml((new DisplayFormElement(
-                HtmlElement::create('div', null, [
-                    HtmlElement::create('h3', ['class' => $formHintClassList], $this->translate('Allowed Sources')),
-                    HtmlElement::create('p', ['class' => $formHintClassList], $this->translate(
-                        'Sources that are used in the generation of the CSP header.',
-                    )),
-                    HtmlElement::create('h4', ['class' => $formHintClassList], $this->translate('System')),
-                ]),
-            ))->addAttributes(Attributes::create(['class' => 'csp-control-group'])));
 
-            $this->addDirectiveContentElement(
-                [Csp::getSystemCsp()],
-                [$this->translate('Directive'), $this->translate('Value')],
-                function (StaticCspReason $reason, string $directive, string $expression) {
-                    return Table::tr([Table::td($directive), $this->buildExpression($directive, $expression)]);
-                },
-                ! $useCustomCsp,
-                $this->translate('No system policies defined.'),
-            );
-
-            $this->addDirectiveCheckboxElement(
-                $this->translate('Enable Modules'),
-                $this->translate(
-                    'Should module defined CSP directives be enabled?'
-                    . ' Modules can define or change csp directives at any point.',
-                ),
-                'csp_enable_modules',
-                ! $useCustomCsp,
-            );
-
-            $this->addDirectiveContentElement(
-                (new ModuleCspLoader())->loadForAllUsers(),
-                [$this->translate('Module'), $this->translate('Directive'), $this->translate('Value')],
-                function (ModuleCspReason $reason, string $directive, string $expression) {
-                    return Table::tr([
-                        Table::td($reason->module),
-                        Table::td($directive),
-                        $this->buildExpression($directive, $expression),
-                    ]);
-                },
-                ! $useCustomCsp && $this->getValue('security__csp_enable_modules') === '1',
-                $this->translate('No module policies defined.'),
-            );
-
-            $this->addDirectiveCheckboxElement(
-                $this->translate('Enable Dashboards'),
-                $this->translate(
-                    'Enable user defined dashboards. This table contains all dashboards for all users. The actual'
-                    . ' header that is sent to the user will only contain the subset of directives that actually'
-                    . ' matters to them.',
-                ),
-                'csp_enable_dashboards',
-                ! $useCustomCsp,
-            );
-
-            $this->addDirectiveContentElement(
-                (new DashboardCspLoader())->loadForAllUsers(),
-                [
-                    $this->translate('Dashboard'),
-                    $this->translate('Dashlet'),
-                    $this->translate('User'),
-                    $this->translate('Directive'),
-                    $this->translate('Value'),
-                ],
-                function (DashboardCspReason $reason, string $directive, string $expression) {
-                    return Table::tr([
-                        Table::td($reason->pane->getName()),
-                        Table::td($reason->dashlet->getName()),
-                        Table::td($reason->dashboard->getUser()->getUsername()),
-                        Table::td($directive),
-                        $this->buildExpression($directive, $expression),
-                    ]);
-                },
-                ! $useCustomCsp && $this->getValue('security__csp_enable_dashboards') === '1',
-                $this->translate('No dashboard policies found.'),
-            );
-
-            $this->addDirectiveCheckboxElement(
-                $this->translate('Enable Navigation Items'),
-                $this->translate(
-                    'Enable user defined navigation items. This table contains all navigation items for'
-                    . ' all users. The actual header that is sent to the user will only contain the subset of'
-                    . ' directives that actually matters to them.',
-                ),
-                'csp_enable_navigation',
-                ! $useCustomCsp,
-            );
-
-            $this->addDirectiveContentElement(
-                (new NavigationCspLoader())->loadForAllUsers(),
-                [
-                    $this->translate('Navigation'),
-                    $this->translate('Parent'),
-                    $this->translate('Name'),
-                    $this->translate('User'),
-                    $this->translate('Directive'),
-                    $this->translate('Value'),
-                ],
-                function (NavigationCspReason $reason, string $directive, string $expression) {
-                    $parentCell = $reason->parent === null
-                        ? Table::td($this->translate('None'))->setAttribute('class', 'empty-state')
-                        : Table::td($reason->parent);
-
-                    $sharedIcon = match ($reason->isShared) {
-                        true  => new Icon('share', [
-                            'class' => 'shared-item',
-                            'title' => $this->translate('Shared item. Displayed user is owner.'),
-                        ]),
-                        false => null,
-                    };
-
-                    $userCell = $reason->username === null
-                        ? Table::td([$sharedIcon, $this->translate('Unknown')])->setAttribute('class', 'empty-state')
-                        : Table::td([$sharedIcon, $reason->username]);
-
-                    return Table::tr([
-                        Table::td($reason->typeConfiguration['label'] ?? $reason->type),
-                        $parentCell,
-                        Table::td($reason->name),
-                        $userCell,
-                        Table::td($directive),
-                        $this->buildExpression($directive, $expression),
-                    ]);
-                },
-                ! $useCustomCsp && $this->getValue('security__csp_enable_navigation') === '1',
-                $this->translate('No navigation policies found.'),
-            );
-
-            $this->addElement('checkbox', 'security__use_custom_csp', [
-                'label'          => $this->translate('Enable Custom CSP'),
-                'description'    => $this->translate(
-                    'Specify whether to use a custom, user-provided string as the CSP header.',
-                ),
-                'class'          => 'autosubmit csp-form-content-aligned csp-label-header-h3 csp-form-header',
-                'checkedValue'   => '1',
-                'uncheckedValue' => '0',
-                'value'          => '0',
-            ]);
-
-            if ($this->isCustomCspEnabled()) {
-                $this->add(new DisplayFormElement(new Callout(
-                    CalloutType::Warning,
-                    $this->translate(
-                        'Be aware that the custom CSP header completely overrides the automatically generated one.'
-                        . ' This means that you are solely responsible for keeping the custom CSP header up to date'
-                        . ' and secure.',
-                    ),
-                    $this->translate('Warning: Use at your own risk!'),
-                )));
-            }
-
-            $this->addElement('textarea', 'security__custom_csp', [
-                'label'       => '',
-                'description' => $this->translate(
-                    'Set a custom CSP header. This completely overrides the automatically generated one.'
-                    . ' Use the placeholder {style_nonce} to insert the automatically generated style nonce.',
-                ),
-                'rows'        => static::TEXTAREA_ROWS,
-                'disabled'    => ! $this->isCustomCspEnabled(),
-                'required'    => $this->isCustomCspEnabled(),
-                'validators'  => [
-                    new CallbackValidator(function ($value, CallbackValidator $validator) {
-                        if (empty($value) || ! $this->isCustomCspEnabled()) {
-                            return true;
-                        }
-
-                        try {
-                            CspInstance::fromString(str_replace('{style_nonce}', "'nonce-validation'", $value));
-                        } catch (Exception $e) {
-                            $validator->addMessage($e->getMessage());
-
-                            return false;
-                        }
-
-                        return true;
-                    }),
-                ],
-            ]);
+            return;
         }
+
+        $this->addHtml((new DisplayFormElement(
+            HtmlElement::create('div', null, [
+                HtmlElement::create('h3', ['class' => $formHintClassList], $this->translate('Allowed Sources')),
+                HtmlElement::create('p', ['class' => $formHintClassList], $this->translate(
+                    'Sources that are used in the generation of the CSP header.',
+                )),
+                HtmlElement::create('h4', ['class' => $formHintClassList], $this->translate('System')),
+            ]),
+        ))->addAttributes(Attributes::create(['class' => 'csp-control-group'])));
+
+        $this->addDirectiveContentElement(
+            [Csp::getSystemCsp()],
+            [$this->translate('Directive'), $this->translate('Value')],
+            function (StaticCspReason $reason, string $directive, string $expression) {
+                return Table::tr([Table::td($directive), $this->buildExpression($directive, $expression)]);
+            },
+            ! $useCustomCsp,
+            $this->translate('No system policies defined.'),
+        );
+
+        $this->addDirectiveCheckboxElement(
+            $this->translate('Enable Modules'),
+            $this->translate(
+                'Should module defined CSP directives be enabled?'
+                . ' Modules can define or change csp directives at any point.',
+            ),
+            'csp_enable_modules',
+            ! $useCustomCsp,
+        );
+
+        $this->addDirectiveContentElement(
+            (new ModuleCspLoader())->loadForAllUsers(),
+            [$this->translate('Module'), $this->translate('Directive'), $this->translate('Value')],
+            function (ModuleCspReason $reason, string $directive, string $expression) {
+                return Table::tr([
+                    Table::td($reason->module),
+                    Table::td($directive),
+                    $this->buildExpression($directive, $expression),
+                ]);
+            },
+            ! $useCustomCsp && $this->getValue('security__csp_enable_modules') === '1',
+            $this->translate('No module policies defined.'),
+        );
+
+        $this->addDirectiveCheckboxElement(
+            $this->translate('Enable Dashboards'),
+            $this->translate(
+                'Enable user defined dashboards. This table contains all dashboards for all users. The actual'
+                . ' header that is sent to the user will only contain the subset of directives that actually'
+                . ' matters to them.',
+            ),
+            'csp_enable_dashboards',
+            ! $useCustomCsp,
+        );
+
+        $this->addDirectiveContentElement(
+            (new DashboardCspLoader())->loadForAllUsers(),
+            [
+                $this->translate('Dashboard'),
+                $this->translate('Dashlet'),
+                $this->translate('User'),
+                $this->translate('Directive'),
+                $this->translate('Value'),
+            ],
+            function (DashboardCspReason $reason, string $directive, string $expression) {
+                return Table::tr([
+                    Table::td($reason->pane->getName()),
+                    Table::td($reason->dashlet->getName()),
+                    Table::td($reason->dashboard->getUser()->getUsername()),
+                    Table::td($directive),
+                    $this->buildExpression($directive, $expression),
+                ]);
+            },
+            ! $useCustomCsp && $this->getValue('security__csp_enable_dashboards') === '1',
+            $this->translate('No dashboard policies found.'),
+        );
+
+        $this->addDirectiveCheckboxElement(
+            $this->translate('Enable Navigation Items'),
+            $this->translate(
+                'Enable user defined navigation items. This table contains all navigation items for'
+                . ' all users. The actual header that is sent to the user will only contain the subset of'
+                . ' directives that actually matters to them.',
+            ),
+            'csp_enable_navigation',
+            ! $useCustomCsp,
+        );
+
+        $this->addDirectiveContentElement(
+            (new NavigationCspLoader())->loadForAllUsers(),
+            [
+                $this->translate('Navigation'),
+                $this->translate('Parent'),
+                $this->translate('Name'),
+                $this->translate('User'),
+                $this->translate('Directive'),
+                $this->translate('Value'),
+            ],
+            function (NavigationCspReason $reason, string $directive, string $expression) {
+                $parentCell = $reason->parent === null
+                    ? Table::td($this->translate('None'))->setAttribute('class', 'empty-state')
+                    : Table::td($reason->parent);
+
+                $sharedIcon = match ($reason->isShared) {
+                    true  => new Icon('share', [
+                        'class' => 'shared-item',
+                        'title' => $this->translate('Shared item. Displayed user is owner.'),
+                    ]),
+                    false => null,
+                };
+
+                $userCell = $reason->username === null
+                    ? Table::td([$sharedIcon, $this->translate('Unknown')])->setAttribute('class', 'empty-state')
+                    : Table::td([$sharedIcon, $reason->username]);
+
+                return Table::tr([
+                    Table::td($reason->typeConfiguration['label'] ?? $reason->type),
+                    $parentCell,
+                    Table::td($reason->name),
+                    $userCell,
+                    Table::td($directive),
+                    $this->buildExpression($directive, $expression),
+                ]);
+            },
+            ! $useCustomCsp && $this->getValue('security__csp_enable_navigation') === '1',
+            $this->translate('No navigation policies found.'),
+        );
+
+        $this->addElement('checkbox', 'security__use_custom_csp', [
+            'label'          => $this->translate('Enable Custom CSP'),
+            'description'    => $this->translate(
+                'Specify whether to use a custom, user-provided string as the CSP header.',
+            ),
+            'class'          => 'autosubmit csp-form-content-aligned csp-label-header-h3 csp-form-header',
+            'checkedValue'   => '1',
+            'uncheckedValue' => '0',
+            'value'          => '0',
+        ]);
+
+        if ($this->isCustomCspEnabled()) {
+            $this->add(new DisplayFormElement(new Callout(
+                CalloutType::Warning,
+                $this->translate(
+                    'Be aware that the custom CSP header completely overrides the automatically generated one.'
+                    . ' This means that you are solely responsible for keeping the custom CSP header up to date'
+                    . ' and secure.',
+                ),
+                $this->translate('Warning: Use at your own risk!'),
+            )));
+        }
+
+        $this->addElement('textarea', 'security__custom_csp', [
+            'label'       => '',
+            'description' => $this->translate(
+                'Set a custom CSP header. This completely overrides the automatically generated one.'
+                . ' Use the placeholder {style_nonce} to insert the automatically generated style nonce.',
+            ),
+            'rows'        => static::TEXTAREA_ROWS,
+            'disabled'    => ! $this->isCustomCspEnabled(),
+            'required'    => $this->isCustomCspEnabled(),
+            'validators'  => [
+                new CallbackValidator(function ($value, CallbackValidator $validator) {
+                    if (empty($value) || ! $this->isCustomCspEnabled()) {
+                        return true;
+                    }
+
+                    try {
+                        CspInstance::fromString(str_replace('{style_nonce}', "'nonce-validation'", $value));
+                    } catch (Exception $e) {
+                        $validator->addMessage($e->getMessage());
+
+                        return false;
+                    }
+
+                    return true;
+                }),
+            ],
+        ]);
     }
 
     protected function onSuccess(): void
