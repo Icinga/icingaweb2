@@ -11,36 +11,21 @@ use Icinga\Forms\Announcement\AcknowledgeAnnouncementForm;
 use Icinga\Forms\Announcement\AnnouncementForm;
 use Icinga\Repository\RepositoryMode;
 use Icinga\Web\Announcement\AnnouncementIniRepository;
-use Icinga\Web\Controller;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
+use ipl\Web\Compat\CompatController;
 use ipl\Web\Url;
 use ipl\Html\Contract\Form;
 use Throwable;
 
-class AnnouncementsController extends Controller
+class AnnouncementsController extends CompatController
 {
-    public function init()
-    {
-        $this->view->title = $this->translate('Announcements');
-
-        parent::init();
-    }
-
     /**
      * List all announcements
      */
     public function indexAction()
     {
-        $this->getTabs()->add(
-            'announcements',
-            [
-                'active'    => true,
-                'label'     => $this->translate('Announcements'),
-                'title'     => $this->translate('List All Announcements'),
-                'url'       => Url::fromPath('announcements')
-            ]
-        );
+        $this->addTitleTab($this->translate('Announcements'));
 
         $announcements = (new AnnouncementIniRepository())
             ->select([
@@ -71,12 +56,7 @@ class AnnouncementsController extends Controller
     {
         $this->assertPermission('application/announcements');
 
-        $this->getTabs()->add('new-announcement', [
-            'active' => true,
-            'label'  => $this->translate('New Announcement'),
-            'title'  => $this->translate('Add a new announcement'),
-            'url'    => Url::fromRequest(),
-        ]);
+        $this->addTitleTab($this->translate('New Announcement'));
 
         $form = (new AnnouncementForm(new AnnouncementIniRepository(), RepositoryMode::Insert))
             ->setCsrfCounterMeasureId(Session::getSession()->getId())
@@ -90,7 +70,7 @@ class AnnouncementsController extends Controller
             })
             ->handleRequest(ServerRequest::fromGlobals());
 
-        $this->view->form = $form;
+        $this->addContent($form);
     }
 
     /**
@@ -100,12 +80,7 @@ class AnnouncementsController extends Controller
     {
         $this->assertPermission('application/announcements');
 
-        $this->getTabs()->add('update-announcement', [
-            'active' => true,
-            'label'  => $this->translate('Update Announcement'),
-            'title'  => $this->translate('Update an announcement'),
-            'url'    => Url::fromRequest(),
-        ]);
+        $this->addTitleTab($this->translate('Update Announcement'));
 
         $form = (new AnnouncementForm(
             new AnnouncementIniRepository(),
@@ -128,7 +103,7 @@ class AnnouncementsController extends Controller
             $this->httpNotFound($this->translate('Announcement not found'));
         }
 
-        $this->view->form = $form;
+        $this->addContent($form);
     }
 
     /**
@@ -138,12 +113,7 @@ class AnnouncementsController extends Controller
     {
         $this->assertPermission('application/announcements');
 
-        $this->getTabs()->add('remove-announcement', [
-            'active' => true,
-            'label'  => $this->translate('Remove Announcement'),
-            'title'  => $this->translate('Remove an announcement'),
-            'url'    => Url::fromRequest(),
-        ]);
+        $this->addTitleTab($this->translate('Remove Announcement'));
 
         $form = (new AnnouncementForm(
             new AnnouncementIniRepository(),
@@ -166,7 +136,7 @@ class AnnouncementsController extends Controller
             $this->httpNotFound($this->translate('Announcement not found'));
         }
 
-        $this->view->form = $form;
+        $this->addContent($form);
     }
 
     public function acknowledgeAction()
