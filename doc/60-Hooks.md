@@ -158,3 +158,100 @@ class Csp extends CspHook
     }
 }
 ```
+
+## TwoFactorHook <a id="hooks-two-factor"></a>
+
+The `TwoFactorHook` allows modules to provide a two-factor authentication method,
+such as TOTP or email token. Icinga Web asks every registered method whether a user
+is enrolled, and if so, requires the second factor after the primary login succeeds.
+This hook always runs, regardless of the `module/<module-name>` permission.
+
+Extend it and implement the methods of the `Icinga\Authentication\TwoFactor` contract:
+
+Method                                   | Description
+-----------------------------------------|-------------------------------------------------------------------
+`getName(): string`                      | Machine-readable identifier, e.g. `totp`. Must be unique within the providing module and a valid HTML `name` attribute value.
+`getDisplayName(): string`               | Human-readable name shown in the two-factor config UI, e.g. `TOTP`.
+`isEnrolled(): bool`                     | Whether the user has an active enrollment in this method. Implementations typically query the database for a stored credential.
+`verify(): bool`                         | Verify the token the user entered during login against the stored credential.
+`enroll(): bool`                         | Read the submitted credential from the fieldset, verify it works, and store it. Return `false` and attach an error to the relevant element via `addMessage()` on failure.
+`unenroll(): void`                       | Remove the stored credential for the user.
+`assembleEnrollmentFormElements(): void` | Add the method-specific form elements to the enrollment fieldset. Don't rename the fieldset.
+
+Icinga Web derives a **canonical name** in the format `<module>/<name>`
+(e.g. `mymodule/totp`) from the providing module and `getName()`, so two modules
+may register a method using the same `getName()` without colliding.
+
+If the module providing a user's enrolled method is disabled, that method is no
+longer registered. The user's enrollment is then ignored and they log in without
+a second factor. This is expected when an administrator disables a 2FA module.
+
+Hook example:
+
+```php
+<?php
+
+namespace Icinga\Module\Mymodule\ProvidedHook;
+
+use Icinga\Application\Hook\TwoFactorHook;
+use Icinga\User;
+use ipl\Html\FormElement\FieldsetElement;
+use ipl\I18n\Translation;
+
+class TotpTwoFactor extends TwoFactorHook
+{
+    use Translation;
+
+    public function getName(): string
+    {
+        return 'totp';
+    }
+
+    public function getDisplayName(): string
+    {
+        return $this->translate('TOTP');
+    }
+
+    public function isEnrolled(User $user): bool
+    {
+        return $this->loadSecret($user) !== null;
+    }
+
+    public function verify(User $user, string $token): bool
+    {
+        return $this->checkToken($this->loadSecret($user), $token);
+    }
+
+    public function assembleEnrollmentFormElements(User $user, FieldsetElement $fieldset): void
+    {
+        $fieldset->addElement('text', 'secret', [
+            'readonly' => true,
+            'value'    => $this->generateSecret(),
+        ]);
+
+        $fieldset->addElement('text', 'token', [
+            'label'    => $this->translate('Verification Code'),
+            'required' => true,
+        ]);
+    }
+
+    public function enroll(User $user, FieldsetElement $fieldset): bool
+    {
+        $secret = $fieldset->getValue('secret');
+        if (! $this->checkToken($secret, $fieldset->getValue('token'))) {
+            $fieldset->getElement('token')->addMessage($this->translate('Invalid code'));
+
+            return false;
+        }
+
+        $this->storeSecret($user, $secret);
+
+        return true;
+    }
+
+    public function unenroll(User $user): void
+    {
+        $this->deleteSecret($user);
+    }
+}
+```
