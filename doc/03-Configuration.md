@@ -73,7 +73,7 @@ Example:
 ```
 [themes]
 disabled = "1"
-default = "high-contrast"
+default = "Icinga"
 default_mode = "light"
 ```
 
