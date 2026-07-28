@@ -143,8 +143,13 @@ class RoleForm extends RepositoryForm
             'uncheckedValue' => null,
         ]);
 
-        $hasAdminPerm = $this->getPopulatedValue(self::WILDCARD_NAME) === 'y';
-        $isUnrestricted = $this->getPopulatedValue('unrestricted') === '1';
+        /** @var CheckboxElement $wildcardCheckbox */
+        $wildcardCheckbox = $this->getElement(self::WILDCARD_NAME);
+        $hasAdminPerm = $wildcardCheckbox->isChecked();
+
+        /** @var CheckboxElement $unrestrictedCheckbox */
+        $unrestrictedCheckbox = $this->getElement('unrestricted');
+        $isUnrestricted = $unrestrictedCheckbox->isChecked();
 
         foreach ($this->providedPermissions as $moduleName => $permissionList) {
             $this->sortPermissions($permissionList);
@@ -183,10 +188,6 @@ class RoleForm extends RepositoryForm
             foreach ($permissionList as $name => $spec) {
                 $elementName = $this->convertToElementName($name);
 
-                if ($fieldset->getPopulatedValue($elementName) === 'y') {
-                    $anythingGranted = true;
-                }
-
                 if ($hasFullPerm || $hasAdminPerm) {
                     $elementName .= '_fake';
                 }
@@ -200,7 +201,7 @@ class RoleForm extends RepositoryForm
                     );
                     $fieldset->registerElement($denyCheckbox);
 
-                    if ($fieldset->getPopulatedValue($denyCheckbox->getName()) === 'y') {
+                    if ($denyCheckbox->isChecked()) {
                         $anythingRefused = true;
                     }
                 }
@@ -213,6 +214,12 @@ class RoleForm extends RepositoryForm
                     'label'       => $spec['label'] ?? $this->buildPrivilegeLabel($name),
                     'checked'     => $hasFullPerm || $hasAdminPerm,
                 ]);
+
+                /** @var CheckboxElement $grantCheckbox */
+                $grantCheckbox = $fieldset->getElement($elementName);
+                if ($grantCheckbox->isChecked()) {
+                    $anythingGranted = true;
+                }
 
                 if ($denyCheckbox !== null) {
                     /** @var CheckboxElement $checkboxElement */
@@ -260,7 +267,7 @@ class RoleForm extends RepositoryForm
                 }
 
                 if (isset($spec['isFullPerm'])) {
-                    $hasFullPerm = $fieldset->getPopulatedValue($this->convertToElementName($name)) === 'y';
+                    $hasFullPerm = $grantCheckbox->isChecked();
                 }
             }
 
