@@ -23,6 +23,7 @@ use ipl\Html\Contract\FormElementDecoration;
 use ipl\Html\FormattedString;
 use ipl\Html\FormElement\CheckboxElement;
 use ipl\Html\FormElement\FieldsetElement;
+use ipl\Html\FormElement\TextElement;
 use ipl\Html\HtmlDocument;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
@@ -166,7 +167,9 @@ class RoleForm extends RepositoryForm
 
             $this->registerElement($fieldset);
 
-            $fieldset->addHtml(new HtmlElement(
+            $details = new HtmlElement('details', new Attributes(['class' => 'collapsible']));
+
+            $details->addHtml(new HtmlElement(
                 'div',
                 null,
                 new HtmlElement('h4', null, new Text($this->translate('Permissions'))),
@@ -206,7 +209,8 @@ class RoleForm extends RepositoryForm
                     }
                 }
 
-                $fieldset->addElement('checkbox', $elementName, [
+                /** @var CheckboxElement $grantCheckbox */
+                $grantCheckbox = $fieldset->createElement('checkbox', $elementName, [
                     'class'       => isset($spec['isFullPerm']) ? 'autosubmit' : null,
                     'description' => $spec['description'] ?? $name,
                     'disabled'    => $hasFullPerm || $hasAdminPerm,
@@ -214,9 +218,9 @@ class RoleForm extends RepositoryForm
                     'label'       => $spec['label'] ?? $this->buildPrivilegeLabel($name),
                     'checked'     => $hasFullPerm || $hasAdminPerm,
                 ]);
+                $fieldset->registerElement($grantCheckbox);
+                $details->addHtml($grantCheckbox);
 
-                /** @var CheckboxElement $grantCheckbox */
-                $grantCheckbox = $fieldset->getElement($elementName);
                 if ($grantCheckbox->isChecked()) {
                     $anythingGranted = true;
                 }
@@ -261,6 +265,8 @@ class RoleForm extends RepositoryForm
                         });
                 }
 
+                $grantCheckbox->applyDecoration();
+
                 if ($hasFullPerm || $hasAdminPerm) {
                     // Add a hidden element to preserve the configured permission value
                     $fieldset->addElement('hidden', $this->convertToElementName($name));
@@ -272,21 +278,23 @@ class RoleForm extends RepositoryForm
             }
 
             if (isset($this->providedRestrictions[$moduleName])) {
-                $fieldset->addHtml(new HtmlElement('h4', null, new Text($this->translate('Restrictions'))));
+                $details->addHtml(new HtmlElement('h4', null, new Text($this->translate('Restrictions'))));
 
                 foreach ($this->providedRestrictions[$moduleName] as $name => $spec) {
-                    $elementName = $this->convertToElementName($name);
-
-                    if (! Str::isEmpty($fieldset->getPopulatedValue($elementName))) {
-                        $anythingRestricted = true;
-                    }
-
-                    $fieldset->addElement('text', $elementName, [
+                    /** @var TextElement $restrictionElement */
+                    $restrictionElement = $fieldset->createElement('text', $this->convertToElementName($name), [
                         'class'       => $isUnrestricted ? 'unrestricted-role' : '',
                         'description' => $spec['description'],
                         'label'       => $spec['label'] ?? $this->buildPrivilegeLabel($name),
                         'readonly'    => $isUnrestricted ?: null,
                     ]);
+                    $fieldset->registerElement($restrictionElement);
+                    $restrictionElement->applyDecoration();
+                    $details->addHtml($restrictionElement);
+
+                    if (! Str::isEmpty($restrictionElement->getValue())) {
+                        $anythingRestricted = true;
+                    }
                 }
             }
 
@@ -316,7 +324,9 @@ class RoleForm extends RepositoryForm
                 new Icon('angles-left', ['class' => 'expand-icon']),
             );
 
-            $this->addHtml(new HtmlElement('details', new Attributes(['class' => 'collapsible']), $summary, $fieldset));
+            $details->prependHtml($summary);
+            $fieldset->addHtml($details);
+            $this->addHtml($fieldset);
         }
     }
 
