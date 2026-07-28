@@ -4,6 +4,17 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.14.1
+
+#### CompatForm-based Repository Form
+
+`Icinga\Web\Form\RepositoryForm` is a new `CompatForm`-based base class for
+forms that work with extensible, updatable, and reducible repositories.
+It supersedes `Icinga\Forms\RepositoryForm`, which will be deprecated in version
+2.15. Relevant for developers: it's no drop-in replacement! The constructor
+signature, assembly method names, notification ownership, and submit controls
+all differ and have to be adjusted when migrating.
+
 ### What's New in Version 2.14.0
 
 You can find all issues related to this release on our
