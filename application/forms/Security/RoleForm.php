@@ -347,6 +347,18 @@ class RoleForm extends RepositoryForm
     }
 
     /**
+     * Get the name of the role to handle
+     *
+     * @return ?string Narrower than the inherited contract, as this form
+     *   accepts string identifiers only. Null only in
+     *   {@see RepositoryMode::Insert} mode, where none is required
+     */
+    public function getIdentifier(): ?string
+    {
+        return $this->identifier;
+    }
+
+    /**
      * Apply the requested mode on the repository and update inheriting roles
      *
      * After applying the mode, updates the `parent` field on all roles that
