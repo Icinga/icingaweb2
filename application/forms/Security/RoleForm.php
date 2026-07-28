@@ -456,14 +456,18 @@ class RoleForm extends RepositoryForm
      * checkboxes into a comma-separated `permissions` string, deny checkboxes into
      * `refusals`, lifts restriction values to top-level keys, and auto-includes
      * the general module access permission (`module/<name>`) whenever the full
-     * module permission (`<name>/*`) is set. Both `permissions` and `refusals`
-     * are `null` when empty.
+     * module permission (`<name>/*`) is set.
      *
-     * @return array<string, string|null>
+     * @return array<string, ?string> Both `permissions` and `refusals` are
+     *   `null` when empty. In {@see RepositoryMode::Delete} mode the parent's
+     *   values are returned unchanged, since no role elements are assembled
      */
     public function getValues(): array
     {
         $values = parent::getValues();
+        if ($this->mode === RepositoryMode::Delete) {
+            return $values;
+        }
 
         foreach ($this->providedRestrictions as $moduleName => $restrictionList) {
             $fieldsetKey = $moduleName . static::FIELDSET_SUFFIX;
