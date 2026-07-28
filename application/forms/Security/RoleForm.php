@@ -192,6 +192,8 @@ class RoleForm extends RepositoryForm
                 $elementName = $this->convertToElementName($name);
 
                 if ($hasFullPerm || $hasAdminPerm) {
+                    // Add a hidden element to preserve the configured permission value
+                    $fieldset->addElement('hidden', $elementName);
                     $elementName .= '_fake';
                 }
 
@@ -266,11 +268,6 @@ class RoleForm extends RepositoryForm
                 }
 
                 $grantCheckbox->applyDecoration();
-
-                if ($hasFullPerm || $hasAdminPerm) {
-                    // Add a hidden element to preserve the configured permission value
-                    $fieldset->addElement('hidden', $this->convertToElementName($name));
-                }
 
                 if (isset($spec['isFullPerm'])) {
                     $hasFullPerm = $grantCheckbox->isChecked();
