@@ -14,6 +14,7 @@ use Icinga\Forms\Security\RoleForm;
 use Icinga\Repository\Repository;
 use Icinga\Repository\RepositoryMode;
 use Icinga\Test\BaseTestCase;
+use Icinga\Util\StringHelper;
 
 /**
  * Tests for {@see RoleForm}
@@ -404,5 +405,66 @@ class RoleFormTest extends BaseTestCase
         $this->assertSame('y', $entry->application_elements['applicationannouncements']);
         $this->assertSame('y', $entry->mymodule_elements['mymoduleread']);
         $this->assertArrayNotHasKey('applicationlog', $entry->application_elements);
+    }
+
+    public function testRoundTripKeepsAPlainRoleUnchanged(): void
+    {
+        $roles = [
+            (object) [
+                'name'                    => 'test',
+                'parent'                  => 'admins',
+                'users'                   => 'icingaadmin',
+                'groups'                  => 'support',
+                'permissions'             => 'application/announcements,mymodule/read',
+                'refusals'                => 'application/log',
+                'unrestricted'            => null,
+                'application/share/users' => 'icingaadmin',
+            ],
+            (object) ['name' => 'admins', 'parent' => null],
+        ];
+        $entry = $this->createForm(RepositoryMode::Update, [], 'test', $roles)->exposeFetchEntry();
+        // Populating with the fetched entry is what a request in update mode does
+        $values = $this->createForm(RepositoryMode::Update, (array) $entry, 'test', $roles)->getValues();
+
+        $this->assertSame('test', $values['name']);
+        $this->assertSame('admins', $values['parent']);
+        $this->assertSame('icingaadmin', $values['users']);
+        $this->assertSame('support', $values['groups']);
+        $this->assertNull($values['unrestricted']);
+        $this->assertSame('icingaadmin', $values['application/share/users']);
+        $this->assertSame('application/announcements,mymodule/read', $values['permissions']);
+        $this->assertSame('application/log', $values['refusals']);
+    }
+
+    public function testRoundTripKeepsAnAdministrativeRoleUnchanged(): void
+    {
+        $role = (object) ['name' => 'test', 'parent' => null, 'permissions' => '*,application/announcements'];
+        $entry = $this->createForm(RepositoryMode::Update, [], 'test', [$role])->exposeFetchEntry();
+        $values = $this->createForm(RepositoryMode::Update, (array) $entry, 'test', [$role])->getValues();
+
+        $this->assertSame('*,application/announcements', $values['permissions']);
+    }
+
+    public function testRoundTripKeepsFullModuleAccessUnchanged(): void
+    {
+        $role = (object) ['name' => 'test', 'parent' => null, 'permissions' => 'module/mymodule,mymodule/*'];
+        $entry = $this->createForm(RepositoryMode::Update, [], 'test', [$role])->exposeFetchEntry();
+        $values = $this->createForm(RepositoryMode::Update, (array) $entry, 'test', [$role])->getValues();
+
+        // The general module access is appended after the module's permissions, hence the different order
+        $this->assertEqualsCanonicalizing(
+            StringHelper::trimSplit($role->permissions),
+            StringHelper::trimSplit($values['permissions']),
+        );
+    }
+
+    public function testRoundTripUpgradesLegacyPermissions(): void
+    {
+        $role = (object) ['name' => 'test', 'parent' => null, 'permissions' => 'admin,no-user/password-change'];
+        $entry = $this->createForm(RepositoryMode::Update, [], 'test', [$role])->exposeFetchEntry();
+        $values = $this->createForm(RepositoryMode::Update, (array) $entry, 'test', [$role])->getValues();
+
+        $this->assertSame('application/announcements', $values['permissions']);
+        $this->assertSame('user/password-change', $values['refusals']);
     }
 }
