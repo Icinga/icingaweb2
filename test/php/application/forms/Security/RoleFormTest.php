@@ -29,12 +29,17 @@ class RoleFormTest extends BaseTestCase
      * @param RepositoryMode $mode
      * @param array<string, mixed> $values
      * @param ?string $identifier
+     * @param array<int, object> $roles The roles the repository provides
      *
      * @return RoleForm
      */
-    private function createForm(RepositoryMode $mode, array $values = [], ?string $identifier = null): RoleForm
-    {
-        $form = new class ($this->createRepository(), $mode, $identifier) extends RoleForm {
+    private function createForm(
+        RepositoryMode $mode,
+        array $values = [],
+        ?string $identifier = null,
+        array $roles = []
+    ): RoleForm {
+        $form = new class ($this->createRepository($roles), $mode, $identifier) extends RoleForm {
             public static function collectProvidedPrivileges(): array
             {
                 return [
@@ -42,6 +47,7 @@ class RoleFormTest extends BaseTestCase
                         'application' => [
                             'application/announcements' => ['description' => 'Allow to manage announcements'],
                             'application/log'           => ['description' => 'Allow to view the application log'],
+                            'user/password-change'      => ['description' => 'Allow password changes in preferences'],
                         ],
                         'mymodule'    => [
                             'module/mymodule' => ['isUsagePerm' => true, 'label' => 'General Module Access'],
@@ -59,6 +65,11 @@ class RoleFormTest extends BaseTestCase
                     ],
                 ];
             }
+
+            public function exposeFetchEntry(): object|false
+            {
+                return $this->fetchEntry();
+            }
         };
 
         $form->disableCsrfCounterMeasure();
@@ -71,7 +82,7 @@ class RoleFormTest extends BaseTestCase
     /**
      * Create a repository suitable for every mode the role form supports
      *
-     * @param array<int, array<string, mixed>> $roles The roles the repository provides
+     * @param array<int, object> $roles The roles the repository provides
      *
      * @return Repository
      */
@@ -245,5 +256,153 @@ class RoleFormTest extends BaseTestCase
 
         $this->assertArrayNotHasKey('permissions', $values);
         $this->assertArrayNotHasKey('refusals', $values);
+    }
+
+    public function testFetchEntryReturnsFalseIfTheRoleDoesNotExist(): void
+    {
+        $form = $this->createForm(RepositoryMode::Update, [], 'missing');
+
+        $this->assertFalse($form->exposeFetchEntry());
+    }
+
+    public function testFetchEntryMapsTheRolesBasicProperties(): void
+    {
+        $role = (object) [
+            'name'         => 'test',
+            'parent'       => 'admins',
+            'users'        => 'icingaadmin',
+            'groups'       => 'support',
+            'unrestricted' => '1',
+        ];
+        $form = $this->createForm(RepositoryMode::Update, [], 'test', [$role]);
+        $entry = $form->exposeFetchEntry();
+
+        $this->assertSame('test', $entry->name);
+        $this->assertSame('admins', $entry->parent);
+        $this->assertSame('icingaadmin', $entry->users);
+        $this->assertSame('support', $entry->groups);
+        $this->assertSame('1', $entry->unrestricted);
+    }
+
+    public function testFetchEntryChecksTheElementsOfGrantedPermissions(): void
+    {
+        $role = (object) [
+            'name'        => 'test',
+            'parent'      => null,
+            'permissions' => 'application/announcements,mymodule/read',
+        ];
+        $form = $this->createForm(RepositoryMode::Update, [], 'test', [$role]);
+        $entry = $form->exposeFetchEntry();
+
+        $this->assertSame('y', $entry->application_elements['applicationannouncements']);
+        $this->assertSame('y', $entry->mymodule_elements['mymoduleread']);
+        $this->assertArrayNotHasKey('applicationlog', $entry->application_elements);
+    }
+
+    public function testFetchEntryChecksTheDenyTogglesOfRefusedPermissions(): void
+    {
+        $role = (object) ['name' => 'test', 'parent' => null, 'refusals' => 'application/log'];
+        $form = $this->createForm(RepositoryMode::Update, [], 'test', [$role]);
+        $entry = $form->exposeFetchEntry();
+
+        $this->assertSame('y', $entry->application_elements['noapplicationlog']);
+        $this->assertArrayNotHasKey('applicationlog', $entry->application_elements);
+    }
+
+    public function testFetchEntryDetectsAdministrativeAccessAsFirstPermission(): void
+    {
+        $role = (object) ['name' => 'test', 'parent' => null, 'permissions' => '*,application/log'];
+        $form = $this->createForm(RepositoryMode::Update, [], 'test', [$role]);
+        $entry = $form->exposeFetchEntry();
+
+        $this->assertSame('y', $entry->{RoleForm::WILDCARD_NAME});
+    }
+
+    public function testFetchEntryDetectsAdministrativeAccessAsLastPermission(): void
+    {
+        $role = (object) ['name' => 'test', 'parent' => null, 'permissions' => 'application/log,*'];
+        $form = $this->createForm(RepositoryMode::Update, [], 'test', [$role]);
+        $entry = $form->exposeFetchEntry();
+
+        $this->assertSame('y', $entry->{RoleForm::WILDCARD_NAME});
+    }
+
+    public function testFetchEntryDetectsAdministrativeAccessAsMiddlePermission(): void
+    {
+        $role = (object) ['name' => 'test', 'parent' => null, 'permissions' => 'application/log,*,mymodule/read'];
+        $form = $this->createForm(RepositoryMode::Update, [], 'test', [$role]);
+        $entry = $form->exposeFetchEntry();
+
+        $this->assertSame('y', $entry->{RoleForm::WILDCARD_NAME});
+    }
+
+    public function testFetchEntryDoesNotMistakeAModuleWildcardForAdministrativeAccess(): void
+    {
+        $role = (object) ['name' => 'test', 'parent' => null, 'permissions' => 'mymodule/*'];
+        $form = $this->createForm(RepositoryMode::Update, [], 'test', [$role]);
+        $entry = $form->exposeFetchEntry();
+
+        $this->assertSame('n', $entry->{RoleForm::WILDCARD_NAME});
+    }
+
+    public function testFetchEntryMigratesLegacyPermissions(): void
+    {
+        $role = (object) ['name' => 'test', 'parent' => null, 'permissions' => 'admin,no-user/password-change'];
+        $form = $this->createForm(RepositoryMode::Update, [], 'test', [$role]);
+        $entry = $form->exposeFetchEntry();
+
+        $this->assertSame('y', $entry->application_elements['applicationannouncements']);
+        $this->assertSame('y', $entry->application_elements['nouserpasswordchange']);
+    }
+
+    public function testFetchEntryOmitsGeneralModuleAccessForFullModuleAccess(): void
+    {
+        $role = (object) ['name' => 'test', 'parent' => null, 'permissions' => 'module/mymodule,mymodule/*'];
+        $form = $this->createForm(RepositoryMode::Update, [], 'test', [$role]);
+        $entry = $form->exposeFetchEntry();
+
+        $this->assertSame('y', $entry->mymodule_elements['mymodule']);
+        $this->assertArrayNotHasKey('modulemymodule', $entry->mymodule_elements);
+    }
+
+    public function testFetchEntryCopiesRestrictionsIntoTheirFieldsets(): void
+    {
+        $role = (object) [
+            'name'                    => 'test',
+            'parent'                  => null,
+            'application/share/users' => 'icingaadmin',
+            'mymodule/filter'         => 'host=foo',
+        ];
+        $form = $this->createForm(RepositoryMode::Update, [], 'test', [$role]);
+        $entry = $form->exposeFetchEntry();
+
+        $this->assertSame('icingaadmin', $entry->application_elements['applicationshareusers']);
+        $this->assertSame('host=foo', $entry->mymodule_elements['mymodulefilter']);
+    }
+
+    public function testFetchEntryYieldsNoFieldsetsForARoleWithoutPrivileges(): void
+    {
+        $role = (object) ['name' => 'test', 'parent' => null];
+        $form = $this->createForm(RepositoryMode::Update, [], 'test', [$role]);
+        $entry = $form->exposeFetchEntry();
+
+        $this->assertSame('n', $entry->{RoleForm::WILDCARD_NAME});
+        $this->assertObjectNotHasProperty('application_elements', $entry);
+        $this->assertObjectNotHasProperty('mymodule_elements', $entry);
+    }
+
+    public function testFetchEntryTrimsSpacesBetweenPermissions(): void
+    {
+        $role = (object) [
+            'name'        => 'test',
+            'parent'      => null,
+            'permissions' => 'application/announcements , mymodule/read',
+        ];
+        $form = $this->createForm(RepositoryMode::Update, [], 'test', [$role]);
+        $entry = $form->exposeFetchEntry();
+
+        $this->assertSame('y', $entry->application_elements['applicationannouncements']);
+        $this->assertSame('y', $entry->mymodule_elements['mymoduleread']);
+        $this->assertArrayNotHasKey('applicationlog', $entry->application_elements);
     }
 }
