@@ -51,9 +51,10 @@ class RoleFormTest extends BaseTestCase
                             'user/password-change'      => ['description' => 'Allow password changes in preferences'],
                         ],
                         'mymodule'    => [
-                            'module/mymodule' => ['isUsagePerm' => true, 'label' => 'General Module Access'],
-                            'mymodule/*'      => ['isFullPerm' => true, 'label' => 'Full Module Access'],
-                            'mymodule/read'   => ['description' => 'Allow to read'],
+                            'module/mymodule'   => ['isUsagePerm' => true, 'label' => 'General Module Access'],
+                            'mymodule/*'        => ['isFullPerm' => true, 'label' => 'Full Module Access'],
+                            'mymodule/read'     => ['description' => 'Allow to read'],
+                            'no-mymodule/write' => ['description' => 'Refuse writing'],
                         ],
                     ],
                     [
@@ -466,5 +467,192 @@ class RoleFormTest extends BaseTestCase
 
         $this->assertSame('application/announcements', $values['permissions']);
         $this->assertSame('user/password-change', $values['refusals']);
+    }
+
+    public function testAssembleCreatesAFieldsetPerModule(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert);
+
+        $this->assertTrue($form->hasElement('application_elements'));
+        $this->assertTrue($form->hasElement('mymodule_elements'));
+    }
+
+    public function testAssembleAddsACheckboxForEveryPermission(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert);
+        $application = $form->getElement('application_elements');
+        $mymodule = $form->getElement('mymodule_elements');
+
+        $this->assertTrue($application->hasElement('applicationannouncements'));
+        $this->assertTrue($application->hasElement('applicationlog'));
+        $this->assertTrue($application->hasElement('userpasswordchange'));
+        $this->assertTrue($mymodule->hasElement('modulemymodule'));
+        $this->assertTrue($mymodule->hasElement('mymodule'));
+        $this->assertTrue($mymodule->hasElement('mymoduleread'));
+        $this->assertTrue($mymodule->hasElement('nomymodulewrite'));
+    }
+
+    public function testAssembleAddsATextElementForEveryRestriction(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert);
+
+        $this->assertTrue($form->getElement('application_elements')->hasElement('applicationshareusers'));
+        $this->assertTrue($form->getElement('mymodule_elements')->hasElement('mymodulefilter'));
+    }
+
+    public function testAssembleAddsADenyToggleForEveryPlainPermission(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert);
+        $application = $form->getElement('application_elements');
+        $mymodule = $form->getElement('mymodule_elements');
+
+        $this->assertTrue($application->hasElement('noapplicationannouncements'));
+        $this->assertTrue($application->hasElement('noapplicationlog'));
+        $this->assertTrue($application->hasElement('nouserpasswordchange'));
+        $this->assertTrue($mymodule->hasElement('nomodulemymodule'));
+        $this->assertTrue($mymodule->hasElement('nomymoduleread'));
+    }
+
+    public function testAssembleAddsNoDenyToggleForFullModuleAccess(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert);
+
+        $this->assertFalse($form->getElement('mymodule_elements')->hasElement('nomymodule'));
+    }
+
+    public function testAssembleAddsNoDenyToggleForPermissionsThatAlreadyDeny(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert);
+
+        $this->assertFalse($form->getElement('mymodule_elements')->hasElement('nonomymodulewrite'));
+    }
+
+    public function testAssembleDisablesPermissionsForAdministrativeAccess(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert, [RoleForm::WILDCARD_NAME => 'y']);
+        $permissions = [
+            'application_elements' => 'applicationannouncements',
+            'mymodule_elements'    => 'mymodule',
+        ];
+
+        foreach ($permissions as $fieldset => $name) {
+            $fakeName = $name . '_fake';
+
+            $this->assertTrue($form->getElement($fieldset)->hasElement($fakeName));
+
+            $checkbox = $form->getElement($fieldset)->getElement($fakeName);
+
+            $this->assertTrue($checkbox->isChecked());
+            $this->assertTrue($checkbox->isIgnored());
+            $this->assertTrue($checkbox->getAttribute('disabled')->getValue());
+        }
+    }
+
+    public function testAssemblePreservesPermissionsHiddenByAdministrativeAccess(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert, [
+            RoleForm::WILDCARD_NAME => 'y',
+            'application_elements'  => ['applicationannouncements' => 'y'],
+        ]);
+        $hidden = $form->getElement('application_elements')->getElement('applicationannouncements');
+
+        $this->assertFalse($hidden->isIgnored());
+        $this->assertSame('y', $hidden->getValue());
+    }
+
+    public function testAssembleDisablesOnlyThePermissionsSortedAfterFullModuleAccess(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert, ['mymodule_elements' => ['mymodule' => 'y']]);
+        $mymodule = $form->getElement('mymodule_elements');
+
+        $this->assertFalse($mymodule->hasElement('mymodule_fake'));
+        $this->assertFalse($mymodule->getElement('mymodule')->getAttribute('disabled')->getValue());
+
+        foreach (['modulemymodule', 'mymoduleread', 'nomymodulewrite'] as $name) {
+            $fakeName = $name . '_fake';
+
+            $this->assertTrue($mymodule->hasElement($fakeName));
+
+            $checkbox = $mymodule->getElement($fakeName);
+
+            $this->assertTrue($checkbox->isIgnored());
+            $this->assertTrue($checkbox->getAttribute('disabled')->getValue());
+        }
+    }
+
+    public function testAssembleMarksRestrictionsReadonlyForUnrestrictedAccess(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert, ['unrestricted' => '1']);
+        $restriction = $form->getElement('application_elements')->getElement('applicationshareusers');
+
+        $this->assertTrue($restriction->getAttribute('readonly')->getValue());
+        $this->assertSame('unrestricted-role', $restriction->getAttribute('class')->getValue());
+    }
+
+    public function testAssembleKeepsRestrictionsEditableWithoutUnrestrictedAccess(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert);
+        $restriction = $form->getElement('application_elements')->getElement('applicationshareusers');
+
+        $this->assertNull($restriction->getAttribute('readonly')->getValue());
+        $this->assertSame('', $restriction->getAttribute('class')->getValue());
+    }
+
+    public function testAssembleShowsTheGrantedIconForACheckedPermission(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert, [
+            'application_elements' => ['applicationannouncements' => 'y'],
+        ]);
+
+        $this->assertStringContainsString('fa-check-circle', $form->getElement('application_elements')->render());
+        $this->assertStringNotContainsString('fa-check-circle', $form->getElement('mymodule_elements')->render());
+    }
+
+    public function testAssembleShowsTheGrantedIconForAdministrativeAccess(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert, [RoleForm::WILDCARD_NAME => 'y']);
+
+        $this->assertStringContainsString('fa-check-circle', $form->getElement('application_elements')->render());
+        $this->assertStringContainsString('fa-check-circle', $form->getElement('mymodule_elements')->render());
+    }
+
+    public function testAssembleShowsTheRefusedIconForACheckedDenyToggle(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert, [
+            'application_elements' => ['noapplicationlog' => 'y'],
+        ]);
+
+        $this->assertStringContainsString('fa-times-circle', $form->getElement('application_elements')->render());
+        $this->assertStringNotContainsString('fa-times-circle', $form->getElement('mymodule_elements')->render());
+    }
+
+    public function testAssembleShowsTheRestrictedIconForAFilledRestriction(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert, [
+            'application_elements' => ['applicationshareusers' => 'icingaadmin'],
+        ]);
+
+        $this->assertStringContainsString('fa-filter', $form->getElement('application_elements')->render());
+        $this->assertStringNotContainsString('fa-filter', $form->getElement('mymodule_elements')->render());
+    }
+
+    public function testAssembleHidesTheRestrictedIconForUnrestrictedAccess(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert, [
+            'unrestricted'         => '1',
+            'application_elements' => ['applicationshareusers' => 'icingaadmin'],
+        ]);
+
+        $this->assertStringNotContainsString('fa-filter', $form->getElement('application_elements')->render());
+    }
+
+    public function testAssembleShowsNoPreviewIconsForARoleWithoutPrivileges(): void
+    {
+        $application = $this->createForm(RepositoryMode::Insert)->getElement('application_elements')->render();
+
+        $this->assertStringContainsString('privilege-preview', $application);
+        $this->assertStringNotContainsString('fa-check-circle', $application);
+        $this->assertStringNotContainsString('fa-times-circle', $application);
+        $this->assertStringNotContainsString('fa-filter', $application);
     }
 }
