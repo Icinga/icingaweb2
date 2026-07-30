@@ -15,6 +15,8 @@ use Icinga\Repository\Repository;
 use Icinga\Repository\RepositoryMode;
 use Icinga\Test\BaseTestCase;
 use Icinga\Util\StringHelper;
+use InvalidArgumentException;
+use ipl\Html\HtmlDocument;
 
 /**
  * Tests for {@see RoleForm}
@@ -72,6 +74,38 @@ class RoleFormTest extends BaseTestCase
             {
                 return $this->fetchEntry();
             }
+
+            public function exposeOnSuccess(): void
+            {
+                $this->onSuccess();
+            }
+
+            public function exposeRepository(): Repository
+            {
+                return $this->repository;
+            }
+
+            public function exposeConvertToElementName(string $value): string
+            {
+                return $this->convertToElementName($value);
+            }
+
+            /**
+             * @param array<string, array<string, mixed>> $permissions
+             *
+             * @return array<string, array<string, mixed>>
+             */
+            public function exposeSortPermissions(array $permissions): array
+            {
+                $this->sortPermissions($permissions);
+
+                return $permissions;
+            }
+
+            public function exposeBuildPrivilegeLabel(string $name): HtmlDocument
+            {
+                return $this->buildPrivilegeLabel($name);
+            }
         };
 
         $form->disableCsrfCounterMeasure();
@@ -106,16 +140,28 @@ class RoleFormTest extends BaseTestCase
                 ],
             ];
 
+            /** @var list<array{target: string, data: array<string, mixed>}> */
+            public array $insertCalls = [];
+
+            /** @var list<array{target: string, data: array<string, mixed>, filter: ?Filter}> */
+            public array $updateCalls = [];
+
+            /** @var list<array{target: string, filter: ?Filter}> */
+            public array $deleteCalls = [];
+
             public function insert($target, array $data): void
             {
+                $this->insertCalls[] = ['target' => $target, 'data' => $data];
             }
 
             public function update($target, array $data, ?Filter $filter = null): void
             {
+                $this->updateCalls[] = ['target' => $target, 'data' => $data, 'filter' => $filter];
             }
 
             public function delete($target, ?Filter $filter = null): void
             {
+                $this->deleteCalls[] = ['target' => $target, 'filter' => $filter];
             }
         };
     }
@@ -654,5 +700,210 @@ class RoleFormTest extends BaseTestCase
         $this->assertStringNotContainsString('fa-check-circle', $application);
         $this->assertStringNotContainsString('fa-times-circle', $application);
         $this->assertStringNotContainsString('fa-filter', $application);
+    }
+
+    public function testDeleteModeRequiresAnUpdatableRepository(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $repository = new class (new ArrayDatasource([])) extends Repository implements Reducible {
+            public function delete($target, ?Filter $filter = null): void
+            {
+            }
+        };
+
+        new RoleForm($repository, RepositoryMode::Delete, 'test');
+    }
+
+    public function testOnSuccessUpdatesTheParentOfInheritingRolesOnRename(): void
+    {
+        $roles = [
+            (object) ['name' => 'test', 'parent' => null],
+            (object) ['name' => 'child', 'parent' => 'test'],
+        ];
+        $form = $this->createForm(RepositoryMode::Update, ['name' => 'renamed'], 'test', $roles);
+        $form->exposeOnSuccess();
+        $updateCalls = $form->exposeRepository()->updateCalls;
+
+        // The first call is the role itself, the second one re-parents what inherits from it
+        $this->assertCount(2, $updateCalls);
+        $this->assertSame(['parent' => 'renamed'], $updateCalls[1]['data']);
+        $this->assertEquals(Filter::where('parent', 'test'), $updateCalls[1]['filter']);
+    }
+
+    public function testOnSuccessKeepsInheritingRolesUntouchedWithoutRename(): void
+    {
+        $roles = [
+            (object) ['name' => 'test', 'parent' => null],
+            (object) ['name' => 'child', 'parent' => 'test'],
+        ];
+        $form = $this->createForm(RepositoryMode::Update, ['name' => 'test'], 'test', $roles);
+        $form->exposeOnSuccess();
+
+        $this->assertCount(1, $form->exposeRepository()->updateCalls);
+    }
+
+    public function testOnSuccessClearsTheParentOfInheritingRolesOnRemoval(): void
+    {
+        $roles = [
+            (object) ['name' => 'test', 'parent' => null],
+            (object) ['name' => 'child', 'parent' => 'test'],
+        ];
+        $form = $this->createForm(RepositoryMode::Delete, [], 'test', $roles);
+        $form->exposeOnSuccess();
+        $repository = $form->exposeRepository();
+
+        $this->assertCount(1, $repository->deleteCalls);
+        $this->assertCount(1, $repository->updateCalls);
+        $this->assertSame(['parent' => null], $repository->updateCalls[0]['data']);
+    }
+
+    public function testOnSuccessKeepsInheritingRolesUntouchedInInsertMode(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert, ['name' => 'test']);
+        $form->exposeOnSuccess();
+        $repository = $form->exposeRepository();
+
+        $this->assertCount(1, $repository->insertCalls);
+        $this->assertEmpty($repository->updateCalls);
+    }
+
+    public function testCollectRolesOffersEveryOtherRoleAsParent(): void
+    {
+        $roles = [
+            (object) ['name' => 'test', 'parent' => null],
+            (object) ['name' => 'admins', 'parent' => null],
+            (object) ['name' => 'support', 'parent' => null],
+        ];
+        $parent = $this->createForm(RepositoryMode::Update, [], 'test', $roles)->getElement('parent');
+
+        $this->assertNotNull($parent->getOption('admins'));
+        $this->assertNotNull($parent->getOption('support'));
+        $this->assertNull($parent->getOption('test'));
+    }
+
+    public function testCollectRolesExcludesInheritingRoles(): void
+    {
+        $roles = [
+            (object) ['name' => 'test', 'parent' => null],
+            (object) ['name' => 'child', 'parent' => 'test'],
+            (object) ['name' => 'grandchild', 'parent' => 'child'],
+            (object) ['name' => 'other', 'parent' => null],
+        ];
+        $parent = $this->createForm(RepositoryMode::Update, [], 'test', $roles)->getElement('parent');
+
+        $this->assertNull($parent->getOption('child'));
+        $this->assertNull($parent->getOption('grandchild'));
+        $this->assertNotNull($parent->getOption('other'));
+    }
+
+    public function testCollectRolesTerminatesOnCyclicInheritance(): void
+    {
+        $roles = [
+            (object) ['name' => 'test', 'parent' => 'child'],
+            (object) ['name' => 'child', 'parent' => 'test'],
+        ];
+        $parent = $this->createForm(RepositoryMode::Update, [], 'test', $roles)->getElement('parent');
+
+        $this->assertNull($parent->getOption('child'));
+    }
+
+    public function testCollectRolesOffersEveryRoleInInsertMode(): void
+    {
+        $roles = [
+            (object) ['name' => 'test', 'parent' => null],
+            (object) ['name' => 'child', 'parent' => 'test'],
+        ];
+        $parent = $this->createForm(RepositoryMode::Insert, [], null, $roles)->getElement('parent');
+
+        $this->assertNotNull($parent->getOption('test'));
+        $this->assertNotNull($parent->getOption('child'));
+    }
+
+    public function testConvertToElementNameStripsEverythingButWordCharacters(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert);
+
+        $this->assertSame('configaccesscontrolusers', $form->exposeConvertToElementName('config/access-control/users'));
+        $this->assertSame('mymodule', $form->exposeConvertToElementName('mymodule/*'));
+        $this->assertSame('mymoduleread_write', $form->exposeConvertToElementName('mymodule/read_write'));
+        $this->assertSame('mübung', $form->exposeConvertToElementName('m/übung'));
+    }
+
+    public function testSortPermissionsPutsFullModuleAccessFirstAndGeneralModuleAccessSecond(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert);
+        $permissions = $form->exposeSortPermissions([
+            'mymodule/read'     => [],
+            'no-mymodule/write' => [],
+            'mymodule/write'    => [],
+            'module/mymodule'   => ['isUsagePerm' => true],
+            'mymodule/*'        => ['isFullPerm' => true],
+        ]);
+
+        $this->assertSame(
+            ['mymodule/*', 'module/mymodule', 'mymodule/read', 'mymodule/write', 'no-mymodule/write'],
+            array_keys($permissions),
+        );
+    }
+
+    public function testSortPermissionsOrdersNamesByTheirFirstDifferingSegment(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert);
+        $permissions = $form->exposeSortPermissions([
+            'user/password-change'        => [],
+            'config/general'              => [],
+            'application/log'             => [],
+            'config/access-control/users' => [],
+            'config/*'                    => [],
+            'application/announcements'   => [],
+            'config/access-control/*'     => [],
+            'user/*'                      => [],
+        ]);
+
+        $this->assertSame(
+            [
+                'application/announcements',
+                'application/log',
+                'config/*',
+                'config/access-control/*',
+                'config/access-control/users',
+                'config/general',
+                'user/*',
+                'user/password-change',
+            ],
+            array_keys($permissions),
+        );
+    }
+
+    public function testSortPermissionsPutsAShorterNameBeforeItsExtensions(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert);
+        $permissions = $form->exposeSortPermissions([
+            'config/general' => [],
+            'config'         => [],
+            'config/*'       => [],
+        ]);
+
+        $this->assertSame(['config', 'config/*', 'config/general'], array_keys($permissions));
+    }
+
+    public function testBuildPrivilegeLabelAllowsLineBreaksAfterEverySlash(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert);
+        $label = $form->exposeBuildPrivilegeLabel('config/access-control/users');
+
+        $this->assertSame(
+            "<em>config</em>/\u{200B}<span class=\"no-wrap\">access-control</span>/\u{200B}"
+            . "<span class=\"no-wrap\">users</span>",
+            $label->render()
+        );
+    }
+
+    public function testBuildPrivilegeLabelEmphasizesASingleSegment(): void
+    {
+        $form = $this->createForm(RepositoryMode::Insert);
+
+        $this->assertSame('<em>admin</em>', $form->exposeBuildPrivilegeLabel('admin')->render());
     }
 }
