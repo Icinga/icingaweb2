@@ -36,11 +36,6 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
             return $content;
         }
 
-        $view = $form->getView();
-        if ($view === null) {
-            return $content;
-        }
-
         $notifications = $this->recurseForm($form);
         if (empty($notifications)) {
             return $content;
@@ -51,12 +46,7 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
             if (isset($notifications[$type])) {
                 $messages = [];
                 foreach ($notifications[$type] as $message) {
-                    if (is_array($message)) {
-                        [$message, $properties] = $message;
-                        $messages[] = HtmlElement::create('li', $properties, $message);
-                    } else {
-                        $messages[] = HtmlElement::create('li', [], $message);
-                    }
+                    $messages[] = HtmlElement::create('li', [], $message);
                 }
 
                 $count = count($messages);
@@ -64,6 +54,7 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
                     $document = HtmlElement::create('ul', null, $messages);
                 } else {
                     $document = new HtmlDocument();
+                    // Single message: unwrap <li> so the callout renders plain content, not a list.
                     $document->add($messages[0]->getContent());
                 }
 
@@ -128,6 +119,7 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
      * @param int $count Number of notifications of the given type
      *
      * @return string
+     *
      * @throws LogicException In case the given type is invalid
      */
     protected function getCalloutTitle(int $type, int $count): string
@@ -135,7 +127,7 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
         return match ($type) {
             Form::NOTIFICATION_ERROR => $this->translatePlural('Error', 'Errors', $count),
             Form::NOTIFICATION_WARNING => $this->translatePlural('Warning', 'Warnings', $count),
-            Form::NOTIFICATION_INFO => $this->translatePlural('Info', 'Infos', $count),
+            Form::NOTIFICATION_INFO => $this->translatePlural('Info', 'Info', $count),
             default => throw new LogicException(sprintf('Invalid notification type "%s" provided', $type)),
         };
     }
