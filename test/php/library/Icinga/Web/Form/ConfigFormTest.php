@@ -5,6 +5,7 @@
 
 namespace Tests\Icinga\Web\Form;
 
+use Error;
 use Icinga\Application\Config;
 use Icinga\Data\ConfigObject;
 use Icinga\Test\BaseTestCase;
@@ -14,33 +15,78 @@ use LogicException;
 
 class ConfigFormTest extends BaseTestCase
 {
-    private function makeForm(array $configData = [])
+    /** @var mixed Original value restored to avoid leaking global test state */
+    private mixed $secFetchSiteHeader;
+
+    public function setUp(): void
     {
-        $form = new class(Config::fromArray($configData)) extends ConfigForm {
-            public function exposeSetSectionKeyDelimiter(string $delimiter): void
-            {
-                $this->sectionKeyDelimiter = $delimiter;
-            }
-        };
+        parent::setUp();
 
-        $form->disableCsrfCounterMeasure();
+        $this->secFetchSiteHeader = $_SERVER['HTTP_SEC_FETCH_SITE'] ?? null;
+        // Force token protection because safe Sec-Fetch-Site values use a dummy element.
+        unset($_SERVER['HTTP_SEC_FETCH_SITE']);
+    }
 
-        return $form;
+    public function tearDown(): void
+    {
+        if ($this->secFetchSiteHeader === null) {
+            unset($_SERVER['HTTP_SEC_FETCH_SITE']);
+        } else {
+            $_SERVER['HTTP_SEC_FETCH_SITE'] = $this->secFetchSiteHeader;
+        }
+
+        parent::tearDown();
     }
 
     public function testSubmitButtonIsAddedAfterAssembly(): void
     {
         $form = $this->makeForm();
+        $form->disableCsrfCounterMeasure();
         $form->ensureAssembled();
         $this->assertTrue($form->hasElement('store'));
     }
 
     public function testCsrfElementIsAddedAfterAssembly(): void
     {
-        $form = new class(Config::fromArray([])) extends ConfigForm {};
+        $form = $this->makeForm();
         $form->setCsrfCounterMeasureId('bogus');
         $form->ensureAssembled();
         $this->assertTrue($form->hasElement('CSRFToken'));
+        $this->assertTrue($form->getElement('CSRFToken')->isRequired());
+        $this->assertMatchesRegularExpression(
+            '/ value="[^"]+\|[^"]+"/',
+            $form->getElement('CSRFToken')->render()
+        );
+    }
+
+    public function testDisabledCsrfCounterMeasureDoesNotAddElement(): void
+    {
+        $form = $this->makeForm();
+        $form->disableCsrfCounterMeasure();
+        $form->ensureAssembled();
+        $this->assertFalse($form->hasElement('CSRFToken'));
+        $this->assertTrue($form->hasElement('store'));
+    }
+
+    public function testAssemblyWithoutCsrfCounterMeasureIdFails(): void
+    {
+        $form = $this->makeForm();
+        $this->expectException(Error::class);
+        $this->expectExceptionMessage('No CSRF counter measure ID set');
+        $form->ensureAssembled();
+    }
+
+    public function testRepeatedAssemblyDoesNotDuplicateRequiredElements(): void
+    {
+        $form = $this->makeForm();
+        $form->setCsrfCounterMeasureId('bogus');
+        $form->ensureAssembled();
+        $submitElement = $form->getElement('store');
+        $csrfElement = $form->getElement('CSRFToken');
+        $form->ensureAssembled();
+        $this->assertCount(2, $form->getElements());
+        $this->assertSame($submitElement, $form->getElement('store'));
+        $this->assertSame($csrfElement, $form->getElement('CSRFToken'));
     }
 
     public function testSaveThrowsForArrayElementValue(): void
@@ -119,5 +165,11 @@ class ConfigFormTest extends BaseTestCase
         $form->exposeSave();
 
         $this->assertFalse($config->hasSection('mysection'));
+    }
+
+    private function makeForm(): ConfigForm
+    {
+        return new class (Config::fromArray([])) extends ConfigForm {
+        };
     }
 }
