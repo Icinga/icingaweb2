@@ -67,7 +67,7 @@ class AccountController extends Controller
                     $userBackend = null;
                 }
                 if ($userBackend !== null) {
-                    $changePasswordForm = (new ChangePasswordForm($userBackend))
+                    $changePasswordForm = (new ChangePasswordForm($userBackend, $user))
                         ->setCsrfCounterMeasureId(Session::getSession()->getId())
                         ->on(Form::ON_SUBMIT, function (ChangePasswordForm $_): void {
                             $this->redirectNow('__REFRESH__');
