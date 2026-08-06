@@ -22,6 +22,7 @@ use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Table;
 use ipl\Html\Text;
+use ipl\Stdlib\Str;
 use ipl\Validator\CallbackValidator;
 use ipl\Web\Common\CalloutType;
 use ipl\Web\Common\Csp as CspInstance;
@@ -189,7 +190,7 @@ class CspConfigForm extends ConfigForm
                     'Should module defined CSP directives be enabled?'
                     . ' Modules can define or change csp directives at any point.',
                 ),
-                'security__csp_enable_modules',
+                'csp_enable_modules',
                 ! $useCustomCsp,
             );
 
@@ -214,7 +215,7 @@ class CspConfigForm extends ConfigForm
                     . ' header that is sent to the user will only contain the subset of directives that actually'
                     . ' matters to them.',
                 ),
-                'security__csp_enable_dashboards',
+                'csp_enable_dashboards',
                 ! $useCustomCsp,
             );
 
@@ -247,7 +248,7 @@ class CspConfigForm extends ConfigForm
                     . ' all users. The actual header that is sent to the user will only contain the subset of'
                     . ' directives that actually matters to them.',
                 ),
-                'security__csp_enable_navigation',
+                'csp_enable_navigation',
                 ! $useCustomCsp,
             );
 
@@ -394,7 +395,7 @@ class CspConfigForm extends ConfigForm
      *
      * @param string $label The label of the checkbox
      * @param string $description The description of the checkbox
-     * @param string $field The name of the checkbox field
+     * @param string $key The key of the checkbox field in the config
      * @param bool $enabled Whether the checkbox should be checked and enabled
      *
      * @return void
@@ -402,7 +403,7 @@ class CspConfigForm extends ConfigForm
     protected function addDirectiveCheckboxElement(
         string $label,
         string $description,
-        string $field,
+        string $key,
         bool $enabled,
     ): void {
         $classList = [
@@ -415,6 +416,17 @@ class CspConfigForm extends ConfigForm
             $classList[] = 'csp-disabled';
         }
 
+        $field = 'security' . $this->sectionKeyDelimiter . $key;
+
+        // Keep the auto-generation options off by default for installations that already
+        // had CSP enabled, so their existing behavior isn't changed. For installations
+        // enabling CSP for the first time, default them on as the recommended setting.
+        $cspWasEnabled = $this->config->get('security', 'use_strict_csp') === '1';
+        $defaultValue = $cspWasEnabled ? '0' : '1';
+        if (Str::isEmpty($this->getPopulatedValue($field)) && $this->config->get('security', $key) === null) {
+            $this->populate([$field => $defaultValue]);
+        }
+
         $this->addElement('checkbox', $field, [
             'label'          => $label,
             'description'    => $description,
@@ -422,7 +434,6 @@ class CspConfigForm extends ConfigForm
             'checkedValue'   => '1',
             'uncheckedValue' => '0',
             'disabled'       => ! $enabled,
-            'value'          => $this->getPopulatedValue($field),
         ]);
     }
 

@@ -133,25 +133,14 @@ class ConfigController extends Controller
 
         $this->view->title = $this->translate('Security');
 
-        $config = Config::app();
-        $cspForm = new CspConfigForm($config);
-        $cspForm->setCsrfCounterMeasureId(Session::getSession()->getId());
-        // Keep the auto-generation options off by default for installations that already
-        // had CSP enabled, so their existing behavior isn't changed. For installations
-        // enabling CSP for the first time, default them on as the recommended setting.
-        $defaultValue = $cspForm->isCspEnabled() ? '0' : '1';
-        $cspForm->populate([
-            'security__csp_enable_modules'    => $config->get('security', 'csp_enable_modules', $defaultValue),
-            'security__csp_enable_dashboards' => $config->get('security', 'csp_enable_dashboards', $defaultValue),
-            'security__csp_enable_navigation' => $config->get('security', 'csp_enable_navigation', $defaultValue),
-        ]);
-
-        $cspForm->on(ContractForm::ON_SUBMIT, function (CspConfigForm $form) {
-            if ($form->hasConfigChanged()) {
-                $this->getResponse()->setReloadWindow(true);
-            }
-        });
-        $cspForm->handleRequest(ServerRequest::fromGlobals());
+        $cspForm = (new CspConfigForm(Config::app()))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->on(ContractForm::ON_SUBMIT, function (CspConfigForm $form) {
+                if ($form->hasConfigChanged()) {
+                    $this->getResponse()->setReloadWindow(true);
+                }
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
         $this->view->cspForm = $cspForm;
         $this->createApplicationTabs()->activate('security');
     }
