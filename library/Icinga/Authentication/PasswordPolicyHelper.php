@@ -39,10 +39,10 @@ class PasswordPolicyHelper
      * On success, attaches the policy validator to the given new-password form element.
      *
      * @param CompatForm $form The form containing the elements and to attach the elements to
+     * @param User $user The user whose password is set
      * @param string $newPasswordElementName Name of the new password form element
      * @param ?string $oldPasswordElementName Optional name of the old password form
      *   element for comparison
-     * @param ?User $user The user whose password is being changed
      *
      * @return void
      *
@@ -50,9 +50,9 @@ class PasswordPolicyHelper
      */
     public static function apply(
         CompatForm $form,
+        User $user,
         string $newPasswordElementName,
         ?string $oldPasswordElementName = null,
-        ?User $user = null,
     ): void {
         if ($oldPasswordElementName !== null && ! $form->hasElement($oldPasswordElementName)) {
             throw new LogicException(sprintf(
@@ -90,7 +90,7 @@ class PasswordPolicyHelper
                     }
                 }
 
-                $messages = $passwordPolicy->validate($value, $oldPassword, $user);
+                $messages = $passwordPolicy->validate($user, $value, $oldPassword);
                 if (empty($messages)) {
                     return true;
                 }
