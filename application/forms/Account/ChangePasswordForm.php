@@ -48,8 +48,25 @@ class ChangePasswordForm extends CompatForm
         $this->addElement($this->createUidElement());
 
         $this->addElement('password', static::OLD_PASSWORD_ELEMENT_NAME, [
-            'label'    => $this->translate('Old Password'),
-            'required' => true
+            'label'      => $this->translate('Old Password'),
+            'required'   => true,
+            'validators' => [new CallbackValidator(
+                function (#[SensitiveParameter] mixed $value, CallbackValidator $validator): bool {
+                    if (! is_string($value)) {
+                        $validator->addMessage($this->translate('Password must be a string'));
+
+                        return false;
+                    }
+
+                    if (! $this->backend->authenticate($this->user, $value)) {
+                        $validator->addMessage($this->translate('Old password is invalid'));
+
+                        return false;
+                    }
+
+                    return true;
+                }
+            )],
         ]);
 
         $this->addElement('password', static::NEW_PASSWORD_ELEMENT_NAME, [
@@ -91,30 +108,5 @@ class ChangePasswordForm extends CompatForm
             Filter::where('user_name', $this->user->getUsername())
         );
         Notification::success($this->translate('Account updated'));
-    }
-
-    /**
-     * Check whether the form is valid
-     *
-     * Extends the parent check by authenticating the old password against the
-     * configured backend, and adds an element-level error message if it fails.
-     *
-     * @return bool
-     */
-    public function isValid(): bool
-    {
-        if (! parent::isValid()) {
-            return false;
-        }
-
-        $oldPasswordEl = $this->getElement(static::OLD_PASSWORD_ELEMENT_NAME);
-
-        if (! $this->backend->authenticate($this->user, $oldPasswordEl->getValue())) {
-            $oldPasswordEl->addMessage($this->translate('Old password is invalid'));
-
-            return false;
-        }
-
-        return true;
     }
 }
