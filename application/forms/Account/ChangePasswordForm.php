@@ -44,14 +44,50 @@ class ChangePasswordForm extends CompatForm
         $this->applyDefaultElementDecorators();
     }
 
+    /**
+     * Validate the form and, once all elements are valid, authenticate the old password
+     *
+     * The old password is verified last, so that a submission rejected for any other
+     * reason does not reveal whether a guessed old password is correct.
+     *
+     * @return $this
+     */
+    public function validate(): static
+    {
+        parent::validate();
+
+        if (! $this->isValid) {
+            return $this;
+        }
+
+        $oldPasswordElement = $this->getElement(static::OLD_PASSWORD_ELEMENT_NAME);
+        if (! $this->backend->authenticate($this->user, $oldPasswordElement->getValue())) {
+            $oldPasswordElement->addMessage($this->translate('Old password is invalid'));
+            $this->isValid = false;
+        }
+
+        return $this;
+    }
+
     protected function assemble(): void
     {
         $this->addCsrfCounterMeasure();
         $this->addElement($this->createUidElement());
 
         $this->addElement('password', static::OLD_PASSWORD_ELEMENT_NAME, [
-            'label'    => $this->translate('Old Password'),
-            'required' => true
+            'label'      => $this->translate('Old Password'),
+            'required'   => true,
+            'validators' => [new CallbackValidator(
+                function (#[SensitiveParameter] mixed $value, CallbackValidator $validator): bool {
+                    if (! is_string($value)) {
+                        $validator->addMessage($this->translate('Password must be a string'));
+
+                        return false;
+                    }
+
+                    return true;
+                }
+            )],
         ]);
 
         $this->addElement('password', static::NEW_PASSWORD_ELEMENT_NAME, [
@@ -92,30 +128,5 @@ class ChangePasswordForm extends CompatForm
             Filter::where('user_name', $this->user->getUsername())
         );
         Notification::success($this->translate('Account updated'));
-    }
-
-    /**
-     * Check whether the form is valid
-     *
-     * Extends the parent check by authenticating the old password against the
-     * configured backend, and adds an element-level error message if it fails.
-     *
-     * @return bool
-     */
-    public function isValid(): bool
-    {
-        if (! parent::isValid()) {
-            return false;
-        }
-
-        $oldPasswordEl = $this->getElement(static::OLD_PASSWORD_ELEMENT_NAME);
-
-        if (! $this->backend->authenticate($this->user, $oldPasswordEl->getValue())) {
-            $oldPasswordEl->addMessage($this->translate('Old password is invalid'));
-
-            return false;
-        }
-
-        return true;
     }
 }
