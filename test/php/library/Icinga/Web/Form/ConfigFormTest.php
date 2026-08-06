@@ -193,6 +193,89 @@ class ConfigFormTest extends BaseTestCase
     }
 
     #[DataProvider('populationTimings')]
+    public function testElementIsClearedWhenValueIsEmpty(bool $populateBeforeAssembly): void
+    {
+        $config = new class(new ConfigObject(['mysection' => ['key' => 'value']])) extends Config {
+            public function saveIni($filePath = null, $fileMode = 0660): void
+            {
+            }
+        };
+
+        $form = new class($config) extends ConfigForm {
+            protected function assemble(): void
+            {
+                $this->addElement('text', 'mysection__key', []);
+            }
+
+            public function exposeSave(): void
+            {
+                $this->save();
+            }
+        };
+        $form->disableCsrfCounterMeasure();
+        $this->populateAroundAssembly($form, [['mysection__key' => '']], $populateBeforeAssembly);
+        $form->exposeSave();
+
+        $this->assertNull($config->get('mysection', 'key'));
+    }
+
+    #[DataProvider('populationTimings')]
+    public function testElementIsClearedWhenValueIsOriginalValue(bool $populateBeforeAssembly): void
+    {
+        $config = new class(new ConfigObject(['mysection' => ['key' => 'value']])) extends Config {
+            public function saveIni($filePath = null, $fileMode = 0660): void
+            {
+            }
+        };
+
+        $form = new class($config) extends ConfigForm {
+            protected function assemble(): void
+            {
+                $this->addElement('text', 'mysection__key', ['value' => 'value']);
+            }
+
+            public function exposeSave(): void
+            {
+                $this->save();
+            }
+        };
+        $form->disableCsrfCounterMeasure();
+        $this->populateAroundAssembly($form, [['mysection__key' => 'value']], $populateBeforeAssembly);
+        $form->exposeSave();
+
+        $this->assertNull($config->get('mysection', 'key'));
+    }
+
+    #[DataProvider('populationTimings')]
+    public function testClearingFieldWithNonEmptyDefaultWritesEmptyStringToConfig(
+        bool $populateBeforeAssembly,
+    ): void {
+        $config = new class(new ConfigObject(['mysection' => ['key' => 'value']])) extends Config {
+            public function saveIni($filePath = null, $fileMode = 0660): void
+            {
+            }
+        };
+
+        $form = new class($config) extends ConfigForm {
+            protected function assemble(): void
+            {
+                $this->addElement('text', 'mysection__key', ['value' => 'default']);
+            }
+
+            public function exposeSave(): void
+            {
+                $this->save();
+            }
+        };
+        $form->disableCsrfCounterMeasure();
+        $this->populateAroundAssembly($form, [['mysection__key' => '']], $populateBeforeAssembly);
+        $form->exposeSave();
+
+        $this->assertTrue($config->hasSection('mysection'));
+        $this->assertSame('', $config->get('mysection', 'key', 'not-set'));
+    }
+
+    #[DataProvider('populationTimings')]
     public function testEmptySectionIsRemovedOnSave(bool $populateBeforeAssembly): void
     {
         $config = new class(new ConfigObject(['mysection' => ['key' => 'value']])) extends Config {
@@ -218,6 +301,33 @@ class ConfigFormTest extends BaseTestCase
     }
 
     #[DataProvider('populationTimings')]
+    public function testZeroValueIsSaved(bool $populateBeforeAssembly): void
+    {
+        $config = new class (new ConfigObject(['mysection' => ['key' => 'value']])) extends Config {
+            public function saveIni($filePath = null, $fileMode = 0660): void
+            {
+            }
+        };
+
+        $form = new class ($config) extends ConfigForm {
+            protected function assemble(): void
+            {
+                $this->addElement('text', 'mysection__key');
+            }
+
+            public function exposeSave(): void
+            {
+                $this->save();
+            }
+        };
+        $form->disableCsrfCounterMeasure();
+        $this->populateAroundAssembly($form, [['mysection__key' => '0']], $populateBeforeAssembly);
+        $form->exposeSave();
+
+        $this->assertSame('0', $config->get('mysection', 'key'));
+    }
+
+    #[DataProvider('populationTimings')]
     public function testEveryPopulatedValueIsAppliedInOrder(bool $populateBeforeAssembly): void
     {
         $config = Config::fromArray(['mysection' => ['key' => 'configured']]);
@@ -240,6 +350,33 @@ class ConfigFormTest extends BaseTestCase
             ['configured', '', '0'],
             $form->getPopulatedValues('mysection__key'),
         );
+    }
+
+    #[DataProvider('populationTimings')]
+    public function testNullValueClearsElement(bool $populateBeforeAssembly): void
+    {
+        $config = new class (new ConfigObject(['mysection' => ['key' => 'value']])) extends Config {
+            public function saveIni($filePath = null, $fileMode = 0660): void
+            {
+            }
+        };
+
+        $form = new class ($config) extends ConfigForm {
+            protected function assemble(): void
+            {
+                $this->addElement('text', 'mysection__key');
+            }
+
+            public function exposeSave(): void
+            {
+                $this->save();
+            }
+        };
+        $form->disableCsrfCounterMeasure();
+        $this->populateAroundAssembly($form, [['mysection__key' => null]], $populateBeforeAssembly);
+        $form->exposeSave();
+
+        $this->assertNull($config->get('mysection', 'key'));
     }
 
     /** @return array<string, array{bool}> */

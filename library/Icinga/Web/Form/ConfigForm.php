@@ -166,8 +166,11 @@ class ConfigForm extends CompatForm
                 throw new LogicException(sprintf('Cannot save element "%s": array values are not supported', $element));
             }
 
+            $originalValue = $this->originalValues[$element] ?? '';
             $configSection = $this->config->getSection($section);
-            if (Str::isEmpty($value)) {
+            if ($originalValue !== '' && Str::isEmpty($value)) {
+                $configSection[$key] = '';
+            } elseif ($originalValue === $value || Str::isEmpty($value)) {
                 unset($configSection[$key]);
             } else {
                 $configSection[$key] = $value;
