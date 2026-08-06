@@ -16,6 +16,7 @@ use ipl\Web\Compat\CompatForm;
 use ipl\Web\Compat\DisplayFormElement;
 use ipl\Web\Widget\CopyToClipboard;
 use LogicException;
+use stdClass;
 
 /**
  * Form base-class providing standard functionality for configuration forms
@@ -49,6 +50,16 @@ class ConfigForm extends CompatForm
     protected string $sectionKeyDelimiter = '__';
 
     /**
+     * The original values of the form elements
+     *
+     * This is used to determine whether an element's submitted value differs from
+     * the original value.
+     *
+     * @var array<string, mixed>
+     */
+    protected array $originalValues = [];
+
+    /**
      * Create a new configuration form
      *
      * @param Config $config The ini file configuration object to use for the form
@@ -73,8 +84,11 @@ class ConfigForm extends CompatForm
         $name = $element->getName();
         [$section, $key] = Str::symmetricSplit($name, $this->sectionKeyDelimiter, 2);
         if ($key !== null) {
-            $configValue = $this->config->get($section, $key);
-            if ($configValue !== null) {
+            $this->originalValues[$name] = $element->getValue();
+
+            $sentinel = new stdClass();
+            $configValue = $this->config->getSection($section)->get($key, $this->originalValues[$name] ?? $sentinel);
+            if ($configValue !== $sentinel) {
                 $populatedValues = $this->getPopulatedValues($name);
                 $this->clearPopulatedValue($name);
                 $this->populate([$name => $configValue]);

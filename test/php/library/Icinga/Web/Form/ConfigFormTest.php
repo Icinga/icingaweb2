@@ -147,6 +147,21 @@ class ConfigFormTest extends BaseTestCase
         $this->assertSame('secret', $config->get('mysection', 'password'));
     }
 
+    public function testElementDefaultIsPreservedWhenConfigKeyIsNotSet(): void
+    {
+        $form = new class(Config::fromArray([])) extends ConfigForm {
+            protected function assemble(): void
+            {
+                $this->addElement('text', 'mysection__key', ['value' => 'defaultvalue']);
+            }
+        };
+        $form->disableCsrfCounterMeasure();
+        $form->ensureAssembled();
+
+        $this->assertSame('defaultvalue', $form->getValue('mysection__key'));
+        $this->assertSame('defaultvalue', $form->getPopulatedValue('mysection__key'));
+    }
+
     public function testConfiguredValueOverridesElementDefault(): void
     {
         $form = new class (Config::fromArray(['mysection' => ['key' => 'configured']])) extends ConfigForm {
@@ -160,6 +175,21 @@ class ConfigFormTest extends BaseTestCase
 
         $this->assertSame('configured', $form->getValue('mysection__key'));
         $this->assertSame('configured', $form->getPopulatedValue('mysection__key'));
+    }
+
+    public function testConfiguredNullOverridesNonEmptyElementDefault(): void
+    {
+        $form = new class (Config::fromArray(['mysection' => ['key' => null]])) extends ConfigForm {
+            protected function assemble(): void
+            {
+                $this->addElement('text', 'mysection__key', ['value' => 'defaultvalue']);
+            }
+        };
+        $form->disableCsrfCounterMeasure();
+        $form->ensureAssembled();
+
+        $this->assertNull($form->getValue('mysection__key'));
+        $this->assertNull($form->getPopulatedValue('mysection__key'));
     }
 
     #[DataProvider('populationTimings')]
