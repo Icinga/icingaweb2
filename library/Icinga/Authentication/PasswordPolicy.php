@@ -48,18 +48,17 @@ interface PasswordPolicy
     /**
      * Validate a password against the policy
      *
+     * @param User $user The user whose password is set
      * @param string $newPassword The new password to validate
      * @param ?string $oldPassword The current password, if available, for policies that
      *   verify the new password differs from the old one
-     * @param ?User $user The user whose password is being changed, available for
-     *   policies that validate the password against user-specific attributes
      *
      * @return list<string> Empty list if valid. One message per violation describing why
      *   the password was rejected
      */
     public function validate(
+        User $user,
         #[SensitiveParameter] string $newPassword,
         #[SensitiveParameter] ?string $oldPassword = null,
-        ?User $user = null,
     ): array;
 }
