@@ -292,20 +292,16 @@ class CspConfigForm extends ConfigForm
                 $this->translate('No navigation policies found.'),
             );
 
-            $this->addElement(
-                'checkbox',
-                'security__use_custom_csp',
-                [
-                    'label'          => $this->translate('Enable Custom CSP'),
-                    'description'    => $this->translate(
-                        'Specify whether to use a custom, user-provided string as the CSP header.',
-                    ),
-                    'class'          => 'autosubmit csp-form-content-aligned csp-label-header-h3 csp-form-header',
-                    'checkedValue'   => '1',
-                    'uncheckedValue' => '0',
-                    'value'          => '0',
-                ],
-            );
+            $this->addElement('checkbox', 'security__use_custom_csp', [
+                'label'          => $this->translate('Enable Custom CSP'),
+                'description'    => $this->translate(
+                    'Specify whether to use a custom, user-provided string as the CSP header.',
+                ),
+                'class'          => 'autosubmit csp-form-content-aligned csp-label-header-h3 csp-form-header',
+                'checkedValue'   => '1',
+                'uncheckedValue' => '0',
+                'value'          => '0',
+            ]);
 
             if ($this->isCustomCspEnabled()) {
                 $this->add(new DisplayFormElement(new Callout(
@@ -544,7 +540,7 @@ class CspConfigForm extends ConfigForm
             if (in_array($directive, static::CRITICAL_DATA_DIRECTIVES)) {
                 return 'critical';
             }
-    
+
             if (in_array($directive, static::WARNING_DATA_DIRECTIVES)) {
                 return 'warning';
             }
