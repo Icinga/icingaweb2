@@ -331,22 +331,22 @@ class UserController extends AuthBackendController
             $tabs->add(
                 'role/list',
                 [
-                    'baseTarget'    => '_main',
-                    'label'         => $this->translate('Roles'),
-                    'title'         => $this->translate(
+                    'title'      => $this->translate(
                         'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
                     ),
-                    'url'           => 'role/list'
+                    'label'      => $this->translate('Roles'),
+                    'url'        => 'role/list',
+                    'baseTarget' => '_main',
                 ]
             );
 
             $tabs->add(
                 'role/audit',
                 [
-                    'title'         => $this->translate('Audit a user\'s or group\'s privileges'),
-                    'label'         => $this->translate('Audit'),
-                    'url'           => 'role/audit',
-                    'baseTarget'    => '_main'
+                    'title'      => $this->translate('Audit a user\'s or group\'s privileges'),
+                    'label'      => $this->translate('Audit'),
+                    'url'        => 'role/audit',
+                    'baseTarget' => '_main',
                 ]
             );
         }
@@ -354,9 +354,10 @@ class UserController extends AuthBackendController
         $tabs->add(
             'user/list',
             [
-                'title'     => $this->translate('List users of authentication backends'),
-                'label'     => $this->translate('Users'),
-                'url'       => 'user/list'
+                'title'      => $this->translate('List users of authentication backends'),
+                'label'      => $this->translate('Users'),
+                'url'        => 'user/list',
+                'baseTarget' => '_main',
             ]
         );
 
@@ -364,9 +365,10 @@ class UserController extends AuthBackendController
             $tabs->add(
                 'group/list',
                 [
-                    'title'     => $this->translate('List groups of user group backends'),
-                    'label'     => $this->translate('User Groups'),
-                    'url'       => 'group/list'
+                    'title'      => $this->translate('List groups of user group backends'),
+                    'label'      => $this->translate('User Groups'),
+                    'url'        => 'group/list',
+                    'baseTarget' => '_main',
                 ]
             );
         }
