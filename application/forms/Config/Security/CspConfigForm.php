@@ -303,6 +303,7 @@ class CspConfigForm extends ConfigForm
                     'class'          => 'autosubmit csp-form-content-aligned csp-label-header-h3 csp-form-header',
                     'checkedValue'   => '1',
                     'uncheckedValue' => '0',
+                    'value'          => '0',
                 ],
             );
 
