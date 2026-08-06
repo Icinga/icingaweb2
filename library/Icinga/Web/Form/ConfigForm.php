@@ -8,7 +8,6 @@ namespace Icinga\Web\Form;
 use Exception;
 use Icinga\Application\Config;
 use ipl\Html\Contract\FormElement;
-use ipl\Html\Contract\ValueCandidates;
 use ipl\Html\HtmlElement;
 use ipl\Html\ValidHtml;
 use ipl\Stdlib\Str;
@@ -17,6 +16,7 @@ use ipl\Web\Compat\CompatForm;
 use ipl\Web\Compat\DisplayFormElement;
 use ipl\Web\Widget\CopyToClipboard;
 use LogicException;
+use stdClass;
 
 /**
  * Form base-class providing standard functionality for configuration forms
@@ -50,6 +50,16 @@ class ConfigForm extends CompatForm
     protected string $sectionKeyDelimiter = '__';
 
     /**
+     * The original values of the form elements
+     *
+     * This is used to determine whether an element's submitted value differs from
+     * the original value.
+     *
+     * @var array<string, mixed>
+     */
+    protected array $originalValues = [];
+
+    /**
      * Create a new configuration form
      *
      * @param Config $config The ini file configuration object to use for the form
@@ -57,38 +67,38 @@ class ConfigForm extends CompatForm
     public function __construct(
         protected Config $config,
     ) {
-        $this->on(static::ON_ELEMENT_REGISTERED, function (FormElement $element) {
-            [$section, $key] = Str::symmetricSplit($element->getName(), $this->sectionKeyDelimiter, 2);
-            if ($key === null || $element->hasValue()) {
-                return;
-            }
-
-            $configValue = $this->config->get($section, $key);
-            if ($configValue === null) {
-                return;
-            }
-
-            if (! ($element instanceof ValueCandidates)) {
-                $element->setValue($configValue);
-
-                return;
-            }
-
-            $candidates = $element->getValueCandidates();
-            if (empty($candidates)) {
-                // Initial render: no prior submission, set value and seed candidates
-                $element->setValue($configValue);
-                $element->setValueCandidates([$configValue]);
-            } else {
-                // POST: candidates were set by registerElement; append config value so
-                // PasswordElement's (count > 1) condition resolves DUMMYPASSWORD on re-render
-                $element->setValueCandidates(array_merge($candidates, [$configValue]));
-            }
-        });
-
         $this->on(static::ON_ASSEMBLED, function (ConfigForm $form) {
             $form->addRequiredElements();
         });
+    }
+
+    /**
+     * Register the given element, seeding it with its configuration value first
+     *
+     * @param FormElement $element
+     *
+     * @return $this
+     */
+    public function registerElement(FormElement $element): static
+    {
+        $name = $element->getName();
+        [$section, $key] = Str::symmetricSplit($name, $this->sectionKeyDelimiter, 2);
+        if ($key !== null) {
+            $this->originalValues[$name] = $element->getValue();
+
+            $sentinel = new stdClass();
+            $configValue = $this->config->getSection($section)->get($key, $this->originalValues[$name] ?? $sentinel);
+            if ($configValue !== $sentinel) {
+                $populatedValues = $this->getPopulatedValues($name);
+                $this->clearPopulatedValue($name);
+                $this->populate([$name => $configValue]);
+                foreach ($populatedValues as $value) {
+                    $this->populate([$name => $value]);
+                }
+            }
+        }
+
+        return parent::registerElement($element);
     }
 
     /**
@@ -156,8 +166,11 @@ class ConfigForm extends CompatForm
                 throw new LogicException(sprintf('Cannot save element "%s": array values are not supported', $element));
             }
 
+            $originalValue = $this->originalValues[$element] ?? '';
             $configSection = $this->config->getSection($section);
-            if (Str::isEmpty($value)) {
+            if ($originalValue !== '' && Str::isEmpty($value)) {
+                $configSection[$key] = '';
+            } elseif ($originalValue === $value || Str::isEmpty($value)) {
                 unset($configSection[$key]);
             } else {
                 $configSection[$key] = $value;
