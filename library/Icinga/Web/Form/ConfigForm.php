@@ -8,7 +8,6 @@ namespace Icinga\Web\Form;
 use Exception;
 use Icinga\Application\Config;
 use ipl\Html\Contract\FormElement;
-use ipl\Html\Contract\ValueCandidates;
 use ipl\Html\HtmlElement;
 use ipl\Html\ValidHtml;
 use ipl\Stdlib\Str;
@@ -57,38 +56,35 @@ class ConfigForm extends CompatForm
     public function __construct(
         protected Config $config,
     ) {
-        $this->on(static::ON_ELEMENT_REGISTERED, function (FormElement $element) {
-            [$section, $key] = Str::symmetricSplit($element->getName(), $this->sectionKeyDelimiter, 2);
-            if ($key === null || $element->hasValue()) {
-                return;
-            }
-
-            $configValue = $this->config->get($section, $key);
-            if ($configValue === null) {
-                return;
-            }
-
-            if (! ($element instanceof ValueCandidates)) {
-                $element->setValue($configValue);
-
-                return;
-            }
-
-            $candidates = $element->getValueCandidates();
-            if (empty($candidates)) {
-                // Initial render: no prior submission, set value and seed candidates
-                $element->setValue($configValue);
-                $element->setValueCandidates([$configValue]);
-            } else {
-                // POST: candidates were set by registerElement; append config value so
-                // PasswordElement's (count > 1) condition resolves DUMMYPASSWORD on re-render
-                $element->setValueCandidates(array_merge($candidates, [$configValue]));
-            }
-        });
-
         $this->on(static::ON_ASSEMBLED, function (ConfigForm $form) {
             $form->addRequiredElements();
         });
+    }
+
+    /**
+     * Register the given element, seeding it with its configuration value first
+     *
+     * @param FormElement $element
+     *
+     * @return $this
+     */
+    public function registerElement(FormElement $element): static
+    {
+        $name = $element->getName();
+        [$section, $key] = Str::symmetricSplit($name, $this->sectionKeyDelimiter, 2);
+        if ($key !== null) {
+            $configValue = $this->config->get($section, $key);
+            if ($configValue !== null) {
+                $populatedValues = $this->getPopulatedValues($name);
+                $this->clearPopulatedValue($name);
+                $this->populate([$name => $configValue]);
+                foreach ($populatedValues as $value) {
+                    $this->populate([$name => $value]);
+                }
+            }
+        }
+
+        return parent::registerElement($element);
     }
 
     /**

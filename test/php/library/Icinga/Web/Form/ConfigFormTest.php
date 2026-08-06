@@ -12,6 +12,7 @@ use Icinga\Test\BaseTestCase;
 use Icinga\Web\Form\ConfigForm;
 use ipl\Html\FormElement\PasswordElement;
 use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ConfigFormTest extends BaseTestCase
 {
@@ -89,7 +90,8 @@ class ConfigFormTest extends BaseTestCase
         $this->assertSame($csrfElement, $form->getElement('CSRFToken'));
     }
 
-    public function testSaveThrowsForArrayElementValue(): void
+    #[DataProvider('populationTimings')]
+    public function testSaveThrowsForArrayElementValue(bool $populateBeforeAssembly): void
     {
         $this->expectException(LogicException::class);
 
@@ -112,12 +114,12 @@ class ConfigFormTest extends BaseTestCase
             }
         };
         $form->disableCsrfCounterMeasure();
-        $form->ensureAssembled();
-        $form->populate(['mysection__key' => ['a', 'b']]);
+        $this->populateAroundAssembly($form, [['mysection__key' => ['a', 'b']]], $populateBeforeAssembly);
         $form->exposeSave();
     }
 
-    public function testUnchangedPasswordElementRetainsConfigValueOnSave(): void
+    #[DataProvider('populationTimings')]
+    public function testUnchangedPasswordElementRetainsConfigValueOnSave(bool $populateBeforeAssembly): void
     {
         $config = new class(new ConfigObject(['mysection' => ['password' => 'secret']])) extends Config {
             public function saveIni($filePath = null, $fileMode = 0660): void {}
@@ -135,14 +137,33 @@ class ConfigFormTest extends BaseTestCase
             }
         };
         $form->disableCsrfCounterMeasure();
-        $form->populate(['mysection__password' => PasswordElement::DUMMYPASSWORD]);
-        $form->ensureAssembled();
+        $this->populateAroundAssembly(
+            $form,
+            [['mysection__password' => PasswordElement::DUMMYPASSWORD]],
+            $populateBeforeAssembly,
+        );
         $form->exposeSave();
 
         $this->assertSame('secret', $config->get('mysection', 'password'));
     }
 
-    public function testEmptySectionIsRemovedOnSave(): void
+    public function testConfiguredValueOverridesElementDefault(): void
+    {
+        $form = new class (Config::fromArray(['mysection' => ['key' => 'configured']])) extends ConfigForm {
+            protected function assemble(): void
+            {
+                $this->addElement('text', 'mysection__key', ['value' => 'defaultvalue']);
+            }
+        };
+        $form->disableCsrfCounterMeasure();
+        $form->ensureAssembled();
+
+        $this->assertSame('configured', $form->getValue('mysection__key'));
+        $this->assertSame('configured', $form->getPopulatedValue('mysection__key'));
+    }
+
+    #[DataProvider('populationTimings')]
+    public function testEmptySectionIsRemovedOnSave(bool $populateBeforeAssembly): void
     {
         $config = new class(new ConfigObject(['mysection' => ['key' => 'value']])) extends Config {
             public function saveIni($filePath = null, $fileMode = 0660): void {}
@@ -160,11 +181,62 @@ class ConfigFormTest extends BaseTestCase
             }
         };
         $form->disableCsrfCounterMeasure();
-        $form->ensureAssembled();
-        $form->populate(['mysection__key' => '']);
+        $this->populateAroundAssembly($form, [['mysection__key' => '']], $populateBeforeAssembly);
         $form->exposeSave();
 
         $this->assertFalse($config->hasSection('mysection'));
+    }
+
+    #[DataProvider('populationTimings')]
+    public function testEveryPopulatedValueIsAppliedInOrder(bool $populateBeforeAssembly): void
+    {
+        $config = Config::fromArray(['mysection' => ['key' => 'configured']]);
+        $form = new class ($config) extends ConfigForm {
+            protected function assemble(): void
+            {
+                $this->addElement('text', 'mysection__key');
+            }
+        };
+        $form->disableCsrfCounterMeasure();
+        $this->populateAroundAssembly(
+            $form,
+            [['mysection__key' => ''], ['mysection__key' => '0']],
+            $populateBeforeAssembly,
+        );
+
+        $this->assertSame('0', $form->getValue('mysection__key'));
+        $this->assertSame('0', $form->getPopulatedValue('mysection__key'));
+        $this->assertSame(
+            ['configured', '', '0'],
+            $form->getPopulatedValues('mysection__key'),
+        );
+    }
+
+    /** @return array<string, array{bool}> */
+    public static function populationTimings(): array
+    {
+        return [
+            'before assembly' => [true],
+            'after assembly'  => [false],
+        ];
+    }
+
+    /**
+     * @param list<array<string, mixed>> $populations
+     */
+    private function populateAroundAssembly(ConfigForm $form, array $populations, bool $populateBeforeAssembly): void
+    {
+        if (! $populateBeforeAssembly) {
+            $form->ensureAssembled();
+        }
+
+        foreach ($populations as $values) {
+            $form->populate($values);
+        }
+
+        if ($populateBeforeAssembly) {
+            $form->ensureAssembled();
+        }
     }
 
     private function makeForm(): ConfigForm
