@@ -9,6 +9,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Hook\PasswordPolicyHook;
 use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
+use Icinga\User;
 use ipl\Html\FormElement\PasswordElement;
 use ipl\Stdlib\Str;
 use ipl\Validator\CallbackValidator;
@@ -41,6 +42,7 @@ class PasswordPolicyHelper
      * @param string $newPasswordElementName Name of the new password form element
      * @param ?string $oldPasswordElementName Optional name of the old password form
      *   element for comparison
+     * @param ?User $user The user whose password is being changed
      *
      * @return void
      *
@@ -50,6 +52,7 @@ class PasswordPolicyHelper
         CompatForm $form,
         string $newPasswordElementName,
         ?string $oldPasswordElementName = null,
+        ?User $user = null,
     ): void {
         if ($oldPasswordElementName !== null && ! $form->hasElement($oldPasswordElementName)) {
             throw new LogicException(sprintf(
@@ -77,6 +80,7 @@ class PasswordPolicyHelper
                 $passwordPolicy,
                 $form,
                 $oldPasswordElementName,
+                $user,
             ): bool {
                 $oldPassword = null;
                 if ($oldPasswordElementName !== null) {
@@ -86,7 +90,7 @@ class PasswordPolicyHelper
                     }
                 }
 
-                $messages = $passwordPolicy->validate($value, $oldPassword);
+                $messages = $passwordPolicy->validate($value, $oldPassword, $user);
                 if (empty($messages)) {
                     return true;
                 }

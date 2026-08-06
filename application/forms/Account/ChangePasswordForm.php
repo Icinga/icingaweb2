@@ -5,10 +5,10 @@
 
 namespace Icinga\Forms\Account;
 
-use Icinga\Authentication\Auth;
 use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Data\Filter\Filter;
+use Icinga\User;
 use Icinga\Web\Notification;
 use ipl\Validator\CallbackValidator;
 use ipl\Web\Common\CsrfCounterMeasure;
@@ -32,9 +32,11 @@ class ChangePasswordForm extends CompatForm
      * Create a new ChangePasswordForm
      *
      * @param DbUserBackend $backend The user backend to work with
+     * @param User $user The user whose password is being changed
      */
     public function __construct(
         protected DbUserBackend $backend,
+        protected User $user,
     ) {
         $this->setAttribute('name', 'form_change_password');
     }
@@ -58,6 +60,7 @@ class ChangePasswordForm extends CompatForm
             $this,
             static::NEW_PASSWORD_ELEMENT_NAME,
             static::OLD_PASSWORD_ELEMENT_NAME,
+            $this->user,
         );
 
         $this->addElement('password', static::NEW_PASSWORD_ELEMENT_NAME . '_confirmation', [
@@ -84,7 +87,7 @@ class ChangePasswordForm extends CompatForm
         $this->backend->update(
             $this->backend->getBaseTable(),
             ['password' => $this->getElement(static::NEW_PASSWORD_ELEMENT_NAME)->getValue()],
-            Filter::where('user_name', Auth::getInstance()->getUser()->getUsername())
+            Filter::where('user_name', $this->user->getUsername())
         );
         Notification::success($this->translate('Account updated'));
     }
@@ -105,7 +108,7 @@ class ChangePasswordForm extends CompatForm
 
         $oldPasswordEl = $this->getElement(static::OLD_PASSWORD_ELEMENT_NAME);
 
-        if (! $this->backend->authenticate(Auth::getInstance()->getUser(), $oldPasswordEl->getValue())) {
+        if (! $this->backend->authenticate($this->user, $oldPasswordEl->getValue())) {
             $oldPasswordEl->addMessage($this->translate('Old password is invalid'));
 
             return false;
