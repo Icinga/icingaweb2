@@ -41,9 +41,9 @@ class AnyPasswordPolicy extends PasswordPolicyHook
     }
 
     public function validate(
+        User $user,
         #[SensitiveParameter] string $newPassword,
         #[SensitiveParameter] ?string $oldPassword = null,
-        ?User $user = null,
     ): array {
         return [];
     }

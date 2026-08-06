@@ -6,10 +6,17 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ### What's New in Version 2.14.1
 
-#### Password Policy Password Parameters Marked as Sensitive
+#### User Aware Password Policies
 
-Password arguments are marked as `#[SensitiveParameter]` to keep them out of
-stack traces.
+Password policies now receive the user whose password is being set, so a
+policy can validate against user attributes (for example, rejecting a password
+that contains the username).
+
+Relevant for developers: this is a breaking change. `PasswordPolicy::validate()`
+now takes the target `Icinga\User` as a required first parameter, ahead of the
+new and old password. Any custom `PasswordPolicyHook` implementation must update
+its `validate()` signature accordingly. Password arguments are additionally
+marked as `#[SensitiveParameter]` to keep them out of stack traces.
 
 * Modernize password policy [#5537](https://github.com/Icinga/icingaweb2/pull/5537)
 
