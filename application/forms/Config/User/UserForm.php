@@ -5,10 +5,12 @@
 
 namespace Icinga\Forms\Config\User;
 
+use Icinga\Authentication\Auth;
 use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Data\Filter\Filter;
 use Icinga\Repository\Repository;
 use Icinga\Repository\RepositoryMode;
+use Icinga\User;
 use Icinga\Web\Form\RepositoryForm;
 
 class UserForm extends RepositoryForm
@@ -78,7 +80,11 @@ class UserForm extends RepositoryForm
             'description' => $this->translate('Leave empty for not updating the user\'s password'),
             'label'       => $this->translate('Password'),
         ]);
-        PasswordPolicyHelper::apply($this, 'password');
+
+        $user = new User($this->getValue('user_name'));
+        $user->setAdditional('backend_name', $this->repository->getName());
+        Auth::getInstance()->setupUser($user);
+        PasswordPolicyHelper::apply($this, 'password', user: $user);
 
         $this->addElement('submit', 'submit_update', ['label' => $this->translate('Save')]);
     }

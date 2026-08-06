@@ -6,6 +6,7 @@
 namespace Icinga\Application\ProvidedHook;
 
 use Icinga\Application\Hook\PasswordPolicyHook;
+use Icinga\User;
 use ipl\Html\Text;
 use ipl\Html\ValidHtml;
 use ipl\I18n\Translation;
@@ -45,6 +46,7 @@ class CommonPasswordPolicy extends PasswordPolicyHook
     public function validate(
         #[SensitiveParameter] string $newPassword,
         #[SensitiveParameter] ?string $oldPassword = null,
+        ?User $user = null,
     ): array {
         $violations = [];
 
