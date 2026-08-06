@@ -96,14 +96,16 @@ class ConfigFormTest extends BaseTestCase
         $this->expectException(LogicException::class);
 
         $config = new class(new ConfigObject([])) extends Config {
-            public function saveIni($filePath = null, $fileMode = 0660): void {}
+            public function saveIni($filePath = null, $fileMode = 0660): void
+            {
+            }
         };
 
         $form = new class($config) extends ConfigForm {
             protected function assemble(): void
             {
                 $this->addElement('select', 'mysection__key', [
-                    'options' => ['a' => 'A', 'b' => 'B'],
+                    'options'  => ['a' => 'A', 'b' => 'B'],
                     'multiple' => true,
                 ]);
             }
@@ -122,7 +124,9 @@ class ConfigFormTest extends BaseTestCase
     public function testUnchangedPasswordElementRetainsConfigValueOnSave(bool $populateBeforeAssembly): void
     {
         $config = new class(new ConfigObject(['mysection' => ['password' => 'secret']])) extends Config {
-            public function saveIni($filePath = null, $fileMode = 0660): void {}
+            public function saveIni($filePath = null, $fileMode = 0660): void
+            {
+            }
         };
 
         $form = new class($config) extends ConfigForm {
@@ -279,7 +283,9 @@ class ConfigFormTest extends BaseTestCase
     public function testEmptySectionIsRemovedOnSave(bool $populateBeforeAssembly): void
     {
         $config = new class(new ConfigObject(['mysection' => ['key' => 'value']])) extends Config {
-            public function saveIni($filePath = null, $fileMode = 0660): void {}
+            public function saveIni($filePath = null, $fileMode = 0660): void
+            {
+            }
         };
 
         $form = new class($config) extends ConfigForm {
