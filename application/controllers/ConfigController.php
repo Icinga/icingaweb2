@@ -8,6 +8,7 @@ namespace Icinga\Controllers;
 use Exception;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Version;
+use Icinga\Web\Session;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
@@ -134,6 +135,7 @@ class ConfigController extends Controller
 
         $config = Config::app();
         $cspForm = new CspConfigForm($config);
+        $cspForm->setCsrfCounterMeasureId(Session::getSession()->getId());
         // Keep the auto-generation options off by default for installations that already
         // had CSP enabled, so their existing behavior isn't changed. For installations
         // enabling CSP for the first time, default them on as the recommended setting.
