@@ -5,6 +5,7 @@
 
 namespace Icinga\Authentication;
 
+use Icinga\User;
 use ipl\Html\ValidHtml;
 use SensitiveParameter;
 
@@ -50,6 +51,8 @@ interface PasswordPolicy
      * @param string $newPassword The new password to validate
      * @param ?string $oldPassword The current password, if available, for policies that
      *   verify the new password differs from the old one
+     * @param ?User $user The user whose password is being changed, available for
+     *   policies that validate the password against user-specific attributes
      *
      * @return list<string> Empty list if valid. One message per violation describing why
      *   the password was rejected
@@ -57,5 +60,6 @@ interface PasswordPolicy
     public function validate(
         #[SensitiveParameter] string $newPassword,
         #[SensitiveParameter] ?string $oldPassword = null,
+        ?User $user = null,
     ): array;
 }
