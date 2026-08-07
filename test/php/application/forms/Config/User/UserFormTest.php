@@ -210,6 +210,70 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
+    public function testInsertModeInsertsUserWhenPolicyFailsToLoad($db): void
+    {
+        // A configured policy that no registered hook provides makes loadConfigured() throw
+        Config::app()->setSection(
+            PasswordPolicyHook::CONFIG_SECTION,
+            [PasswordPolicyHook::CONFIG_KEY => 'missing/policy'],
+        );
+
+        $form = $this->createForm($db, RepositoryMode::Insert);
+        $form->populate([
+            'is_active' => '1',
+            'user_name' => static::NEW_USER_NAME,
+            'password'  => 'new_password',
+        ]);
+        $form->ensureAssembled();
+
+        // The admin form stays unrestricted when the policy cannot be loaded
+        $this->assertTrue($form->isValid());
+
+        $form->exposeOnSuccess();
+
+        $this->assertTrue(
+            $db->select()
+                ->columns(['*'])
+                ->from('icingaweb_user')
+                ->where('name', static::NEW_USER_NAME)
+                ->hasResult(),
+        );
+    }
+
+    #[DataProvider('mysqlDb')]
+    public function testUpdateModeUpdatesPasswordWhenPolicyFailsToLoad($db): void
+    {
+        Config::app()->setSection(
+            PasswordPolicyHook::CONFIG_SECTION,
+            [PasswordPolicyHook::CONFIG_KEY => 'missing/policy'],
+        );
+
+        $newPassword = 'new_password';
+
+        $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
+        $form->populate([
+            'is_active' => '1',
+            'user_name' => static::USER_NAME,
+            'password'  => $newPassword,
+        ]);
+        $form->ensureAssembled();
+
+        // The admin form stays unrestricted when the policy cannot be loaded
+        $this->assertTrue($form->isValid());
+
+        $form->exposeOnSuccess();
+
+        $this->assertTrue(password_verify(
+            $newPassword,
+            $db->select()
+                ->columns(['password_hash'])
+                ->from('icingaweb_user')
+                ->where('name', static::USER_NAME)
+                ->fetchOne(),
+        ));
+    }
+
+    #[DataProvider('mysqlDb')]
     public function testUpdateModeDeactivatesUser($db): void
     {
         $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);

@@ -38,11 +38,20 @@ class PasswordPolicyHelper
      * configuration is invalid. The description of the policy is also added to the form.
      * On success, attaches the policy validator to the given new-password form element.
      *
+     * If the policy cannot be loaded, the behavior depends on $adminFacing:
+     * an administrator facing form stays usable and the password change is
+     * left unrestricted, while for self-service forms the new-password element
+     * is rejected so the change is blocked rather than accepted without any
+     * policy enforcement.
+     *
      * @param CompatForm $form The form containing the elements and to attach the elements to
      * @param User $user The user whose password is set
      * @param string $newPasswordElementName Name of the new password form element
      * @param ?string $oldPasswordElementName Optional name of the old password form
      *   element for comparison
+     * @param bool $adminFacing Whether the form to set the password is administrator facing.
+     *   When true and the policy fails to load, the change is left unrestricted instead
+     *   of being blocked.
      *
      * @return void
      *
@@ -53,6 +62,7 @@ class PasswordPolicyHelper
         User $user,
         string $newPasswordElementName,
         ?string $oldPasswordElementName = null,
+        bool $adminFacing = false,
     ): void {
         if ($oldPasswordElementName !== null && ! $form->hasElement($oldPasswordElementName)) {
             throw new LogicException(sprintf(
@@ -65,7 +75,24 @@ class PasswordPolicyHelper
             $passwordPolicy = PasswordPolicyHook::loadConfigured(Config::app());
         } catch (Throwable $e) {
             Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
-            static::addError($form);
+            static::addError($form, $adminFacing);
+
+            if (! $adminFacing) {
+                /** @var PasswordElement $newPasswordElement */
+                $newPasswordElement = $form->getElement($newPasswordElementName);
+                $newPasswordElement->addValidators([
+                    new CallbackValidator(function (
+                        #[SensitiveParameter] mixed $value,
+                        CallbackValidator $validator,
+                    ): bool {
+                        $validator->addMessage(
+                            t('Cannot change the password because the password policy could not be loaded')
+                        );
+
+                        return false;
+                    }),
+                ]);
+            }
 
             return;
         }
