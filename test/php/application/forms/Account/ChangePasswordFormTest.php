@@ -77,6 +77,30 @@ class ChangePasswordFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
+    public function testNonStringNewPasswordIsRejectedByConfirmation($db): void
+    {
+        $form = $this->createForm($db, static::CURRENT_PASSWORD, ['icinga123'], 'icinga123');
+
+        $this->assertFalse($form->isValid());
+        $this->assertSame(
+            'Password must be a string',
+            $form->getElement(ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME . '_confirmation')->getMessages()[0],
+        );
+    }
+
+    #[DataProvider('mysqlDb')]
+    public function testNonStringPasswordConfirmationIsRejected($db): void
+    {
+        $form = $this->createForm($db, static::CURRENT_PASSWORD, 'icinga123', ['icinga123']);
+
+        $this->assertFalse($form->isValid());
+        $this->assertSame(
+            'Password must be a string',
+            $form->getElement(ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME . '_confirmation')->getMessages()[0],
+        );
+    }
+
+    #[DataProvider('mysqlDb')]
     public function testValidInputChangesPassword($db): void
     {
         $newPassword = 'icinga123';
