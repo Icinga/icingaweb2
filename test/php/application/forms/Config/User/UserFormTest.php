@@ -109,6 +109,14 @@ class UserFormTest extends BaseTestCase
 
         $form->exposeOnSuccess();
 
+        $this->assertFalse(
+            $db->select()
+                ->columns(['*'])
+                ->from('icingaweb_user')
+                ->where('name', static::USER_NAME)
+                ->hasResult(),
+        );
+
         $this->assertTrue(
             $db->select()
                 ->columns(['*'])
