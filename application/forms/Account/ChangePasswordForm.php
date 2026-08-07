@@ -79,7 +79,14 @@ class ChangePasswordForm extends CompatForm
             'required'   => true,
             'validators' => [new CallbackValidator(
                 function (#[SensitiveParameter] mixed $value, CallbackValidator $validator): bool {
-                    if (! hash_equals($this->getValue(static::NEW_PASSWORD_ELEMENT_NAME), $value)) {
+                    $newPassword = $this->getValue(static::NEW_PASSWORD_ELEMENT_NAME);
+                    if (! is_string($newPassword) || ! is_string($value)) {
+                        $validator->addMessage($this->translate('Password must be string'));
+
+                        return false;
+                    }
+
+                    if (! hash_equals($newPassword, $value)) {
                         $validator->addMessage($this->translate('The passwords do not match'));
 
                         return false;
