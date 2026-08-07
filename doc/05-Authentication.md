@@ -168,7 +168,7 @@ Icinga Web ships with two built-in policies:
 Policy Name | Canonical Name | Description
 ------------|----------------|------------
 None        | `any`          | No requirements. Any password is accepted. This is the default.
-Common      | `common`       | Minimum 12 characters, at least 1 number, 1 special character, lowercase and uppercase letters.
+Common      | `common`       | Minimum 12 characters, at least 1 number, 1 special character, lowercase and uppercase letters, and must not be contained in, contain or match the username.
 
 Custom policies can be added by implementing the
 [PasswordPolicyHook](60-Hooks.md#hooks-password-policy).
