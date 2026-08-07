@@ -83,7 +83,7 @@ default_mode = "light"
 
 Option                   | Description
 -------------------------|-----------------------------------------------
-default\_domain          | **Optional.** Domain assumed when users log in without specifying a domain. The value must match the domain of a configured authentication backend, e.g. `icinga.com`.
+default\_domain          | **Optional.** Domain assumed when users log in without specifying a domain. It must match an LDAP backend's configured domain or the domain suffix stored in another backend's usernames, e.g. `icinga.com`.
 
 Example:
 
