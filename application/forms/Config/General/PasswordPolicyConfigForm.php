@@ -11,7 +11,6 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Exception\IcingaException;
 use Icinga\Web\Form\ConfigForm;
-use ipl\Web\Common\CsrfCounterMeasure;
 use ipl\Web\Common\FormUid;
 use Throwable;
 
