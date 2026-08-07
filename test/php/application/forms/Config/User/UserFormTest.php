@@ -90,6 +90,25 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
+    public function testInsertModeIsRejectedWhenPolicyValidationThrows($db): void
+    {
+        $form = $this->createForm($db, RepositoryMode::Insert);
+
+        // A non-string value makes the configured policy's validate() throw a TypeError.
+        $form->populate([
+            'is_active' => '1',
+            'user_name' => static::NEW_USER_NAME,
+            'password'  => ['new_password'],
+        ]);
+        $form->ensureAssembled();
+
+        $this->assertFalse($form->isValid());
+        $this->assertNotEmpty(
+            preg_grep('/^Password validation failed: .+/', $form->getElement('password')->getMessages()),
+        );
+    }
+
+    #[DataProvider('mysqlDb')]
     public function testUpdateModeUpdatesUserName($db): void
     {
         $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
