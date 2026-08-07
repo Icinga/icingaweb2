@@ -44,6 +44,7 @@ class ChangePasswordFormTest extends BaseTestCase
     public function testInvalidOldPasswordIsRejected($db): void
     {
         $form = $this->createForm($db, 'wrong_password', 'icinga123', 'icinga123');
+
         $this->assertFalse($form->isValid());
         $this->assertSame(
             'Old password is invalid',
@@ -55,6 +56,7 @@ class ChangePasswordFormTest extends BaseTestCase
     public function testMismatchedPasswordConfirmationIsRejected($db): void
     {
         $form = $this->createForm($db, static::CURRENT_PASSWORD, 'icinga123', 'icinga456');
+
         $this->assertFalse($form->isValid());
         $this->assertSame(
             'The passwords do not match',
@@ -79,7 +81,9 @@ class ChangePasswordFormTest extends BaseTestCase
     {
         $newPassword = 'icinga123';
         $form = $this->createForm($db, static::CURRENT_PASSWORD, $newPassword, $newPassword);
+
         $this->assertTrue($form->isValid());
+
         $form->exposeOnSuccess();
 
         $this->assertTrue(password_verify(
@@ -97,6 +101,7 @@ class ChangePasswordFormTest extends BaseTestCase
     {
         $this->usePolicy(CommonPasswordPolicy::class);
         $form = $this->createForm($db, static::CURRENT_PASSWORD, 'test', 'test');
+
         $this->assertFalse($form->isValid());
         $this->assertNotEmpty($form->getElement(ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME)->getMessages());
     }
@@ -106,6 +111,7 @@ class ChangePasswordFormTest extends BaseTestCase
     {
         $this->usePolicy(CommonPasswordPolicy::class);
         $form = $this->createForm($db, static::CURRENT_PASSWORD, 'Testpassword123!', 'Testpassword123!');
+
         $this->assertTrue($form->isValid());
     }
 
@@ -122,7 +128,6 @@ class ChangePasswordFormTest extends BaseTestCase
 
         $this->assertFalse($form->isValid());
         $this->assertNotEmpty($form->getElement(ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME)->getMessages());
-
         $this->assertTrue(password_verify(
             static::CURRENT_PASSWORD,
             $db->select()
