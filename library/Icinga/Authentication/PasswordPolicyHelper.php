@@ -117,7 +117,15 @@ class PasswordPolicyHelper
                     }
                 }
 
-                $messages = $passwordPolicy->validate($user, $value, $oldPassword);
+                try {
+                    $messages = $passwordPolicy->validate($user, $value, $oldPassword);
+                } catch (Throwable $e) {
+                    Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
+                    $validator->addMessage(sprintf(t('Password validation failed: %s'), $e->getMessage()));
+
+                    return false;
+                }
+
                 if (empty($messages)) {
                     return true;
                 }
