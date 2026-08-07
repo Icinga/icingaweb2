@@ -9,6 +9,7 @@ use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Forms\Account\TwoFactorEnrollmentForm;
 use Icinga\User;
 use ipl\Html\FormElement\FieldsetElement;
+use SensitiveParameter;
 
 /**
  * Contract for a two-factor authentication method
@@ -57,7 +58,7 @@ interface TwoFactor
      *
      * @return bool True if the token is valid, false otherwise
      */
-    public function verify(User $user, string $token): bool;
+    public function verify(User $user, #[SensitiveParameter] string $token): bool;
 
     /**
      * Verify the submitted credential and persist it for the given user

@@ -21,6 +21,15 @@ It supersedes `Icinga\Forms\RepositoryForm`, which will be deprecated in version
 signature, assembly method names, notification ownership, and submit controls
 all differ and have to be adjusted when migrating.
 
+#### Sensitive Two-Factor Token
+
+The `$token` parameter of `Icinga\Authentication\TwoFactor::verify()` is now
+marked `#[SensitiveParameter]` so the entered token is redacted from stack
+traces and error reports. Implementations of the contract should mark their own
+`verify()` parameter the same way.
+
+* Mark TwoFactor::verify() token parameter as sensitive [#5559](https://github.com/Icinga/icingaweb2/pull/5559)
+
 ### What's New in Version 2.14.0
 
 You can find all issues related to this release on our
