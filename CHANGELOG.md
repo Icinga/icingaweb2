@@ -26,6 +26,8 @@ marked `#[SensitiveParameter]` to keep them out of stack traces.
 `setCsrfCounterMeasureId()` before assembly or explicitly disable protection
 with `disableCsrfCounterMeasure()`.
 
+* Add CsrfProtection to ConfigForm [#5552](https://github.com/Icinga/icingaweb2/pull/5552)
+
 #### CompatForm-based Repository Form
 
 `Icinga\Web\Form\RepositoryForm` is a new `CompatForm`-based base class for
@@ -34,6 +36,8 @@ It supersedes `Icinga\Forms\RepositoryForm`, which will be deprecated in version
 2.15. Relevant for developers: it's no drop-in replacement! The constructor
 signature, assembly method names, notification ownership, and submit controls
 all differ and have to be adjusted when migrating.
+
+* Modernize repository form [#5536](https://github.com/Icinga/icingaweb2/pull/5536)
 
 #### Sensitive Two-Factor Token
 
