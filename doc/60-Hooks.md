@@ -186,6 +186,12 @@ If the module providing a user's enrolled method is disabled, that method is no
 longer registered. The user's enrollment is then ignored and they log in without
 a second factor. This is expected when an administrator disables a 2FA module.
 
+The example below calls `loadSecret()`, `checkToken()`, `generateSecret()`,
+`storeSecret()`, and `deleteSecret()`. These are placeholders that neither
+`TwoFactorHook` nor this example provides. A real implementation must supply
+them, including secure secret generation, token verification, and protected
+persistent storage of the per-user secret.
+
 Hook example:
 
 ```php
