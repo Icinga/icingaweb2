@@ -81,7 +81,7 @@ class ChangePasswordForm extends CompatForm
                 function (#[SensitiveParameter] mixed $value, CallbackValidator $validator): bool {
                     $newPassword = $this->getValue(static::NEW_PASSWORD_ELEMENT_NAME);
                     if (! is_string($newPassword) || ! is_string($value)) {
-                        $validator->addMessage($this->translate('Password must be string'));
+                        $validator->addMessage($this->translate('Password must be a string'));
 
                         return false;
                     }
