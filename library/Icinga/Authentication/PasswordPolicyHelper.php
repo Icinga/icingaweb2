@@ -134,7 +134,21 @@ class PasswordPolicyHelper
                     }
                 }
 
-                $messages = $passwordPolicy->validate($value, $oldPassword);
+                if (! is_string($value)) {
+                    $validator->addMessage(t('Password must be a string'));
+
+                    return false;
+                }
+
+                try {
+                    $messages = $passwordPolicy->validate($value, $oldPassword);
+                } catch (Throwable $e) {
+                    Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
+                    $validator->addMessage(t('Password validation failed'));
+
+                    return false;
+                }
+
                 if (empty($messages)) {
                     return true;
                 }
