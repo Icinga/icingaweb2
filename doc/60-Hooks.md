@@ -45,6 +45,7 @@ class Csp extends CspHook
 ## PasswordPolicyHook <a id="hooks-password-policy"></a>
 
 The `PasswordPolicyHook` allows modules to provide custom [password policies](05-Authentication.md#authentication-password-policy).
+This hook always runs, regardless of the providing module's `module/<module-name>` permission.
 Extend it and implement the following methods:
 
 Method                         | Description
