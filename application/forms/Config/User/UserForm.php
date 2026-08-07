@@ -5,228 +5,136 @@
 
 namespace Icinga\Forms\Config\User;
 
-use Icinga\Application\Hook\ConfigFormEventsHook;
+use Icinga\Authentication\Auth;
 use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Data\Filter\Filter;
-use Icinga\Forms\RepositoryForm;
-use Icinga\Web\Notification;
+use Icinga\Repository\Repository;
+use Icinga\Repository\RepositoryMode;
+use Icinga\User;
+use Icinga\Web\Form\RepositoryForm;
 
 class UserForm extends RepositoryForm
 {
     /**
-     * Create and add common elements to this form
+     * Create a new UserForm
      *
-     * @param array $formData The data sent by the user
+     * @param Repository $repository The repository to work with
+     * @param RepositoryMode $mode How to interact with the repository
+     * @param ?string $identifier The name of the user to handle
+     */
+    public function __construct(Repository $repository, RepositoryMode $mode, ?string $identifier = null)
+    {
+        parent::__construct($repository, $mode, $identifier);
+        $this->setAttribute('name', 'repo_form_user');
+    }
+
+    /**
+     * Create and add common elements to this form
      *
      * @return void
      */
-    protected function createCommonElements(array $formData): void
+    protected function assembleCommonElements(): void
     {
-        $this->addElement(
-            'checkbox',
-            'is_active',
-            [
-                'value'       => true,
-                'label'       => $this->translate('Active'),
-                'description' => $this->translate('Prevents the user from logging in if unchecked')
-            ]
-        );
-        $this->addElement(
-            'text',
-            'user_name',
-            [
-                'required' => true,
-                'label'    => $this->translate('Username')
-            ]
-        );
+        $this->addElement('checkbox', 'is_active', [
+            'checkedValue'   => '1',
+            'uncheckedValue' => '0',
+            'value'          => '1',
+            'label'          => $this->translate('Active'),
+            'description'    => $this->translate('Prevents the user from logging in if unchecked'),
+        ]);
+
+        $this->addElement('text', 'user_name', [
+            'required' => true,
+            'label'    => $this->translate('Username')
+        ]);
     }
 
     /**
      * Create and add elements to this form to insert or update a user
      *
-     * @param array $formData The data sent by the user
-     *
      * @return void
      */
-    protected function createInsertElements(array $formData)
+    protected function assembleInsertElements(): void
     {
-        $this->createCommonElements($formData);
+        $this->assembleCommonElements();
 
-        $this->addElement(
-            'password',
-            'password',
-            [
-                'required' => true,
-                'label'    => $this->translate('Password')
-            ]
-        );
-        PasswordPolicyHelper::apply($this, 'password');
+        $this->addElement('password', 'password', [
+            'required' => true,
+            'label'    => $this->translate('Password'),
+        ]);
+        PasswordPolicyHelper::apply($this, new User($this->getValue('user_name', '')), 'password', adminFacing: true);
 
-        $this->setTitle($this->translate('Add a new user'));
-        $this->setSubmitLabel($this->translate('Add'));
+        $this->addElement('submit', 'submit_add', ['label' => $this->translate('Add')]);
     }
 
     /**
      * Create and add elements to this form to update a user
      *
-     * @param array $formData The data sent by the user
-     *
      * @return void
      */
-    protected function createUpdateElements(array $formData)
+    protected function assembleUpdateElements(): void
     {
-        $this->createCommonElements($formData);
+        $this->assembleCommonElements();
 
-        $this->addElement(
-            'password',
-            'password',
-            [
-                'description'   => $this->translate('Leave empty for not updating the user\'s password'),
-                'label'         => $this->translate('Password'),
-            ]
-        );
-        PasswordPolicyHelper::apply($this, 'password');
+        $this->addElement('password', 'password', [
+            'description' => $this->translate('Leave empty for not updating the user\'s password'),
+            'label'       => $this->translate('Password'),
+        ]);
 
-        $this->setTitle(sprintf($this->translate('Edit user %s'), $this->getIdentifier()));
-        $this->setSubmitLabel($this->translate('Save'));
-    }
+        $user = new User($this->getValue('user_name'));
+        $user->setAdditional('backend_name', $this->repository->getName());
+        Auth::getInstance()->setupUser($user);
+        PasswordPolicyHelper::apply($this, $user, 'password', adminFacing: true);
 
-    /**
-     * Update a user
-     *
-     * @return  bool
-     */
-    protected function onUpdateSuccess()
-    {
-        if (parent::onUpdateSuccess()) {
-            if (($newName = $this->getValue('user_name')) !== $this->getIdentifier()) {
-                $this->getRedirectUrl()->setParam('user', $newName);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Retrieve all form element values
-     *
-     * Strips off the password if null or the empty string.
-     *
-     * @param   bool    $suppressArrayNotation
-     *
-     * @return  array
-     */
-    public function getValues($suppressArrayNotation = false)
-    {
-        $values = parent::getValues($suppressArrayNotation);
-        // before checking if password values is empty
-        // we have to check that the password field is set
-        // otherwise an error is thrown
-        if (isset($values['password']) && ! $values['password']) {
-            unset($values['password']);
-        }
-
-        return $values;
+        $this->addElement('submit', 'submit_update', ['label' => $this->translate('Save')]);
     }
 
     /**
      * Create and add elements to this form to delete a user
      *
-     * @param   array   $formData   The data sent by the user
+     * @return void
      */
-    protected function createDeleteElements(array $formData)
+    protected function assembleDeleteElements(): void
     {
-        $this->setTitle(sprintf($this->translate('Remove user %s?'), $this->getIdentifier()));
-        $this->setSubmitLabel($this->translate('Confirm Removal'));
-        $this->setAttrib('class', 'icinga-controls');
+        $this->addElement('submit', 'submit_remove', ['label' => $this->translate('Confirm Removal')]);
     }
 
     /**
      * Create and return a filter to use when updating or deleting a user
      *
-     * @return  Filter
+     * @return Filter
      */
-    protected function createFilter()
+    protected function createFilter(): Filter
     {
         return Filter::where('user_name', $this->getIdentifier());
     }
 
     /**
-     * Return a notification message to use when inserting a user
+     * Get the name of the user to handle
      *
-     * @param   bool    $success    true or false, whether the operation was successful
-     *
-     * @return  string
+     * @return ?string Narrower than the inherited contract, as this form
+     *   accepts string identifiers only. Null only in
+     *   {@see RepositoryMode::Insert} mode, where none is required.
      */
-    protected function getInsertMessage($success)
+    public function getIdentifier(): ?string
     {
-        if ($success) {
-            return $this->translate('User added successfully');
-        } else {
-            return $this->translate('Failed to add user');
-        }
+        return $this->identifier;
     }
 
     /**
-     * Return a notification message to use when updating a user
+     * Retrieve all form element values
      *
-     * @param   bool    $success    true or false, whether the operation was successful
+     * Strips off the password if null or an empty string.
      *
-     * @return  string
+     * @return array
      */
-    protected function getUpdateMessage($success)
+    public function getValues(): array
     {
-        if ($success) {
-            return sprintf($this->translate('User "%s" has been edited'), $this->getIdentifier());
-        } else {
-            return sprintf($this->translate('Failed to edit user "%s"'), $this->getIdentifier());
-        }
-    }
-
-    /**
-     * Return a notification message to use when deleting a user
-     *
-     * @param   bool    $success    true or false, whether the operation was successful
-     *
-     * @return  string
-     */
-    protected function getDeleteMessage($success)
-    {
-        if ($success) {
-            return sprintf($this->translate('User "%s" has been removed'), $this->getIdentifier());
-        } else {
-            return sprintf($this->translate('Failed to remove user "%s"'), $this->getIdentifier());
-        }
-    }
-
-    public function isValid($formData)
-    {
-        $valid = parent::isValid($formData);
-
-        if ($valid && ConfigFormEventsHook::runIsValid($this) === false) {
-            foreach (ConfigFormEventsHook::getLastErrors() as $msg) {
-                $this->error($msg);
-            }
-
-            $valid = false;
+        $values = parent::getValues();
+        if (array_key_exists('password', $values) && ($values['password'] === '' || $values['password'] === null)) {
+            unset($values['password']);
         }
 
-        return $valid;
-    }
-
-    public function onSuccess()
-    {
-        if (parent::onSuccess() === false) {
-            return false;
-        }
-
-        if (ConfigFormEventsHook::runOnSuccess($this) === false) {
-            Notification::error($this->translate(
-                'Configuration successfully stored. Though, one or more module hooks failed to run.'
-                . ' See logs for details'
-            ));
-        }
+        return $values;
     }
 }

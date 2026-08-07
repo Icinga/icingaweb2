@@ -6,8 +6,10 @@
 namespace Icinga\Application\ProvidedHook;
 
 use Icinga\Application\Hook\PasswordPolicyHook;
+use Icinga\User;
 use ipl\Html\ValidHtml;
 use ipl\I18n\Translation;
+use SensitiveParameter;
 
 /**
  * Policy to allow any password
@@ -38,8 +40,11 @@ class AnyPasswordPolicy extends PasswordPolicyHook
         return null;
     }
 
-    public function validate(string $newPassword, ?string $oldPassword = null): array
-    {
+    public function validate(
+        User $user,
+        #[SensitiveParameter] string $newPassword,
+        #[SensitiveParameter] ?string $oldPassword = null,
+    ): array {
         return [];
     }
 }

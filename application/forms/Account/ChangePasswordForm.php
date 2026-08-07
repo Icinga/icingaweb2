@@ -8,118 +8,105 @@ namespace Icinga\Forms\Account;
 use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Data\Filter\Filter;
-use Icinga\Web\Form;
+use Icinga\User;
 use Icinga\Web\Notification;
+use ipl\Validator\CallbackValidator;
+use ipl\Web\Common\CsrfCounterMeasure;
+use ipl\Web\Common\FormUid;
+use ipl\Web\Compat\CompatForm;
+use SensitiveParameter;
 
 /**
  * Form for changing user passwords
  */
-class ChangePasswordForm extends Form
+class ChangePasswordForm extends CompatForm
 {
+    use CsrfCounterMeasure;
+    use FormUid;
+
+    public const OLD_PASSWORD_ELEMENT_NAME = 'old_password';
+
+    public const NEW_PASSWORD_ELEMENT_NAME = 'new_password';
+
     /**
-     * The user backend
+     * Create a new ChangePasswordForm
      *
-     * @var DbUserBackend
+     * @param DbUserBackend $backend The user backend to work with
+     * @param User $user The user whose password is being changed
      */
-    protected $backend;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function init()
-    {
-        $this->setSubmitLabel($this->translate('Update Account'));
+    public function __construct(
+        protected DbUserBackend $backend,
+        protected User $user,
+    ) {
+        $this->setAttribute('name', 'form_change_password');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createElements(array $formData)
+    protected function assemble(): void
     {
-        $this->addElement(
-            'password',
-            'old_password',
-            [
-                'label'    => $this->translate('Old Password'),
-                'required' => true
-            ]
-        );
-        $this->addElement(
-            'password',
-            'new_password',
-            [
-                'label'    => $this->translate('New Password'),
-                'required' => true
-            ]
-        );
-        PasswordPolicyHelper::apply($this, 'new_password', 'old_password');
+        $this->addCsrfCounterMeasure();
+        $this->addElement($this->createUidElement());
 
-        $this->addElement(
-            'password',
-            'new_password_confirmation',
-            [
-                'label'      => $this->translate('Confirm New Password'),
-                'required'   => true,
-                'validators' => [['identical', false, ['new_password']]]
-            ]
+        $this->addElement('password', static::OLD_PASSWORD_ELEMENT_NAME, [
+            'label'      => $this->translate('Old Password'),
+            'required'   => true,
+            'validators' => [new CallbackValidator(
+                function (#[SensitiveParameter] mixed $value, CallbackValidator $validator): bool {
+                    if (! $this->backend->authenticate($this->user, $value)) {
+                        $validator->addMessage($this->translate('Old password is invalid'));
+
+                        return false;
+                    }
+
+                    return true;
+                }
+            )],
+        ]);
+
+        $this->addElement('password', static::NEW_PASSWORD_ELEMENT_NAME, [
+            'label'    => $this->translate('New Password'),
+            'required' => true
+        ]);
+
+        PasswordPolicyHelper::apply(
+            $this,
+            $this->user,
+            static::NEW_PASSWORD_ELEMENT_NAME,
+            static::OLD_PASSWORD_ELEMENT_NAME,
         );
+
+        $this->addElement('password', static::NEW_PASSWORD_ELEMENT_NAME . '_confirmation', [
+            'label'      => $this->translate('Confirm New Password'),
+            'required'   => true,
+            'validators' => [new CallbackValidator(
+                function (#[SensitiveParameter] mixed $value, CallbackValidator $validator): bool {
+                    $newPassword = $this->getValue(static::NEW_PASSWORD_ELEMENT_NAME);
+                    if (! is_string($newPassword) || ! is_string($value)) {
+                        $validator->addMessage($this->translate('Password must be a string'));
+
+                        return false;
+                    }
+
+                    if (! hash_equals($newPassword, $value)) {
+                        $validator->addMessage($this->translate('The passwords do not match'));
+
+                        return false;
+                    }
+
+                    return true;
+                }
+            )],
+        ]);
+
+        $this->addElement('submit', 'submit', ['label' => $this->translate('Update Account')]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onSuccess()
+    protected function onSuccess(): void
     {
-        $backend = $this->getBackend();
-        $backend->update(
-            $backend->getBaseTable(),
-            ['password' => $this->getElement('new_password')->getValue()],
-            Filter::where('user_name', $this->Auth()->getUser()->getUsername())
+        $this->backend->update(
+            $this->backend->getBaseTable(),
+            ['password' => $this->getElement(static::NEW_PASSWORD_ELEMENT_NAME)->getValue()],
+            Filter::where('user_name', $this->user->getUsername())
         );
         Notification::success($this->translate('Account updated'));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isValid($formData)
-    {
-        $valid = parent::isValid($formData);
-        if (! $valid) {
-            return false;
-        }
-
-        $oldPasswordEl = $this->getElement('old_password');
-
-        if (! $this->backend->authenticate($this->Auth()->getUser(), $oldPasswordEl->getValue())) {
-            $oldPasswordEl->addError($this->translate('Old password is invalid'));
-            $this->markAsError();
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Get the user backend
-     *
-     * @return  DbUserBackend
-     */
-    public function getBackend()
-    {
-        return $this->backend;
-    }
-
-    /**
-     * Set the user backend
-     *
-     * @param   DbUserBackend $backend
-     *
-     * @return  $this
-     */
-    public function setBackend(DbUserBackend $backend)
-    {
-        $this->backend = $backend;
-        return $this;
     }
 }
