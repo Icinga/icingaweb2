@@ -59,9 +59,9 @@ protected static function isAlwaysRun(): bool
 
 ### Implement the new Hook <a id="hooks-implement-new-hook"></a>
 
-In other modules you can now provide an implementation for your own hook. It works
-basically the same like described earlier, but the class goes in a sub namespace
-of the module's `ProvidedHook` namespace this time:
+Other modules can now provide implementations of the hook. Registration works
+as described earlier, but the class goes in a subnamespace of the implementing
+module's `ProvidedHook` namespace:
 
 ```
 library/<ModuleName>/ProvidedHook/Acme/<HookName>.php
