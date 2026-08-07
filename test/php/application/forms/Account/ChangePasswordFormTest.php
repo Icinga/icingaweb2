@@ -97,6 +97,30 @@ class ChangePasswordFormTest extends BaseTestCase
         $this->assertTrue($form->isValid());
     }
 
+    #[DataProvider('mysqlDb')]
+    public function testPasswordChangeIsRejectedWhenPolicyFailsToLoad($db): void
+    {
+        Config::app()->setSection(
+            PasswordPolicyHook::CONFIG_SECTION,
+            [PasswordPolicyHook::CONFIG_KEY => 'missing/policy'],
+        );
+
+        $newPassword = 'icinga123';
+        $form = $this->createForm($db, static::CURRENT_PASSWORD, $newPassword, $newPassword);
+
+        $this->assertFalse($form->isValid());
+        $this->assertNotEmpty($form->getElement(ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME)->getMessages());
+
+        $this->assertTrue(password_verify(
+            static::CURRENT_PASSWORD,
+            $db->select()
+                ->columns(['password_hash'])
+                ->from('icingaweb_user')
+                ->where('name', static::USER_NAME)
+                ->fetchOne(),
+        ));
+    }
+
     protected function createForm(
         $db,
         string $oldPassword,
