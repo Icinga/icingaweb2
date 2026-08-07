@@ -71,7 +71,7 @@ class ChangePasswordFormTest extends BaseTestCase
 
         $this->assertFalse($form->isValid());
         $this->assertSame(
-            'Password must be string',
+            'Password must be a string',
             $form->getElement(ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME . '_confirmation')->getMessages()[0],
         );
     }
