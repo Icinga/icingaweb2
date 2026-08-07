@@ -198,7 +198,7 @@ class UserController extends AuthBackendController
                 $this->redirectNow($form->getRedirectUrl());
             })
             ->on(IplForm::ON_ERROR, function (Throwable $_, UserForm $_form): void {
-                Notification::error($this->translate('User creation failed'));
+                Notification::error($this->translate('Failed to create user'));
             })
             ->handleRequest(ServerRequest::fromGlobals());
 

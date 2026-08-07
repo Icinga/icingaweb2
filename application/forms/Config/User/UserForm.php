@@ -114,7 +114,7 @@ class UserForm extends RepositoryForm
      *
      * @return ?string Narrower than the inherited contract, as this form
      *   accepts string identifiers only. Null only in
-     *   {@see RepositoryMode::Insert} mode, where none is required
+     *   {@see RepositoryMode::Insert} mode, where none is required.
      */
     public function getIdentifier(): ?string
     {
