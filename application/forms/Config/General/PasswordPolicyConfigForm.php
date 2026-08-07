@@ -11,6 +11,7 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Exception\IcingaException;
 use Icinga\Web\Form\ConfigForm;
+use ipl\Html\Contract\Form;
 use ipl\Web\Common\FormUid;
 use Throwable;
 
@@ -20,6 +21,8 @@ use Throwable;
 class PasswordPolicyConfigForm extends ConfigForm
 {
     use FormUid;
+
+    protected bool $policiesLoadable = true;
 
     public function __construct(Config $config)
     {
@@ -39,6 +42,8 @@ class PasswordPolicyConfigForm extends ConfigForm
             $policies = iterator_to_array(PasswordPolicyHook::yieldPolicies());
         } catch (Throwable $e) {
             $this->logAndShowError($e, $this->translate('Could not load password policies: {error}'));
+            $this->policiesLoadable = false;
+            $this->on(Form::ON_VALIDATE, fn() => $this->isValid = false);
 
             return;
         }
@@ -69,5 +74,14 @@ class PasswordPolicyConfigForm extends ConfigForm
         } catch (Throwable) {
             PasswordPolicyHelper::addError($this, true);
         }
+    }
+
+    protected function addRequiredElements(): void
+    {
+        if (! $this->policiesLoadable) {
+            return;
+        }
+
+        parent::addRequiredElements();
     }
 }
