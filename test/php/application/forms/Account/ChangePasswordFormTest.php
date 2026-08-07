@@ -93,7 +93,7 @@ class ChangePasswordFormTest extends BaseTestCase
     public function testPasswordSatisfyingTheConfiguredPolicyIsAccepted($db): void
     {
         $this->usePolicy(CommonPasswordPolicy::class);
-        $form = $this->createForm($db, static::CURRENT_PASSWORD, 'Icingaadmin123!', 'Icingaadmin123!');
+        $form = $this->createForm($db, static::CURRENT_PASSWORD, 'Testpassword123!', 'Testpassword123!');
         $this->assertTrue($form->isValid());
     }
 
