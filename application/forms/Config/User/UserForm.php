@@ -81,7 +81,7 @@ class UserForm extends RepositoryForm
             'label'       => $this->translate('Password'),
         ]);
 
-        $user = new User($this->getIdentifier());
+        $user = new User($this->getValue('user_name'));
         $user->setAdditional('backend_name', $this->repository->getName());
         Auth::getInstance()->setupUser($user);
         PasswordPolicyHelper::apply($this, $user, 'password', adminFacing: true);
