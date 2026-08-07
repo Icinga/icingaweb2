@@ -21,6 +21,7 @@ use SensitiveParameter;
  * - At least one special character
  * - At least one uppercase letter
  * - At least one lowercase letter
+ * - Not equal to, contained in, or containing the username
  */
 class CommonPasswordPolicy extends PasswordPolicyHook
 {
@@ -39,7 +40,8 @@ class CommonPasswordPolicy extends PasswordPolicyHook
     public function getDescription(): ?ValidHtml
     {
         return new Text($this->translate(
-            'Minimum 12 characters, at least 1 number, 1 special character, lowercase and uppercase letters.',
+            'Minimum 12 characters, at least 1 number, 1 special character, lowercase and uppercase letters,'
+            . ' and must not be contained in, contain or match the username.',
         ));
     }
 
@@ -68,6 +70,21 @@ class CommonPasswordPolicy extends PasswordPolicyHook
 
         if (! preg_match('/[a-z]/', $newPassword)) {
             $violations[] = $this->translate('Password must contain at least one lowercase letter');
+        }
+
+        $username = mb_strtolower($user->getUsername());
+        $lowerPassword = mb_strtolower($newPassword);
+
+        if ($username === $lowerPassword) {
+            $violations[] = $this->translate('Username and password must not match');
+        } else {
+            if (str_contains($username, $lowerPassword)) {
+                $violations[] = $this->translate('Password must not be contained in username');
+            }
+
+            if (str_contains($lowerPassword, $username)) {
+                $violations[] = $this->translate('Password must not contain username');
+            }
         }
 
         return $violations;
