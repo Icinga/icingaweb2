@@ -95,7 +95,7 @@ class UserForm extends RepositoryForm
             'required' => true,
             'label'    => $this->translate('Password'),
         ]);
-        PasswordPolicyHelper::apply($this, 'password');
+        PasswordPolicyHelper::apply($this, 'password', adminFacing: true);
 
         $this->addElement('submit', 'submit_add', ['label' => $this->translate('Add')]);
     }
@@ -113,7 +113,8 @@ class UserForm extends RepositoryForm
             'description' => $this->translate('Leave empty for not updating the user\'s password'),
             'label'       => $this->translate('Password'),
         ]);
-        PasswordPolicyHelper::apply($this, 'password');
+
+        PasswordPolicyHelper::apply($this, 'password', adminFacing: true);
 
         $this->addElement('submit', 'submit_update', ['label' => $this->translate('Save')]);
     }

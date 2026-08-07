@@ -5,6 +5,7 @@
 
 namespace Tests\Icinga\Forms\Account;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Config;
 use Icinga\Application\Hook;
 use Icinga\Application\Hook\PasswordPolicyHook;
@@ -150,6 +151,50 @@ class ChangePasswordFormTest extends BaseTestCase
         $form = $this->createForm($db, static::CURRENT_PASSWORD, 'Icingaadmin123!', 'Icingaadmin123!');
 
         $this->assertTrue($form->isValid());
+    }
+
+    #[DataProvider('mysqlDb')]
+    public function testPasswordChangeIsRejectedWhenPolicyFailsToLoad($db): void
+    {
+        Config::app()->setSection(
+            PasswordPolicyHook::CONFIG_SECTION,
+            [PasswordPolicyHook::CONFIG_KEY => 'missing/policy'],
+        );
+
+        $this->setupDbProvider($db);
+        $this->setUpUserTable($db);
+
+        $newPassword = 'icinga123';
+        $form = new ChangePasswordForm(new DbUserBackend($db), new User(static::USER_NAME));
+        $form->disableCsrfCounterMeasure();
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/account'))->withParsedBody([
+                'uid'                                                           => 'form_change_password',
+                ChangePasswordForm::OLD_PASSWORD_ELEMENT_NAME                   => static::CURRENT_PASSWORD,
+                ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME                   => $newPassword,
+                ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME . '_confirmation' => $newPassword,
+                'submit'                                                        => 'Update Account',
+            ]),
+        );
+
+        $this->assertTrue($form->hasBeenSubmitted());
+        $this->assertFalse($form->isValid());
+        $this->assertSame(
+            'Cannot change the password because the password policy could not be loaded',
+            $form->getElement(ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME)->getMessages()[0]
+        );
+        $this->assertStringContainsString(
+            'There was a problem loading the configured password policy. Please contact your administrator.',
+            $form->render(),
+        );
+        $this->assertTrue(password_verify(
+            static::CURRENT_PASSWORD,
+            $db->select()
+                ->columns(['password_hash'])
+                ->from('icingaweb_user')
+                ->where('name', static::USER_NAME)
+                ->fetchOne(),
+        ));
     }
 
     /**
