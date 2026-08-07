@@ -166,18 +166,6 @@ such as TOTP or email token. Icinga Web asks every registered method whether a u
 is enrolled, and if so, requires the second factor after the primary login succeeds.
 This hook always runs, regardless of the `module/<module-name>` permission.
 
-Extend it and implement the methods of the `Icinga\Authentication\TwoFactor` contract:
-
-Method                                   | Description
------------------------------------------|-------------------------------------------------------------------
-`getName(): string`                      | Machine-readable identifier, e.g. `totp`. Must be unique within the providing module and a valid HTML `name` attribute value.
-`getDisplayName(): string`               | Human-readable name shown in the two-factor config UI, e.g. `TOTP`.
-`isEnrolled(): bool`                     | Whether the user has an active enrollment in this method. Implementations typically query the database for a stored credential.
-`verify(): bool`                         | Verify the token the user entered during login against the stored credential.
-`enroll(): bool`                         | Read the submitted credential from the fieldset, verify it works, and store it. Return `false` and attach an error to the relevant element via `addMessage()` on failure.
-`unenroll(): void`                       | Remove the stored credential for the user.
-`assembleEnrollmentFormElements(): void` | Add the method-specific form elements to the enrollment fieldset. Don't rename the fieldset.
-
 Icinga Web derives a **canonical name** in the format `<module>/<name>`
 (e.g. `mymodule/totp`) from the providing module and `getName()`, so two modules
 may register a method using the same `getName()` without colliding.
@@ -203,6 +191,7 @@ use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\User;
 use ipl\Html\FormElement\FieldsetElement;
 use ipl\I18n\Translation;
+use SensitiveParameter;
 
 class TotpTwoFactor extends TwoFactorHook
 {
@@ -223,7 +212,7 @@ class TotpTwoFactor extends TwoFactorHook
         return $this->loadSecret($user) !== null;
     }
 
-    public function verify(User $user, string $token): bool
+    public function verify(User $user, #[SensitiveParameter] string $token): bool
     {
         return $this->checkToken($this->loadSecret($user), $token);
     }
