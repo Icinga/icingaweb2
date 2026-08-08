@@ -354,6 +354,7 @@
 
             req.$target = $target;
             req.$redirectTarget = $target;
+            req.renderTargets = new Set();
             req.url = url;
             req.done(this.onResponse);
             req.fail(this.onFailure);
@@ -866,6 +867,17 @@
                                     forceFocus = req.forceFocus;
                                 }
 
+                                req.renderTargets.add($target[0]);
+                                const container = $target[0].closest('.container');
+                                if (container !== null) {
+                                    if (req.renderTargets.has(container)) {
+                                        // Ensure parent containers are processed last
+                                        req.renderTargets.delete(container);
+                                    }
+
+                                    req.renderTargets.add(container);
+                                }
+
                                 _this.renderContentToContainer(
                                     match[3],
                                     $target,
@@ -885,6 +897,9 @@
                     }
                 })
             } else {
+                req.$target[0].querySelectorAll(':scope .container').forEach((c) => req.renderTargets.add(c));
+                req.renderTargets.add(req.$target[0]);
+
                 this.renderContentToContainer(
                     req.responseText,
                     req.$target,
@@ -1037,10 +1052,10 @@
             // Lazy load module javascript (Applies only to module.js code)
             this.icinga.ensureSubModules(req.$target);
 
-            req.$target.find('.container').each(function () {
-                $(this).trigger('rendered', [req.autorefresh, req.scripted, req.autosubmit]);
-            });
-            req.$target.trigger('rendered', [req.autorefresh, req.scripted, req.autosubmit]);
+            for (const target of req.renderTargets) {
+                this.icinga.logger.debug('Triggering rendered event for target', target);
+                $(target).trigger('rendered', [req.autorefresh, req.scripted, req.autosubmit]);
+            }
 
             this.icinga.ui.refreshDebug();
         },
