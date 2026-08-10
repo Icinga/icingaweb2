@@ -3,6 +3,15 @@
 Specific version upgrades are described below. Please note that upgrades are incremental. An upgrade from
 v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
+## Upgrading to Icinga Web 2.14.1
+
+**Breaking changes**
+
+* The base `Icinga\Web\Form\ConfigForm` now provides a CSRF counter-measure
+  per default, so callers must now either set a session-stable ID with
+  `setCsrfCounterMeasureId()` before assembly or explicitly disable protection
+  with `disableCsrfCounterMeasure()`.
+
 ## Upgrading to Icinga Web 2.14
 
 **Deprecations**
