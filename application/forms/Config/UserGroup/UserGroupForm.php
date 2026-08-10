@@ -5,70 +5,68 @@
 
 namespace Icinga\Forms\Config\UserGroup;
 
-use Icinga\Application\Hook\ConfigFormEventsHook;
 use Icinga\Data\Filter\Filter;
-use Icinga\Forms\RepositoryForm;
-use Icinga\Web\Notification;
+use Icinga\Repository\Repository;
+use Icinga\Repository\RepositoryMode;
+use Icinga\Web\Form\RepositoryForm;
+use ipl\Web\Common\CalloutType;
+use ipl\Web\Widget\Callout;
 
 class UserGroupForm extends RepositoryForm
 {
     /**
-     * Create and add elements to this form to insert or update a group
+     * Create a new UserGroupForm
      *
-     * @param   array   $formData   The data sent by the user
+     * @param Repository $repository The repository to work with
+     * @param RepositoryMode $mode How to interact with the repository
+     * @param ?string $identifier The name of the user group to handle
      */
-    protected function createInsertElements(array $formData)
+    public function __construct(Repository $repository, RepositoryMode $mode, ?string $identifier = null)
     {
-        $this->addElement(
-            'text',
-            'group_name',
-            [
-                'required'  => true,
-                'label'     => $this->translate('Group Name')
-            ]
-        );
+        parent::__construct($repository, $mode, $identifier);
+        $this->setAttribute('name', 'repo_form_user_group');
+    }
 
-        if ($this->shouldInsert()) {
-            $this->setTitle($this->translate('Add a new group'));
-            $this->setSubmitLabel($this->translate('Add'));
-        } else { // $this->shouldUpdate()
-            $this->setTitle(sprintf($this->translate('Edit group %s'), $this->getIdentifier()));
-            $this->setSubmitLabel($this->translate('Save'));
-        }
+    protected function assembleCommonElements(): void
+    {
+        $this->addElement('text', 'group_name', [
+            'required' => true,
+            'label'    => $this->translate('Group Name'),
+        ]);
     }
 
     /**
-     * Update a group
+     * Create and add elements to this form to insert or update a group
      *
-     * @return  bool
+     * @return void
      */
-    protected function onUpdateSuccess()
+    protected function assembleInsertElements(): void
     {
-        if (parent::onUpdateSuccess()) {
-            if (($newName = $this->getValue('group_name')) !== $this->getIdentifier()) {
-                $this->getRedirectUrl()->setParam('group', $newName);
-            }
+        $this->assembleCommonElements();
 
-            return true;
-        }
+        $this->addElement('submit', 'submit_add', ['label' => $this->translate('Add')]);
+    }
 
-        return false;
+    protected function assembleUpdateElements(): void
+    {
+        $this->assembleCommonElements();
+
+        $this->addElement('submit', 'submit_update', ['label' => $this->translate('Save')]);
     }
 
     /**
      * Create and add elements to this form to delete a group
      *
-     * @param   array   $formData   The data sent by the user
+     * @return void
      */
-    protected function createDeleteElements(array $formData)
+    protected function assembleDeleteElements(): void
     {
-        $this->setTitle(sprintf($this->translate('Remove group %s?'), $this->getIdentifier()));
-        $this->addDescription($this->translate(
+        $this->addHtml(new Callout(CalloutType::Info, $this->translate(
             'Note that all users that are currently a member of this group will'
             . ' have their membership cleared automatically.'
-        ));
-        $this->setSubmitLabel($this->translate('Confirm Removal'));
-        $this->setAttrib('class', 'icinga-form icinga-controls');
+        )));
+
+        $this->addElement('submit', 'submit_remove', ['label' => $this->translate('Confirm Removal')]);
     }
 
     /**
@@ -76,85 +74,20 @@ class UserGroupForm extends RepositoryForm
      *
      * @return  Filter
      */
-    protected function createFilter()
+    protected function createFilter(): Filter
     {
         return Filter::where('group_name', $this->getIdentifier());
     }
 
     /**
-     * Return a notification message to use when inserting a group
+     * Get the name of the user group to handle
      *
-     * @param   bool    $success    true or false, whether the operation was successful
-     *
-     * @return  string
+     * @return ?string Narrower than the inherited contract, as this form
+     *   accepts string identifiers only. Null only in
+     *   {@see RepositoryMode::Insert} mode, where none is required.
      */
-    protected function getInsertMessage($success)
+    public function getIdentifier(): ?string
     {
-        if ($success) {
-            return $this->translate('Group added successfully');
-        } else {
-            return $this->translate('Failed to add group');
-        }
-    }
-
-    /**
-     * Return a notification message to use when updating a group
-     *
-     * @param   bool    $success    true or false, whether the operation was successful
-     *
-     * @return  string
-     */
-    protected function getUpdateMessage($success)
-    {
-        if ($success) {
-            return sprintf($this->translate('Group "%s" has been edited'), $this->getIdentifier());
-        } else {
-            return sprintf($this->translate('Failed to edit group "%s"'), $this->getIdentifier());
-        }
-    }
-
-    /**
-     * Return a notification message to use when deleting a group
-     *
-     * @param   bool    $success    true or false, whether the operation was successful
-     *
-     * @return  string
-     */
-    protected function getDeleteMessage($success)
-    {
-        if ($success) {
-            return sprintf($this->translate('Group "%s" has been removed'), $this->getIdentifier());
-        } else {
-            return sprintf($this->translate('Failed to remove group "%s"'), $this->getIdentifier());
-        }
-    }
-
-    public function isValid($formData)
-    {
-        $valid = parent::isValid($formData);
-
-        if ($valid && ConfigFormEventsHook::runIsValid($this) === false) {
-            foreach (ConfigFormEventsHook::getLastErrors() as $msg) {
-                $this->error($msg);
-            }
-
-            $valid = false;
-        }
-
-        return $valid;
-    }
-
-    public function onSuccess()
-    {
-        if (parent::onSuccess() === false) {
-            return false;
-        }
-
-        if (ConfigFormEventsHook::runOnSuccess($this) === false) {
-            Notification::error($this->translate(
-                'Configuration successfully stored. Though, one or more module hooks failed to run.'
-                . ' See logs for details'
-            ));
-        }
+        return $this->identifier;
     }
 }
