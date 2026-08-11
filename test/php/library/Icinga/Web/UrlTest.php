@@ -163,6 +163,41 @@ class UrlTest extends BaseTestCase
         );
     }
 
+    public function testWhetherGetAbsoluteUrlDoesNotInjectAnAuthorityForSchemesWithoutOne(): void
+    {
+        $this->getRequestMock()->shouldReceive('getServer')->with('SERVER_NAME')->andReturn('localhost')
+            ->shouldReceive('getServer')->with('SERVER_PORT')->andReturn('80');
+
+        $urls = [
+            'data:image/png',
+            'data:image/png;base64,iVBORw0KGgo=',
+            'data:text/csv;charset=utf-8,a,b,c',
+            'mailto:user@example.com',
+            'mailto:user@example.com?subject=Hi%20there',
+            'tel:+49123456789',
+            'geo:50.11,8.68',
+            'file:/tmp/report.txt',
+            'custom:/absolute/path',
+            'custom:relative/path',
+        ];
+
+        foreach ($urls as $url) {
+            $this->assertEquals(
+                $url,
+                Url::fromPath($url)->getAbsoluteUrl(),
+                'Url::getAbsoluteUrl injects `//` and the base path into ' . $url
+            );
+        }
+    }
+
+    public function testWhetherFileUrlsWithAnEmptyAuthorityKeepTheirAbsolutePath(): void
+    {
+        $url = Url::fromPath('file:///tmp/report.txt');
+
+        $this->assertSame('/tmp/report.txt', $url->getPath());
+        $this->assertSame('file:/tmp/report.txt', $url->getAbsoluteUrl());
+    }
+
     public function testWhetherFromRequestWorksWithoutARequest()
     {
         $this->getRequestMock()->shouldReceive('getBaseUrl')->andReturn('/path/to')
