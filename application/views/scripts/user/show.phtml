@@ -33,6 +33,10 @@ use Icinga\Data\Selectable;
             <td><?= $user->is_active === null ? '-' : ($user->is_active ? $this->translate('Active') : $this->translate('Inactive')); ?></td>
         </tr>
         <tr>
+            <th><?= $this->translate('Two-Factor Method'); ?></th>
+            <td><?= $twoFactor === null ? '-' : $this->escape($twoFactor); ?></td>
+        </tr>
+        <tr>
             <th><?= $this->translate('Created at'); ?></th>
             <td><?= $user->created_at === null ? '-' : $this->formatDateTime($user->created_at); ?></td>
         </tr>
