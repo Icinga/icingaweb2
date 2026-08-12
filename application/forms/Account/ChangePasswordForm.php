@@ -51,6 +51,11 @@ class ChangePasswordForm extends CompatForm
             'required'   => true,
             'validators' => [new CallbackValidator(
                 function (#[SensitiveParameter] mixed $value, CallbackValidator $validator): bool {
+                    if (! is_string($value)) {
+                        $validator->addMessage($this->translate('Password must be a string'));
+
+                        return false;
+                    }
                     if (! $this->backend->authenticate($this->user, $value)) {
                         $validator->addMessage($this->translate('Old password is invalid'));
 
