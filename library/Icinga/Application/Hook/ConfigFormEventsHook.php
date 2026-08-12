@@ -12,8 +12,8 @@ use Icinga\Web\Form;
 /**
  * Base class for config form event hooks
  *
- * @deprecated Over the years we didn't really develop a proper implementation.
- *   There will be no replacement.
+ * @deprecated since 2.14.1 and will be removed in 2.15. Over the years we didn't
+ *   really develop a proper implementation. There will be no replacement.
  */
 abstract class ConfigFormEventsHook
 {
