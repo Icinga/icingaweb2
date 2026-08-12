@@ -120,7 +120,9 @@ class PasswordPolicyHelper
                 $oldPassword = null;
                 if ($oldPasswordElementName !== null) {
                     $oldPasswordValue = $form->getValue($oldPasswordElementName);
-                    if (! Str::isEmpty($oldPasswordValue)) {
+                    // A crafted request can submit an array, which Str::isEmpty() rejects with a
+                    // TypeError. Such a value is left to the old-password element's own validator.
+                    if (is_string($oldPasswordValue) && ! Str::isEmpty($oldPasswordValue)) {
                         $oldPassword = $oldPasswordValue;
                     }
                 }
