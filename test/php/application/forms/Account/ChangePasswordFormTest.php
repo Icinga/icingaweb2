@@ -142,19 +142,8 @@ class ChangePasswordFormTest extends BaseTestCase
     #[DataProvider('mysqlDb')]
     public function testPasswordChangeIsRejectedWhenPolicyValidationThrows($db): void
     {
-        $this->setupDbProvider($db);
-        $this->setUpUserTable($db);
-
-        $form = new ChangePasswordForm(new DbUserBackend($db), new User(static::USER_NAME));
-
         // A non-string value makes the configured policy's validate() throw a TypeError.
-        $form->populate([
-            ChangePasswordForm::OLD_PASSWORD_ELEMENT_NAME                   => static::CURRENT_PASSWORD,
-            ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME                   => ['icinga123'],
-            ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME . '_confirmation' => ['icinga123'],
-        ]);
-        $form->disableCsrfCounterMeasure();
-        $form->ensureAssembled();
+        $form = $this->createForm($db, static::CURRENT_PASSWORD, ['icinga123'], ['icinga123']);
 
         $this->assertFalse($form->isValid());
         $this->assertContains(
@@ -189,11 +178,24 @@ class ChangePasswordFormTest extends BaseTestCase
         ));
     }
 
+    /**
+     * Create a form populated with the given credentials
+     *
+     * The passwords are typed `mixed` so that tests can submit non-string values,
+     * the way a crafted request would.
+     *
+     * @param $db
+     * @param mixed $oldPassword
+     * @param mixed $newPassword
+     * @param mixed $newPasswordConfirmation
+     *
+     * @return ChangePasswordForm
+     */
     protected function createForm(
         $db,
-        string $oldPassword,
-        string $newPassword,
-        string $newPasswordConfirmation,
+        mixed $oldPassword,
+        mixed $newPassword,
+        mixed $newPasswordConfirmation,
     ): ChangePasswordForm {
         $this->setupDbProvider($db);
         $this->setUpUserTable($db);
