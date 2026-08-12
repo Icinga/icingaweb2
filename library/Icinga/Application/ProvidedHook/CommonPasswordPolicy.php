@@ -73,17 +73,19 @@ class CommonPasswordPolicy extends PasswordPolicyHook
         }
 
         $username = mb_strtolower($user->getUsername());
-        $lowerPassword = mb_strtolower($newPassword);
+        if ($username !== '') {
+            $lowerPassword = mb_strtolower($newPassword);
 
-        if ($username === $lowerPassword) {
-            $violations[] = $this->translate('Username and password must not match');
-        } else {
-            if (str_contains($username, $lowerPassword)) {
-                $violations[] = $this->translate('Password must not be contained in username');
-            }
+            if ($username === $lowerPassword) {
+                $violations[] = $this->translate('Username and password must not match');
+            } else {
+                if (str_contains($username, $lowerPassword)) {
+                    $violations[] = $this->translate('Password must not be contained in username');
+                }
 
-            if (str_contains($lowerPassword, $username)) {
-                $violations[] = $this->translate('Password must not contain username');
+                if (str_contains($lowerPassword, $username)) {
+                    $violations[] = $this->translate('Password must not contain username');
+                }
             }
         }
 
