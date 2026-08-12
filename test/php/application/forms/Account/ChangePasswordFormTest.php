@@ -133,11 +133,9 @@ class ChangePasswordFormTest extends BaseTestCase
         $form->ensureAssembled();
 
         $this->assertFalse($form->isValid());
-        $this->assertNotEmpty(
-            preg_grep(
-                '/^Password validation failed: .+/',
-                $form->getElement(ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME)->getMessages(),
-            ),
+        $this->assertContains(
+            'Password validation failed',
+            $form->getElement(ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME)->getMessages(),
         );
     }
 

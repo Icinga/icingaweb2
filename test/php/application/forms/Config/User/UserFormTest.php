@@ -103,9 +103,7 @@ class UserFormTest extends BaseTestCase
         $form->ensureAssembled();
 
         $this->assertFalse($form->isValid());
-        $this->assertNotEmpty(
-            preg_grep('/^Password validation failed: .+/', $form->getElement('password')->getMessages()),
-        );
+        $this->assertContains('Password validation failed', $form->getElement('password')->getMessages());
     }
 
     #[DataProvider('mysqlDb')]
