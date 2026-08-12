@@ -56,6 +56,7 @@ class ChangePasswordForm extends CompatForm
 
                         return false;
                     }
+
                     if (! $this->backend->authenticate($this->user, $value)) {
                         $validator->addMessage($this->translate('Old password is invalid'));
 
