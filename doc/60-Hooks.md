@@ -46,14 +46,6 @@ class Csp extends CspHook
 
 The `PasswordPolicyHook` allows modules to provide custom [password policies](05-Authentication.md#authentication-password-policy).
 This hook always runs, regardless of the providing module's `module/<module-name>` permission.
-Extend it and implement the following methods:
-
-Method                         | Description
--------------------------------|-------------------------------------------------------------------
-`getDisplayName(): string`     | Human-readable name shown in the policy selector in the UI.
-`getName(): string`            | Machine-readable identifier used in the configuration file. Must be unique within the providing module, and must not change.
-`getDescription(): ?ValidHtml` | Description of the requirements shown in the password change form when this policy is active. Return `null` to show nothing.
-`validate(): array`            | Validates the new password. Returns a list of violation messages, or an empty array if the password is valid. `$oldPassword` may be `null` when unavailable..
 
 Icinga Web derives a **canonical name** in the format `<module>/<name>` (e.g. `mypasswordpolicy/my-custom-policy`)
 from the providing module and `getName()`. This is what gets stored in the configuration file and must be unique
