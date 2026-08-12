@@ -163,7 +163,10 @@ class ChangePasswordFormTest extends BaseTestCase
         $form = $this->createForm($db, static::CURRENT_PASSWORD, $newPassword, $newPassword);
 
         $this->assertFalse($form->isValid());
-        $this->assertNotEmpty($form->getElement(ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME)->getMessages());
+        $this->assertSame(
+            'Cannot change the password because the password policy could not be loaded',
+            $form->getElement(ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME)->getMessages()[0]
+        );
         $this->assertTrue(password_verify(
             static::CURRENT_PASSWORD,
             $db->select()
