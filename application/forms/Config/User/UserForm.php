@@ -126,7 +126,7 @@ class UserForm extends RepositoryForm
      *
      * Strips off the password if null or an empty string.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getValues(): array
     {
