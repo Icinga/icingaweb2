@@ -277,7 +277,7 @@ class UserFormTest extends BaseTestCase
         $form->ensureAssembled();
 
         $this->assertFalse($form->isValid());
-        $this->assertNotEmpty($form->getElement('password')->getMessages());
+        $this->assertSame('Password must be a string', $form->getElement('password')->getMessages()[0]);
     }
 
     #[DataProvider('mysqlDb')]
