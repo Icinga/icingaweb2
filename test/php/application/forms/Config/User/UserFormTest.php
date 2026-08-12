@@ -260,6 +260,29 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
+    public function testInsertModeIsRejectedWhenPolicyFailsToLoadAndPasswordIsNoString($db): void
+    {
+        Config::app()->setSection(
+            PasswordPolicyHook::CONFIG_SECTION,
+            [PasswordPolicyHook::CONFIG_KEY => 'missing/policy'],
+        );
+
+        $form = $this->createForm($db, RepositoryMode::Insert);
+
+        // The required validator accepts a non-empty array, so leaving the admin
+        // form unrestricted must still not let a non-string reach password_hash().
+        $form->populate([
+            'is_active' => '1',
+            'user_name' => static::NEW_USER_NAME,
+            'password'  => ['new_password'],
+        ]);
+        $form->ensureAssembled();
+
+        $this->assertFalse($form->isValid());
+        $this->assertNotEmpty($form->getElement('password')->getMessages());
+    }
+
+    #[DataProvider('mysqlDb')]
     public function testUpdateModeUpdatesPasswordWhenPolicyFailsToLoad($db): void
     {
         Config::app()->setSection(
