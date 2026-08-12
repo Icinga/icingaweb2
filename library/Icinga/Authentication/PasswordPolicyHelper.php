@@ -77,22 +77,30 @@ class PasswordPolicyHelper
             Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
             static::addError($form, $adminFacing);
 
-            if (! $adminFacing) {
-                /** @var PasswordElement $newPasswordElement */
-                $newPasswordElement = $form->getElement($newPasswordElementName);
-                $newPasswordElement->addValidators([
-                    new CallbackValidator(function (
-                        #[SensitiveParameter] mixed $value,
-                        CallbackValidator $validator,
-                    ): bool {
-                        $validator->addMessage(
-                            t('Cannot change the password because the password policy could not be loaded')
-                        );
+            /** @var PasswordElement $newPasswordElement */
+            $newPasswordElement = $form->getElement($newPasswordElementName);
+            $newPasswordElement->addValidators([
+                new CallbackValidator(function (
+                    #[SensitiveParameter] mixed $value,
+                    CallbackValidator $validator,
+                ) use ($adminFacing): bool {
+                    if (! is_string($value)) {
+                        $validator->addMessage(t('The password must be a string'));
 
                         return false;
-                    }),
-                ]);
-            }
+                    }
+
+                    if ($adminFacing) {
+                        return true;
+                    }
+
+                    $validator->addMessage(
+                        t('Cannot change the password because the password policy could not be loaded')
+                    );
+
+                    return false;
+                }),
+            ]);
 
             return;
         }
