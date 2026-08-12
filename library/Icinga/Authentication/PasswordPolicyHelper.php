@@ -85,7 +85,7 @@ class PasswordPolicyHelper
                     CallbackValidator $validator,
                 ) use ($adminFacing): bool {
                     if (! is_string($value)) {
-                        $validator->addMessage(t('The password must be a string'));
+                        $validator->addMessage(t('Password must be a string'));
 
                         return false;
                     }
