@@ -5,7 +5,9 @@
 
 namespace Icinga\Authentication;
 
+use Icinga\User;
 use ipl\Html\ValidHtml;
+use SensitiveParameter;
 
 /**
  * Contract for password policy implementations
@@ -46,6 +48,7 @@ interface PasswordPolicy
     /**
      * Validate a password against the policy
      *
+     * @param User $user The user whose password is set
      * @param string $newPassword The new password to validate
      * @param ?string $oldPassword The current password, if available, for policies that
      *   verify the new password differs from the old one
@@ -53,5 +56,9 @@ interface PasswordPolicy
      * @return list<string> Empty list if valid. One message per violation describing why
      *   the password was rejected
      */
-    public function validate(string $newPassword, ?string $oldPassword = null): array;
+    public function validate(
+        User $user,
+        #[SensitiveParameter] string $newPassword,
+        #[SensitiveParameter] ?string $oldPassword = null,
+    ): array;
 }

@@ -161,114 +161,17 @@ in order to manually create users directly inside the database.
 ### Password Policy <a id="authentication-password-policy"></a>
 
 Icinga Web supports password policies when using database authentication. You can configure this under
-**Configuration > Application > General**.
+**Configuration > Application > Security**.
 
-By default, no password policy is enforced (`None`). Icinga Web provides a built-in policy called `Common` with the
-following requirements:
+Icinga Web ships with two built-in policies:
 
-* Minimum length of 12 characters
-* At least one number
-* At least one special character
-* At least one lowercase letter
-* At least one uppercase letter
+Policy Name | Canonical Name | Description
+------------|----------------|------------
+None        | `any`          | No requirements. Any password is accepted. This is the default.
+Common      | `common`       | Minimum 12 characters, at least 1 number, 1 special character, lowercase and uppercase letters, and must not be contained in, contain or match the username.
 
-#### Custom Password Policy <a id="authentication-custom-password-policy"></a>
-
-You can create custom password policies by developing a module with a provided hook.
-
-**Create Module Structure**
-
-```bash
-mkdir -p /usr/share/icingaweb2/modules/mypasswordpolicy/library/Mypasswordpolicy/ProvidedHook
-cd /usr/share/icingaweb2/modules/mypasswordpolicy
-```
-
-Create `module.info`:
-
-```ini
-Module: mypasswordpolicy
-Name: My Password Policy
-Version: 1.0.0
-Description: Custom password policy implementation
-```
-
-**Implement the Hook**
-
-Icinga Web provides the `PasswordPolicyHook` with predefined methods that simplify the extension of custom password
-policies.
-
-Create `library/Mypasswordpolicy/ProvidedHook/PasswordPolicy.php`:
-
-```php
-<?php
-
-namespace Icinga\Module\Mypasswordpolicy\ProvidedHook;
-
-use Icinga\Application\Hook\PasswordPolicyHook;
-use ipl\Html\Text;
-use ipl\Html\ValidHtml;
-use ipl\I18n\Translation;
-
-class MyPasswordPolicy extends PasswordPolicyHook
-{
-    use Translation;
-
-    public function getDisplayName(): string
-    {
-        return $this->translate('My Custom Policy');
-    }
-
-    public function getName(): string
-    {
-        return 'my-custom-policy';
-    }
-
-    public function getDescription(): ?ValidHtml
-    {
-        return new Text(
-            $this->translate('More than 8 chars, at least 1 number, and must differ from the last password'),
-        );
-    }
-
-    public function validate(string $newPassword, ?string $oldPassword = null): array
-    {
-        $violations = [];
-
-        if (strlen($newPassword) < 8) {
-            $violations[] = 'Password must be at least 8 characters';
-        }
-
-        if (! preg_match('/[0-9]/', $newPassword)) {
-            $violations[] = 'Password must contain at least one number';
-        }
-
-        if ($oldPassword !== null && hash_equals($oldPassword, $newPassword)) {
-            $violations[] = 'New password must be different from the old password';
-        }
-
-        return $violations;
-    }
-}
-```
-
-**Register the Hook**
-
-Create `run.php`:
-
-```php
-<?php
-
-use Icinga\Module\Mypasswordpolicy\ProvidedHook\MyPasswordPolicy;
-MyPasswordPolicy::register();
-```
-
-
-Enable the module:
-```shell
-icingacli module enable mypasswordpolicy
-```
-
-The custom policy will now appear in **Configuration > Application > General** under Password Policy.
+Custom policies can be added by implementing the
+[PasswordPolicyHook](60-Hooks.md#hooks-password-policy).
 
 ## Groups <a id="authentication-configuration-groups"></a>
 

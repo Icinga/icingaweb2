@@ -7,7 +7,6 @@ namespace Icinga\Module\Setup\Forms;
 
 use Exception;
 use Icinga\Application\Config;
-use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\DbUserBackend;
@@ -231,7 +230,6 @@ class AdminAccountPage extends Form
                     'autocomplete'      => 'new-password'
                 ]
             );
-            PasswordPolicyHelper::apply($this, 'new_user_password');
 
             $this->addElement(
                 'password',

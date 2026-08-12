@@ -1,53 +1,5 @@
 # Hooks
 
-## ConfigFormEventsHook
-
-The `ConfigFormEventsHook` allows developers to hook into the handling of configuration forms. It provides three methods:
-
-* `appliesTo()`
-* `isValid()`
-* `onSuccess()`
-
-`appliesTo()` determines whether the hook should run for a given configuration form.
-Developers should use `instanceof` checks in order to decide whether the hook should run or not.
-If `appliesTo()` returns `false`, `isValid()` and `onSuccess()` won't get called for this hook.
-
-`isValid()` is called after the configuration form has been validated successfully.
-An exception thrown here indicates form errors and prevents the config from being stored.
-The exception's error message is shown in the frontend automatically.
-If there are multiple hooks indicating errors, every error will be displayed.
-
-`onSuccess()` is called after the configuration has been stored successfully.
-Form handling can't be interrupted here. Any exception will be caught, logged and notified.
-
-Hook example:
-
-```php
-namespace Icinga\Module\Acme\ProvidedHook;
-
-use Icinga\Application\Hook\ConfigFormEventsHook;
-use Icinga\Forms\ConfigForm;
-use Icinga\Forms\Security\RoleForm;
-
-class ConfigFormEvents extends ConfigFormEventsHook
-{
-    public function appliesTo(ConfigForm $form)
-    {
-        return $form instanceof RoleForm;
-    }
-
-    public function onSuccess(ConfigForm $form)
-    {
-        $this->updateMyModuleConfig();
-    }
-
-    protected function updateMyModuleConfig()
-    {
-        // ...
-    }
-}
-```
-
 ## CspHook <a id="hooks-csp"></a>
 
 The `CspHook` allows developers to add custom CSP directives to the Icinga Web 2 frontend.
@@ -86,6 +38,74 @@ class Csp extends CspHook
         // ...
         
         return $csp;
+    }
+}
+```
+
+## PasswordPolicyHook <a id="hooks-password-policy"></a>
+
+The `PasswordPolicyHook` allows modules to provide custom [password policies](05-Authentication.md#authentication-password-policy).
+This hook always runs, regardless of the providing module's `module/<module-name>` permission.
+
+Icinga Web derives a **canonical name** in the format `<module>/<name>` (e.g. `mypasswordpolicy/my-custom-policy`)
+from the providing module and `getName()`. This is what gets stored in the configuration file and must be unique
+across all registered policies.
+
+Hook example:
+
+```php
+<?php
+
+namespace Icinga\Module\Mypasswordpolicy\ProvidedHook;
+
+use Icinga\Application\Hook\PasswordPolicyHook;
+use Icinga\User;
+use ipl\Html\Text;
+use ipl\Html\ValidHtml;
+use ipl\I18n\Translation;
+use SensitiveParameter;
+
+class PasswordPolicy extends PasswordPolicyHook
+{
+    use Translation;
+
+    public function getDisplayName(): string
+    {
+        return $this->translate('My Custom Policy');
+    }
+
+    public function getName(): string
+    {
+        return 'my-custom-policy';
+    }
+
+    public function getDescription(): ?ValidHtml
+    {
+        return new Text(
+            $this->translate('At least 8 characters, at least 1 number, and must differ from the last password'),
+        );
+    }
+
+    public function validate(
+        User $user,
+        #[SensitiveParameter] string $newPassword,
+        #[SensitiveParameter] ?string $oldPassword = null,
+    ): array {
+        $violations = [];
+
+        if (mb_strlen($newPassword) < 8) {
+            $violations[] = $this->translate('Password must be at least 8 characters long');
+        }
+
+        if (! preg_match('/[0-9]/', $newPassword)) {
+            $violations[] = $this->translate('Password must contain at least one number');
+        }
+
+        if ($oldPassword !== null && hash_equals($oldPassword, $newPassword)) {
+            $violations[] = $this->translate('New password must differ from the old password');
+        }
+
+        return $violations;
     }
 }
 ```

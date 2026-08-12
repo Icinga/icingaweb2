@@ -5,6 +5,13 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
 ## Upgrading to Icinga Web 2.14.1
 
+**Deprecations**
+
+* `Icinga\Application\Hook\ConfigFormEventsHook` is deprecated now. There will
+  be no replacement, as the hook never evolved into a proper implementation.
+  * Existing hook implementations continue to work until v2.15, which removes
+    the deprecated hook.
+
 **Breaking changes**
 
 * The base `Icinga\Web\Form\ConfigForm` now provides a CSRF counter-measure
