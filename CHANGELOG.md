@@ -6,6 +6,16 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ### What's New in Version 2.14.1
 
+#### Password Policy Moved to the Security Configuration
+
+The password policy setting moved from Configuration > Application > General to
+Configuration > Application > Security. Managing it now requires the
+`config/security` permission instead of `config/general`. Roles that were
+granted `config/general` to manage password policies must be updated to
+`config/security`, otherwise they lose access to the setting.
+
+* Modernize password policy [#5537](https://github.com/Icinga/icingaweb2/pull/5537)
+
 #### CSRF Protection for Config Forms
 
 `Icinga\Web\Form\ConfigForm` callers must now set a session-stable ID with
