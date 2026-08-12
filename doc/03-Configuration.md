@@ -25,18 +25,20 @@ This configuration is stored in the `config.ini` file in `/etc/icingaweb2`.
 ### Global Configuration <a id="configuration-general-global"></a>
 
 
-Option                   | Description
--------------------------|-----------------------------------------------
-show\_stacktraces        | **Optional.** Whether to show debug stacktraces. Defaults to `0`.
-module\_path             | **Optional.** Specifies the directories where modules can be installed. Multiple directories must be separated with colons.
-config\_resource         | **Required.** Specify a defined [resource](04-Resources.md#resources-configuration-database) name.
+Option                             | Description
+-----------------------------------|-----------------------------------------------
+show\_stacktraces                  | **Optional.** Set to `1` to show debug stacktraces. Defaults to `1`.
+show\_application\_state\_messages | **Optional.** Set to `1` to show application state messages. Defaults to `1`.
+module\_path                       | **Optional.** Specifies the directories where modules can be installed. Multiple directories must be separated with the platform path separator (`:` on Unix-like systems).
+config\_resource                   | **Required.** Specify a defined [resource](04-Resources.md#resources-configuration-database) name.
 
 
 Example for storing the user preferences in the database resource `icingaweb_db`:
 
 ```
 [global]
-show_stacktraces = "0"
+show_stacktraces = "1"
+show_application_state_messages = "1"
 config_resource = "icingaweb_db"
 module_path = "/usr/share/icingaweb2/modules"
 ```
@@ -46,9 +48,9 @@ module_path = "/usr/share/icingaweb2/modules"
 Option                   | Description
 -------------------------|-----------------------------------------------
 log                      | **Optional.** Specifies the logging type. Can be set to `syslog`, `file`, `php` (web server's error log) or `none`.
-level                    | **Optional.** Specifies the logging level. Can be set to `ERROR`, `WARNING`, `INFORMATION` or `DEBUG`.
+level                    | **Optional.** Specifies the logging level. Can be set to `ERROR`, `WARNING`, `INFO` or `DEBUG`.
 file                     | **Optional.** Specifies the log file path if `log` is set to `file`.
-application              | **Optional.** Specifies the application name if `log` is set to `syslog`.
+application              | **Optional.** Specifies the application name if `log` is set to `syslog` or `php`. Defaults to `icingaweb2`.
 facility                 | **Optional.** Specifies the syslog facility if `log` is set to `syslog`. Can be set to `user`, `local0` to `local7`. Defaults to `user`.
 
 Example for more verbose debug logging into a file:
@@ -64,7 +66,7 @@ file = "/usr/share/icingaweb2/log/icingaweb2.log"
 
 Option                   | Description
 -------------------------|-----------------------------------------------
-default                  | **Optional.** Choose the default theme. Can be set to `Icinga`, `high-contrast`, `Winter`, 'colorblind' or your own installed theme. Defaults to `Icinga`. Note that this setting is case-sensitive because it refers to the filename of the theme.
+default                  | **Optional.** Choose the default theme. Can be set to `Icinga`, `high-contrast`, `Winter`, `colorblind` or your own installed theme. Defaults to `Icinga`. Note that this setting is case-sensitive because it refers to the filename of the theme.
 disabled                 | **Optional.** Set this to `1` if users should not be allowed to change their theme. Defaults to `0`.
 default_mode             | **Optional.** Choose the default theme mode. Can be set to `system`, `light` or `none` for the dark theme mode. Defaults to `none`.
 
@@ -77,6 +79,36 @@ default = "Icinga"
 default_mode = "light"
 ```
 
+### Authentication Configuration <a id="configuration-general-authentication"></a>
+
+Option                   | Description
+-------------------------|-----------------------------------------------
+default\_domain          | **Optional.** Domain assumed when users log in without specifying a domain. It must match an LDAP backend's configured domain or the domain suffix stored in another backend's usernames, e.g. `icinga.com`.
+
+Example:
+
+```
+[authentication]
+default_domain = "icinga.com"
+```
+
+### Cookie Configuration <a id="configuration-general-cookie"></a>
+
+Option                   | Description
+-------------------------|-----------------------------------------------
+domain                   | **Optional.** Domain attribute for cookies, e.g. `.example.com`.
+path                     | **Optional.** Path attribute for cookies, e.g. `/icingaweb2/`. Defaults to the Icinga Web base URL.
+secure                   | **Optional.** Set to `1` to send cookies only over HTTPS. Defaults to the current request scheme.
+
+Example:
+
+```
+[cookie]
+domain = ".example.com"
+path = "/icingaweb2/"
+secure = "1"
+```
+
 ## Security Configuration <a id="configuration-security"></a>
 
 Navigate into **Configuration > Application > Security**.
@@ -85,14 +117,16 @@ This configuration is stored in the `config.ini` file in `/etc/icingaweb2`.
 
 ### Content Security Policy Configuration <a id="configuration-security-csp"></a>
 
-| Option                  | Description                                                                                                                                               |
-|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| use\_strict\_csp        | **Optional.** Set this to `1` to enable strict [Content Security Policy](20-Advanced-Topics.md#advanced-topics-csp). Defaults to `0`.                     |
-| use\_custom\_csp        | **Optional.** Set this to `1` to enable the use of the user defined Content Security Policy. Defaults to `0`.                                             |
-| custom\_csp             | **Optional.** Specifies the user defined Content Security Policy. Overrides the automatically generated one. Only used if `use_custom_csp` is set to `1`. |
-| csp\_enable\_modules    | **Optional.** Specifies if modules should be included in the generated Content Security Policy. Defaults to `1`.                                          |
-| csp\_enable\_dashboards | **Optional.** Specifies if dashboards should be included in the generated Content Security Policy. Defaults to `1`.                                       |
-| csp\_enable\_navigation | **Optional.** Specifies if navigation menu items should be included in the generated Content Security Policy. Defaults to `1`.                            |
+Option                  | Description
+------------------------|------------------------------
+use\_strict\_csp        | **Optional.** Set this to `1` to enable strict [Content Security Policy](20-Advanced-Topics.md#advanced-topics-csp). Defaults to `0`.
+use\_custom\_csp        | **Optional.** Set this to `1` to use the user-defined Content Security Policy. Defaults to `0`.
+custom\_csp             | **Optional.** Specifies the user defined Content Security Policy. Overrides the automatically generated one. Only used if `use_custom_csp` is set to `1`.
+csp\_enable\_modules    | **Optional.** Specifies if modules should be included in the generated Content Security Policy. Defaults to `0`.
+csp\_enable\_dashboards | **Optional.** Specifies if dashboards should be included in the generated Content Security Policy. Defaults to `0`.
+csp\_enable\_navigation | **Optional.** Specifies if navigation menu items should be included in the generated Content Security Policy. Defaults to `0`.
+
+When strict CSP is enabled through the Security page for the first time, the `csp_enable_*` options are enabled by default.
 
 Example:
 
