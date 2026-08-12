@@ -83,6 +83,19 @@ Navigate into **Configuration > Application > Security**.
 
 This configuration is stored in the `config.ini` file in `/etc/icingaweb2`.
 
+### Password Policy Configuration <a id="configuration-security-password-policy"></a>
+
+Option            | Description
+------------------|-----------------------------------
+password\_policy  | **Optional.** Canonical name of the [password policy](05-Authentication.md#authentication-password-policy) to enforce. Defaults to `any` (None).
+
+Example:
+
+```
+[security]
+password_policy = "common"
+```
+
 ### Content Security Policy Configuration <a id="configuration-security-csp"></a>
 
 | Option                  | Description                                                                                                                                               |
