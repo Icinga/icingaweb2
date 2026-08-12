@@ -161,7 +161,7 @@ in order to manually create users directly inside the database.
 ### Password Policy <a id="authentication-password-policy"></a>
 
 Icinga Web supports password policies when using database authentication. You can configure this under
-**Configuration > Application > General**.
+**Configuration > Application > Security**.
 
 By default, no password policy is enforced (`None`). Icinga Web provides a built-in policy called `Common` with the
 following requirements:
@@ -268,7 +268,7 @@ Enable the module:
 icingacli module enable mypasswordpolicy
 ```
 
-The custom policy will now appear in **Configuration > Application > General** under Password Policy.
+The custom policy will now appear in **Configuration > Application > Security** under Password Policy.
 
 ## Groups <a id="authentication-configuration-groups"></a>
 

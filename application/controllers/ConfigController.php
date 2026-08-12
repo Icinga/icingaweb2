@@ -8,6 +8,7 @@ namespace Icinga\Controllers;
 use Exception;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Version;
+use Icinga\Forms\Config\General\PasswordPolicyConfigForm;
 use Icinga\Web\Session;
 use InvalidArgumentException;
 use Icinga\Application\Config;
@@ -28,7 +29,8 @@ use Icinga\Web\Controller;
 use Icinga\Web\Notification;
 use Icinga\Web\Url;
 use Icinga\Web\Widget;
-use ipl\Html\Contract\Form as ContractForm;
+use ipl\Html\Contract\Form;
+use Throwable;
 
 /**
  * Application and module configuration
@@ -133,15 +135,29 @@ class ConfigController extends Controller
 
         $this->view->title = $this->translate('Security');
 
-        $cspForm = (new CspConfigForm(Config::app()))
+        $config = Config::app();
+        $request = ServerRequest::fromGlobals();
+
+        $this->view->passwordPolicyForm = (new PasswordPolicyConfigForm($config))
             ->setCsrfCounterMeasureId(Session::getSession()->getId())
-            ->on(ContractForm::ON_SUBMIT, function (CspConfigForm $form) {
+            ->on(Form::ON_SUBMIT, function (PasswordPolicyConfigForm $_): void {
+                Notification::success($this->translate('Password policy config has successfully been stored'));
+                $this->redirectNow('__REFRESH__');
+            })
+            ->on(Form::ON_ERROR, function (Throwable $_, PasswordPolicyConfigForm $_form): void {
+                Notification::error($this->translate('Failed to store password policy config'));
+            })
+            ->handleRequest($request);
+
+        $this->view->cspForm = (new CspConfigForm($config))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->on(Form::ON_SUBMIT, function (CspConfigForm $form) {
                 if ($form->hasConfigChanged()) {
                     $this->getResponse()->setReloadWindow(true);
                 }
             })
-            ->handleRequest(ServerRequest::fromGlobals());
-        $this->view->cspForm = $cspForm;
+            ->handleRequest($request);
+
         $this->createApplicationTabs()->activate('security');
     }
 
