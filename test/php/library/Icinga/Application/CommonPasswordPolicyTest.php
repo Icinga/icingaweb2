@@ -105,4 +105,11 @@ class CommonPasswordPolicyTest extends TestCase
             (new CommonPasswordPolicy())->validate(new User('IcingaAdmin'), 'icingaadmin')
         );
     }
+
+    public function testValidateEmptyUsernameSkipsUsernameComparison(): void
+    {
+        // str_contains() matches an empty needle in any string, so without the
+        // guard an empty username would reject every password.
+        $this->assertEmpty((new CommonPasswordPolicy())->validate(new User(''), 'Testpassword1#'));
+    }
 }
