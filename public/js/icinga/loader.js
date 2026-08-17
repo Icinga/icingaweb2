@@ -885,7 +885,7 @@
                     }
                 })
             } else {
-                this.renderContentToContainer(
+                const rendered = this.renderContentToContainer(
                     req.responseText,
                     req.$target,
                     req.action,
@@ -894,6 +894,10 @@
                     req.autosubmit || autoSubmit,
                     req.scripted
                 );
+
+                if (! rendered) {
+                    req.discarded = true;
+                }
             }
 
             if (oldNotifications) {
@@ -917,14 +921,28 @@
                 req = reqOrError;
             }
 
+            req.$target.data('lastUpdate', (new Date()).getTime());
+            delete this.requests[req.$target.attr('id')];
+            this.icinga.ui.fadeNotificationsAway();
+
+            // Remove 'impact' class if there was such
+            if (req.$target.hasClass('impact')) {
+                req.$target.removeClass('impact');
+            } else {
+                const $impact = req.$target.find(':scope > .content.impact').first();
+                if ($impact.length) {
+                    $impact.removeClass('impact');
+                }
+            }
+
+            if (req.discarded) {
+                return;
+            }
+
             if (req.getResponseHeader('X-Icinga-Reload-Window') === 'yes') {
                 window.location.reload();
                 return;
             }
-
-            req.$target.data('lastUpdate', (new Date()).getTime());
-            delete this.requests[req.$target.attr('id')];
-            this.icinga.ui.fadeNotificationsAway();
 
             var extraUpdates = req.getResponseHeader('X-Icinga-Extra-Updates');
             if (!! extraUpdates && req.getResponseHeader('X-Icinga-Redirect-Http') !== 'yes') {
@@ -975,16 +993,6 @@
 
             if ((textStatus === 'abort' && typeof req.referrer !== 'undefined') || this.processRedirectHeader(req)) {
                 return;
-            }
-
-            // Remove 'impact' class if there was such
-            if (req.$target.hasClass('impact')) {
-                req.$target.removeClass('impact');
-            } else {
-                const $impact = req.$target.find(':scope > .content.impact').first();
-                if ($impact.length) {
-                    $impact.removeClass('impact');
-                }
             }
 
             if (! req.autorefresh && ! req.autosubmit) {
@@ -1286,8 +1294,6 @@
                 }
             }
 
-            $container.trigger('beforerender', [content, action, autorefresh, scripted, autoSubmit]);
-
             let discard = false;
             for (const hook of _this.icinga.renderHooks) {
                 const changed = hook.renderHook(content, $container, action, autorefresh, autoSubmit);
@@ -1304,6 +1310,8 @@
             });
 
             if (! discard) {
+                $container.trigger('beforerender', [content, action, autorefresh, scripted, autoSubmit]);
+
                 if ($container.closest('.dashboard').length) {
                     var title = $('h1', $container).first().detach();
                     $container.html(title).append(content);
@@ -1369,6 +1377,8 @@
 
             // Re-enable all click events (disabled as of performance reasons)
             // $('*').off('click');
+
+            return ! discard;
         },
 
         /**
