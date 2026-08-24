@@ -66,7 +66,8 @@
         this.behaviors = {};
 
         /**
-         * Site behaviors which hook into the rendering process
+         * Site behaviors which hook into the rendering process.
+         * RenderHooks should not be used anymore.
          */
         this.renderHooks = [];
 
