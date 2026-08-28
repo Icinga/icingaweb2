@@ -3,6 +3,17 @@
 Specific version upgrades are described below. Please note that upgrades are incremental. An upgrade from
 v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
+## Upgrading to Icinga Web 2.15
+
+**Deprecations**
+
+* `Icinga\Forms\RepositoryForm` is deprecated in favor of `Icinga\Web\Form\RepositoryForm`,
+  which builds on `CompatForm` instead of the legacy Zend form layer.
+  * Existing subclasses continue to work until v2.17, which removes the deprecated class.
+  * The new class is no drop-in replacement. The constructor signature, assembly
+    method names, notification ownership, and submit controls all differ and have
+    to be adjusted when migrating.
+
 ## Upgrading to Icinga Web 2.14.1
 
 **Breaking changes**

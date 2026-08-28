@@ -4,6 +4,18 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.15.0
+
+#### Old Repository Form Deprecation
+
+`Icinga\Forms\RepositoryForm` is deprecated in favor of
+`Icinga\Web\Form\RepositoryForm`, which builds on `CompatForm` instead of the
+legacy Zend form layer. Existing subclasses keep working until version 2.17,
+which removes the deprecated class. Please migrate them to the new base class
+before then.
+
+* Deprecate old RepositoryForm [#5553](https://github.com/Icinga/icingaweb2/pull/5553)
+
 ### What's New in Version 2.14.1
 
 #### CSRF Protection for Config Forms
