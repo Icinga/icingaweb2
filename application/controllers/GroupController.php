@@ -6,20 +6,25 @@
 namespace Icinga\Controllers;
 
 use Exception;
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Logger;
 use Icinga\Authentication\User\DomainAwareInterface;
+use Icinga\Authentication\UserGroup\DbUserGroupBackend;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Reducible;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Config\UserGroup\AddMemberForm;
 use Icinga\Forms\Config\UserGroup\UserGroupForm;
+use Icinga\Repository\RepositoryMode;
 use Icinga\User;
 use Icinga\Web\Controller\AuthBackendController;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
-use Icinga\Web\Url;
-use Icinga\Web\Widget;
+use Icinga\Web\Session;
+use ipl\Html\Contract\Form as IplForm;
+use ipl\Web\Url;
+use Throwable;
 
 class GroupController extends AuthBackendController
 {
@@ -161,62 +166,100 @@ class GroupController extends AuthBackendController
     /**
      * Add a group
      */
-    public function addAction()
+    public function addAction(): void
     {
         $this->assertPermission('config/access-control/groups');
-        $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
-        $form = new UserGroupForm();
-        $form->setRedirectUrl(Url::fromPath('group/list', ['backend' => $backend->getName()]));
-        $form->setRepository($backend);
-        $form->add()->handleRequest();
 
-        $this->renderForm($form, $this->translate('New User Group'));
+        /** @var DbUserGroupBackend $backend */
+        $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
+
+        $form = (new UserGroupForm($backend, RepositoryMode::Insert))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->setRedirectUrl(Url::fromPath('group/list', ['backend' => $backend->getName()]))
+            ->on(IplForm::ON_SUBMIT, function (UserGroupForm $form): void {
+                Notification::success($this->translate('Group created'));
+                $this->redirectNow($form->getRedirectUrl());
+            })
+            ->on(IplForm::ON_ERROR, function (Throwable $_, UserGroupForm $_form): void {
+                Notification::error($this->translate('Failed to create group'));
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
+
+        $this->addTitleTab($this->translate('New User Group'));
+        $this->addContent($form);
     }
 
     /**
      * Edit a group
      */
-    public function editAction()
+    public function editAction(): void
     {
         $this->assertPermission('config/access-control/groups');
-        $groupName = $this->params->getRequired('group');
-        $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
 
-        $form = new UserGroupForm();
-        $form->setRedirectUrl(
-            Url::fromPath('group/show', ['backend' => $backend->getName(), 'group' => $groupName])
-        );
-        $form->setRepository($backend);
+        /** @var DbUserGroupBackend $backend */
+        $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
+        $groupName = $this->params->getRequired('group');
+
+        $form = (new UserGroupForm($backend, RepositoryMode::Update, $groupName))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->setRedirectUrl(Url::fromPath('group/show', ['backend' => $backend->getName(), 'group' => $groupName]))
+            ->on(IplForm::ON_SUBMIT, function (UserGroupForm $form): void {
+                Notification::success(sprintf($this->translate('Group "%s" has been updated'), $form->getIdentifier()));
+
+                /** @var Url $redirect */
+                $redirect = $form->getRedirectUrl();
+                $newName = $form->getValue('group_name');
+                if ($newName !== $form->getIdentifier()) {
+                    $redirect->setParam('group', $newName);
+                }
+
+                $this->sendExtraUpdates(['#col1']);
+                $this->redirectNow($redirect);
+            })
+            ->on(IplForm::ON_ERROR, function (Throwable $_, UserGroupForm $form): void {
+                Notification::error(sprintf($this->translate('Failed to update group "%s"'), $form->getIdentifier()));
+            });
 
         try {
-            $form->edit($groupName)->handleRequest();
-        } catch (NotFoundError $_) {
+            $form->handleRequest(ServerRequest::fromGlobals());
+        } catch (NotFoundError) {
             $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
         }
 
-        $this->renderForm($form, $this->translate('Update User Group'));
+        $this->addTitleTab($this->translate('Update User Group'));
+        $this->addContent($form);
     }
 
     /**
      * Remove a group
      */
-    public function removeAction()
+    public function removeAction(): void
     {
         $this->assertPermission('config/access-control/groups');
-        $groupName = $this->params->getRequired('group');
-        $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
 
-        $form = new UserGroupForm();
-        $form->setRedirectUrl(Url::fromPath('group/list', ['backend' => $backend->getName()]));
-        $form->setRepository($backend);
+        /** @var DbUserGroupBackend $backend */
+        $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
+        $groupName = $this->params->getRequired('group');
+
+        $form = (new UserGroupForm($backend, RepositoryMode::Delete, $groupName))
+            ->setCsrfCounterMeasureId(Session::getSession()->getId())
+            ->setRedirectUrl(Url::fromPath('group/list', ['backend' => $backend->getName()]))
+            ->on(IplForm::ON_SUBMIT, function (UserGroupForm $form): void {
+                Notification::success(sprintf($this->translate('Group "%s" has been removed'), $form->getIdentifier()));
+                $this->redirectNow($form->getRedirectUrl());
+            })
+            ->on(IplForm::ON_ERROR, function (Throwable $_, UserGroupForm $form): void {
+                Notification::error(sprintf($this->translate('Failed to remove group "%s"'), $form->getIdentifier()));
+            });
 
         try {
-            $form->remove($groupName)->handleRequest();
-        } catch (NotFoundError $_) {
+            $form->handleRequest(ServerRequest::fromGlobals());
+        } catch (NotFoundError) {
             $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
         }
 
-        $this->renderForm($form, $this->translate('Remove User Group'));
+        $this->addTitleTab($this->translate('Remove User Group'));
+        $this->addContent($form);
     }
 
     /**
