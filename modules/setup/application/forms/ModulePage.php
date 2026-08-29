@@ -7,6 +7,7 @@ namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Modules\Module;
+use Icinga\Module\Setup\ModuleDependency;
 use Icinga\Web\Form;
 
 class ModulePage extends Form
@@ -102,6 +103,8 @@ class ModulePage extends Form
         foreach ($checked as $name => $module) {
             if ($module->providesSetupWizard()) {
                 $wizards[$name] = $module->getSetupWizard();
+            } elseif (! empty($module->getRequiredModules()) || ! empty($module->getRequiredLibraries())) {
+                $wizards[$name] = new ModuleDependency($module, array_keys($checked));
             }
         }
 
