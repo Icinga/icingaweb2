@@ -142,6 +142,17 @@ class NavigationItem implements IteratorAggregate
     protected $renderer;
 
     /**
+     * Escaping decision for the latest render attempt
+     *
+     * Each render attempt resets this value to true before rendering. The
+     * renderer's flag is recorded only after success, so fallback rendering
+     * keeps it true.
+     *
+     * @see getRenderedLabelEscaping()
+     */
+    protected bool $renderedLabelEscaping = true;
+
+    /**
      * Whether to render this item
      *
      * @var bool
@@ -849,6 +860,20 @@ class NavigationItem implements IteratorAggregate
     }
 
     /**
+     * Get whether the current label needs escaping after rendering
+     *
+     * The value is true before rendering and when a custom renderer fails.
+     * Successful custom renderers may leave trusted HTML in the label and
+     * disable escaping.
+     *
+     * @return bool
+     */
+    public function getRenderedLabelEscaping(): bool
+    {
+        return $this->renderedLabelEscaping;
+    }
+
+    /**
      * Set whether this item should be rendered
      *
      * @param   bool    $state
@@ -894,8 +919,14 @@ class NavigationItem implements IteratorAggregate
      */
     public function render()
     {
+        $this->renderedLabelEscaping = true;
+
         try {
-            return $this->getRenderer()->setItem($this)->render();
+            $renderer = $this->getRenderer();
+            $content = $renderer->setItem($this)->render();
+            $this->renderedLabelEscaping = $renderer->getEscapeLabel();
+
+            return $content;
         } catch (Exception $e) {
             Logger::error(
                 'Could not invoke custom navigation item renderer. %s in %s:%d with message: %s',
