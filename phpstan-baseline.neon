@@ -12745,24 +12745,6 @@ parameters:
 			path: library/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php
 
 		-
-			message: '#^Method Icinga\\Web\\RememberMe\:\:getAllByUsername\(\) has parameter \$username with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: library/Icinga/Web/RememberMe.php
-
-		-
-			message: '#^Method Icinga\\Web\\RememberMe\:\:getAllByUsername\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: library/Icinga/Web/RememberMe.php
-
-		-
-			message: '#^Method Icinga\\Web\\RememberMe\:\:getAllUser\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: library/Icinga/Web/RememberMe.php
-
-		-
 			message: '#^Method Icinga\\Web\\RememberMe\:\:removeExpired\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
