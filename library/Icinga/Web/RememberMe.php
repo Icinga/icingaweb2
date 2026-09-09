@@ -10,6 +10,7 @@ use Icinga\Authentication\Auth;
 use Icinga\Crypt\AesCrypt;
 use Icinga\Common\Database;
 use Icinga\User;
+use ipl\Sql\Connection;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
 use RuntimeException;
@@ -299,6 +300,23 @@ class RememberMe
     }
 
     /**
+     * Remove a known device of the given user
+     *
+     * @param string $username The username, including its domain
+     * @param string $iv The random iv of the device to remove
+     *
+     * @return void
+     */
+    public function removeByUsername(string $username, string $iv): void
+    {
+        $db = $this->getDb();
+        $db->delete(static::TABLE, [
+            static::createUsernameCondition($db, $username),
+            'random_iv = ?' => $iv,
+        ]);
+    }
+
+    /**
      * Create renewed remember me cookie
      *
      * @return static New remember me cookie which has to be sent to the client
@@ -312,9 +330,9 @@ class RememberMe
     }
 
     /**
-     * Get all users using remember me cookie
+     * Get all lowercase usernames using remember me cookies
      *
-     * @return array Array of users
+     * @return (\stdClass&object{username: string})[]
      */
     public static function getAllUser()
     {
@@ -323,20 +341,24 @@ class RememberMe
             return [];
         }
 
+        $db = $rememberMe->getDb();
+        $username = new Expression(
+            $db->getConfig()->db === 'mysql' ? 'BINARY LOWER(username)' : 'LOWER(username)'
+        );
         $select = (new Select())
             ->from(static::TABLE)
-            ->columns('username')
-            ->groupBy('username');
+            ->columns(['username' => $username])
+            ->groupBy($username);
 
-        return $rememberMe->getDb()->select($select)->fetchAll();
+        return $db->select($select)->fetchAll();
     }
 
     /**
-     * Get all remember me entries from the database of the given user.
+     * Get all remember me entries from the database of the given user
      *
-     * @param $username
+     * @param string $username The username, including its domain
      *
-     * @return array Array of database entries
+     * @return (\stdClass&object{http_user_agent: string, random_iv: string})[]
      */
     public static function getAllByUsername($username)
     {
@@ -345,12 +367,13 @@ class RememberMe
             return [];
         }
 
+        $db = $rememberMe->getDb();
         $select = (new Select())
             ->from(static::TABLE)
             ->columns(['http_user_agent', 'random_iv'])
-            ->where(['username = ?' => $username]);
+            ->where(static::createUsernameCondition($db, $username));
 
-        return $rememberMe->getDb()->select($select)->fetchAll();
+        return $db->select($select)->fetchAll();
     }
 
     /**
@@ -361,5 +384,23 @@ class RememberMe
     public function getAesCrypt()
     {
         return $this->aesCrypt;
+    }
+
+    /**
+     * Create a condition matching a username using the database backend's normalization
+     *
+     * @param Connection $db The database connection
+     * @param string $username The username, including its domain
+     *
+     * @return Expression
+     */
+    protected static function createUsernameCondition(Connection $db, string $username): Expression
+    {
+        // Match the database backend's case folding without MySQL's accent-insensitive collation.
+        $condition = $db->getConfig()->db === 'mysql'
+            ? 'BINARY LOWER(username) = ?'
+            : 'LOWER(username) = ?';
+
+        return new Expression($condition, null, strtolower($username));
     }
 }
