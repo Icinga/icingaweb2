@@ -6,6 +6,7 @@
 namespace Icinga\Authentication\User;
 
 use Exception;
+use Icinga\Data\Filter\FilterEqual;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
 use Icinga\Data\Filter\Filter;
@@ -193,9 +194,9 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
             $username = strtolower($username);
             $nameColumn = new Zend_Db_Expr('BINARY LOWER(name)');
 
-            $query->getQuery()->where($nameColumn, $username);
+            $query->getQuery()->addFilter(new FilterEqual($nameColumn, "=", $username));
         } else { // pgsql
-            $query->where('user', $username);
+            $query->addFilter(new FilterEqual('user', '=', $username));
         }
 
         $statement = $this->ds->getDbAdapter()->prepare($query->getQuery()->getSelectQuery());
