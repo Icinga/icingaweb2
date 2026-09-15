@@ -6,24 +6,6 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ### What's New in Version 2.14.1
 
-#### User Aware Password Policies
-
-Password policies now receive the user whose password is being set, so a
-policy can validate against user attributes (for example, rejecting a password
-that contains the username).
-
-The built-in Common policy (`common`) uses this and rejects a new password that
-matches the username, contains it, or is contained in it. All three comparisons
-ignore case. Existing passwords are unaffected until they are changed.
-
-Relevant for developers: this is a breaking change. `PasswordPolicy::validate()`
-now takes the target `Icinga\User` as a required first parameter, ahead of the
-new and old password. Any custom `PasswordPolicyHook` implementation must update
-its `validate()` signature accordingly. Password arguments are additionally
-marked as `#[SensitiveParameter]` to keep them out of stack traces.
-
-* Modernize password policy [#5537](https://github.com/Icinga/icingaweb2/pull/5537)
-
 #### Password Policy Moved to the Security Configuration
 
 The password policy setting moved from Configuration > Application > General to

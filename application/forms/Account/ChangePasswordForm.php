@@ -76,7 +76,6 @@ class ChangePasswordForm extends CompatForm
 
         PasswordPolicyHelper::apply(
             $this,
-            $this->user,
             static::NEW_PASSWORD_ELEMENT_NAME,
             static::OLD_PASSWORD_ELEMENT_NAME,
         );

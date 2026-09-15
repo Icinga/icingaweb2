@@ -220,7 +220,6 @@ Hook example:
 namespace Icinga\Module\Mypasswordpolicy\ProvidedHook;
 
 use Icinga\Application\Hook\PasswordPolicyHook;
-use Icinga\User;
 use ipl\Html\Text;
 use ipl\Html\ValidHtml;
 use ipl\I18n\Translation;
@@ -248,7 +247,6 @@ class PasswordPolicy extends PasswordPolicyHook
     }
 
     public function validate(
-        User $user,
         #[SensitiveParameter] string $newPassword,
         #[SensitiveParameter] ?string $oldPassword = null,
     ): array {
