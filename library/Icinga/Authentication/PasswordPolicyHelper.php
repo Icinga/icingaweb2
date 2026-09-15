@@ -9,7 +9,6 @@ use Icinga\Application\Config;
 use Icinga\Application\Hook\PasswordPolicyHook;
 use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
-use Icinga\User;
 use ipl\Html\FormElement\PasswordElement;
 use ipl\Stdlib\Str;
 use ipl\Validator\CallbackValidator;
@@ -45,7 +44,6 @@ class PasswordPolicyHelper
      * policy enforcement.
      *
      * @param CompatForm $form The form containing the elements and to attach the elements to
-     * @param User $user The user whose password is set
      * @param string $newPasswordElementName Name of the new password form element
      * @param ?string $oldPasswordElementName Optional name of the old password form
      *   element for comparison
@@ -59,7 +57,6 @@ class PasswordPolicyHelper
      */
     public static function apply(
         CompatForm $form,
-        User $user,
         string $newPasswordElementName,
         ?string $oldPasswordElementName = null,
         bool $adminFacing = false,
@@ -115,7 +112,6 @@ class PasswordPolicyHelper
                 $passwordPolicy,
                 $form,
                 $oldPasswordElementName,
-                $user,
             ): bool {
                 $oldPassword = null;
                 if ($oldPasswordElementName !== null) {
@@ -128,7 +124,7 @@ class PasswordPolicyHelper
                 }
 
                 try {
-                    $messages = $passwordPolicy->validate($user, $value, $oldPassword);
+                    $messages = $passwordPolicy->validate($value, $oldPassword);
                 } catch (Throwable $e) {
                     Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
                     $validator->addMessage(t('Password validation failed'));
