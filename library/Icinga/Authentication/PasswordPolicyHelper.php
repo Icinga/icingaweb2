@@ -61,6 +61,13 @@ class PasswordPolicyHelper
         ?string $oldPasswordElementName = null,
         bool $adminFacing = false,
     ): void {
+        if (! $form->hasElement($newPasswordElementName)) {
+            throw new LogicException(sprintf(
+                t('Form element "%s" was specified but does not exist in the form'),
+                $newPasswordElementName
+            ));
+        }
+
         if ($oldPasswordElementName !== null && ! $form->hasElement($oldPasswordElementName)) {
             throw new LogicException(sprintf(
                 t('Form element "%s" was specified but does not exist in the form'),
