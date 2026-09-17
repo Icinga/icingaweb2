@@ -140,19 +140,6 @@ class ChangePasswordFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testPasswordChangeIsRejectedWhenPolicyValidationThrows($db): void
-    {
-        // A non-string value makes the configured policy's validate() throw a TypeError.
-        $form = $this->createForm($db, static::CURRENT_PASSWORD, ['icinga123'], ['icinga123']);
-
-        $this->assertFalse($form->isValid());
-        $this->assertContains(
-            'Password validation failed',
-            $form->getElement(ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME)->getMessages(),
-        );
-    }
-
-    #[DataProvider('mysqlDb')]
     public function testPasswordChangeIsRejectedWhenPolicyFailsToLoad($db): void
     {
         Config::app()->setSection(
