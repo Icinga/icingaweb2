@@ -72,5 +72,4 @@ class CommonPasswordPolicyTest extends TestCase
         ];
         $this->assertSame($expected, (new CommonPasswordPolicy())->validate('TEST'));
     }
-
 }
