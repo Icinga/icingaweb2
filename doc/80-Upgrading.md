@@ -7,10 +7,13 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
 **Deprecations**
 
-* `Icinga\Application\Hook\ConfigFormEventsHook` is deprecated now. There will
+* `Icinga\Application\Hook\ConfigFormEventsHook` is now deprecated. There will
   be no replacement, as the hook never evolved into a proper implementation.
-  * Existing hook implementations continue to work until v2.15, which removes
-    the deprecated hook.
+  * The hook is only invoked by config forms that still build on
+    `Icinga\Web\Form`. Forms migrated to `CompatForm` no longer invoke it,
+    because the hook's contract is typed against Zend's form implementation.
+    In 2.14.1 this affects `Icinga\Forms\Config\User\UserForm`.
+  * All remaining invocations are removed in v2.15.
 
 **Breaking changes**
 
