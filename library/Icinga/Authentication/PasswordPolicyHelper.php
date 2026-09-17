@@ -189,13 +189,13 @@ class PasswordPolicyHelper
      * Add a password policy load-error callout to the form
      *
      * @param CompatForm $form The form to attach the error callout to
-     * @param bool $forAdmin Whether the error message targets an administrator
+     * @param bool $adminFacing Whether the error message targets an administrator
      *
      * @return void
      */
-    public static function addError(CompatForm $form, bool $forAdmin = false): void
+    public static function addError(CompatForm $form, bool $adminFacing = false): void
     {
-        $errorMessage = $forAdmin
+        $errorMessage = $adminFacing
             ? t('There was a problem loading the configured password policy.')
             : t('There was a problem loading the configured password policy. Please contact your administrator.');
 
