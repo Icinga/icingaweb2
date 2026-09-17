@@ -48,7 +48,7 @@ class UserForm extends RepositoryForm
     }
 
     /**
-     * Create and add elements to this form to insert or update a user
+     * Create and add elements to this form to insert a user
      *
      * @return void
      */
