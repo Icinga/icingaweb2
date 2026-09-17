@@ -12,6 +12,8 @@ use Icinga\Authentication\PasswordPolicyHelper;
 use Icinga\Exception\IcingaException;
 use Icinga\Web\Form\ConfigForm;
 use ipl\Html\Contract\Form;
+use ipl\Html\FormElement\SelectElement;
+use ipl\Html\FormElement\SubmitElement;
 use ipl\Web\Common\FormUid;
 use Throwable;
 
@@ -74,11 +76,44 @@ class PasswordPolicyConfigForm extends ConfigForm
             'value'        => $defaultPolicy,
         ]);
 
+        $selectedPolicy = $this->getPopulatedValue($elementName, $defaultPolicy);
+
+        if (! is_string($selectedPolicy)) {
+            // Keep malformed saved values visible as an invalid selection until an
+            // administrator explicitly chooses a replacement. The empty value of the
+            // required select also rejects malformed requests without storing a
+            // fallback policy.
+            /** @var SelectElement $element */
+            $element = $this->getElement($elementName);
+            $element
+                ->setOptions(['' => $this->translate('Invalid password policy')] + $policies)
+                ->setDisabledOptions([''])
+                ->setValue(null);
+
+            $this->logAndShowError($this->translate('The password policy must be a string'), '{error}');
+            $this->policiesLoadable = false;
+
+            return;
+        }
+
         try {
-            $policy = PasswordPolicyHook::fromCanonicalName($this->getPopulatedValue($elementName, $defaultPolicy));
+            $policy = PasswordPolicyHook::fromCanonicalName($selectedPolicy);
         } catch (Throwable $e) {
+            // Offer the unavailable policy as a disabled option, so that the browser does
+            // not show the first available one as current and storing does not silently
+            // replace the configuration. Disabled options fail the select's own
+            // validation, which keeps the form unstorable until another policy is chosen.
+            $unknownPolicy = [$selectedPolicy => sprintf($this->translate('%s (unknown)'), $selectedPolicy)];
+
+            /** @var SelectElement $element */
+            $element = $this->getElement($elementName);
+            $element
+                ->setOptions($unknownPolicy + $policies)
+                ->setDisabledOptions([$selectedPolicy]);
+
             Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
             PasswordPolicyHelper::addError($this, true);
+            $this->policiesLoadable = false;
 
             return;
         }
@@ -96,10 +131,12 @@ class PasswordPolicyConfigForm extends ConfigForm
 
     protected function addRequiredElements(): void
     {
-        if (! $this->policiesLoadable) {
-            return;
-        }
-
         parent::addRequiredElements();
+
+        if (! $this->policiesLoadable) {
+            /** @var SubmitElement $submitButton Added by the parent implementation */
+            $submitButton = $this->getSubmitButton();
+            $submitButton->setAttribute('disabled', true);
+        }
     }
 }
