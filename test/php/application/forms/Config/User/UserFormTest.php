@@ -61,6 +61,8 @@ class UserFormTest extends BaseTestCase
                 ->hasResult(),
         );
 
+        $this->assertTrue($form->isValid());
+
         $form->exposeOnSuccess();
 
         $this->assertTrue(
@@ -107,6 +109,8 @@ class UserFormTest extends BaseTestCase
                 ->hasResult(),
         );
 
+        $this->assertTrue($form->isValid());
+
         $form->exposeOnSuccess();
 
         $this->assertFalse(
@@ -148,6 +152,8 @@ class UserFormTest extends BaseTestCase
                 ->fetchOne(),
         ));
 
+        $this->assertTrue($form->isValid());
+
         $form->exposeOnSuccess();
 
         $this->assertTrue(password_verify(
@@ -179,6 +185,39 @@ class UserFormTest extends BaseTestCase
                 ->where('name', static::USER_NAME)
                 ->fetchOne(),
         ));
+
+        $this->assertTrue($form->isValid());
+
+        $form->exposeOnSuccess();
+
+        $this->assertTrue(password_verify(
+            static::CURRENT_PASSWORD,
+            $db->select()
+                ->columns(['password_hash'])
+                ->from('icingaweb_user')
+                ->where('name', static::USER_NAME)
+                ->fetchOne(),
+        ));
+    }
+
+    #[DataProvider('mysqlDb')]
+    public function testUpdateModeKeepsPasswordWhenLeftEmptyUnderRestrictivePolicy($db): void
+    {
+        $this->usePolicy(CommonPasswordPolicy::class);
+
+        $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
+        $form->populate([
+            'is_active' => '1',
+            'user_name' => static::USER_NAME,
+            'password'  => '',
+        ]);
+        $form->ensureAssembled();
+
+        // An empty password leaves the stored one untouched, so there is nothing for
+        // the policy to reject. Enforcing it here would make every other change to a
+        // user impossible without also assigning a new password.
+        $this->assertTrue($form->isValid());
+        $this->assertEmpty($form->getElement('password')->getMessages());
 
         $form->exposeOnSuccess();
 
@@ -312,6 +351,8 @@ class UserFormTest extends BaseTestCase
             ->where('name', static::USER_NAME)
             ->fetchOne());
 
+        $this->assertTrue($form->isValid());
+
         $form->exposeOnSuccess();
 
         $this->assertEquals(0, $db->select()
@@ -334,6 +375,8 @@ class UserFormTest extends BaseTestCase
                 ->where('name', static::USER_NAME)
                 ->hasResult(),
         );
+
+        $this->assertTrue($form->isValid());
 
         $form->exposeOnSuccess();
 
