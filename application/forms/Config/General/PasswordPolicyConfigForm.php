@@ -42,6 +42,11 @@ class PasswordPolicyConfigForm extends ConfigForm
         } catch (Throwable $e) {
             $this->logAndShowError($e, $this->translate('Could not load password policies: {error}'));
             $this->policiesLoadable = false;
+            // Nothing that could fail validation was added before assembly stopped, so the
+            // form would validate and store, reporting success while nothing was configured.
+            // ON_VALIDATE is emitted after the elements have been validated, making it the
+            // last point that can reject the submit. Disabling the button only prevents to
+            // submit the form via the browser.
             $this->on(Form::ON_VALIDATE, fn() => $this->isValid = false);
 
             return;
