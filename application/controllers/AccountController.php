@@ -5,7 +5,9 @@
 
 namespace Icinga\Controllers;
 
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Config;
+use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
@@ -13,6 +15,8 @@ use Icinga\Forms\Account\ChangePasswordForm;
 use Icinga\Forms\PreferenceForm;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Controller;
+use Icinga\Web\Session;
+use ipl\Html\Contract\Form;
 
 /**
  * My Account
@@ -57,15 +61,18 @@ class AccountController extends Controller
         if ($user->getAdditional('backend_type') === 'db') {
             if ($user->can('user/password-change')) {
                 try {
+                    /** @var DbUserBackend $userBackend */
                     $userBackend = UserBackend::create($user->getAdditional('backend_name'));
                 } catch (ConfigurationError $e) {
                     $userBackend = null;
                 }
                 if ($userBackend !== null) {
-                    $changePasswordForm = new ChangePasswordForm();
-                    $changePasswordForm
-                        ->setBackend($userBackend)
-                        ->handleRequest();
+                    $changePasswordForm = (new ChangePasswordForm($userBackend, $user))
+                        ->setCsrfCounterMeasureId(Session::getSession()->getId())
+                        ->on(Form::ON_SUBMIT, function (ChangePasswordForm $_): void {
+                            $this->redirectNow('__REFRESH__');
+                        })
+                        ->handleRequest(ServerRequest::fromGlobals());
                     $this->view->changePasswordForm = $changePasswordForm;
                 }
             }

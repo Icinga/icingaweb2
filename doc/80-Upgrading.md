@@ -5,12 +5,27 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
 ## Upgrading to Icinga Web 2.14.1
 
+**Deprecations**
+
+* `Icinga\Application\Hook\ConfigFormEventsHook` is now deprecated. There will
+  be no replacement, as the hook never evolved into a proper implementation.
+  * The hook is only invoked by config forms that still build on
+    `Icinga\Web\Form`. Forms migrated to `CompatForm` no longer invoke it,
+    because the hook's contract is typed against Zend's form implementation.
+    In 2.14.1 this affects `Icinga\Forms\Config\User\UserForm`.
+  * All remaining invocations are removed in v2.15.
+
 **Breaking changes**
 
 * The base `Icinga\Web\Form\ConfigForm` now provides a CSRF counter-measure
   per default, so callers must now either set a session-stable ID with
   `setCsrfCounterMeasureId()` before assembly or explicitly disable protection
   with `disableCsrfCounterMeasure()`.
+* The password policy setting moved from Configuration > Application > General
+  to Configuration > Application > Security. Managing it now requires the
+  `config/security` permission instead of `config/general`. Roles that were
+  granted `config/general` to manage password policies must be updated to
+  `config/security`, otherwise they lose access to the setting.
 
 ## Upgrading to Icinga Web 2.14
 

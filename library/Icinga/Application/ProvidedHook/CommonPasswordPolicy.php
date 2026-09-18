@@ -9,6 +9,7 @@ use Icinga\Application\Hook\PasswordPolicyHook;
 use ipl\Html\Text;
 use ipl\Html\ValidHtml;
 use ipl\I18n\Translation;
+use SensitiveParameter;
 
 /**
  * Implementation of a common password policy
@@ -41,8 +42,10 @@ class CommonPasswordPolicy extends PasswordPolicyHook
         ));
     }
 
-    public function validate(string $newPassword, ?string $oldPassword = null): array
-    {
+    public function validate(
+        #[SensitiveParameter] string $newPassword,
+        #[SensitiveParameter] ?string $oldPassword = null,
+    ): array {
         $violations = [];
 
         if (mb_strlen($newPassword) < 12) {
