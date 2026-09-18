@@ -98,6 +98,9 @@ class PasswordPolicyHelper
                         return false;
                     }
 
+                    // Administrators must stay able to change passwords even when no policy
+                    // can be loaded. Self-service changes are blocked instead, so that users
+                    // cannot set a password that skips the policy.
                     if ($adminFacing) {
                         return true;
                     }
