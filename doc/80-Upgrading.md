@@ -21,6 +21,11 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
   per default, so callers must now either set a session-stable ID with
   `setCsrfCounterMeasureId()` before assembly or explicitly disable protection
   with `disableCsrfCounterMeasure()`.
+* The password policy setting moved from Configuration > Application > General
+  to Configuration > Application > Security. Managing it now requires the
+  `config/security` permission instead of `config/general`. Roles that were
+  granted `config/general` to manage password policies must be updated to
+  `config/security`, otherwise they lose access to the setting.
 
 ## Upgrading to Icinga Web 2.14
 
