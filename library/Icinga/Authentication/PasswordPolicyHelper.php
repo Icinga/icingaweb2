@@ -79,7 +79,11 @@ class PasswordPolicyHelper
             $passwordPolicy = PasswordPolicyHook::loadConfigured(Config::app());
         } catch (Throwable $e) {
             Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
-            static::addError($form, $adminFacing);
+            $errorMessage = $adminFacing
+                ? t('There was a problem loading the configured password policy.')
+                : t('There was a problem loading the configured password policy. Please contact your administrator.');
+
+            $form->addHtml(new DisplayFormElement(new Callout(CalloutType::Error, $errorMessage)));
 
             /** @var PasswordElement $newPasswordElement */
             $newPasswordElement = $form->getElement($newPasswordElementName);
@@ -183,22 +187,5 @@ class PasswordPolicyHelper
         $form->addHtml(
             new DisplayFormElement(new Callout(CalloutType::Info, $description, t('Password requirements'))),
         );
-    }
-
-    /**
-     * Add a password policy load-error callout to the form
-     *
-     * @param CompatForm $form The form to attach the error callout to
-     * @param bool $adminFacing Whether the error message targets an administrator
-     *
-     * @return void
-     */
-    public static function addError(CompatForm $form, bool $adminFacing = false): void
-    {
-        $errorMessage = $adminFacing
-            ? t('There was a problem loading the configured password policy.')
-            : t('There was a problem loading the configured password policy. Please contact your administrator.');
-
-        $form->addHtml(new DisplayFormElement(new Callout(CalloutType::Error, $errorMessage)));
     }
 }

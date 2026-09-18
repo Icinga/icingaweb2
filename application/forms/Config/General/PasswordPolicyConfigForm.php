@@ -7,9 +7,7 @@ namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Config;
 use Icinga\Application\Hook\PasswordPolicyHook;
-use Icinga\Application\Logger;
 use Icinga\Authentication\PasswordPolicyHelper;
-use Icinga\Exception\IcingaException;
 use Icinga\Web\Form\ConfigForm;
 use ipl\Html\Contract\Form;
 use ipl\Html\FormElement\SelectElement;
@@ -74,8 +72,7 @@ class PasswordPolicyConfigForm extends ConfigForm
                 ->setOptions($unknownPolicy + $policies)
                 ->setDisabledOptions([$selectedPolicy]);
 
-            Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
-            PasswordPolicyHelper::addError($this, true);
+            $this->logAndShowError($e, $this->translate('Could not load the password policy: {error}'));
             $this->policiesLoadable = false;
 
             return;
@@ -87,8 +84,8 @@ class PasswordPolicyConfigForm extends ConfigForm
         // its providing module was disabled. The result is intentionally discarded.
         try {
             PasswordPolicyHook::loadConfigured($this->config);
-        } catch (Throwable) {
-            PasswordPolicyHelper::addError($this, true);
+        } catch (Throwable $e) {
+            $this->logAndShowError($e, $this->translate('Could not load the configured password policy: {error}'));
         }
     }
 
