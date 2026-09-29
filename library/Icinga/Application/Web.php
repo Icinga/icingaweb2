@@ -8,6 +8,7 @@ namespace Icinga\Application;
 require_once __DIR__ . '/EmbeddedWeb.php';
 
 use ErrorException;
+use ipl\Html\Error;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\Locale;
 use ipl\I18n\StaticTranslator;
@@ -290,6 +291,8 @@ class Web extends EmbeddedWeb
                         'displayExceptions' => $displayExceptions
                     )
                 );
+
+                Error::showTraces($displayExceptions);
             }
         }
 
@@ -326,6 +329,9 @@ class Web extends EmbeddedWeb
                 'displayExceptions' => $displayExceptions
             ]
         );
+
+        Error::showTraces($displayExceptions);
+
         return $this;
     }
 
