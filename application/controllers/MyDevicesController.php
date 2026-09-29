@@ -8,6 +8,7 @@ namespace Icinga\Controllers;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Common\Database;
+use Icinga\Exception\IcingaException;
 use Icinga\Web\RememberMe;
 use Icinga\Web\RememberMeUserDevicesList;
 use ipl\Web\Common\CalloutType;
@@ -56,12 +57,13 @@ class MyDevicesController extends CompatController
         if (! Config::app()->get('global', 'config_resource')) {
             if ($this->hasPermission('config/general')) {
                 $errorMessage = $this->translate(
-                    'To establish a valid database connection set the configuration'
-                    . ' Database field in the Application Settings.'
+                    'A configuration database is required to keep you logged in between visits.'
+                    . ' Select a Configuration Database in the general settings.'
                 );
             } else {
                 $errorMessage = $this->translate(
-                    'You do not have permission to change this setting. Please contact an administrator.'
+                    'A configuration database is required to keep you logged in between visits.'
+                    . ' Contact an administrator to configure a database.'
                 );
             }
 
@@ -81,10 +83,35 @@ class MyDevicesController extends CompatController
             return;
         }
 
-        $name = $this->auth->getUser()->getUsername();
+        try {
+            $deviceList = RememberMe::getAllByUsername($name);
+        } catch (Throwable $e) {
+            Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
+            // Rethrowing would delegate API requests to ErrorController, but it does not handle format=json.
+            if ($this->getRequest()->isApiRequest() || $this->params->get('format') === 'json') {
+                $this->getResponse()->setHttpResponseCode(500);
+                $this->getResponse()->json()
+                    ->setErrorMessage($e->getMessage())
+                    ->sendResponse();
+            }
+
+            $this->addContent(new Callout(
+                CalloutType::Error,
+                sprintf(
+                    $this->translate(
+                        "%s\n"
+                        . 'Check the application log for more information, or contact an administrator.'
+                    ),
+                    $e->getMessage()
+                ),
+                $this->translate('Failed to load devices'),
+            ));
+
+            return;
+        }
 
         $data = (new RememberMeUserDevicesList())
-            ->setDevicesList(RememberMe::getAllByUsername($name))
+            ->setDevicesList($deviceList)
             ->setUsername($name)
             ->setUrl('my-devices/delete');
 
