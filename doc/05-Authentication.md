@@ -375,7 +375,8 @@ converted to "rroe@EXAMPLE" as soon as the user logs in.
 
 ### Default Domain <a id="default-auth-domain"></a>
 
-For the sake of simplicity a default domain can be configured (in `config.ini`).
+For the sake of simplicity a default domain can be configured in
+[config.ini](03-Configuration.md#configuration-general-authentication).
 
 **Example:**
 
