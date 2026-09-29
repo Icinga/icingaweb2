@@ -8,6 +8,7 @@ namespace Icinga\Controllers;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Common\Database;
+use Icinga\Exception\IcingaException;
 use Icinga\Web\RememberMe;
 use Icinga\Web\RememberMeUserDevicesList;
 use ipl\Web\Common\CalloutType;
@@ -81,10 +82,29 @@ class MyDevicesController extends CompatController
             return;
         }
 
-        $name = $this->auth->getUser()->getUsername();
+        try {
+            $deviceList = RememberMe::getAllByUsername($name);
+        } catch (Throwable $e) {
+            Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
+            // Rethrowing would delegate API requests to ErrorController, but it does not handle format=json.
+            if ($this->getRequest()->isApiRequest() || $this->params->get('format') === 'json') {
+                $this->getResponse()->setHttpResponseCode(500);
+                $this->getResponse()->json()
+                    ->setErrorMessage($e->getMessage())
+                    ->sendResponse();
+            }
+
+            $this->addContent(new Callout(
+                CalloutType::Error,
+                sprintf($this->translate('Please check the log for details: %s'), $e->getMessage()),
+                $this->translate('Failed to load devices'),
+            ));
+
+            return;
+        }
 
         $data = (new RememberMeUserDevicesList())
-            ->setDevicesList(RememberMe::getAllByUsername($name))
+            ->setDevicesList($deviceList)
             ->setUsername($name)
             ->setUrl('my-devices/delete');
 
