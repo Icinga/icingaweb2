@@ -91,7 +91,7 @@ class ApplicationConfigForm extends Form
             ]
         );
 
-        if (! isset(Config::app()->getSection('global')->config_resource)) {
+        if (! Config::app()->get('global', 'config_resource')) {
             $this->warning(
                 $this->translate(
                     'The configuration database has not been configured.'
