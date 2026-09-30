@@ -22,7 +22,7 @@ class DbMigration extends DbMigrationHook
     {
         if (! $this->hasDb()) {
             throw new RuntimeException(
-                'No configuration database available. Please check your Icinga Web configuration',
+                'Cannot check Icinga Web database migrations because no configuration database is configured.',
             );
         }
 
