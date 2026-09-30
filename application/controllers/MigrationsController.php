@@ -140,13 +140,27 @@ class MigrationsController extends CompatController
             );
         }
 
+        $this->addTitleTab($this->translate('Error'));
+
         $mm = MigrationManager::instance();
-        if (! $mm->hasMigrations($module)) {
+        try {
+            $hasMigrations = $mm->hasMigrations($module);
+        } catch (Throwable $e) {
+            Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
+            $this->addContent(new Callout(
+                CalloutType::Error,
+                sprintf($this->translate('Please check the log for details: %s'), $e->getMessage()),
+                $this->translate('Failed to load pending migrations'),
+            ));
+
+            return;
+        }
+
+        if (! $hasMigrations) {
             $this->httpNotFound(sprintf('There are no pending migrations matching the given name: %s', $module));
         }
 
         $migration = $mm->getMigration($module);
-        $this->addTitleTab($this->translate('Error'));
         $this->addContent(
             new HtmlElement(
                 'div',
@@ -173,7 +187,20 @@ class MigrationsController extends CompatController
         $this->controls->getAttributes()->add('class', 'default-layout');
 
         $mm = MigrationManager::instance();
-        if (! $mm->hasMigrations($name)) {
+        try {
+            $hasMigrations = $mm->hasMigrations($name);
+        } catch (Throwable $e) {
+            Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
+            $this->addContent(new Callout(
+                CalloutType::Error,
+                sprintf($this->translate('Please check the log for details: %s'), $e->getMessage()),
+                $this->translate('Failed to load pending migrations'),
+            ));
+
+            return;
+        }
+
+        if (! $hasMigrations) {
             $migrations = [];
         } else {
             $hook = $mm->getMigration($name);
