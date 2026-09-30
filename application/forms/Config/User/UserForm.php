@@ -47,14 +47,15 @@ class UserForm extends RepositoryForm
     /**
      * Retrieve all form element values
      *
-     * Strips off the password if null or an empty string.
+     * Omits passwords considered empty by form validation, including whitespace-only
+     * strings, so skipped validation cannot result in a password change.
      *
      * @return array<string, mixed>
      */
     public function getValues(): array
     {
         $values = parent::getValues();
-        if (array_key_exists('password', $values) && ($values['password'] === '' || $values['password'] === null)) {
+        if (array_key_exists('password', $values) && static::isEmptyValue($values['password'])) {
             unset($values['password']);
         }
 

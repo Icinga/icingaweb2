@@ -234,6 +234,75 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
+    public function testUpdateModeKeepsPasswordWhenOnlyWhitespaceIsSubmitted($db): void
+    {
+        $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
+        $form->populate([
+            'user_name' => static::USER_NAME,
+            'password'  => " \t\r\n ",
+        ]);
+        $form->ensureAssembled();
+
+        $query = $db->select()
+            ->columns(['password_hash'])
+            ->from('icingaweb_user')
+            ->where('name', static::USER_NAME);
+        $hash = $query->fetchOne();
+
+        $this->assertTrue($form->isValid());
+        $form->exposeOnSuccess();
+
+        $this->assertSame($hash, $query->fetchOne());
+    }
+
+    #[DataProvider('mysqlDb')]
+    public function testUpdateModeIgnoresWhitespaceUnderRestrictivePolicy($db): void
+    {
+        $this->usePolicy(CommonPasswordPolicy::class);
+
+        $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
+        $form->populate([
+            'user_name' => static::USER_NAME,
+            'password'  => '   ',
+        ]);
+        $form->ensureAssembled();
+
+        $query = $db->select()
+            ->columns(['password_hash'])
+            ->from('icingaweb_user')
+            ->where('name', static::USER_NAME);
+        $hash = $query->fetchOne();
+
+        $this->assertTrue($form->isValid());
+        $form->exposeOnSuccess();
+
+        $this->assertSame($hash, $query->fetchOne());
+    }
+
+    #[DataProvider('mysqlDb')]
+    public function testUpdateModeAcceptsZeroAsPassword($db): void
+    {
+        $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
+        $form->populate([
+            'user_name' => static::USER_NAME,
+            'password'  => '0',
+        ]);
+        $form->ensureAssembled();
+
+        $this->assertTrue($form->isValid());
+        $form->exposeOnSuccess();
+
+        $this->assertTrue(password_verify(
+            '0',
+            $db->select()
+                ->columns(['password_hash'])
+                ->from('icingaweb_user')
+                ->where('name', static::USER_NAME)
+                ->fetchOne(),
+        ));
+    }
+
+    #[DataProvider('mysqlDb')]
     public function testUpdateModeAppliesPasswordPolicy($db): void
     {
         $this->usePolicy(CommonPasswordPolicy::class);
