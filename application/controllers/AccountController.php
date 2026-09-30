@@ -13,6 +13,8 @@ use Icinga\Forms\Account\ChangePasswordForm;
 use Icinga\Forms\PreferenceForm;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Controller;
+use ipl\Web\Common\CalloutType;
+use ipl\Web\Widget\Callout;
 
 /**
  * My Account
@@ -69,6 +71,27 @@ class AccountController extends Controller
                     $this->view->changePasswordForm = $changePasswordForm;
                 }
             }
+        }
+
+        if (! $config->get('config_resource')) {
+            if ($this->hasPermission('config/general')) {
+                $errorMessage = $this->translate(
+                    'To establish a valid database connection set the configuration'
+                    . ' Database field in the Application Settings.'
+                );
+            } else {
+                $errorMessage = $this->translate(
+                    'You do not have permission to change this setting. Please contact an administrator.'
+                );
+            }
+
+            $this->view->callout = new Callout(
+                CalloutType::Error,
+                $errorMessage,
+                $this->translate('The configuration database has not been configured'),
+            );
+
+            return;
         }
 
         $form = new PreferenceForm();

@@ -7,8 +7,10 @@ namespace Icinga\Controllers;
 
 use Icinga\Application\Hook\DbMigrationHook;
 use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
 use Icinga\Application\MigrationManager;
 use Icinga\Common\Database;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\MissingParameterException;
 use Icinga\Forms\MigrationForm;
 use Icinga\Web\Notification;
@@ -18,8 +20,11 @@ use ipl\Html\Attributes;
 use ipl\Html\FormElement\SubmitButtonElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\Text;
+use ipl\Web\Common\CalloutType;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Widget\ActionLink;
+use ipl\Web\Widget\Callout;
+use Throwable;
 
 class MigrationsController extends CompatController
 {
@@ -56,7 +61,27 @@ class MigrationsController extends CompatController
 
         $migrateListForm = new MigrationForm();
         $migrateListForm->setAttribute('id', $this->getRequest()->protectId('migration-form'));
-        $migrateListForm->setRenderDatabaseUserChange(! $mm->validateDatabasePrivileges());
+        try {
+            $hasPrivileges = $mm->validateDatabasePrivileges();
+        } catch (Throwable $e) {
+            Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
+            // Rethrowing would delegate API requests to ErrorController, but it does not handle format=json.
+            if ($this->getRequest()->isApiRequest() || $this->params->get('format') === 'json') {
+                $this->getResponse()->setHttpResponseCode(500);
+                $this->getResponse()->json()
+                    ->setErrorMessage($e->getMessage())
+                    ->sendResponse();
+            }
+            $this->addContent(new Callout(
+                CalloutType::Error,
+                sprintf($this->translate('Please check the log for details: %s'), $e->getMessage()),
+                $this->translate('Failed to load pending migrations'),
+            ));
+
+            return;
+        }
+
+        $migrateListForm->setRenderDatabaseUserChange(! $hasPrivileges);
 
         if ($canApply && $mm->hasPendingMigrations()) {
             $migrateAllButton = new SubmitButtonElement(sprintf('migrate-%s', DbMigrationHook::ALL_MIGRATIONS), [
@@ -115,13 +140,27 @@ class MigrationsController extends CompatController
             );
         }
 
+        $this->addTitleTab($this->translate('Error'));
+
         $mm = MigrationManager::instance();
-        if (! $mm->hasMigrations($module)) {
+        try {
+            $hasMigrations = $mm->hasMigrations($module);
+        } catch (Throwable $e) {
+            Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
+            $this->addContent(new Callout(
+                CalloutType::Error,
+                sprintf($this->translate('Please check the log for details: %s'), $e->getMessage()),
+                $this->translate('Failed to load pending migrations'),
+            ));
+
+            return;
+        }
+
+        if (! $hasMigrations) {
             $this->httpNotFound(sprintf('There are no pending migrations matching the given name: %s', $module));
         }
 
         $migration = $mm->getMigration($module);
-        $this->addTitleTab($this->translate('Error'));
         $this->addContent(
             new HtmlElement(
                 'div',
@@ -148,7 +187,20 @@ class MigrationsController extends CompatController
         $this->controls->getAttributes()->add('class', 'default-layout');
 
         $mm = MigrationManager::instance();
-        if (! $mm->hasMigrations($name)) {
+        try {
+            $hasMigrations = $mm->hasMigrations($name);
+        } catch (Throwable $e) {
+            Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
+            $this->addContent(new Callout(
+                CalloutType::Error,
+                sprintf($this->translate('Please check the log for details: %s'), $e->getMessage()),
+                $this->translate('Failed to load pending migrations'),
+            ));
+
+            return;
+        }
+
+        if (! $hasMigrations) {
             $migrations = [];
         } else {
             $hook = $mm->getMigration($name);
