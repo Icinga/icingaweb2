@@ -2,10 +2,15 @@
     <?= $tabs ?>
 </div>
 <div class="content">
+<?php if (isset($callout)): ?>
+    <?= $callout ?>
+<?php endif ?>
 <?php if (isset($changePasswordForm)): ?>
     <h1><?= $this->translate('Account') ?></h1>
     <?= $changePasswordForm ?>
 <?php endif ?>
+<?php if (isset($form)): ?>
     <h1><?= $this->translate('Preferences') ?></h1>
     <?= $form ?>
+<?php endif ?>
 </div>
