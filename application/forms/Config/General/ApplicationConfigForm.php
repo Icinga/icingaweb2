@@ -94,8 +94,10 @@ class ApplicationConfigForm extends Form
         if (! Config::app()->get('global', 'config_resource')) {
             $this->warning(
                 $this->translate(
-                    'The configuration database has not been configured.'
-                    . ' Please set the required field to establish a valid database connection.'
+                    'No configuration database is configured.'
+                    . ' Preferences can only be saved for the current session.'
+                    . ' Keeping users logged in between visits also requires a database.'
+                    . ' Select a Configuration Database below.'
                 ),
                 false,
             );

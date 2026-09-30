@@ -191,14 +191,15 @@ class PreferenceForm extends Form
         if (! Config::app()->get('global', 'config_resource')) {
             if ($this->hasPermission('config/general')) {
                 $warningMessage = $this->translate(
-                    'The configuration database has not been configured.'
-                    . ' To establish a valid database connection set the configuration'
-                    . ' Database field in the Application Settings.'
+                    'Without a configuration database, your preferences can only be saved'
+                    . ' for the current session.'
+                    . ' Select a Configuration Database in the general settings.'
                 );
             } else {
                 $warningMessage = $this->translate(
-                    'The configuration database has not been configured.'
-                    . ' You do not have permission to change this setting. Please contact an administrator.'
+                    'Without a configuration database, your preferences can only be saved'
+                    . ' for the current session.'
+                    . ' Contact an administrator to configure a database.'
                 );
             }
 
