@@ -10,6 +10,21 @@
      this class gets our design applied
  */
 
+@toggle-disabled-bg-color: #444B59;
+@toggle-disabled-checked-bg-color: #578695;
+@toggle-disabled-knob-bg-color: fade(@body-bg-color, 84%);
+@toggle-knob-border-color: #556388;
+@toggle-checked-knob-border-color: mix(@icinga-blue, @icinga-blue-dark, 49%);
+
+@light-mode: {
+  :root {
+    --toggle-disabled-bg-color: #DAE2E6;
+    --toggle-disabled-checked-bg-color: #A4D0DF;
+    --toggle-disabled-knob-bg-color: fade(#F5F9FA, 84%);
+    --toggle-knob-border-color: #B8C8CB;
+  }
+};
+
 // General form layout
 
 form.icinga-form {
@@ -410,7 +425,7 @@ form.inline {
   background: @text-color-inverted;
   border-radius: 1em;
   border: 1px solid;
-  border-color: @low-sat-blue;
+  border-color: @toggle-knob-border-color;
   box-sizing: border-box;
   content: "";
   display: block;
@@ -437,7 +452,7 @@ form.inline {
 
 .icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider:before {
   border: 1px solid;
-  border-color: @icinga-blue;
+  border-color: @toggle-checked-knob-border-color;
   left: 100%;
   margin-left: -4/3em;
 }
@@ -448,13 +463,22 @@ form.inline {
   cursor: default;
 
   & > .toggle-slider {
-    background-color: @gray-light;
-    border-color: @gray-light;
+    background-color: @toggle-disabled-bg-color;
+    border-color: @toggle-disabled-bg-color;
 
     &:before {
-      background-color: @gray-lighter;
-      border-color: @gray-light;
+      background-color: @toggle-disabled-knob-bg-color;
+      border-color: @toggle-disabled-bg-color;
     }
+  }
+}
+
+.icinga-controls input[type="checkbox"]:checked + .toggle-switch.disabled > .toggle-slider {
+  background-color: @toggle-disabled-checked-bg-color;
+  border-color: @toggle-disabled-checked-bg-color;
+
+  &:before {
+    border-color: @toggle-disabled-checked-bg-color;
   }
 }
 
