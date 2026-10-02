@@ -31,7 +31,8 @@ parameters:
         - /usr/share/icingaweb2-modules
 
     excludePaths:
-        - library/Icinga/Test
+        analyse:
+            - library/Icinga/Test
 
     universalObjectCratesClasses:
         - ipl\Orm\Model
