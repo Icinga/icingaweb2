@@ -14,7 +14,6 @@ parameters:
         - modules/doc/application
         - modules/migrate/application
         - modules/setup/application
-        - modules/test/application
         - modules/translation/application
         - modules/doc/library
         - modules/migrate/library
