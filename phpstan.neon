@@ -23,7 +23,6 @@ parameters:
     ignoreErrors:
         - '#Unsafe usage of new static\(\)#'
         - '#. but return statement is missing#'
-        - '#Cannot call method importNode\(\) on DOMDocument\|null.#'
 
     scanDirectories:
         - /usr/share/icinga-php
