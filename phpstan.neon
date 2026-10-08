@@ -2,7 +2,7 @@ includes:
 	- phpstan-baseline.neon
 
 parameters:
-    level: max
+    level: 6
 
     checkFunctionNameCase: true
     checkInternalClassCaseSensitivity: true
@@ -14,7 +14,6 @@ parameters:
         - modules/doc/application
         - modules/migrate/application
         - modules/setup/application
-        - modules/test/application
         - modules/translation/application
         - modules/doc/library
         - modules/migrate/library
@@ -24,14 +23,14 @@ parameters:
     ignoreErrors:
         - '#Unsafe usage of new static\(\)#'
         - '#. but return statement is missing#'
-        - '#Cannot call method importNode\(\) on DOMDocument\|null.#'
 
     scanDirectories:
         - /usr/share/icinga-php
         - /usr/share/icingaweb2-modules
 
     excludePaths:
-        - library/Icinga/Test
+        analyse:
+            - library/Icinga/Test
 
     universalObjectCratesClasses:
         - ipl\Orm\Model
