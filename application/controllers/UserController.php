@@ -6,6 +6,7 @@
 namespace Icinga\Controllers;
 
 use Exception;
+use Icinga\Application\Hook\TwoFactorHook;
 use Icinga\Application\Logger;
 use Icinga\Authentication\AdmissionLoader;
 use Icinga\Authentication\User\DomainAwareInterface;
@@ -20,6 +21,7 @@ use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Url;
 use Icinga\Web\Widget;
+use Throwable;
 
 class UserController extends AuthBackendController
 {
@@ -136,7 +138,16 @@ class UserController extends AuthBackendController
             $this->view->showCreateMembershipLink = false;
         }
 
+        try {
+            $twoFactorName = TwoFactorHook::loadEnrolled($userObj)?->getDisplayName();
+        } catch (Throwable $e) {
+            Logger::error($e);
+
+            $twoFactorName = $this->translate('Error: failed to load two-factor method');
+        }
+
         $this->view->user = $user;
+        $this->view->twoFactor = $twoFactorName ?? null;
         $this->view->backend = $backend;
         $this->view->memberships = $memberships;
         $this->createShowTabs($backend->getName(), $userName)->activate('user/show');
