@@ -7,19 +7,21 @@ use PHPUnit\Framework\TestCase;
 
 class CommonPasswordPolicyTest extends TestCase
 {
-    public function testValidatePasswordTooShort(): void
+    public function testValidatePasswordLength(): void
     {
         $this->assertSame(
             ['Password must be at least 12 characters long'],
-            (new CommonPasswordPolicy())->validate('Icinga1#')
+            (new CommonPasswordPolicy())->validate('Test1#abcde')
         );
+
+        $this->assertEmpty((new CommonPasswordPolicy())->validate('Test1#abcdef'));
     }
 
     public function testValidatePasswordNoNumber(): void
     {
         $this->assertSame(
             ['Password must contain at least one number'],
-            (new CommonPasswordPolicy())->validate('Icingaadmin#')
+            (new CommonPasswordPolicy())->validate('TestPassword#')
         );
     }
 
@@ -27,7 +29,7 @@ class CommonPasswordPolicyTest extends TestCase
     {
         $this->assertSame(
             ['Password must contain at least one special character'],
-            (new CommonPasswordPolicy())->validate('Icingaadmin1')
+            (new CommonPasswordPolicy())->validate('TestPassword1')
         );
     }
 
@@ -35,7 +37,7 @@ class CommonPasswordPolicyTest extends TestCase
     {
         $this->assertSame(
             ['Password must contain at least one uppercase letter'],
-            (new CommonPasswordPolicy())->validate('icingaadmin1#')
+            (new CommonPasswordPolicy())->validate('testpassword1#')
         );
     }
 
@@ -43,13 +45,13 @@ class CommonPasswordPolicyTest extends TestCase
     {
         $this->assertSame(
             ['Password must contain at least one lowercase letter'],
-            (new CommonPasswordPolicy())->validate('ICINGAADMIN1#')
+            (new CommonPasswordPolicy())->validate('TESTPASSWORD1#')
         );
     }
 
     public function testValidatePasswordValid(): void
     {
-        $this->assertEmpty((new CommonPasswordPolicy())->validate('Icingaadmin1#'));
+        $this->assertEmpty((new CommonPasswordPolicy())->validate('Testpassword1#'));
     }
 
     public function testValidatePasswordOnlyLowerCaseLetters(): void
@@ -59,7 +61,7 @@ class CommonPasswordPolicyTest extends TestCase
             'Password must contain at least one special character',
             'Password must contain at least one uppercase letter'
         ];
-        $this->assertSame($expected, (new CommonPasswordPolicy())->validate('icingawebadmin'));
+        $this->assertSame($expected, (new CommonPasswordPolicy())->validate('testpassword'));
     }
 
     public function testValidatePasswordToShortAndOnlyUpperCaseLetters(): void
@@ -70,6 +72,6 @@ class CommonPasswordPolicyTest extends TestCase
             'Password must contain at least one special character',
             'Password must contain at least one lowercase letter'
         ];
-        $this->assertSame($expected, (new CommonPasswordPolicy())->validate('ICINGAADMIN'));
+        $this->assertSame($expected, (new CommonPasswordPolicy())->validate('TEST'));
     }
 }
