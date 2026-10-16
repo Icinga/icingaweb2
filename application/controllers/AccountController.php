@@ -73,7 +73,7 @@ class AccountController extends Controller
 
         $form = new PreferenceForm();
         $form->setPreferences($user->getPreferences());
-        if (isset($config->config_resource)) {
+        if ($config->get('config_resource')) {
             $form->setStore(PreferencesStore::create(new ConfigObject([
                 'resource' => $config->config_resource
             ]), $user));

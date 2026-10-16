@@ -5,6 +5,7 @@
 
 namespace Icinga\Forms\Config\General;
 
+use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
 use Icinga\Web\Form;
@@ -89,6 +90,18 @@ class ApplicationConfigForm extends Form
                 'label'         => $this->translate('Configuration Database')
             ]
         );
+
+        if (! Config::app()->get('global', 'config_resource')) {
+            $this->warning(
+                $this->translate(
+                    'No configuration database is configured.'
+                    . ' Preferences can only be saved for the current session.'
+                    . ' Keeping users logged in between visits also requires a database.'
+                    . ' Select a Configuration Database below.'
+                ),
+                false,
+            );
+        }
 
         return $this;
     }

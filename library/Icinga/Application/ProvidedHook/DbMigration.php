@@ -10,6 +10,7 @@ use Icinga\Common\Database;
 use Icinga\Model\Schema;
 use ipl\Orm\Query;
 use ipl\Sql\Connection;
+use RuntimeException;
 
 class DbMigration extends DbMigrationHook
 {
@@ -19,6 +20,12 @@ class DbMigration extends DbMigrationHook
 
     public function getDb(): Connection
     {
+        if (! $this->hasDb()) {
+            throw new RuntimeException(
+                'Cannot check Icinga Web database migrations because no configuration database is configured.',
+            );
+        }
+
         return $this->getWebDb();
     }
 
