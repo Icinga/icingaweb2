@@ -21,8 +21,10 @@ use Tests\Icinga\Lib\Authentication\OldPasswordRecordingPolicy;
 
 class ChangePasswordFormTest extends BaseTestCase
 {
+    /** @var string */
     public const USER_NAME = 'icingaadmin';
 
+    /** @var string */
     public const CURRENT_PASSWORD = 'icinga';
 
     public function setUp(): void
@@ -43,9 +45,14 @@ class ChangePasswordFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testInvalidOldPasswordIsRejected($db): void
+    public function testInvalidOldPasswordIsRejected(DbConnection|string $db): void
     {
-        $form = $this->createForm($db, 'wrong_password', 'icinga123', 'icinga123');
+        $form = $this->createForm(
+            $db,
+            'wrong_password',
+            'correct horse battery staple',
+            'correct horse battery staple',
+        );
 
         $this->assertFalse($form->isValid());
         $this->assertSame(
@@ -55,9 +62,14 @@ class ChangePasswordFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testNonStringOldPasswordIsRejected($db): void
+    public function testNonStringOldPasswordIsRejected(DbConnection|string $db): void
     {
-        $form = $this->createForm($db, [static::CURRENT_PASSWORD], 'icinga123', 'icinga123');
+        $form = $this->createForm(
+            $db,
+            [static::CURRENT_PASSWORD],
+            'correct horse battery staple',
+            'correct horse battery staple',
+        );
 
         $this->assertFalse($form->isValid());
         $this->assertSame(
@@ -67,9 +79,14 @@ class ChangePasswordFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testMismatchedPasswordConfirmationIsRejected($db): void
+    public function testMismatchedPasswordConfirmationIsRejected(DbConnection|string $db): void
     {
-        $form = $this->createForm($db, static::CURRENT_PASSWORD, 'icinga123', 'icinga456');
+        $form = $this->createForm(
+            $db,
+            static::CURRENT_PASSWORD,
+            'correct horse battery staple',
+            'different horse battery staple',
+        );
 
         $this->assertFalse($form->isValid());
         $this->assertSame(
@@ -79,9 +96,14 @@ class ChangePasswordFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testNonStringNewPasswordIsRejectedByConfirmation($db): void
+    public function testNonStringNewPasswordIsRejectedByConfirmation(DbConnection|string $db): void
     {
-        $form = $this->createForm($db, static::CURRENT_PASSWORD, ['icinga123'], 'icinga123');
+        $form = $this->createForm(
+            $db,
+            static::CURRENT_PASSWORD,
+            ['correct horse battery staple'],
+            'correct horse battery staple',
+        );
 
         $this->assertFalse($form->isValid());
         $this->assertSame(
@@ -91,9 +113,14 @@ class ChangePasswordFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testNonStringPasswordConfirmationIsRejected($db): void
+    public function testNonStringPasswordConfirmationIsRejected(DbConnection|string $db): void
     {
-        $form = $this->createForm($db, static::CURRENT_PASSWORD, 'icinga123', ['icinga123']);
+        $form = $this->createForm(
+            $db,
+            static::CURRENT_PASSWORD,
+            'correct horse battery staple',
+            ['correct horse battery staple'],
+        );
 
         $this->assertFalse($form->isValid());
         $this->assertSame(
@@ -103,9 +130,9 @@ class ChangePasswordFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testEmptyNewPasswordWithConfirmationIsRejected($db): void
+    public function testEmptyNewPasswordWithConfirmationIsRejected(DbConnection|string $db): void
     {
-        $form = $this->createForm($db, static::CURRENT_PASSWORD, '', 'icinga123');
+        $form = $this->createForm($db, static::CURRENT_PASSWORD, '', 'correct horse battery staple');
 
         $this->assertFalse($form->isValid());
         $this->assertNotEmpty($form->getElement(ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME)->getMessages());
@@ -115,14 +142,26 @@ class ChangePasswordFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testValidInputChangesPassword($db): void
+    public function testValidInputChangesPassword(DbConnection|string $db): void
     {
-        $newPassword = 'icinga123';
-        $form = $this->createForm($db, static::CURRENT_PASSWORD, $newPassword, $newPassword);
+        $this->setupDbProvider($db);
+        $this->setUpUserTable($db);
 
+        $newPassword = 'correct horse battery staple';
+        $form = new ChangePasswordForm(new DbUserBackend($db), new User(static::USER_NAME));
+        $form->disableCsrfCounterMeasure();
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/account'))->withParsedBody([
+                'uid'                                                           => 'form_change_password',
+                ChangePasswordForm::OLD_PASSWORD_ELEMENT_NAME                   => static::CURRENT_PASSWORD,
+                ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME                   => $newPassword,
+                ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME . '_confirmation' => $newPassword,
+                'submit'                                                        => 'Update Account',
+            ]),
+        );
+
+        $this->assertTrue($form->hasBeenSubmitted());
         $this->assertTrue($form->isValid());
-
-        $form->exposeOnSuccess();
 
         $this->assertTrue(password_verify(
             $newPassword,
@@ -135,19 +174,24 @@ class ChangePasswordFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testOldPasswordIsPassedToThePolicy($db): void
+    public function testOldPasswordIsPassedToThePolicy(DbConnection|string $db): void
     {
         OldPasswordRecordingPolicy::$oldPassword = null;
         $this->usePolicy(OldPasswordRecordingPolicy::class);
 
-        $form = $this->createForm($db, static::CURRENT_PASSWORD, 'icinga123', 'icinga123');
+        $form = $this->createForm(
+            $db,
+            static::CURRENT_PASSWORD,
+            'correct horse battery staple',
+            'correct horse battery staple',
+        );
 
         $this->assertTrue($form->isValid());
         $this->assertSame(static::CURRENT_PASSWORD, OldPasswordRecordingPolicy::$oldPassword);
     }
 
     #[DataProvider('mysqlDb')]
-    public function testPasswordViolatingTheConfiguredPolicyIsRejected($db): void
+    public function testPasswordViolatingTheConfiguredPolicyIsRejected(DbConnection|string $db): void
     {
         $this->usePolicy(CommonPasswordPolicy::class);
         $form = $this->createForm($db, static::CURRENT_PASSWORD, 'test', 'test');
@@ -157,16 +201,21 @@ class ChangePasswordFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testPasswordSatisfyingTheConfiguredPolicyIsAccepted($db): void
+    public function testPasswordSatisfyingTheConfiguredPolicyIsAccepted(DbConnection|string $db): void
     {
         $this->usePolicy(CommonPasswordPolicy::class);
-        $form = $this->createForm($db, static::CURRENT_PASSWORD, 'Icingaadmin123!', 'Icingaadmin123!');
+        $form = $this->createForm(
+            $db,
+            static::CURRENT_PASSWORD,
+            'Correct horse battery staple 1!',
+            'Correct horse battery staple 1!',
+        );
 
         $this->assertTrue($form->isValid());
     }
 
     #[DataProvider('mysqlDb')]
-    public function testPasswordChangeIsRejectedWhenPolicyFailsToLoad($db): void
+    public function testPasswordChangeIsRejectedWhenPolicyFailsToLoad(DbConnection|string $db): void
     {
         Config::app()->setSection(
             PasswordPolicyHook::CONFIG_SECTION,
@@ -176,7 +225,7 @@ class ChangePasswordFormTest extends BaseTestCase
         $this->setupDbProvider($db);
         $this->setUpUserTable($db);
 
-        $newPassword = 'icinga123';
+        $newPassword = 'correct horse battery staple';
         $form = new ChangePasswordForm(new DbUserBackend($db), new User(static::USER_NAME));
         $form->disableCsrfCounterMeasure();
         $form->handleRequest(
@@ -215,7 +264,7 @@ class ChangePasswordFormTest extends BaseTestCase
      * The passwords are typed `mixed` so that tests can submit non-string values,
      * the way a crafted request would.
      *
-     * @param $db
+     * @param DbConnection|string $db
      * @param mixed $oldPassword
      * @param mixed $newPassword
      * @param mixed $newPasswordConfirmation
@@ -223,7 +272,7 @@ class ChangePasswordFormTest extends BaseTestCase
      * @return ChangePasswordForm
      */
     protected function createForm(
-        $db,
+        DbConnection|string $db,
         mixed $oldPassword,
         mixed $newPassword,
         mixed $newPasswordConfirmation,
@@ -231,12 +280,7 @@ class ChangePasswordFormTest extends BaseTestCase
         $this->setupDbProvider($db);
         $this->setUpUserTable($db);
 
-        $form = new class (new DbUserBackend($db), new User(static::USER_NAME)) extends ChangePasswordForm {
-            public function exposeOnSuccess(): void
-            {
-                $this->onSuccess();
-            }
-        };
+        $form = new ChangePasswordForm(new DbUserBackend($db), new User(static::USER_NAME));
         $form->populate([
             ChangePasswordForm::OLD_PASSWORD_ELEMENT_NAME                   => $oldPassword,
             ChangePasswordForm::NEW_PASSWORD_ELEMENT_NAME                   => $newPassword,
@@ -270,7 +314,7 @@ SQL;
     }
 
     /**
-     * @param class-string $policyClass The policy to enable
+     * @param class-string<PasswordPolicyHook> $policyClass The policy to enable
      *
      * @return void
      */

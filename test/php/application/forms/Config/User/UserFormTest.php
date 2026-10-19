@@ -21,10 +21,13 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class UserFormTest extends BaseTestCase
 {
+    /** @var string */
     public const USER_NAME = 'icingaadmin';
 
+    /** @var string */
     public const NEW_USER_NAME = 'new_user';
 
+    /** @var string */
     public const CURRENT_PASSWORD = 'icinga';
 
     public function setUp(): void
@@ -45,15 +48,14 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testInsertModeInsertsNewUser($db): void
+    public function testInsertModeInsertsNewUser(DbConnection|string $db): void
     {
         $form = $this->createForm($db, RepositoryMode::Insert);
-        $form->populate([
+        $values = [
             'is_active' => '1',
             'user_name' => static::NEW_USER_NAME,
-            'password'  => 'new_password',
-        ]);
-        $form->ensureAssembled();
+            'password'  => 'correct horse battery staple',
+        ];
 
         $this->assertFalse(
             $db->select()
@@ -63,9 +65,15 @@ class UserFormTest extends BaseTestCase
                 ->hasResult(),
         );
 
-        $this->assertTrue($form->isValid());
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/user/add'))->withParsedBody([
+                'uid'        => 'repo_form_user',
+                'submit_add' => 'Add',
+            ] + $values),
+        );
 
-        $form->exposeOnSuccess();
+        $this->assertTrue($form->hasBeenSubmitted());
+        $this->assertTrue($form->isValid());
 
         $this->assertTrue(
             $db->select()
@@ -77,7 +85,7 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testInsertModeAppliesPasswordPolicy($db): void
+    public function testInsertModeAppliesPasswordPolicy(DbConnection|string $db): void
     {
         $this->usePolicy(CommonPasswordPolicy::class);
 
@@ -94,14 +102,13 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testUpdateModeUpdatesUserName($db): void
+    public function testUpdateModeUpdatesUserName(DbConnection|string $db): void
     {
         $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
-        $form->populate([
+        $values = [
             'is_active' => '1',
             'user_name' => static::NEW_USER_NAME,
-        ]);
-        $form->ensureAssembled();
+        ];
 
         $this->assertFalse(
             $db->select()
@@ -111,9 +118,15 @@ class UserFormTest extends BaseTestCase
                 ->hasResult(),
         );
 
-        $this->assertTrue($form->isValid());
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/user/edit'))->withParsedBody([
+                'uid'           => 'repo_form_user',
+                'submit_update' => 'Save',
+            ] + $values),
+        );
 
-        $form->exposeOnSuccess();
+        $this->assertTrue($form->hasBeenSubmitted());
+        $this->assertTrue($form->isValid());
 
         $this->assertFalse(
             $db->select()
@@ -133,17 +146,16 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testUpdateModeUpdatesPassword($db): void
+    public function testUpdateModeUpdatesPassword(DbConnection|string $db): void
     {
-        $newPassword = 'new_password';
+        $newPassword = 'correct horse battery staple';
 
         $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
-        $form->populate([
+        $values = [
             'is_active' => '1',
             'user_name' => static::USER_NAME,
             'password'  => $newPassword,
-        ]);
-        $form->ensureAssembled();
+        ];
 
         $this->assertFalse(password_verify(
             $newPassword,
@@ -154,9 +166,15 @@ class UserFormTest extends BaseTestCase
                 ->fetchOne(),
         ));
 
-        $this->assertTrue($form->isValid());
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/user/edit'))->withParsedBody([
+                'uid'           => 'repo_form_user',
+                'submit_update' => 'Save',
+            ] + $values),
+        );
 
-        $form->exposeOnSuccess();
+        $this->assertTrue($form->hasBeenSubmitted());
+        $this->assertTrue($form->isValid());
 
         $this->assertTrue(password_verify(
             $newPassword,
@@ -169,15 +187,14 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testUpdateModeKeepsPasswordWhenLeftEmpty($db): void
+    public function testUpdateModeKeepsPasswordWhenLeftEmpty(DbConnection|string $db): void
     {
         $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
-        $form->populate([
+        $values = [
             'is_active' => '1',
             'user_name' => static::USER_NAME,
             'password'  => '',
-        ]);
-        $form->ensureAssembled();
+        ];
 
         $this->assertTrue(password_verify(
             static::CURRENT_PASSWORD,
@@ -188,9 +205,15 @@ class UserFormTest extends BaseTestCase
                 ->fetchOne(),
         ));
 
-        $this->assertTrue($form->isValid());
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/user/edit'))->withParsedBody([
+                'uid'           => 'repo_form_user',
+                'submit_update' => 'Save',
+            ] + $values),
+        );
 
-        $form->exposeOnSuccess();
+        $this->assertTrue($form->hasBeenSubmitted());
+        $this->assertTrue($form->isValid());
 
         $this->assertTrue(password_verify(
             static::CURRENT_PASSWORD,
@@ -203,17 +226,25 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testUpdateModeKeepsPasswordWhenLeftEmptyUnderRestrictivePolicy($db): void
+    public function testUpdateModeKeepsPasswordWhenLeftEmptyUnderRestrictivePolicy(DbConnection|string $db): void
     {
         $this->usePolicy(CommonPasswordPolicy::class);
 
         $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
-        $form->populate([
+        $values = [
             'is_active' => '1',
             'user_name' => static::USER_NAME,
             'password'  => '',
-        ]);
-        $form->ensureAssembled();
+        ];
+
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/user/edit'))->withParsedBody([
+                'uid'           => 'repo_form_user',
+                'submit_update' => 'Save',
+            ] + $values),
+        );
+
+        $this->assertTrue($form->hasBeenSubmitted());
 
         // An empty password leaves the stored one untouched, so there is nothing for
         // the policy to reject. Enforcing it here would make every other change to a
@@ -221,8 +252,6 @@ class UserFormTest extends BaseTestCase
         $this->assertTrue($form->isValid());
         $this->assertEmpty($form->getElement('password')->getMessages());
 
-        $form->exposeOnSuccess();
-
         $this->assertTrue(password_verify(
             static::CURRENT_PASSWORD,
             $db->select()
@@ -234,14 +263,13 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testUpdateModeKeepsPasswordWhenOnlyWhitespaceIsSubmitted($db): void
+    public function testUpdateModeKeepsPasswordWhenOnlyWhitespaceIsSubmitted(DbConnection|string $db): void
     {
         $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
-        $form->populate([
+        $values = [
             'user_name' => static::USER_NAME,
             'password'  => " \t\r\n ",
-        ]);
-        $form->ensureAssembled();
+        ];
 
         $query = $db->select()
             ->columns(['password_hash'])
@@ -249,23 +277,29 @@ class UserFormTest extends BaseTestCase
             ->where('name', static::USER_NAME);
         $hash = $query->fetchOne();
 
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/user/edit'))->withParsedBody([
+                'uid'           => 'repo_form_user',
+                'submit_update' => 'Save',
+            ] + $values),
+        );
+
+        $this->assertTrue($form->hasBeenSubmitted());
         $this->assertTrue($form->isValid());
-        $form->exposeOnSuccess();
 
         $this->assertSame($hash, $query->fetchOne());
     }
 
     #[DataProvider('mysqlDb')]
-    public function testUpdateModeIgnoresWhitespaceUnderRestrictivePolicy($db): void
+    public function testUpdateModeIgnoresWhitespaceUnderRestrictivePolicy(DbConnection|string $db): void
     {
         $this->usePolicy(CommonPasswordPolicy::class);
 
         $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
-        $form->populate([
+        $values = [
             'user_name' => static::USER_NAME,
             'password'  => '   ',
-        ]);
-        $form->ensureAssembled();
+        ];
 
         $query = $db->select()
             ->columns(['password_hash'])
@@ -273,24 +307,37 @@ class UserFormTest extends BaseTestCase
             ->where('name', static::USER_NAME);
         $hash = $query->fetchOne();
 
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/user/edit'))->withParsedBody([
+                'uid'           => 'repo_form_user',
+                'submit_update' => 'Save',
+            ] + $values),
+        );
+
+        $this->assertTrue($form->hasBeenSubmitted());
         $this->assertTrue($form->isValid());
-        $form->exposeOnSuccess();
 
         $this->assertSame($hash, $query->fetchOne());
     }
 
     #[DataProvider('mysqlDb')]
-    public function testUpdateModeAcceptsZeroAsPassword($db): void
+    public function testUpdateModeAcceptsZeroAsPassword(DbConnection|string $db): void
     {
         $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
-        $form->populate([
+        $values = [
             'user_name' => static::USER_NAME,
             'password'  => '0',
-        ]);
-        $form->ensureAssembled();
+        ];
 
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/user/edit'))->withParsedBody([
+                'uid'           => 'repo_form_user',
+                'submit_update' => 'Save',
+            ] + $values),
+        );
+
+        $this->assertTrue($form->hasBeenSubmitted());
         $this->assertTrue($form->isValid());
-        $form->exposeOnSuccess();
 
         $this->assertTrue(password_verify(
             '0',
@@ -303,7 +350,7 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testUpdateModeAppliesPasswordPolicy($db): void
+    public function testUpdateModeAppliesPasswordPolicy(DbConnection|string $db): void
     {
         $this->usePolicy(CommonPasswordPolicy::class);
 
@@ -320,26 +367,32 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testInsertModeInsertsUserWhenPolicyFailsToLoad($db): void
+    public function testInsertModeInsertsUserWhenPolicyFailsToLoad(DbConnection|string $db): void
     {
-        // A configured policy that no registered hook provides makes loadConfigured() throw
+        // A configured policy that no registered hook provides makes loadConfigured() throw.
         Config::app()->setSection(
             PasswordPolicyHook::CONFIG_SECTION,
             [PasswordPolicyHook::CONFIG_KEY => 'missing/policy'],
         );
 
         $form = $this->createForm($db, RepositoryMode::Insert);
-        $form->populate([
+        $values = [
             'is_active' => '1',
             'user_name' => static::NEW_USER_NAME,
-            'password'  => 'new_password',
-        ]);
-        $form->ensureAssembled();
+            'password'  => 'correct horse battery staple',
+        ];
 
-        // The admin form stays unrestricted when the policy cannot be loaded
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/user/add'))->withParsedBody([
+                'uid'        => 'repo_form_user',
+                'submit_add' => 'Add',
+            ] + $values),
+        );
+
+        $this->assertTrue($form->hasBeenSubmitted());
+
+        // The admin form stays unrestricted when the policy cannot be loaded.
         $this->assertTrue($form->isValid());
-
-        $form->exposeOnSuccess();
 
         $this->assertTrue(
             $db->select()
@@ -351,7 +404,7 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testInsertModeIsRejectedWhenPolicyFailsToLoadAndPasswordIsNoString($db): void
+    public function testInsertModeIsRejectedWhenPolicyFailsToLoadAndPasswordIsNoString(DbConnection|string $db): void
     {
         Config::app()->setSection(
             PasswordPolicyHook::CONFIG_SECTION,
@@ -365,7 +418,7 @@ class UserFormTest extends BaseTestCase
         $form->populate([
             'is_active' => '1',
             'user_name' => static::NEW_USER_NAME,
-            'password'  => ['new_password'],
+            'password'  => ['correct horse battery staple'],
         ]);
         $form->ensureAssembled();
 
@@ -374,27 +427,33 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testUpdateModeUpdatesPasswordWhenPolicyFailsToLoad($db): void
+    public function testUpdateModeUpdatesPasswordWhenPolicyFailsToLoad(DbConnection|string $db): void
     {
         Config::app()->setSection(
             PasswordPolicyHook::CONFIG_SECTION,
             [PasswordPolicyHook::CONFIG_KEY => 'missing/policy'],
         );
 
-        $newPassword = 'new_password';
+        $newPassword = 'correct horse battery staple';
 
         $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
-        $form->populate([
+        $values = [
             'is_active' => '1',
             'user_name' => static::USER_NAME,
             'password'  => $newPassword,
-        ]);
-        $form->ensureAssembled();
+        ];
 
-        // The admin form stays unrestricted when the policy cannot be loaded
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/user/edit'))->withParsedBody([
+                'uid'           => 'repo_form_user',
+                'submit_update' => 'Save',
+            ] + $values),
+        );
+
+        $this->assertTrue($form->hasBeenSubmitted());
+
+        // The admin form stays unrestricted when the policy cannot be loaded.
         $this->assertTrue($form->isValid());
-
-        $form->exposeOnSuccess();
 
         $this->assertTrue(password_verify(
             $newPassword,
@@ -407,14 +466,13 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testUpdateModeDeactivatesUser($db): void
+    public function testUpdateModeDeactivatesUser(DbConnection|string $db): void
     {
         $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
-        $form->populate([
+        $values = [
             'is_active' => '0',
             'user_name' => static::USER_NAME,
-        ]);
-        $form->ensureAssembled();
+        ];
 
         $this->assertEquals(1, $db->select()
             ->columns(['active'])
@@ -422,9 +480,15 @@ class UserFormTest extends BaseTestCase
             ->where('name', static::USER_NAME)
             ->fetchOne());
 
-        $this->assertTrue($form->isValid());
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/user/edit'))->withParsedBody([
+                'uid'           => 'repo_form_user',
+                'submit_update' => 'Save',
+            ] + $values),
+        );
 
-        $form->exposeOnSuccess();
+        $this->assertTrue($form->hasBeenSubmitted());
+        $this->assertTrue($form->isValid());
 
         $this->assertEquals(0, $db->select()
             ->columns(['active'])
@@ -434,10 +498,9 @@ class UserFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
-    public function testDeleteModeDeletesUser($db): void
+    public function testDeleteModeDeletesUser(DbConnection|string $db): void
     {
         $form = $this->createForm($db, RepositoryMode::Delete, static::USER_NAME);
-        $form->ensureAssembled();
 
         $this->assertTrue(
             $db->select()
@@ -447,9 +510,15 @@ class UserFormTest extends BaseTestCase
                 ->hasResult(),
         );
 
-        $this->assertTrue($form->isValid());
+        $form->handleRequest(
+            (new ServerRequest('POST', '/icingaweb2/user/remove'))->withParsedBody([
+                'uid'           => 'repo_form_user',
+                'submit_remove' => 'Confirm Removal',
+            ]),
+        );
 
-        $form->exposeOnSuccess();
+        $this->assertTrue($form->hasBeenSubmitted());
+        $this->assertTrue($form->isValid());
 
         $this->assertFalse(
             $db->select()
@@ -462,7 +531,7 @@ class UserFormTest extends BaseTestCase
 
     #[DataProvider('mysqlDb')]
     #[DataProvider('pgsqlDb')]
-    public function testUpdateRequestPrefillsTheStoredUser($db): void
+    public function testUpdateRequestPrefillsTheStoredUser(DbConnection|string $db): void
     {
         $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
         $form->handleRequest(new ServerRequest('GET', '/icingaweb2/user/edit'));
@@ -470,7 +539,7 @@ class UserFormTest extends BaseTestCase
         /** @var CheckboxElement $isActive */
         $isActive = $form->getElement('is_active');
 
-        // PostgreSQL returns the smallint column as int, which must still check the box
+        // PostgreSQL returns the smallint column as int, which must still check the box.
         $this->assertTrue($isActive->isChecked());
         $this->assertSame(static::USER_NAME, $form->getValue('user_name'));
         $this->assertNull($form->getValue('password'));
@@ -478,7 +547,7 @@ class UserFormTest extends BaseTestCase
 
     #[DataProvider('mysqlDb')]
     #[DataProvider('pgsqlDb')]
-    public function testUpdateSubmitKeepsUntouchedUserActive($db): void
+    public function testUpdateSubmitKeepsUntouchedUserActive(DbConnection|string $db): void
     {
         $form = $this->createForm($db, RepositoryMode::Update, static::USER_NAME);
         $form->handleRequest(
@@ -500,17 +569,12 @@ class UserFormTest extends BaseTestCase
             ->fetchOne());
     }
 
-    protected function createForm($db, RepositoryMode $mode, ?string $identifier = null): UserForm
+    protected function createForm(DbConnection|string $db, RepositoryMode $mode, ?string $identifier = null): UserForm
     {
         $this->setupDbProvider($db);
         $this->setUpUserTable($db);
 
-        $form = new class (new DbUserBackend($db), $mode, $identifier) extends UserForm {
-            public function exposeOnSuccess(): void
-            {
-                $this->onSuccess();
-            }
-        };
+        $form = new UserForm(new DbUserBackend($db), $mode, $identifier);
 
         $form->disableCsrfCounterMeasure();
 
@@ -556,7 +620,7 @@ SQL;
     }
 
     /**
-     * @param class-string $policyClass The policy to enable
+     * @param class-string<PasswordPolicyHook> $policyClass The policy to enable
      *
      * @return void
      */
