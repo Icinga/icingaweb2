@@ -18,6 +18,13 @@ class DbMigration extends DbMigrationHook
         getDb as private getWebDb;
     }
 
+    /**
+     * Get the configuration database connection
+     *
+     * @return Connection
+     *
+     * @throws RuntimeException If no configuration database is configured
+     */
     public function getDb(): Connection
     {
         if (! $this->hasDb()) {
