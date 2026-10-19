@@ -180,14 +180,9 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
      */
     protected function getPasswordHash($username)
     {
-        if ($this->ds->getDbType() === 'pgsql') {
-            // Since PostgreSQL version 9.0 the default value for bytea_output is 'hex' instead of 'escape'
-            $columns = ['password_hash' => new Zend_Db_Expr('ENCODE(password_hash, \'escape\')')];
-        } else {
-            // password_hash is intentionally not a valid query column,
-            // by wrapping it in an expression it is not validated
-            $columns = ['password_hash' => new Zend_Db_Expr('password_hash')];
-        }
+        // password_hash is intentionally not a valid query column,
+        // by wrapping it in an expression it is not validated
+        $columns = ['password_hash' => new Zend_Db_Expr('password_hash')];
 
         $query = $this
             ->select()
@@ -215,7 +210,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
             return '';
         }
 
-        return $this->ds->getDbType() === 'pgsql' ? pg_unescape_bytea($lob) : $lob;
+        return $lob;
     }
 
     /**
