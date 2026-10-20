@@ -9,7 +9,7 @@ File/Directory                                          | Description
 ------------------------------------------------------- | ---------------------------------
 [config.ini](03-Configuration.md#configuration-general) | General configuration (global, logging, themes, etc.)
 [resources.ini](04-Resources.md#resources)              | Global resources (Icinga Web 2 database for preferences and authentication, Icinga 2 IDO database)
-[roles.ini](06-Security.md#security-roles)              | User specific roles (e.g. `administrators`) and permissions
+[roles.ini](06-Security.md#roles)                       | User specific roles (e.g. `administrators`) and permissions
 [authentication.ini](05-Authentication.md)              | Authentication backends (e.g. database)
 enabledModules                                          | Symlinks to enabled modules
 modules                                                 | Directory for module specific configuration
