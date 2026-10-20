@@ -529,6 +529,14 @@ class Url
         }
 
         if ($this->getUsername() || $this->isExternal()) {
+            if ($this->getScheme() && ! $this->getHost() && ! $this->getUsername()) {
+                // Without a host there is no authority component, so `scheme:path`
+                // is the only correct rendering. Injecting `//` and the base path
+                // would corrupt the url, as it does for schemes such as `data:`,
+                // `mailto:` or `tel:`.
+                return $this->getScheme() . ':' . $path;
+            }
+
             $urlString = '';
             if ($this->getScheme()) {
                 $urlString .= $this->getScheme() . '://';
