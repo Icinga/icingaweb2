@@ -6,16 +6,42 @@
 namespace Icinga\Forms\Announcement;
 
 use DateTime;
+use Icinga\Application\Icinga;
 use Icinga\Authentication\Auth;
 use Icinga\Data\Filter\Filter;
-use Icinga\Forms\RepositoryForm;
+use Icinga\Repository\Repository;
+use Icinga\Repository\RepositoryMode;
+use Icinga\Web\Form\RepositoryForm;
 
 /**
  * Create, update and delete announcements
  */
 class AnnouncementForm extends RepositoryForm
 {
-    protected function fetchEntry()
+    /**
+     * Create a new AnnouncementForm
+     *
+     * @param Repository $repository The repository to work with
+     * @param RepositoryMode $mode How to interact with the repository
+     * @param ?string $identifier The id of the announcement to handle
+     */
+    public function __construct(Repository $repository, RepositoryMode $mode, ?string $identifier = null)
+    {
+        parent::__construct($repository, $mode, $identifier);
+        $this->setAttribute('name', 'repo_form_announcement');
+    }
+
+    /**
+     * Fetch and transform the stored announcement into form-ready values
+     *
+     * In addition to fetching the raw entry, converts the stored `start` and
+     * `end` Unix timestamps into {@see DateTime} objects, as expected by the
+     * respective `localDateTime` elements.
+     *
+     * @return object|false The transformed announcement, or false if no
+     *   matching entry exists
+     */
+    protected function fetchEntry(): object|false
     {
         $entry = parent::fetchEntry();
         if ($entry !== false) {
@@ -30,108 +56,66 @@ class AnnouncementForm extends RepositoryForm
         return $entry;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function createInsertElements(array $formData)
+    protected function assembleCommonElements(): void
     {
-        $this->addElement(
-            'text',
-            'author',
-            [
-                'disabled'  => ! $this->getRequest()->isApiRequest(),
-                'required'  => true,
-                'value'     => Auth::getInstance()->getUser()->getUsername()
-            ]
-        );
-        $this->addElement(
-            'textarea',
-            'message',
-            [
-                'description'   => $this->translate('The message to display to users'),
-                'label'         => $this->translate('Message'),
-                'required'      => true
-            ]
-        );
-        $this->addElement(
-            'dateTimePicker',
-            'start',
-            [
-                'description'   => $this->translate('The time to display the announcement from'),
-                'label'         => $this->translate('Start'),
-                'placeholder'   => new DateTime('tomorrow'),
-                'required'      => true
-            ]
-        );
-        $this->addElement(
-            'dateTimePicker',
-            'end',
-            [
-                'description'   => $this->translate('The time to display the announcement until'),
-                'label'         => $this->translate('End'),
-                'placeholder'   => new DateTime('tomorrow +1day'),
-                'required'      => true
-            ]
-        );
+        $this->addElement('text', 'author', [
+            'disabled' => ! Icinga::app()->getRequest()->isApiRequest(),
+            'required' => true,
+            'value'    => Auth::getInstance()->getUser()->getUsername(),
+        ]);
 
-        $this->setTitle($this->translate('Create a new announcement'));
-        $this->setSubmitLabel($this->translate('Create'));
-    }
-    /**
-     * {@inheritDoc}
-     */
-    protected function createUpdateElements(array $formData)
-    {
-        $this->createInsertElements($formData);
-        $this->setTitle(sprintf($this->translate('Edit announcement %s'), $this->getIdentifier()));
-        $this->setSubmitLabel($this->translate('Save'));
+        $this->addElement('textarea', 'message', [
+            'description' => $this->translate('The message to display to users'),
+            'label'       => $this->translate('Message'),
+            'required'    => true,
+        ]);
+
+        $this->addElement('localDateTime', 'start', [
+            'description' => $this->translate('The time to display the announcement from'),
+            'label'       => $this->translate('Start'),
+            'value'       => (new DateTime('tomorrow')),
+            'required'    => true,
+        ]);
+
+        $this->addElement('localDateTime', 'end', [
+            'description' => $this->translate('The time to display the announcement until'),
+            'label'       => $this->translate('End'),
+            'value'       => (new DateTime('tomorrow +1day')),
+            'required'    => true,
+        ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function createDeleteElements(array $formData)
+    protected function assembleInsertElements(): void
     {
-        $this->setTitle(sprintf($this->translate('Remove announcement %s?'), $this->getIdentifier()));
-        $this->setSubmitLabel($this->translate('Confirm Removal'));
-        $this->setAttrib('class', 'icinga-controls');
+        $this->assembleCommonElements();
+        $this->addElement('submit', 'submit_add', ['label' => $this->translate('Create')]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function createFilter()
+    protected function assembleUpdateElements(): void
+    {
+        $this->assembleCommonElements();
+        $this->addElement('submit', 'submit_update', ['label' => $this->translate('Save')]);
+    }
+
+    protected function assembleDeleteElements(): void
+    {
+        $this->addElement('submit', 'submit_remove', ['label' => $this->translate('Confirm Removal')]);
+    }
+
+    protected function createFilter(): Filter
     {
         return Filter::where('id', $this->getIdentifier());
     }
 
     /**
-     * {@inheritDoc}
+     * Get the id of the announcement to handle
+     *
+     * @return ?string Narrower than the inherited contract, as this form
+     *   accepts string identifiers only. Null only in
+     *   {@see RepositoryMode::Insert} mode, where none is required.
      */
-    protected function getInsertMessage($success)
+    public function getIdentifier(): ?string
     {
-        return $success
-            ? $this->translate('Announcement created')
-            : $this->translate('Failed to create announcement');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getUpdateMessage($success)
-    {
-        return $success
-            ? $this->translate('Announcement updated')
-            : $this->translate('Failed to update announcement');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getDeleteMessage($success)
-    {
-        return $success
-            ? $this->translate('Announcement removed')
-            : $this->translate('Failed to remove announcement');
+        return $this->identifier;
     }
 }
