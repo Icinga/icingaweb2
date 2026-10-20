@@ -7,12 +7,14 @@ use PHPUnit\Framework\TestCase;
 
 class CommonPasswordPolicyTest extends TestCase
 {
-    public function testValidatePasswordTooShort(): void
+    public function testValidatePasswordLength(): void
     {
         $this->assertSame(
             ['Password must be at least 12 characters long'],
-            (new CommonPasswordPolicy())->validate('Icinga1#')
+            (new CommonPasswordPolicy())->validate('Icinga1#abc')
         );
+
+        $this->assertEmpty((new CommonPasswordPolicy())->validate('Icinga1#abcd'));
     }
 
     public function testValidatePasswordNoNumber(): void

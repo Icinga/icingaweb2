@@ -28,6 +28,8 @@ use Stringable;
  * to set the CSRF form element id or {@see disableCsrfCounterMeasure()}
  * to opt out. The form UID element requires a form name. Set one via the
  * `name` attribute before assembling.
+ *
+ * @template TIdentifier of string|Stringable|int
  */
 abstract class RepositoryForm extends CompatForm
 {
@@ -51,7 +53,7 @@ abstract class RepositoryForm extends CompatForm
      *
      * @param Repository $repository The repository to work with
      * @param RepositoryMode $mode How to interact with the repository
-     * @param string|Stringable|int|null $identifier The identifier of the entry to handle.
+     * @param ?TIdentifier $identifier The identifier of the entry to handle.
      *   Required for {@see RepositoryMode::Update} and {@see RepositoryMode::Delete}.
      *
      * @throws InvalidArgumentException If $repository does not implement the interface
@@ -122,7 +124,7 @@ abstract class RepositoryForm extends CompatForm
     /**
      * Get the name of the entry to handle
      *
-     * @return string|Stringable|int|null
+     * @return ?TIdentifier
      */
     public function getIdentifier(): string|Stringable|int|null
     {

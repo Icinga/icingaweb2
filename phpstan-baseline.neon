@@ -139,12 +139,6 @@ parameters:
 			path: application/controllers/AccountController.php
 
 		-
-			message: '#^Parameter \#1 \$backend of method Icinga\\Forms\\Account\\ChangePasswordForm\:\:setBackend\(\) expects Icinga\\Authentication\\User\\DbUserBackend, Icinga\\Authentication\\User\\UserBackendInterface given\.$#'
-			identifier: argument.type
-			count: 1
-			path: application/controllers/AccountController.php
-
-		-
 			message: '#^Method Icinga\\Controllers\\AnnouncementsController\:\:acknowledgeAction\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -775,12 +769,6 @@ parameters:
 			path: application/controllers/UserController.php
 
 		-
-			message: '#^Method Icinga\\Controllers\\UserController\:\:addAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/UserController.php
-
-		-
 			message: '#^Method Icinga\\Controllers\\UserController\:\:createListTabs\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -799,19 +787,7 @@ parameters:
 			path: application/controllers/UserController.php
 
 		-
-			message: '#^Method Icinga\\Controllers\\UserController\:\:editAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/UserController.php
-
-		-
 			message: '#^Method Icinga\\Controllers\\UserController\:\:listAction\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/controllers/UserController.php
-
-		-
-			message: '#^Method Icinga\\Controllers\\UserController\:\:removeAction\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: application/controllers/UserController.php
@@ -820,12 +796,6 @@ parameters:
 			message: '#^Method Icinga\\Controllers\\UserController\:\:showAction\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: application/controllers/UserController.php
-
-		-
-			message: '#^Parameter \#1 \$repository of method Icinga\\Forms\\RepositoryForm\:\:setRepository\(\) expects Icinga\\Repository\\Repository, Icinga\\Authentication\\User\\UserBackendInterface given\.$#'
-			identifier: argument.type
-			count: 3
 			path: application/controllers/UserController.php
 
 		-
@@ -851,24 +821,6 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: application/controllers/UsergroupbackendController.php
-
-		-
-			message: '#^Method Icinga\\Forms\\Account\\ChangePasswordForm\:\:createElements\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/forms/Account/ChangePasswordForm.php
-
-		-
-			message: '#^Method Icinga\\Forms\\Account\\ChangePasswordForm\:\:createElements\(\) has parameter \$formData with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: application/forms/Account/ChangePasswordForm.php
-
-		-
-			message: '#^Method Icinga\\Forms\\Account\\ChangePasswordForm\:\:isValid\(\) has parameter \$formData with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: application/forms/Account/ChangePasswordForm.php
 
 		-
 			message: '#^Call to an undefined method Zend_View_Interface\:\:icon\(\)\.$#'
@@ -1019,12 +971,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: application/forms/Config/General/LoggingConfigForm.php
-
-		-
-			message: '#^Method Icinga\\Forms\\Config\\General\\PasswordPolicyConfigForm\:\:createElements\(\) has parameter \$formData with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: application/forms/Config/General/PasswordPolicyConfigForm.php
 
 		-
 			message: '#^Call to an undefined method Icinga\\Application\\ApplicationBootstrap\:\:getThemes\(\)\.$#'
@@ -1217,48 +1163,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: application/forms/Config/User/CreateMembershipForm.php
-
-		-
-			message: '#^Method Icinga\\Forms\\Config\\User\\UserForm\:\:createCommonElements\(\) has parameter \$formData with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: application/forms/Config/User/UserForm.php
-
-		-
-			message: '#^Method Icinga\\Forms\\Config\\User\\UserForm\:\:createDeleteElements\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: application/forms/Config/User/UserForm.php
-
-		-
-			message: '#^Method Icinga\\Forms\\Config\\User\\UserForm\:\:createDeleteElements\(\) has parameter \$formData with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: application/forms/Config/User/UserForm.php
-
-		-
-			message: '#^Method Icinga\\Forms\\Config\\User\\UserForm\:\:createInsertElements\(\) has parameter \$formData with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: application/forms/Config/User/UserForm.php
-
-		-
-			message: '#^Method Icinga\\Forms\\Config\\User\\UserForm\:\:createUpdateElements\(\) has parameter \$formData with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: application/forms/Config/User/UserForm.php
-
-		-
-			message: '#^Method Icinga\\Forms\\Config\\User\\UserForm\:\:getValues\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: application/forms/Config/User/UserForm.php
-
-		-
-			message: '#^Method Icinga\\Forms\\Config\\User\\UserForm\:\:isValid\(\) has parameter \$formData with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: application/forms/Config/User/UserForm.php
 
 		-
 			message: '#^Method Icinga\\Forms\\Config\\UserBackend\\DbBackendForm\:\:createElements\(\) has no return type specified\.$#'
