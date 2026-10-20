@@ -12,6 +12,8 @@ use Icinga\Test\BaseTestCase;
 
 class StreamWriterTest extends BaseTestCase
 {
+    protected string $target;
+
     public function setUp(): void
     {
         parent::setUp();
