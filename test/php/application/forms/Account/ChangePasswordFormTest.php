@@ -62,6 +62,20 @@ class ChangePasswordFormTest extends BaseTestCase
     }
 
     #[DataProvider('mysqlDb')]
+    public function testOldPasswordIsNotVerifiedWhileOtherInputIsInvalid(DbConnection|string $db): void
+    {
+        $form = $this->createForm(
+            $db,
+            'wrong_password',
+            'correct horse battery staple',
+            'different horse battery staple',
+        );
+
+        $this->assertFalse($form->isValid());
+        $this->assertEmpty($form->getElement(ChangePasswordForm::OLD_PASSWORD_ELEMENT_NAME)->getMessages());
+    }
+
+    #[DataProvider('mysqlDb')]
     public function testNonStringOldPasswordIsRejected(DbConnection|string $db): void
     {
         $form = $this->createForm(
