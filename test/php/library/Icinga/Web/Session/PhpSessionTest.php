@@ -29,7 +29,7 @@ class PhpSessionTest extends BaseTestCase
      */
     public function testSessionCreation()
     {
-        $this->getSession();
+        $this->assertInstanceOf(PhpSession::class, $this->getSession());
     }
 
     /**
