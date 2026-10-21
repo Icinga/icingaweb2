@@ -71,10 +71,17 @@ trait HookEssentials
     }
 
     /**
-     * Register the hook
+     * Register the concrete hook implementation
+     *
+     * Call this method on the concrete implementation class that uses this trait
+     * directly or inherits it from a hook base class, for example
+     * `MyHookImplementation::register()`. The called class is registered under
+     * the name returned by {@see getHookName()}.
      *
      * @param ?bool $alwaysRun Whether to always run the hook without permission check.
      *   Defaults to {@see isAlwaysRun()}.
+     *
+     * @return void
      */
     public static function register(?bool $alwaysRun = null): void
     {

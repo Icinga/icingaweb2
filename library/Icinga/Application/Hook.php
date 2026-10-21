@@ -315,13 +315,17 @@ class Hook
     /**
      * Register a class
      *
-     * @param   string      $name           One of the predefined hook names
-     * @param   string      $key            The identifier of a specific subtype
-     * @param   string      $class          Your class name, must inherit one of the
-     *                                      classes in the Icinga/Application/Hook folder
-     * @param   bool        $alwaysRun      To run the hook always (e.g. without permission check)
+     * If your concrete implementation uses {@see Hook\HookEssentials} directly
+     * or inherits it from a hook base class, you can also register it by calling
+     * `MyHookImplementation::register()`.
      *
-     * @deprecated Use {@link Hook\HookEssentials::register} instead
+     * @param string $name One of the predefined hook names
+     * @param string $key The identifier of a specific subtype
+     * @param class-string $class Implementation class that extends the hook's base class
+     *   or implements its interface
+     * @param bool $alwaysRun To run the hook always (e.g. without permission check)
+     *
+     * @return void
      */
     public static function register($name, $key, $class, $alwaysRun = false)
     {
