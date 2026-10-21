@@ -7,7 +7,7 @@
 3. [Installation](#installation)
 4. [Documentation](#documentation)
 5. [Support](#support)
-6. [Contributing](#contributing)
+6. [Security Issues](#security-issues)
 
 ## About
 
@@ -39,14 +39,6 @@ Check the [project website](https://icinga.com) for status updates. Join the
 [community channels](https://icinga.com/community/) for questions
 or ask an Icinga partner for [professional support](https://icinga.com/support/).
 
-## Contributing
-
-There are many ways to contribute to Icinga -- whether it be sending patches,
-testing, reporting bugs, or reviewing and updating the documentation. Every
-contribution is appreciated!
-
-Please continue reading in the [contributing chapter](CONTRIBUTING.md).
-
-### Security Issues
+## Security Issues
 
 For reporting security issues please visit [this page](https://icinga.com/contact/security/).
