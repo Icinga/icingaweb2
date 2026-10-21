@@ -1328,7 +1328,7 @@ Valid for distributions:
 
 * RHEL / CentOS 6 + 7
   * Upgrading to PHP 7.0 / 7.1 via RedHat SCL (new dependency)
-  * See [Upgrading to FPM](doc/02-Installation.md#upgrading-to-fpm) for manual steps that are required
+  * See [Upgrading to FPM][fpm] for manual steps that are required
 * SUSE SLE 12
   * Upgrading PHP to >= 5.6.0 via the alternative packages.
     You might have to confirm the replacement of PHP < 5.6 - but that should work with any other PHP app as well
@@ -2019,3 +2019,5 @@ The location of a user's preferences has been changed from config-dir/preference
 * Bug 9378: Rpm calls usermod w/ invalid option on openSUSE
 * Bug 9384: Timeline+Role problem
 * Bug 9392: Command links seem to be broken
+
+[fpm]: https://github.com/Icinga/icingaweb2/blob/v2.8.0/doc/02-Installation.md#upgrading-to-fpm
