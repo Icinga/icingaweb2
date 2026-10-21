@@ -1473,6 +1473,10 @@ class Module
     /**
      * Provide a hook implementation
      *
+     * If your concrete implementation uses {@see Hook\HookEssentials} directly
+     * or inherits it from a hook base class, you can also register it by calling
+     * `MyHookImplementation::register()`.
+     *
      * @param   string  $name           Name of the hook for which to provide an implementation
      * @param   string  $implementation Fully qualified name of the class providing the hook implementation.
      *                                  Defaults to the module's ProvidedHook namespace plus the hook's name for the
@@ -1480,8 +1484,6 @@ class Module
      * @param   bool    $alwaysRun      To run the hook always (e.g. without permission check)
      *
      * @return  $this
-     *
-     * @deprecated Use {@link Hook\HookEssentials::register} instead
      */
     protected function provideHook($name, $implementation = null, $alwaysRun = false)
     {
