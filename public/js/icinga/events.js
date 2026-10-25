@@ -308,7 +308,7 @@
                 return;
             }
 
-            if (href.match(/^(?:(?:mailto|javascript|data):|[a-z]+:\/\/)/)) {
+            if (href.match(/^[a-z][a-z0-9+.-]*:/i)) {
                 event.stopPropagation();
                 return true;
             }
