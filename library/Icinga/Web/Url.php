@@ -195,7 +195,10 @@ class Url
             $urlPath = $urlParts['path'];
             if ($urlPath && $urlPath[0] === '/') {
                 if ($urlObject->isExternal() || isset($urlParts['user'])) {
-                    $urlPath = ltrim($urlPath, '/');
+                    // URLs without a host retain absolute paths, as in file:/tmp/report.txt.
+                    if (! isset($urlParts['scheme']) || isset($urlParts['host'])) {
+                        $urlPath = ltrim($urlPath, '/');
+                    }
                 } else {
                     $requestBaseUrl = $request->getBaseUrl();
                     if ($requestBaseUrl && $requestBaseUrl !== '/' && strpos($urlPath, $requestBaseUrl) === 0) {
@@ -519,6 +522,11 @@ class Url
     public function getAbsoluteUrl($separator = '&')
     {
         $path = $this->buildPathQueryAndFragment($separator);
+        if ($this->isExternal() && $this->getScheme() && ! $this->getHost() && ! $this->getUsername()) {
+            // Preserve absolute paths as well as rootless paths for schemes without a host.
+            return $this->getScheme() . ':' . $path;
+        }
+
         if ($path && ($path === '#' || $path[0] === '/')) {
             return $path;
         }
