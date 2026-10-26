@@ -5,9 +5,14 @@
 
 namespace Icinga\Web\Form\Decorator;
 
-use Icinga\Application\Icinga;
-use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Form;
+use ipl\Html\Attributes;
+use ipl\Html\HtmlDocument;
+use ipl\Html\HtmlElement;
+use ipl\I18n\Translation;
+use ipl\Web\Common\CalloutType;
+use ipl\Web\Widget\Callout;
+use LogicException;
 use Zend_Form_Decorator_Abstract;
 
 /**
@@ -15,6 +20,8 @@ use Zend_Form_Decorator_Abstract;
  */
 class FormNotifications extends Zend_Form_Decorator_Abstract
 {
+    use Translation;
+
     /**
      * Render form notifications
      *
@@ -29,55 +36,39 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
             return $content;
         }
 
-        $view = $form->getView();
-        if ($view === null) {
-            return $content;
-        }
-
         $notifications = $this->recurseForm($form);
         if (empty($notifications)) {
             return $content;
         }
 
-        $html = '<ul class="form-notification-list">';
+        $html = '';
         foreach ([Form::NOTIFICATION_ERROR, Form::NOTIFICATION_WARNING, Form::NOTIFICATION_INFO] as $type) {
             if (isset($notifications[$type])) {
-                $html .= '<li><ul class="notification-' . $this->getNotificationTypeName($type) . '">';
+                $messages = [];
                 foreach ($notifications[$type] as $message) {
-                    if (is_array($message)) {
-                        list($message, $properties) = $message;
-                        $html .= '<li' . $view->propertiesToString($properties) . '>'
-                            . $view->escape($message)
-                            . '</li>';
-                    } else {
-                        $html .= '<li>' . $view->escape($message) . '</li>';
-                    }
+                    $messages[] = HtmlElement::create('li', [], $message);
                 }
 
-                $html .= '</ul></li>';
+                $count = count($messages);
+                if ($count > 1) {
+                    $document = HtmlElement::create('ul', null, $messages);
+                } else {
+                    $document = new HtmlDocument();
+                    // Single message: unwrap <li> so the callout renders plain content, not a list.
+                    $document->add($messages[0]->getContent());
+                }
+
+                $html .= (new Callout($this->getCalloutType($type), $document, $this->getCalloutTitle($type, $count)))
+                    ->addAttributes(new Attributes(['class' => 'form-notification']))
+                    ->render();
             }
         }
 
-        if (isset($notifications[Form::NOTIFICATION_ERROR])) {
-            $icon = 'cancel';
-            $class = 'error';
-        } elseif (isset($notifications[Form::NOTIFICATION_WARNING])) {
-            $icon = 'warning-empty';
-            $class = 'warning';
-        } else {
-            $icon = 'info';
-            $class = 'info';
-        }
-
-        $html = "<div class=\"form-notifications $class\">"
-        . Icinga::app()->getViewRenderer()->view->icon($icon, '', ['class' => 'form-notification-icon'])
-        . $html;
-
         switch ($this->getPlacement()) {
             case self::APPEND:
-                return $content . $html . '</ul></div>';
+                return $content . $html;
             case self::PREPEND:
-                return $html . '</ul></div>' . $content;
+                return $html . $content;
         }
     }
 
@@ -103,25 +94,41 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
     }
 
     /**
-     * Return the name for the given notification type
+     * Return the callout type for the given notification type
      *
-     * @param   int     $type
+     * @param int $type Form notification type constants
      *
-     * @return  string
+     * @return CalloutType
      *
-     * @throws  ProgrammingError    In case the given type is invalid
+     * @throws LogicException In case the given type is invalid
      */
-    protected function getNotificationTypeName($type)
+    protected function getCalloutType(int $type): CalloutType
     {
-        switch ($type) {
-            case Form::NOTIFICATION_ERROR:
-                return 'error';
-            case Form::NOTIFICATION_WARNING:
-                return 'warning';
-            case Form::NOTIFICATION_INFO:
-                return 'info';
-            default:
-                throw new ProgrammingError('Invalid notification type "%s" provided', $type);
-        }
+        return match ($type) {
+            Form::NOTIFICATION_ERROR => CalloutType::Error,
+            Form::NOTIFICATION_WARNING => CalloutType::Warning,
+            Form::NOTIFICATION_INFO => CalloutType::Info,
+            default => throw new LogicException(sprintf('Invalid notification type "%s" provided', $type)),
+        };
+    }
+
+    /**
+     * Return the title for the given notification type
+     *
+     * @param int $type Form notification type constants
+     * @param int $count Number of notifications of the given type
+     *
+     * @return string
+     *
+     * @throws LogicException In case the given type is invalid
+     */
+    protected function getCalloutTitle(int $type, int $count): string
+    {
+        return match ($type) {
+            Form::NOTIFICATION_ERROR => $this->translatePlural('Error', 'Errors', $count),
+            Form::NOTIFICATION_WARNING => $this->translatePlural('Warning', 'Warnings', $count),
+            Form::NOTIFICATION_INFO => $this->translatePlural('Info', 'Info', $count),
+            default => throw new LogicException(sprintf('Invalid notification type "%s" provided', $type)),
+        };
     }
 }
