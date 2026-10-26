@@ -437,7 +437,7 @@ class Dashboard extends AbstractWidget
             }
         }
 
-        if (isset($this->panes[$active])) {
+        if ($active !== null && isset($this->panes[$active])) {
             return $this->panes[$active];
         }
 
