@@ -13,12 +13,16 @@ use Icinga\Security\Csp\AttributedCsp;
 use Icinga\Security\Csp\Reason\ModuleCspReason;
 use RuntimeException;
 use Icinga\User;
+use ipl\Web\Common\Csp;
 use Throwable;
 
 /**
  * Loads CSP directives from modules. Modules can implement the {@see CspHook}
  * interface to provide custom CSP directives. The hook is called for each
  * request, allowing modules to dynamically add or modify CSP policies.
+ *
+ * The directives for a user combine the directives every user gets
+ * with the directives the module adds for that user only.
  */
 class ModuleCspLoader implements CspLoader
 {
@@ -29,7 +33,12 @@ class ModuleCspLoader implements CspLoader
 
     public function loadForUser(User $user): array
     {
-        return $this->loadWith(fn($hook) => $hook->getCspForUser($user));
+        return $this->loadWith(
+            fn(CspHook $hook): Csp => (new Csp())->merge(
+                $hook->getCspForAllUsers(),
+                $hook->getCspForUser($user),
+            ),
+        );
     }
 
     /**
