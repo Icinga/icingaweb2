@@ -145,9 +145,9 @@ Alternatively you can define your own CSP header by setting the `custom_csp` in 
 `Custom CSP` section at **Configuration > Application > Security** which will completely overwrite the generated
 CSP header.
 Therefore, you are responsible for ensuring that the CSP header is valid, does not contain insecure directives,
-is kept up to date with updates or changes to the icingaweb application or its components, and works for every user.
+is kept up to date with updates or changes to Icinga Web or its components, and works for every user.
 When creating your own CSP header, you can use the placeholder `{style_nonce}` in place of the
-automatically generated nonce. This will be replaced with the actual nonce when a user loads icingaweb.
+automatically generated nonce. Icinga Web replaces it with the actual nonce when it sends the CSP header.
 
 Here is a list of all Icinga Web components that are capable of strict CSP.
 

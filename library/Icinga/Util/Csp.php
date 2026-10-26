@@ -145,7 +145,7 @@ class Csp
     }
 
     /**
-     * Get the default CSP for icingaweb
+     * Get the default CSP of Icinga Web
      *
      * @return AttributedCsp
      */
