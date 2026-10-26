@@ -191,7 +191,7 @@ class LocalFileStorageTest extends BaseTestCase
     {
         $lfs = new TemporaryLocalFileStorage();
         $lfs->create('foobar', 'Hello world!');
-        $lfs->resolvePath('./notRelevant/../foobar', true);
+        static::assertFileExists($lfs->resolvePath('./notRelevant/../foobar', true));
     }
 
     public function testResolvePathThrowsNotFoundError()
