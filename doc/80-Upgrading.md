@@ -334,8 +334,7 @@ Valid for distributions:
 
 * RHEL / CentOS 6 + 7
   * Upgrading to PHP 7.0 / 7.1 via RedHat SCL (new dependency)
-  * See [Upgrading to FPM](02-Installation.md#upgrading-to-fpm) for manual steps that
-    are required
+  * See [Upgrading to FPM][fpm] for manual steps that are required
 * SUSE SLE 12
   * Upgrading PHP to >= 5.6.0 via the alternative packages.
     You might have to confirm the replacement of PHP < 5.6 - but that
@@ -509,3 +508,5 @@ upgrade files involved, apply them incrementally.
 # export PGPASSWORD=icingaweb2
 # psql -U icingaweb2 -d icingaweb2 < /usr/share/doc/icingaweb2/schema/pgsql-upgrades/2.5.0.sql
 ```
+
+[fpm]: https://github.com/Icinga/icingaweb2/blob/v2.8.0/doc/02-Installation.md#upgrading-to-fpm
