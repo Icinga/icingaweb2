@@ -63,13 +63,14 @@ class Hook
     }
 
     /**
-     * Whether someone registered itself for the given hook name
+     * Check whether an implementation is registered for the given hook
      *
-     * @param   string  $name   One of the predefined hook names
+     * If the hook's base class uses {@see Hook\HookEssentials}, you can also check
+     * this by calling `MyHook::isRegistered()`.
      *
-     * @return  bool
+     * @param string $name One of the predefined hook names
      *
-     * @deprecated Use {@link Hook\HookEssentials::isRegistered} instead
+     * @return bool
      */
     public static function has($name)
     {
@@ -264,13 +265,14 @@ class Hook
     }
 
     /**
-     * Return all instances of a specific name
+     * Get all instances of the given hook that the current user is permitted to run
      *
-     * @param   string  $name   One of the predefined hook names
+     * If the hook's base class uses {@see Hook\HookEssentials}, you can also get
+     * the instances by calling `MyHook::all()`.
      *
-     * @return  array
+     * @param string $name One of the predefined hook names
      *
-     * @deprecated Use {@link Hook\HookEssentials::all} instead
+     * @return object[]
      */
     public static function all($name): array
     {
@@ -290,13 +292,14 @@ class Hook
     }
 
     /**
-     * Get the first hook
+     * Get the first instance of the given hook that the current user is permitted to run
      *
-     * @param   string  $name   One of the predefined hook names
+     * If the hook's base class uses {@see Hook\HookEssentials}, you can also get
+     * the instance by calling `MyHook::first()`.
      *
-     * @return  null|mixed
+     * @param string $name One of the predefined hook names
      *
-     * @deprecated Use {@link Hook\HookEssentials::first} instead
+     * @return ?object
      */
     public static function first($name)
     {
@@ -315,13 +318,16 @@ class Hook
     /**
      * Register a class
      *
-     * @param   string      $name           One of the predefined hook names
-     * @param   string      $key            The identifier of a specific subtype
-     * @param   string      $class          Your class name, must inherit one of the
-     *                                      classes in the Icinga/Application/Hook folder
-     * @param   bool        $alwaysRun      To run the hook always (e.g. without permission check)
+     * @param string $name One of the predefined hook names
+     * @param string $key The identifier of a specific subtype
+     * @param class-string $class Implementation class that extends the hook's base class
+     *   or implements its interface
+     * @param bool $alwaysRun To run the hook always (e.g. without permission check)
      *
-     * @deprecated Use {@link Hook\HookEssentials::register} instead
+     * @return void
+     *
+     * @deprecated Use {@see Modules\Module::provideHook()} instead, or call `MyHookImplementation::register()`
+     *   if your concrete implementation uses {@see Hook\HookEssentials} directly or inherits it
      */
     public static function register($name, $key, $class, $alwaysRun = false)
     {
