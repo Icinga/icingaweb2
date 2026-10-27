@@ -65,9 +65,7 @@
          */
         this.behaviors = {};
 
-        /**
-         * Site behaviors which hook into the rendering process
-         */
+        /** @deprecated No direct replacement. */
         this.renderHooks = [];
 
         /**
