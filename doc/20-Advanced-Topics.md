@@ -134,7 +134,8 @@ Icinga does its best to support user-defined content like navigation items and d
 not desired, you can disable both by disabling the corresponding feature in the **Security page** at
 **Configuration > Application > Security** or by setting `csp_enable_navigation` or `csp_enable_dashboards` in the
 `config.ini`. Note that while you can see all navigation items and dashboards, the actual CSP is generated per user
-and does not include the full set of directives shown.
+and does not include the full set of directives shown. Modules can also add directives for specific users only.
+The Security page does not list these.
 
 If it is necessary to add extra entries to the CSP header, you can do so by using the `CspHook` hook,
 read more about it [here](60-Hooks.md#hooks-csp). This is the preferred way to extend the CSP header
@@ -144,9 +145,9 @@ Alternatively you can define your own CSP header by setting the `custom_csp` in 
 `Custom CSP` section at **Configuration > Application > Security** which will completely overwrite the generated
 CSP header.
 Therefore, you are responsible for ensuring that the CSP header is valid, does not contain insecure directives,
-is kept up to date with updates or changes to the icingaweb application or its components, and works for every user.
+is kept up to date with updates or changes to Icinga Web or its components, and works for every user.
 When creating your own CSP header, you can use the placeholder `{style_nonce}` in place of the
-automatically generated nonce. This will be replaced with the actual nonce when a user loads icingaweb.
+automatically generated nonce. Icinga Web replaces it with the actual nonce when it sends the CSP header.
 
 Here is a list of all Icinga Web components that are capable of strict CSP.
 

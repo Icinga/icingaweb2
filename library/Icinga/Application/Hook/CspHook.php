@@ -10,8 +10,10 @@ use Icinga\User;
 use ipl\Web\Common\Csp;
 
 /**
- * Allow modules to provide custom Content-Security-Policy policies.
- * This hook is only used if the CSP header is enabled.
+ * Allow modules to add directives to the Content Security Policy (CSP)
+ *
+ * Icinga Web uses this hook only if strict CSP is enabled, module CSP is enabled,
+ * and no custom CSP is configured.
  */
 abstract class CspHook
 {
@@ -36,23 +38,27 @@ abstract class CspHook
     }
 
     /**
-     * Get the CSP directives for a module
+     * Get the CSP directives the given user needs in addition to {@see static::getCspForAllUsers()}
      *
-     * @param User $user The user to generate the CSP for
+     * Icinga Web adds these directives to the CSP of the given user only.
+     * The CSP overview on the Security page does not list them.
      *
-     * @return Csp A CSP instance with the required policies, this instance will
-     * be merged with all other requested directives.
+     * @param User $user The user to get the directives for
+     *
+     * @return Csp Empty by default
      */
-    abstract public function getCspForUser(User $user): Csp;
+    public function getCspForUser(User $user): Csp
+    {
+        return new Csp();
+    }
 
     /**
-     * Get the CSP directives for a module for all users
+     * Get the CSP directives every user needs
      *
-     * It should contain all required policies that are required for any user,
-     * not only directives that are non user specific.
+     * Icinga Web adds these directives to the CSP of every user
+     * and lists them in the CSP overview on the Security page.
      *
-     * @return Csp A CSP instance with the required policies, this instance will
-     * be merged with all other requested directives.
+     * @return Csp
      */
     abstract public function getCspForAllUsers(): Csp;
 }

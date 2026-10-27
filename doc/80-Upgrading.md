@@ -28,6 +28,14 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
   `config/security`, otherwise they lose access to the setting.
 * `Icinga\Forms\Config\General\PasswordPolicyConfigForm` has been moved to
   `Icinga\Forms\Config\Security\PasswordPolicyConfigForm`.
+* Icinga Web now adds the directives of `Icinga\Application\Hook\CspHook::getCspForAllUsers()`
+  to the CSP of every user. `getCspForUser()` returns only the directives the
+  given user needs in addition, and returns an empty CSP unless overridden.
+  Before, Icinga Web used only `getCspForUser()` for the CSP header and
+  `getCspForAllUsers()` only for the overview on the Security page.
+  Hooks that return the directives of all users combined from
+  `getCspForAllUsers()` now grant them to every user. Return only directives
+  that every user needs from it.
 
 ## Upgrading to Icinga Web 2.14
 

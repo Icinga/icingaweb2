@@ -71,14 +71,24 @@ Don't forget to register the hook in the `run.php`.
 
 ## CspHook <a id="hooks-csp"></a>
 
-The `CspHook` allows developers to add custom CSP directives to the Icinga Web 2 frontend.
-It provides the methods `getCspForUser(User)` and `getCspForAllUsers()` which should return
-a `Csp` instance with the directives the module wants to add. The difference between the two
-methods is that `getCspForUser()` is called for a specific user instance and should return
-the CSP directives that specific user requires. While `getCspForAllUsers()` is called for
-all users and should return the CSP directives that any one user requires. The directives are
-combined additively with the default directives, icingaweb2 generated ones and other
-module-defined directives.
+The `CspHook` lets modules add directives to the Content Security Policy (CSP)
+that Icinga Web sends when strict CSP is enabled. Icinga Web uses the hook only
+if **Enable Modules** is enabled at **Configuration > Application > Security**
+and no custom CSP is configured. The hook always runs, regardless of the
+`module/<module-name>` permission.
+
+Both methods return an `ipl\Web\Common\Csp` instance:
+
+* `getCspForAllUsers()` returns the directives every user needs, for example
+  hosts from the module configuration. Icinga Web adds them to the CSP of every
+  user and lists them in the CSP overview on the Security page.
+* `getCspForUser(User $user)` returns the directives only the given user needs,
+  for example a host from the user's preferences. Icinga Web adds them to the
+  CSP of that user only. The CSP overview does not list them. Implementing this
+  method is optional. By default, it returns an empty CSP.
+
+Icinga Web merges the directives of all modules with its own directives.
+Modules can only add directives. Setting `default-src` is not allowed.
 
 Hook example:
 
@@ -86,8 +96,8 @@ Hook example:
 namespace Icinga\Module\Acme\ProvidedHook;
 
 use Icinga\Application\Hook\CspHook;
-use ipl\Web\Common\Csp as CspInstance;
 use Icinga\User;
+use ipl\Web\Common\Csp as CspInstance;
 
 class Csp extends CspHook
 {
@@ -97,15 +107,18 @@ class Csp extends CspHook
         $csp->add('img-src', ['cdn.example.com', 'usercontent.example.com']);
         $csp->add('style-src', 'cdn.example.com');
 
-        // ...
-
         return $csp;
     }
-    
-    public function getCspForUser(User $user) : CspInstance
+
+    public function getCspForUser(User $user): CspInstance
     {
-        // ...
-        
+        $csp = new CspInstance();
+
+        $imageHost = $user->getPreferences()->getValue('acme', 'image_host');
+        if ($imageHost !== null) {
+            $csp->add('img-src', $imageHost);
+        }
+
         return $csp;
     }
 }
