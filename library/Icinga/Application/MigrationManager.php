@@ -22,6 +22,16 @@ final class MigrationManager implements Countable
 {
     use Translation;
 
+    private const TLS_OPTIONS = [
+        'use_ssl' => 'useSsl',
+        'ssl_key' => 'sslKey',
+        'ssl_cert' => 'sslCert',
+        'ssl_ca' => 'sslCa',
+        'ssl_capath' => 'sslCapath',
+        'ssl_cipher' => 'sslCipher',
+        'ssl_do_not_verify_server_cert' => 'sslDoNotVerifyServerCert',
+    ];
+
     /** @var array<string, DbMigrationHook> All pending migration hooks */
     protected $pendingMigrations;
 
@@ -287,15 +297,22 @@ final class MigrationManager implements Countable
     {
         $config = $db->getConfig();
 
-        return new DbTool(array_merge([
+        $dbToolConfig = [
             'db' => $config->db,
             'host' => $config->host,
             'port' => $config->port,
             'dbname' => $config->dbname,
             'username' => $config->username,
             'password' => $config->password,
-            'charset'  => $config->charset
-        ], $db->getAdapter()->getOptions($config)));
+            'charset' => $config->charset,
+        ];
+
+        // DbTool applies these itself, but knows them only by their resources.ini names.
+        foreach (self::TLS_OPTIONS as $name => $property) {
+            $dbToolConfig[$name] = $config->$property ?? null;
+        }
+
+        return new DbTool($dbToolConfig);
     }
 
     protected function load(): void
