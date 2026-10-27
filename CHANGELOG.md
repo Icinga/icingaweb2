@@ -6,6 +6,12 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ### What's New in Version 2.14.1
 
+You can find all issues related to this release on our
+[Roadmap](https://github.com/Icinga/icingaweb2/milestone/90?closed=1).
+
+This release requires [Icinga PHP Library](https://github.com/Icinga/icinga-php-library)
+1.1.0 or later.
+
 #### Security Fixes
 
 This release fixes four vulnerabilities. The most severe one lets
@@ -73,6 +79,60 @@ will be no replacement. Its documentation has been dropped to keep new code from
 depending on it.
 
 * Modernize password policy [#5537](https://github.com/Icinga/icingaweb2/pull/5537)
+
+#### Default Theme Mode
+
+Administrators can set the default theme mode (system, dark, or light) in the
+theming configuration. Users without a personal theme mode preference get this
+default.
+
+* Add configurable default theme mode to theming configuration [#5541](https://github.com/Icinga/icingaweb2/pull/5541)
+* Add documentation about the default theme mode [#5551](https://github.com/Icinga/icingaweb2/pull/5551)
+
+#### Fixes
+
+Pages that need a configuration database explain what is missing instead of
+showing a stack trace. PostgreSQL authentication works with `pdo_pgsql` alone.
+Links with schemes such as `data:` or `mailto:` work again, which fixes
+downloads in Safari. Changing the timezone reloads the page like changing the
+locale does. Database migrations work with TLS client certificates, and hosts
+that modules allow for all users are no longer blocked by the browser.
+
+* Handle a missing or unusable configuration database gracefully [#5356](https://github.com/Icinga/icingaweb2/pull/5356)
+* Let PDO decode PostgreSQL password hashes [#5584](https://github.com/Icinga/icingaweb2/pull/5584)
+* Support URLs whose scheme has no authority [#5565](https://github.com/Icinga/icingaweb2/pull/5565)
+* Reload on timezone/locale preference changes and after authentication [#5540](https://github.com/Icinga/icingaweb2/pull/5540)
+* Set `baseTarget` for user and group access-control list tabs [#5558](https://github.com/Icinga/icingaweb2/pull/5558)
+* Fix config form value & Simplify CspConfigForm [#5533](https://github.com/Icinga/icingaweb2/pull/5533)
+* Check for a preference store before accepting the primary submit button [#5542](https://github.com/Icinga/icingaweb2/pull/5542)
+* Guard `TwoFactorHook::yieldMethods()` [#5543](https://github.com/Icinga/icingaweb2/pull/5543)
+* Sync `ipl\Html\Error::showTraces()` with displayExceptions setting [#5555](https://github.com/Icinga/icingaweb2/pull/5555)
+* Avoid a null array offset when selecting the dashboard pane [#5588](https://github.com/Icinga/icingaweb2/pull/5588)
+* Fix logging level description in configuration [#5566](https://github.com/Icinga/icingaweb2/pull/5566)
+* Tell DbTool about the resource's TLS settings [#5571](https://github.com/Icinga/icingaweb2/pull/5571)
+* Add `getCspForAllUsers()` directives to every user's CSP [#5595](https://github.com/Icinga/icingaweb2/pull/5595)
+
+#### Framework Changes
+
+Interface-based hooks cannot use `HookEssentials`, so `Module::provideHook()`,
+`Hook::has()`, `Hook::all()`, and `Hook::first()` are no longer deprecated.
+`Hook::register()` remains deprecated. The datetime picker behavior has been
+removed because all supported browsers support `datetime-local` inputs.
+`CspHook::getCspForUser()` is optional and returns only the directives a user
+needs in addition to `getCspForAllUsers()`. `Icinga.renderHooks` in JavaScript
+is deprecated.
+
+* Keep hook APIs needed by interface-based hooks supported [#5585](https://github.com/Icinga/icingaweb2/pull/5585)
+* Remove datetime picker behavior [#5532](https://github.com/Icinga/icingaweb2/pull/5532)
+* Add `getCspForAllUsers()` directives to every user's CSP [#5595](https://github.com/Icinga/icingaweb2/pull/5595)
+* Docs: Mention that RenderHooks should not be used anymore [#5557](https://github.com/Icinga/icingaweb2/pull/5557)
+
+#### Documentation
+
+* Documentation updates [#5539](https://github.com/Icinga/icingaweb2/pull/5539)
+* Improve database setup in the installation guide [#5548](https://github.com/Icinga/icingaweb2/pull/5548)
+* Fix broken documentation section links [#5587](https://github.com/Icinga/icingaweb2/pull/5587)
+* Remove the outdated contributing guide [#5590](https://github.com/Icinga/icingaweb2/pull/5590)
 
 ### What's New in Version 2.14.0
 
