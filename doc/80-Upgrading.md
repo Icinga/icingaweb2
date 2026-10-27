@@ -3,6 +3,19 @@
 Specific version upgrades are described below. Please note that upgrades are incremental. An upgrade from
 v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
+## Upgrading to Icinga Web 2.13.2
+
+**Breaking changes**
+
+* The standalone chart endpoints `svg/chart.php` and `png/chart.php` and the
+  classes `Icinga\Chart\Inline\Inline` and `Icinga\Chart\Inline\PieChart` have
+  been removed.
+* `Icinga\Chart\Primitive\Styleable::getStyle()` now returns an
+  `ipl\Html\HtmlElement` with plain CSS instead of an `ipl\Web\Style` ruleset.
+  Chart styles no longer evaluate LESS syntax.
+* LDAP authentication rejects login names that contain `*`. LDAP group
+  membership lookups return no groups for such names.
+
 ## Upgrading to Icinga Web 2.13
 
 **Deprecations**
