@@ -5,7 +5,6 @@
 
 namespace Icinga\Application;
 
-use Icinga\Chart\Inline\PieChart;
 use Icinga\Web\Controller\StaticController;
 use Icinga\Web\JavaScript;
 use Icinga\Web\StyleSheet;
@@ -75,26 +74,6 @@ if (in_array($path, $special)) {
         default:
             return false;
     }
-} elseif ($path === 'svg/chart.php') {
-    if (!array_key_exists('data', $_GET)) {
-        return false;
-    }
-    include __DIR__ . '/EmbeddedWeb.php';
-    EmbeddedWeb::start();
-    header('Content-Type: image/svg+xml');
-    $pie = new PieChart();
-    $pie->initFromRequest();
-    $pie->toSvg();
-} elseif ($path === 'png/chart.php') {
-    if (!array_key_exists('data', $_GET)) {
-        return false;
-    }
-    include __DIR__ . '/EmbeddedWeb.php';
-    EmbeddedWeb::start();
-    header('Content-Type: image/png');
-    $pie = new PieChart();
-    $pie->initFromRequest();
-    $pie->toPng();
 } elseif (substr($path, 0, 4) === 'lib/') {
     include_once __DIR__ . '/StaticWeb.php';
     $app = StaticWeb::start();

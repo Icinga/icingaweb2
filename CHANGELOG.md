@@ -4,6 +4,22 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.13.2
+
+#### Security Fixes
+
+This release fixes four vulnerabilities. The most severe one lets
+unauthenticated attackers read files accessible to the web server and overload
+it through the standalone chart endpoints, which are removed. LDAP and database
+users with a `*` in their login name could also receive the group memberships
+of other users. A navigation item label could inject HTML into the sidebar,
+and any authenticated user could remove remembered devices of other users.
+
+* Remove the standalone chart endpoints to prevent file reads and denial of service [GHSA-mph2-hvq4-8423](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-mph2-hvq4-8423)
+* Match usernames literally in database and LDAP backends [GHSA-jff6-vjrf-q9gj](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-jff6-vjrf-q9gj)
+* Escape navigation item labels in sidebar submenu headers [GHSA-grpw-587v-93vw](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-grpw-587v-93vw)
+* Restrict remembered device management to the user's own devices [GHSA-fmf2-272p-p3r9](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-fmf2-272p-p3r9)
+
 ### What's New in Version 2.13.1
 
 #### Security Fixes

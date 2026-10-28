@@ -7,7 +7,9 @@ namespace Icinga\Chart\Primitive;
 
 use DOMElement;
 use Icinga\Util\Csp;
-use ipl\Web\Style;
+use ipl\Html\Attributes;
+use ipl\Html\HtmlElement;
+use ipl\Html\HtmlString;
 
 /**
  * Base class for stylable drawables
@@ -124,9 +126,9 @@ class Styleable
     }
 
     /**
-     * Return the ruleset used for styling the DOMNode
+     * Get the style element for the DOM node
      *
-     * @return Style A ruleset containing styles
+     * @return HtmlElement A style element containing CSS declarations
      */
     public function getStyle()
     {
@@ -135,9 +137,19 @@ class Styleable
         $styles['stroke'] = $this->strokeColor;
         $styles['stroke-width'] = (string) $this->strokeWidth;
 
-        return (new Style())
-            ->setNonce(Csp::getStyleNonce())
-            ->add("#$this->id", $styles);
+        return new HtmlElement(
+            'style',
+            Attributes::create(['nonce' => Csp::getStyleNonce()]),
+            HtmlString::create(sprintf(
+                '#%s { %s }',
+                $this->id,
+                implode('', array_map(
+                    fn($k, $v) => sprintf('%s: %s;', $k, $v),
+                    array_keys($styles),
+                    array_values($styles)
+                ))
+            ))
+        );
     }
 
     /**

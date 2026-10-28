@@ -69,7 +69,10 @@ class MyDevicesController extends CompatController
 
     public function deleteAction()
     {
-        (new RememberMe())->remove($this->params->getRequired('fingerprint'));
+        (new RememberMe())->removeByUsername(
+            $this->auth->getUser()->getUsername(),
+            $this->params->getRequired('fingerprint')
+        );
 
         $this->redirectNow('my-devices');
     }
