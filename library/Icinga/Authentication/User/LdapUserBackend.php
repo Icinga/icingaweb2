@@ -398,10 +398,16 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
             $username = $user->getUsername();
         }
 
+        // The asterisk (*) is a wildcard in LDAP filter expressions (RFC 4515) and must
+        // not appear in user-supplied values to prevent filter injection attacks.
+        if (str_contains($username, '*')) {
+            throw new AuthenticationException('The LDAP username must not contain any forbidden characters.');
+        }
+
         try {
             $userDn = $this
                 ->select()
-                ->where('user_name', str_replace('*', '', $username))
+                ->where('user_name', $username)
                 ->getQuery()
                 ->setUsePagedResults(false)
                 ->fetchDn();

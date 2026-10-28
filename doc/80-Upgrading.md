@@ -5,7 +5,14 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
 ## Upgrading to Icinga Web 2.14.1
 
+**Requirements**
+
+* Icinga Web 2.14.1 requires [Icinga PHP Library](https://github.com/Icinga/icinga-php-library)
+  1.1.0 or later. Upgrade the library before or together with Icinga Web.
+
 **Deprecations**
+
+* `Icinga.renderHooks` in JavaScript is deprecated. Do not use it in new code.
 
 * `Icinga\Application\Hook\ConfigFormEventsHook` is now deprecated. There will
   be no replacement, as the hook never evolved into a proper implementation.
@@ -36,6 +43,20 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
   Hooks that return the directives of all users combined from
   `getCspForAllUsers()` now grant them to every user. Return only directives
   that every user needs from it.
+* The standalone chart endpoints `svg/chart.php` and `png/chart.php` and the
+  classes `Icinga\Chart\Inline\Inline` and `Icinga\Chart\Inline\PieChart` have
+  been removed.
+* `Icinga\Chart\Primitive\Styleable::getStyle()` now returns an
+  `ipl\Html\HtmlElement` with plain CSS instead of an `ipl\Web\Style` ruleset.
+  Chart styles no longer evaluate LESS syntax.
+* LDAP authentication rejects login names that contain `*`. LDAP group
+  membership lookups return no groups for such names.
+
+**Framework changes affecting third-party code**
+
+* The datetime picker behavior (`datetime-picker.js`), its styles, and the
+  `data-use-datetime-picker` attribute have been removed. Inputs of type
+  `datetime-local` use the browser's native picker.
 
 ## Upgrading to Icinga Web 2.14
 

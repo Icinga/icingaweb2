@@ -7,6 +7,7 @@ namespace Icinga\Authentication\UserGroup;
 
 use Exception;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterEqual;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
 use Icinga\Exception\NotFoundError;
@@ -206,7 +207,7 @@ class DbUserGroupBackend extends DbRepository implements Inspectable, UserGroupB
         $membershipQuery = $this
             ->select()
             ->from('group_membership', ['group_name'])
-            ->where('user', $user->getUsername());
+            ->addFilter(new FilterEqual('user', '=', $user->getUsername()));
 
         $memberships = [];
         foreach ($membershipQuery as $membership) {

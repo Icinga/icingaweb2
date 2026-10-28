@@ -22,7 +22,9 @@ class RecursiveMenuNavigationRenderer extends RecursiveNavigationRenderer
         $item->setCssClass('nav-item-header');
 
         $renderer = new NavigationItemRenderer();
-        $renderer->setEscapeLabel(false);
+        if (! $this->getUseStandardItemRenderer() && $parentItem->shouldRender()) {
+            $renderer->setEscapeLabel($parentItem->getRenderedLabelEscaping());
+        }
         $content = $renderer->render($item);
 
         $this->content[] = $this->getInnerIterator()->beginItemMarkup($item);

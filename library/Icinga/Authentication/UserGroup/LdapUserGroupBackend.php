@@ -21,6 +21,7 @@ use Icinga\Protocol\Ldap\LdapUtils;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
+use Icinga\Util\Json;
 
 class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGroupBackendInterface
 {
@@ -722,6 +723,17 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
             $username = $user->getLocalUsername();
         } else {
             $username = $user->getUsername();
+        }
+
+        // The asterisk (*) is a wildcard in LDAP filter expressions (RFC 4515) and must
+        // not appear in user-supplied values to prevent filter injection attacks.
+        if (str_contains($username, '*')) {
+            Logger::warning(
+                'The LDAP username %s must not contain any forbidden characters.',
+                Json::sanitize($username)
+            );
+
+            return [];
         }
 
         if ($this->isMemberAttributeAmbiguous()) {
