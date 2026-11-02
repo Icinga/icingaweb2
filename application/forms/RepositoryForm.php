@@ -14,6 +14,9 @@ use Icinga\Web\Notification;
 
 /**
  * Form base-class providing standard functionality for extensible, updatable and reducible repositories
+ *
+ * @deprecated Use {@see \Icinga\Web\Form\RepositoryForm} instead for a
+ * {@see \ipl\Web\Compat\CompatForm} based implementation.
  */
 abstract class RepositoryForm extends Form
 {
