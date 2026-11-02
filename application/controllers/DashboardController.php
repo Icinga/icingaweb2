@@ -73,7 +73,7 @@ class DashboardController extends ActionController
                 $action->render('error');
                 return false;
             }
-            Notification::success(t('Dashlet created'));
+            Notification::success(sprintf($this->translate('Created dashlet "%s" successfully'), $dashlet->getName()));
             return true;
         });
         $form->setTitle($this->translate('Add Dashlet To Dashboard'));
@@ -133,7 +133,7 @@ class DashboardController extends ActionController
                 $action->render('error');
                 return false;
             }
-            Notification::success(t('Dashlet updated'));
+            Notification::success(sprintf($this->translate('Updated dashlet "%s" successfully'), $dashlet->getName()));
             return true;
         });
         $form->setTitle($this->translate('Edit Dashlet'));
@@ -176,7 +176,11 @@ class DashboardController extends ActionController
             $dashboardConfig = $dashboard->getConfig();
             try {
                 $dashboardConfig->saveIni();
-                Notification::success(t('Dashlet has been removed from') . ' ' . $pane->getTitle());
+                Notification::success(sprintf(
+                    $this->translate('Removed dashlet "%s" from %s successfully'),
+                    $dashlet->getName(),
+                    $pane->getTitle()
+                ));
             } catch (Exception $e) {
                 $action->view->error = $e;
                 $action->view->config = $dashboardConfig;
@@ -231,9 +235,11 @@ class DashboardController extends ActionController
             $pane->setTitle($newTitle);
             $this->dashboard->getConfig()->saveIni();
 
-            Notification::success(
-                sprintf($this->translate('Pane "%s" successfully renamed to "%s"'), $paneName, $newName)
-            );
+            Notification::success(sprintf(
+                $this->translate('Renamed pane "%s" to "%s" successfully'),
+                $paneName,
+                $newName
+            ));
         });
 
         $form->handleRequest();
@@ -271,7 +277,10 @@ class DashboardController extends ActionController
             $dashboardConfig = $dashboard->getConfig();
             try {
                 $dashboardConfig->saveIni();
-                Notification::success(t('Dashboard has been removed') . ': ' . $pane->getTitle());
+                Notification::success(sprintf(
+                    $this->translate('Removed dashboard "%s" successfully'),
+                    $pane->getTitle()
+                ));
             } catch (Exception $e) {
                 $action->view->error = $e;
                 $action->view->config = $dashboardConfig;

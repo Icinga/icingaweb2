@@ -175,9 +175,9 @@ class AddMemberForm extends Form
         }
 
         if ($single) {
-            Notification::success(sprintf($this->translate('Group member "%s" added successfully'), $userName));
+            Notification::success(sprintf($this->translate('Added group member "%s" successfully'), $userName));
         } else {
-            Notification::success($this->translate('Group members added successfully'));
+            Notification::success($this->translate('Added group members successfully'));
         }
 
         return true;

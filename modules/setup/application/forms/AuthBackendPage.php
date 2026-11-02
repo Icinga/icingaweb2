@@ -221,7 +221,7 @@ class AuthBackendPage extends Form
                 }
             }
 
-            $this->info($this->translate('The configuration has been successfully validated.'));
+            $this->info($this->translate('Validated the configuration successfully'));
         } elseif (isset($formData['discovery_btn']) || isset($formData['btn_discover_domain'])) {
             return parent::isValidPartial($formData);
         } elseif (! isset($formData['backend_validation'])) {

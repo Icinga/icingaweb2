@@ -139,6 +139,6 @@ class ChangePasswordForm extends CompatForm
             ['password' => $this->getElement(static::NEW_PASSWORD_ELEMENT_NAME)->getValue()],
             Filter::where('user_name', $this->user->getUsername())
         );
-        Notification::success($this->translate('Account updated'));
+        Notification::success($this->translate('Updated account successfully'));
     }
 }

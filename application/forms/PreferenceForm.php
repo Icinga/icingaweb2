@@ -138,9 +138,9 @@ class PreferenceForm extends Form
         try {
             if ($this->store && $this->getElement('btn_submit')->isChecked()) {
                 $this->save();
-                Notification::success($this->translate('Preferences successfully saved'));
+                Notification::success($this->translate('Saved preferences successfully'));
             } else {
-                Notification::success($this->translate('Preferences successfully saved for the current session'));
+                Notification::success($this->translate('Saved preferences for the current session successfully'));
             }
         } catch (Exception $e) {
             Logger::error($e);

@@ -268,7 +268,7 @@ class GroupController extends AuthBackendController
                             )
                         );
                         Notification::success(sprintf(
-                            t('User "%s" has been removed from group "%s"'),
+                            $this->translate('Removed user "%s" from group "%s" successfully'),
                             $userName,
                             $groupName
                         ));

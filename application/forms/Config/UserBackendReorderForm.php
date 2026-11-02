@@ -64,7 +64,7 @@ class UserBackendReorderForm extends ConfigForm
 
             try {
                 if ($configForm->move($backendName, $position)->save()) {
-                    Notification::success($this->translate('Authentication order updated'));
+                    Notification::success($this->translate('Updated authentication order successfully'));
                 } else {
                     return false;
                 }

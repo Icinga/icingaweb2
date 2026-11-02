@@ -439,7 +439,7 @@ class UserBackendConfigForm extends ConfigForm
                 }
             }
 
-            $this->info($this->translate('The configuration has been successfully validated.'));
+            $this->info($this->translate('Validated the configuration successfully'));
         }
 
         return true;
