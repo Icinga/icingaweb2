@@ -70,6 +70,7 @@ class StaticController
             return;
         }
 
+        $assetRoot = realpath($assetRoot);
         $filePath = $assetRoot . DIRECTORY_SEPARATOR . $assetPath;
         $dirPath = realpath(dirname($filePath)); // dirname, because the file may be a link
 
