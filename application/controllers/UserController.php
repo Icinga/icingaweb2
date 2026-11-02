@@ -195,7 +195,7 @@ class UserController extends AuthBackendController
             ->setCsrfCounterMeasureId(Session::getSession()->getId())
             ->setRedirectUrl(Url::fromPath('user/list', ['backend' => $backend->getName()]))
             ->on(IplForm::ON_SUBMIT, function (UserForm $form): void {
-                Notification::success($this->translate('User created'));
+                Notification::success($this->translate('Created user successfully'));
                 $this->redirectNow($form->getRedirectUrl());
             })
             ->on(IplForm::ON_ERROR, function (Throwable $e, UserForm $_form): void {
@@ -224,7 +224,7 @@ class UserController extends AuthBackendController
             ->setRedirectUrl(Url::fromPath('user/show', ['backend' => $backend->getName(), 'user' => $userName]))
             ->on(IplForm::ON_SUBMIT, function (UserForm $form): void {
                 $newName = $form->getValue('user_name');
-                Notification::success(sprintf($this->translate('User "%s" has been updated'), $newName));
+                Notification::success(sprintf($this->translate('Updated user "%s" successfully'), $newName));
 
                 /** @var Url $redirect */
                 $redirect = $form->getRedirectUrl();
@@ -265,7 +265,9 @@ class UserController extends AuthBackendController
             ->setCsrfCounterMeasureId(Session::getSession()->getId())
             ->setRedirectUrl(Url::fromPath('user/list', ['backend' => $backend->getName()]))
             ->on(IplForm::ON_SUBMIT, function (UserForm $form): void {
-                Notification::success(sprintf($this->translate('User "%s" has been removed'), $form->getIdentifier()));
+                Notification::success(
+                    sprintf($this->translate('Removed user "%s" successfully'), $form->getIdentifier())
+                );
                 $this->redirectNow($form->getRedirectUrl());
             })
             ->on(IplForm::ON_ERROR, function (Throwable $e, UserForm $form): void {

@@ -91,7 +91,7 @@ class UserGroupForm extends RepositoryForm
     protected function getInsertMessage($success)
     {
         if ($success) {
-            return $this->translate('Group added successfully');
+            return $this->translate('Added group successfully');
         } else {
             return $this->translate('Failed to add group');
         }
@@ -107,9 +107,9 @@ class UserGroupForm extends RepositoryForm
     protected function getUpdateMessage($success)
     {
         if ($success) {
-            return sprintf($this->translate('Group "%s" has been edited'), $this->getIdentifier());
+            return sprintf($this->translate('Updated group "%s" successfully'), $this->getIdentifier());
         } else {
-            return sprintf($this->translate('Failed to edit group "%s"'), $this->getIdentifier());
+            return sprintf($this->translate('Failed to update group "%s"'), $this->getIdentifier());
         }
     }
 
@@ -123,7 +123,7 @@ class UserGroupForm extends RepositoryForm
     protected function getDeleteMessage($success)
     {
         if ($success) {
-            return sprintf($this->translate('Group "%s" has been removed'), $this->getIdentifier());
+            return sprintf($this->translate('Removed group "%s" successfully'), $this->getIdentifier());
         } else {
             return sprintf($this->translate('Failed to remove group "%s"'), $this->getIdentifier());
         }

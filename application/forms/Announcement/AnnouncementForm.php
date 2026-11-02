@@ -111,7 +111,7 @@ class AnnouncementForm extends RepositoryForm
     protected function getInsertMessage($success)
     {
         return $success
-            ? $this->translate('Announcement created')
+            ? $this->translate('Created announcement successfully')
             : $this->translate('Failed to create announcement');
     }
 
@@ -121,7 +121,7 @@ class AnnouncementForm extends RepositoryForm
     protected function getUpdateMessage($success)
     {
         return $success
-            ? $this->translate('Announcement updated')
+            ? $this->translate('Updated announcement successfully')
             : $this->translate('Failed to update announcement');
     }
 
@@ -131,7 +131,7 @@ class AnnouncementForm extends RepositoryForm
     protected function getDeleteMessage($success)
     {
         return $success
-            ? $this->translate('Announcement removed')
+            ? $this->translate('Removed announcement successfully')
             : $this->translate('Failed to remove announcement');
     }
 }
