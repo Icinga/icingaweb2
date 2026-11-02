@@ -40,10 +40,10 @@ class AutoRefreshForm extends Form
 
         if ((bool) $preferences->getValue('icingaweb', 'auto_refresh', true) === false) {
             $icingaweb['auto_refresh'] = '1';
-            $notification = $this->translate('Auto refresh successfully enabled');
+            $notification = $this->translate('Enabled auto-refresh successfully');
         } else {
             $icingaweb['auto_refresh'] = '0';
-            $notification = $this->translate('Auto refresh successfully disabled');
+            $notification = $this->translate('Disabled auto-refresh successfully');
         }
         $preferences->icingaweb = $icingaweb;
 
