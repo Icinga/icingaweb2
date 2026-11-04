@@ -244,7 +244,7 @@ class NavigationController extends Controller
                     $form->getResponse()->setRerenderLayout();
                 }
 
-                Notification::success(t('Navigation item successfully created'));
+                Notification::success($this->translate('Created navigation item successfully'));
                 return true;
             }
 
@@ -294,7 +294,10 @@ class NavigationController extends Controller
                     $form->getResponse()->setRerenderLayout();
                 }
 
-                Notification::success(sprintf(t('Navigation item "%s" successfully updated'), $itemName));
+                Notification::success(sprintf(
+                    $this->translate('Updated navigation item "%s" successfully'),
+                    $itemName
+                ));
                 return true;
             }
 
@@ -344,7 +347,10 @@ class NavigationController extends Controller
                     $form->getResponse()->setRerenderLayout();
                 }
 
-                Notification::success(sprintf(t('Navigation Item "%s" successfully removed'), $itemName));
+                Notification::success(sprintf(
+                    $this->translate('Removed navigation item "%s" successfully'),
+                    $itemName
+                ));
                 return true;
             }
 
@@ -385,7 +391,7 @@ class NavigationController extends Controller
                         }
 
                         Notification::success(sprintf(
-                            t('Navigation item "%s" has been unshared'),
+                            $this->translate('Unshared navigation item "%s"'),
                             $form->getValue('name')
                         ));
                     } else {

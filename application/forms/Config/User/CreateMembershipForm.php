@@ -140,11 +140,12 @@ class CreateMembershipForm extends Form
         }
 
         if ($single) {
-            Notification::success(
-                sprintf($this->translate('Membership for group %s created successfully'), $groupName)
-            );
+            Notification::success(sprintf(
+                $this->translate('Created membership for group "%s" successfully'),
+                $groupName
+            ));
         } else {
-            Notification::success($this->translate('Memberships created successfully'));
+            Notification::success($this->translate('Created memberships successfully'));
         }
 
         return true;

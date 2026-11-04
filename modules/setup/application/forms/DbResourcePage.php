@@ -95,7 +95,7 @@ class DbResourcePage extends Form
                 return false;
             }
 
-            $this->info($this->translate('The configuration has been successfully validated.'));
+            $this->info($this->translate('Validated the configuration successfully'));
         } elseif (! isset($formData['backend_validation'])) {
             // This is usually done by isValid(Partial), but as we're not calling any of these...
             $this->populate($formData);

@@ -52,7 +52,7 @@ class UsergroupbackendController extends Controller
             }
 
             if ($form->save()) {
-                Notification::success(t('User group backend successfully created'));
+                Notification::success($this->translate('Created user group backend successfully'));
                 return true;
             }
 
@@ -83,7 +83,10 @@ class UsergroupbackendController extends Controller
             }
 
             if ($form->save()) {
-                Notification::success(sprintf(t('User group backend "%s" successfully updated'), $backendName));
+                Notification::success(sprintf(
+                    $this->translate('Updated user group backend "%s" successfully'),
+                    $backendName
+                ));
                 return true;
             }
 
@@ -121,7 +124,10 @@ class UsergroupbackendController extends Controller
             }
 
             if ($backendForm->save()) {
-                Notification::success(sprintf(t('User group backend "%s" successfully removed'), $backendName));
+                Notification::success(sprintf(
+                    $this->translate('Removed user group backend "%s" successfully'),
+                    $backendName
+                ));
                 return true;
             }
 

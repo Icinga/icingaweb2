@@ -189,10 +189,10 @@ class ResourceConfigForm extends ConfigForm
                     }
                 }
                 $this->add(static::transformEmptyValuesToNull($this->getValues()));
-                $message = $this->translate('Resource "%s" has been successfully created');
+                $message = $this->translate('Created resource "%s" successfully');
             } else { // edit existing resource
                 $this->edit($resource, static::transformEmptyValuesToNull($this->getValues()));
-                $message = $this->translate('Resource "%s" has been successfully changed');
+                $message = $this->translate('Changed resource "%s" successfully');
             }
         } catch (InvalidArgumentException $e) {
             Notification::error($e->getMessage());
@@ -342,14 +342,14 @@ class ResourceConfigForm extends ConfigForm
 
                 if ($inspection->hasError()) {
                     $this->warning(sprintf(
-                        $this->translate('Failed to successfully validate the configuration: %s'),
+                        $this->translate('Failed to validate the configuration: %s'),
                         $inspection->getError()
                     ));
                     return false;
                 }
             }
 
-            $this->info($this->translate('The configuration has been successfully validated.'));
+            $this->info($this->translate('Validated the configuration successfully'));
         }
 
         return true;

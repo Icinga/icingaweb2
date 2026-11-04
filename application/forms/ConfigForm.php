@@ -87,7 +87,7 @@ class ConfigForm extends Form
         }
 
         if ($this->save()) {
-            Notification::success($this->translate('New configuration has successfully been stored'));
+            Notification::success($this->translate('Stored new configuration successfully'));
         } else {
             return false;
         }

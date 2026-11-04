@@ -143,7 +143,7 @@ class ConfigController extends Controller
         $this->view->passwordPolicyForm = (new PasswordPolicyConfigForm($config))
             ->setCsrfCounterMeasureId(Session::getSession()->getId())
             ->on(Form::ON_SUBMIT, function (PasswordPolicyConfigForm $_): void {
-                Notification::success($this->translate('Password policy configuration has successfully been stored'));
+                Notification::success($this->translate('Stored password policy configuration successfully'));
                 $this->redirectNow('__REFRESH__');
             })
             ->on(Form::ON_ERROR, function (Throwable $e, PasswordPolicyConfigForm $_form): void {
@@ -175,7 +175,7 @@ class ConfigController extends Controller
         $this->view->tabs = Widget::create('tabs')
             ->add('modules', [
                 'label' => $this->translate('Modules'),
-                'title' => $this->translate('List intalled modules'),
+                'title' => $this->translate('List installed modules'),
                 'url'   => 'config/modules'
             ])
             ->activate('modules');
@@ -241,7 +241,7 @@ class ConfigController extends Controller
             $module = Icinga::app()->getModuleManager()
                 ->enableModule($moduleName)
                 ->getModule($moduleName);
-            Notification::success(sprintf($this->translate('Module "%s" enabled'), $moduleName));
+            Notification::success(sprintf($this->translate('Enabled module "%s" successfully'), $moduleName));
             $form->onSuccess();
 
             if ($module->hasJs()) {
@@ -280,7 +280,7 @@ class ConfigController extends Controller
             $moduleName = $form->getValue('identifier');
             $module = $mm->getModule($moduleName);
             $mm->disableModule($moduleName);
-            Notification::success(sprintf($this->translate('Module "%s" disabled'), $moduleName));
+            Notification::success(sprintf($this->translate('Disabled module "%s" successfully'), $moduleName));
             $form->onSuccess();
 
             if ($module->hasJs()) {
@@ -362,7 +362,7 @@ class ConfigController extends Controller
             }
 
             if ($form->save()) {
-                Notification::success(t('User backend successfully created'));
+                Notification::success($this->translate('Created user backend successfully'));
                 return true;
             }
 
@@ -394,7 +394,10 @@ class ConfigController extends Controller
             }
 
             if ($form->save()) {
-                Notification::success(sprintf(t('User backend "%s" successfully updated'), $backendName));
+                Notification::success(sprintf(
+                    $this->translate('Updated user backend "%s" successfully'),
+                    $backendName
+                ));
                 return true;
             }
 
@@ -434,7 +437,10 @@ class ConfigController extends Controller
             }
 
             if ($backendForm->save()) {
-                Notification::success(sprintf(t('User backend "%s" successfully removed'), $backendName));
+                Notification::success(sprintf(
+                    $this->translate('Removed user backend "%s" successfully'),
+                    $backendName
+                ));
                 return true;
             }
 
@@ -525,7 +531,10 @@ class ConfigController extends Controller
                 }
 
                 if ($configForm->save()) {
-                    Notification::success(sprintf(t('Resource "%s" has been successfully removed'), $resource));
+                    Notification::success(sprintf(
+                        $this->translate('Removed resource "%s" successfully'),
+                        $resource
+                    ));
                 } else {
                     return false;
                 }
@@ -542,7 +551,7 @@ class ConfigController extends Controller
                 $form->warning(sprintf(
                     $this->translate(
                         'The resource "%s" is currently utilized for authentication by user backend "%s".'
-                        . ' Removing the resource can result in noone being able to log in any longer.'
+                        . ' Removing the resource can result in no one being able to log in any longer.'
                     ),
                     $resource,
                     $backendName
