@@ -166,6 +166,10 @@ class PreferenceForm extends Form
             $values['timezone'] = 'autodetect';
         }
 
+        if (! isset($values['theme_mode'])) {
+            $values['theme_mode'] = Config::app()->get('themes', 'default_mode', StyleSheet::DEFAULT_MODE);
+        }
+
         if (! isset($values['auto_refresh'])) {
             $values['auto_refresh'] = '1';
         }
@@ -239,7 +243,7 @@ class PreferenceForm extends Form
         if ($themeFile !== null) {
             $file = @file_get_contents($themeFile);
             if ($file && strpos($file, StyleSheet::LIGHT_MODE_IDENTIFIER) === false) {
-                $disabled = ['', 'light', 'system'];
+                $disabled = ['none', 'light', 'system'];
             }
         }
 
@@ -250,7 +254,7 @@ class PreferenceForm extends Form
                 'class' => 'theme-mode-input',
                 'label' => $this->translate('Theme Mode'),
                 'multiOptions' => [
-                    '' => HtmlElement::create(
+                    'none' => HtmlElement::create(
                         'img',
                         ['src' => $this->getView()->href('img/theme-mode-thumbnail-dark.svg')]
                     ) . HtmlElement::create('span', [], $this->translate('Dark')),
