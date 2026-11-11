@@ -475,7 +475,10 @@ form.icinga-form .control-group.disabled .control-label-group {
 // Errors and additional information
 
 form.icinga-form {
-  .form-notifications,
+  .form-notification {
+    margin: 0 0 1em 0;
+  }
+
   .form-description {
     border-radius: .25em;
     display: flex;
@@ -494,26 +497,11 @@ form.icinga-form {
       list-style: none;
     }
 
-    & .form-notification-icon,
     & .form-description-icon {
       font-size: 2em;
       margin-left: .25em;
       opacity: .4;
       align-self: flex-start;
-    }
-  }
-
-  .form-notifications {
-    &.info {
-      background-color: @form-info-bg-color;
-    }
-
-    &.error {
-      background-color: @form-error-bg-color;
-    }
-
-    &.warning {
-      background-color: @form-warning-bg-color;
     }
   }
 
