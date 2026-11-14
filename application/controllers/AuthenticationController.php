@@ -166,6 +166,8 @@ class AuthenticationController extends CompatController
         $isExternalUser = $auth->getUser()->isExternalUser();
         // Call provided AuthenticationHook(s) when logout action is called
         AuthenticationHook::triggerLogout($auth->getUser());
+        // Hooks need the session to build their redirect URL, so ask them before removing authorization.
+        $redirectUrl = $isExternalUser ? null : AuthenticationHook::getLogoutRedirectUrlFromHooks($auth->getUser());
         $auth->removeAuthorization();
         if ($isExternalUser) {
             $this->view->layout()->setLayout('external-logout');
@@ -173,6 +175,11 @@ class AuthenticationController extends CompatController
         } else {
             if (RememberMe::hasCookie() && $this->hasDb()) {
                 $this->getResponse()->setCookie(RememberMe::forget());
+            }
+
+            if ($redirectUrl !== null) {
+                // The URL may be external, so the browser must leave Icinga Web even if this is an XHR request.
+                $this->redirectHttp($redirectUrl);
             }
 
             $this->redirectToLogin();
