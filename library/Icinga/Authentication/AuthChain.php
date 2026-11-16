@@ -33,6 +33,8 @@ class AuthChain implements Authenticatable, Iterator
     /**
      * Error code if the authentication configuration was not readable
      *
+     * Set when the chain is created and kept by {@link authenticate()}.
+     *
      * @var int
      */
     const EPERM = 1;
@@ -108,6 +110,10 @@ class AuthChain implements Authenticatable, Iterator
      */
     public function authenticate(User $user, $password)
     {
+        if ($this->error === static::EPERM) {
+            return false;
+        }
+
         $this->error = null;
         $backendsTried = 0;
         $backendsWithError = 0;
@@ -158,6 +164,34 @@ class AuthChain implements Authenticatable, Iterator
     public function hasError()
     {
         return $this->error !== null;
+    }
+
+    /**
+     * Check whether the configuration lists an enabled backend that verifies credentials of the login form
+     *
+     * Looks at the configuration only and does not create the backends. A backend with an incomplete or invalid
+     * configuration counts, so that the login page keeps reporting it. The same applies if the configuration can't
+     * be read. External backends don't count because they never verify credentials of the login form.
+     *
+     * @return bool
+     */
+    public function hasPasswordBackend(): bool
+    {
+        if ($this->error === static::EPERM) {
+            return true;
+        }
+
+        foreach ($this->config->toArray() as $backendConfig) {
+            if ((bool) ($backendConfig['disabled'] ?? false)) {
+                continue;
+            }
+
+            if (strtolower((string) ($backendConfig['backend'] ?? '')) !== 'external') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

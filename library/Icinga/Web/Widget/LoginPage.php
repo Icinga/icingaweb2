@@ -33,12 +33,12 @@ class LoginPage extends HtmlDocument
     /**
      * Create a new LoginPage
      *
-     * @param CompatForm $form Primary form to render in the center of the login box
-     * @param LoginButtonForm[] $loginButtons Additional login button forms to render below the primary form
+     * @param ?CompatForm $form Primary form to render in the center of the login box, if any
+     * @param LoginButtonForm[] $loginButtons Login button forms to render below the primary form if there is one
      * @param bool $requiresSetup Whether to show the setup-wizard configuration note
      */
     public function __construct(
-        protected CompatForm $form,
+        protected ?CompatForm $form,
         protected array $loginButtons = [],
         protected bool $requiresSetup = false
     ) {
@@ -89,7 +89,9 @@ class LoginPage extends HtmlDocument
             $inner->addHtml($this->assembleSetupNote());
         }
 
-        $inner->addHtml($this->form);
+        if ($this->form !== null) {
+            $inner->addHtml($this->form);
+        }
 
         if ($this->loginButtons !== []) {
             $loginButtons = HtmlElement::create('div', Attributes::create(['class' => 'login-buttons']));

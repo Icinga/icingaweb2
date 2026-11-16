@@ -233,7 +233,10 @@
             if (onload && document.querySelector('#layout #login')) {
                 // The user landed on the login
                 let redirectInput = document.querySelector('#login form input[name=redirect]');
-                redirectInput.value = redirectInput.value + col2State;
+                if (redirectInput) {
+                    redirectInput.value = redirectInput.value + col2State;
+                }
+
                 return;
             }
 

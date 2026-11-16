@@ -109,20 +109,6 @@ class AuthenticationController extends CompatController
             $this->redirectNow($redirectUrl);
         }
 
-        $request = $this->getServerRequest();
-        if (! $requiresSetup) {
-            $cookies = new CookieHelper($this->getRequest());
-            if (! $cookies->isSupported()) {
-                $this
-                    ->getResponse()
-                    ->setBody("Cookies must be enabled to run this application.\n")
-                    ->setHttpResponseCode(403)
-                    ->sendResponse();
-                exit;
-            }
-            $form->handleRequest($request);
-        }
-
         $loginButtons = [];
 
         foreach (LoginButtonHook::all() as $class => $hook) {
@@ -137,8 +123,7 @@ class AuthenticationController extends CompatController
                     ))
                         ->on(Form::ON_SUBMIT, function () use ($button): void {
                             ($button->onClick)();
-                        })
-                        ->handleRequest($request);
+                        });
                 }
             } catch (Throwable $e) {
                 Logger::error('Failed to execute login button hook: %s', $e);
@@ -146,10 +131,44 @@ class AuthenticationController extends CompatController
             }
         }
 
+        $loginButtonsOnly = $loginButtons !== [] && ! $this->Auth()->getAuthChain()->hasPasswordBackend();
+
+        $request = $this->getServerRequest();
+        if (! $requiresSetup || $loginButtonsOnly) {
+            $cookies = new CookieHelper($this->getRequest());
+            if (! $cookies->isSupported()) {
+                $this
+                    ->getResponse()
+                    ->setBody("Cookies must be enabled to run this application.\n")
+                    ->setHttpResponseCode(403)
+                    ->sendResponse();
+                exit;
+            }
+
+            // No backend can verify credentials, so the login form is not processed.
+            if (! $loginButtonsOnly) {
+                $form->handleRequest($request);
+            }
+        }
+
+        foreach ($loginButtons as $key => $loginButton) {
+            try {
+                $loginButton->handleRequest($request);
+            } catch (Throwable $e) {
+                Logger::error('Failed to execute login button hook: %s', $e);
+                unset($loginButtons[$key]);
+            }
+        }
+
         // Suppress the rendering of controls bar.
         $this->view->compact = true;
         $this->setTitle($this->translate('Icinga Web 2 Login'));
-        $this->addContent(new LoginPage($form, $loginButtons, $requiresSetup));
+        $this->addContent(
+            // A button that failed to handle its request is dropped. Without any left, the form takes over.
+            $loginButtonsOnly && $loginButtons !== []
+                ? new LoginPage(null, $loginButtons)
+                : new LoginPage($form, $loginButtons, $requiresSetup)
+        );
     }
 
     /**

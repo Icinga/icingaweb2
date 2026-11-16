@@ -199,6 +199,10 @@ class LoginForm extends CompatForm
             return;
         }
         switch ($authChain->getError()) {
+            case $authChain::EPERM:
+                $this->addUnreadableConfigurationMessage();
+
+                break;
             case $authChain::EEMPTY:
                 $this->addMessage($this->translate(
                     'No authentication methods available.'
@@ -228,16 +232,23 @@ class LoginForm extends CompatForm
     }
 
     /**
-     * Show an error when all configured backends are external
+     * Show an error when the authentication configuration is not readable or all configured backends are external
      *
      * @return void
      */
     public function onRequest(): void
     {
-        $auth = Auth::getInstance();
+        $authChain = Auth::getInstance()->getAuthChain();
+        if ($authChain->getError() === $authChain::EPERM) {
+            $this->addUnreadableConfigurationMessage();
+            $this->onError();
+
+            return;
+        }
+
         $onlyExternal = true;
         // TODO(el): This may be set on the auth chain once iterated. See Auth::authExternal().
-        foreach ($auth->getAuthChain() as $backend) {
+        foreach ($authChain as $backend) {
             if (! $backend instanceof ExternalBackend) {
                 $onlyExternal = false;
             }
@@ -249,5 +260,15 @@ class LoginForm extends CompatForm
             ));
             $this->onError();
         }
+    }
+
+    /**
+     * Add the error message for an authentication configuration that can't be read
+     *
+     * @return void
+     */
+    protected function addUnreadableConfigurationMessage(): void
+    {
+        $this->addMessage($this->translate('The authentication configuration is not readable.'));
     }
 }
