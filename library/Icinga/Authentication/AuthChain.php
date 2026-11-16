@@ -33,6 +33,8 @@ class AuthChain implements Authenticatable, Iterator
     /**
      * Error code if the authentication configuration was not readable
      *
+     * Set when the chain is created and kept by {@link authenticate()}.
+     *
      * @var int
      */
     const EPERM = 1;
@@ -108,6 +110,10 @@ class AuthChain implements Authenticatable, Iterator
      */
     public function authenticate(User $user, $password)
     {
+        if ($this->error === static::EPERM) {
+            return false;
+        }
+
         $this->error = null;
         $backendsTried = 0;
         $backendsWithError = 0;
