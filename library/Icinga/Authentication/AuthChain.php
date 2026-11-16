@@ -167,6 +167,34 @@ class AuthChain implements Authenticatable, Iterator
     }
 
     /**
+     * Check whether the configuration lists an enabled backend that verifies credentials of the login form
+     *
+     * Looks at the configuration only and does not create the backends. A backend with an incomplete or invalid
+     * configuration counts, so that the login page keeps reporting it. The same applies if the configuration can't
+     * be read. External backends don't count because they never verify credentials of the login form.
+     *
+     * @return bool
+     */
+    public function hasPasswordBackend(): bool
+    {
+        if ($this->error === static::EPERM) {
+            return true;
+        }
+
+        foreach ($this->config->toArray() as $backendConfig) {
+            if ((bool) ($backendConfig['disabled'] ?? false)) {
+                continue;
+            }
+
+            if (strtolower((string) ($backendConfig['backend'] ?? '')) !== 'external') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get whether to skip external user backends on iteration
      *
      * @return bool

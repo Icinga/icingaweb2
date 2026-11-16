@@ -12,7 +12,7 @@ use ipl\Html\ValidHtml;
 readonly class LoginButton
 {
     /**
-     * Create an additional button to be displayed below the login form
+     * Create an additional button to be displayed on the login page
      *
      * @param Closure $onClick What to do if the button is pressed
      * @param ValidHtml $content What to show in the button, see also {@link Html::wantHtml()}

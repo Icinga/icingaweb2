@@ -8,10 +8,13 @@ namespace Icinga\Application\Hook;
 use Icinga\Authentication\LoginButton;
 
 /**
- * Hook for adding custom buttons below the login form
+ * Hook for adding custom buttons to the login page
  *
  * Extend this class to display additional buttons on the Icinga Web login page,
  * e.g. for alternative authentication flows such as SSO.
+ * The buttons are rendered below the login form. The login page shows no form
+ * and only the buttons if at least one button is rendered and no enabled
+ * authentication backend other than `external` is configured.
  * To register your implementation, call `YourLoginButtons::register()` during module initialization.
  */
 abstract class LoginButtonHook
@@ -37,10 +40,10 @@ abstract class LoginButtonHook
     }
 
     /**
-     * Get the buttons to display below the login form
+     * Get the buttons to display on the login page
      *
      * Implement this method to return any number of {@link LoginButton} instances.
-     * Each button is rendered below the standard login form in the order provided.
+     * Each button is rendered in the order provided, below the standard login form if there is one.
      *
      * @return LoginButton[]
      */
