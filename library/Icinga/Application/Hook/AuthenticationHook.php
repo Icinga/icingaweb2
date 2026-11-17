@@ -107,7 +107,7 @@ abstract class AuthenticationHook
         foreach (static::all() as $hook) {
             try {
                 $hook->onLogin($user);
-            } catch (\Exception $e) {
+            } catch (Throwable $e) {
                 // Avoid error propagation if login failed in third party application
                 Logger::error($e);
             }
@@ -124,7 +124,7 @@ abstract class AuthenticationHook
         foreach (static::all() as $hook) {
             try {
                 $hook->onLogout($user);
-            } catch (\Exception $e) {
+            } catch (Throwable $e) {
                 // Avoid error propagation if login failed in third party application
                 Logger::error($e);
             }
