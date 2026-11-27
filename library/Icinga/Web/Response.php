@@ -5,8 +5,8 @@
 
 namespace Icinga\Web;
 
-use Icinga\Application\Config;
 use Icinga\Util\Csp;
+use Icinga\Util\TimezoneDetect;
 use Zend_Controller_Response_Http;
 use Icinga\Application\Icinga;
 use Icinga\Web\Response\JsonResponse;
@@ -390,6 +390,16 @@ class Response extends Zend_Controller_Response_Http
 
         if (! $this->getHeader('Content-Type', true)) {
             $this->setHeader('Content-Type', static::DEFAULT_CONTENT_TYPE);
+        }
+
+        $currentTimezone = date_default_timezone_get();
+        $cachedTimezone = $request->getCookie('icingaweb2-tzo');
+        if (! isset($cachedTimezone) || $cachedTimezone !== $currentTimezone) {
+            $this->setCookie(
+                (new Cookie('icingaweb2-tzo', $currentTimezone))
+                    ->setExpire(time() + 60 * 60 * 24 * 30)
+                    ->setHttpOnly(false)
+            );
         }
     }
 

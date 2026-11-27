@@ -299,8 +299,9 @@
                 this.requests[id].abort();
             }
 
-            // Not sure whether we need this Accept-header
-            var headers = { 'X-Icinga-Accept': 'text/html' };
+            let headers = {
+                'X-Icinga-Client-Timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
+            };
 
             if (!! id) {
                 headers['X-Icinga-Container'] = id;
@@ -735,6 +736,12 @@
 
             if (req.autorefresh && req.$target.is('[data-suspend-autorefresh]')) {
                 return;
+            }
+
+            const tz = this.icinga.utils.readCookie('icingaweb2-tzo');
+            if (tz) {
+                this.icinga.logger.debug('Switching timezone to ' + tz);
+                this.icinga.config.timezone = tz;
             }
 
             this.icinga.logger.debug(

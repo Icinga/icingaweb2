@@ -9,6 +9,8 @@ use DateTimeZone;
 
 /**
  * Retrieve timezone information from cookie
+ *
+ * @deprecated use `date_default_timezone_get()` to get the user's timezone instead.
  */
 class TimezoneDetect
 {

@@ -13,7 +13,6 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
-use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
@@ -129,10 +128,16 @@ class PreferenceForm extends Form
             $this->getResponse()->setReloadCss(true);
         }
 
-        if ((($locale = $this->getElement('language')) !== null && $locale->getValue() !== $oldLocale)
-            || (($timezone = $this->getElement('timezone')) !== null && $timezone->getValue() !== $oldTimezone)
-        ) {
+        if (($locale = $this->getElement('language')) !== null && $locale->getValue() !== $oldLocale) {
             $this->getResponse()->setHeader('X-Icinga-Redirect-Http', 'yes', true);
+        }
+
+        if (($timezone = $this->getElement('timezone')) !== null && $timezone->getValue() !== $oldTimezone) {
+            date_default_timezone_set(
+                $timezone->getValue() === 'autodetect'
+                    ? $this->getClientTimezone()
+                    : $timezone->getValue()
+            );
         }
 
         try {
@@ -295,7 +300,7 @@ class PreferenceForm extends Form
         $tzList = [];
         $tzList['autodetect'] = sprintf(
             $this->translate('Browser (%s)', 'preferences.form'),
-            $this->getDefaultTimezone()
+            $this->getClientTimezone() ?: $this->translate('N/A')
         );
         foreach (DateTimeZone::listIdentifiers() as $tz) {
             $tzList[$tz] = $tz;
@@ -320,8 +325,7 @@ class PreferenceForm extends Form
                 'required'      => true,
                 'label'         => $this->translate('Your Current Timezone'),
                 'description'   => $this->translate('Use the following timezone for dates and times'),
-                'multiOptions'  => $tzList,
-                'value'         => $this->getDefaultTimezone()
+                'multiOptions'  => $tzList
             ]
         );
 
@@ -477,12 +481,17 @@ class PreferenceForm extends Form
      */
     protected function getDefaultTimezone()
     {
-        $detect = new TimezoneDetect();
-        if ($detect->success()) {
-            return $detect->getTimezoneName();
-        } else {
-            return @date_default_timezone_get();
-        }
+        return date_default_timezone_get();
+    }
+
+    /**
+     * Get the browser's timezone
+     *
+     * @return ?string
+     */
+    protected function getClientTimezone(): ?string
+    {
+        return $this->getRequest()->getHeader('X-Icinga-Client-Timezone');
     }
 
     /**
