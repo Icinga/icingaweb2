@@ -90,7 +90,6 @@
                 return false;
             }
 
-            this.timezone   = new Icinga.Timezone();
             this.utils      = new Icinga.Utils(this);
             this.logger     = new Icinga.Logger(this);
             this.timer      = new Icinga.Timer(this);
@@ -114,7 +113,6 @@
                 return (a.priority || 999) - (b.priority || 999);
             });
 
-            this.timezone.initialize();
             this.timer.initialize();
             this.events.initialize();
             this.history.initialize();
@@ -238,7 +236,6 @@
                 module.destroy();
             });
 
-            this.timezone.destroy();
             this.timer.destroy();
             this.events.destroy();
             this.loader.destroy();

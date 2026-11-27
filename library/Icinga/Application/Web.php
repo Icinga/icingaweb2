@@ -19,7 +19,6 @@ use Zend_Paginator;
 use Zend_View_Helper_PaginationControl;
 use Icinga\Authentication\Auth;
 use Icinga\Util\DirectoryIterator;
-use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Controller\Dispatcher;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Notification;
@@ -419,8 +418,8 @@ class Web extends EmbeddedWeb
         if (! $auth->isAuthenticated()
             || ($timezone = $auth->getUser()->getPreferences()->getValue('icingaweb', 'timezone')) === null
         ) {
-            $detect = new TimezoneDetect();
-            $timezone = $detect->getTimezoneName();
+            $timezone = $this->getRequest()->getHeader('X-Icinga-Client-Timezone')
+                ?: $this->getRequest()->getCookie('icingaweb2-tzo');
         }
         return $timezone;
     }

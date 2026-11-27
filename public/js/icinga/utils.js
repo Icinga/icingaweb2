@@ -577,7 +577,22 @@
          */
         generateId: function(len) {
             return this.shuffleString('abcefghijklmnopqrstuvwxyz').substr(0, len);
-        }
+        },
+
+        /**
+         * Read cookie data
+         * @param {string} name
+         * @returns {string|null}
+         */
+        readCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) {
+                return decodeURIComponent(parts.pop().split(';').shift());
+            }
+
+            return null;
+        },
     };
 
 }(Icinga, jQuery));

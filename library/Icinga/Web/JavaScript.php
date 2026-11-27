@@ -30,7 +30,6 @@ class JavaScript
         'js/icinga/events.js',
         'js/icinga/history.js',
         'js/icinga/module.js',
-        'js/icinga/timezone.js',
         'js/icinga/behavior/application-state.js',
         'js/icinga/behavior/collapsible.js',
         'js/icinga/behavior/detach.js',
